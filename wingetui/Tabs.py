@@ -15,14 +15,25 @@ class Discover(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
 
+        self.reloadButton = QtWidgets.QPushButton()
+        self.reloadButton.setFixedSize(30, 30)
+        self.reloadButton.clicked.connect(self.reload)
+        self.reloadButton.setIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/reload.png"))
+
+        hLayout = QtWidgets.QHBoxLayout()
+
         self.query = QtWidgets.QLineEdit()
-        self.query.setPlaceholderText("Search for something on Winget")
+        self.query.setPlaceholderText(" Search something on Winget")
         self.query.textChanged.connect(self.filter)
         self.query.setFixedHeight(30)
 
+        hLayout.addWidget(self.query)
+        hLayout.addWidget(self.reloadButton)
+
         self.packageList = QtWidgets.QTreeWidget()
-        self.packageList.setColumnCount(4)
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Install"])
+        self.packageList.setIconSize(QtCore.QSize(24, 24))
+        self.packageList.setColumnCount(3)
+        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version"])
         self.packageList.setColumnWidth(0, 300)
         self.packageList.setColumnWidth(1, 300)
         self.packageList.setColumnWidth(2, 200)
@@ -31,7 +42,7 @@ class Discover(QtWidgets.QWidget):
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1)))
 
-        self.layout.addWidget(self.query)
+        self.layout.addLayout(hLayout)
         self.layout.addWidget(self.packageList)
         self.layout.addWidget(self.infobox)
         self.infobox.hide()
@@ -47,6 +58,10 @@ class Discover(QtWidgets.QWidget):
         item = QtWidgets.QTreeWidgetItem()
         item.setText(0, name)
         item.setText(1, id)
+        item.setIcon(0, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/install.png"))
+        item.setIcon(1, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/ID.png"))
+        item.setIcon(2, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/version.png"))
+        self.reloadButton.setEnabled(True)
         item.setText(2, version)
         self.packageList.addTopLevelItem(item)
     
@@ -63,16 +78,24 @@ class Discover(QtWidgets.QWidget):
     def showQuery(self) -> None:
         self.packageList.show()
         self.query.show()
+        self.reloadButton.show()
         self.infobox.hide()
 
     def openInfo(self, title, id) -> None:
         if("…" in title):
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""))
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False)
         else:
-            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""))
+            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True)
         self.packageList.hide()
         self.query.hide()
+        self.reloadButton.hide()
         self.infobox.show()
+    
+    def reload(self) -> None:
+        self.reloadButton.setEnabled(False)
+        self.packageList.clear()
+        self.query.setText("")
+        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, ""), daemon=True).start()
     
 
 class Installed(QtWidgets.QWidget):
@@ -174,7 +197,9 @@ class Program(QtWidgets.QWidget):
         self.versionLabel = QtWidgets.QLabel("Version: ")
         self.versionCombo = QtWidgets.QComboBox()
         self.versionCombo.setFixedWidth(150)
-        self.installButton = QtWidgets.QPushButton("Install")
+        self.installButton = QtWidgets.QPushButton()
+        self.installButton.setText("Install")
+        self.installButton.setIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/install.png"))
         self.installButton.clicked.connect(self.install)
         self.installButton.setFixedWidth(150)
         self.installButton.setFixedHeight(30)
@@ -209,8 +234,7 @@ class Program(QtWidgets.QWidget):
         self.setLayout(self.hLayout)
 
 
-
-        self.backButton = QtWidgets.QPushButton("◀", self)
+        self.backButton = QtWidgets.QPushButton(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/back.png"), "", self)
         self.backButton.setStyleSheet("font-size: 22px;")
         self.backButton.move(0, 0)
         self.backButton.resize(30, 30)
@@ -227,8 +251,11 @@ class Program(QtWidgets.QWidget):
         else:
             QtWidgets.QMessageBox.warning(self, "Winget UI Store", f"An error occurred while installing the package {self.title.text()}. (Winget output code is {returncode})")
     
-    def loadProgram(self, title: str, id: str) -> None:
-        self.title.setText(title)
+    def loadProgram(self, title: str, id: str, goodTitle: bool) -> None:
+        if(goodTitle):
+            self.title.setText(title)
+        else:
+            self.title.setText(id)
         self.description.setText("Loading...")
         self.author.setText("Author: "+"Loading...")
         self.publisher.setText("Publisher: "+"Loading...")
@@ -241,7 +268,7 @@ class Program(QtWidgets.QWidget):
         self.versionCombo.addItems(["Loading..."])
         self.progressDialog.show()
         
-        Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id), daemon=True).start()
+        Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
         self.progressDialog.hide()

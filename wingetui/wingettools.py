@@ -1,5 +1,5 @@
 from PySide2 import QtCore
-import subprocess
+import subprocess, time
 
 def searchForPackage(signal: QtCore.Signal, query: str = "") -> None:
     print("[   OK   ] Starting internet search...")
@@ -17,16 +17,17 @@ def searchForPackage(signal: QtCore.Signal, query: str = "") -> None:
     for element in output:
         signal.emit(element[0:27].strip(), element[27:77].strip(), element[77:109].replace("Moniker:", "").strip())
 
-def getInfo(signal: QtCore.Signal, title: str, id: str) -> None:
-    print(f"[   OK   ] Acquiring title for id \"{title}\"")
-    p = subprocess.Popen(["winget", "search", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output = []
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            output.append(str(line, encoding='utf-8', errors="ignore"))
-    title = output[-1][0:output[0].split("\r")[-1].index("Id")].strip()
+def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
+    if not(goodTitle):
+        print(f"[   OK   ] Acquiring title for id \"{title}\"")
+        p = subprocess.Popen(["winget", "search", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output = []
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            if line:
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+        title = output[-1][0:output[0].split("\r")[-1].index("Id")].strip()
     print(f"[   OK   ] Starting get info for title {title}")
     p = subprocess.Popen(["winget", "show", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = []

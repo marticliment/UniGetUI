@@ -11,9 +11,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loadWidgets()
         self.show()
         self.setStyleSheet("""
-        QTreeWidget::item{{
-            height: 20px;
-        }}
+            QTreeWidget::item{{
+                height: 25px;
+                padding: 5px;
+                padding-left: 10px;
+            }}
         """)
         if(self.isAdmin()):
             QtWidgets.QMessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
