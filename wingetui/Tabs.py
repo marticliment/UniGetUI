@@ -12,6 +12,8 @@ class Discover(QtWidgets.QWidget):
         self.infobox = Program()
         self.infobox.onClose.connect(self.showQuery)
 
+        self.programbox = QtWidgets.QWidget()
+
         self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
 
@@ -26,6 +28,9 @@ class Discover(QtWidgets.QWidget):
         self.query.setPlaceholderText(" Search something on Winget")
         self.query.textChanged.connect(self.filter)
         self.query.setFixedHeight(30)
+
+        self.discoverLabel = QtWidgets.QLabel("Discover packages")
+        self.discoverLabel.setStyleSheet("font-size: 40px;")
 
         hLayout.addWidget(self.query)
         hLayout.addWidget(self.reloadButton)
@@ -42,8 +47,15 @@ class Discover(QtWidgets.QWidget):
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1)))
 
-        self.layout.addLayout(hLayout)
-        self.layout.addWidget(self.packageList)
+        layout = QtWidgets.QVBoxLayout()
+
+        layout.addWidget(self.discoverLabel)
+        layout.addWidget(QtWidgets.QLabel())
+        layout.addLayout(hLayout)
+        layout.addWidget(self.packageList)
+        layout.addWidget(QtWidgets.QLabel())
+        self.programbox.setLayout(layout)
+        self.layout.addWidget(self.programbox)
         self.layout.addWidget(self.infobox)
         self.infobox.hide()
 
@@ -76,9 +88,7 @@ class Discover(QtWidgets.QWidget):
                 item.setHidden(False)
     
     def showQuery(self) -> None:
-        self.packageList.show()
-        self.query.show()
-        self.reloadButton.show()
+        self.programbox.show()
         self.infobox.hide()
 
     def openInfo(self, title, id) -> None:
@@ -86,9 +96,7 @@ class Discover(QtWidgets.QWidget):
             self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False)
         else:
             self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True)
-        self.packageList.hide()
-        self.query.hide()
-        self.reloadButton.hide()
+        self.programbox.hide()
         self.infobox.show()
     
     def reload(self) -> None:
@@ -197,9 +205,12 @@ class Program(QtWidgets.QWidget):
         self.versionLabel = QtWidgets.QLabel("Version: ")
         self.versionCombo = QtWidgets.QComboBox()
         self.versionCombo.setFixedWidth(150)
+        self.versionCombo.setIconSize(QtCore.QSize(24, 24))
+        self.versionCombo.setFixedHeight(25)
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
         self.installButton.setIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/install.png"))
+        self.installButton.setIconSize(QtCore.QSize(24, 24))
         self.installButton.clicked.connect(self.install)
         self.installButton.setFixedWidth(150)
         self.installButton.setFixedHeight(30)
@@ -288,6 +299,8 @@ class Program(QtWidgets.QWidget):
             self.versionCombo.addItems(["Lastest"] + appInfo["versions"])
         except KeyError:
             pass
+        for i in range(self.versionCombo.count()):
+            self.versionCombo.setItemIcon(i, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/version.png"))
 
     def install(self):
         title = self.title.text()
