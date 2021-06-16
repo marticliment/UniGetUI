@@ -23,8 +23,6 @@ class MainApplication(QtWidgets.QApplication):
 
             self.window = MainWindow.MainWindow()
             
-            icon = QtGui.QIcon("icon.ico")
-            self.setWindowIcon(icon)
 
         
 

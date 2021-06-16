@@ -6,6 +6,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__(parent=parent)
         self.setWindowTitle("Winget UI Store")
         self.setMinimumSize(700, 560)
+        self.setWindowIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/icon.png"))
         self.resize(QtCore.QSize(1024, 600))
         self.loadWidgets()
         self.show()
