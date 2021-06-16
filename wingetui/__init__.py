@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, darkdetect, qtmodern.styles
 from PySide2 import QtWidgets, QtCore, QtGui
 import MainWindow
 
@@ -22,6 +22,12 @@ class MainApplication(QtWidgets.QApplication):
             os.chdir(os.path.expanduser("~"))
 
             self.window = MainWindow.MainWindow()
+
+            
+            if(darkdetect.isDark()):
+                qtmodern.styles.dark(self)
+            #else:
+                #qtmodern.styles.light(self)
             
 
         

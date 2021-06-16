@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools
+import WingetTools, darkdetect
 from threading import Thread
 
 class Discover(QtWidgets.QWidget):
@@ -61,13 +61,28 @@ class Discover(QtWidgets.QWidget):
 
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
+
+        self.loadWheel = LoadingProgress(self)
+        self.loadWheel.resize(64, 64)
+
+        
     
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, ""), daemon=True).start()
         print("[   OK   ] Discover tab loaded")
 
+        g = self.packageList.geometry()
+        self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+
+    def resizeEvent(self, event = None):
+        g = self.packageList.geometry()
+        self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        if(event):
+            return super().resizeEvent(event)
+
     def addItem(self, name: str, id: str, version: str) -> None:
         item = QtWidgets.QTreeWidgetItem()
+        self.loadWheel.hide()
         item.setText(0, name)
         item.setText(1, id)
         item.setIcon(0, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/install.png"))
@@ -100,6 +115,7 @@ class Discover(QtWidgets.QWidget):
         self.infobox.show()
     
     def reload(self) -> None:
+        self.loadWheel.show()
         self.reloadButton.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
@@ -113,6 +129,19 @@ class Installed(QtWidgets.QWidget):
 class Update(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+class LoadingProgress(QtWidgets.QLabel):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.movie = QtGui.QMovie("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/loading.gif")
+        self.movie.start()
+        #self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setMovie(self.movie)
+        self.show()
+    
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.movie.setScaledSize(self.size())
 
 class QLinkLabel(QtWidgets.QLabel):
     def __init__(self, text=""):
@@ -263,6 +292,10 @@ class Program(QtWidgets.QWidget):
             QtWidgets.QMessageBox.warning(self, "Winget UI Store", f"An error occurred while installing the package {self.title.text()}. (Winget output code is {returncode})")
     
     def loadProgram(self, title: str, id: str, goodTitle: bool) -> None:
+        if(darkdetect.isDark()):
+            blueColor = "CornflowerBlue"
+        else:
+            blueColor = "blue"
         if(goodTitle):
             self.title.setText(title)
         else:
@@ -270,10 +303,10 @@ class Program(QtWidgets.QWidget):
         self.description.setText("Loading...")
         self.author.setText("Author: "+"Loading...")
         self.publisher.setText("Publisher: "+"Loading...")
-        self.homepage.setText(f"Homepage: <a href=\"\">{'Loading...'}</a>")
-        self.license.setText(f"License: {'Loading...'} (<a href=\"\">{'Loading...'}</a>)")
+        self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"\">{'Loading...'}</a>")
+        self.license.setText(f"License: {'Loading...'} (<a style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>)")
         self.sha.setText(f"Installer SHA256 (Lastest version): {'Loading...'}")
-        self.link.setText(f"Installer URL (Lastest version): <a href=\"\">{'Loading...'}</a>")
+        self.link.setText(f"Installer URL (Lastest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
         self.type.setText(f"Installer type (Lastest version): {'Loading...'}")
         self.id.setText(f"Package ID: {'Loading...'}")
         self.versionCombo.addItems(["Loading..."])
@@ -282,15 +315,19 @@ class Program(QtWidgets.QWidget):
         Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
+        if(darkdetect.isDark()):
+            blueColor = "CornflowerBlue"
+        else:
+            blueColor = "blue"
         self.progressDialog.hide()
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
         self.author.setText("Author: "+appInfo["author"])
         self.publisher.setText("Publisher: "+appInfo["publisher"])
-        self.homepage.setText(f"Homepage: <a href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
-        self.license.setText(f"License: {appInfo['license']} (<a href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
+        self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
+        self.license.setText(f"License: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
         self.sha.setText(f"Installer SHA256 (Lastest version): {appInfo['installer-sha256']}")
-        self.link.setText(f"Installer URL (Lastest version): <a href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
+        self.link.setText(f"Installer URL (Lastest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"Installer type (Lastest version): {appInfo['installer-type']}")
         self.id.setText(f"Package ID: {appInfo['id']}")
         while self.versionCombo.count()>0:

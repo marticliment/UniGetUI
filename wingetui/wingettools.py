@@ -14,7 +14,13 @@ def searchForPackage(signal: QtCore.Signal, query: str = "") -> None:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
                 counter += 1
+    counter = 0
     for element in output:
+        if(counter>=100):
+            time.sleep(0.01)
+            counter = 0
+        else:
+            counter += 1
         signal.emit(element[0:27].strip(), element[27:77].strip(), element[77:109].replace("Moniker:", "").strip())
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:

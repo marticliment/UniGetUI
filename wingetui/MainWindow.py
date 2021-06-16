@@ -17,17 +17,20 @@ class MainWindow(QtWidgets.QMainWindow):
                 padding-left: 10px;
             }}
         """)
+
         if(self.isAdmin()):
             QtWidgets.QMessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:
-        self.mainWidget = QtWidgets.QTabWidget()
-        self.mainWidget.addTab(Tabs.Discover(), "Discover")
-        self.mainWidget.addTab(Tabs.Update(), "Updates")
-        self.mainWidget.addTab(Tabs.Installed(), "Installed applications")
+        self.mainWidget = Tabs.Discover()#QtWidgets.QTabWidget()
+        #self.mainWidget.addTab(Tabs.Discover(), "Discover")
+        #self.mainWidget.addTab(Tabs.Update(), "Updates")
+        #self.mainWidget.addTab(Tabs.Installed(), "Installed applications")
 
         self.setCentralWidget(self.mainWidget)
+        self.show()
+        self.mainWidget.resizeEvent()
 
     def isAdmin(self) -> bool:
         try:

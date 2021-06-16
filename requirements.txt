@@ -1,1 +1,3 @@
 PySide2
+darkdetect
+qtmodern
