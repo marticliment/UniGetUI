@@ -1,6 +1,12 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, darkdetect
+import WingetTools, darkdetect, sys
 from threading import Thread
+
+
+if hasattr(sys, 'frozen'):
+    realpath = sys._MEIPASS
+else:
+    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 class Discover(QtWidgets.QWidget):
 
@@ -20,7 +26,7 @@ class Discover(QtWidgets.QWidget):
         self.reloadButton = QtWidgets.QPushButton()
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.clicked.connect(self.reload)
-        self.reloadButton.setIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/reload.png"))
+        self.reloadButton.setIcon(QtGui.QIcon(realpath+"/reload.png"))
 
         hLayout = QtWidgets.QHBoxLayout()
 
@@ -85,9 +91,9 @@ class Discover(QtWidgets.QWidget):
         self.loadWheel.hide()
         item.setText(0, name)
         item.setText(1, id)
-        item.setIcon(0, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/install.png"))
-        item.setIcon(1, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/ID.png"))
-        item.setIcon(2, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/version.png"))
+        item.setIcon(0, QtGui.QIcon(realpath+"/install.png"))
+        item.setIcon(1, QtGui.QIcon(realpath+"/ID.png"))
+        item.setIcon(2, QtGui.QIcon(realpath+"/version.png"))
         self.reloadButton.setEnabled(True)
         item.setText(2, version)
         self.packageList.addTopLevelItem(item)
@@ -133,7 +139,7 @@ class Update(QtWidgets.QWidget):
 class LoadingProgress(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.movie = QtGui.QMovie("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/loading.gif")
+        self.movie = QtGui.QMovie(realpath+"/loading.gif")
         self.movie.start()
         #self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setMovie(self.movie)
@@ -238,7 +244,7 @@ class Program(QtWidgets.QWidget):
         self.versionCombo.setFixedHeight(25)
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
-        self.installButton.setIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/install.png"))
+        self.installButton.setIcon(QtGui.QIcon(realpath+"/install.png"))
         self.installButton.setIconSize(QtCore.QSize(24, 24))
         self.installButton.clicked.connect(self.install)
         self.installButton.setFixedWidth(150)
@@ -274,7 +280,7 @@ class Program(QtWidgets.QWidget):
         self.setLayout(self.hLayout)
 
 
-        self.backButton = QtWidgets.QPushButton(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/back.png"), "", self)
+        self.backButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/back.png"), "", self)
         self.backButton.setStyleSheet("font-size: 22px;")
         self.backButton.move(0, 0)
         self.backButton.resize(30, 30)
@@ -337,7 +343,7 @@ class Program(QtWidgets.QWidget):
         except KeyError:
             pass
         for i in range(self.versionCombo.count()):
-            self.versionCombo.setItemIcon(i, QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/version.png"))
+            self.versionCombo.setItemIcon(i, QtGui.QIcon(realpath+"/version.png"))
 
     def install(self):
         title = self.title.text()

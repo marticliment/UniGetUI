@@ -1,6 +1,7 @@
 from PySide2 import QtCore
 import subprocess, time
 
+
 def searchForPackage(signal: QtCore.Signal, query: str = "") -> None:
     print("[   OK   ] Starting internet search...")
     p = subprocess.Popen(["winget", "search", query], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
