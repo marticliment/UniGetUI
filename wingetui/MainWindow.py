@@ -48,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         if(Tools.pending_programs != []):
-            if(QtWidgets.QMessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI Store, the installation may fail and have unexpected results. Do you still want to close the application?") == 0):
+            if(QtWidgets.QMessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI Store, the installation may fail and have unexpected results. Do you still want to close the application?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
                 event.accept()
             else:
                 event.ignore()
