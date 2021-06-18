@@ -59,10 +59,11 @@ class Discover(QtWidgets.QWidget):
         layout.addWidget(QtWidgets.QLabel())
         layout.addLayout(hLayout)
         layout.addWidget(self.packageList)
-        layout.addWidget(QtWidgets.QLabel())
+        #layout.addWidget(QtWidgets.QLabel())
         self.programbox.setLayout(layout)
         self.layout.addWidget(self.programbox)
         self.layout.addWidget(self.infobox)
+        self.layout.addWidget(PackageInstalling("WingetUI"))
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
@@ -141,7 +142,6 @@ class LoadingProgress(QtWidgets.QLabel):
         super().__init__(parent=parent)
         self.movie = QtGui.QMovie(realpath+"/loading.gif")
         self.movie.start()
-        #self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setMovie(self.movie)
         self.show()
     
@@ -164,6 +164,26 @@ class QInfoProgressDialog(QtWidgets.QProgressDialog):
     def addTextLine(self, text: str) -> None:
         self.setLabelText("Downloading and installing, please wait...\n\n"+text)
 
+class PackageInstalling(QtWidgets.QGroupBox):
+    onCancel = QtCore.Signal()
+    def __init__(self, title: str = "{$AppxPackage}", parent=None):
+        super().__init__(parent=parent)
+        self.setFixedHeight(66)
+        self.layout = QtWidgets.QHBoxLayout()
+        self.layout.addWidget(QtWidgets.QLabel(title))
+        self.progressbar = QtWidgets.QProgressBar()
+        self.progressbar.setTextVisible(False)
+        self.progressbar.setRange(0, 0)
+        self.progressbar.setFixedHeight(6)
+        self.layout.addWidget(self.progressbar)
+        self.info = QtWidgets.QLineEdit()
+        self.info.setText("Downloading...100%\nInstalling...38%")
+        self.info.setReadOnly(True)
+        self.layout.addWidget(self.info)
+        self.cancelButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/cancel.png"), "Cancel")
+        self.cancelButton.clicked.connect(self.onCancel.emit)
+        self.layout.addWidget(self.cancelButton)
+        self.setLayout(self.layout)
 
 class Program(QtWidgets.QWidget):
     onClose = QtCore.Signal()
@@ -205,7 +225,7 @@ class Program(QtWidgets.QWidget):
         self.addInfoLine.connect(self.progressDialog.addTextLine)
         self.finishInstallation.connect(lambda code: self.closeAndInform(code))
 
-        mainGroupBox = QtWidgets.QGroupBox()
+        self.mainGroupBox = QtWidgets.QGroupBox()
 
         self.vLayout.addWidget(fortyTopWidget)
         self.layout.addWidget(self.title)
@@ -251,6 +271,7 @@ class Program(QtWidgets.QWidget):
         self.installButton.setFixedHeight(30)
 
         downloadGroupBox = QtWidgets.QGroupBox()
+        downloadGroupBox.setMinimumHeight(80)
 
         hLayout.addWidget(self.versionLabel)
         hLayout.addWidget(self.versionCombo)
@@ -272,8 +293,8 @@ class Program(QtWidgets.QWidget):
         self.advert = QLinkLabel("ALERT: NEITHER MICROSOFT NOR THE CREATORS OF WINGET UI STORE ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE.<br> PROCEED WITH CAUTION")
         self.layout.addWidget(self.advert)
 
-        mainGroupBox.setLayout(self.layout)
-        self.vLayout.addWidget(mainGroupBox)
+        self.mainGroupBox.setLayout(self.layout)
+        self.vLayout.addWidget(self.mainGroupBox)
         self.vLayout.addWidget(fortyWidget, stretch=1)
         self.hLayout.addLayout(self.vLayout, stretch=0)
         self.hLayout.addWidget(fortyWidget, stretch=1)
@@ -287,7 +308,19 @@ class Program(QtWidgets.QWidget):
         self.backButton.clicked.connect(self.onClose.emit)
         self.backButton.show()
 
+        
+        self.loadWheel = LoadingProgress(self)
+        self.loadWheel.resize(64, 64)
+        self.loadWheel.hide()
+        self.hide()
+
         self.loadInfo.connect(self.printData)
+    
+    def resizeEvent(self, event = None):
+        g = self.mainGroupBox.geometry()
+        self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        if(event):
+            return super().resizeEvent(event)
     
     def closeAndInform(self, returncode: int) -> None:
         print(returncode)
@@ -306,6 +339,8 @@ class Program(QtWidgets.QWidget):
             self.title.setText(title)
         else:
             self.title.setText(id)
+            
+        self.loadWheel.show()
         self.description.setText("Loading...")
         self.author.setText("Author: "+"Loading...")
         self.publisher.setText("Publisher: "+"Loading...")
@@ -316,7 +351,7 @@ class Program(QtWidgets.QWidget):
         self.type.setText(f"Installer type (Lastest version): {'Loading...'}")
         self.id.setText(f"Package ID: {'Loading...'}")
         self.versionCombo.addItems(["Loading..."])
-        self.progressDialog.show()
+        #self.progressDialog.show()
         
         Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
@@ -325,7 +360,8 @@ class Program(QtWidgets.QWidget):
             blueColor = "CornflowerBlue"
         else:
             blueColor = "blue"
-        self.progressDialog.hide()
+        self.loadWheel.hide()
+        #self.progressDialog.hide()
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
         self.author.setText("Author: "+appInfo["author"])

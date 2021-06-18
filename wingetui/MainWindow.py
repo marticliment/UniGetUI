@@ -16,6 +16,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 padding: 5px;
                 padding-left: 10px;
             }}
+            QGroupBox:title{{ max-width: 0; max-height: 0; }}"
         """)
 
         if(self.isAdmin()):
