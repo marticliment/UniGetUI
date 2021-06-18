@@ -1,5 +1,5 @@
 from PySide2 import QtCore
-import subprocess, time
+import subprocess, time, os, sys, signal
 
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
@@ -94,22 +94,66 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     appInfo["versions"] = output
     signal.emit(appInfo)
     
-def install(closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, title: str, version: list) -> None:
-    print(f"[   OK   ] Starting installation title {title}")
-    p = subprocess.Popen(["winget", "install", f"{title}"] + version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+    print(f"[   OK   ] winget installer assistant thread started for process {p}")
     outputCode = 0
+    counter = 0
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
         line = str(line, encoding='utf-8', errors="ignore").strip()
         if line:
             infoSignal.emit(line)
+            counter += 1
+            counterSignal.emit(counter)
             print(line)
             if("failed" in line):
                 outputCode = 1
     print(outputCode)
     closeAndInform.emit(outputCode)
 
+
+class Installer(QtCore.QThread):
+
+    killSubprocess = QtCore.Signal()
+
+    def __init__(self, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, title: str, version: list, killProcess: QtCore.Signal, counterSignal: QtCore.Signal): 
+        super().__init__()
+        self.closeAndInform = closeAndInform
+        self.infoSignal = infoSignal
+        self.title = title
+        self.version = version
+        self.killProcess = killProcess
+        self.counterSignal = counterSignal
+    
+    def run(self) -> None:
+
+        def kill():
+            nonlocal p
+            print("[        ] Killing winget...")
+            p.terminate()
+            os.killpg(os.getpgid(p.pid), signal.SIGTERM)
+
+        print(f"[   OK   ] Starting installation title {self.title}")
+        p = subprocess.Popen(["winget", "install", f"{self.title}"] + self.version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        self.killSubprocess.connect(kill)
+        outputCode = 0
+        counter = 0
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+            if line:
+                self.infoSignal.emit(line)
+                counter += 1
+                self.counterSignal.emit(counter)
+                print(line)
+                if("failed" in line):
+                    outputCode = 1
+        print(outputCode)
+        self.closeAndInform.emit(outputCode)
+
+  
 
 if(__name__=="__main__"):
     import __init__

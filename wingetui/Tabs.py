@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, darkdetect, sys
+import WingetTools, darkdetect, sys, Tools, subprocess
 from threading import Thread
 
 
@@ -74,6 +74,7 @@ class Discover(QtWidgets.QWidget):
         self.loadWheel.resize(64, 64)
 
         self.hideLoadingWheel.connect(self.loadWheel.hide)
+        self.infobox.addProgram.connect(self.addInstallation)
         
     
 
@@ -129,6 +130,9 @@ class Discover(QtWidgets.QWidget):
         self.query.setText("")
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
+    def addInstallation(self, p) -> None:
+        self.layout.addWidget(p)
+    
 
 class Installed(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -165,33 +169,84 @@ class QInfoProgressDialog(QtWidgets.QProgressDialog):
     def addTextLine(self, text: str) -> None:
         self.setLabelText("Downloading and installing, please wait...\n\n"+text)
 
-class PackageInstalling(QtWidgets.QGroupBox):
+class PackageInstaller(QtWidgets.QGroupBox):
     onCancel = QtCore.Signal()
-    def __init__(self, title: str = "{$AppxPackage}", parent=None):
+    killSubprocess = QtCore.Signal()
+    addInfoLine = QtCore.Signal(str)
+    finishInstallation = QtCore.Signal(int)
+    counterSignal = QtCore.Signal(int)
+    def __init__(self, title: str, version: str = "", parent=None, startInstall = True):
         super().__init__(parent=parent)
-        self.setFixedHeight(66)
+        self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
+        self.setFixedHeight(45)
+        self.programName = title
         self.layout = QtWidgets.QHBoxLayout()
-        self.layout.addWidget(QtWidgets.QLabel(title))
+        self.label = QtWidgets.QLabel(title+" installation")
+        self.label.setFixedWidth(230)
+        self.layout.addWidget(self.label)
         self.progressbar = QtWidgets.QProgressBar()
         self.progressbar.setTextVisible(False)
-        self.progressbar.setRange(0, 0)
+        self.progressbar.setRange(0, 10)
+        self.progressbar.setValue(1)
         self.progressbar.setFixedHeight(6)
         self.layout.addWidget(self.progressbar)
         self.info = QtWidgets.QLineEdit()
-        self.info.setText("Downloading...100%\nInstalling...38%")
+        self.info.setText("Preparing...")
         self.info.setReadOnly(True)
+        self.addInfoLine.connect(lambda text: self.info.setText(text))
+        self.finishInstallation.connect(self.finish)
         self.layout.addWidget(self.info)
+        self.counterSignal.connect(self.counter)
         self.cancelButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/cancel.png"), "Cancel")
-        self.cancelButton.clicked.connect(self.onCancel.emit)
+        self.cancelButton.clicked.connect(self.cancel)
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
+        self.canceled = False
+        self.p = subprocess.Popen(["winget", "install", f"{title}"] + version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+        self.t.start()
+    
+    def counter(self, line: int) -> None:
+        if(line == 4):
+            self.progressbar.setValue(4)
+        elif(line == 6):
+            self.cancelButton.setEnabled(False)
+            self.progressbar.setValue(7)
+
+    def cancel(self):
+        print("[        ] Sending cancel signal...")
+        self.info.setText("Installation canceled by user!")
+        self.cancelButton.setEnabled(True)
+        self.cancelButton.setText("Close")
+        self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
+        self.cancelButton.clicked.connect(self.close)
+        self.onCancel.emit()
+        self.progressbar.setValue(0)
+        self.canceled=True
+        self.t.kill()
+        self.p.kill()
+    
+    def finish(self, returncode) -> None:
+        self.cancelButton.setEnabled(True)
+        if not(self.canceled):
+            if(returncode == 0):
+                self.cancelButton.setText("OK")
+                self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
+                self.cancelButton.clicked.connect(self.close)
+                self.info.setText(f"{self.programName} was installed successfully!")
+                self.progressbar.setValue(10)
+            else:
+                self.cancelButton.setText("OK")
+                self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
+                self.cancelButton.clicked.connect(self.close)
+                self.info.setText(f"An error occurred during {self.programName} installation!")
+                self.progressbar.setValue(10)
 
 class Program(QtWidgets.QScrollArea):
     onClose = QtCore.Signal()
     loadInfo = QtCore.Signal(dict)
     closeDialog = QtCore.Signal()
-    addInfoLine = QtCore.Signal(str)
-    finishInstallation = QtCore.Signal(int)
+    addProgram = QtCore.Signal(PackageInstaller)
     def __init__(self):
         super().__init__()
         self.setWidgetResizable(True)
@@ -221,11 +276,9 @@ class Program(QtWidgets.QScrollArea):
 
         fortyTopWidget = QtWidgets.QWidget()
         fortyTopWidget.setFixedWidth(120)
-        fortyTopWidget.setMinimumHeight(60)
+        fortyTopWidget.setMinimumHeight(30)
 
         self.closeDialog.connect(self.progressDialog.close)
-        self.addInfoLine.connect(self.progressDialog.addTextLine)
-        self.finishInstallation.connect(lambda code: self.closeAndInform(code))
 
         self.mainGroupBox = QtWidgets.QGroupBox()
 
@@ -369,7 +422,6 @@ class Program(QtWidgets.QScrollArea):
         self.type.setText(f"Installer type (Lastest version): {'Loading...'}")
         self.id.setText(f"Package ID: {'Loading...'}")
         self.versionCombo.addItems(["Loading..."])
-        #self.progressDialog.show()
         
         Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
@@ -379,7 +431,6 @@ class Program(QtWidgets.QScrollArea):
         else:
             blueColor = "blue"
         self.loadWheel.hide()
-        #self.progressDialog.hide()
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
         self.author.setText("Author: "+appInfo["author"])
@@ -409,8 +460,8 @@ class Program(QtWidgets.QScrollArea):
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
             self.progressDialog.setLabelText(f"Downloading and installing {title} version {self.versionCombo.currentText()}...")
-        self.progressDialog.show()
-        Thread(target=WingetTools.install, args=(self.finishInstallation, self.addInfoLine, title, version), daemon=True).start()
+        p = PackageInstaller(title, version)
+        self.addProgram.emit(p)
         
 
 
