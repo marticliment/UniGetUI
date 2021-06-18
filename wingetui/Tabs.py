@@ -11,6 +11,7 @@ else:
 class Discover(QtWidgets.QWidget):
 
     addProgram = QtCore.Signal(str, str, str)
+    hideLoadingWheel = QtCore.Signal()
     clearList = QtCore.Signal()
 
     def __init__(self, parent=None):
@@ -63,7 +64,7 @@ class Discover(QtWidgets.QWidget):
         self.programbox.setLayout(layout)
         self.layout.addWidget(self.programbox)
         self.layout.addWidget(self.infobox)
-        self.layout.addWidget(PackageInstalling("WingetUI"))
+        #self.layout.addWidget(PackageInstalling("WingetUI"))
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
@@ -72,10 +73,11 @@ class Discover(QtWidgets.QWidget):
         self.loadWheel = LoadingProgress(self)
         self.loadWheel.resize(64, 64)
 
+        self.hideLoadingWheel.connect(self.loadWheel.hide)
         
     
 
-        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, ""), daemon=True).start()
+        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
@@ -89,7 +91,6 @@ class Discover(QtWidgets.QWidget):
 
     def addItem(self, name: str, id: str, version: str) -> None:
         item = QtWidgets.QTreeWidgetItem()
-        self.loadWheel.hide()
         item.setText(0, name)
         item.setText(1, id)
         item.setIcon(0, QtGui.QIcon(realpath+"/install.png"))
@@ -126,7 +127,7 @@ class Discover(QtWidgets.QWidget):
         self.reloadButton.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
-        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, ""), daemon=True).start()
+        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
 
 class Installed(QtWidgets.QWidget):
@@ -185,7 +186,7 @@ class PackageInstalling(QtWidgets.QGroupBox):
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
 
-class Program(QtWidgets.QWidget):
+class Program(QtWidgets.QScrollArea):
     onClose = QtCore.Signal()
     loadInfo = QtCore.Signal(dict)
     closeDialog = QtCore.Signal()
@@ -193,6 +194,7 @@ class Program(QtWidgets.QWidget):
     finishInstallation = QtCore.Signal(int)
     def __init__(self):
         super().__init__()
+        self.setWidgetResizable(True)
         self.progressDialog = QInfoProgressDialog(self)
         self.progressDialog.setWindowTitle("Winget UI Store")
         self.progressDialog.setModal(True)
@@ -235,23 +237,28 @@ class Program(QtWidgets.QWidget):
         self.hLayout.addWidget(fortyWidget, stretch=1)
 
         self.description = QtWidgets.QLabel("Description: Unknown")
+        self.description.setWordWrap(True)
 
         self.layout.addWidget(self.description)
 
         self.homepage = QLinkLabel("Homepage URL: Unknown")
+        self.homepage.setWordWrap(True)
 
         self.layout.addWidget(self.homepage)
 
         self.publisher = QtWidgets.QLabel("Publisher: Unknown")
+        self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
         self.author = QtWidgets.QLabel("Author: Unknown")
+        self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
         self.layout.addWidget(QtWidgets.QLabel())
 
         self.license = QLinkLabel("License: Unknown")
+        self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
         self.layout.addWidget(QtWidgets.QLabel())
@@ -282,23 +289,33 @@ class Program(QtWidgets.QWidget):
         self.layout.addWidget(QtWidgets.QLabel())
 
         self.id = QLinkLabel("Program ID: Unknown")
+        self.id.setWordWrap(True)
         self.layout.addWidget(self.id)
         self.sha = QLinkLabel("Installer SHA256 (Lastest version): Unknown")
+        self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
         self.link = QLinkLabel("Installer URL (Lastest version): Unknown")
+        self.link.setWordWrap(True)
         self.layout.addWidget(self.link)
         self.type = QLinkLabel("Installer type (Lastest version): Unknown")
+        self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
         self.layout.addWidget(QtWidgets.QLabel())
-        self.advert = QLinkLabel("ALERT: NEITHER MICROSOFT NOR THE CREATORS OF WINGET UI STORE ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE.<br> PROCEED WITH CAUTION")
+        self.advert = QLinkLabel("ALERT: NEITHER MICROSOFT NOR THE CREATORS OF WINGET UI STORE ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE. PROCEED WITH CAUTION")
+        self.advert.setWordWrap(True)
         self.layout.addWidget(self.advert)
 
         self.mainGroupBox.setLayout(self.layout)
+        self.mainGroupBox.setMinimumHeight(480)
         self.vLayout.addWidget(self.mainGroupBox)
         self.vLayout.addWidget(fortyWidget, stretch=1)
         self.hLayout.addLayout(self.vLayout, stretch=0)
         self.hLayout.addWidget(fortyWidget, stretch=1)
-        self.setLayout(self.hLayout)
+
+        self.centralwidget = QtWidgets.QWidget()
+        self.centralwidget.setLayout(self.hLayout)
+        self.centralwidget.setAttribute(QtCore.Qt.WA_NoSystemBackground) 
+        self.setWidget(self.centralwidget)
 
 
         self.backButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/back.png"), "", self)
@@ -317,6 +334,7 @@ class Program(QtWidgets.QWidget):
         self.loadInfo.connect(self.printData)
     
     def resizeEvent(self, event = None):
+        self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
         self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
         if(event):

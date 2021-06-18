@@ -2,9 +2,9 @@ from PySide2 import QtCore
 import subprocess, time
 
 
-def searchForPackage(signal: QtCore.Signal, query: str = "") -> None:
+def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print("[   OK   ] Starting internet search...")
-    p = subprocess.Popen(["winget", "search", query], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p = subprocess.Popen(["winget", "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = []
     counter = 0
     while p.poll() is None:
@@ -23,6 +23,7 @@ def searchForPackage(signal: QtCore.Signal, query: str = "") -> None:
         else:
             counter += 1
         signal.emit(element[0:27].strip(), element[27:77].strip(), element[77:109].replace("Moniker:", "").strip())
+    finishSignal.emit()
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     if not(goodTitle):
