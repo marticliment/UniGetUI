@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, darkdetect, sys, Tools, subprocess
+import WingetTools, darkdetect, sys, Tools, subprocess, time
 from threading import Thread
 
 
@@ -60,11 +60,19 @@ class Discover(QtWidgets.QWidget):
         layout.addWidget(QtWidgets.QLabel())
         layout.addLayout(hLayout)
         layout.addWidget(self.packageList)
-        #layout.addWidget(QtWidgets.QLabel())
         self.programbox.setLayout(layout)
-        self.layout.addWidget(self.programbox)
-        self.layout.addWidget(self.infobox)
-        #self.layout.addWidget(PackageInstalling("WingetUI"))
+        self.layout.addWidget(self.programbox, stretch=1)
+        self.layout.addWidget(self.infobox, stretch=1)
+        self.installersScrollArea = QtWidgets.QScrollArea()
+        self.installersScrollArea.setWidgetResizable(True)
+        self.installersScrollArea.setFixedHeight(150)
+        self.installersScrollArea.hide()
+        widget = QtWidgets.QWidget()
+        widget.setAttribute(QtCore.Qt.WA_NoSystemBackground) 
+        self.installerswidget = QtWidgets.QVBoxLayout()
+        widget.setLayout(self.installerswidget)
+        self.installersScrollArea.setWidget(widget)
+        self.layout.addWidget(self.installersScrollArea, stretch=0)
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
@@ -131,7 +139,8 @@ class Discover(QtWidgets.QWidget):
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
     def addInstallation(self, p) -> None:
-        self.layout.addWidget(p)
+        self.installerswidget.addWidget(p)
+        self.installersScrollArea.show()
     
 
 class Installed(QtWidgets.QWidget):
@@ -180,6 +189,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(45)
         self.programName = title
+        self.version = version
         self.layout = QtWidgets.QHBoxLayout()
         self.label = QtWidgets.QLabel(title+" installation")
         self.label.setFixedWidth(230)
@@ -187,11 +197,11 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.progressbar = QtWidgets.QProgressBar()
         self.progressbar.setTextVisible(False)
         self.progressbar.setRange(0, 10)
-        self.progressbar.setValue(1)
+        self.progressbar.setValue(0)
         self.progressbar.setFixedHeight(6)
         self.layout.addWidget(self.progressbar)
         self.info = QtWidgets.QLineEdit()
-        self.info.setText("Preparing...")
+        self.info.setText("Waiting for other installations to finish...")
         self.info.setReadOnly(True)
         self.addInfoLine.connect(lambda text: self.info.setText(text))
         self.finishInstallation.connect(self.finish)
@@ -202,11 +212,25 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
         self.canceled = False
-        self.p = subprocess.Popen(["winget", "install", f"{title}"] + version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.id = str(time.time())
+        Tools.queueProgram(self.id)
+        self.waitThread = Tools.KillableThread(target=self.startInstallation, daemon=True)
+        self.waitThread.start()
+        print("[   OK   ] Waiting for install permission...")
+        
+
+    
+    def startInstallation(self) -> None:
+        while self.id != Tools.current_program:
+            time.sleep(0.2)
+        print("[   OK   ] Have permission to install, starting installation threads...")
+        self.p = subprocess.Popen(["winget", "install", f"{self.programName}"] + self.version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
         self.t.start()
     
     def counter(self, line: int) -> None:
+        if(line == 1):
+            self.progressbar.setValue(1)
         if(line == 4):
             self.progressbar.setValue(4)
         elif(line == 6):
@@ -223,19 +247,34 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.onCancel.emit()
         self.progressbar.setValue(0)
         self.canceled=True
-        self.t.kill()
-        self.p.kill()
+        Tools.removeProgram(self.id)
+        try: self.waitThread.kill()
+        except: pass
+        try: self.t.kill()
+        except: pass
+        try: self.p.kill()
+        except: pass
     
     def finish(self, returncode) -> None:
         self.cancelButton.setEnabled(True)
+        Tools.removeProgram(self.id)
+        try: self.waitThread.kill()
+        except: pass
+        try: self.t.kill()
+        except: pass
+        try: self.p.kill()
+        except: pass
         if not(self.canceled):
             if(returncode == 0):
+                Tools.notify("WingetUI Store", f"{self.programName} was installed successfully!")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was installed successfully!")
                 self.progressbar.setValue(10)
             else:
+                Tools.notify("WingetUI Store", f"An error occurred while installing {self.programName}")
+                QtWidgets.QMessageBox.warning(self, "WingetUI Store", f"An error occurred while installing {self.programName}")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)

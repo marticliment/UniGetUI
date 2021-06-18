@@ -1,6 +1,11 @@
 import sys, os, darkdetect, qtmodern.styles
 from PySide2 import QtWidgets, QtCore, QtGui
-import MainWindow
+import MainWindow, Tools
+
+if hasattr(sys, 'frozen'):
+    realpath = sys._MEIPASS
+else:
+    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 debugging = True
 
@@ -22,6 +27,13 @@ class MainApplication(QtWidgets.QApplication):
             os.chdir(os.path.expanduser("~"))
 
             self.window = MainWindow.MainWindow()
+
+            self.trayIcon = QtWidgets.QSystemTrayIcon()
+
+            Tools.registerApplication(self)
+            self.trayIcon.setIcon(QtGui.QIcon(realpath+"/icon.png"))
+            self.trayIcon.setToolTip("WingetUI Store")
+            self.trayIcon.setVisible(True)
 
             
             if(darkdetect.isDark()):

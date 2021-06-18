@@ -1,6 +1,44 @@
 from PySide2 import QtCore
 from threading import Thread
-import sys
+import sys, time
+
+
+if hasattr(sys, 'frozen'):
+    realpath = sys._MEIPASS
+else:
+    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
+pending_programs = []
+current_program = ""
+
+app = None
+
+def queueProgram(id: str):
+    global pending_programs
+    pending_programs.append(id)
+
+def removeProgram(id: str):
+    global pending_programs, current_program
+    try:
+        pending_programs.remove(id)
+    except ValueError:
+        pass
+    if(current_program == id):
+        current_program = ""
+
+def checkQueue():
+    global current_program, pending_programs
+    print("[   OK   ] checkQueue Thread started!")
+    while True:
+        if(current_program == ""):
+            try:
+                current_program = pending_programs[0]
+                print(f"[ THREAD ] Current program set to {current_program}")
+            except IndexError:
+                pass
+        time.sleep(0.2)
+
+Thread(target=checkQueue, daemon=True).start()
 
 class KillableThread(Thread):
     def __init__(self, *args, **keywords): 
@@ -28,5 +66,10 @@ class KillableThread(Thread):
             print("Killed")
         return self.localtrace 
 
-def notify(title: str, body: str) -> None:
-    print(title, body)
+
+def notify(title: str, text: str) -> None:
+    app.trayIcon.showMessage(title, text)
+
+def registerApplication(newApp):
+    global app
+    app = newApp

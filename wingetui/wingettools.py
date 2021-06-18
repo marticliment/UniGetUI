@@ -1,6 +1,11 @@
 from PySide2 import QtCore
 import subprocess, time, os, sys, signal
 
+if hasattr(sys, 'frozen'):
+    realpath = sys._MEIPASS
+else:
+    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print("[   OK   ] Starting internet search...")

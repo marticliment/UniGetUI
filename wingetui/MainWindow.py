@@ -1,14 +1,20 @@
 from PySide2 import QtCore, QtGui, QtWidgets
-import Tabs, os, ctypes
+import Tabs, os, ctypes, sys, Tools
+
+if hasattr(sys, 'frozen'):
+    realpath = sys._MEIPASS
+else:
+    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setWindowTitle("Winget UI Store")
+        self.setWindowTitle("WingetUI Store")
         self.setMinimumSize(700, 560)
-        self.setWindowIcon(QtGui.QIcon("C:/Users/marti/SPTPrograms/WinGetUI/wingetui/icon.png"))
+        self.setWindowIcon(QtGui.QIcon(realpath+"/icon.png"))
         self.resize(QtCore.QSize(1024, 600))
         self.loadWidgets()
+        self.installEventFilter(self)
         self.show()
         self.setStyleSheet("""
             QTreeWidget::item{{
@@ -39,6 +45,15 @@ class MainWindow(QtWidgets.QMainWindow):
         except AttributeError:
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
         return is_admin
+    
+    def closeEvent(self, event):
+        if(Tools.pending_programs != []):
+            if(QtWidgets.QMessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI Store, the installation may fail and have unexpected results. Do you still want to close the application?") == 0):
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()
 
 
 if(__name__=="__main__"):
