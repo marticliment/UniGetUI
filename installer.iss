@@ -26,7 +26,7 @@ OutputBaseFilename=WingetUI Store Installer
 SetupIconFile=C:\Users\marti\SPTPrograms\WinGetUI\wingetui\icon.ico
 Compression=lzma
 SolidCompression=yes
-WizardStyle=modern
+WizardStyle=classic
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
