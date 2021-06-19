@@ -16,7 +16,7 @@ This project has no connection with the winget-cli official project, and it's to
 
 
 # Installation
-For the moment, there are no packages available. Python 3.9 is required. You'll need to clone the repository, install requirements.txt (`pip install -r requirements.txt`) and run `__init__.py` from the wingetui folder.
+Donwload and install the <a href="/releases">lastest release</a>
 
 I'll add a .exe package soon :)
 
