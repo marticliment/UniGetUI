@@ -9,7 +9,7 @@ else:
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print("[   OK   ] Starting internet search...")
-    p = subprocess.Popen(["winget", "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ)
+    p = subprocess.Popen(["winget", "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -34,7 +34,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     if not(goodTitle):
         print(f"[   OK   ] Acquiring title for id \"{title}\"")
-        p = subprocess.Popen(["winget", "search", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ)
+        p = subprocess.Popen(["winget", "search", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
         while p.poll() is None:
             line = p.stdout.readline()
@@ -46,7 +46,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         except:
             pass
     print(f"[   OK   ] Starting get info for title {title}")
-    p = subprocess.Popen(["winget", "show", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ)
+    p = subprocess.Popen(["winget", "show", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     appInfo = {
         "title": title,
@@ -90,7 +90,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         elif("Type:" in line):
             appInfo["installer-type"] = line.replace("Type:", "").strip()
     print(f"[   OK   ] Loading versions for {title}")
-    p = subprocess.Popen(["winget", "show", f"{title}", "--versions"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ)
+    p = subprocess.Popen(["winget", "show", f"{title}", "--versions"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
