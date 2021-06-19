@@ -1,4 +1,4 @@
-# WingetUI Store: Give WinGet a proper (Graphical) User Interface
+# WingetUI Store: Give Windows 10 a proper (Graphical) User Interface to install packages from most common CLI package managers such as Winget or Scoop.
 The main goal of this project is to give a GUI to the new WinGet CLI package manager.
 This project has no connection with the winget-cli official project, and it's totally unofficial.
 
