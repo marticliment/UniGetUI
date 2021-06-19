@@ -105,7 +105,7 @@ class Discover(QtWidgets.QWidget):
         else:
             print("[   OK   ] Scoop found")
 
-        if(subprocess.call("winnget --version", shell=True) != 0):
+        if(subprocess.call("winget --version", shell=True) != 0):
             print("[   OK   ] Winget not found")
             if(QtWidgets.QMessageBox.question(self, "Warning", "Winget was not found on the system. Do you want to install winget?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
                 subprocess.Popen("start https://www.microsoft.com/en-us/p/app-installer/9nblggh4nns1?launch", shell=True)
@@ -322,7 +322,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
                     msgBox = QtWidgets.QMessageBox(self)
                     msgBox.setWindowTitle("WingetUI Store")
                     msgBox.setText(f"{self.programName} was installed successfully.")
-                    msgBox.setInformativeText(f"You will need yo refresh the file list in order to get the {self.programName} new packages")
+                    msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
                     msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
                     msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
                     msgBox.setIcon(QtWidgets.QMessageBox.Information)
