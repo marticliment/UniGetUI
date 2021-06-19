@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, darkdetect, sys, Tools, subprocess, time
+import WingetTools, ScoopTools, darkdetect, sys, Tools, subprocess, time, os
 from threading import Thread
 
 
@@ -10,12 +10,14 @@ else:
 
 class Discover(QtWidgets.QWidget):
 
-    addProgram = QtCore.Signal(str, str, str)
-    hideLoadingWheel = QtCore.Signal()
+    addProgram = QtCore.Signal(str, str, str, str)
+    hideLoadingWheel = QtCore.Signal(str)
     clearList = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.scoopLoaded = False
+        self.wingetLoaded = False
         self.infobox = Program()
         self.infobox.onClose.connect(self.showQuery)
 
@@ -44,15 +46,15 @@ class Discover(QtWidgets.QWidget):
 
         self.packageList = QtWidgets.QTreeWidget()
         self.packageList.setIconSize(QtCore.QSize(24, 24))
-        self.packageList.setColumnCount(3)
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version"])
+        self.packageList.setColumnCount(4)
+        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
         self.packageList.setColumnWidth(0, 300)
         self.packageList.setColumnWidth(1, 300)
         self.packageList.setColumnWidth(2, 200)
         self.packageList.setColumnWidth(3, 100)
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)))
 
         layout = QtWidgets.QVBoxLayout()
 
@@ -81,16 +83,30 @@ class Discover(QtWidgets.QWidget):
         self.loadWheel = LoadingProgress(self)
         self.loadWheel.resize(64, 64)
 
-        self.hideLoadingWheel.connect(self.loadWheel.hide)
+        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
         
+
+        self.reloadButton.setEnabled(False)
+        self.query.setEnabled(False)
     
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
         self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+
+    def hideLoadingWheelIfNeeded(self, store: str) -> None:
+        if(store == "winget"):
+            self.wingetLoaded = True
+        elif(store == "scoop"):
+            self.scoopLoaded = True
+        if(self.wingetLoaded and self.scoopLoaded):
+            self.loadWheel.hide()
+            self.reloadButton.setEnabled(True)
+            self.query.setEnabled(True)
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
@@ -98,14 +114,14 @@ class Discover(QtWidgets.QWidget):
         if(event):
             return super().resizeEvent(event)
 
-    def addItem(self, name: str, id: str, version: str) -> None:
+    def addItem(self, name: str, id: str, version: str, store) -> None:
         item = QtWidgets.QTreeWidgetItem()
         item.setText(0, name)
         item.setText(1, id)
         item.setIcon(0, QtGui.QIcon(realpath+"/install.png"))
         item.setIcon(1, QtGui.QIcon(realpath+"/ID.png"))
         item.setIcon(2, QtGui.QIcon(realpath+"/version.png"))
-        self.reloadButton.setEnabled(True)
+        item.setText(3, store)
         item.setText(2, version)
         self.packageList.addTopLevelItem(item)
     
@@ -123,24 +139,28 @@ class Discover(QtWidgets.QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def openInfo(self, title, id) -> None:
+    def openInfo(self, title: str, id: str, store: str) -> None:
         if("…" in title):
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False)
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
         else:
-            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True)
+            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
         self.programbox.hide()
         self.infobox.show()
     
     def reload(self) -> None:
+        self.scoopLoaded = False
+        self.wingetLoaded = False
         self.loadWheel.show()
         self.reloadButton.setEnabled(False)
+        self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
     def addInstallation(self, p) -> None:
-        self.installerswidget.addWidget(p)
-        self.installersScrollArea.show()
+        self.layout.addWidget(p)
+        #self.installersScrollArea.show()
     
 
 class Installed(QtWidgets.QWidget):
@@ -182,10 +202,11 @@ class PackageInstaller(QtWidgets.QGroupBox):
     onCancel = QtCore.Signal()
     killSubprocess = QtCore.Signal()
     addInfoLine = QtCore.Signal(str)
-    finishInstallation = QtCore.Signal(int)
+    finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
-    def __init__(self, title: str, version: str = "", parent=None, startInstall = True):
+    def __init__(self, title: str, store: str, version: str = "", parent=None, startInstall = True):
         super().__init__(parent=parent)
+        self.store = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(45)
         self.programName = title
@@ -224,9 +245,14 @@ class PackageInstaller(QtWidgets.QGroupBox):
         while self.id != Tools.current_program:
             time.sleep(0.2)
         print("[   OK   ] Have permission to install, starting installation threads...")
-        self.p = subprocess.Popen(["winget", "install", f"{self.programName}"] + self.version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-        self.t.start()
+        if(self.store == "winget"):
+            self.p = subprocess.Popen(["winget", "install", f"{self.programName}"] + self.version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=False, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+        elif(self.store == "scoop"):
+            self.p = subprocess.Popen(' '.join(["scoop", "install", f"{self.programName}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
     
     def counter(self, line: int) -> None:
         if(line == 1):
@@ -255,7 +281,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         try: self.p.kill()
         except: pass
     
-    def finish(self, returncode) -> None:
+    def finish(self, returncode: int, output: str = "") -> None:
         self.cancelButton.setEnabled(True)
         Tools.removeProgram(self.id)
         try: self.waitThread.kill()
@@ -274,12 +300,20 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.progressbar.setValue(10)
             else:
                 Tools.notify("WingetUI Store", f"An error occurred while installing {self.programName}")
-                QtWidgets.QMessageBox.warning(self, "WingetUI Store", f"An error occurred while installing {self.programName}")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"An error occurred during {self.programName} installation!")
                 self.progressbar.setValue(10)
+                msgBox = QtWidgets.QMessageBox(self)
+                msgBox.setWindowTitle("WingetUI Store")
+                msgBox.setText(f"An error occurred while installing {self.programName}")
+                msgBox.setInformativeText("Click \"Show Details\" to get the output of the installer.")
+                msgBox.setDetailedText(output)
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.exec_()
 
 class Program(QtWidgets.QScrollArea):
     onClose = QtCore.Signal()
@@ -288,6 +322,7 @@ class Program(QtWidgets.QScrollArea):
     addProgram = QtCore.Signal(PackageInstaller)
     def __init__(self):
         super().__init__()
+        self.store = ""
         self.setWidgetResizable(True)
         self.progressDialog = QInfoProgressDialog(self)
         self.progressDialog.setWindowTitle("Winget UI Store")
@@ -383,6 +418,9 @@ class Program(QtWidgets.QScrollArea):
         self.id = QLinkLabel("Program ID: Unknown")
         self.id.setWordWrap(True)
         self.layout.addWidget(self.id)
+        self.manifest = QLinkLabel("Manifest: Unknown")
+        self.manifest.setWordWrap(True)
+        self.layout.addWidget(self.manifest)
         self.sha = QLinkLabel("Installer SHA256 (Lastest version): Unknown")
         self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
@@ -392,6 +430,9 @@ class Program(QtWidgets.QScrollArea):
         self.type = QLinkLabel("Installer type (Lastest version): Unknown")
         self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
+        self.storeLabel = QLinkLabel(f"Source: {self.store}")
+        self.storeLabel.setWordWrap(True)
+        self.layout.addWidget(self.storeLabel)
         self.layout.addWidget(QtWidgets.QLabel())
         self.advert = QLinkLabel("ALERT: NEITHER MICROSOFT NOR THE CREATORS OF WINGET UI STORE ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE. PROCEED WITH CAUTION")
         self.advert.setWordWrap(True)
@@ -440,7 +481,9 @@ class Program(QtWidgets.QScrollArea):
         else:
             QtWidgets.QMessageBox.warning(self, "Winget UI Store", f"An error occurred while installing the package {self.title.text()}. (Winget output code is {returncode})")
     
-    def loadProgram(self, title: str, id: str, goodTitle: bool) -> None:
+    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str) -> None:
+        self.store = store
+        store = store.lower()
         if(darkdetect.isDark()):
             blueColor = "CornflowerBlue"
         else:
@@ -460,9 +503,14 @@ class Program(QtWidgets.QScrollArea):
         self.link.setText(f"Installer URL (Lastest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
         self.type.setText(f"Installer type (Lastest version): {'Loading...'}")
         self.id.setText(f"Package ID: {'Loading...'}")
+        self.manifest.setText(f"Manifest: {'Loading...'}")
+        self.storeLabel.setText(f"Source: {self.store.capitalize()}")
         self.versionCombo.addItems(["Loading..."])
         
-        Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
+        if(store=="winget"):
+            Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
+        elif(store=="scoop"):
+            Thread(target=ScoopTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
         if(darkdetect.isDark()):
@@ -480,6 +528,7 @@ class Program(QtWidgets.QScrollArea):
         self.link.setText(f"Installer URL (Lastest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"Installer type (Lastest version): {appInfo['installer-type']}")
         self.id.setText(f"Package ID: {appInfo['id']}")
+        self.manifest.setText(f"Manifest: <a style=\"color: {blueColor};\" href=\"file:///"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
         try:
@@ -499,7 +548,7 @@ class Program(QtWidgets.QScrollArea):
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
             self.progressDialog.setLabelText(f"Downloading and installing {title} version {self.versionCombo.currentText()}...")
-        p = PackageInstaller(title, version)
+        p = PackageInstaller(title, self.store, version)
         self.addProgram.emit(p)
         
 
