@@ -97,6 +97,20 @@ class Discover(QtWidgets.QWidget):
 
         g = self.packageList.geometry()
         self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+            
+        if(subprocess.call("scoop", shell=True) != 0):
+            print("[   OK   ] Scoop not found")
+            if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+                self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+        else:
+            print("[   OK   ] Scoop found")
+
+        if(subprocess.call("winnget --version", shell=True) != 0):
+            print("[   OK   ] Winget not found")
+            if(QtWidgets.QMessageBox.question(self, "Warning", "Winget was not found on the system. Do you want to install winget?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+                subprocess.Popen("start https://www.microsoft.com/en-us/p/app-installer/9nblggh4nns1?launch", shell=True)
+        else:
+            print("[   OK   ] Winget found")
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
@@ -204,9 +218,10 @@ class PackageInstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
-    def __init__(self, title: str, store: str, version: str = "", parent=None, startInstall = True):
+    def __init__(self, title: str, store: str, version: str = "", parent=None, customCommand: str = ""):
         super().__init__(parent=parent)
         self.store = store.lower()
+        self.customCommand = customCommand
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(45)
         self.programName = title
@@ -251,8 +266,13 @@ class PackageInstaller(QtWidgets.QGroupBox):
             self.t.start()
         elif(self.store == "scoop"):
             self.p = subprocess.Popen(' '.join(["scoop", "install", f"{self.programName}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
-            self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+        else:
+            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=Tools.genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+
     
     def counter(self, line: int) -> None:
         if(line == 1):
@@ -298,6 +318,15 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was installed successfully!")
                 self.progressbar.setValue(10)
+                if(self.store == "powershell"):
+                    msgBox = QtWidgets.QMessageBox(self)
+                    msgBox.setWindowTitle("WingetUI Store")
+                    msgBox.setText(f"{self.programName} was installed successfully.")
+                    msgBox.setInformativeText(f"You will need yo refresh the file list in order to get the {self.programName} new packages")
+                    msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                    msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
+                    msgBox.setIcon(QtWidgets.QMessageBox.Information)
+                    msgBox.exec_()
             else:
                 Tools.notify("WingetUI Store", f"An error occurred while installing {self.programName}")
                 self.cancelButton.setText("OK")

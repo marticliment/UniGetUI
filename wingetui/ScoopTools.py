@@ -81,8 +81,8 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
         line = str(line, encoding='utf-8', errors="ignore").strip()
         if line:
             if("Installing" in line):
-                countersignal.emit(1)
-            elif("] 100%" in line):
+                counterSignal.emit(1)
+            elif("] 100%" in line or "Downloading" in line):
                 counterSignal.emit(4)
             elif("was installed successfully!" in line):
                 counterSignal.emit(6)

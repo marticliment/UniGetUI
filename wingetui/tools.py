@@ -1,6 +1,6 @@
 from PySide2 import QtCore
 from threading import Thread
-import sys, time
+import sys, time, subprocess
 
 
 if hasattr(sys, 'frozen'):
@@ -73,3 +73,18 @@ def notify(title: str, text: str) -> None:
 def registerApplication(newApp):
     global app
     app = newApp
+
+def genericInstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    outputCode = 1
+    output = ""
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        line = str(line, encoding='utf-8', errors="ignore").strip()
+        if line:
+            output += line+"\n"
+            infoSignal.emit(line)
+            print(line)
+    print(p.returncode)
+    closeAndInform.emit(p.returncode, output)
