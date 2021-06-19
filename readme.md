@@ -2,7 +2,7 @@
 The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop.
 This project has no connection with the winget-cli official project, and it's totally unofficial.
 
-#Features
+# Features
  - Ability to install packages from scoop and from winget (The idea is to add more package managers in a future)
  - Ability to install scoop and winget if they aren't installed on user's machine.
  - User can choose which version to install (if more than one version is available)
