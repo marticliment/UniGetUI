@@ -121,6 +121,7 @@ class Discover(QtWidgets.QWidget):
             self.loadWheel.hide()
             self.reloadButton.setEnabled(True)
             self.query.setEnabled(True)
+            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
