@@ -36,10 +36,10 @@ exe = EXE(pyz,
           [],
           name='WingetUI Store',
           icon="icon.ico",
-          debug=bool(input("Debug?: ")),
+          debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=bool(input("Console?: ")))
+          console=False)
