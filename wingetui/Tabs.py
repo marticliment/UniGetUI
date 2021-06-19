@@ -477,7 +477,8 @@ class Program(QtWidgets.QScrollArea):
 
         self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setLayout(self.hLayout)
-        self.centralwidget.setAttribute(QtCore.Qt.WA_NoSystemBackground) 
+        if(darkdetect.isDark()):
+            self.centralwidget.setAttribute(QtCore.Qt.WA_NoSystemBackground) 
         self.setWidget(self.centralwidget)
 
 
