@@ -16,7 +16,7 @@ This project has no connection with the winget-cli official project, and it's to
 
 
 # Installation
-Donwload and install the <a href="/releases">lastest release</a>
+Donwload and install the <a href="https://github.com/martinet101/WinGetUI/releases">lastest release</a>
 
 I'll add a .exe package soon :)
 
