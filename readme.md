@@ -11,7 +11,7 @@ This project has no connection with the winget-cli official project, and it's to
  - Ability to queue installations in order to prevent conflicts
  - Dark theme available to prevent you from burning your eyes :)
  - Ability to show some package-related information (license, sha256, homepage, etc.)
- - More than 2800 packages available to install, such as Google Chrome, Whatsapp, Adobe Reader or ADB Tools!
+ - More than 3200 packages available to install, such as Google Chrome, Whatsapp, Adobe Reader or ADB Tools!
  - More features coming!
 
 

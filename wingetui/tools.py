@@ -1,6 +1,6 @@
 from PySide2 import QtCore
 from threading import Thread
-import sys, time, subprocess, os
+import sys, time, subprocess, os, darkdetect
 
 
 if hasattr(sys, 'frozen'):
@@ -10,6 +10,11 @@ else:
 
 pending_programs = []
 current_program = ""
+
+if(darkdetect.isDark()):
+    blueColor = "CornflowerBlue"
+else:
+    blueColor = "blue"
 
 app = None
 

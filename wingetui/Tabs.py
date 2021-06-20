@@ -156,6 +156,7 @@ class Discover(QtWidgets.QWidget):
         item.setIcon(0, QtGui.QIcon(realpath+"/install.png"))
         item.setIcon(1, QtGui.QIcon(realpath+"/ID.png"))
         item.setIcon(2, QtGui.QIcon(realpath+"/version.png"))
+        item.setIcon(3, QtGui.QIcon(realpath+"/provider.png"))
         item.setText(3, store)
         item.setText(2, version)
         self.packageList.addTopLevelItem(item)
@@ -198,7 +199,56 @@ class Discover(QtWidgets.QWidget):
     def addInstallation(self, p) -> None:
         self.layout.addWidget(p)
         #self.installersScrollArea.show()
+
+class About(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setStyleSheet("margin-left: 10px;")
+        self.layout = QtWidgets.QVBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.addWidget(QtWidgets.QLabel())
+
+        title = QtWidgets.QLabel("About WingetUI Store")
+        title.setStyleSheet("font-size: 40px;")
+
+        self.layout.addWidget(title)
+        self.layout.addWidget(QtWidgets.QLabel())
+
+        description = QtWidgets.QLabel("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget, Scoop and AppGet.\nThis project has no connection with the winget-cli official project, and it's totally unofficial.")
+        self.layout.addWidget(description)
+        self.layout.addWidget(QLinkLabel(f"Project homepage (<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>)"))
+        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 25px;"))
+        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addWidget(QLinkLabel(f"WingetUI Store:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
+        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addWidget(QLinkLabel(f"PySide2:&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
+        self.layout.addWidget(QLinkLabel(f"DarkDetect:&nbsp;&nbsp;&nbsp;&nbsp;Copyright (c) 2019, Alberto Sottile:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/albertosottile/darkdetect/blob/master/LICENSE\">https://github.com/albertosottile/darkdetect/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"QtModren:&nbsp;&nbsp;&nbsp;&nbsp;MIT License:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/gmarull/qtmodern/blob/master/LICENSE\">https://github.com/gmarull/qtmodern/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;Python Software Foundation License Agreement:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
+        self.layout.addWidget(QLinkLabel())
+        self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;MIT License:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;Unlicense:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"AppGet:&nbsp;&nbsp;&nbsp;&nbsp;Apache License 2.0:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/appget/appget/blob/master/LICENSE\">https://github.com/appget/appget/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel())
+        self.layout.addWidget(QLinkLabel(f"Icons by Icons8&nbsp;&nbsp;(<a style=\"color: {Tools.blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>)"))
+        self.layout.addWidget(QLinkLabel())
+        self.layout.addWidget(QLinkLabel())
+        button = QtWidgets.QPushButton("About Qt")
+        button.setFixedWidth(150)
+        button.setFixedHeight(20)
+        button.clicked.connect(lambda: QtWidgets.QMessageBox.aboutQt(self, "WingetUI Store: About Qt"))
+        self.layout.addWidget(button)
+        self.layout.addWidget(QLinkLabel())
+        button = QtWidgets.QPushButton("Update/Reinstall WingetUI Store")
+        button.setFixedWidth(250)
+        button.setFixedHeight(20)
+        button.clicked.connect(lambda: self.layout.addWidget(PackageInstaller("WingetUI Store", "winget")))
+        self.layout.addWidget(button)
+        self.layout.addWidget(QtWidgets.QWidget(), stretch=1)
     
+        print("[   OK   ] About tab loaded!")
+
 
 class Installed(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -221,10 +271,12 @@ class LoadingProgress(QtWidgets.QLabel):
         self.movie.setScaledSize(self.size())
 
 class QLinkLabel(QtWidgets.QLabel):
-    def __init__(self, text=""):
+    def __init__(self, text: str = "", stylesheet: str = ""):
         super().__init__(text)
+        self.setStyleSheet(stylesheet)
         self.setTextFormat(QtCore.Qt.RichText)
         self.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+        self.setWordWrap(True)
         self.setOpenExternalLinks(True)
 
 class QInfoProgressDialog(QtWidgets.QProgressDialog):
@@ -499,7 +551,8 @@ class Program(QtWidgets.QScrollArea):
         self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setLayout(self.hLayout)
         if(darkdetect.isDark()):
-            self.centralwidget.setAttribute(QtCore.Qt.WA_NoSystemBackground) 
+            print("[        ] Is Dark")
+            self.centralwidget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setWidget(self.centralwidget)
 
 

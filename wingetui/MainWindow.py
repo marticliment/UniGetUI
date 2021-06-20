@@ -9,7 +9,7 @@ else:
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setWindowTitle("WingetUI Store: A GUI Store for winget, scoop and AppGet packages")
+        self.setWindowTitle("WingetUI Store: A GUI Store for Winget, Scoop and AppGet packages")
         self.setMinimumSize(700, 560)
         self.setWindowIcon(QtGui.QIcon(realpath+"/icon.png"))
         self.resize(QtCore.QSize(1024, 600))
@@ -30,14 +30,15 @@ class MainWindow(QtWidgets.QMainWindow):
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:
-        self.mainWidget = Tabs.Discover()#QtWidgets.QTabWidget()
-        #self.mainWidget.addTab(Tabs.Discover(), "Discover")
-        #self.mainWidget.addTab(Tabs.Update(), "Updates")
+        self.discover = Tabs.Discover()
+        self.mainWidget = QtWidgets.QTabWidget()
+        self.mainWidget.addTab(self.discover, "Discover Software")
+        self.mainWidget.addTab(Tabs.About(), "About WingetUI")
         #self.mainWidget.addTab(Tabs.Installed(), "Installed applications")
 
         self.setCentralWidget(self.mainWidget)
         self.show()
-        self.mainWidget.resizeEvent()
+        self.discover.resizeEvent()
 
     def isAdmin(self) -> bool:
         try:
