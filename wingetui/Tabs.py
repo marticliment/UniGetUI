@@ -382,21 +382,7 @@ class Program(QtWidgets.QScrollArea):
         super().__init__()
         self.store = ""
         self.setWidgetResizable(True)
-        self.progressDialog = QInfoProgressDialog(self)
-        self.progressDialog.setWindowTitle("Winget UI Store")
-        self.progressDialog.setModal(True)
-        self.progressDialog.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        self.progressDialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
-        self.progressDialog.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
-        bar = QtWidgets.QProgressBar()
-        bar.setTextVisible(False)
-        self.progressDialog.setBar(bar)
-        self.progressDialog.setCancelButton(None)
-        self.progressDialog.setLabelText("Processing, please wait...")
-        self.progressDialog.setRange(0, 0)
-        self.progressDialog.close()
-
-
+        
         self.vLayout = QtWidgets.QVBoxLayout()
         self.layout = QtWidgets.QVBoxLayout()
         self.title = QtWidgets.QLabel()
@@ -409,8 +395,6 @@ class Program(QtWidgets.QScrollArea):
         fortyTopWidget = QtWidgets.QWidget()
         fortyTopWidget.setFixedWidth(120)
         fortyTopWidget.setMinimumHeight(30)
-
-        self.closeDialog.connect(self.progressDialog.close)
 
         self.mainGroupBox = QtWidgets.QGroupBox()
 
@@ -568,6 +552,8 @@ class Program(QtWidgets.QScrollArea):
             Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
         elif(store=="scoop"):
             Thread(target=ScoopTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
+        elif(store=="appget"):
+            Thread(target=AppgetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
         if(darkdetect.isDark()):
@@ -605,11 +591,9 @@ class Program(QtWidgets.QScrollArea):
             cmdline_args.append("--force")
         if(self.versionCombo.currentText()=="Lastest"):
             version = []
-            self.progressDialog.setLabelText(f"Downloading and installing {title}...")
         else:
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
-            self.progressDialog.setLabelText(f"Downloading and installing {title} version {self.versionCombo.currentText()}...")
         p = PackageInstaller(title, self.store, version, args=cmdline_args)
         self.addProgram.emit(p)
         

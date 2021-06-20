@@ -38,15 +38,15 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     title = title.lower()
-    print(f"[   OK   ] Starting get info for title {title}")
-    p = subprocess.Popen(' '.join(["scoop", "info", f"{title}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    print(f"[   OK   ] Starting get info for title {id}")
+    p = subprocess.Popen(' '.join([appget_path, "view", f"{id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     appInfo = {
         "title": title,
         "id": id,
         "publisher": "Unknown",
         "author": "Unknown",
-        "description": "Unknown",
+        "description": "No description provided",
         "homepage": "Unknown",
         "license": "Unknown",
         "license-url": "Unknown",
@@ -64,22 +64,20 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     manifest = False
     version = ""
     for line in output:
-        if("Description:" in line):
-            appInfo["description"] = line.replace("Description:", "").strip()
-        elif("Website:" in line):
-            appInfo["homepage"] = line.replace("Website:", "").strip()
-        elif("Version:" in line):
-            version = line.replace("Version:", "").strip()
-        elif("License:" in line):
-            appInfo["license"] = line.replace("License:", "").strip().split("(")[0].strip()
-            appInfo["license-url"] = line.replace("License:", "").strip().split("(")[1].strip().replace(")", "")
-        elif("Manifest:" in line):
-            manifest = True # This is because manifest path is in the following line.
-        elif(manifest):
-            manifest = False
-            appInfo["manifest"] = line.strip()
-    print(f"[  INFO  ] Scoop does not support specific version installs")
-    appInfo["versions"] = [version]
+        if("home:" in line):
+            appInfo["homepage"] = line.replace("home:", "").strip()
+        elif("sha256:" in line):
+            appInfo["installer-sha256"] = line.replace("sha256:", "").strip()
+        elif("- location:" in line):
+            appInfo["installer-url"] = line.replace("- location:", "").strip()
+        elif("installMethod:" in line):
+            appInfo["installer-type"] = line.replace("installMethod:", "").strip()
+        elif("Loading package manifest from" in line):
+            appInfo["manifest"] = line.replace("Loading package manifest from", "").strip()
+        elif("version:" in line):
+            appInfo["versions"] = [line.replace("version:", "").strip()]
+        
+    print(f"[  INFO  ] Appget does not support specific version installs")
     signal.emit(appInfo)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
