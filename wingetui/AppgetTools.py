@@ -24,7 +24,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         line = str(line, encoding='utf-8', errors="ignore")
         if line:
             if(counter > 4):
-                program = line.split("|")
+                program = line.split("| ")
                 if not(program[1] in alreadyIn):
                     alreadyIn.append(program[1])
                     output.append(program)
@@ -37,7 +37,6 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     finishSignal.emit("appget")
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
-    title = title.lower()
     print(f"[   OK   ] Starting get info for title {id}")
     p = subprocess.Popen(' '.join([appget_path, "view", f"{id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -81,7 +80,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     signal.emit(appInfo)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
-    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    print(f"[   OK   ] appget installer assistant thread started for process {p}")
     outputCode = 1
     output = ""
     while p.poll() is None:
@@ -89,17 +88,15 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
         line = line.strip()
         line = str(line, encoding='utf-8', errors="ignore").strip()
         if line:
-            if("Installing" in line):
+            if("Beginning installation of" in line):
                 counterSignal.emit(1)
-            elif("] 100%" in line or "Downloading" in line):
+            elif("Checksum verification PASSED" in line):
                 counterSignal.emit(4)
-            elif("was installed successfully!" in line):
+            elif("Installation completed successfully" in line):
                 counterSignal.emit(6)
             infoSignal.emit(line)
             print(line)
-            if("was installed successfully" in line):
-                outputCode = 0
-            elif ("is already installed" in line):
+            if("Installation completed successfully" in line):
                 outputCode = 0
             output += line+"\n"
     print(outputCode)

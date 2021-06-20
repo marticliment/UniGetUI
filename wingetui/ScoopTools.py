@@ -73,7 +73,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     signal.emit(appInfo)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
-    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    print(f"[   OK   ] scoop installer assistant thread started for process {p}")
     outputCode = 1
     output = ""
     while p.poll() is None:

@@ -36,7 +36,7 @@ class Discover(QtWidgets.QWidget):
         hLayout = QtWidgets.QHBoxLayout()
 
         self.query = QtWidgets.QLineEdit()
-        self.query.setPlaceholderText(" Search something on Winget")
+        self.query.setPlaceholderText(" Search something on Winget, Scoop or AppGet")
         self.query.textChanged.connect(self.filter)
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
@@ -241,13 +241,14 @@ class PackageInstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = []):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId=""):
         super().__init__(parent=parent)
         self.store = store.lower()
         self.customCommand = customCommand
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(45)
         self.programName = title
+        self.packageId = packageId
         self.version = version
         self.cmdline_args = args
         self.layout = QtWidgets.QHBoxLayout()
@@ -272,16 +273,16 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
         self.canceled = False
-        self.id = str(time.time())
-        Tools.queueProgram(self.id)
+        self.installId = str(time.time())
+        Tools.queueProgram(self.installId)
         self.waitThread = Tools.KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
-        print("[   OK   ] Waiting for install permission...")
+        print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
         
 
     
     def startInstallation(self) -> None:
-        while self.id != Tools.current_program:
+        while self.installId != Tools.current_program:
             time.sleep(0.2)
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
@@ -291,6 +292,10 @@ class PackageInstaller(QtWidgets.QGroupBox):
         elif(self.store == "scoop"):
             self.p = subprocess.Popen(' '.join(["scoop", "install", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+        elif(self.store == "appget"):
+            self.p = subprocess.Popen(' '.join([AppgetTools.appget_path, "install", f"{self.packageId}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=AppgetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
@@ -317,7 +322,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.onCancel.emit()
         self.progressbar.setValue(0)
         self.canceled=True
-        Tools.removeProgram(self.id)
+        Tools.removeProgram(self.installId)
         try: self.waitThread.kill()
         except: pass
         try: self.t.kill()
@@ -327,7 +332,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     
     def finish(self, returncode: int, output: str = "") -> None:
         self.cancelButton.setEnabled(True)
-        Tools.removeProgram(self.id)
+        Tools.removeProgram(self.installId)
         try: self.waitThread.kill()
         except: pass
         try: self.t.kill()
@@ -461,9 +466,9 @@ class Program(QtWidgets.QScrollArea):
         self.layout.addWidget(downloadGroupBox)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        self.id = QLinkLabel("Program ID: Unknown")
-        self.id.setWordWrap(True)
-        self.layout.addWidget(self.id)
+        self.packageId = QLinkLabel("Program ID: Unknown")
+        self.packageId.setWordWrap(True)
+        self.layout.addWidget(self.packageId)
         self.manifest = QLinkLabel("Manifest: Unknown")
         self.manifest.setWordWrap(True)
         self.layout.addWidget(self.manifest)
@@ -543,7 +548,7 @@ class Program(QtWidgets.QScrollArea):
         self.sha.setText(f"Installer SHA256 (Lastest version): {'Loading...'}")
         self.link.setText(f"Installer URL (Lastest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
         self.type.setText(f"Installer type (Lastest version): {'Loading...'}")
-        self.id.setText(f"Package ID: {'Loading...'}")
+        self.packageId.setText(f"Package ID: {'Loading...'}")
         self.manifest.setText(f"Manifest: {'Loading...'}")
         self.storeLabel.setText(f"Source: {self.store.capitalize()}")
         self.versionCombo.addItems(["Loading..."])
@@ -561,7 +566,7 @@ class Program(QtWidgets.QScrollArea):
         else:
             blueColor = "blue"
         self.loadWheel.hide()
-        if(self.store.lower() == "winget"):
+        if(self.store.lower() == "winget" or self.store.lower() == "appget"):
             self.forceCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
@@ -572,7 +577,7 @@ class Program(QtWidgets.QScrollArea):
         self.sha.setText(f"Installer SHA256 (Lastest version): {appInfo['installer-sha256']}")
         self.link.setText(f"Installer URL (Lastest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"Installer type (Lastest version): {appInfo['installer-type']}")
-        self.id.setText(f"Package ID: {appInfo['id']}")
+        self.packageId.setText(f"Package ID: {appInfo['id']}")
         self.manifest.setText(f"Manifest: <a style=\"color: {blueColor};\" href=\"file:///"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
@@ -585,7 +590,8 @@ class Program(QtWidgets.QScrollArea):
 
     def install(self):
         title = self.title.text()
-        print(f"[   OK   ] Starting installation of package {title}")
+        packageId = self.packageId.text().replace('Package ID:', '').strip()
+        print(f"[   OK   ] Starting installation of package {title} with id {packageId}")
         cmdline_args = []
         if(self.forceCheckbox.isChecked()):
             cmdline_args.append("--force")
@@ -594,7 +600,7 @@ class Program(QtWidgets.QScrollArea):
         else:
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
-        p = PackageInstaller(title, self.store, version, args=cmdline_args)
+        p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId)
         self.addProgram.emit(p)
         
 
