@@ -8,7 +8,7 @@ else:
 
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
-    print("[   OK   ] Starting internet search...")
+    print("[   OK   ] Starting scoop search...")
     p = subprocess.Popen(' '.join(["scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -23,6 +23,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     counter = 0
     for element in output:
         signal.emit(element.split("(")[0].strip().capitalize(), f"scoop.{element.split('(')[0].strip()}", element.split("(")[1].replace(")", "").strip(), "Scoop")
+    print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:

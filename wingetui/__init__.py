@@ -7,6 +7,9 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
+appget_path = os.path.join(os.getenv("SystemDrive"), "ProgramData/AppGet/bin")
+
+
 debugging = True
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):

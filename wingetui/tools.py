@@ -1,7 +1,8 @@
 from PySide2 import QtCore
 from threading import Thread
-import sys, time, subprocess
+import sys, time, subprocess, os
 
+appget_path = os.path.join(os.getenv("SystemDrive"), "ProgramData/AppGet/bin")
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS

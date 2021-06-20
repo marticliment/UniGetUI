@@ -8,7 +8,7 @@ else:
 
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
-    print("[   OK   ] Starting internet search...")
+    print("[   OK   ] Starting winget search...")
     p = subprocess.Popen(["winget", "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -29,6 +29,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         else:
             counter += 1"""
         signal.emit(element[0:27].strip(), element[27:77].strip(), element[77:109].replace("Moniker:", "").strip(), "Winget")
+    print("[   OK   ] Winget search finished")
     finishSignal.emit("winget")
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
@@ -120,6 +121,10 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             print(line)
             if("failed" in line):
                 outputCode = 1
+            elif ("--force" in line):
+                outputCode = 2
+            elif("-" in line):
+                outputCode = 0
             output += line+"\n"
     print(outputCode)
     closeAndInform.emit(outputCode, output)

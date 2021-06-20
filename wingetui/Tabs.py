@@ -27,7 +27,8 @@ class Discover(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
         self.reloadButton = QtWidgets.QPushButton()
-        self.reloadButton.setFixedSize(30, 30)
+        self.reloadButton.setFixedSize(30, 40)
+        self.reloadButton.setStyleSheet("margin-top: 10px;")
         self.reloadButton.clicked.connect(self.reload)
         self.reloadButton.setIcon(QtGui.QIcon(realpath+"/reload.png"))
 
@@ -36,11 +37,14 @@ class Discover(QtWidgets.QWidget):
         self.query = QtWidgets.QLineEdit()
         self.query.setPlaceholderText(" Search something on Winget")
         self.query.textChanged.connect(self.filter)
-        self.query.setFixedHeight(30)
+        self.query.setFixedHeight(40)
+        self.query.setStyleSheet("margin-top: 10px;")
+        self.query.setFixedWidth(250)
 
         self.discoverLabel = QtWidgets.QLabel("Discover packages")
         self.discoverLabel.setStyleSheet("font-size: 40px;")
 
+        hLayout.addWidget(self.discoverLabel)
         hLayout.addWidget(self.query)
         hLayout.addWidget(self.reloadButton)
 
@@ -58,9 +62,11 @@ class Discover(QtWidgets.QWidget):
 
         layout = QtWidgets.QVBoxLayout()
 
-        layout.addWidget(self.discoverLabel)
-        layout.addWidget(QtWidgets.QLabel())
+
+        self.countLabel = QtWidgets.QLabel("Fetching file list...")
         layout.addLayout(hLayout)
+        layout.addWidget(QtWidgets.QLabel())
+        layout.addWidget(self.countLabel)
         layout.addWidget(self.packageList)
         self.programbox.setLayout(layout)
         self.layout.addWidget(self.programbox, stretch=1)
@@ -114,8 +120,10 @@ class Discover(QtWidgets.QWidget):
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.wingetLoaded = True
         elif(store == "scoop"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.scoopLoaded = True
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadWheel.hide()
@@ -219,7 +227,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
-    def __init__(self, title: str, store: str, version: str = "", parent=None, customCommand: str = ""):
+    def __init__(self, title: str, store: str, version: str = "", parent=None, customCommand: str = "", args: list = []):
         super().__init__(parent=parent)
         self.store = store.lower()
         self.customCommand = customCommand
@@ -227,6 +235,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.setFixedHeight(45)
         self.programName = title
         self.version = version
+        self.cmdline_args = args
         self.layout = QtWidgets.QHBoxLayout()
         self.label = QtWidgets.QLabel(title+" installation")
         self.label.setFixedWidth(230)
@@ -262,11 +271,11 @@ class PackageInstaller(QtWidgets.QGroupBox):
             time.sleep(0.2)
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
-            self.p = subprocess.Popen(["winget", "install", f"{self.programName}"] + self.version, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif(self.store == "scoop"):
-            self.p = subprocess.Popen(' '.join(["scoop", "install", f"{self.programName}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(' '.join(["scoop", "install", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
@@ -329,15 +338,20 @@ class PackageInstaller(QtWidgets.QGroupBox):
                     msgBox.setIcon(QtWidgets.QMessageBox.Information)
                     msgBox.exec_()
             else:
-                Tools.notify("WingetUI Store", f"An error occurred while installing {self.programName}")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.info.setText(f"An error occurred during {self.programName} installation!")
                 self.progressbar.setValue(10)
                 msgBox = QtWidgets.QMessageBox(self)
                 msgBox.setWindowTitle("WingetUI Store")
-                msgBox.setText(f"An error occurred while installing {self.programName}")
+                if(returncode == 2):
+                    Tools.notify("WingetUI Store", f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
+                    self.info.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
+                    msgBox.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
+                else:
+                    Tools.notify("WingetUI Store", f"An error occurred while installing {self.programName}")
+                    self.info.setText(f"An error occurred during {self.programName} installation!")
+                    msgBox.setText(f"An error occurred while installing {self.programName}")
                 msgBox.setInformativeText("Click \"Show Details\" to get the output of the installer.")
                 msgBox.setDetailedText(output)
                 msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
@@ -426,6 +440,9 @@ class Program(QtWidgets.QScrollArea):
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QtCore.QSize(24, 24))
         self.versionCombo.setFixedHeight(25)
+        self.forceCheckbox = QtWidgets.QCheckBox()
+        self.forceCheckbox.setText("Force")
+        self.forceCheckbox.setChecked(False)
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
         self.installButton.setIcon(QtGui.QIcon(realpath+"/install.png"))
@@ -440,6 +457,7 @@ class Program(QtWidgets.QScrollArea):
         hLayout.addWidget(self.versionLabel)
         hLayout.addWidget(self.versionCombo)
         hLayout.addWidget(QtWidgets.QLabel(), stretch=1)
+        hLayout.addWidget(self.forceCheckbox)
         hLayout.addWidget(self.installButton)
         downloadGroupBox.setLayout(hLayout)
         self.layout.addWidget(downloadGroupBox)
@@ -504,14 +522,6 @@ class Program(QtWidgets.QScrollArea):
         if(event):
             return super().resizeEvent(event)
     
-    def closeAndInform(self, returncode: int) -> None:
-        print(returncode)
-        self.progressDialog.close()
-        if(returncode==0):
-            QtWidgets.QMessageBox.information(self, "Winget UI Store", f"The package {self.title.text()} was installed successfully. (Winget output code is 0)")
-        else:
-            QtWidgets.QMessageBox.warning(self, "Winget UI Store", f"An error occurred while installing the package {self.title.text()}. (Winget output code is {returncode})")
-    
     def loadProgram(self, title: str, id: str, goodTitle: bool, store: str) -> None:
         self.store = store
         store = store.lower()
@@ -525,6 +535,8 @@ class Program(QtWidgets.QScrollArea):
             self.title.setText(id)
             
         self.loadWheel.show()
+        self.forceCheckbox.setChecked(False)
+        self.forceCheckbox.setEnabled(False)
         self.description.setText("Loading...")
         self.author.setText("Author: "+"Loading...")
         self.publisher.setText("Publisher: "+"Loading...")
@@ -549,6 +561,8 @@ class Program(QtWidgets.QScrollArea):
         else:
             blueColor = "blue"
         self.loadWheel.hide()
+        if(self.store.lower() == "winget"):
+            self.forceCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
         self.author.setText("Author: "+appInfo["author"])
@@ -572,6 +586,9 @@ class Program(QtWidgets.QScrollArea):
     def install(self):
         title = self.title.text()
         print(f"[   OK   ] Starting installation of package {title}")
+        cmdline_args = []
+        if(self.forceCheckbox.isChecked()):
+            cmdline_args.append("--force")
         if(self.versionCombo.currentText()=="Lastest"):
             version = []
             self.progressDialog.setLabelText(f"Downloading and installing {title}...")
@@ -579,7 +596,7 @@ class Program(QtWidgets.QScrollArea):
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
             self.progressDialog.setLabelText(f"Downloading and installing {title} version {self.versionCombo.currentText()}...")
-        p = PackageInstaller(title, self.store, version)
+        p = PackageInstaller(title, self.store, version, args=cmdline_args)
         self.addProgram.emit(p)
         
 
