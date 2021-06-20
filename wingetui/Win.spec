@@ -10,7 +10,7 @@ package_imports = [['qtmodern', ['resources/frameless.qss', 'resources/style.qss
 
 a = Analysis(['__init__.py'],
              pathex=['C:\\Users\\marti\\SPTPrograms\\WinGetUI\\wingetui'],
-             binaries=[('MainWindow.py', '.'), ('Tabs.py', '.'), ('Tools.py', '.'), ('WingetTools.py', '.')],
+             binaries=[('MainWindow.py', '.'), ('Tabs.py', '.'), ('Tools.py', '.'), ('WingetTools.py', '.'), ('ScoopTools.py', '.'), ('AppgetTools.py', '.')],
              datas=[('*.png', '.'), ('*.gif', '.'), ('*.ico', '.')],
              hiddenimports=['pkg_resources.py2_warn', "darkdetect", "qtmodern",],
              hookspath=[],
