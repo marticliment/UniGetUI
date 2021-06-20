@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, ScoopTools, darkdetect, sys, Tools, subprocess, time, os
+import WingetTools, ScoopTools, AppgetTools, darkdetect, sys, Tools, subprocess, time, os
 from threading import Thread
 
 
@@ -18,6 +18,7 @@ class Discover(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
+        self.appgetLoaded = False
         self.infobox = Program()
         self.infobox.onClose.connect(self.showQuery)
 
@@ -98,6 +99,7 @@ class Discover(QtWidgets.QWidget):
     
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        Thread(target=AppgetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         print("[   OK   ] Discover tab loaded")
 
@@ -110,6 +112,13 @@ class Discover(QtWidgets.QWidget):
                 self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         else:
             print("[   OK   ] Scoop found")
+        
+        if not(os.path.isfile(AppgetTools.appget_path)):
+            print("[   OK   ] Appget not found")
+            if(QtWidgets.QMessageBox.question(self, "Warning", "Appget was not found on the system. Do you want to install appget?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+                self.layout.addWidget(PackageInstaller("AppGet", "Winget"))
+        else:
+            print("[   OK   ] Appget found")
 
         if(subprocess.call("winget --version", shell=True) != 0):
             print("[   OK   ] Winget not found")
@@ -125,7 +134,10 @@ class Discover(QtWidgets.QWidget):
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.scoopLoaded = True
-        if(self.wingetLoaded and self.scoopLoaded):
+        elif(store == "appget"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.appgetLoaded = True
+        if(self.wingetLoaded and self.scoopLoaded and self.appgetLoaded):
             self.loadWheel.hide()
             self.reloadButton.setEnabled(True)
             self.query.setEnabled(True)
@@ -172,6 +184,7 @@ class Discover(QtWidgets.QWidget):
     
     def reload(self) -> None:
         self.scoopLoaded = False
+        self.appgetLoaded = False
         self.wingetLoaded = False
         self.loadWheel.show()
         self.reloadButton.setEnabled(False)
@@ -179,6 +192,7 @@ class Discover(QtWidgets.QWidget):
         self.packageList.clear()
         self.query.setText("")
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        Thread(target=AppgetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
     def addInstallation(self, p) -> None:
@@ -227,7 +241,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
-    def __init__(self, title: str, store: str, version: str = "", parent=None, customCommand: str = "", args: list = []):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = []):
         super().__init__(parent=parent)
         self.store = store.lower()
         self.customCommand = customCommand
