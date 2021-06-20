@@ -26,3 +26,4 @@ It's easy: Donwload and install the <a href="https://github.com/martinet101/WinG
 ![alt text](/media/winget_4.png)
 ![alt text](/media/winget_6.png)
 ![alt text](/media/winget_5.png)
+![alt text](/media/winget_7.png)
