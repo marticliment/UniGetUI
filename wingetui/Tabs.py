@@ -208,7 +208,7 @@ class About(QtWidgets.QWidget):
         self.setLayout(self.layout)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        title = QtWidgets.QLabel("About WingetUI Store")
+        title = QtWidgets.QLabel("About WingetUI Store v0.3")
         title.setStyleSheet("font-size: 40px;")
 
         self.layout.addWidget(title)
