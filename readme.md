@@ -5,6 +5,7 @@ This project has no connection with the winget-cli official project, and it's to
 # Features
  - Ability to install packages from scoop and from winget (The idea is to add more package managers in a future)
  - Ability to install scoop and winget if they aren't installed on user's machine.
+ - Support for `scoop bucket add extras` (Issue #2, pending release 0.4)
  - User can choose which version to install (if more than one version is available)
  - Detects whether the installation suceeded or not
  - Provides error information in case of installation failure
