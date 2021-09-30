@@ -12,15 +12,30 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     p = subprocess.Popen(["winget", "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
+    idSeparator = 0
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
         if line:
+            #print(str(line, encoding="utf-8"))
             if(counter > 1):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
+                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
+                l = l.split("\r")[-1]
+                if("Id" in l):
+                    idSeparator = len(l.split("Id")[0])
+                    print(l.split("Id")[1].split(" "))
+                    verSeparator = idSeparator+2
+                    i=0
+                    while l.split("Id")[1].split(" ")[i] == "":
+                        verSeparator += 1
+                        i += 1
+                        
+                    #verSeparator = idSeparator+len(l.split("Id")[1].split(" "))
                 counter += 1
     counter = 0
+    print(idSeparator, verSeparator)
     for element in output:
         """
         if(counter>=100):
@@ -28,7 +43,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             counter = 0
         else:
             counter += 1"""
-        signal.emit(element[0:27].strip(), element[27:77].strip(), element[77:109].replace("Moniker:", "").strip(), "Winget")
+        signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
     print("[   OK   ] Winget search finished")
     finishSignal.emit("winget")
 
