@@ -225,6 +225,16 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(description)
         self.layout.addWidget(QLinkLabel(f"Project homepage (<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>)"))
         self.layout.addWidget(QtWidgets.QLabel())
+        button = QtWidgets.QPushButton("Add Extra packages to scoop")
+        button.setFixedWidth(250)
+        button.setFixedHeight(20)
+        button.clicked.connect(lambda: self.scoopAddExtraBucket())
+        self.layout.addWidget(button)
+        button = QtWidgets.QPushButton("Remove extra packages from scoop")
+        button.setFixedWidth(250)
+        button.setFixedHeight(20)
+        button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
+        self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 25px;"))
         self.layout.addWidget(QtWidgets.QLabel())
         self.layout.addWidget(QLinkLabel(f"WingetUI Store:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
@@ -246,10 +256,6 @@ class About(QtWidgets.QScrollArea):
         button.clicked.connect(lambda: QtWidgets.QMessageBox.aboutQt(self, "WingetUI Store: About Qt"))
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
-        button = QtWidgets.QPushButton("Add Extra packages to scoop")
-        button.setFixedWidth(250)
-        button.setFixedHeight(20)
-        button.clicked.connect(lambda: self.scoopAddExtraBucket())
         button = QtWidgets.QPushButton("Update/Reinstall WingetUI Store")
         button.setFixedWidth(250)
         button.setFixedHeight(20)
@@ -259,6 +265,16 @@ class About(QtWidgets.QScrollArea):
     
         print("[   OK   ] About tab loaded!")
         
+    def scoopAddExtraBucket(self) -> None:
+        os.startfile(os.path.join(realpath, "scoopAddExtrasBucket.cmd"))
+        self.raise_()
+        self.show()
+    
+    def scoopRemoveExtraBucket(self) -> None:
+        os.startfile(os.path.join(realpath, "scoopRemoveExtrasBucket.cmd"))
+        self.raise_()
+        self.show()
+
 
 
 class Installed(QtWidgets.QWidget):
