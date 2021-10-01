@@ -99,6 +99,11 @@ class Discover(QtWidgets.QWidget):
         self.reloadButton.setEnabled(False)
         self.query.setEnabled(False)
         
+        self.installIcon = QtGui.QIcon(realpath+"/install.png")
+        self.IDIcon = QtGui.QIcon(realpath+"/ID.png")
+        self.versionIcon = QtGui.QIcon(realpath+"/version.png")
+        self.providerIcon = QtGui.QIcon(realpath+"/provider.png")
+        
         self.show()
     
 
@@ -146,10 +151,10 @@ class Discover(QtWidgets.QWidget):
         item = QtWidgets.QTreeWidgetItem()
         item.setText(0, name)
         item.setText(1, id)
-        item.setIcon(0, QtGui.QIcon(realpath+"/install.png"))
-        item.setIcon(1, QtGui.QIcon(realpath+"/ID.png"))
-        item.setIcon(2, QtGui.QIcon(realpath+"/version.png"))
-        item.setIcon(3, QtGui.QIcon(realpath+"/provider.png"))
+        item.setIcon(0, self.installIcon)
+        item.setIcon(1, self.IDIcon)
+        item.setIcon(2, self.versionIcon)
+        item.setIcon(3, self.providerIcon)
         item.setText(3, store)
         item.setText(2, version)
         self.packageList.addTopLevelItem(item)
