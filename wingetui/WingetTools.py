@@ -5,11 +5,15 @@ if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+    
+    
+    
+winget = os.path.join(os.path.join(realpath, "winget-cli"), "AppInstallerCLI.exe")
 
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
-    print("[   OK   ] Starting winget search...")
-    p = subprocess.Popen(["winget", "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    print(f"[   OK   ] Starting winget search, winget on {winget}...")
+    p = subprocess.Popen([winget, "search", ""], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -60,7 +64,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     if not(goodTitle):
         print(f"[   OK   ] Acquiring title for id \"{title}\"")
-        p = subprocess.Popen(["winget", "search", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        p = subprocess.Popen([winget, "search", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
         while p.poll() is None:
             line = p.stdout.readline()
@@ -72,7 +76,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         except:
             pass
     print(f"[   OK   ] Starting get info for title {title}")
-    p = subprocess.Popen(["winget", "show", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen([winget, "show", f"{title}"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     appInfo = {
         "title": title,
@@ -92,7 +96,6 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
-        print(line)
         if line:
             output.append(str(line, encoding='utf-8', errors="ignore"))
     for line in output:
@@ -117,7 +120,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         elif("Type:" in line):
             appInfo["installer-type"] = line.replace("Type:", "").strip()
     print(f"[   OK   ] Loading versions for {title}")
-    p = subprocess.Popen(["winget", "show", f"{title}", "--versions"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen([winget, "show", f"{title}", "--versions"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -144,7 +147,6 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             infoSignal.emit(line)
             counter += 1
             counterSignal.emit(counter)
-            print(line)
             if("failed" in line):
                 outputCode = 1
             elif ("--force" in line):

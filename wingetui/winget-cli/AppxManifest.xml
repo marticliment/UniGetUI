@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Package IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap8 mp wincap rescap desktop com build" xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:uap8="http://schemas.microsoft.com/appx/manifest/uap/windows10/8" xmlns:wincap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/windowscapabilities" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build">
+  
+  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.12.11692.0" ProcessorArchitecture="x64"/>
+  <mp:PhoneIdentity PhoneProductId="199c15cd-11cc-42bc-99de-619509297b5e" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35"/>
+  <Properties>
+    <DisplayName>ms-resource:appDisplayName</DisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
+    <Logo>Assets\AppPackageStoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.18362.0"/>
+    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.29231.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
+  </Dependencies>
+  <Resources>
+    <Resource Language="EN-US"/>
+    <Resource Language="EN-GB"/>
+    <Resource uap:Scale="200"/>
+    
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="AppInstaller.exe" EntryPoint="AppInstaller.App">
+      <uap:VisualElements DisplayName="ms-resource:appDisplayName" Square150x150Logo="Assets\AppPackageMedTile.png" Square44x44Logo="Assets\AppPackageAppList.png" Description="ms-resource:appDescription" BackgroundColor="#0078d7" AppListEntry="none">
+        <uap:DefaultTile Square310x310Logo="Assets\AppPackageLargeTile.png" Wide310x150Logo="Assets\AppPackageWideTile.png" Square71x71Logo="Assets\AppPackageSmallTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\AppPackageSplashScreen.png" BackgroundColor="#FFFFFF"/>
+      </uap:VisualElements>
+      <Extensions>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="AppInstallerElevatedAppServiceClient.exe"/>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-appinstaller">
+            <uap:Logo>Assets\FileIcons\FileLogoExtensions.png</uap:Logo>
+            <uap:DisplayName>Windows 10 Application Package</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="appinstaller.oauth2">
+            <uap:Logo>Assets\FileIcons\FileLogoExtensions.png</uap:Logo>
+            <uap:DisplayName>App Installer OAuth2 Protocol</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="packageextension">
+            <uap:Logo>Assets\FileIcons\FileLogoExtensions.png</uap:Logo>
+            <uap:InfoTip>Windows 10 Application Package</uap:InfoTip>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.msix</uap:FileType>
+              <uap:FileType>.msixbundle</uap:FileType>
+              <uap:FileType>.appx</uap:FileType>
+              <uap:FileType>.appxbundle</uap:FileType>
+              <uap:FileType>.appinstaller</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap2:SupportedVerbs>
+              <uap3:Verb Id="Install">ms-resource:installButton</uap3:Verb>
+            </uap2:SupportedVerbs>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="AppInstallerBackgroundTasks.ToastNotificationBackgroundTask">
+          <BackgroundTasks>
+            <Task Type="systemEvent"/>
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="AppInstallerBackgroundTasks.InstallationBackgroundTask">
+          <BackgroundTasks>
+            <Task Type="general"/>
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="AppInstaller.ElevatedDeployment"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="AppInstaller.OnBlockActivation"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="AuthenticationManager.OAuth2"/>
+        </uap:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="AuthenticationManager.exe" DisplayName="AuthenticationManager">
+              <com:Class Id="7B21B8BB-EE70-40DC-836C-687B6A30B642" DisplayName="AppInstaller Data Source"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+      </Extensions>
+    </Application>
+    <Application Id="PythonRedirector" Executable="AppInstallerPythonRedirector.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="ms-resource:appDisplayName" Square150x150Logo="Assets\AppPackageMedTile.png" Square44x44Logo="Assets\AppPackageAppList.png" Description="ms-resource:appDescription" BackgroundColor="#0078d7" AppListEntry="none"/>
+      <Extensions>
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias>
+            <uap8:ExecutionAlias Alias="python.exe" uap8:AllowOverride="true"/>
+            <uap8:ExecutionAlias Alias="python3.exe" uap8:AllowOverride="true"/>
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application Id="winget" Executable="AppInstallerCLI.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="Windows Package Manager Client" Square150x150Logo="Assets\AppPackageMedTile.png" Square44x44Logo="Assets\AppPackageAppList.png" Description="ms-resource:appDescription" BackgroundColor="#0078d7" AppListEntry="none"/>
+      <Extensions>
+        <uap3:Extension Category="windows.appExtensionHost">
+          <uap3:AppExtensionHost>
+            <uap3:Name>com.microsoft.winget.source</uap3:Name>
+          </uap3:AppExtensionHost>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExecutionAlias">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="winget.exe"/>
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient"/>
+    <Capability Name="privateNetworkClientServer"/>
+    <uap:Capability Name="documentsLibrary"/>
+    <wincap:Capability Name="storeAppInstall"/>
+    <rescap:Capability Name="packageManagement"/>
+    <rescap:Capability Name="packageQuery"/>
+    <rescap:Capability Name="appLicensing"/>
+    <rescap:Capability Name="broadFileSystemAccess"/>
+    <rescap:Capability Name="runFullTrust"/>
+    <rescap:Capability Name="allowElevation"/>
+    <uap4:CustomCapability Name="Microsoft.deployFullTrustOnHost_8wekyb3d8bbwe"/>
+  </Capabilities>
+  <Extensions>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>AppInstallerBackgroundTasks.dll</Path>
+        <ActivatableClass ActivatableClassId="AppInstallerBackgroundTasks.ToastNotificationBackgroundTask" ThreadingModel="both"/>
+        <ActivatableClass ActivatableClassId="AppInstallerBackgroundTasks.InstallationBackgroundTask" ThreadingModel="both"/>
+      </InProcessServer>
+    </Extension>
+  </Extensions>
+  <build:Metadata>
+    <build:Item Name="cl.exe" Version="19.29.30037.0 built by: vcwrkspc"/>
+    <build:Item Name="VisualStudio" Version="16.0"/>
+    <build:Item Name="OperatingSystem" Version="10.0.17763.1 (WinBuild.160101.0800)"/>
+    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="16.0.31320.204"/>
+    <build:Item Name="ProjectGUID" Value="{2910e195-72ee-433c-a714-8add7c86118b}"/>
+    <build:Item Name="ilc.exe" Version="1.4.24211.07 built by: PROJECTNSVC2"/>
+    <build:Item Name="OptimizingToolset" Value="ilc.exe"/>
+    <build:Item Name="UseDotNetNativeSharedAssemblyFrameworkPackage" Value="True"/>
+    <build:Item Name="UniversalGenericsOptOut" Value="false"/>
+    <build:Item Name="Microsoft.Windows.UI.Xaml.Build.Tasks.dll" Version="10.0.18362.1"/>
+    <build:Item Name="MakePri.exe" Version="10.0.18362.1 (WinBuild.160101.0800)"/>
+  </build:Metadata>
+</Package>
