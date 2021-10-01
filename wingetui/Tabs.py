@@ -20,6 +20,7 @@ class Discover(QtWidgets.QWidget):
         self.wingetLoaded = False
         self.appgetLoaded = False
         self.infobox = Program()
+        self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
 
         self.programbox = QtWidgets.QWidget()
@@ -200,15 +201,18 @@ class Discover(QtWidgets.QWidget):
         self.layout.addWidget(p)
         #self.installersScrollArea.show()
 
-class About(QtWidgets.QWidget):
+class About(QtWidgets.QScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setStyleSheet("margin-left: 10px;")
+        self.widget = QtWidgets.QWidget()
+        self.setWidgetResizable(True)
+        self.setStyleSheet("margin-left: 0px;")
         self.layout = QtWidgets.QVBoxLayout()
-        self.setLayout(self.layout)
+        self.widget.setLayout(self.layout)
+        self.setWidget(self.widget)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        title = QtWidgets.QLabel("About WingetUI Store v0.3")
+        title = QtWidgets.QLabel("About WingetUI Store v0.4")
         title.setStyleSheet("font-size: 40px;")
 
         self.layout.addWidget(title)
@@ -439,6 +443,12 @@ class Program(QtWidgets.QScrollArea):
         super().__init__()
         self.store = ""
         self.setWidgetResizable(True)
+        self.setStyleSheet("""
+        QScrollArea{
+            border-radius: 5px;
+            padding: 5px;
+        }
+        """)
         
         self.vLayout = QtWidgets.QVBoxLayout()
         self.layout = QtWidgets.QVBoxLayout()
@@ -558,6 +568,7 @@ class Program(QtWidgets.QScrollArea):
 
         self.backButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/back.png"), "", self)
         self.backButton.setStyleSheet("font-size: 22px;")
+        self.setStyleSheet("margin: 0px;")
         self.backButton.move(0, 0)
         self.backButton.resize(30, 30)
         self.backButton.clicked.connect(self.onClose.emit)
