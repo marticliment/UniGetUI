@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, ScoopTools, AppgetTools, darkdetect, sys, Tools, subprocess, time, os
+import WingetTools, ScoopTools, darkdetect, sys, Tools, subprocess, time, os
 from threading import Thread
 
 
@@ -18,7 +18,6 @@ class Discover(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.appgetLoaded = False
         self.infobox = Program()
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
@@ -37,7 +36,7 @@ class Discover(QtWidgets.QWidget):
         hLayout = QtWidgets.QHBoxLayout()
 
         self.query = QtWidgets.QLineEdit()
-        self.query.setPlaceholderText(" Search something on Winget, Scoop or AppGet")
+        self.query.setPlaceholderText(" Search something on Winget or Scoop")
         self.query.textChanged.connect(self.filter)
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
@@ -100,7 +99,6 @@ class Discover(QtWidgets.QWidget):
     
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=AppgetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         print("[   OK   ] Discover tab loaded")
 
@@ -113,13 +111,6 @@ class Discover(QtWidgets.QWidget):
                 self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         else:
             print("[   OK   ] Scoop found")
-        
-        if not(os.path.isfile(AppgetTools.appget_path)):
-            print("[   OK   ] Appget not found")
-            if(QtWidgets.QMessageBox.question(self, "Warning", "Appget was not found on the system. Do you want to install appget?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
-                self.layout.addWidget(PackageInstaller("AppGet", "Winget"))
-        else:
-            print("[   OK   ] Appget found")
 
         if(subprocess.call("winget --version", shell=True) != 0):
             print("[   OK   ] Winget not found")
@@ -135,10 +126,7 @@ class Discover(QtWidgets.QWidget):
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.scoopLoaded = True
-        elif(store == "appget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
-            self.appgetLoaded = True
-        if(self.wingetLoaded and self.scoopLoaded and self.appgetLoaded):
+        if(self.wingetLoaded and self.scoopLoaded):
             self.loadWheel.hide()
             self.reloadButton.setEnabled(True)
             self.query.setEnabled(True)
@@ -186,7 +174,6 @@ class Discover(QtWidgets.QWidget):
     
     def reload(self) -> None:
         self.scoopLoaded = False
-        self.appgetLoaded = False
         self.wingetLoaded = False
         self.loadWheel.show()
         self.reloadButton.setEnabled(False)
@@ -194,7 +181,6 @@ class Discover(QtWidgets.QWidget):
         self.packageList.clear()
         self.query.setText("")
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=AppgetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
     def addInstallation(self, p) -> None:
@@ -218,7 +204,7 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(title)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        description = QtWidgets.QLabel("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget, Scoop and AppGet.\nThis project has no connection with the winget-cli official project, and it's totally unofficial.")
+        description = QtWidgets.QLabel("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop.\nThis project has no connection with the winget-cli official project, and it's totally unofficial.")
         self.layout.addWidget(description)
         self.layout.addWidget(QLinkLabel(f"Project homepage (<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>)"))
         self.layout.addWidget(QtWidgets.QLabel())
@@ -233,7 +219,6 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(QLinkLabel())
         self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;MIT License:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
         self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;Unlicense:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
-        self.layout.addWidget(QLinkLabel(f"AppGet:&nbsp;&nbsp;&nbsp;&nbsp;Apache License 2.0:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/appget/appget/blob/master/LICENSE\">https://github.com/appget/appget/blob/master/LICENSE</a>"))
         self.layout.addWidget(QLinkLabel())
         self.layout.addWidget(QLinkLabel(f"Icons by Icons8&nbsp;&nbsp;(<a style=\"color: {Tools.blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>)"))
         self.layout.addWidget(QLinkLabel())
@@ -348,10 +333,6 @@ class PackageInstaller(QtWidgets.QGroupBox):
         elif(self.store == "scoop"):
             self.p = subprocess.Popen(' '.join(["scoop", "install", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-        elif(self.store == "appget"):
-            self.p = subprocess.Popen(' '.join([AppgetTools.appget_path, "install", f"{self.packageId}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
-            self.t = Tools.KillableThread(target=AppgetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
@@ -621,8 +602,6 @@ class Program(QtWidgets.QScrollArea):
             Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
         elif(store=="scoop"):
             Thread(target=ScoopTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
-        elif(store=="appget"):
-            Thread(target=AppgetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
         if(darkdetect.isDark()):
@@ -630,7 +609,7 @@ class Program(QtWidgets.QScrollArea):
         else:
             blueColor = "blue"
         self.loadWheel.hide()
-        if(self.store.lower() == "winget" or self.store.lower() == "appget"):
+        if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])

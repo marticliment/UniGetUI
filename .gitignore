@@ -7,3 +7,4 @@ WingetUI Store Installer.exe
 WingetUI Store.exe
 installer.iss
 Output/
+*.old
