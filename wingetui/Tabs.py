@@ -15,6 +15,9 @@ class Discover(QtWidgets.QWidget):
     hideLoadingWheel = QtCore.Signal(str)
     clearList = QtCore.Signal()
     askForScoopInstall = QtCore.Signal(str)
+    setLoadBarValue = QtCore.Signal(str)
+    startAnim = QtCore.Signal(QtCore.QVariantAnimation)
+    changeBarOrientation = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -69,6 +72,14 @@ class Discover(QtWidgets.QWidget):
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)))
+        
+        
+        
+        self.loadingProgressBar = QtWidgets.QProgressBar()
+        self.loadingProgressBar.setRange(0, 500)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(6)
+        self.loadingProgressBar.setTextVisible(False)
 
         layout = QtWidgets.QVBoxLayout()
 
@@ -77,6 +88,7 @@ class Discover(QtWidgets.QWidget):
         layout.addLayout(hLayout)
         layout.addWidget(QtWidgets.QLabel())
         layout.addWidget(self.countLabel)
+        layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.packageList)
         self.programbox.setLayout(layout)
         self.layout.addWidget(self.programbox, stretch=1)
@@ -97,11 +109,14 @@ class Discover(QtWidgets.QWidget):
         self.clearList.connect(self.packageList.clear)
         self.askForScoopInstall.connect(self.scoopNotFound)
 
-        self.loadWheel = LoadingProgress(self)
-        self.loadWheel.resize(64, 64)
+        #self.loadWheel = LoadingProgress(self)
+        #self.loadWheel.resize(64, 64)
 
         self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
 
         self.reloadButton.setEnabled(False)
@@ -121,9 +136,52 @@ class Discover(QtWidgets.QWidget):
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
-        self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
             
         Thread(target=self.checkIfScoop, daemon=True)
+        
+        self.leftSlow = QtCore.QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(500)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.rightSlow = QtCore.QVariantAnimation()
+        self.rightSlow.setStartValue(500)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.leftFast = QtCore.QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(500)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.rightFast = QtCore.QVariantAnimation()
+        self.rightFast.setStartValue(500)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
+        
+        Thread(target=self.loadProgressBarLoop, daemon=True).start()
+        
+    
+    def loadProgressBarLoop(self):
+        print("starting")
+        while True:
+            self.startAnim.emit(self.leftSlow)
+            time.sleep(0.7)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.rightSlow)
+            time.sleep(0.7)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.leftFast)
+            time.sleep(0.3)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.rightFast)
+            time.sleep(0.3)
+            self.changeBarOrientation.emit()
 
     
     def checkIfScoop(self) -> None:
@@ -151,13 +209,13 @@ class Discover(QtWidgets.QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded):
-            self.loadWheel.hide()
+            self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
-        self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
         if(event):
             return super().resizeEvent(event)
 
@@ -198,7 +256,7 @@ class Discover(QtWidgets.QWidget):
     def reload(self) -> None:
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.loadWheel.show()
+        self.loadingProgressBar.show()
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
