@@ -37,13 +37,23 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     counter = 0
     print(idSeparator, verSeparator)
     for element in output:
-        """
-        if(counter>=100):
-            time.sleep(0.01)
-            counter = 0
-        else:
-            counter += 1"""
-        signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
+        try:
+            element = bytes(element, "utf-8")
+            """
+            if(counter>=100):
+                time.sleep(0.01)
+                counter = 0
+            else:
+                counter += 1"""
+            export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
+            signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
+        except Exception as e:
+            print("[ WINGET ] Exception on unicodedecode, trying level 2...")
+            try:
+                element = str(element, "utf-8")
+                signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
+            except Exception as e:
+                print(type(e), str(e))
     print("[   OK   ] Winget search finished")
     finishSignal.emit("winget")
 
@@ -82,6 +92,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
+        print(line)
         if line:
             output.append(str(line, encoding='utf-8', errors="ignore"))
     for line in output:
