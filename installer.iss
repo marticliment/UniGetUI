@@ -19,7 +19,8 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName="{autopf}\WingetUI Store v0.4"
-DisableProgramGroupPage=yes
+DisableProgramGroupPage=yes     
+CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputBaseFilename=WingetUI Store Installer
