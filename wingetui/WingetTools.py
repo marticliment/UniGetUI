@@ -52,7 +52,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
             signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
         except Exception as e:
-            print("[ WINGET ] Exception on unicodedecode, trying level 2...")
+            #print("[ WINGET ] Exception on unicodedecode, trying level 2...")
             try:
                 element = str(element, "utf-8")
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
