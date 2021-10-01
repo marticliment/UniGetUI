@@ -1,3 +1,4 @@
+from posixpath import relpath
 from PySide2 import QtWidgets, QtCore, QtGui
 import WingetTools, ScoopTools, darkdetect, sys, Tools, subprocess, time, os
 from threading import Thread
@@ -34,11 +35,17 @@ class Discover(QtWidgets.QWidget):
         self.reloadButton.clicked.connect(self.reload)
         self.reloadButton.setIcon(QtGui.QIcon(realpath+"/reload.png"))
 
+        self.searchButton = QtWidgets.QPushButton()
+        self.searchButton.setFixedSize(30, 40)
+        self.searchButton.setStyleSheet("margin-top: 10px;")
+        self.searchButton.clicked.connect(self.filter)
+        self.searchButton.setIcon(QtGui.QIcon(realpath+"/search.png"))
+
         hLayout = QtWidgets.QHBoxLayout()
 
         self.query = QtWidgets.QLineEdit()
         self.query.setPlaceholderText(" Search something on Winget or Scoop")
-        self.query.textChanged.connect(self.filter)
+        self.query.returnPressed.connect(self.filter)
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
@@ -48,6 +55,7 @@ class Discover(QtWidgets.QWidget):
 
         hLayout.addWidget(self.discoverLabel)
         hLayout.addWidget(self.query)
+        hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
         self.packageList = QtWidgets.QTreeWidget()
@@ -238,6 +246,10 @@ class About(QtWidgets.QScrollArea):
         button.clicked.connect(lambda: QtWidgets.QMessageBox.aboutQt(self, "WingetUI Store: About Qt"))
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
+        button = QtWidgets.QPushButton("Add Extra packages to scoop")
+        button.setFixedWidth(250)
+        button.setFixedHeight(20)
+        button.clicked.connect(lambda: self.scoopAddExtraBucket())
         button = QtWidgets.QPushButton("Update/Reinstall WingetUI Store")
         button.setFixedWidth(250)
         button.setFixedHeight(20)
@@ -246,6 +258,7 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(QtWidgets.QWidget(), stretch=1)
     
         print("[   OK   ] About tab loaded!")
+        
 
 
 class Installed(QtWidgets.QWidget):
