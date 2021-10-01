@@ -105,6 +105,7 @@ class Discover(QtWidgets.QWidget):
         
 
         self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
         self.installIcon = QtGui.QIcon(realpath+"/install.png")
@@ -138,15 +139,20 @@ class Discover(QtWidgets.QWidget):
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", still loading...")
             self.wingetLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", still loading...")
             self.scoopLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadWheel.hide()
-            self.reloadButton.setEnabled(True)
-            self.query.setEnabled(True)
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -194,6 +200,7 @@ class Discover(QtWidgets.QWidget):
         self.wingetLoaded = False
         self.loadWheel.show()
         self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
