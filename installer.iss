@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI Store"
-#define MyAppVersion "0.2"
+#define MyAppVersion "0.4"
 #define MyAppPublisher "SomePythonThings"
 #define MyAppURL "https://www.somepythonthings.tk/"
 #define MyAppExeName "WingetUI Store.exe"
@@ -18,25 +18,38 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName="{autopf}\WingetUI Store v0.2"
+DefaultDirName="{autopf}\WingetUI Store v0.4"
 DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputBaseFilename=WingetUI Store Installer
-SetupIconFile=C:\Users\marti\SPTPrograms\WinGetUI\wingetui\icon.ico
+SetupIconFile=Y:\WinGetUI-Store\wingetui\icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=classic
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+[Code]
+procedure InitializeWizard;
+begin
+  WizardForm.Bevel.Visible := False;
+  WizardForm.Bevel1.Visible := True;
+end;
 
+procedure TaskKill(FileName: String);
+var
+  ResultCode: Integer;
+begin
+    Exec('taskkill.exe', '/f /im ' + '"' + FileName + '"', '', SW_HIDE,
+     ewWaitUntilTerminated, ResultCode);
+end;
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\marti\SPTPrograms\WinGetUI\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion 
-Source: "C:\Users\marti\SPTPrograms\WinGetUI\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
+Source: "Y:\WinGetUI-Store\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TaskKill('WingetUI Store.exe')
+Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
