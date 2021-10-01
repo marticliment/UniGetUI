@@ -13,6 +13,7 @@ class Discover(QtWidgets.QWidget):
     addProgram = QtCore.Signal(str, str, str, str)
     hideLoadingWheel = QtCore.Signal(str)
     clearList = QtCore.Signal()
+    askForScoopInstall = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -86,6 +87,7 @@ class Discover(QtWidgets.QWidget):
 
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
+        self.askForScoopInstall.connect(self.scoopNotFound)
 
         self.loadWheel = LoadingProgress(self)
         self.loadWheel.resize(64, 64)
@@ -96,6 +98,8 @@ class Discover(QtWidgets.QWidget):
 
         self.reloadButton.setEnabled(False)
         self.query.setEnabled(False)
+        
+        self.show()
     
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
@@ -105,19 +109,19 @@ class Discover(QtWidgets.QWidget):
         g = self.packageList.geometry()
         self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
             
-        if(subprocess.call("scoop", shell=True) != 0):
-            print("[   OK   ] Scoop not found")
-            if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
-                self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+        Thread(target=self.checkIfScoop, daemon=True)
+
+    
+    def checkIfScoop(self) -> None:
+        if(subprocess.call("scooop --version", shell=True) != 0):
+            self.askForScoopInstall.emit()
         else:
             print("[   OK   ] Scoop found")
-
-        if(subprocess.call("winget --version", shell=True) != 0):
-            print("[   OK   ] Winget not found")
-            if(QtWidgets.QMessageBox.question(self, "Warning", "Winget was not found on the system. Do you want to install winget?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
-                subprocess.Popen("start https://www.microsoft.com/en-us/p/app-installer/9nblggh4nns1?launch", shell=True)
-        else:
-            print("[   OK   ] Winget found")
+    
+    def scoopNotFound(self) -> None:
+        if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+            self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+        
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):

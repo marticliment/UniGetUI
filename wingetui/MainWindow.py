@@ -9,7 +9,7 @@ else:
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setWindowTitle("WingetUI Store: A GUI Store for Winget, Scoop and AppGet packages")
+        self.setWindowTitle("WingetUI Store: A GUI Store for Winget and Scoop packages")
         self.setMinimumSize(700, 560)
         self.setWindowIcon(QtGui.QIcon(realpath+"/icon.png"))
         self.resize(QtCore.QSize(1024, 600))

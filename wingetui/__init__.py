@@ -7,7 +7,6 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
-appget_path = os.path.join(os.getenv("SystemDrive"), "ProgramData/AppGet/bin")
 
 
 debugging = True
@@ -41,8 +40,8 @@ class MainApplication(QtWidgets.QApplication):
             
             if(darkdetect.isDark()):
                 qtmodern.styles.dark(self)
-            #else:
-                #qtmodern.styles.light(self)
+            else:
+                qtmodern.styles.light(self)
             
 
         
