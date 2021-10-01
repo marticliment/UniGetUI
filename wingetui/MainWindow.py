@@ -22,7 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 padding: 5px;
                 padding-left: 10px;
             }}
-            QGroupBox:title{{ max-width: 0; max-height: 0; }}"
+            QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
 
         if(self.isAdmin()):
@@ -31,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def loadWidgets(self) -> None:
         self.discover = Tabs.Discover()
+        self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.mainWidget = QtWidgets.QTabWidget()
         self.mainWidget.addTab(self.discover, "Discover Software")
         self.mainWidget.addTab(Tabs.About(), "About WingetUI")
