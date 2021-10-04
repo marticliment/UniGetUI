@@ -8,3 +8,4 @@ WingetUI Store.exe
 installer.iss
 Output/
 *.old
+vcredist.exe
