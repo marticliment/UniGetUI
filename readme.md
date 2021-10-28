@@ -1,12 +1,12 @@
 # WingetUI Store: Give Windows 10 a proper (Graphical) User Interface to install packages from most common CLI package managers such as Winget and Scoop.
-The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop. Appget was supported on release 0.3 but as it was discontinued it has been removed
-This project has no connection with the winget-cli official project, and it's totally unofficial.
 [![Downloads Badge](https://img.shields.io/github/downloads/martinet101/WinGetUI/total.svg?style=for-the-badge)](https://github.com/martinet101/ElevenClock/releases)
 [![Downloads@2.3](https://img.shields.io/github/downloads/martinet101/WinGetUI/latest/total?style=for-the-badge)](https://github.com/martinet101/ElevenClock/releases/latest) 
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/ElevenClock/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/ElevenClock/issues?q=is%3Aissue+is%3Aclosed)
 [![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/ElevenClock/releases/latest)
 
+The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop. Appget was supported on release 0.3 but as it was discontinued it has been removed
+This project has no connection with the winget-cli official project, and it's totally unofficial.
 # Features
  - Ability to install packages from scoop and from winget (The idea is to add more package managers in a future)
  - Ability to install scoop and winget if they aren't installed on user's machine.
