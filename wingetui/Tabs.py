@@ -430,7 +430,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
             time.sleep(0.2)
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
-            self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif(self.store == "scoop"):
