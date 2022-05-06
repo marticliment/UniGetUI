@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Package IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap8 mp wincap rescap desktop com build" xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:uap8="http://schemas.microsoft.com/appx/manifest/uap/windows10/8" xmlns:wincap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/windowscapabilities" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build">
   
-  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.12.11692.0" ProcessorArchitecture="x64"/>
+  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.17.10271.0" ProcessorArchitecture="x64"/>
   <mp:PhoneIdentity PhoneProductId="199c15cd-11cc-42bc-99de-619509297b5e" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35"/>
   <Properties>
     <DisplayName>ms-resource:appDisplayName</DisplayName>
@@ -9,8 +9,10 @@
     <Logo>Assets\AppPackageStoreLogo.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.18362.0"/>
-    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.29231.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.0"/>
+    <TargetDeviceFamily Name="Windows.Holographic" MinVersion="10.0.20346.0" MaxVersionTested="10.0.22000.0"/>
+    <PackageDependency Name="Microsoft.UI.Xaml.2.7" MinVersion="7.2109.13004.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
+    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.30035.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
   </Dependencies>
   <Resources>
     <Resource Language="EN-US"/>
@@ -81,7 +83,7 @@
         </uap:Extension>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="AuthenticationManager.exe" DisplayName="AuthenticationManager">
+            <com:ExeServer Executable="AuthenticationManager.exe" DisplayName="AuthenticationManager" LaunchAndActivationPermission="O:SYG:SYD:(A;;11;;;WD)(A;;11;;;RC)(A;;11;;;AC)(A;;11;;;AN)S:P(ML;;NX;;;S-1-16-0)">
               <com:Class Id="7B21B8BB-EE70-40DC-836C-687B6A30B642" DisplayName="AppInstaller Data Source"/>
             </com:ExeServer>
           </com:ComServer>
@@ -99,7 +101,7 @@
         </uap5:Extension>
       </Extensions>
     </Application>
-    <Application Id="winget" Executable="AppInstallerCLI.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="winget" Executable="winget.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="Windows Package Manager Client" Square150x150Logo="Assets\AppPackageMedTile.png" Square44x44Logo="Assets\AppPackageAppList.png" Description="ms-resource:appDescription" BackgroundColor="#0078d7" AppListEntry="none"/>
       <Extensions>
         <uap3:Extension Category="windows.appExtensionHost">
@@ -112,6 +114,17 @@
             <desktop:ExecutionAlias Alias="winget.exe"/>
           </uap3:AppExecutionAlias>
         </uap3:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="WindowsPackageManagerServer.exe" DisplayName="Windows Package Manager Server" LaunchAndActivationPermission="O:SYG:SYD:(A;;11;;;WD)(A;;11;;;RC)(A;;11;;;AC)(A;;11;;;AN)S:P(ML;;NX;;;S-1-16-0)">
+              <com:Class Id="C53A4F16-787E-42A4-B304-29EFFB4BF597" DisplayName="PackageManager Server"/>
+              <com:Class Id="572DED96-9C60-4526-8F92-EE7D91D38C1A" DisplayName="FindPackagesOptions Server"/>
+              <com:Class Id="526534B8-7E46-47C8-8416-B1685C327D37" DisplayName="CreateCompositePackageCatalogOptions Server"/>
+              <com:Class Id="1095F097-EB96-453B-B4E6-1613637F3B14" DisplayName="InstallOptions Server"/>
+              <com:Class Id="D02C9DAF-99DC-429C-B503-4E504E4AB000" DisplayName="PackageMatchFilter Server"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -126,28 +139,30 @@
     <rescap:Capability Name="broadFileSystemAccess"/>
     <rescap:Capability Name="runFullTrust"/>
     <rescap:Capability Name="allowElevation"/>
+    <rescap:Capability Name="confirmAppClose"/>
     <uap4:CustomCapability Name="Microsoft.deployFullTrustOnHost_8wekyb3d8bbwe"/>
   </Capabilities>
   <Extensions>
     <Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
         <Path>AppInstallerBackgroundTasks.dll</Path>
-        <ActivatableClass ActivatableClassId="AppInstallerBackgroundTasks.ToastNotificationBackgroundTask" ThreadingModel="both"/>
         <ActivatableClass ActivatableClassId="AppInstallerBackgroundTasks.InstallationBackgroundTask" ThreadingModel="both"/>
+        <ActivatableClass ActivatableClassId="AppInstallerBackgroundTasks.ToastNotificationBackgroundTask" ThreadingModel="both"/>
       </InProcessServer>
     </Extension>
   </Extensions>
   <build:Metadata>
-    <build:Item Name="cl.exe" Version="19.29.30037.0 built by: vcwrkspc"/>
+    <build:Item Name="cl.exe" Version="19.29.30139.0 built by: vcwrkspc"/>
+    <build:Item Name="CodeSharingProject" Value="248F659F-DAC5-46E8-AC09-60EC9FC95053"/>
     <build:Item Name="VisualStudio" Version="16.0"/>
     <build:Item Name="OperatingSystem" Version="10.0.17763.1 (WinBuild.160101.0800)"/>
-    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="16.0.31320.204"/>
+    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="16.0.31910.33"/>
     <build:Item Name="ProjectGUID" Value="{2910e195-72ee-433c-a714-8add7c86118b}"/>
     <build:Item Name="ilc.exe" Version="1.4.24211.07 built by: PROJECTNSVC2"/>
     <build:Item Name="OptimizingToolset" Value="ilc.exe"/>
     <build:Item Name="UseDotNetNativeSharedAssemblyFrameworkPackage" Value="True"/>
     <build:Item Name="UniversalGenericsOptOut" Value="false"/>
-    <build:Item Name="Microsoft.Windows.UI.Xaml.Build.Tasks.dll" Version="10.0.18362.1"/>
-    <build:Item Name="MakePri.exe" Version="10.0.18362.1 (WinBuild.160101.0800)"/>
+    <build:Item Name="Microsoft.Windows.UI.Xaml.Build.Tasks.dll" Version="0.0.0.0"/>
+    <build:Item Name="MakePri.exe" Version="10.0.22000.120 (WinBuild.160101.0800)"/>
   </build:Metadata>
 </Package>
