@@ -1,3 +1,4 @@
 PySide2
 darkdetect
 qtmodern
+win32mica
