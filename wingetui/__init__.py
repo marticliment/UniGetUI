@@ -35,7 +35,7 @@ class MainApplication(QtWidgets.QApplication):
             self.trayIcon.setVisible(True)
 
             
-            if(darkdetect.isDark()):
+            if(darkdetect.isLight()):
                 qtmodern.styles.light(self)
                 win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
             else:
@@ -223,6 +223,42 @@ QProgressBar {{
 QProgressBar::chunk {{
     background-color: rgb({colors[4]});
     border-radius: 2px;
+}}
+QCheckBox::indicator{{
+    height: 12px;
+    width: 12px;
+}}
+QCheckBox::indicator:unchecked {{
+    background-color: rgba(30, 30, 30, 25%);
+    border: 1px solid #444444;
+    border-radius: 4px;
+}}
+QCheckBox::indicator:disabled {{
+    background-color: rgba(71, 71, 71, 0%);
+    color: #bbbbbb;
+    border: 1px solid #444444;
+    border-radius: 4px;
+}}
+QCheckBox::indicator:unchecked:hover {{
+    background-color: #2a2a2a;
+    border: 1px solid #444444;
+    border-radius: 4px;
+}}
+QCheckBox::indicator:checked {{
+    border: 1px solid #444444;
+    background-color: rgb({colors[1]});
+    border-radius: 4px;
+}}
+QCheckBox::indicator:checked:disabled {{
+    border: 1px solid #444444;
+    background-color: #303030;
+    color: #bbbbbb;
+    border-radius: 4px;
+}}
+QCheckBox::indicator:checked:hover {{
+    border: 1px solid #444444;
+    background-color: rgb({colors[2]});
+    border-radius: 4px;
 }}
 """
 

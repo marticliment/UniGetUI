@@ -966,6 +966,9 @@ class Program(QMainWindow):
     loadInfo = QtCore.Signal(dict)
     closeDialog = QtCore.Signal()
     addProgram = QtCore.Signal(PackageInstaller)
+    setLoadBarValue = QtCore.Signal(str)
+    startAnim = QtCore.Signal(QtCore.QVariantAnimation)
+    changeBarOrientation = QtCore.Signal()
     def __init__(self, parent=None):
         super().__init__(parent)
         self.sc = QtWidgets.QScrollArea()
@@ -983,6 +986,14 @@ class Program(QMainWindow):
             padding: 5px;
         }
         """)
+        self.loadingProgressBar = QtWidgets.QProgressBar(self)
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
         self.vLayout = QtWidgets.QVBoxLayout()
         self.layout = QtWidgets.QVBoxLayout()
@@ -1000,6 +1011,7 @@ class Program(QMainWindow):
         self.mainGroupBox = QtWidgets.QGroupBox()
 
         #self.vLayout.addWidget(fortyTopWidget)
+        #self.layout.addWidget(self.loadingProgressBar)
         self.layout.addWidget(self.title)
         self.layout.addStretch()
 
@@ -1044,7 +1056,7 @@ class Program(QMainWindow):
         self.forceCheckbox.setChecked(False)
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
-        self.installButton.setIcon(QtGui.QIcon(realpath+"/install.png"))
+        self.installButton.setIcon(QtGui.QIcon(Tools.getMedia("performinstall")))
         self.installButton.setIconSize(QtCore.QSize(24, 24))
         self.installButton.clicked.connect(self.install)
         self.installButton.setFixedWidth(150)
@@ -1115,11 +1127,57 @@ class Program(QMainWindow):
         self.hide()
 
         self.loadInfo.connect(self.printData)
+
+        
+        self.leftSlow = QtCore.QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.rightSlow = QtCore.QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.leftFast = QtCore.QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setLoopCount(60)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.rightFast = QtCore.QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
+        
+        Thread(target=self.loadProgressBarLoop, daemon=True).start()
+        
+    
+    def loadProgressBarLoop(self):
+        print("starting")
+        while True:
+            self.startAnim.emit(self.leftSlow)
+            time.sleep(0.7)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.rightSlow)
+            time.sleep(0.7)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.leftFast)
+            time.sleep(0.3)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.rightFast)
+            time.sleep(0.3)
+            self.changeBarOrientation.emit()
     
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
-        self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        self.loadingProgressBar.move(0, 0)
+        self.loadingProgressBar.resize(self.width(), 4)
         self.backButton.move(self.width()-40, 0)
         if(event):
             return super().resizeEvent(event)
@@ -1128,7 +1186,7 @@ class Program(QMainWindow):
         self.store = store
         store = store.lower()
         if(darkdetect.isDark()):
-            blueColor = "CornflowerBlue"
+            blueColor = "rgb("+Tools.getColors()[2]+")"
         else:
             blueColor = "blue"
         if(goodTitle):
@@ -1136,7 +1194,7 @@ class Program(QMainWindow):
         else:
             self.title.setText(id)
             
-        self.loadWheel.show()
+        self.loadingProgressBar.show()
         self.forceCheckbox.setChecked(False)
         self.forceCheckbox.setEnabled(False)
         self.description.setText("Loading...")
@@ -1159,10 +1217,10 @@ class Program(QMainWindow):
 
     def printData(self, appInfo: dict) -> None:
         if(darkdetect.isDark()):
-            blueColor = "CornflowerBlue"
+            blueColor = "rgb("+Tools.getColors()[2]+")"
         else:
             blueColor = "blue"
-        self.loadWheel.hide()
+        self.loadingProgressBar.hide()
         if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
@@ -1183,7 +1241,7 @@ class Program(QMainWindow):
         except KeyError:
             pass
         for i in range(self.versionCombo.count()):
-            self.versionCombo.setItemIcon(i, QtGui.QIcon(realpath+"/version.png"))
+            self.versionCombo.setItemIcon(i, QtGui.QIcon(Tools.getMedia("version")))
 
     def install(self):
         title = self.title.text()
