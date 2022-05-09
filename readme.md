@@ -1,4 +1,4 @@
-# WingetUI Store: Give Windows 10 a proper (Graphical) User Interface to install packages from most common CLI package managers such as Winget and Scoop.
+# WingetUI Store: Give Windows 10 and 11 a proper (Graphical) User Interface to install packages from most common CLI package managers such as Winget and Scoop.
 [![Downloads Badge](https://img.shields.io/github/downloads/martinet101/WinGetUI/total.svg?style=for-the-badge)](https://github.com/martinet101/ElevenClock/releases)
 [![Downloads@2.3](https://img.shields.io/github/downloads/martinet101/WinGetUI/latest/total?style=for-the-badge)](https://github.com/martinet101/ElevenClock/releases/latest) 
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/ElevenClock/issues)
