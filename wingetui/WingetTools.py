@@ -8,9 +8,9 @@ else:
     
 common_params = ["--source", "winget", "--accept-source-agreements"]
     
-    
-winget = os.path.join(os.path.join(realpath, "winget-cli"), "AppInstallerCLI.exe")
-
+#winget = os.path.join(os.path.join(realpath, "winget-cli"), "AppInstallerCLI.exe")
+winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
+#winget = "winget"
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
@@ -54,6 +54,44 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             except Exception as e:
                 print(type(e), str(e))
     print("[   OK   ] Winget search finished")
+    finishSignal.emit("winget")
+
+def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+    print(f"[   OK   ] Starting winget search, winget on {winget}...")
+    p = subprocess.Popen([winget, "uninstall"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    output = []
+    counter = 0
+    idSeparator = 0
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        if line:
+            print(line)
+            if(counter > 2):
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+            else:
+                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
+                l = l.split("\r")[-1]
+                if("Id" in l):
+                    idSeparator = len(l.split("Id")[0])
+                    print(l.split("Id")[1].split(" "))
+                counter += 1
+    counter = 0
+    emptyStr = ""
+    wingetName = "Winget"
+    print(output)
+    for element in output:
+        try:
+            element = bytes(element, "utf-8")
+            export = (element[0:idSeparator], element[idSeparator:])#verSeparator], element[verSeparator:])
+            signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), emptyStr, wingetName)
+        except Exception as e:
+            try:
+                element = str(element, "utf-8")
+                signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
+            except Exception as e:
+                print(type(e), str(e))
+    print("[   OK   ] Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
@@ -139,6 +177,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
         line = line.strip()
         line = str(line, encoding='utf-8', errors="ignore").strip()
         if line:
+            print(line)
             infoSignal.emit(line)
             counter += 1
             counterSignal.emit(counter)
@@ -147,6 +186,30 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             elif ("--force" in line):
                 outputCode = 2
             elif("-" in line):
+                outputCode = 0
+            output += line+"\n"
+    print(outputCode)
+    closeAndInform.emit(outputCode, output)
+ 
+def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    outputCode = 0
+    counter = 0
+    output = ""
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        line = str(line, encoding='utf-8', errors="ignore").strip()
+        if line:
+            print(line)
+            infoSignal.emit(line)
+            counter += 1
+            counterSignal.emit(counter)
+            if("No installed package found matching input criteria" in line or "failed" in line):
+                outputCode = 1
+            elif ("--force" in line):
+                outputCode = 2
+            elif("-" in line or "Successfully uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
     print(outputCode)

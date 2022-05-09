@@ -1,4 +1,7 @@
 from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 import Tabs, os, ctypes, sys, Tools
 
 if hasattr(sys, 'frozen'):
@@ -12,7 +15,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("WingetUI Store: A GUI Store for Winget and Scoop packages")
         self.setMinimumSize(700, 560)
         self.setWindowIcon(QtGui.QIcon(realpath+"/icon.png"))
-        self.resize(QtCore.QSize(1024, 600))
+        self.resize(QtCore.QSize(1100, 700))
         self.loadWidgets()
         self.installEventFilter(self)
         self.show()
@@ -30,16 +33,39 @@ class MainWindow(QtWidgets.QMainWindow):
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:
+        self.mainWidget = QtWidgets.QStackedWidget()
+        self.buttonBox = QButtonGroup()
+        self.buttonLayout = QHBoxLayout()
+        self.mainWidget.setStyleSheet("""
+        QTabWidget::tab-bar {{
+            alignment: center;
+            }}""")
         self.discover = Tabs.Discover()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
-        self.mainWidget = QtWidgets.QTabWidget()
-        self.mainWidget.addTab(self.discover, "Discover Software")
-        self.mainWidget.addTab(Tabs.About(), "About WingetUI")
-        #self.mainWidget.addTab(Tabs.Installed(), "Installed applications")
-
-        self.setCentralWidget(self.mainWidget)
+        self.buttonLayout.addWidget(QWidget(), stretch=1)
+        self.addTab(self.discover, "Discover Software")
+        self.addTab(Tabs.Uninstall(), "Installed applications")
+        self.addTab(Tabs.About(), "About WingetUI")
+        self.buttonLayout.addWidget(QWidget(), stretch=1)
+        vl = QVBoxLayout()
+        vl.addLayout(self.buttonLayout, stretch=0)
+        vl.addWidget(self.mainWidget, stretch=1)
+        vl.setContentsMargins(0, 0, 0, 0)
+        w = QWidget()
+        w.setContentsMargins(0, 0, 0, 0)
+        self.setContentsMargins(0, 0, 0, 0)
+        w.setLayout(vl)
+        self.setCentralWidget(w)
         self.show()
         self.discover.resizeEvent()
+
+    def addTab(self, widget: QWidget, label: str) -> None:
+        i = self.mainWidget.addWidget(widget)
+        btn = QPushButton(label)
+        btn.setCheckable(True)
+        btn.clicked.connect(lambda: self.mainWidget.setCurrentIndex(i))
+        self.buttonBox.addButton(btn)
+        self.buttonLayout.addWidget(btn)
 
     def isAdmin(self) -> bool:
         try:

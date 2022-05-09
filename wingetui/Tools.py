@@ -1,7 +1,11 @@
+import winreg
 from PySide2 import QtCore
 from threading import Thread
 import sys, time, subprocess, os, darkdetect
-
+from PySide2.QtCore import *
+from PySide2.QtWinExtras import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -42,6 +46,79 @@ def checkQueue():
             except IndexError:
                 pass
         time.sleep(0.2)
+
+
+def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
+    hwnd = int(hwnd)
+    #window.setAttribute(Qt.WA_TranslucentBackground)
+    #window.setAttribute(Qt.WA_NoSystemBackground)
+
+    mode = isDark()
+    from blurwindow import GlobalBlur
+    if not avoidOverrideStyleSheet:
+        window.setStyleSheet("background-color: transparent;")
+    if mode:
+        GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
+        if shadow:
+            QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
+    else:
+        GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40", Dark=True, smallCorners=smallCorners)
+        if shadow: 
+            QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
+
+
+def getPath(s):
+    return os.path.join(realpath, s).replace("\\", "/")
+
+def getIconMode() -> str:
+    return "white" if isDark() else "black"
+
+def getMedia(m: str) -> str:
+    return getPath(m+"_"+getIconMode()+".png")
+
+def isDark() -> str:
+    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0
+
+def getint(s: str, fallback: int) -> int:
+    try:
+        return int(s)
+    except:
+        print("can't parse", s)
+        return fallback
+
+def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
+    registry = winreg.ConnectRegistry(None, storage)
+    reg_keypath = aKey
+    try:
+        reg_key = winreg.OpenKey(registry, reg_keypath)
+    except FileNotFoundError as e:
+        return default
+    except Exception as e:
+        print(e)
+        return default
+
+    for i in range(1024):
+        try:
+            value_name, value, _ = winreg.EnumValue(reg_key, i)
+            if value_name == sKey:
+                return value
+        except OSError as e:
+            return default
+        except Exception as e:
+            print(e)
+            return default
+
+def getColors() -> list:
+    colors = ['215,226,228', '160,174,183', '101,116,134', '81,92,107', '69,78,94', '41,47,64', '15,18,36', '239,105,80']
+    string = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent", "AccentPalette", b'\xe9\xd8\xf1\x00\xcb\xb7\xde\x00\x96}\xbd\x00\x82g\xb0\x00gN\x97\x00H4s\x00#\x13K\x00\x88\x17\x98\x00')
+    i = 0
+    j = 0
+    while (i+2)<len(string):
+        colors[j] = f"{string[i]},{string[i+1]},{string[i+2]}"
+        j += 1
+        i += 4
+    return colors
+
 
 Thread(target=checkQueue, daemon=True).start()
 

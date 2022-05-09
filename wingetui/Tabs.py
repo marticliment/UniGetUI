@@ -2,6 +2,11 @@ from posixpath import relpath
 from PySide2 import QtWidgets, QtCore, QtGui
 import WingetTools, ScoopTools, darkdetect, sys, Tools, subprocess, time, os
 from threading import Thread
+from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
 
 
 if hasattr(sys, 'frozen'):
@@ -9,7 +14,7 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
-class Discover(QtWidgets.QWidget):
+class Uninstall(QtWidgets.QWidget):
 
     addProgram = QtCore.Signal(str, str, str, str)
     hideLoadingWheel = QtCore.Signal(str)
@@ -30,6 +35,7 @@ class Discover(QtWidgets.QWidget):
         self.programbox = QtWidgets.QWidget()
 
         self.layout = QtWidgets.QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
         self.reloadButton = QtWidgets.QPushButton()
@@ -45,15 +51,17 @@ class Discover(QtWidgets.QWidget):
         self.searchButton.setIcon(QtGui.QIcon(realpath+"/search.png"))
 
         hLayout = QtWidgets.QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 0, 0)
 
         self.query = QtWidgets.QLineEdit()
-        self.query.setPlaceholderText(" Search something on Winget or Scoop")
+        self.query.setPlaceholderText(" Search on your software")
         self.query.returnPressed.connect(self.filter)
+        self.query.textChanged.connect(self.filter)
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
-        self.discoverLabel = QtWidgets.QLabel("Discover packages")
+        self.discoverLabel = QtWidgets.QLabel("Installed packages")
         self.discoverLabel.setStyleSheet("font-size: 40px;")
 
         hLayout.addWidget(self.discoverLabel)
@@ -61,36 +69,57 @@ class Discover(QtWidgets.QWidget):
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
+        
+        self.packageListScrollBar = QScrollBar()
+        self.packageListScrollBar.setOrientation(Qt.Vertical)
+
         self.packageList = QtWidgets.QTreeWidget()
         self.packageList.setIconSize(QtCore.QSize(24, 24))
         self.packageList.setColumnCount(4)
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
+        self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "Installation source"])
         self.packageList.setColumnWidth(0, 300)
         self.packageList.setColumnWidth(1, 300)
         self.packageList.setColumnWidth(2, 200)
+        self.packageList.setColumnHidden(2, True)
         self.packageList.setColumnWidth(3, 100)
         self.packageList.setSortingEnabled(True)
+        self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3)))
         
         
         
         self.loadingProgressBar = QtWidgets.QProgressBar()
-        self.loadingProgressBar.setRange(0, 500)
+        self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
-        self.loadingProgressBar.setFixedHeight(6)
+        self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
 
+        
         layout = QtWidgets.QVBoxLayout()
+        w = QWidget()
+        w.setLayout(layout)
+        w.setMaximumWidth(1000)
+
+        self.bodyWidget = QWidget()
+        l = QHBoxLayout()
+        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(w)
+        l.setContentsMargins(0, 0, 0, 0)
+        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(self.packageListScrollBar)
+        self.bodyWidget.setLayout(l)
 
 
         self.countLabel = QtWidgets.QLabel("Fetching file list...")
         layout.addLayout(hLayout)
-        layout.addWidget(QtWidgets.QLabel())
+        layout.setContentsMargins(20, 10, 0, 10)
         layout.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.packageList)
-        self.programbox.setLayout(layout)
+        self.programbox.setLayout(l)
         self.layout.addWidget(self.programbox, stretch=1)
         self.layout.addWidget(self.infobox, stretch=1)
         self.installersScrollArea = QtWidgets.QScrollArea()
@@ -98,7 +127,6 @@ class Discover(QtWidgets.QWidget):
         self.installersScrollArea.setFixedHeight(150)
         self.installersScrollArea.hide()
         widget = QtWidgets.QWidget()
-        widget.setAttribute(QtCore.Qt.WA_NoSystemBackground) 
         self.installerswidget = QtWidgets.QVBoxLayout()
         widget.setLayout(self.installerswidget)
         self.installersScrollArea.setWidget(widget)
@@ -108,9 +136,6 @@ class Discover(QtWidgets.QWidget):
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
         self.askForScoopInstall.connect(self.scoopNotFound)
-
-        #self.loadWheel = LoadingProgress(self)
-        #self.loadWheel.resize(64, 64)
 
         self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
@@ -128,7 +153,285 @@ class Discover(QtWidgets.QWidget):
         self.versionIcon = QtGui.QIcon(realpath+"/version.png")
         self.providerIcon = QtGui.QIcon(realpath+"/provider.png")
         
-        self.show()
+    
+
+        Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        print("[   OK   ] Discover tab loaded")
+
+        g = self.packageList.geometry()
+        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+            
+        Thread(target=self.checkIfScoop, daemon=True)
+        
+        self.leftSlow = QtCore.QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.rightSlow = QtCore.QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.leftFast = QtCore.QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setLoopCount(60)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        
+        self.rightFast = QtCore.QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
+        
+        Thread(target=self.loadProgressBarLoop, daemon=True).start()
+        
+    
+    def loadProgressBarLoop(self):
+        print("starting")
+        while True:
+            self.startAnim.emit(self.leftSlow)
+            time.sleep(0.7)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.rightSlow)
+            time.sleep(0.7)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.leftFast)
+            time.sleep(0.3)
+            self.changeBarOrientation.emit()
+            self.startAnim.emit(self.rightFast)
+            time.sleep(0.3)
+            self.changeBarOrientation.emit()
+
+    
+    def checkIfScoop(self) -> None:
+        if(subprocess.call("scooop --version", shell=True) != 0):
+            self.askForScoopInstall.emit()
+        else:
+            print("[   OK   ] Scoop found")
+    
+    def scoopNotFound(self) -> None:
+        if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+            self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+        
+
+    def hideLoadingWheelIfNeeded(self, store: str) -> None:
+        if(store == "winget"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", still loading...")
+            self.wingetLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        elif(store == "scoop"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", still loading...")
+            self.scoopLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        if(self.wingetLoaded and self.scoopLoaded):
+            self.loadingProgressBar.hide()
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
+
+    def resizeEvent(self, event = None):
+        g = self.packageList.geometry()
+        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        if(event):
+            return super().resizeEvent(event)
+
+    def addItem(self, name: str, id: str, version: str, store) -> None:
+        item = QtWidgets.QTreeWidgetItem()
+        item.setText(0, name)
+        item.setText(1, id)
+        item.setIcon(0, self.installIcon)
+        item.setIcon(1, self.IDIcon)
+        #item.setText(2, version)
+        #item.setIcon(2, self.versionIcon)
+        item.setIcon(3, self.providerIcon)
+        item.setText(3, store)
+        self.packageList.addTopLevelItem(item)
+    
+    def filter(self) -> None:
+        resultsFound = self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 0)
+        resultsFound += self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 1)
+        print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
+        for item in self.packageList.findItems('', QtCore.Qt.MatchContains, 0):
+            if not(item in resultsFound):
+                item.setHidden(True)
+            else:
+                item.setHidden(False)
+    
+    def showQuery(self) -> None:
+        self.programbox.show()
+        self.infobox.hide()
+
+    def uninstall(self, title: str, id: str, store: str) -> None:
+        if(QtWidgets.QMessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes):
+           
+            if("…" in title):
+                self.addInstallation(PackageUninstaller(title, store, useId=True, packageId=id.replace("…", "")))
+                #self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
+            else:
+                self.addInstallation(PackageUninstaller(title, store, packageId=id.replace("…", "")))
+                #self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
+    
+    def reload(self) -> None:
+        self.scoopLoaded = False
+        self.wingetLoaded = False
+        self.loadingProgressBar.show()
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        self.packageList.clear()
+        self.query.setText("")
+        Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+    
+    def addInstallation(self, p) -> None:
+        self.layout.addWidget(p)
+        #self.installersScrollArea.show()
+
+class Discover(QtWidgets.QWidget):
+
+    addProgram = QtCore.Signal(str, str, str, str)
+    hideLoadingWheel = QtCore.Signal(str)
+    clearList = QtCore.Signal()
+    askForScoopInstall = QtCore.Signal(str)
+    setLoadBarValue = QtCore.Signal(str)
+    startAnim = QtCore.Signal(QtCore.QVariantAnimation)
+    changeBarOrientation = QtCore.Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.scoopLoaded = False
+        self.wingetLoaded = False
+        self.infobox = Program(self)
+        self.setStyleSheet("margin: 0px;")
+        #self.infobox.onClose.connect(self.showQuery)
+
+        self.programbox = QtWidgets.QWidget()
+
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.layout)
+
+        self.reloadButton = QtWidgets.QPushButton()
+        self.reloadButton.setFixedSize(30, 40)
+        self.reloadButton.setStyleSheet("margin-top: 10px;")
+        self.reloadButton.clicked.connect(self.reload)
+        self.reloadButton.setIcon(QtGui.QIcon(Tools.getMedia("reload")))
+
+        self.searchButton = QtWidgets.QPushButton()
+        self.searchButton.setFixedSize(30, 40)
+        self.searchButton.setStyleSheet("margin-top: 10px;")
+        self.searchButton.clicked.connect(self.filter)
+        self.searchButton.setIcon(QtGui.QIcon(Tools.getMedia("search")))
+
+        hLayout = QtWidgets.QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.query = QtWidgets.QLineEdit()
+        self.query.setPlaceholderText(" Search something on Winget or Scoop")
+        self.query.returnPressed.connect(self.filter)
+        self.query.textChanged.connect(self.filter)
+        self.query.setFixedHeight(40)
+        self.query.setStyleSheet("margin-top: 10px;")
+        self.query.setFixedWidth(250)
+
+        self.discoverLabel = QtWidgets.QLabel("Discover packages")
+        self.discoverLabel.setStyleSheet("font-size: 40px;")
+
+        hLayout.addWidget(self.discoverLabel)
+        hLayout.addWidget(self.query)
+        hLayout.addWidget(self.searchButton)
+        hLayout.addWidget(self.reloadButton)
+
+        self.packageListScrollBar = QScrollBar()
+        self.packageListScrollBar.setOrientation(Qt.Vertical)
+
+        self.packageList = QtWidgets.QTreeWidget()
+        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
+        self.packageList.setColumnCount(4)
+        self.packageList.setColumnWidth(0, 300)
+        self.packageList.setColumnWidth(1, 300)
+        self.packageList.setColumnWidth(2, 200)
+        self.packageList.setColumnWidth(3, 100)
+        self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.packageList.setSortingEnabled(True)
+        self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
+        self.packageList.setIconSize(QtCore.QSize(24, 24))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)))
+        
+        
+        self.loadingProgressBar = QtWidgets.QProgressBar()
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+
+        layout = QtWidgets.QVBoxLayout()
+        w = QWidget()
+        w.setLayout(layout)
+        w.setMaximumWidth(1000)
+
+        self.bodyWidget = QWidget()
+        l = QHBoxLayout()
+        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(w)
+        l.setContentsMargins(0, 0, 0, 0)
+        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(self.packageListScrollBar)
+        self.bodyWidget.setLayout(l)
+
+
+        self.countLabel = QtWidgets.QLabel("Fetching file list...")
+        layout.addLayout(hLayout)
+        layout.setContentsMargins(20, 10, 0, 10)
+        layout.addWidget(self.countLabel)
+        layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.packageList)
+        
+        self.programbox.setLayout(l)
+        self.layout.addWidget(self.programbox, stretch=1)
+        #self.layout.addWidget(self.infobox, stretch=1)
+        self.installersScrollArea = QtWidgets.QScrollArea()
+        self.installersScrollArea.setWidgetResizable(True)
+        self.installersScrollArea.setFixedHeight(150)
+        self.installersScrollArea.hide()
+        widget = QtWidgets.QWidget()
+        self.installerswidget = QtWidgets.QVBoxLayout()
+        widget.setLayout(self.installerswidget)
+        self.installersScrollArea.setWidget(widget)
+        self.layout.addWidget(self.installersScrollArea, stretch=0)
+        self.infobox.hide()
+
+        self.addProgram.connect(self.addItem)
+        self.clearList.connect(self.packageList.clear)
+        self.askForScoopInstall.connect(self.scoopNotFound)
+
+        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
+        self.infobox.addProgram.connect(self.addInstallation)
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        
+
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        
+        self.installIcon = QtGui.QIcon(Tools.getMedia("install"))
+        self.IDIcon = QtGui.QIcon(Tools.getMedia("ID"))
+        self.versionIcon = QtGui.QIcon(Tools.getMedia("version"))
+        self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
+        
     
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
@@ -142,24 +445,24 @@ class Discover(QtWidgets.QWidget):
         
         self.leftSlow = QtCore.QVariantAnimation()
         self.leftSlow.setStartValue(0)
-        self.leftSlow.setEndValue(500)
+        self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         
         self.rightSlow = QtCore.QVariantAnimation()
-        self.rightSlow.setStartValue(500)
+        self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         
         self.leftFast = QtCore.QVariantAnimation()
         self.leftFast.setStartValue(0)
-        self.leftFast.setEndValue(500)
+        self.leftFast.setEndValue(1000)
         self.leftFast.setDuration(300)
         self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         
         self.rightFast = QtCore.QVariantAnimation()
-        self.rightFast.setStartValue(500)
+        self.rightFast.setStartValue(1000)
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
@@ -250,8 +553,10 @@ class Discover(QtWidgets.QWidget):
             self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
         else:
             self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
-        self.programbox.hide()
         self.infobox.show()
+        from win32mica import ApplyMica, MICAMODE
+        #ApplyMica(self.infobox.winId(), MICAMODE.DARK if Tools.isDark() else MICAMODE.LIGHT)
+        Tools.ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -518,15 +823,160 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
                 msgBox.exec_()
 
-class Program(QtWidgets.QScrollArea):
+class PackageUninstaller(QtWidgets.QGroupBox):
+    onCancel = QtCore.Signal()
+    killSubprocess = QtCore.Signal()
+    addInfoLine = QtCore.Signal(str)
+    finishInstallation = QtCore.Signal(int, str)
+    counterSignal = QtCore.Signal(int)
+    def __init__(self, title: str, store: str, useId=False, packageId=""):
+        super().__init__(parent=None)
+        self.store = store.lower()
+        self.useId = useId
+        self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
+        self.setFixedHeight(45)
+        self.programName = title
+        self.packageId = packageId
+        self.layout = QtWidgets.QHBoxLayout()
+        self.label = QtWidgets.QLabel(title+" installation")
+        self.label.setFixedWidth(230)
+        self.layout.addWidget(self.label)
+        self.progressbar = QtWidgets.QProgressBar()
+        self.progressbar.setTextVisible(False)
+        self.progressbar.setRange(0, 10)
+        self.progressbar.setValue(0)
+        self.progressbar.setFixedHeight(6)
+        self.layout.addWidget(self.progressbar)
+        self.info = QtWidgets.QLineEdit()
+        self.info.setText("Waiting for other installations to finish...")
+        self.info.setReadOnly(True)
+        self.addInfoLine.connect(lambda text: self.info.setText(text))
+        self.finishInstallation.connect(self.finish)
+        self.layout.addWidget(self.info)
+        self.counterSignal.connect(self.counter)
+        self.cancelButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/cancel.png"), "Cancel")
+        self.cancelButton.clicked.connect(self.cancel)
+        self.layout.addWidget(self.cancelButton)
+        self.setLayout(self.layout)
+        self.canceled = False
+        self.installId = str(time.time())
+        Tools.queueProgram(self.installId)
+        self.waitThread = Tools.KillableThread(target=self.startUninstallation, daemon=True)
+        self.waitThread.start()
+        print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
+        
+
+    
+    def startUninstallation(self) -> None:
+        while self.installId != Tools.current_program:
+            time.sleep(0.2)
+        print("[   OK   ] Have permission to install, starting installation threads...")
+        if(self.store == "winget"):
+            if self.useId:
+                self.p = subprocess.Popen([WingetTools.winget, "uninstall", "-e", "--id", f"{self.programName}"]+WingetTools.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+                self.t = Tools.KillableThread(target=WingetTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+                self.t.start()
+            else:
+                self.p = subprocess.Popen([WingetTools.winget, "uninstall", "-e", "--name", f"{self.programName}"]+WingetTools.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+                self.t = Tools.KillableThread(target=WingetTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+                self.t.start()
+        elif("scoop" in self.store):
+            self.p = subprocess.Popen(' '.join(["scoop", "uninstall", f"{self.programName}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=ScoopTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+
+    
+    def counter(self, line: int) -> None:
+        if(line == 1):
+            self.progressbar.setValue(1)
+        if(line == 4):
+            self.progressbar.setValue(4)
+        elif(line == 6):
+            self.cancelButton.setEnabled(False)
+            self.progressbar.setValue(7)
+
+    def cancel(self):
+        print("[        ] Sending cancel signal...")
+        self.info.setText("Installation canceled by user!")
+        self.cancelButton.setEnabled(True)
+        self.cancelButton.setText("Close")
+        self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
+        self.cancelButton.clicked.connect(self.close)
+        self.onCancel.emit()
+        self.progressbar.setValue(0)
+        self.canceled=True
+        Tools.removeProgram(self.installId)
+        try: self.waitThread.kill()
+        except: pass
+        try: self.t.kill()
+        except: pass
+        try: self.p.kill()
+        except: pass
+    
+    def finish(self, returncode: int, output: str = "") -> None:
+        self.cancelButton.setEnabled(True)
+        Tools.removeProgram(self.installId)
+        try: self.waitThread.kill()
+        except: pass
+        try: self.t.kill()
+        except: pass
+        try: self.p.kill()
+        except: pass
+        if not(self.canceled):
+            if(returncode == 0):
+                Tools.notify("WingetUI Store", f"{self.programName} was uninstalled successfully!")
+                self.cancelButton.setText("OK")
+                self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
+                self.cancelButton.clicked.connect(self.close)
+                self.info.setText(f"{self.programName} was uninstalled successfully!")
+                self.progressbar.setValue(10)
+                if(self.store == "powershell"):
+                    msgBox = QtWidgets.QMessageBox(self)
+                    msgBox.setWindowTitle("WingetUI Store")
+                    msgBox.setText(f"{self.programName} was uninstalled successfully.")
+                    msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
+                    msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                    msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
+                    msgBox.setIcon(QtWidgets.QMessageBox.Information)
+                    msgBox.exec_()
+            else:
+                self.cancelButton.setText("OK")
+                self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
+                self.cancelButton.clicked.connect(self.close)
+                self.progressbar.setValue(10)
+                msgBox = QtWidgets.QMessageBox(self)
+                msgBox.setWindowTitle("WingetUI Store")
+                if(returncode == 2):
+                    Tools.notify("WingetUI Store", f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
+                    self.info.setText(f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
+                    msgBox.setText(f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
+                else:
+                    Tools.notify("WingetUI Store", f"An error occurred while uninstalling {self.programName}")
+                    self.info.setText(f"An error occurred during {self.programName} uninstallation!")
+                    msgBox.setText(f"An error occurred while uninstalling {self.programName}")
+                msgBox.setInformativeText("Click \"Show Details\" to get the output of the uninstaller.")
+                msgBox.setDetailedText(output)
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.exec_()
+
+class Program(QMainWindow):
     onClose = QtCore.Signal()
     loadInfo = QtCore.Signal(dict)
     closeDialog = QtCore.Signal()
     addProgram = QtCore.Signal(PackageInstaller)
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.sc = QtWidgets.QScrollArea()
+        self.setWindowFlags(Qt.Window)
+        self.setWindowModality(Qt.WindowModal)
+        self.setWindowFlag(Qt.Tool)
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setWindowFlag(Qt.FramelessWindowHint)
+        #self.setAttribute(Qt.WA_NoBackground, False)
         self.store = ""
-        self.setWidgetResizable(True)
+        self.sc.setWidgetResizable(True)
         self.setStyleSheet("""
         QScrollArea{
             border-radius: 5px;
@@ -549,12 +999,12 @@ class Program(QtWidgets.QScrollArea):
 
         self.mainGroupBox = QtWidgets.QGroupBox()
 
-        self.vLayout.addWidget(fortyTopWidget)
+        #self.vLayout.addWidget(fortyTopWidget)
         self.layout.addWidget(self.title)
-        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addStretch()
 
         self.hLayout = QtWidgets.QHBoxLayout()
-        self.hLayout.addWidget(fortyWidget, stretch=1)
+        #self.hLayout.addWidget(fortyWidget, stretch=1)
 
         self.description = QtWidgets.QLabel("Description: Unknown")
         self.description.setWordWrap(True)
@@ -575,13 +1025,13 @@ class Program(QtWidgets.QScrollArea):
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
-        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addStretch()
 
         self.license = QLinkLabel("License: Unknown")
         self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
-        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addStretch()
         
         hLayout = QtWidgets.QHBoxLayout()
         self.versionLabel = QtWidgets.QLabel("Version: ")
@@ -605,12 +1055,12 @@ class Program(QtWidgets.QScrollArea):
 
         hLayout.addWidget(self.versionLabel)
         hLayout.addWidget(self.versionCombo)
-        hLayout.addWidget(QtWidgets.QLabel(), stretch=1)
+        hLayout.addWidget(QWidget(), stretch=1)
         hLayout.addWidget(self.forceCheckbox)
         hLayout.addWidget(self.installButton)
         downloadGroupBox.setLayout(hLayout)
         self.layout.addWidget(downloadGroupBox)
-        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addStretch()
 
         self.packageId = QLinkLabel("Program ID: Unknown")
         self.packageId.setWordWrap(True)
@@ -630,7 +1080,7 @@ class Program(QtWidgets.QScrollArea):
         self.storeLabel = QLinkLabel(f"Source: {self.store}")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
-        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addStretch()
         self.advert = QLinkLabel("ALERT: NEITHER MICROSOFT NOR THE CREATORS OF WINGET UI STORE ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE. PROCEED WITH CAUTION")
         self.advert.setWordWrap(True)
         self.layout.addWidget(self.advert)
@@ -638,24 +1088,24 @@ class Program(QtWidgets.QScrollArea):
         self.mainGroupBox.setLayout(self.layout)
         self.mainGroupBox.setMinimumHeight(480)
         self.vLayout.addWidget(self.mainGroupBox)
-        self.vLayout.addWidget(fortyWidget, stretch=1)
         self.hLayout.addLayout(self.vLayout, stretch=0)
-        self.hLayout.addWidget(fortyWidget, stretch=1)
 
         self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setLayout(self.hLayout)
         if(darkdetect.isDark()):
             print("[        ] Is Dark")
-            self.centralwidget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setWidget(self.centralwidget)
+        self.sc.setWidget(self.centralwidget)
+        self.setCentralWidget(self.sc)
 
 
-        self.backButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/back.png"), "", self)
+        self.backButton = QtWidgets.QPushButton(QtGui.QIcon(Tools.getMedia("close")), "", self)
         self.backButton.setStyleSheet("font-size: 22px;")
         self.setStyleSheet("margin: 0px;")
-        self.backButton.move(0, 0)
-        self.backButton.resize(30, 30)
-        self.backButton.clicked.connect(self.onClose.emit)
+        self.backButton.move(self.width()-40, 0)
+        self.backButton.resize(40, 40)
+        self.backButton.setFlat(True)
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent}QPushButton:hover{background-color:red;}")
+        self.backButton.clicked.connect(lambda: (self.onClose.emit(), self.close()))
         self.backButton.show()
 
         
@@ -670,6 +1120,7 @@ class Program(QtWidgets.QScrollArea):
         self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
         self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
+        self.backButton.move(self.width()-40, 0)
         if(event):
             return super().resizeEvent(event)
     
@@ -748,6 +1199,14 @@ class Program(QtWidgets.QScrollArea):
             print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
         p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId)
         self.addProgram.emit(p)
+        self.close()
+
+    def show(self) -> None:
+        g: QRect = self.parent().window().geometry()
+        self.resize(600, 600)
+        self.move(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
+        print(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
+        return super().show()
         
 
 
