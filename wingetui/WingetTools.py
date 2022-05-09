@@ -67,7 +67,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
         line = line.strip()
         if line:
             print(line)
-            if(counter > 2):
+            if(counter > 2 and not b"---" in line):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
@@ -102,7 +102,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
-            if line:
+            if line and not b"---" in line:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
         try:
             title = output[-1][0:output[0].split("\r")[-1].index("Id")].strip()

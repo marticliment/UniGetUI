@@ -42,13 +42,13 @@ class Uninstall(QtWidgets.QWidget):
         self.reloadButton.setFixedSize(30, 40)
         self.reloadButton.setStyleSheet("margin-top: 10px;")
         self.reloadButton.clicked.connect(self.reload)
-        self.reloadButton.setIcon(QtGui.QIcon(realpath+"/reload.png"))
+        self.reloadButton.setIcon(QtGui.QIcon(Tools.getMedia("reload")))
 
         self.searchButton = QtWidgets.QPushButton()
         self.searchButton.setFixedSize(30, 40)
         self.searchButton.setStyleSheet("margin-top: 10px;")
         self.searchButton.clicked.connect(self.filter)
-        self.searchButton.setIcon(QtGui.QIcon(realpath+"/search.png"))
+        self.searchButton.setIcon(QtGui.QIcon(Tools.getMedia("search")))
 
         hLayout = QtWidgets.QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 0, 0)
@@ -148,10 +148,10 @@ class Uninstall(QtWidgets.QWidget):
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
-        self.installIcon = QtGui.QIcon(realpath+"/install.png")
-        self.IDIcon = QtGui.QIcon(realpath+"/ID.png")
-        self.versionIcon = QtGui.QIcon(realpath+"/version.png")
-        self.providerIcon = QtGui.QIcon(realpath+"/provider.png")
+        self.installIcon = QtGui.QIcon(Tools.getMedia("install"))
+        self.IDIcon = QtGui.QIcon(Tools.getMedia("ID"))
+        self.versionIcon = QtGui.QIcon(Tools.getMedia("version"))
+        self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
         
     
 
@@ -1047,7 +1047,17 @@ class Program(QMainWindow):
         
         hLayout = QtWidgets.QHBoxLayout()
         self.versionLabel = QtWidgets.QLabel("Version: ")
-        self.versionCombo = QtWidgets.QComboBox()
+
+        
+        class QComboBoxWithFluentMenu(QComboBox):
+            def __init__(self, parent=None) -> None:
+                super().__init__(parent)
+                v = self.view().window()
+                Tools.ApplyMenuBlur(v.winId(), v)
+                from win32mica import ApplyMica, MICAMODE
+                ApplyMica(v.winId(), v)
+
+        self.versionCombo = QComboBoxWithFluentMenu()
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QtCore.QSize(24, 24))
         self.versionCombo.setFixedHeight(25)

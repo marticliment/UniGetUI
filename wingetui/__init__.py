@@ -260,6 +260,72 @@ QCheckBox::indicator:checked:hover {{
     background-color: rgb({colors[2]});
     border-radius: 4px;
 }}
+QComboBox {{
+    width: 100px;
+    background-color:rgba(81, 81, 81, 25%);
+    border-radius: 6px;
+    border: 1px solid rgba(86, 86, 86, 25%);
+    height: 30px;
+    padding-left: 10px;
+    border: 1px solid rgba(86, 86, 86, 25%);
+}}
+QComboBox:disabled {{
+    width: 100px;
+    background-color: #303030;
+    color: #bbbbbb;
+    border-radius: 6px;
+    border: 0.6px solid #262626;
+    height: 25px;
+    padding-left: 10px;
+}}
+QComboBox:hover {{
+    background-color:rgba(86, 86, 86, 25%);
+    border-radius: 6px;
+    border: 1px solidrgba(100, 100, 100, 25%);
+    height: 25px;
+    padding-left: 10px;
+}}
+QComboBox::drop-down {{
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    background-color: none;
+    padding: 5px;
+    border-radius: 6px;
+    border: none;
+    width: 30px;
+}}
+QComboBox::down-arrow {{
+    image: url("{Tools.getMedia("drop-down")}");
+    height: 8px;
+    width: 8px;
+}}
+QComboBox::down-arrow:disabled {{
+    image: url("{Tools.getMedia("drop-down")}");
+    height: 2px;
+    width: 2px;
+}}
+QComboBox QAbstractItemView {{
+    border: 1px solid rgba(36, 36, 36, 50%);
+    padding: 4px;
+    outline: 0px;
+    padding-right: 0px;
+    background-color: #303030;
+    border-radius: 8px;
+}}
+QComboBox QAbstractItemView::item{{
+    height: 30px;
+    border: none;
+    padding-left: 10px;
+    border-radius: 4px;
+}}
+QComboBox QAbstractItemView::item:selected{{
+    background: rgba(255, 255, 255, 6%);
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-left: 10px;
+    border-radius: 4px;
+}}
 """
 
 
