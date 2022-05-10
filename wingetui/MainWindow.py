@@ -45,7 +45,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         self.addTab(self.discover, "Discover Software")
-        self.addTab(Tabs.Uninstall(), "Installed applications")
+        self.uninstall = Tabs.Uninstall()
+        self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
+        self.addTab(self.uninstall, "Installed applications")
         self.addTab(Tabs.About(), "About WingetUI")
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
@@ -58,6 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
         w.setLayout(vl)
         self.setCentralWidget(w)
         self.show()
+        self.uninstall.resizeEvent()
         self.discover.resizeEvent()
 
     def addTab(self, widget: QWidget, label: str) -> None:
