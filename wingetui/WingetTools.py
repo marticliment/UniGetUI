@@ -22,7 +22,6 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            #print(str(line, encoding="utf-8"))
             if(counter > 1):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
@@ -30,14 +29,11 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
                 l = l.split("\r")[-1]
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
-                    print(l.split("Id")[1].split(" "))
                     verSeparator = idSeparator+2
                     i=0
                     while l.split("Id")[1].split(" ")[i] == "":
                         verSeparator += 1
                         i += 1
-                        
-                    #verSeparator = idSeparator+len(l.split("Id")[1].split(" "))
                 counter += 1
     counter = 0
     print(idSeparator, verSeparator)
@@ -47,7 +43,6 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
             signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
         except Exception as e:
-            #print("[ WINGET ] Exception on unicodedecode, trying level 2...")
             try:
                 element = str(element, "utf-8")
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
@@ -66,7 +61,6 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            print(line)
             if(counter > 2 and not b"---" in line):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
@@ -74,12 +68,10 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
                 l = l.split("\r")[-1]
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
-                    print(l.split("Id")[1].split(" "))
                 counter += 1
     counter = 0
     emptyStr = ""
     wingetName = "Winget"
-    print(output)
     for element in output:
         try:
             element = bytes(element, "utf-8")
@@ -177,7 +169,6 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
         line = line.strip()
         line = str(line, encoding='utf-8', errors="ignore").strip()
         if line:
-            print(line)
             infoSignal.emit(line)
             counter += 1
             counterSignal.emit(counter)
@@ -188,7 +179,6 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             elif("-" in line):
                 outputCode = 0
             output += line+"\n"
-    print(outputCode)
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
@@ -201,7 +191,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoS
         line = line.strip()
         line = str(line, encoding='utf-8', errors="ignore").strip()
         if line:
-            print(line)
             infoSignal.emit(line)
             counter += 1
             counterSignal.emit(counter)
@@ -212,7 +201,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoS
             elif("-" in line or "Successfully uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
-    print(outputCode)
     closeAndInform.emit(outputCode, output)
 
 

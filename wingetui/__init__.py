@@ -39,10 +39,12 @@ class MainApplication(QtWidgets.QApplication):
                 qtmodern.styles.light(self)
                 win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
             else:
-                self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.setStyle("fusion")
-                win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
-                self.setStyleSheet(darkSS)
+                r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
+                if r != 0x32:
+                    self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+                print("MICA", r)
+                self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
             
 
         
@@ -61,7 +63,16 @@ darkSS = f"""
     color: #eeeeee;
     font-family: "Segoe UI Variable Display semib"
 }}
-
+#micawin {{
+    background-color: mainbg;
+    color: red;
+}}
+QMessageBox{{
+    background-color: #202020;
+}}
+#greyLabel {{
+    color: #bbbbbb;
+}}
 QPushButton,#FocusLabel {{
     width: 150px;
     background-color:rgba(81, 81, 81, 25%);
@@ -78,7 +89,24 @@ QPushButton:hover {{
     height: 30px;
     border-top: 1px solid rgba(107, 107, 107, 25%);
 }}
-
+#AccentButton{{
+    color: #202020;
+    font-size: 8pt;
+    background-color: rgb({colors[1]});
+    border-color: rgb({colors[1]});
+    border-bottom-color: rgb({colors[2]});
+}}
+#AccentButton:hover{{
+    background-color: rgba({colors[1]}, 80%);
+    border-color: rgb({colors[2]});
+    border-bottom-color: rgb({colors[2]});
+}}
+#AccentButton:pressed{{
+    color: #555555;
+    background-color: rgba({colors[1]}, 80%);
+    border-color: rgb({colors[2]});
+    border-bottom-color: rgb({colors[2]});
+}}
 QLineEdit {{
     background-color: rgba(81, 81, 81, 25%);
     font-family: "Segoe UI Variable Display";
@@ -178,8 +206,9 @@ QTreeWidget::item:selected {{
     outline: none;
     background-color: #77303030;
     height: 25px;
-    border-bottom: 1px solid #393939;
-    border-top: 1px solid #404040;
+    border-bottom: 1px solid #303030;
+    border-top: 1px solid #303030;
+    color: rgb({colors[2]});
 }}
 QTreeWidget::item:hover {{
     margin-top: 2px;
@@ -190,8 +219,8 @@ QTreeWidget::item:hover {{
     outline: none;
     background-color: #88343434;
     height: 25px;
-    border-bottom: 1px solid #393939;
-    border-top: 1px solid #404040;
+    border-bottom: 1px solid #303030;
+    border-top: 1px solid #303030;
 }}
 QTreeWidget::item:first {{
     border-top-left-radius: 6px;
@@ -204,16 +233,16 @@ QTreeWidget::item:last {{
     border-right: 1px solid #1f1f1f;
 }}
 QTreeWidget::item:first:selected {{
-    border-left: 1px solid #393939;
+    border-left: 1px solid #303030;
 }}
 QTreeWidget::item:last:selected {{
-    border-right: 1px solid #393939;
+    border-right: 1px solid #303030;
 }}
 QTreeWidget::item:first:hover {{
-    border-left: 1px solid #393939;
+    border-left: 1px solid #303030;
 }}
 QTreeWidget::item:last:hover {{
-    border-right: 1px solid #393939;
+    border-right: 1px solid #303030;
 }}
 QProgressBar {{
     border-radius: 2px;
@@ -325,6 +354,12 @@ QComboBox QAbstractItemView::item:selected{{
     border: none;
     padding-left: 10px;
     border-radius: 4px;
+}}
+#package {{
+    margin: 15px;
+    background-color: #55303030;
+    border-radius: 8px;
+    border: 1px solid #1f1f1f;
 }}
 """
 

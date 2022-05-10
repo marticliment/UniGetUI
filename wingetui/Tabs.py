@@ -35,7 +35,7 @@ class Uninstall(QtWidgets.QWidget):
         self.programbox = QtWidgets.QWidget()
 
         self.layout = QtWidgets.QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(self.layout)
 
         self.reloadButton = QtWidgets.QPushButton()
@@ -169,44 +169,30 @@ class Uninstall(QtWidgets.QWidget):
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
         
         self.rightSlow = QtCore.QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
         
         self.leftFast = QtCore.QVariantAnimation()
         self.leftFast.setStartValue(0)
-        self.leftFast.setLoopCount(60)
         self.leftFast.setEndValue(1000)
         self.leftFast.setDuration(300)
         self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
         self.rightFast = QtCore.QVariantAnimation()
         self.rightFast.setStartValue(1000)
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
-        Thread(target=self.loadProgressBarLoop, daemon=True).start()
-        
-    
-    def loadProgressBarLoop(self):
-        print("starting")
-        while True:
-            self.startAnim.emit(self.leftSlow)
-            time.sleep(0.7)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.rightSlow)
-            time.sleep(0.7)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.leftFast)
-            time.sleep(0.3)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.rightFast)
-            time.sleep(0.3)
-            self.changeBarOrientation.emit()
+        self.leftSlow.start()
 
     
     def checkIfScoop(self) -> None:
@@ -317,7 +303,7 @@ class Discover(QtWidgets.QWidget):
         self.programbox = QtWidgets.QWidget()
 
         self.layout = QtWidgets.QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(self.layout)
 
         self.reloadButton = QtWidgets.QPushButton()
@@ -343,10 +329,17 @@ class Discover(QtWidgets.QWidget):
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
+        img = QLabel()
+        img.setFixedWidth(96)
+        img.setPixmap(QIcon(Tools.getMedia("store_logo")).pixmap(QSize(80, 80)))
+        hLayout.addWidget(img)
+
+        v = QVBoxLayout()
         self.discoverLabel = QtWidgets.QLabel("Discover packages")
         self.discoverLabel.setStyleSheet("font-size: 40px;")
+        v.addWidget(self.discoverLabel)
 
-        hLayout.addWidget(self.discoverLabel)
+        hLayout.addLayout(v)
         hLayout.addWidget(self.query)
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
@@ -391,10 +384,12 @@ class Discover(QtWidgets.QWidget):
         self.bodyWidget.setLayout(l)
 
 
-        self.countLabel = QtWidgets.QLabel("Fetching file list...")
+        self.countLabel = QtWidgets.QLabel("Searching for packages...")
+        self.countLabel.setObjectName("greyLabel")
+        v.addWidget(self.countLabel)
         layout.addLayout(hLayout)
         layout.setContentsMargins(20, 10, 0, 10)
-        layout.addWidget(self.countLabel)
+        #layout.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.packageList)
         
@@ -448,44 +443,32 @@ class Discover(QtWidgets.QWidget):
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
         
         self.rightSlow = QtCore.QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
         
         self.leftFast = QtCore.QVariantAnimation()
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
         self.leftFast.setDuration(300)
         self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
         self.rightFast = QtCore.QVariantAnimation()
         self.rightFast.setStartValue(1000)
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
-        Thread(target=self.loadProgressBarLoop, daemon=True).start()
+        self.leftSlow.start()
         
     
-    def loadProgressBarLoop(self):
-        print("starting")
-        while True:
-            self.startAnim.emit(self.leftSlow)
-            time.sleep(0.7)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.rightSlow)
-            time.sleep(0.7)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.leftFast)
-            time.sleep(0.3)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.rightFast)
-            time.sleep(0.3)
-            self.changeBarOrientation.emit()
-
     
     def checkIfScoop(self) -> None:
         if(subprocess.call("scooop --version", shell=True) != 0):
@@ -692,9 +675,10 @@ class PackageInstaller(QtWidgets.QGroupBox):
     counterSignal = QtCore.Signal(int)
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId=""):
         super().__init__(parent=parent)
+        self.setMinimumHeight(500)
         self.store = store.lower()
         self.customCommand = customCommand
-        self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
+        self.setObjectName("package")
         self.setFixedHeight(45)
         self.programName = title
         self.packageId = packageId
@@ -1066,7 +1050,8 @@ class Program(QMainWindow):
         self.forceCheckbox.setChecked(False)
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
-        self.installButton.setIcon(QtGui.QIcon(Tools.getMedia("performinstall")))
+        self.installButton.setObjectName("AccentButton")
+        #self.installButton.setIcon(QtGui.QIcon(Tools.getMedia("performinstall")))
         self.installButton.setIconSize(QtCore.QSize(24, 24))
         self.installButton.clicked.connect(self.install)
         self.installButton.setFixedWidth(150)
@@ -1090,13 +1075,13 @@ class Program(QMainWindow):
         self.manifest = QLinkLabel("Manifest: Unknown")
         self.manifest.setWordWrap(True)
         self.layout.addWidget(self.manifest)
-        self.sha = QLinkLabel("Installer SHA256 (Lastest version): Unknown")
+        self.sha = QLinkLabel("Installer SHA256 (Latest version): Unknown")
         self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
-        self.link = QLinkLabel("Installer URL (Lastest version): Unknown")
+        self.link = QLinkLabel("Installer URL (Latest version): Unknown")
         self.link.setWordWrap(True)
         self.layout.addWidget(self.link)
-        self.type = QLinkLabel("Installer type (Lastest version): Unknown")
+        self.type = QLinkLabel("Installer type (Latest version): Unknown")
         self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
         self.storeLabel = QLinkLabel(f"Source: {self.store}")
@@ -1144,44 +1129,30 @@ class Program(QMainWindow):
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
         
         self.rightSlow = QtCore.QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
         
         self.leftFast = QtCore.QVariantAnimation()
         self.leftFast.setStartValue(0)
-        self.leftFast.setLoopCount(60)
         self.leftFast.setEndValue(1000)
         self.leftFast.setDuration(300)
         self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
         self.rightFast = QtCore.QVariantAnimation()
         self.rightFast.setStartValue(1000)
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))#self.setLoadBarValue.emit(v))
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
-        Thread(target=self.loadProgressBarLoop, daemon=True).start()
-        
-    
-    def loadProgressBarLoop(self):
-        print("starting")
-        while True:
-            self.startAnim.emit(self.leftSlow)
-            time.sleep(0.7)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.rightSlow)
-            time.sleep(0.7)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.leftFast)
-            time.sleep(0.3)
-            self.changeBarOrientation.emit()
-            self.startAnim.emit(self.rightFast)
-            time.sleep(0.3)
-            self.changeBarOrientation.emit()
+        self.leftSlow.start()
     
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
@@ -1212,9 +1183,9 @@ class Program(QMainWindow):
         self.publisher.setText("Publisher: "+"Loading...")
         self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"\">{'Loading...'}</a>")
         self.license.setText(f"License: {'Loading...'} (<a style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>)")
-        self.sha.setText(f"Installer SHA256 (Lastest version): {'Loading...'}")
-        self.link.setText(f"Installer URL (Lastest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
-        self.type.setText(f"Installer type (Lastest version): {'Loading...'}")
+        self.sha.setText(f"Installer SHA256 (Latest version): {'Loading...'}")
+        self.link.setText(f"Installer URL (Latest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
+        self.type.setText(f"Installer type (Latest version): {'Loading...'}")
         self.packageId.setText(f"Package ID: {'Loading...'}")
         self.manifest.setText(f"Manifest: {'Loading...'}")
         self.storeLabel.setText(f"Source: {self.store.capitalize()}")
@@ -1239,19 +1210,20 @@ class Program(QMainWindow):
         self.publisher.setText("Publisher: "+appInfo["publisher"])
         self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
         self.license.setText(f"License: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
-        self.sha.setText(f"Installer SHA256 (Lastest version): {appInfo['installer-sha256']}")
-        self.link.setText(f"Installer URL (Lastest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
-        self.type.setText(f"Installer type (Lastest version): {appInfo['installer-type']}")
+        self.sha.setText(f"Installer SHA256 (Latest version): {appInfo['installer-sha256']}")
+        self.link.setText(f"Installer URL (Latest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
+        self.type.setText(f"Installer type (Latest version): {appInfo['installer-type']}")
         self.packageId.setText(f"Package ID: {appInfo['id']}")
         self.manifest.setText(f"Manifest: <a style=\"color: {blueColor};\" href=\"file:///"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
         try:
-            self.versionCombo.addItems(["Lastest"] + appInfo["versions"])
+            self.versionCombo.addItems(["Latest"] + appInfo["versions"])
         except KeyError:
             pass
         for i in range(self.versionCombo.count()):
-            self.versionCombo.setItemIcon(i, QtGui.QIcon(Tools.getMedia("version")))
+            pass
+            #self.versionCombo.setItemIcon(i, QtGui.QIcon(Tools.getMedia("version")))
 
     def install(self):
         title = self.title.text()
@@ -1260,7 +1232,7 @@ class Program(QMainWindow):
         cmdline_args = []
         if(self.forceCheckbox.isChecked()):
             cmdline_args.append("--force")
-        if(self.versionCombo.currentText()=="Lastest"):
+        if(self.versionCombo.currentText()=="Latest"):
             version = []
         else:
             version = ["--version", self.versionCombo.currentText()]
@@ -1275,6 +1247,10 @@ class Program(QMainWindow):
         self.move(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
         print(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
         return super().show()
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.parent().window().activateWindow()
+        return super().mousePressEvent(event)
         
 
 

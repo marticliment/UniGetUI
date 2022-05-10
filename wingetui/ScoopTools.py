@@ -43,9 +43,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
             else:
                 counter += 1
     counter = 0
-    print(output)
     for element in output:
-        print(element)
         try:
             elList = element.split(" ")
             if(len(elList)>=2):
@@ -121,7 +119,6 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             elif("was installed successfully!" in line):
                 counterSignal.emit(6)
             infoSignal.emit(line)
-            print(line)
             if("was installed successfully" in line):
                 outputCode = 0
             elif ("is already installed" in line):
@@ -147,7 +144,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoS
             elif("was uninstalled" in line):
                 counterSignal.emit(6)
             infoSignal.emit(line)
-            print(line)
             if("was uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
