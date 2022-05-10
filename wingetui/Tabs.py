@@ -8,7 +8,6 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 
-
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
@@ -160,7 +159,6 @@ class Uninstall(QtWidgets.QWidget):
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
-        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
             
         Thread(target=self.checkIfScoop, daemon=True)
         
@@ -226,7 +224,6 @@ class Uninstall(QtWidgets.QWidget):
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
-        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
         if(event):
             return super().resizeEvent(event)
 
@@ -236,8 +233,6 @@ class Uninstall(QtWidgets.QWidget):
         item.setText(1, id)
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.IDIcon)
-        #item.setText(2, version)
-        #item.setIcon(2, self.versionIcon)
         item.setIcon(3, self.providerIcon)
         item.setText(3, store)
         self.packageList.addTopLevelItem(item)
@@ -261,10 +256,8 @@ class Uninstall(QtWidgets.QWidget):
            
             if("…" in title):
                 self.addInstallation(PackageUninstaller(title, store, useId=True, packageId=id.replace("…", "")))
-                #self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
             else:
                 self.addInstallation(PackageUninstaller(title, store, packageId=id.replace("…", "")))
-                #self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -280,7 +273,6 @@ class Uninstall(QtWidgets.QWidget):
     
     def addInstallation(self, p) -> None:
         self.layout.addWidget(p)
-        #self.installersScrollArea.show()
 
 class Discover(QtWidgets.QWidget):
 
@@ -298,7 +290,6 @@ class Discover(QtWidgets.QWidget):
         self.wingetLoaded = False
         self.infobox = Program(self)
         self.setStyleSheet("margin: 0px;")
-        #self.infobox.onClose.connect(self.showQuery)
 
         self.programbox = QtWidgets.QWidget()
 
@@ -389,13 +380,11 @@ class Discover(QtWidgets.QWidget):
         v.addWidget(self.countLabel)
         layout.addLayout(hLayout)
         layout.setContentsMargins(20, 10, 0, 10)
-        #layout.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.packageList)
         
         self.programbox.setLayout(l)
         self.layout.addWidget(self.programbox, stretch=1)
-        #self.layout.addWidget(self.infobox, stretch=1)
         self.installersScrollArea = QtWidgets.QScrollArea()
         self.installersScrollArea.setWidgetResizable(True)
         self.installersScrollArea.setFixedHeight(150)
@@ -434,7 +423,6 @@ class Discover(QtWidgets.QWidget):
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
-        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
             
         Thread(target=self.checkIfScoop, daemon=True)
         
@@ -501,7 +489,6 @@ class Discover(QtWidgets.QWidget):
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
-        #self.loadWheel.move(g.x()+g.width()//2-32, g.y()+g.height()//2-32)
         if(event):
             return super().resizeEvent(event)
 
@@ -538,7 +525,6 @@ class Discover(QtWidgets.QWidget):
             self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
         self.infobox.show()
         from win32mica import ApplyMica, MICAMODE
-        #ApplyMica(self.infobox.winId(), MICAMODE.DARK if Tools.isDark() else MICAMODE.LIGHT)
         Tools.ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
     
     def reload(self) -> None:
@@ -555,7 +541,6 @@ class Discover(QtWidgets.QWidget):
     
     def addInstallation(self, p) -> None:
         self.layout.addWidget(p)
-        #self.installersScrollArea.show()
 
 class About(QtWidgets.QScrollArea):
     def __init__(self, parent=None):
@@ -961,7 +946,6 @@ class Program(QMainWindow):
         self.setWindowFlag(Qt.Tool)
         self.setFocusPolicy(Qt.NoFocus)
         self.setWindowFlag(Qt.FramelessWindowHint)
-        #self.setAttribute(Qt.WA_NoBackground, False)
         self.store = ""
         self.sc.setWidgetResizable(True)
         self.setStyleSheet("""
@@ -994,14 +978,10 @@ class Program(QMainWindow):
 
         self.mainGroupBox = QtWidgets.QGroupBox()
 
-        #self.vLayout.addWidget(fortyTopWidget)
-        #self.layout.addWidget(self.loadingProgressBar)
         self.layout.addWidget(self.title)
         self.layout.addStretch()
 
         self.hLayout = QtWidgets.QHBoxLayout()
-        #self.hLayout.addWidget(fortyWidget, stretch=1)
-
         self.description = QtWidgets.QLabel("Description: Unknown")
         self.description.setWordWrap(True)
 
@@ -1051,7 +1031,6 @@ class Program(QMainWindow):
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
         self.installButton.setObjectName("AccentButton")
-        #self.installButton.setIcon(QtGui.QIcon(Tools.getMedia("performinstall")))
         self.installButton.setIconSize(QtCore.QSize(24, 24))
         self.installButton.clicked.connect(self.install)
         self.installButton.setFixedWidth(150)
@@ -1221,9 +1200,6 @@ class Program(QMainWindow):
             self.versionCombo.addItems(["Latest"] + appInfo["versions"])
         except KeyError:
             pass
-        for i in range(self.versionCombo.count()):
-            pass
-            #self.versionCombo.setItemIcon(i, QtGui.QIcon(Tools.getMedia("version")))
 
     def install(self):
         title = self.title.text()
