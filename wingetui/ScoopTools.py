@@ -124,7 +124,6 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             elif ("is already installed" in line):
                 outputCode = 0
             output += line+"\n"
-    print(outputCode)
     closeAndInform.emit(outputCode, output)
 
    
@@ -147,7 +146,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoS
             if("was uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
-    print(outputCode)
     closeAndInform.emit(outputCode, output)
 
 

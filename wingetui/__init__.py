@@ -43,7 +43,6 @@ class MainApplication(QtWidgets.QApplication):
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
                     self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-                print("MICA", r)
                 self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
             
 
@@ -171,6 +170,8 @@ QHeaderView,QAbstractItemView {{
     height: 25px;
     border: 1px solid #1f1f1f;
     margin-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
 }}
 QHeaderView::section {{
     background-color: transparent;
@@ -178,6 +179,15 @@ QHeaderView::section {{
     padding: 4px;
     height: 25px;
     margin: 1px;
+}}
+QHeaderView::section:first {{
+    background-color: transparent;
+    border-radius: 6px;
+    padding: 4px;
+    height: 25px;
+    margin: 1px;
+    margin-left: -20px;
+    padding-left: 30px;
 }}
 QTreeWidget {{
     show-decoration-selected: 0;

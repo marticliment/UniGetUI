@@ -36,7 +36,6 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
                         i += 1
                 counter += 1
     counter = 0
-    print(idSeparator, verSeparator)
     for element in output:
         try:
             element = bytes(element, "utf-8")
