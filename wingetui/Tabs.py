@@ -60,10 +60,17 @@ class Uninstall(QtWidgets.QWidget):
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
+        img = QLabel()
+        img.setFixedWidth(96)
+        img.setPixmap(QIcon(Tools.getMedia("red_trash")).pixmap(QSize(80, 80)))
+        hLayout.addWidget(img)
+
+        v = QVBoxLayout()
         self.discoverLabel = QtWidgets.QLabel("Installed packages")
         self.discoverLabel.setStyleSheet("font-size: 40px;")
+        v.addWidget(self.discoverLabel)
 
-        hLayout.addWidget(self.discoverLabel)
+        hLayout.addLayout(v)
         hLayout.addWidget(self.query)
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
@@ -113,9 +120,10 @@ class Uninstall(QtWidgets.QWidget):
 
 
         self.countLabel = QtWidgets.QLabel("Fetching file list...")
+        self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
         layout.setContentsMargins(20, 10, 0, 10)
-        layout.addWidget(self.countLabel)
+        v.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.packageList)
         self.programbox.setLayout(l)

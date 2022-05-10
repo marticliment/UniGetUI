@@ -47,9 +47,10 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
         try:
             elList = element.split(" ")
             if(len(elList)>=2):
-                if len(elList)==2:
-                    provider = "scoop"
+                if len(elList)==2 or elList[2].replace('[', '').replace(']', '') != " ":
+                    provider = "Scoop"
                 else:
+                    print("aaa",  elList[2].replace('[', '').replace(']', ''), "aaa")
                     provider = f"Scoop ({elList[2].replace('[', '').replace(']', '')} bucket)"
                 signal.emit(elList[0].capitalize(), f"scoop.{elList[0]}", elList[1], provider)
         except IndexError as e:
