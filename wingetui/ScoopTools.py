@@ -58,6 +58,28 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
+def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+    """print("[   OK   ] Starting scoop search...")
+    p = subprocess.Popen(' '.join(["scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    output = []
+    counter = 0
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        if line:
+            if(counter > 1 and not b"---" in line):
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+            else:
+                counter += 1
+    counter = 0
+    for element in output:
+        try:
+            signal.emit(element.split("(")[0].strip().capitalize(), f"scoop.{element.split('(')[0].strip()}", element.split("(")[1].replace(")", "").strip(), "Scoop")
+        except IndexError as e:
+            print("IndexError: "+str(e))
+    print("[   OK   ] Scoop search finished")"""
+    finishSignal.emit("scoop")
+
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     title = title.lower()
     print(f"[   OK   ] Starting get info for title {title}")

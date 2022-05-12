@@ -50,6 +50,43 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     print("[   OK   ] Winget search finished")
     finishSignal.emit("winget")
 
+def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+    print(f"[   OK   ] Starting winget search, winget on {winget}...")
+    p = subprocess.Popen([winget, "upgrade"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    output = []
+    counter = 0
+    idSeparator = 0
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        if line:
+            if(counter > 1):
+                if not b"upgrades available" in line:
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
+            else:
+                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
+                l = l.split("\r")[-1]
+                print(l)
+                if("Id" in l):
+                    idSeparator = len(l.split("Id")[0])
+                    verSeparator = len(l.split("Version")[0])
+                    newVerSeparator = len(l.split("Available")[0])
+                counter += 1
+    counter = 0
+    for element in output:
+        try:
+            element = bytes(element, "utf-8")
+            export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
+            signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
+        except Exception as e:
+            try:
+                element = str(element, "utf-8")
+                signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
+            except Exception as e:
+                print(type(e), str(e))
+    print("[   OK   ] Winget search finished")
+    finishSignal.emit("winget")
+
 def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "uninstall"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)

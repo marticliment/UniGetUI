@@ -366,7 +366,8 @@ QComboBox QAbstractItemView::item:selected{{
     border-radius: 4px;
 }}
 #package {{
-    margin: 15px;
+    margin: 0px;
+    padding: 0px;
     background-color: #55303030;
     border-radius: 8px;
     border: 1px solid #1f1f1f;
