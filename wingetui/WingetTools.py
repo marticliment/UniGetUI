@@ -208,13 +208,9 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
             infoSignal.emit(line)
             counter += 1
             counterSignal.emit(counter)
-            if("failed" in line):
-                outputCode = 1
-            elif ("--force" in line):
-                outputCode = 2
-            elif("-" in line):
-                outputCode = 0
             output += line+"\n"
+    p.wait()
+    outputCode = p.returncode
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
@@ -230,13 +226,9 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoS
             infoSignal.emit(line)
             counter += 1
             counterSignal.emit(counter)
-            if("No installed package found matching input criteria" in line or "failed" in line):
-                outputCode = 1
-            elif ("--force" in line):
-                outputCode = 2
-            elif("-" in line or "Successfully uninstalled" in line):
-                outputCode = 0
             output += line+"\n"
+    p.wait()
+    outputCode = p.returncode
     closeAndInform.emit(outputCode, output)
 
 
