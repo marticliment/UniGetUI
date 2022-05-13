@@ -236,14 +236,15 @@ class Uninstall(QtWidgets.QWidget):
             return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
-        item = QtWidgets.QTreeWidgetItem()
-        item.setText(0, name)
-        item.setText(1, id)
-        item.setIcon(0, self.installIcon)
-        item.setIcon(1, self.IDIcon)
-        item.setIcon(3, self.providerIcon)
-        item.setText(3, store)
-        self.packageList.addTopLevelItem(item)
+        if not "---" in name:
+            item = QtWidgets.QTreeWidgetItem()
+            item.setText(0, name)
+            item.setText(1, id)
+            item.setIcon(0, self.installIcon)
+            item.setIcon(1, self.IDIcon)
+            item.setIcon(3, self.providerIcon)
+            item.setText(3, store)
+            self.packageList.addTopLevelItem(item)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 0)
@@ -506,16 +507,17 @@ class Discover(QtWidgets.QWidget):
             return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
-        item = QtWidgets.QTreeWidgetItem()
-        item.setText(0, name)
-        item.setText(1, id)
-        item.setIcon(0, self.installIcon)
-        item.setIcon(1, self.IDIcon)
-        item.setIcon(2, self.versionIcon)
-        item.setIcon(3, self.providerIcon)
-        item.setText(3, store)
-        item.setText(2, version)
-        self.packageList.addTopLevelItem(item)
+        if not "---" in name:
+            item = QtWidgets.QTreeWidgetItem()
+            item.setText(0, name)
+            item.setText(1, id)
+            item.setIcon(0, self.installIcon)
+            item.setIcon(1, self.IDIcon)
+            item.setIcon(2, self.versionIcon)
+            item.setIcon(3, self.providerIcon)
+            item.setText(3, store)
+            item.setText(2, version)
+            self.packageList.addTopLevelItem(item)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 0)
@@ -779,18 +781,19 @@ class Upgrade(QtWidgets.QWidget):
             return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
-        item = QtWidgets.QTreeWidgetItem()
-        item.setText(0, name)
-        item.setIcon(0, self.installIcon)
-        item.setText(1, id)
-        item.setIcon(1, self.IDIcon)
-        item.setText(2, version)
-        item.setIcon(2, self.versionIcon)
-        item.setText(3, newVersion)
-        item.setIcon(3, self.newVersionIcon)
-        item.setText(4, store)
-        item.setIcon(4, self.providerIcon)
-        self.packageList.addTopLevelItem(item)
+        if not "---" in name:
+            item = QtWidgets.QTreeWidgetItem()
+            item.setText(0, name)
+            item.setIcon(0, self.installIcon)
+            item.setText(1, id)
+            item.setIcon(1, self.IDIcon)
+            item.setText(2, version)
+            item.setIcon(2, self.versionIcon)
+            item.setText(3, newVersion)
+            item.setIcon(3, self.newVersionIcon)
+            item.setText(4, store)
+            item.setIcon(4, self.providerIcon)
+            self.packageList.addTopLevelItem(item)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 0)
@@ -807,8 +810,6 @@ class Upgrade(QtWidgets.QWidget):
         self.infobox.hide()
 
     def update(self, title: str, id: str) -> None:
-        #if(QtWidgets.QMessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes):
-           
             if("…" in title):
                 self.addInstallation(PackageInstaller(title, "winget", useId=True, packageId=id.replace("…", "")))
             else:
