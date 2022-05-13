@@ -947,7 +947,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     counterSignal = QtCore.Signal(int)
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId=""):
         super().__init__(parent=parent)
-        self.finishedInstallation = False
+        self.finishedInstallation = True
         self.setMinimumHeight(500)
         self.store = store.lower()
         self.customCommand = customCommand
@@ -990,6 +990,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     def startInstallation(self) -> None:
         while self.installId != Tools.current_program:
             time.sleep(0.2)
+        self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
             self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
@@ -1016,6 +1017,9 @@ class PackageInstaller(QtWidgets.QGroupBox):
 
     def cancel(self):
         print("[        ] Sending cancel signal...")
+        if not self.finishedInstallation:
+            subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
+            self.finishedInstallation = True
         self.info.setText("Installation canceled by user!")
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText("Close")
@@ -1031,10 +1035,9 @@ class PackageInstaller(QtWidgets.QGroupBox):
         except: pass
         try: self.p.kill()
         except: pass
-        if not self.finishedInstallation:
-            subprocess.Popen("taskkill /im winget.exe /f")
     
     def finish(self, returncode: int, output: str = "") -> None:
+        self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         Tools.removeProgram(self.installId)
         try: self.waitThread.kill()
@@ -1048,7 +1051,6 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 Tools.notify("WingetUI Store", f"{self.programName} was installed successfully!")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
-                self.finishedInstallation = True
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was installed successfully!")
                 self.progressbar.setValue(10)
@@ -1065,7 +1067,6 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.finishedInstallation = True
                 self.progressbar.setValue(10)
                 msgBox = QtWidgets.QMessageBox(self)
                 msgBox.setWindowTitle("WingetUI Store")
@@ -1092,7 +1093,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     counterSignal = QtCore.Signal(int)
     def __init__(self, title: str, store: str, useId=False, packageId=""):
         super().__init__(parent=None)
-        self.finishedInstallation = False
+        self.finishedInstallation = True
         self.store = store.lower()
         self.useId = useId
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
@@ -1132,6 +1133,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     def startUninstallation(self) -> None:
         while self.installId != Tools.current_program:
             time.sleep(0.2)
+        self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
             if self.useId:
@@ -1160,6 +1162,9 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     def cancel(self):
         print("[        ] Sending cancel signal...")
         self.info.setText("Installation canceled by user!")
+        if not self.finishedInstallation:
+            subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
+            self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText("Close")
         self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
@@ -1174,10 +1179,9 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         except: pass
         try: self.p.kill()
         except: pass
-        if not self.finishedInstallation:
-            subprocess.Popen("taskkill /im winget.exe /f")
     
     def finish(self, returncode: int, output: str = "") -> None:
+        self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         Tools.removeProgram(self.installId)
         try: self.waitThread.kill()
@@ -1192,7 +1196,6 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.finishedInstallation = True
                 self.info.setText(f"{self.programName} was uninstalled successfully!")
                 self.progressbar.setValue(10)
                 if(self.store == "powershell"):
@@ -1209,7 +1212,6 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(10)
-                self.finishedInstallation = True
                 msgBox = QtWidgets.QMessageBox(self)
                 msgBox.setWindowTitle("WingetUI Store")
                 if(returncode == 2):
