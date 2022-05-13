@@ -1156,7 +1156,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         self.programName = title
         self.packageId = packageId
         self.layout = QtWidgets.QHBoxLayout()
-        self.label = QtWidgets.QLabel(title+" installation")
+        self.label = QtWidgets.QLabel(title+" Uninstallation")
         self.label.setFixedWidth(230)
         self.layout.addWidget(self.label)
         self.progressbar = QtWidgets.QProgressBar()

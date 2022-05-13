@@ -6,6 +6,7 @@ from PySide2.QtCore import *
 from PySide2.QtWinExtras import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
+from win32mica import ApplyMica, MICAMODE
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -15,10 +16,46 @@ else:
 pending_programs = []
 current_program = ""
 
-if(darkdetect.isDark()):
-    blueColor = "CornflowerBlue"
+def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
+    registry = winreg.ConnectRegistry(None, storage)
+    reg_keypath = aKey
+    try:
+        reg_key = winreg.OpenKey(registry, reg_keypath)
+    except FileNotFoundError as e:
+        return default
+    except Exception as e:
+        print(e)
+        return default
+
+    for i in range(1024):
+        try:
+            value_name, value, _ = winreg.EnumValue(reg_key, i)
+            if value_name == sKey:
+                return value
+        except OSError as e:
+            return default
+        except Exception as e:
+            print(e)
+            return default
+
+def getColors() -> list:
+    colors = ['215,226,228', '160,174,183', '101,116,134', '81,92,107', '69,78,94', '41,47,64', '15,18,36', '239,105,80']
+    string = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent", "AccentPalette", b'\xe9\xd8\xf1\x00\xcb\xb7\xde\x00\x96}\xbd\x00\x82g\xb0\x00gN\x97\x00H4s\x00#\x13K\x00\x88\x17\x98\x00')
+    i = 0
+    j = 0
+    while (i+2)<len(string):
+        colors[j] = f"{string[i]},{string[i+1]},{string[i+2]}"
+        j += 1
+        i += 4
+    return colors
+
+def isDark() -> str:
+    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0
+
+if isDark():
+    blueColor = f"rgb({getColors()[1]})"
 else:
-    blueColor = "blue"
+    blueColor = f"rgb({getColors()[4]})"
 
 app = None
 
@@ -76,9 +113,6 @@ def getIconMode() -> str:
 def getMedia(m: str) -> str:
     return getPath(m+"_"+getIconMode()+".png")
 
-def isDark() -> str:
-    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0
-
 def getint(s: str, fallback: int) -> int:
     try:
         return int(s)
@@ -86,38 +120,6 @@ def getint(s: str, fallback: int) -> int:
         print("can't parse", s)
         return fallback
 
-def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
-    registry = winreg.ConnectRegistry(None, storage)
-    reg_keypath = aKey
-    try:
-        reg_key = winreg.OpenKey(registry, reg_keypath)
-    except FileNotFoundError as e:
-        return default
-    except Exception as e:
-        print(e)
-        return default
-
-    for i in range(1024):
-        try:
-            value_name, value, _ = winreg.EnumValue(reg_key, i)
-            if value_name == sKey:
-                return value
-        except OSError as e:
-            return default
-        except Exception as e:
-            print(e)
-            return default
-
-def getColors() -> list:
-    colors = ['215,226,228', '160,174,183', '101,116,134', '81,92,107', '69,78,94', '41,47,64', '15,18,36', '239,105,80']
-    string = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent", "AccentPalette", b'\xe9\xd8\xf1\x00\xcb\xb7\xde\x00\x96}\xbd\x00\x82g\xb0\x00gN\x97\x00H4s\x00#\x13K\x00\x88\x17\x98\x00')
-    i = 0
-    j = 0
-    while (i+2)<len(string):
-        colors[j] = f"{string[i]},{string[i+1]},{string[i+2]}"
-        j += 1
-        i += 4
-    return colors
 
 
 Thread(target=checkQueue, daemon=True).start()
@@ -170,3 +172,11 @@ def genericInstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, 
             print(line)
     print(p.returncode)
     closeAndInform.emit(p.returncode, output)
+
+
+class MessageBox(QMessageBox):
+    def __init__(self, parent: object = None) -> None:
+        super().__init__(parent)
+        ApplyMica(self.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("QMessageBox{background-color: transparent;}")
+        
