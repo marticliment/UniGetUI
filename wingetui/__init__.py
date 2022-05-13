@@ -80,6 +80,7 @@ QPushButton,#FocusLabel {{
     height: 25px;
     font-size: 10pt;
     border-top: 1px solid rgba(99, 99, 99, 25%);
+    margin: 0px;
 }}
 QPushButton:hover {{
     background-color:rgba(86, 86, 86, 25%);
@@ -260,7 +261,7 @@ QProgressBar {{
     border: 0px;
 }}
 QProgressBar::chunk {{
-    background-color: rgb({colors[4]});
+    background-color: rgb({colors[2]});
     border-radius: 2px;
 }}
 QCheckBox::indicator{{

@@ -208,7 +208,7 @@ class Uninstall(QtWidgets.QWidget):
             print("[   OK   ] Scoop found")
     
     def scoopNotFound(self) -> None:
-        if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+        if(Tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
             self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
 
@@ -261,7 +261,7 @@ class Uninstall(QtWidgets.QWidget):
         self.infobox.hide()
 
     def uninstall(self, title: str, id: str, store: str) -> None:
-        if(QtWidgets.QMessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes):
+        if(Tools.MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.Yes) == Tools.MessageBox.Yes):
            
             if("…" in title):
                 self.addInstallation(PackageUninstaller(title, store, useId=True, packageId=id.replace("…", "")))
@@ -479,7 +479,7 @@ class Discover(QtWidgets.QWidget):
             print("[   OK   ] Scoop found")
     
     def scoopNotFound(self) -> None:
-        if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+        if(Tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
             self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
 
@@ -753,7 +753,7 @@ class Upgrade(QtWidgets.QWidget):
             print("[   OK   ] Scoop found")
     
     def scoopNotFound(self) -> None:
-        if(QtWidgets.QMessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+        if(Tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
             self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
 
@@ -837,11 +837,18 @@ class About(QtWidgets.QScrollArea):
         self.setWidgetResizable(True)
         self.setStyleSheet("margin-left: 0px;")
         self.layout = QtWidgets.QVBoxLayout()
-        self.widget.setLayout(self.layout)
+        w = QWidget()
+        w.setLayout(self.layout)
+        w.setMaximumWidth(1000)
+        l = QHBoxLayout()
+        l.addStretch()
+        l.addWidget(w)
+        l.addStretch()
+        self.widget.setLayout(l)
         self.setWidget(self.widget)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        title = QtWidgets.QLabel("About WingetUI Store v0.4")
+        title = QtWidgets.QLabel("About WingetUI Store 1.0-beta")
         title.setStyleSheet("font-size: 40px;")
 
         self.layout.addWidget(title)
@@ -879,7 +886,7 @@ class About(QtWidgets.QScrollArea):
         button = QtWidgets.QPushButton("About Qt")
         button.setFixedWidth(150)
         button.setFixedHeight(20)
-        button.clicked.connect(lambda: QtWidgets.QMessageBox.aboutQt(self, "WingetUI Store: About Qt"))
+        button.clicked.connect(lambda: Tools.MessageBox.aboutQt(self, "WingetUI Store: About Qt"))
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
         button = QtWidgets.QPushButton("Update/Reinstall WingetUI Store")
@@ -946,6 +953,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
+    changeBarOrientation = QtCore.Signal()
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId=""):
         super().__init__(parent=parent)
         self.finishedInstallation = True
@@ -959,15 +967,17 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.version = version
         self.cmdline_args = args
         self.layout = QtWidgets.QHBoxLayout()
-        self.label = QtWidgets.QLabel(title+" installation")
-        self.label.setFixedWidth(230)
+        self.layout.setContentsMargins(30, 10, 10, 10)
+        self.label = QtWidgets.QLabel(title+" Installation")
         self.layout.addWidget(self.label)
+        self.layout.addSpacing(5)
         self.progressbar = QtWidgets.QProgressBar()
         self.progressbar.setTextVisible(False)
-        self.progressbar.setRange(0, 10)
+        self.progressbar.setRange(0, 1000)
         self.progressbar.setValue(0)
-        self.progressbar.setFixedHeight(6)
-        self.layout.addWidget(self.progressbar)
+        self.progressbar.setFixedHeight(4)
+        self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
+        self.layout.addWidget(self.progressbar, stretch=1)
         self.info = QtWidgets.QLineEdit()
         self.info.setText("Waiting for other installations to finish...")
         self.info.setReadOnly(True)
@@ -977,11 +987,44 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.counterSignal.connect(self.counter)
         self.cancelButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/cancel.png"), "Cancel")
         self.cancelButton.clicked.connect(self.cancel)
+        self.cancelButton.setFixedHeight(30)
+        self.info.setFixedHeight(30)
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
         self.canceled = False
         self.installId = str(time.time())
         Tools.queueProgram(self.installId)
+        
+        self.leftSlow = QtCore.QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(900)
+        self.leftSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.rightSlow = QtCore.QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(900)
+        self.rightSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+        
+        self.leftFast = QtCore.QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QtCore.QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.leftSlow.start()
+
         self.waitThread = Tools.KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
         print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
@@ -993,6 +1036,12 @@ class PackageInstaller(QtWidgets.QGroupBox):
             time.sleep(0.2)
         self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
+        self.leftSlow.stop()
+        self.leftFast.stop()
+        self.rightSlow.stop()
+        self.rightFast.stop()
+        self.progressbar.setValue(0)
+        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store == "winget"):
             self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
@@ -1009,14 +1058,18 @@ class PackageInstaller(QtWidgets.QGroupBox):
     
     def counter(self, line: int) -> None:
         if(line == 1):
-            self.progressbar.setValue(1)
+            self.progressbar.setValue(250)
         if(line == 4):
-            self.progressbar.setValue(4)
+            self.progressbar.setValue(500)
         elif(line == 6):
             self.cancelButton.setEnabled(False)
-            self.progressbar.setValue(7)
+            self.progressbar.setValue(750)
 
     def cancel(self):
+        self.leftSlow.stop()
+        self.leftFast.stop()
+        self.rightSlow.stop()
+        self.rightFast.stop()
         print("[        ] Sending cancel signal...")
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
@@ -1027,7 +1080,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
-        self.progressbar.setValue(0)
+        self.progressbar.setValue(1000)
         self.canceled=True
         Tools.removeProgram(self.installId)
         try: self.waitThread.kill()
@@ -1054,22 +1107,22 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was installed successfully!")
-                self.progressbar.setValue(10)
+                self.progressbar.setValue(1000)
                 if(self.store == "powershell"):
-                    msgBox = QtWidgets.QMessageBox(self)
+                    msgBox = Tools.MessageBox(self)
                     msgBox.setWindowTitle("WingetUI Store")
                     msgBox.setText(f"{self.programName} was installed successfully.")
                     msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
-                    msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                    msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
-                    msgBox.setIcon(QtWidgets.QMessageBox.Information)
+                    msgBox.setStandardButtons(Tools.MessageBox.Ok)
+                    msgBox.setDefaultButton(Tools.MessageBox.Ok)
+                    msgBox.setIcon(Tools.MessageBox.Information)
                     msgBox.exec_()
             else:
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.progressbar.setValue(10)
-                msgBox = QtWidgets.QMessageBox(self)
+                self.progressbar.setValue(1000)
+                msgBox = Tools.MessageBox(self)
                 msgBox.setWindowTitle("WingetUI Store")
                 if(returncode == 2):
                     Tools.notify("WingetUI Store", f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
@@ -1081,9 +1134,9 @@ class PackageInstaller(QtWidgets.QGroupBox):
                     msgBox.setText(f"An error occurred while installing {self.programName}")
                 msgBox.setInformativeText("Click \"Show Details\" to get the output of the installer.")
                 msgBox.setDetailedText(output)
-                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
-                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setStandardButtons(Tools.MessageBox.Ok)
+                msgBox.setDefaultButton(Tools.MessageBox.Ok)
+                msgBox.setIcon(Tools.MessageBox.Warning)
                 msgBox.exec_()
 
 class PackageUninstaller(QtWidgets.QGroupBox):
@@ -1092,6 +1145,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
+    changeBarOrientation = QtCore.Signal()
     def __init__(self, title: str, store: str, useId=False, packageId=""):
         super().__init__(parent=None)
         self.finishedInstallation = True
@@ -1107,9 +1161,10 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         self.layout.addWidget(self.label)
         self.progressbar = QtWidgets.QProgressBar()
         self.progressbar.setTextVisible(False)
-        self.progressbar.setRange(0, 10)
+        self.progressbar.setRange(0, 1000)
         self.progressbar.setValue(0)
-        self.progressbar.setFixedHeight(6)
+        self.progressbar.setFixedHeight(4)
+        self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
         self.layout.addWidget(self.progressbar)
         self.info = QtWidgets.QLineEdit()
         self.info.setText("Waiting for other installations to finish...")
@@ -1119,6 +1174,8 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         self.layout.addWidget(self.info)
         self.counterSignal.connect(self.counter)
         self.cancelButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/cancel.png"), "Cancel")
+        self.cancelButton.setFixedHeight(30)
+        self.info.setFixedHeight(30)
         self.cancelButton.clicked.connect(self.cancel)
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
@@ -1127,6 +1184,36 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         Tools.queueProgram(self.installId)
         self.waitThread = Tools.KillableThread(target=self.startUninstallation, daemon=True)
         self.waitThread.start()
+        self.leftSlow = QtCore.QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(900)
+        self.leftSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.rightSlow = QtCore.QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(900)
+        self.rightSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+        
+        self.leftFast = QtCore.QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QtCore.QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.leftSlow.start()
+        
         print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
         
 
@@ -1134,6 +1221,12 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     def startUninstallation(self) -> None:
         while self.installId != Tools.current_program:
             time.sleep(0.2)
+        self.leftSlow.stop()
+        self.leftFast.stop()
+        self.rightSlow.stop()
+        self.rightFast.stop()
+        self.progressbar.setValue(0)
+        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
@@ -1153,15 +1246,19 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     
     def counter(self, line: int) -> None:
         if(line == 1):
-            self.progressbar.setValue(1)
+            self.progressbar.setValue(250)
         if(line == 4):
-            self.progressbar.setValue(4)
+            self.progressbar.setValue(500)
         elif(line == 6):
             self.cancelButton.setEnabled(False)
-            self.progressbar.setValue(7)
+            self.progressbar.setValue(750)
 
     def cancel(self):
         print("[        ] Sending cancel signal...")
+        self.leftSlow.stop()
+        self.leftFast.stop()
+        self.rightSlow.stop()
+        self.rightFast.stop()
         self.info.setText("Installation canceled by user!")
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
@@ -1171,7 +1268,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
-        self.progressbar.setValue(0)
+        self.progressbar.setValue(1000)
         self.canceled=True
         Tools.removeProgram(self.installId)
         try: self.waitThread.kill()
@@ -1198,22 +1295,22 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was uninstalled successfully!")
-                self.progressbar.setValue(10)
+                self.progressbar.setValue(1000)
                 if(self.store == "powershell"):
-                    msgBox = QtWidgets.QMessageBox(self)
+                    msgBox = Tools.MessageBox(self)
                     msgBox.setWindowTitle("WingetUI Store")
                     msgBox.setText(f"{self.programName} was uninstalled successfully.")
                     msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
-                    msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                    msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
-                    msgBox.setIcon(QtWidgets.QMessageBox.Information)
+                    msgBox.setStandardButtons(Tools.MessageBox.Ok)
+                    msgBox.setDefaultButton(Tools.MessageBox.Ok)
+                    msgBox.setIcon(Tools.MessageBox.Information)
                     msgBox.exec_()
             else:
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.progressbar.setValue(10)
-                msgBox = QtWidgets.QMessageBox(self)
+                self.progressbar.setValue(1000)
+                msgBox = Tools.MessageBox(self)
                 msgBox.setWindowTitle("WingetUI Store")
                 if(returncode == 2):
                     Tools.notify("WingetUI Store", f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
@@ -1225,9 +1322,9 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                     msgBox.setText(f"An error occurred while uninstalling {self.programName}")
                 msgBox.setInformativeText("Click \"Show Details\" to get the output of the uninstaller.")
                 msgBox.setDetailedText(output)
-                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
-                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setStandardButtons(Tools.MessageBox.Ok)
+                msgBox.setDefaultButton(Tools.MessageBox.Ok)
+                msgBox.setIcon(Tools.MessageBox.Warning)
                 msgBox.exec_()
 
 class Program(QMainWindow):
@@ -1445,10 +1542,7 @@ class Program(QMainWindow):
     def loadProgram(self, title: str, id: str, goodTitle: bool, store: str) -> None:
         self.store = store
         store = store.lower()
-        if(darkdetect.isDark()):
-            blueColor = "rgb("+Tools.getColors()[2]+")"
-        else:
-            blueColor = "blue"
+        blueColor = Tools.blueColor
         if(goodTitle):
             self.title.setText(title)
         else:
@@ -1476,10 +1570,7 @@ class Program(QMainWindow):
             Thread(target=ScoopTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
-        if(darkdetect.isDark()):
-            blueColor = "rgb("+Tools.getColors()[2]+")"
-        else:
-            blueColor = "blue"
+        blueColor = Tools.blueColor
         self.loadingProgressBar.hide()
         if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)

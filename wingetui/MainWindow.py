@@ -30,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """)
 
         if(self.isAdmin()):
-            QtWidgets.QMessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
+            Tools.MessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:
@@ -93,7 +93,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         if(Tools.pending_programs != []):
-            if(QtWidgets.QMessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI Store, the installation may fail and have unexpected results. Do you still want to close the application?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes):
+            if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI Store, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
                 event.accept()
             else:
                 event.ignore()
