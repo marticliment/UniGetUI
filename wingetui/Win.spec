@@ -4,15 +4,15 @@ block_cipher = None
 
 import importlib, os
 
-package_imports = [['qtmodern', ['resources/frameless.qss', 'resources/style.qss']]]
+#package_imports = [['qtmodern', ['resources/frameless.qss', 'resources/style.qss']]]
 
 
 
 a = Analysis(['__init__.py'],
              pathex=['Y:\WingetUI-Store\wingetui'],
              binaries=[('MainWindow.py', '.'), ('Tabs.py', '.'), ('Tools.py', '.'), ('WingetTools.py', '.'), ('ScoopTools.py', '.')],
-             datas=[('*.png', '.'), ('*.gif', '.'), ('*.ico', '.'), ('*.cmd', '.'), ("winget-cli/", "winget-cli/")],
-             hiddenimports=['pkg_resources.py2_warn', "darkdetect", "qtmodern",],
+             datas=[('*.png', '.'), ('*.ico', '.'), ('*.cmd', '.'), ("winget-cli/", "winget-cli/")],
+             hiddenimports=['pkg_resources.py2_warn'],
              hookspath=[],
              runtime_hooks=[],
              excludes=['eel', 'tkinter', "PyQt5"],
@@ -22,8 +22,8 @@ a = Analysis(['__init__.py'],
              noarchive=False)
 
 
-a.datas += [('./qtmodern/resources/frameless.qss', f'qtmodern/frameless.qss', "DATA")]
-a.datas += [('./qtmodern/resources/style.qss', f'qtmodern/style.qss', "DATA")]
+#a.datas += [('./qtmodern/resources/frameless.qss', f'qtmodern/frameless.qss', "DATA")]
+#a.datas += [('./qtmodern/resources/style.qss', f'qtmodern/style.qss', "DATA")]
 
 
 pyz = PYZ(a.pure, a.zipped_data,
@@ -34,7 +34,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='WingetUI Store',
+          name='WingetUI',
           icon="icon.ico",
           debug=False,
           bootloader_ignore_signals=False,

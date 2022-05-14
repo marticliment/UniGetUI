@@ -1,6 +1,6 @@
 from posixpath import relpath
 from PySide2 import QtWidgets, QtCore, QtGui
-import WingetTools, ScoopTools, darkdetect, sys, Tools, subprocess, time, os
+import WingetTools, ScoopTools, sys, Tools, subprocess, time, os
 from threading import Thread
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import *
@@ -898,8 +898,6 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QtWidgets.QLabel())
         self.layout.addWidget(QLinkLabel(f"PySide2:&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
-        self.layout.addWidget(QLinkLabel(f"DarkDetect:&nbsp;&nbsp;&nbsp;&nbsp;Copyright (c) 2019, Alberto Sottile:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/albertosottile/darkdetect/blob/master/LICENSE\">https://github.com/albertosottile/darkdetect/blob/master/LICENSE</a>"))
-        self.layout.addWidget(QLinkLabel(f"QtModren:&nbsp;&nbsp;&nbsp;&nbsp;MIT License:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/gmarull/qtmodern/blob/master/LICENSE\">https://github.com/gmarull/qtmodern/blob/master/LICENSE</a>"))
         self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;Python Software Foundation License Agreement:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
         self.layout.addWidget(QLinkLabel())
         self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;MIT License:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
@@ -1526,7 +1524,7 @@ class Program(QMainWindow):
 
         self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setLayout(self.hLayout)
-        if(darkdetect.isDark()):
+        if(Tools.isDark()):
             print("[        ] Is Dark")
         self.sc.setWidget(self.centralwidget)
         self.setCentralWidget(self.sc)

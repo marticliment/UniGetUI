@@ -1,7 +1,7 @@
 import winreg
 from PySide2 import QtCore
 from threading import Thread
-import sys, time, subprocess, os, darkdetect
+import sys, time, subprocess, os
 from PySide2.QtCore import *
 from PySide2.QtWinExtras import *
 from PySide2.QtGui import *

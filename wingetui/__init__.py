@@ -1,7 +1,7 @@
 import hashlib
 import socket
 import subprocess
-import sys, os, darkdetect, qtmodern.styles, win32mica
+import sys, os, win32mica
 import time
 from threading import Thread
 from tempfile import tempdir

@@ -1,13 +1,13 @@
-del "WingetUI Store.exe"
+del "WingetUI.exe"
 cd wingetui
 rmdir /Q /S build
 rmdir /Q /S dist
 python -m PyInstaller "Win.spec"
 cd dist
-move "WingetUI Store.exe" ../../
+move "WingetUI.exe" ../../
 cd ..
 rmdir /Q /S build
 rmdir /Q /S dist
 cd ..
-"WingetUI Store"
+"WingetUI"
 pause
