@@ -873,7 +873,7 @@ class About(QtWidgets.QScrollArea):
         self.setWidget(self.widget)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        title = QtWidgets.QLabel("About WingetUI Store "+str(Tools.version))
+        title = QtWidgets.QLabel("About WingetUI "+str(Tools.version))
         title.setStyleSheet("font-size: 40px;")
 
         self.layout.addWidget(title)
@@ -895,7 +895,7 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 25px;"))
         self.layout.addWidget(QtWidgets.QLabel())
-        self.layout.addWidget(QLinkLabel(f"WingetUI Store:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QtWidgets.QLabel())
         self.layout.addWidget(QLinkLabel(f"PySide2:&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
         self.layout.addWidget(QLinkLabel(f"DarkDetect:&nbsp;&nbsp;&nbsp;&nbsp;Copyright (c) 2019, Alberto Sottile:&nbsp;&nbsp;<a style=\"color: {Tools.blueColor};\" href=\"https://github.com/albertosottile/darkdetect/blob/master/LICENSE\">https://github.com/albertosottile/darkdetect/blob/master/LICENSE</a>"))
@@ -911,13 +911,13 @@ class About(QtWidgets.QScrollArea):
         button = QtWidgets.QPushButton("About Qt")
         button.setFixedWidth(150)
         button.setFixedHeight(20)
-        button.clicked.connect(lambda: Tools.MessageBox.aboutQt(self, "WingetUI Store: About Qt"))
+        button.clicked.connect(lambda: Tools.MessageBox.aboutQt(self, "WingetUI: About Qt"))
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
-        button = QtWidgets.QPushButton("Update/Reinstall WingetUI Store")
+        button = QtWidgets.QPushButton("Update/Reinstall WingetUI")
         button.setFixedWidth(250)
         button.setFixedHeight(20)
-        button.clicked.connect(lambda: self.layout.addWidget(PackageInstaller("WingetUI Store", "winget")))
+        button.clicked.connect(lambda: self.layout.addWidget(PackageInstaller("WingetUI", "winget")))
         self.layout.addWidget(button)
         self.layout.addWidget(QtWidgets.QWidget(), stretch=1)
     
@@ -1127,7 +1127,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                Tools.notify("WingetUI Store", f"{self.programName} was installed successfully!")
+                Tools.notify("WingetUI", f"{self.programName} was installed successfully!")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
@@ -1135,7 +1135,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.progressbar.setValue(1000)
                 if(self.store == "powershell"):
                     msgBox = Tools.MessageBox(self)
-                    msgBox.setWindowTitle("WingetUI Store")
+                    msgBox.setWindowTitle("WingetUI")
                     msgBox.setText(f"{self.programName} was installed successfully.")
                     msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
                     msgBox.setStandardButtons(Tools.MessageBox.Ok)
@@ -1148,13 +1148,13 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
                 msgBox = Tools.MessageBox(self)
-                msgBox.setWindowTitle("WingetUI Store")
+                msgBox.setWindowTitle("WingetUI")
                 if(returncode == 2):
-                    Tools.notify("WingetUI Store", f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
+                    Tools.notify("WingetUI", f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
                     self.info.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
                     msgBox.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
                 else:
-                    Tools.notify("WingetUI Store", f"An error occurred while installing {self.programName}")
+                    Tools.notify("WingetUI", f"An error occurred while installing {self.programName}")
                     self.info.setText(f"An error occurred during {self.programName} installation!")
                     msgBox.setText(f"An error occurred while installing {self.programName}")
                 msgBox.setInformativeText("Click \"Show Details\" to get the output of the installer.")
@@ -1341,7 +1341,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                Tools.notify("WingetUI Store", f"{self.programName} was uninstalled successfully!")
+                Tools.notify("WingetUI", f"{self.programName} was uninstalled successfully!")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
@@ -1349,7 +1349,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                 self.progressbar.setValue(1000)
                 if(self.store == "powershell"):
                     msgBox = Tools.MessageBox(self)
-                    msgBox.setWindowTitle("WingetUI Store")
+                    msgBox.setWindowTitle("WingetUI")
                     msgBox.setText(f"{self.programName} was uninstalled successfully.")
                     msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
                     msgBox.setStandardButtons(Tools.MessageBox.Ok)
@@ -1362,13 +1362,13 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
                 msgBox = Tools.MessageBox(self)
-                msgBox.setWindowTitle("WingetUI Store")
+                msgBox.setWindowTitle("WingetUI")
                 if(returncode == 2):
-                    Tools.notify("WingetUI Store", f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
+                    Tools.notify("WingetUI", f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
                     self.info.setText(f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
                     msgBox.setText(f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
                 else:
-                    Tools.notify("WingetUI Store", f"An error occurred while uninstalling {self.programName}")
+                    Tools.notify("WingetUI", f"An error occurred while uninstalling {self.programName}")
                     self.info.setText(f"An error occurred during {self.programName} uninstallation!")
                     msgBox.setText(f"An error occurred while uninstalling {self.programName}")
                 msgBox.setInformativeText("Click \"Show Details\" to get the output of the uninstaller.")

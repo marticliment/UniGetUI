@@ -12,7 +12,7 @@ else:
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setWindowTitle("WingetUI Store: A GUI Store for Winget and Scoop packages")
+        self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
         self.setWindowIcon(QtGui.QIcon(realpath+"/icon.png"))
@@ -93,7 +93,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         if(Tools.pending_programs != []):
-            if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI Store, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
+            if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
                 event.accept()
             else:
                 event.ignore()

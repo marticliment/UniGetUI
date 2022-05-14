@@ -36,7 +36,7 @@ class MainApplication(QtWidgets.QApplication):
 
             Tools.registerApplication(self)
             self.trayIcon.setIcon(QtGui.QIcon(realpath+"/icon.png"))
-            self.trayIcon.setToolTip("WingetUI Store")
+            self.trayIcon.setToolTip("WingetUI")
             self.trayIcon.setVisible(True)
             if(not Tools.isDark()):
                 self.setStyle("fusion")
@@ -70,7 +70,7 @@ class MainApplication(QtWidgets.QApplication):
                         if float(new_version_number) > Tools.version:
                             print("🟢 Updates found!")
                             if(integrityPass):
-                                url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Store.Installer.exe"
+                                url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
                                 filedata = urlopen(url)
                                 datatowrite = filedata.read()
                                 filename = ""
