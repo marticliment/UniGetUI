@@ -12,7 +12,7 @@ common_params = ["--source", "winget", "--accept-source-agreements"]
 winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 #winget = "winget"
 
-def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "search", ""] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -35,24 +35,29 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
                         verSeparator += 1
                         i += 1
                 counter += 1
-    counter = 0
-    for element in output:
-        try:
-            element = bytes(element, "utf-8")
-            export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
-            signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
-        except Exception as e:
+    if p.returncode != 0 and not noretry:
+        time.sleep(1)
+        print(p.returncode)
+        searchForPackage(signal, finishSignal, noretry=True)
+    else:
+        counter = 0
+        for element in output:
             try:
-                element = str(element, "utf-8")
-                signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
+                element = bytes(element, "utf-8")
+                export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
+                signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
             except Exception as e:
-                print(type(e), str(e))
-            except Exception as e:
-                print(e)
-    print("[   OK   ] Winget search finished")
-    finishSignal.emit("winget")
+                try:
+                    element = str(element, "utf-8")
+                    signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
+                except Exception as e:
+                    print(type(e), str(e))
+                except Exception as e:
+                    print(e)
+        print("[   OK   ] Winget search finished")
+        finishSignal.emit("winget")
 
-def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "upgrade"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -74,22 +79,28 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
                     verSeparator = len(l.split("Version")[0])
                     newVerSeparator = len(l.split("Available")[0])
                 counter += 1
-    counter = 0
-    for element in output:
-        try:
-            element = bytes(element, "utf-8")
-            export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
-            signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
-        except Exception as e:
+    
+    if p.returncode != 0 and not noretry:
+        time.sleep(1)
+        print(p.returncode)
+        searchForUpdates(signal, finishSignal, noretry=True)
+    else:
+        counter = 0
+        for element in output:
             try:
-                element = str(element, "utf-8")
-                signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
+                element = bytes(element, "utf-8")
+                export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
+                signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
             except Exception as e:
-                print(type(e), str(e))
-            except Exception as e:
-                print(e)
-    print("[   OK   ] Winget search finished")
-    finishSignal.emit("winget")
+                try:
+                    element = str(element, "utf-8")
+                    signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
+                except Exception as e:
+                    print(type(e), str(e))
+                except Exception as e:
+                    print(e)
+        print("[   OK   ] Winget search finished")
+        finishSignal.emit("winget")
 
 def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
