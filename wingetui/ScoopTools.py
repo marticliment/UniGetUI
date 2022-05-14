@@ -83,7 +83,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     title = title.lower()
     print(f"[   OK   ] Starting get info for title {title}")
-    p = subprocess.Popen(' '.join(["scoop", "info", f"{title}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     appInfo = {
         "title": title,
@@ -96,7 +96,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         "license-url": "Unknown",
         "installer-sha256": "Unknown",
         "installer-url": "Unknown",
-        "installer-type": "Unknown",
+        "installer-type": "Scoop shim",
         "manifest": "Unknown",
         "versions": [],
     }
@@ -108,22 +108,43 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     manifest = False
     version = ""
     for line in output:
-        if("Description:" in line):
-            appInfo["description"] = line.replace("Description:", "").strip()
-        elif("Website:" in line):
-            appInfo["homepage"] = line.replace("Website:", "").strip()
-        elif("Version:" in line):
-            version = line.replace("Version:", "").strip()
-        elif("License:" in line):
-            appInfo["license"] = line.replace("License:", "").strip().split("(")[0].strip()
-            appInfo["license-url"] = line.replace("License:", "").strip().split("(")[1].strip().replace(")", "")
-        elif("Manifest:" in line):
-            manifest = True # This is because manifest path is in the following line.
-        elif(manifest):
-            manifest = False
-            appInfo["manifest"] = line.strip()
+        print(line)
+        if("Description" in line):
+            appInfo["description"] = line.replace("Description", "").strip()[1:].strip()
+        elif("Website" in line):
+            appInfo["homepage"] = line.replace("Website", "").strip()[1:].strip()
+        elif("Version" in line):
+            version = line.replace("Version", "").strip()[1:].strip()
+        elif("Updated by" in line):
+            appInfo["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
+            appInfo["author"] = line.replace("Updated by", "").strip()[1:].strip()
+        elif("License" in line):
+            appInfo["license"] = line.replace("License", "").strip()[1:].strip().split("(")[0].strip()
+            try:
+                appInfo["license-url"] = line.replace("License", "").strip()[1:].strip().split("(")[1].strip().replace(")", "")
+            except IndexError:
+                pass
+        elif("Manifest" in line):
+            print("ok")
+            appInfo["manifest"] = line.replace("Manifest", "").strip()[1:].strip()
+            try:
+                print("ok")
+                mfest = open(appInfo["manifest"])
+                import json
+                data = json.load(mfest)
+                print("ok")
+                try:
+                    appInfo["installer-url"] = data["url"]
+                    appInfo["installer-sha256"] = data["hash"]
+                except KeyError:
+                    appInfo["installer-url"] = data["architecture"]["64bit"]["url"]
+                    appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
+                appInfo["installer-type"] = "Scoop package"
+            except Exception as e:
+                print(type(e), e)
     print(f"[  INFO  ] Scoop does not support specific version installs")
     appInfo["versions"] = [version]
+    appInfo["title"] = appInfo["title"].capitalize()
     signal.emit(appInfo)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
