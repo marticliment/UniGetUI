@@ -47,6 +47,8 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
             except Exception as e:
                 print(type(e), str(e))
+            except Exception as e:
+                print(e)
     print("[   OK   ] Winget search finished")
     finishSignal.emit("winget")
 
@@ -84,6 +86,8 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
             except Exception as e:
                 print(type(e), str(e))
+            except Exception as e:
+                print(e)
     print("[   OK   ] Winget search finished")
     finishSignal.emit("winget")
 
@@ -119,6 +123,8 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
             except Exception as e:
                 print(type(e), str(e))
+            except Exception as e:
+                print(e)
     print("[   OK   ] Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 

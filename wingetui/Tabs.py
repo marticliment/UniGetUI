@@ -810,10 +810,17 @@ class Upgrade(QtWidgets.QWidget):
         self.infobox.hide()
 
     def update(self, title: str, id: str) -> None:
+        if not "scoop" in id:
             if("…" in title):
-                self.addInstallation(PackageInstaller(title, "winget", useId=True, packageId=id.replace("…", "")))
+                self.addInstallation(PackageUpdater(title, "winget", useId=True, packageId=id.replace("…", "")))
             else:
-                self.addInstallation(PackageInstaller(title, "winget", packageId=id.replace("…", "")))
+                self.addInstallation(PackageUpdater(title, "winget", packageId=id.replace("…", "")))
+        else:
+            if("…" in title):
+                self.addInstallation(PackageUpdater(title, "scoop", useId=True, packageId=id.replace("…", "")))
+            else:
+                self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", "")))
+
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -1138,6 +1145,32 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 msgBox.setDefaultButton(Tools.MessageBox.Ok)
                 msgBox.setIcon(Tools.MessageBox.Warning)
                 msgBox.exec_()
+
+class PackageUpdater(PackageInstaller):
+    
+    def startInstallation(self) -> None:
+        while self.installId != Tools.current_program:
+            time.sleep(0.2)
+        self.finishedInstallation = False
+        print("[   OK   ] Have permission to install, starting installation threads...")
+        self.leftSlow.stop()
+        self.leftFast.stop()
+        self.rightSlow.stop()
+        self.rightFast.stop()
+        self.progressbar.setValue(0)
+        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
+        if(self.store == "winget"):
+            self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+        elif(self.store == "scoop"):
+            self.p = subprocess.Popen(' '.join(["scoop", "update", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+        else:
+            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.t = Tools.KillableThread(target=Tools.genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
 
 class PackageUninstaller(QtWidgets.QGroupBox):
     onCancel = QtCore.Signal()

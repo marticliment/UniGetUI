@@ -55,12 +55,14 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
                 signal.emit(elList[0].capitalize(), f"scoop.{elList[0]}", elList[1], provider)
         except IndexError as e:
             print("IndexError: "+str(e))
+        except Exception as e:
+            print(e)
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
 def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
-    """print("[   OK   ] Starting scoop search...")
-    p = subprocess.Popen(' '.join(["scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    print("[   OK   ] Starting scoop search...")
+    p = subprocess.Popen(' '.join(["scoop", "status"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -68,16 +70,19 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         line = line.strip()
         if line:
             if(counter > 1 and not b"---" in line):
-                output.append(str(line, encoding='utf-8', errors="ignore"))
+                if b"->" in line:
+                    output.append(str(line, encoding='utf-8', errors="ignore").strip())
             else:
                 counter += 1
     counter = 0
     for element in output:
         try:
-            signal.emit(element.split("(")[0].strip().capitalize(), f"scoop.{element.split('(')[0].strip()}", element.split("(")[1].replace(")", "").strip(), "Scoop")
+            signal.emit(element.split(":")[0].strip().capitalize(), f"scoop.{element.split(':')[0].strip()}", element.split(":")[1].strip().split("->")[0].strip(), element.split(":")[1].strip().split("->")[1].strip(), "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
-    print("[   OK   ] Scoop search finished")"""
+        except Exception as e:
+            print(e)
+    print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
