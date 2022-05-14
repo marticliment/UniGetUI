@@ -5,7 +5,9 @@ wingetui/dist/
 wingetui/winget-cli.old/
 "WingetUI Store.exe"
 WingetUI Store Installer.exe
+WingetUI Installer.exe
 WingetUI Store.exe
+WingetUI.exe
 installer.iss
 Output/
 *.old
