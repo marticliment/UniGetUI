@@ -88,7 +88,7 @@ class Uninstall(QtWidgets.QWidget):
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = QtWidgets.QTreeWidget()
+        self.packageList = Tools.TreeWidget("a")
         self.packageList.setIconSize(QtCore.QSize(24, 24))
         self.packageList.setColumnCount(4)
         self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "Installation source"])
@@ -128,7 +128,8 @@ class Uninstall(QtWidgets.QWidget):
         self.bodyWidget.setLayout(l)
 
 
-        self.countLabel = QtWidgets.QLabel("Fetching file list...")
+        self.countLabel = QtWidgets.QLabel("Searching for installed packages...")
+        self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
         layout.setContentsMargins(20, 10, 0, 10)
@@ -215,12 +216,14 @@ class Uninstall(QtWidgets.QWidget):
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
@@ -228,6 +231,7 @@ class Uninstall(QtWidgets.QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.packageList.label.setText(self.countLabel.text())
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -277,6 +281,8 @@ class Uninstall(QtWidgets.QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
+        self.countLabel.setText("Searching for installed packages...")
+        self.packageList.label.setText(self.countLabel.text())
         Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
@@ -360,7 +366,7 @@ class Discover(QtWidgets.QWidget):
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = QtWidgets.QTreeWidget()
+        self.packageList = Tools.TreeWidget("a")
         self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
         self.packageList.setColumnCount(4)
         self.packageList.setColumnWidth(0, 300)
@@ -398,6 +404,7 @@ class Discover(QtWidgets.QWidget):
 
 
         self.countLabel = QtWidgets.QLabel("Searching for packages...")
+        self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         v.addWidget(self.countLabel)
         layout.addLayout(hLayout)
@@ -486,12 +493,14 @@ class Discover(QtWidgets.QWidget):
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
@@ -499,6 +508,7 @@ class Discover(QtWidgets.QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.packageList.label.setText(self.countLabel.text())
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -551,6 +561,8 @@ class Discover(QtWidgets.QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
+        self.countLabel.setText("Searching for packages...")
+        self.packageList.label.setText(self.countLabel.text())
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
@@ -632,7 +644,7 @@ class Upgrade(QtWidgets.QWidget):
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = QtWidgets.QTreeWidget()
+        self.packageList = Tools.TreeWidget("a")
         self.packageList.setIconSize(QtCore.QSize(24, 24))
         self.packageList.setColumnCount(5)
         self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "New Version", "Installation source"])
@@ -673,6 +685,7 @@ class Upgrade(QtWidgets.QWidget):
 
 
         self.countLabel = QtWidgets.QLabel("Checking for updates...")
+        self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
         layout.setContentsMargins(20, 10, 0, 10)
@@ -760,12 +773,14 @@ class Upgrade(QtWidgets.QWidget):
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
@@ -773,6 +788,7 @@ class Upgrade(QtWidgets.QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.packageList.label.setText(self.countLabel.text())
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -831,6 +847,8 @@ class Upgrade(QtWidgets.QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
+        self.countLabel.setText("Checking for updates...")
+        self.packageList.label.setText(self.countLabel.text())
         Thread(target=WingetTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
     
@@ -855,7 +873,7 @@ class About(QtWidgets.QScrollArea):
         self.setWidget(self.widget)
         self.layout.addWidget(QtWidgets.QLabel())
 
-        title = QtWidgets.QLabel("About WingetUI Store 1.0-beta")
+        title = QtWidgets.QLabel("About WingetUI Store "+str(Tools.version))
         title.setStyleSheet("font-size: 40px;")
 
         self.layout.addWidget(title)

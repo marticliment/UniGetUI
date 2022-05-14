@@ -15,6 +15,7 @@ else:
 
 pending_programs = []
 current_program = ""
+version = 1.0
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
@@ -180,3 +181,31 @@ class MessageBox(QMessageBox):
         ApplyMica(self.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
         
+
+class TreeWidget(QTreeWidget):
+    def __init__(self, emptystr: str = "") -> None:
+        super().__init__()
+        self.label = QLabel(emptystr, self)
+        self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+        op=QGraphicsOpacityEffect(self.label)
+        op.setOpacity(0.5)
+        self.label.setGraphicsEffect(op)
+        self.label.setAutoFillBackground(True)
+        font = self.label.font()
+        font.setBold(True)
+        font.setPointSize(20)
+        self.label.setFont(font)
+        self.label.setFixedWidth(2050)
+        self.label.setFixedHeight(50)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.label.move((self.width()-self.label.width())//2, (self.height()-self.label.height())//2,)
+        return super().resizeEvent(event)
+
+    def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
+        self.label.hide()
+        return super().addTopLevelItem(item)
+
+    def clear(self) -> None:
+        self.label.show()
+        return super().clear()
