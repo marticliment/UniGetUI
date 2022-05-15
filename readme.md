@@ -1,9 +1,10 @@
 # WingetUI: A Graphical User Interface to manage the most common CLI package managers such as Winget and Scoop.
-[![Downloads Badge](https://img.shields.io/github/downloads/martinet101/WinGetUI/total.svg?style=for-the-badge)](https://github.com/martinet101/WinGetUI/releases)
-[![Downloads@2.3](https://img.shields.io/github/downloads/martinet101/WinGetUI/latest/total?style=for-the-badge)](https://github.com/martinet101/WinGetUI/releases/latest) 
-[![Issues Badge](https://img.shields.io/github/issues/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/ElevenClock/issues)
-[![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/WinGetUI/issues?q=is%3Aissue+is%3Aclosed)
-[![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WinGetUI?style=for-the-badge)](https://github.com/martinet101/WinGetUI/releases/latest)
+
+[![Downloads@latest](https://img.shields.io/github/downloads/martinet101/WingetUI/total?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+[![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases)
+[![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
+[![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
+
 
 The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop. From here you'll be able to download, install upgrade and uninstall any software published on winget or on scoop.
 Appget was supported on release 0.3 but as it was discontinued it has been removed.
