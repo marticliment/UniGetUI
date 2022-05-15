@@ -9,19 +9,18 @@ The main goal of this project is to give a GUI Store to the most common CLI Pack
 Appget was supported on release 0.3 but as it was discontinued it has been removed.
 This project has no connection with the winget-cli official project, and it's totally unofficial.
 # Features
- - Ability to install packages from scoop and from winget (The idea is to add more package managers in a future)
- - Ability to install scoop and winget if they aren't installed on user's machine.
- - Smooth and responside UI (starting from v0.4)
- - It has winget embedded, so it is not needed to install winget manually
- - Support for `scoop bucket add extras`
- - User can choose which version to install (if more than one version is available)
- - Detects whether the installation suceeded or not
- - Provides error information in case of installation failure
+ - Ability to install packages from scoop and winget (The idea is to add more package managers in a future)
+ - Ability to update and uninstall previoulsly installed packages.
+ - The user does not need to install the package managers.
+ - Smooth and responsive UI (starting from 1.0)
+ - Support for managing scoop buckets
+ - The user can select the version that should be installed
+ - The user will be notified whether the install/upgrade/uninstall completed successfully or not
  - Ability to queue installations in order to prevent conflicts
  - Dark theme available to prevent you from burning your eyes :)
- - Ability to show some package-related information (license, sha256, homepage, etc.)
- - More than 4700 packages available to install, such as Google Chrome, Whatsapp, Adobe Reader or ADB Tools!
- - More features coming!
+ - Ability to show some package-related information (license, sha256, homepage, etc.) before installing
+ - 5800+ packages available to install, such as Google Chrome, Whatsapp, Adobe Reader or ADB Tools!
+ - More features are coming!
 
 
 # Installation
