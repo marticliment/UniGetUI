@@ -6,36 +6,45 @@
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
 
-The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop. From here you'll be able to download, install upgrade and uninstall any software published on winget or on scoop.
-Appget was supported on release 0.3 but as it was discontinued it has been removed.
-This project has no connection with the winget-cli official project, and it's totally unofficial.
+The main goal of this project is to give a GUI Store to the most common CLI Package Managers for Windows, such as Winget and Scoop. 
+
+From here, you'll be able to download, install, upgrade and uninstall any software published on Winget or Scoop.
+
+AppGet was supported in release 0.3, but as it was discontinued it has been removed.
+
+This project has no connection to the official Winget-CLI project - it's completely unofficial.
+
 
 ![ezgif-3-901ac5902a](https://user-images.githubusercontent.com/53119851/169247775-e02ed0b1-ba34-4552-966a-676979d89925.png)
 
 
 # Features
- - Ability to install packages from scoop and winget (The idea is to add more package managers in a future)
- - Ability to update and uninstall previoulsly installed packages.
+
+ - The ability to install packages from Scoop and Winget. (The idea is to add more package managers in the future.)
+ - The ability to update and uninstall previously installed packages.
  - The user does not need to install the package managers.
- - Smooth and responsive UI (starting from 1.0)
- - Support for managing scoop buckets
- - The user can select the version that should be installed
- - The user will be notified whether the install/upgrade/uninstall completed successfully or not
- - Ability to queue installations in order to prevent conflicts
- - Dark theme available to prevent you from burning your eyes :)
- - Ability to show some package-related information (license, sha256, homepage, etc.) before installing
- - 5800+ packages available to install, such as Google Chrome, Whatsapp, Adobe Reader or ADB Tools!
+ - Smooth and responsive UI (starting from 1.0).
+ - Support for managing Scoop buckets.
+ - The user can select the version that should be installed.
+ - The user will be notified whether the installation/upgrade/uninstallation was completed successfully or not.
+ - The ability to queue installations in order to prevent conflicts.
+ - A dark theme is available to prevent you from burning your eyes. :)
+ - The ability to show some package-related information (like license, SHA256 hash, homepage, etc.) before installing.
+ - 5800+ packages available to install, such as Google Chrome, WhatsApp, Adobe Reader or ADB Tools!
  - More features are coming!
 
 # Support me :)
+
 <a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
 
 # Installation
-It's easy: Donwload and install the [Latest WingetUI Version](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+ 
+It's easy: Download and install the [latest WingetUI version!](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 
 
 # Screenshots
+ 
 ![alt text](/media/winget_1.png)
 ![alt text](/media/winget_2.png)
 ![alt text](/media/winget_3.png)
