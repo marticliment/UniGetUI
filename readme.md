@@ -45,9 +45,15 @@ It's easy! Download and install the latest version of WingetUI by clicking [here
 # Screenshots
  
 ![alt text](/media/winget_1.png)
+
 ![alt text](/media/winget_2.png)
+
 ![alt text](/media/winget_3.png)
+
 ![alt text](/media/winget_4.png)
+
 ![alt text](/media/winget_6.png)
+
 ![alt text](/media/winget_5.png)
+
 ![alt text](/media/winget_7.png)
