@@ -10,7 +10,7 @@ The main goal of this project is to create a GUI Store for the most common CLI p
 
 From here, you'll be able to download, install, upgrade and uninstall any software published on Winget or Scoop.
 
-AppGet was supported in release 0.3, but since it's been discontinued, the support has been removed.
+AppGet was supported in release 0.3, but since that project has been discontinued, the support has been removed.
 
 This project has no connection to the official Winget-CLI project - it's completely unofficial.
 
@@ -25,7 +25,7 @@ This project has no connection to the official Winget-CLI project - it's complet
  - The user does not need to install any of the package managers.
  - Smooth and responsive UI (starting from v1.0).
  - Support for managing Scoop buckets.
- - The user can select the version that should be installed.
+ - The user can select the version that should be installed for any of the apps.
  - The user will be notified whether the installation/upgrade/uninstallation was completed successfully or not.
  - The ability to queue installations in order to prevent conflicts.
  - A dark theme is available to prevent you from burning your eyes. :)
@@ -40,7 +40,7 @@ This project has no connection to the official Winget-CLI project - it's complet
 
 # Installation
  
-It's easy: Download and install the [latest WingetUI version!](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+It's easy! Download and install the [latest WingetUI version by clicking here!](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 
 
 # Screenshots
