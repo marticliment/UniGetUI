@@ -10,7 +10,7 @@ The main goal of this project is to create a GUI Store for the most common CLI p
 
 From here, you'll be able to download, install, upgrade and uninstall any software published on Winget or Scoop.
 
-AppGet was supported in release 0.3, but since that project has been discontinued, the support has been removed.
+AppGet was supported in release 0.3, but since that project has been discontinued, the support has since been removed.
 
 This project has no connection to the official Winget-CLI project - it's completely unofficial.
 
