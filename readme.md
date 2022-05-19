@@ -9,6 +9,10 @@
 The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop. From here you'll be able to download, install upgrade and uninstall any software published on winget or on scoop.
 Appget was supported on release 0.3 but as it was discontinued it has been removed.
 This project has no connection with the winget-cli official project, and it's totally unofficial.
+
+![ezgif-3-901ac5902a](https://user-images.githubusercontent.com/53119851/169247775-e02ed0b1-ba34-4552-966a-676979d89925.png)
+
+
 # Features
  - Ability to install packages from scoop and winget (The idea is to add more package managers in a future)
  - Ability to update and uninstall previoulsly installed packages.
