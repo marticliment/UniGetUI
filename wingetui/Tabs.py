@@ -65,9 +65,9 @@ class Uninstall(QtWidgets.QWidget):
         sct.activated.connect(self.query.setFocus)
 
         self.forceCheckBox = QCheckBox("Instant search")
-        self.forceCheckBox.setFixedHeight(20)
+        self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.forceCheckBox.setFixedWidth(90)
+        self.forceCheckBox.setFixedWidth(140)
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
 
@@ -333,9 +333,9 @@ class Discover(QtWidgets.QWidget):
 
 
         self.forceCheckBox = QCheckBox("Instant search")
-        self.forceCheckBox.setFixedHeight(20)
+        self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.forceCheckBox.setFixedWidth(90)
+        self.forceCheckBox.setFixedWidth(140)
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
          
@@ -631,9 +631,9 @@ class Upgrade(QtWidgets.QWidget):
 
 
         self.forceCheckBox = QCheckBox("Instant search")
-        self.forceCheckBox.setFixedHeight(20)
+        self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.forceCheckBox.setFixedWidth(90)
+        self.forceCheckBox.setFixedWidth(140)
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
 
