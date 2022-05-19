@@ -29,7 +29,7 @@ This project has no connection with the winget-cli official project, and it's to
 
 
 # Installation
-It's easy: Donwload and install the <a href="https://github.com/martinet101/WinGetUI/releases">lastest release</a>
+It's easy: Donwload and install the [Latest WingetUI Version](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 
 
 # Screenshots
