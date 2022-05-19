@@ -6,7 +6,7 @@
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
 
-The main goal of this project is to give a GUI Store to the most common CLI Package Managers for Windows, such as Winget and Scoop. 
+The main goal of this project is to create a GUI Store for the most common CLI package managers for Windows, such as Winget and Scoop. 
 
 From here, you'll be able to download, install, upgrade and uninstall any software published on Winget or Scoop.
 
