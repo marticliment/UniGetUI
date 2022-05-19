@@ -22,7 +22,7 @@ This project has no connection to the official Winget-CLI project - it's complet
 
  - The ability to install packages from Scoop and Winget. (The idea is to add more package managers in the future.)
  - The ability to update and uninstall previously installed packages.
- - The user does not need to install any of the package managers.
+ - The user doesn't need to install any of the package managers.
  - Smooth and responsive UI (starting from v1.0).
  - Support for managing Scoop buckets.
  - The user can select the version that should be installed for any of the apps.
