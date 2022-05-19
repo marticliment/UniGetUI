@@ -27,6 +27,9 @@ This project has no connection with the winget-cli official project, and it's to
  - 5800+ packages available to install, such as Google Chrome, Whatsapp, Adobe Reader or ADB Tools!
  - More features are coming!
 
+# Suport me :)
+<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+
 
 # Installation
 It's easy: Donwload and install the [Latest WingetUI Version](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
