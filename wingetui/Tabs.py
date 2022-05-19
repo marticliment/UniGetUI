@@ -976,10 +976,12 @@ class PackageInstaller(QtWidgets.QGroupBox):
     addInfoLine = QtCore.Signal(str)
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
+    callInMain = QtCore.Signal(object)
     changeBarOrientation = QtCore.Signal()
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId=""):
         super().__init__(parent=parent)
         self.finishedInstallation = True
+        self.callInMain.connect(lambda f: f())
         self.setMinimumHeight(500)
         self.store = store.lower()
         self.customCommand = customCommand
@@ -1131,6 +1133,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was installed successfully!")
                 self.progressbar.setValue(1000)
+                self.startCoolDown()
                 if(self.store == "powershell"):
                     msgBox = Tools.MessageBox(self)
                     msgBox.setWindowTitle("WingetUI")
@@ -1162,6 +1165,27 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 msgBox.setIcon(Tools.MessageBox.Warning)
                 msgBox.exec_()
 
+    def startCoolDown(self):
+        print("starting cooldown")
+        op=QGraphicsOpacityEffect(self)
+        def updateOp(v: float):
+            op.setOpacity(v)
+            for widget in [self, self.cancelButton, self.label, self.progressbar, self.info]:
+                widget: QWidget
+                widget.setGraphicsEffect(op)
+                widget.setAutoFillBackground(True)
+
+        updateOp(1)
+        a = QVariantAnimation(self)
+        a.setStartValue(1.0)
+        a.setEndValue(0.0)
+        a.setEasingCurve(QEasingCurve.Linear)
+        a.setDuration(1000)
+        a.valueChanged.connect(lambda v: updateOp(v))
+        a.finished.connect(self.hide)
+        f = lambda: (time.sleep(3), self.callInMain.emit(a.start))
+        Thread(target=f, daemon=True).start()
+
 class PackageUpdater(PackageInstaller):
     
     def startInstallation(self) -> None:
@@ -1188,7 +1212,7 @@ class PackageUpdater(PackageInstaller):
             self.t = Tools.KillableThread(target=Tools.genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
-class PackageUninstaller(QtWidgets.QGroupBox):
+class PackageUninstaller(PackageInstaller):
     onCancel = QtCore.Signal()
     killSubprocess = QtCore.Signal()
     addInfoLine = QtCore.Signal(str)
@@ -1196,7 +1220,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
     counterSignal = QtCore.Signal(int)
     changeBarOrientation = QtCore.Signal()
     def __init__(self, title: str, store: str, useId=False, packageId=""):
-        super().__init__(parent=None)
+        super().__init__(parent=None, title=title, store=store)
         self.finishedInstallation = True
         self.store = store.lower()
         self.useId = useId
@@ -1204,66 +1228,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
         self.setFixedHeight(50)
         self.programName = title
         self.packageId = packageId
-        self.layout = QtWidgets.QHBoxLayout()
-        self.label = QtWidgets.QLabel(title+" Uninstallation")
-        self.label.setFixedWidth(230)
-        self.layout.addWidget(self.label)
-        self.progressbar = QtWidgets.QProgressBar()
-        self.progressbar.setTextVisible(False)
-        self.progressbar.setRange(0, 1000)
-        self.progressbar.setValue(0)
-        self.progressbar.setFixedHeight(4)
-        self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
-        self.layout.addWidget(self.progressbar)
-        self.info = QtWidgets.QLineEdit()
-        self.info.setText("Waiting for other installations to finish...")
-        self.info.setReadOnly(True)
-        self.addInfoLine.connect(lambda text: self.info.setText(text))
-        self.finishInstallation.connect(self.finish)
-        self.layout.addWidget(self.info)
-        self.counterSignal.connect(self.counter)
-        self.cancelButton = QtWidgets.QPushButton(QtGui.QIcon(realpath+"/cancel.png"), "Cancel")
-        self.cancelButton.setFixedHeight(30)
-        self.info.setFixedHeight(30)
-        self.cancelButton.clicked.connect(self.cancel)
-        self.layout.addWidget(self.cancelButton)
-        self.setLayout(self.layout)
-        self.canceled = False
-        self.installId = str(time.time())
-        Tools.queueProgram(self.installId)
-        self.waitThread = Tools.KillableThread(target=self.startUninstallation, daemon=True)
-        self.waitThread.start()
-        self.leftSlow = QtCore.QVariantAnimation()
-        self.leftSlow.setStartValue(0)
-        self.leftSlow.setEndValue(1000)
-        self.leftSlow.setDuration(900)
-        self.leftSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
-        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
-        self.rightSlow = QtCore.QVariantAnimation()
-        self.rightSlow.setStartValue(1000)
-        self.rightSlow.setEndValue(0)
-        self.rightSlow.setDuration(900)
-        self.rightSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
-        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
-        self.leftFast = QtCore.QVariantAnimation()
-        self.leftFast.setStartValue(0)
-        self.leftFast.setEndValue(1000)
-        self.leftFast.setDuration(300)
-        self.leftFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
-        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
-
-        self.rightFast = QtCore.QVariantAnimation()
-        self.rightFast.setStartValue(1000)
-        self.rightFast.setEndValue(0)
-        self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
-        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
-        self.leftSlow.start()
-        
-        print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
+        self.label.setText(title+" Uninstallation")
         
 
     
@@ -1345,6 +1310,7 @@ class PackageUninstaller(QtWidgets.QGroupBox):
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was uninstalled successfully!")
                 self.progressbar.setValue(1000)
+                self.startCoolDown()
                 if(self.store == "powershell"):
                     msgBox = Tools.MessageBox(self)
                     msgBox.setWindowTitle("WingetUI")
