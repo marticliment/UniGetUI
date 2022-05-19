@@ -61,6 +61,9 @@ class Uninstall(QtWidgets.QWidget):
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
+        sct = QShortcut(QKeySequence("Ctrl+F"), self)
+        sct.activated.connect(self.query.setFocus)
+
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(20)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
@@ -344,6 +347,11 @@ class Discover(QtWidgets.QWidget):
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
+        
+        sct = QShortcut(QKeySequence("Ctrl+F"), self)
+        sct.activated.connect(self.query.setFocus)
+
+
         img = QLabel()
         img.setFixedWidth(96)
         img.setPixmap(QIcon(Tools.getMedia("store_logo")).pixmap(QSize(80, 80)))
@@ -616,6 +624,11 @@ class Upgrade(QtWidgets.QWidget):
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
+
+
+        sct = QShortcut(QKeySequence("Ctrl+F"), self)
+        sct.activated.connect(self.query.setFocus)
+
 
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(20)
