@@ -37,10 +37,9 @@ This project has no connection to the official Winget-CLI project - it's complet
 
 <a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
-
 # Installation
  
-It's easy! Download and install the [latest WingetUI version by clicking here!](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+It's easy! Download and install the latest WingetUI version by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)!
 
 
 # Screenshots
