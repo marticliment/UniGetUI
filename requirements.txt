@@ -1,2 +1,2 @@
-PySide2
+PySide6
 win32mica

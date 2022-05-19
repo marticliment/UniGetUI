@@ -6,7 +6,7 @@ import time
 from threading import Thread
 from tempfile import tempdir
 from urllib.request import urlopen
-from PySide2 import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore, QtGui
 import MainWindow, Tools
 
 if hasattr(sys, 'frozen'):
@@ -42,13 +42,13 @@ class MainApplication(QtWidgets.QApplication):
                 self.setStyle("fusion")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
                 if r != 0x32:
-                    self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+                    pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
             else:
                 self.setStyle("fusion")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
-                    self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+                    pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020")) 
 
             def updateIfPossible():

@@ -1,11 +1,11 @@
 import winreg
-from PySide2 import QtCore
+from PySide6 import QtCore
 from threading import Thread
 import sys, time, subprocess, os
-from PySide2.QtCore import *
-from PySide2.QtWinExtras import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *
+#from PySide6.QtWinExtras import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
 
 if hasattr(sys, 'frozen'):
@@ -98,11 +98,13 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
     if mode:
         GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
         if shadow:
-            QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
+            pass
+            #QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
     else:
         GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40", Dark=True, smallCorners=smallCorners)
         if shadow: 
-            QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
+            pass
+            #QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
 
 
 def getPath(s):

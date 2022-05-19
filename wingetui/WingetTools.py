@@ -1,4 +1,4 @@
-from PySide2 import QtCore
+from PySide6 import QtCore
 import subprocess, time, os, sys, signal
 
 if hasattr(sys, 'frozen'):
