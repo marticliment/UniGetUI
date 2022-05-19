@@ -39,7 +39,7 @@ This project has no connection to the official Winget-CLI project - it's complet
 
 # Installation
  
-It's easy! Download and install the latest WingetUI version by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)!
+It's easy! Download and install the latest version of WingetUI by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)!
 
 
 # Screenshots
