@@ -39,7 +39,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainWidget = QtWidgets.QStackedWidget()
         self.buttonBox = QButtonGroup()
         self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setSpacing(5)
         self.installerswidget = QVBoxLayout()
         self.installerswidget.setContentsMargins(0, 0, 0, 0)
         self.installerswidget.setSpacing(5)

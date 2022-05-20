@@ -430,6 +430,16 @@ QComboBox QAbstractItemView::item:selected{{
     border-radius: 8px;
     border: 1px solid #1f1f1f;
 }}
+QListWidget{{
+    border: 0px;
+    background-color: transparent;
+    color: transparent;
+}}
+QListWidget::item{{
+    border: 0px;
+    background-color: transparent;
+    color: transparent;
+}}
 """
 
 lightCSS = f"""
