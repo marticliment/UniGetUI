@@ -130,6 +130,15 @@ QPushButton,#FocusLabel {{
     border-top: 1px solid rgba(99, 99, 99, 25%);
     margin: 0px;
 }}
+#FlatButton {{
+    width: 150px;
+    background-color: rgba(255, 255, 255, 1%);
+    border-radius: 6px;
+    border: 0px solid rgba(255, 255, 255, 1%);
+    height: 25px;
+    font-size: 10pt;
+    border-top: 0px solid rgba(255, 255, 255, 1%);
+}}
 QPushButton:hover {{
     background-color:rgba(86, 86, 86, 25%);
     border-radius: 6px;
@@ -448,6 +457,15 @@ QPushButton,#FocusLabel {{
     height: 25px;
     font-size: 10pt;
     margin: 0px;
+}}
+#FlatButton {{
+    width: 150px;
+    background-color: rgba(255, 255, 255, 0.1%);
+    border-radius: 6px;
+    border: 0px solid rgba(255, 255, 255, 1%);
+    height: 25px;
+    font-size: 10pt;
+    border-top: 0px solid rgba(255, 255, 255, 1%);
 }}
 QPushButton:hover {{
     background-color: rgba(255, 255, 255, 90%);
