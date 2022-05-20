@@ -1,3 +1,5 @@
+import os
+
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -75,6 +77,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uninstall.resizeEvent()
         self.discover.resizeEvent()
         self.updates.resizeEvent()
+
+        sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
+        sct.activated.connect(lambda: self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 3 else 0))
+
+        sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
+        sct.activated.connect(lambda: self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3))
 
     def addTab(self, widget: QWidget, label: str) -> None:
         i = self.mainWidget.addWidget(widget)
