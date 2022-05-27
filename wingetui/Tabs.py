@@ -70,6 +70,9 @@ class Uninstall(QtWidgets.QWidget):
         sct = QShortcut(QKeySequence("F5"), self)
         sct.activated.connect(self.reload)
 
+        sct = QShortcut(QKeySequence("Esc"), self)
+        sct.activated.connect(self.query.clear)
+
 
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(30)
@@ -127,6 +130,8 @@ class Uninstall(QtWidgets.QWidget):
         w = QWidget()
         w.setLayout(layout)
         w.setMaximumWidth(1000)
+
+
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
@@ -363,6 +368,9 @@ class Discover(QtWidgets.QWidget):
         
         sct = QShortcut(QKeySequence("F5"), self)
         sct.activated.connect(self.reload)
+
+        sct = QShortcut(QKeySequence("Esc"), self)
+        sct.activated.connect(self.query.clear)
 
         img = QLabel()
         img.setFixedWidth(96)
@@ -646,6 +654,9 @@ class Upgrade(QtWidgets.QWidget):
         
         sct = QShortcut(QKeySequence("F5"), self)
         sct.activated.connect(self.reload)
+
+        sct = QShortcut(QKeySequence("Esc"), self)
+        sct.activated.connect(self.query.clear)
 
 
         self.forceCheckBox = QCheckBox("Instant search")
@@ -1390,6 +1401,8 @@ class Program(QMainWindow):
         self.setFocusPolicy(Qt.NoFocus)
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.store = ""
+        self.sct = QShortcut(QKeySequence("Esc"), self)
+        self.sct.activated.connect(lambda: self.close())
         self.sc.setWidgetResizable(True)
         self.setStyleSheet("""
         QScrollArea{
@@ -1662,7 +1675,7 @@ class Program(QMainWindow):
         return super().show()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.parent().window().activateWindow()
+        #self.parent().window().activateWindow()
         return super().mousePressEvent(event)
         
 
