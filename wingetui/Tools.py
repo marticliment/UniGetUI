@@ -211,3 +211,12 @@ class TreeWidget(QTreeWidget):
     def clear(self) -> None:
         self.label.show()
         return super().clear()
+
+class ScrollWidget(QWidget):
+    def __init__(self, scroller: QWidget) -> None:
+        self.scroller = scroller
+        super().__init__()
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        self.scroller.wheelEvent(event)
+        return super().wheelEvent(event)

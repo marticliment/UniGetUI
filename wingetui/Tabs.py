@@ -123,10 +123,10 @@ class Uninstall(QtWidgets.QWidget):
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
-        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(Tools.ScrollWidget(self.packageList), stretch=0)
         l.addWidget(w)
         l.setContentsMargins(0, 0, 0, 0)
-        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(Tools.ScrollWidget(self.packageList), stretch=0)
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
@@ -403,10 +403,10 @@ class Discover(QtWidgets.QWidget):
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
-        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(Tools.ScrollWidget(self.packageList), stretch=0)
         l.addWidget(w)
         l.setContentsMargins(0, 0, 0, 0)
-        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(Tools.ScrollWidget(self.packageList), stretch=0)
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
@@ -689,10 +689,10 @@ class Upgrade(QtWidgets.QWidget):
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
-        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(Tools.ScrollWidget(self.packageList), stretch=0)
         l.addWidget(w)
         l.setContentsMargins(0, 0, 0, 0)
-        l.addWidget(QWidget(), stretch=0)
+        l.addWidget(Tools.ScrollWidget(self.packageList), stretch=0)
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
