@@ -1,10 +1,13 @@
 from PySide6 import QtCore
-import subprocess, time, os, sys, signal
+import subprocess, time, os, sys, signal, re
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
+ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+
 
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
@@ -17,7 +20,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         line = line.strip()
         if line:
             if(counter > 1 and not b"---" in line):
-                output.append(str(line, encoding='utf-8', errors="ignore"))
+                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
             else:
                 counter += 1
     counter = 0
@@ -39,7 +42,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
         line = line.strip()
         if line:
             if(counter > 1 and not b"---" in line):
-                output.append(str(line, encoding='utf-8', errors="ignore"))
+                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore").strip()))
             else:
                 counter += 1
     counter = 0
@@ -71,7 +74,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         if line:
             if(counter > 1 and not b"---" in line):
                 if b"->" in line:
-                    output.append(str(line, encoding='utf-8', errors="ignore").strip())
+                    output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore").strip()))
             else:
                 counter += 1
     counter = 0
@@ -109,7 +112,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            output.append(str(line, encoding='utf-8', errors="ignore"))
+            output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
     manifest = False
     version = ""
     for line in output:
