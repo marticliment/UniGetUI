@@ -9,7 +9,7 @@ else:
 
 def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print("[   OK   ] Starting scoop search...")
-    p = subprocess.Popen(' '.join(["scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -31,7 +31,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
 
 def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print("[   OK   ] Starting scoop search...")
-    p = subprocess.Popen(' '.join(["scoop", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 1
     while p.poll() is None:
@@ -62,7 +62,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
 
 def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
     print("[   OK   ] Starting scoop search...")
-    p = subprocess.Popen(' '.join(["scoop", "status"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "status"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -88,7 +88,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
     title = title.lower()
     print(f"[   OK   ] Starting get info for title {title}")
-    p = subprocess.Popen(' '.join(["scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     appInfo = {
         "title": title,
