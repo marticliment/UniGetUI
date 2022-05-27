@@ -64,6 +64,13 @@ class Uninstall(QtWidgets.QWidget):
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(self.query.setFocus)
 
+        sct = QShortcut(QKeySequence("Ctrl+R"), self)
+        sct.activated.connect(self.reload)
+        
+        sct = QShortcut(QKeySequence("F5"), self)
+        sct.activated.connect(self.reload)
+
+
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
@@ -351,6 +358,11 @@ class Discover(QtWidgets.QWidget):
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(self.query.setFocus)
 
+        sct = QShortcut(QKeySequence("Ctrl+R"), self)
+        sct.activated.connect(self.reload)
+        
+        sct = QShortcut(QKeySequence("F5"), self)
+        sct.activated.connect(self.reload)
 
         img = QLabel()
         img.setFixedWidth(96)
@@ -628,6 +640,12 @@ class Upgrade(QtWidgets.QWidget):
 
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(self.query.setFocus)
+
+        sct = QShortcut(QKeySequence("Ctrl+R"), self)
+        sct.activated.connect(self.reload)
+        
+        sct = QShortcut(QKeySequence("F5"), self)
+        sct.activated.connect(self.reload)
 
 
         self.forceCheckBox = QCheckBox("Instant search")
