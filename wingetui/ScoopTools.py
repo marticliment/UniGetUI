@@ -148,6 +148,10 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
                     appInfo["installer-url"] = data["architecture"]["64bit"]["url"]
                     appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
                 appInfo["installer-type"] = "Scoop package"
+                try:
+                    appInfo["description"] = data["description"] if data["description"] != "" else appInfo["description"]
+                except KeyError:
+                    print("[  WARN  ] No description found in the manifest")
             except Exception as e:
                 print(type(e), e)
     print(f"[  INFO  ] Scoop does not support specific version installs")
