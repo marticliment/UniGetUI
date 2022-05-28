@@ -85,7 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
         widget.setLayout(self.installerswidget)
         #self.installersScrollArea.setWidget(widget)
         self.showHideButton = QPushButton()
-        self.showHideButton.setStyleSheet("padding: 2px;")
+        self.showHideButton.setStyleSheet("padding: 2px;border-radius: 1px;")
         self.showHideButton.setIconSize(QSize(8, 8))
         self.showHideButton.setFixedSize(QSize(16, 8))
         self.showHideButton.setIcon(QIcon(Tools.getMedia("collapse")))
@@ -109,14 +109,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uninstall.resizeEvent()
         self.discover.resizeEvent()
         self.updates.resizeEvent()
-
-        self.mainWidget.setCurrentIndex(3)
-
         sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
-        sct.activated.connect(lambda: self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 3 else 0))
+        sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 3 else 0), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
-        sct.activated.connect(lambda: self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3))
+        sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
     def addTab(self, widget: QWidget, label: str) -> None:
         i = self.mainWidget.addWidget(widget)
