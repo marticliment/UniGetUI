@@ -110,6 +110,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.discover.resizeEvent()
         self.updates.resizeEvent()
 
+        self.mainWidget.setCurrentIndex(3)
+
         sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
         sct.activated.connect(lambda: self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 3 else 0))
 
