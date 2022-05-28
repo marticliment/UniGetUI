@@ -280,6 +280,7 @@ class Uninstall(QtWidgets.QWidget):
                 item.setHidden(True)
             else:
                 item.setHidden(False)
+        self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
         self.programbox.show()
@@ -586,6 +587,7 @@ class Discover(QtWidgets.QWidget):
                 item.setHidden(True)
             else:
                 item.setHidden(False)
+        self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
         self.programbox.show()
@@ -913,6 +915,7 @@ class Upgrade(QtWidgets.QWidget):
                 item.setHidden(True)
             else:
                 item.setHidden(False)
+        self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
         self.programbox.show()
