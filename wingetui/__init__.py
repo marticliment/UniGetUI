@@ -45,7 +45,7 @@ class MainApplication(QtWidgets.QApplication):
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
             else:
-                self.setStyle("fusion")
+                #self.setStyle("fusion")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -113,6 +113,71 @@ darkSS = f"""
 #micawin {{
     background-color: mainbg;
     color: red;
+}}
+QMenu {{
+    border: 1px solid rgb(60, 60, 60);
+    padding: 2px;
+    outline: 0px;
+    color: white;
+    background: #262626;
+    border-radius: 8px;
+}}
+QMenu::separator {{
+    margin: 2px;
+    height: 1px;
+    background: rgb(60, 60, 60);
+}}
+QMenu::icon{{
+    padding-left: 10px;
+}}
+QMenu::item{{
+    height: 30px;
+    border: none;
+    background: transparent;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+    margin: 2px;
+}}
+QMenu::item:selected{{
+    background: rgba(255, 255, 255, 10%);
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+}}  
+QMenu::item:selected:disabled{{
+    background: transparent;
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+}}
+QComboBox QAbstractItemView {{
+    border: 1px solid rgba(36, 36, 36, 50%);
+    padding: 4px;
+    outline: 0px;
+    padding-right: 0px;
+    background-color: #303030;
+    border-radius: 8px;
+}}
+QComboBox QAbstractItemView::item{{
+    height: 10px;
+    border: none;
+    padding-left: 10px;
+    border-radius: 4px;
+}}
+QComboBox QAbstractItemView::item:selected{{
+    background: rgba(255, 255, 255, 6%);
+    height: 10px;
+    outline: none;
+    border: none;
+    padding-left: 10px;
+    border-radius: 4px;
 }}
 QMessageBox{{
     background-color: #202020;
@@ -451,6 +516,71 @@ lightCSS = f"""
 #micawin {{
     background-color: mainbg;
     color: red;
+}}
+QMenu {{
+    border: 1px solid rgb(200, 200, 200);
+    padding: 2px;
+    outline: 0px;
+    color: black;
+    background: #eeeeee;
+    border-radius: 8px;
+}}
+QMenu::separator {{
+    margin: 2px;
+    height: 1px;
+    background: rgb(200, 200, 200);
+}}
+QMenu::icon{{
+    padding-left: 10px;
+}}
+QMenu::item{{
+    height: 30px;
+    border: none;
+    background: transparent;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+    margin: 2px;
+}}
+QMenu::item:selected{{
+    background: rgba(0, 0, 0, 10%);
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+}}  
+QMenu::item:selected:disabled{{
+    background: transparent;
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+}}
+QComboBox QAbstractItemView {{
+    border: 1px solid rgba(196, 196, 196, 25%);
+    padding: 4px;
+    outline: 0px;
+    background-color: rgba(255, 255, 255, 10%);
+    border-radius: 8px;
+}}
+QComboBox QAbstractItemView::item{{
+    height: 10px;
+    border: none;
+    padding-left: 10px;
+    border-radius: 4px;
+}}
+QComboBox QAbstractItemView::item:selected{{
+    background: rgba(0, 0, 0, 6%);
+    height: 10px;
+    outline: none;
+    color: black;
+    border: none;
+    padding-left: 10px;
+    border-radius: 4px;
 }}
 QMessageBox{{
     background-color: #f9f9f9;

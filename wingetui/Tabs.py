@@ -349,7 +349,6 @@ class Discover(QtWidgets.QWidget):
         hLayout = QtWidgets.QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 0, 0)
 
-
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
@@ -365,7 +364,6 @@ class Discover(QtWidgets.QWidget):
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
-        
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(self.query.setFocus)
 
@@ -400,7 +398,7 @@ class Discover(QtWidgets.QWidget):
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = Tools.TreeWidget("a")
+        self.packageList: QTreeWidget = Tools.TreeWidget("a")
         self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
         self.packageList.setColumnCount(4)
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
@@ -410,7 +408,26 @@ class Discover(QtWidgets.QWidget):
         self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QtCore.QSize(24, 24))
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)))
-        
+
+        def showMenu(pos: QPoint):
+            contextMenu = QMenu(self)
+            contextMenu.setParent(self)
+            contextMenu.setStyleSheet("* {background: red;color: black}")
+            Tools.ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
+            inf = QAction("Show info")
+            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3)))
+            inf.setIcon(QIcon(Tools.getMedia("info")))
+            inst = QAction("Install")
+            inst.setIcon(QIcon(Tools.getMedia("performinstall")))
+            inst.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1)))
+            contextMenu.addAction(inst)
+            contextMenu.addSeparator()
+            contextMenu.addAction(inf)
+            contextMenu.exec(QCursor.pos())
+
+        self.packageList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.packageList.customContextMenuRequested.connect(showMenu)
+
         header = self.packageList.header()
         header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         header.setStretchLastSection(False)
@@ -441,7 +458,6 @@ class Discover(QtWidgets.QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
-
         self.countLabel = QtWidgets.QLabel("Searching for packages...")
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
@@ -453,7 +469,6 @@ class Discover(QtWidgets.QWidget):
         
         self.programbox.setLayout(l)
         self.layout.addWidget(self.programbox, stretch=1)
-        # pass
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
@@ -466,7 +481,6 @@ class Discover(QtWidgets.QWidget):
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
@@ -475,8 +489,6 @@ class Discover(QtWidgets.QWidget):
         self.IDIcon = QtGui.QIcon(Tools.getMedia("ID"))
         self.versionIcon = QtGui.QIcon(Tools.getMedia("newversion"))
         self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
-        
-    
 
         Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
@@ -516,8 +528,6 @@ class Discover(QtWidgets.QWidget):
         
         self.leftSlow.start()
         
-    
-    
     def checkIfScoop(self) -> None:
         if(subprocess.call("scooop --version", shell=True) != 0):
             self.askForScoopInstall.emit()
@@ -528,7 +538,6 @@ class Discover(QtWidgets.QWidget):
         if(Tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
             self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
-
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
@@ -588,8 +597,19 @@ class Discover(QtWidgets.QWidget):
         else:
             self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
         self.infobox.show()
-        from win32mica import ApplyMica, MICAMODE
         Tools.ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+
+    def fastinstall(self, title: str, id: str) -> None:
+        if not "scoop" in id:
+            if("…" in title):
+                self.addInstallation(PackageInstaller(title, "winget", useId=True, packageId=id.replace("…", "")))
+            else:
+                self.addInstallation(PackageInstaller(title, "winget", packageId=id.replace("…", "")))
+        else:
+            if("…" in title):
+                self.addInstallation(PackageInstaller(title, "scoop", useId=True, packageId=id.replace("…", "")))
+            else:
+                self.addInstallation(PackageInstaller(title, "scoop", packageId=id.replace("…", "")))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -623,15 +643,12 @@ class Upgrade(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = Program()
+        self.infobox = Program(self)
         self.setStyleSheet("margin: 0px;")
-        self.infobox.onClose.connect(self.showQuery)
 
         self.programbox = QtWidgets.QWidget()
         self.setContentsMargins(0, 0, 0, 0)
         self.programbox.setContentsMargins(0, 0, 0, 0)
-
-
 
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.setContentsMargins(5, 5, 5, 5)
@@ -660,7 +677,6 @@ class Upgrade(QtWidgets.QWidget):
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
 
-
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(self.query.setFocus)
 
@@ -672,7 +688,6 @@ class Upgrade(QtWidgets.QWidget):
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
-
 
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(30)
@@ -697,7 +712,6 @@ class Upgrade(QtWidgets.QWidget):
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
-        
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
@@ -716,8 +730,26 @@ class Upgrade(QtWidgets.QWidget):
         self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(0), item.text(1)))
-
         
+        def showMenu(pos: QPoint):
+            contextMenu = QMenu(self)
+            contextMenu.setParent(self)
+            contextMenu.setStyleSheet("* {background: red;color: black}")
+            Tools.ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
+            inf = QAction("Show info")
+            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(4).lower()))
+            inf.setIcon(QIcon(Tools.getMedia("info")))
+            inst = QAction("Update")
+            inst.setIcon(QIcon(Tools.getMedia("performinstall")))
+            inst.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1)))
+            contextMenu.addAction(inst)
+            contextMenu.addSeparator()
+            contextMenu.addAction(inf)
+            contextMenu.exec(QCursor.pos())
+
+        self.packageList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.packageList.customContextMenuRequested.connect(showMenu)
+
         header = self.packageList.header()
         header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         header.setStretchLastSection(False)
@@ -730,15 +762,12 @@ class Upgrade(QtWidgets.QWidget):
         self.packageList.setColumnWidth(3, 100)
         self.packageList.setColumnWidth(4, 100)
         
-        
-        
         self.loadingProgressBar = QtWidgets.QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
 
-        
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         w = QWidget()
@@ -754,7 +783,6 @@ class Upgrade(QtWidgets.QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
-
         self.countLabel = QtWidgets.QLabel("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
@@ -765,7 +793,6 @@ class Upgrade(QtWidgets.QWidget):
         layout.addWidget(self.packageList)
         self.programbox.setLayout(l)
         self.layout.addWidget(self.programbox, stretch=1)
-        self.layout.addWidget(self.infobox, stretch=1)
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
@@ -778,7 +805,6 @@ class Upgrade(QtWidgets.QWidget):
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
@@ -788,8 +814,6 @@ class Upgrade(QtWidgets.QWidget):
         self.versionIcon = QtGui.QIcon(Tools.getMedia("version"))
         self.newVersionIcon = QtGui.QIcon(Tools.getMedia("newversion"))
         self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
-        
-    
 
         Thread(target=WingetTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         Thread(target=ScoopTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
@@ -829,7 +853,6 @@ class Upgrade(QtWidgets.QWidget):
         
         self.leftSlow.start()
 
-    
     def checkIfScoop(self) -> None:
         if(subprocess.call("scooop --version", shell=True) != 0):
             self.askForScoopInstall.emit()
@@ -840,7 +863,6 @@ class Upgrade(QtWidgets.QWidget):
         if(Tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
             self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
-
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
@@ -908,6 +930,13 @@ class Upgrade(QtWidgets.QWidget):
             else:
                 self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", "")))
 
+    def openInfo(self, title: str, id: str, store: str) -> None:
+        if("…" in title):
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True)
+        else:
+            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store, update=True)
+        self.infobox.show()
+        Tools.ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -1507,10 +1536,11 @@ class Program(QMainWindow):
         class QComboBoxWithFluentMenu(QComboBox):
             def __init__(self, parent=None) -> None:
                 super().__init__(parent)
+                self.setAttribute(Qt.WA_StyledBackground)
+                self.setItemDelegate(QStyledItemDelegate(self))
                 v = self.view().window()
-                Tools.ApplyMenuBlur(v.winId(), v)
-                from win32mica import ApplyMica, MICAMODE
-                ApplyMica(v.winId(), v)
+                Tools.ApplyMenuBlur(v.winId().__int__(), v)
+
 
         self.versionCombo = QComboBoxWithFluentMenu()
         self.versionCombo.setFixedWidth(150)
@@ -1633,8 +1663,10 @@ class Program(QMainWindow):
         if(event):
             return super().resizeEvent(event)
     
-    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str) -> None:
+    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False) -> None:
         self.store = store
+        self.installButton.setEnabled(False)
+        self.isAnUpdate = update
         store = store.lower()
         blueColor = Tools.blueColor
         if(goodTitle):
@@ -1666,6 +1698,11 @@ class Program(QMainWindow):
     def printData(self, appInfo: dict) -> None:
         blueColor = Tools.blueColor
         self.loadingProgressBar.hide()
+        if self.isAnUpdate:
+            self.installButton.setText("Update")
+        else:
+            self.installButton.setText("Install")
+        self.installButton.setEnabled(True)
         if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
