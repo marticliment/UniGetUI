@@ -45,7 +45,7 @@ class MainApplication(QtWidgets.QApplication):
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
             else:
-                #self.setStyle("fusion")
+                self.setStyle("fusion")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -108,7 +108,7 @@ darkSS = f"""
 * {{
     background-color: transparent;
     color: #eeeeee;
-    font-family: "Segoe UI Variable Display semib"
+    font-family: "Segoe UI Variable Display semib";
 }}
 #micawin {{
     background-color: mainbg;
@@ -210,6 +210,30 @@ QPushButton:hover {{
     border: 1px solid rgba(100, 100, 100, 25%);
     height: 30px;
     border-top: 1px solid rgba(107, 107, 107, 25%);
+}}
+#Headerbutton {{
+    width: 150px;
+    background-color:rgba(0, 0, 0, 1%);
+    border-radius: 6px;
+    border: 0px solid transparent;
+    height: 25px;
+    font-size: 10pt;
+    margin: 0px;
+}}
+#Headerbutton:hover {{
+    background-color:rgba(100, 100, 100, 12%);
+    border-radius: 8px;
+    height: 30px;
+}}
+#Headerbutton:checked {{
+    background-color:rgba(100, 100, 100, 25%);
+    border-radius: 8px;
+    border: 0px solid rgba(100, 100, 100, 25%);
+    height: 30px;
+}}
+#buttonier {{
+    border: 0px solid rgba(100, 100, 100, 25%);
+    border-radius: 12px;
 }}
 #AccentButton{{
     color: #202020;
@@ -643,6 +667,30 @@ QPushButton:hover {{
     background-color: rgba(200,200,200, 80%);
     border-color: rgb(200, 200, 200);
     border-bottom-color: rgb(200, 200, 200);
+}}
+#Headerbutton {{
+    width: 150px;
+    background-color:rgba(255, 255, 255, 1%);
+    border-radius: 6px;
+    border: 0px solid transparent;
+    height: 25px;
+    font-size: 10pt;
+    margin: 0px;
+}}
+#Headerbutton:hover {{
+    background-color:rgba(240, 240, 240, 12%);
+    border-radius: 8px;
+    height: 30px;
+}}
+#Headerbutton:checked {{
+    background-color:rgba(200, 200, 200, 75%);
+    border-radius: 8px;
+    border: 0px solid rgba(100, 100, 100, 25%);
+    height: 30px;
+}}
+#buttonier {{
+    border: 0px solid rgba(100, 100, 100, 25%);
+    border-radius: 12px;
 }}
 QLineEdit {{
     background-color: rgba(255, 255, 255, 25%);

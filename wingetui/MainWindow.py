@@ -13,6 +13,7 @@ else:
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
+        self.oldbtn = None
         super().__init__(parent=parent)
         self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
@@ -39,8 +40,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainWidget = QtWidgets.QStackedWidget()
         self.buttonBox = QButtonGroup()
         self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setContentsMargins(10, 10, 10, 10)
+        self.buttonLayout.setContentsMargins(2, 6, 4, 6)
         self.buttonLayout.setSpacing(5)
+        self.buttonier = QWidget()
+        self.buttonier.setFixedHeight(54)
+        self.buttonier.setFixedWidth(703)
+        self.buttonier.setObjectName("buttonier")
+        self.buttonier.setLayout(self.buttonLayout)
         self.installerswidget = QVBoxLayout()
         self.installerswidget.setContentsMargins(0, 0, 0, 0)
         self.installerswidget.setSpacing(5)
@@ -61,8 +67,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addTab(Tabs.About(), "About WingetUI")
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
-        vl.addLayout(self.buttonLayout, stretch=0)
+        hl = QHBoxLayout()
+        hl.addStretch()
+        hl.addWidget(self.buttonier)
+        hl.addStretch()
+        hl.setContentsMargins(0, 0, 0, 0)
+        vl.addLayout(hl)
         vl.addWidget(self.mainWidget, stretch=1)
+        self.buttonBox.buttons()[0].setChecked(True)
         #self.installersScrollArea = QtWidgets.QScrollArea()
         #self.installersScrollArea.setWidgetResizable(True)
         #self.installersScrollArea.setMaximumHeight(150)
@@ -87,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
         vl.addWidget(ebw)
         vl.addWidget(widget)
         vl.setSpacing(0)
-        vl.setContentsMargins(0, 20, 0, 0)
+        vl.setContentsMargins(0, 0, 0, 0)
         w = QWidget()
         w.setContentsMargins(0, 0, 0, 0)
         self.setContentsMargins(0, 0, 0, 0)
@@ -108,7 +120,14 @@ class MainWindow(QtWidgets.QMainWindow):
         i = self.mainWidget.addWidget(widget)
         btn = QPushButton(label)
         btn.setCheckable(True)
+        btn.setFixedHeight(40)
+        btn.setObjectName("Headerbutton")
+        btn.setFixedWidth(170)
         btn.clicked.connect(lambda: self.mainWidget.setCurrentIndex(i))
+        if self.oldbtn:
+            self.oldbtn.setStyleSheet("" + self.oldbtn.styleSheet())
+            btn.setStyleSheet("" + btn.styleSheet())
+        self.oldbtn = btn
         self.buttonBox.addButton(btn)
         self.buttonLayout.addWidget(btn)
 
