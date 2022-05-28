@@ -1670,6 +1670,7 @@ class Program(QMainWindow):
         self.store = store
         self.installButton.setEnabled(False)
         self.isAnUpdate = update
+        self.installButton.setText("Please wait...")
         store = store.lower()
         blueColor = Tools.blueColor
         if(goodTitle):

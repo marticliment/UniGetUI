@@ -21,6 +21,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         if line:
             if(counter > 1 and not b"---" in line):
                 output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+                print(line, ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
             else:
                 counter += 1
     counter = 0

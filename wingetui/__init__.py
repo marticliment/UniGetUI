@@ -229,6 +229,12 @@ QPushButton:hover {{
     border-color: rgb({colors[2]});
     border-bottom-color: rgb({colors[2]});
 }}
+#AccentButton:disabled{{
+    color: grey;
+    background-color: rgba(50,50,50, 80%);
+    border-color: rgb(50, 50, 50);
+    border-bottom-color: rgb(50, 50, 50);
+}}
 QLineEdit {{
     background-color: rgba(81, 81, 81, 25%);
     font-family: "Segoe UI Variable Display";
@@ -631,6 +637,12 @@ QPushButton:hover {{
     background-color: rgba({colors[1]}, 80%);
     border-color: rgb({colors[2]});
     border-bottom-color: rgb({colors[2]});
+}}
+#AccentButton:disabled{{
+    color: #000000;
+    background-color: rgba(200,200,200, 80%);
+    border-color: rgb(200, 200, 200);
+    border-bottom-color: rgb(200, 200, 200);
 }}
 QLineEdit {{
     background-color: rgba(255, 255, 255, 25%);
