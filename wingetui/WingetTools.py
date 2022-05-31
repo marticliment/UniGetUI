@@ -168,7 +168,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
         "installer-sha256": "Unknown",
         "installer-url": "Unknown",
         "installer-type": "Unknown",
-        "manifest": "Unknown",
+        "manifest": "Not Applicable",
         "versions": [],
     }
     while p.poll() is None:

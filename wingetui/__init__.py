@@ -711,7 +711,6 @@ QLineEdit:disabled {{
     border-radius: 6px;
     border: 0.6px solid rgba(255, 255, 255, 55%);
 }}
-
 QScrollBar:vertical {{
     background: transparent;
     border: 1px solid rgba(240, 240, 240, 55%);
