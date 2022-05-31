@@ -53,7 +53,7 @@ class Uninstall(QtWidgets.QWidget):
         hLayout = QtWidgets.QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.query = QtWidgets.QLineEdit()
+        self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search on your software")
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(self.filter)
@@ -357,7 +357,7 @@ class Discover(QtWidgets.QWidget):
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
          
-        self.query = QtWidgets.QLineEdit()
+        self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search something on Winget or Scoop")
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
@@ -671,7 +671,7 @@ class Upgrade(QtWidgets.QWidget):
         hLayout = QtWidgets.QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.query = QtWidgets.QLineEdit()
+        self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search available updates")
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(self.filter)
@@ -1112,6 +1112,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
         self.layout.addWidget(self.progressbar, stretch=1)
         self.info = QtWidgets.QLineEdit()
+        self.info.setStyleSheet("color: grey; border-bottom: inherit;")
         self.info.setText("Waiting for other installations to finish...")
         self.info.setReadOnly(True)
         self.addInfoLine.connect(lambda text: self.info.setText(text))
@@ -1668,6 +1669,7 @@ class Program(QMainWindow):
     def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False) -> None:
         self.store = store
         self.installButton.setEnabled(False)
+        self.versionCombo.setEnabled(False)
         self.isAnUpdate = update
         self.installButton.setText("Please wait...")
         store = store.lower()
@@ -1706,6 +1708,7 @@ class Program(QMainWindow):
         else:
             self.installButton.setText("Install")
         self.installButton.setEnabled(True)
+        self.versionCombo.setEnabled(True)
         if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])

@@ -220,3 +220,23 @@ class ScrollWidget(QWidget):
     def wheelEvent(self, event: QWheelEvent) -> None:
         self.scroller.wheelEvent(event)
         return super().wheelEvent(event)
+
+class CustomLineEdit(QLineEdit):
+    def __init__(self, parent = None):
+        super().__init__(parent=parent)
+        self.textChanged.connect(self.updateTextColor)
+        self.updateTextColor(self.text())
+
+    def updateTextColor(self, text: str) -> None:
+        if text == "":
+            self.startStyleSheet = super().styleSheet()
+            super().setStyleSheet(self.startStyleSheet+"color: grey;")
+        else:
+            super().setStyleSheet(self.startStyleSheet)
+
+    def setStyleSheet(self, styleSheet: str) -> None:
+        if self.text() == "":
+            self.startStyleSheet = styleSheet
+            super().setStyleSheet(self.startStyleSheet+"color: grey;")
+        else:
+            super().setStyleSheet(self.startStyleSheet)
