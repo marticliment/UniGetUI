@@ -785,10 +785,32 @@ class Upgrade(QtWidgets.QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
+        h2Layout = QHBoxLayout()
+        h2Layout.setContentsMargins(27, 0, 27, 0)
+        self.upgradeAllButton = QPushButton("Upgrade all packages")
+        self.upgradeAllButton.clicked.connect(lambda: self.update("", "", all=True))
+        self.showUnknownSection = QCheckBox("Show unknown versions")
+        self.showUnknownSection.setFixedHeight(30)
+        self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
+        self.showUnknownSection.setFixedWidth(190)
+        self.showUnknownSection.setStyleSheet("margin-top: 10px;")
+        self.showUnknownSection.setChecked(True)
+        def updatelist():
+            nonlocal self
+            for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
+                if item.text(2) == "Unknown":
+                    item.setHidden(not self.showUnknownSection.isChecked())
+        self.showUnknownSection.clicked.connect(updatelist)
+
+        h2Layout.addWidget(self.upgradeAllButton)
+        h2Layout.addStretch()
+        h2Layout.addWidget(self.showUnknownSection)
+
         self.countLabel = QtWidgets.QLabel("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
+        layout.addLayout(h2Layout)
         layout.setContentsMargins(5, 0, 0, 5)
         v.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
@@ -921,17 +943,21 @@ class Upgrade(QtWidgets.QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str) -> None:
-        if not "scoop" in id:
-            if("…" in title):
-                self.addInstallation(PackageUpdater(title, "winget", useId=True, packageId=id.replace("…", "")))
+    def update(self, title: str, id: str, all = False) -> None:
+        if not all:
+            if not "scoop" in id:
+                if("…" in title):
+                    self.addInstallation(PackageUpdater(title, "winget", useId=True, packageId=id.replace("…", "")))
+                else:
+                    self.addInstallation(PackageUpdater(title, "winget", packageId=id.replace("…", "")))
             else:
-                self.addInstallation(PackageUpdater(title, "winget", packageId=id.replace("…", "")))
+                if("…" in title):
+                    self.addInstallation(PackageUpdater(title, "scoop", useId=True, packageId=id.replace("…", "")))
+                else:
+                    self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", "")))
         else:
-            if("…" in title):
-                self.addInstallation(PackageUpdater(title, "scoop", useId=True, packageId=id.replace("…", "")))
-            else:
-                self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", "")))
+            self.addInstallation(PackageUpdater(title, "", customCommand=f"{WingetTools.winget} upgrade --all "+" ".join(WingetTools.common_params)))
+            self.addInstallation(PackageUpdater(title, "", customCommand=f"scoop update"))
 
     def openInfo(self, title: str, id: str, store: str) -> None:
         if("…" in title):
