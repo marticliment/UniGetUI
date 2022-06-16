@@ -65,6 +65,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
         self.addTab(Tabs.About(), "About WingetUI")
+        class Text(QPlainTextEdit):
+            def __init__(self):
+                super().__init__()
+                self.setPlainText("click to show log")
+
+            def mousePressEvent(self, e: QMouseEvent) -> None:
+                self.setPlainText(Tools.buffer.getvalue())
+                self.appendPlainText(Tools.errbuffer.getvalue())
+                return super().mousePressEvent(e)
+        p = Text()
+        p.setReadOnly(True)
+        self.addTab(p, "Debugging log")
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()

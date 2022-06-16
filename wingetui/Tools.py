@@ -1,4 +1,5 @@
 import winreg
+import io
 from PySide6 import QtCore
 from threading import Thread
 import sys, time, subprocess, os
@@ -7,6 +8,13 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
+
+old_stdout = sys.stdout
+old_stderr = sys.stderr
+buffer = io.StringIO()
+errbuffer = io.StringIO()
+#sys.stdout = buffer = io.StringIO()
+#sys.stderr = errbuffer = io.StringIO()
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
