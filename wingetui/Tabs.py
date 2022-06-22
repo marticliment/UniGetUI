@@ -1576,10 +1576,9 @@ class Program(QMainWindow):
         class QComboBoxWithFluentMenu(QComboBox):
             def __init__(self, parent=None) -> None:
                 super().__init__(parent)
-                self.setAttribute(Qt.WA_StyledBackground)
                 self.setItemDelegate(QStyledItemDelegate(self))
                 v = self.view().window()
-                Tools.ApplyMenuBlur(v.winId().__int__(), v)
+                Tools.ApplyMenuBlur(v.winId().__int__(), v, avoidOverrideStyleSheet=True)
 
 
         self.versionCombo = QComboBoxWithFluentMenu()

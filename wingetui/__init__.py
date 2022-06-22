@@ -894,7 +894,7 @@ QComboBox {{
 }}
 QComboBox:disabled {{
     width: 100px;
-    background-color: #303030;
+    background-color: #bbbbbb;
     color: #000000;
     border-radius: 6px;
     border: 0.6px solid #262626;
@@ -934,15 +934,15 @@ QComboBox QAbstractItemView {{
     padding: 4px;
     outline: 0px;
     padding-right: 0px;
-    background-color: #303030;
+    background-color: #ffffff;
     border-radius: 8px;
-    color: white;
+    color: black;
 }}
 QComboBox QAbstractItemView::item{{
     height: 30px;
     border: none;
     padding-left: 10px;
-    color: white;
+    color: black;
     border-radius: 4px;
     background-color: white;
 }}
@@ -953,7 +953,7 @@ QComboBox QAbstractItemView::item:selected{{
     border: none;
     padding-left: 10px;
     background-color: white;
-    color: white;
+    color: black;
     border-radius: 4px;
 }}
 #package {{
