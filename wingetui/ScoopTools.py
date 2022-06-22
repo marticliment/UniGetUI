@@ -21,7 +21,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         if line:
             if(counter > 1 and not b"---" in line):
                 output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
-                print(line, ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+                #print(line, ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
             else:
                 counter += 1
     counter = 0
@@ -54,7 +54,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
                 if len(elList)==2 or elList[2].replace('[', '').replace(']', '') != " ":
                     provider = "Scoop"
                 else:
-                    print("aaa",  elList[2].replace('[', '').replace(']', ''), "aaa")
+                    #print("aaa",  elList[2].replace('[', '').replace(']', ''), "aaa")
                     provider = f"Scoop ({elList[2].replace('[', '').replace(']', '')} bucket)"
                 signal.emit(elList[0].capitalize(), f"scoop.{elList[0]}", elList[1], provider)
         except IndexError as e:
@@ -117,7 +117,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     manifest = False
     version = ""
     for line in output:
-        print(line)
+        #print(line)
         if("Description" in line):
             appInfo["description"] = line.replace("Description", "").strip()[1:].strip()
         elif("Website" in line):
@@ -134,7 +134,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
             except IndexError:
                 pass
         elif("Manifest" in line):
-            print("ok")
+            #print("ok")
             appInfo["manifest"] = line.replace("Manifest", "").strip()[1:].strip()
             try:
                 print("ok")
