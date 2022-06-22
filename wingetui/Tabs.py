@@ -121,7 +121,7 @@ class Uninstall(QtWidgets.QWidget):
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3), packageItem=item))
         
         
         
@@ -286,13 +286,13 @@ class Uninstall(QtWidgets.QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def uninstall(self, title: str, id: str, store: str) -> None:
+    def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None) -> None:
         if(Tools.MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.Yes) == Tools.MessageBox.Yes):
            
-            if("…" in title):
-                self.addInstallation(PackageUninstaller(title, store, useId=True, packageId=id.replace("…", "")))
+            if("…" in id):
+                self.addInstallation(PackageUninstaller(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
             else:
-                self.addInstallation(PackageUninstaller(title, store, packageId=id.replace("…", "")))
+                self.addInstallation(PackageUninstaller(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -731,7 +731,7 @@ class Upgrade(QtWidgets.QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
         self.packageList.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(0), item.text(1)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(0), item.text(1), packageItem=item))
         
         def showMenu(pos: QPoint):
             contextMenu = QMenu(self)
@@ -943,18 +943,18 @@ class Upgrade(QtWidgets.QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str, all = False) -> None:
+    def update(self, title: str, id: str, all = False, packageItem: QTreeWidgetItem = None) -> None:
         if not all:
             if not "scoop" in id:
                 if("…" in title):
-                    self.addInstallation(PackageUpdater(title, "winget", useId=True, packageId=id.replace("…", "")))
+                    self.addInstallation(PackageUpdater(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
                 else:
-                    self.addInstallation(PackageUpdater(title, "winget", packageId=id.replace("…", "")))
+                    self.addInstallation(PackageUpdater(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem))
             else:
                 if("…" in title):
-                    self.addInstallation(PackageUpdater(title, "scoop", useId=True, packageId=id.replace("…", "")))
+                    self.addInstallation(PackageUpdater(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
                 else:
-                    self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", "")))
+                    self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
         else:
             self.addInstallation(PackageUpdater(title, "", customCommand=f"{WingetTools.winget} upgrade --all "+" ".join(WingetTools.common_params)))
             self.addInstallation(PackageUpdater(title, "", customCommand=f"scoop update"))
@@ -1309,7 +1309,6 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 widget: QWidget
                 widget.setGraphicsEffect(op)
                 widget.setAutoFillBackground(True)
-
         updateOp(1)
         a = QVariantAnimation(self)
         a.setStartValue(1.0)
@@ -1322,6 +1321,10 @@ class PackageInstaller(QtWidgets.QGroupBox):
         Thread(target=f, daemon=True).start()
 
 class PackageUpdater(PackageInstaller):
+
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None):
+        super().__init__(title, store, version, parent, customCommand, args, packageId)
+        self.packageItem = packageItem
     
     def startInstallation(self) -> None:
         while self.installId != Tools.current_program:
@@ -1347,6 +1350,12 @@ class PackageUpdater(PackageInstaller):
             self.t = Tools.KillableThread(target=Tools.genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
+    def finish(self, returncode: int, output: str = "") -> None:
+        if returncode == 0 and not self.canceled:
+            if self.packageItem:
+                self.packageItem.setHidden(True)
+        return super().finish(returncode, output)
+
 class PackageUninstaller(PackageInstaller):
     onCancel = QtCore.Signal()
     killSubprocess = QtCore.Signal()
@@ -1354,7 +1363,8 @@ class PackageUninstaller(PackageInstaller):
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
     changeBarOrientation = QtCore.Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId=""):
+    def __init__(self, title: str, store: str, useId=False, packageId="", packageItem: QTreeWidgetItem = None):
+        self.packageItem = packageItem
         super().__init__(parent=None, title=title, store=store)
         self.finishedInstallation = True
         self.store = store.lower()
@@ -1365,9 +1375,7 @@ class PackageUninstaller(PackageInstaller):
         self.packageId = packageId
         self.label.setText(title+" Uninstallation")
         
-
-    
-    def startUninstallation(self) -> None:
+    def startInstallation(self) -> None:
         while self.installId != Tools.current_program:
             time.sleep(0.2)
         self.leftSlow.stop()
@@ -1380,7 +1388,7 @@ class PackageUninstaller(PackageInstaller):
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
             if self.useId:
-                self.p = subprocess.Popen([WingetTools.winget, "uninstall", "-e", "--id", f"{self.programName}"]+WingetTools.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+                self.p = subprocess.Popen([WingetTools.winget, "uninstall", "-e", "--id", f"{self.packageId}"]+WingetTools.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
                 self.t = Tools.KillableThread(target=WingetTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
                 self.t.start()
             else:
@@ -1426,8 +1434,11 @@ class PackageUninstaller(PackageInstaller):
         except: pass
         try: self.p.kill()
         except: pass
-    
+        
     def finish(self, returncode: int, output: str = "") -> None:
+        if returncode == 0 and not self.canceled:
+            if self.packageItem:
+                self.packageItem.setHidden(True)
         self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         Tools.removeProgram(self.installId)
