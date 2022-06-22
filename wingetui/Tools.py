@@ -23,7 +23,7 @@ else:
 
 pending_programs = []
 current_program = ""
-version = 1.0
+version = 1.1
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)

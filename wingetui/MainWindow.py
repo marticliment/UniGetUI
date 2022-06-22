@@ -76,7 +76,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return super().mousePressEvent(e)
         p = Text()
         p.setReadOnly(True)
-        self.addTab(p, "Debugging log")
+        #self.addTab(p, "Debugging log")
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()
