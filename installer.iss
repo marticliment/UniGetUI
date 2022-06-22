@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1"
 #define MyAppPublisher "SomePythonThings"
 #define MyAppURL "https://www.somepythonthings.tk/"
 #define MyAppExeName "WingetUI.exe"
