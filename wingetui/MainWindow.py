@@ -22,7 +22,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(QtCore.QSize(1100, 700))
         self.loadWidgets()
         self.installEventFilter(self)
-        self.show()
         self.setStyleSheet("""
             QTreeWidget::item{{
                 height: 25px;
@@ -152,11 +151,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         if(Tools.pending_programs != []):
             if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
-                event.accept()
+                self.hide()
+                event.ignore()
             else:
                 event.ignore()
         else:
-            event.accept()
+            event.ignore()
+            self.hide()
+            
 
 
 if(__name__=="__main__"):

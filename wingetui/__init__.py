@@ -7,6 +7,9 @@ from threading import Thread
 from tempfile import tempdir
 from urllib.request import urlopen
 from PySide6 import QtWidgets, QtCore, QtGui
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
 import MainWindow, Tools
 
 if hasattr(sys, 'frozen'):
@@ -30,11 +33,40 @@ class MainApplication(QtWidgets.QApplication):
     def __init__(self):
         try:
             super().__init__(sys.argv)
+            self.popup = QWidget()
+            self.popup.setFixedSize(QSize(600, 400))
+            self.popup.setWindowFlag(Qt.FramelessWindowHint)
+            self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)
+            self.popup.setLayout(QVBoxLayout())
+            self.popup.layout().addStretch()
+            titlewidget = QHBoxLayout()
+            titlewidget.addStretch()
+            icon = QLabel()
+            icon.setPixmap(QtGui.QPixmap(realpath+"/icon.png"))
+            text = QLabel("WingetUI")
+            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if Tools.isDark() else 'black'};font-size: 60px;")
+            titlewidget.addWidget(icon)
+            titlewidget.addWidget(text)
+            titlewidget.addStretch()
+            self.popup.layout().addLayout(titlewidget)
+            self.popup.layout().addStretch()
+            self.loadingText = QLabel("Loading WingetUI...")
+            self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if Tools.isDark() else 'black'};font-size: 12px;")
+            self.popup.layout().addWidget(self.loadingText)
+            Tools.ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
+            self.popup.show()
+
             print("[        ] Starting main application...")
             os.chdir(os.path.expanduser("~"))
-            self.kill.connect(lambda: sys.exit(0))
+            self.kill.connect(sys.exit)
             self.callInMain.connect(lambda f: f())
+            Thread(target=self.checkForRunningInstances).start()
+            self.loadingText.setText("Checking for other running instances...")
+        except Exception as e:
+            print(e)
 
+    def checkForRunningInstances(self):
+            print("Scanning for instances...")
             self.nowTime = time.time()
             self.lockFileName = f"WingetUI_{self.nowTime}"
             Tools.setSettings(self.lockFileName, True)
@@ -42,21 +74,30 @@ class MainApplication(QtWidgets.QApplication):
                 for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*")): # for every lock file
                     timestamp = float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), ""))
                     if(timestamp < self.nowTime): # If there's an older instance available: post a block file and wait until it has been deleted in a timeout. If this happens, quit
+                        self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace ID={timestamp}..."))
                         print("Found lock file, reactivating...")
                         Tools.setSettings("RaiseWindow_"+str(timestamp), True)
                         for i in range(8):
                             time.sleep(0.2)
+                            self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace ID={timestamp}... ({int(i/7*100)}%)"))
                             if not Tools.getSettings("RaiseWindow_"+str(timestamp), cache = False):
                                 print("Quitting...")
-                                Tools.setSettings(self.lockFileName, False)
+                                #Tools.setSettings(self.lockFileName, False)
                                 self.kill.emit()
+                                sys.exit(0)
                         print("Reactivation signal ignored: RaiseWindow_"+str(timestamp))
                         Tools.setSettings("RaiseWindow_"+str(timestamp), False)
                         Tools.setSettings("WingetUI_"+str(timestamp), False)
             except Exception as e:
                 print(e)
+            Thread(target=self.instanceThread, daemon=False).start()
+            Thread(target=self.updateIfPossible).start()
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
+            self.callInMain.emit(self.loadMainUI)
 
-            Thread(target=self.instanceThread, daemon=True).start()
+    def loadMainUI(self):
+        print("load main UI")
+        try:
             self.window = MainWindow.MainWindow()
             self.trayIcon = QtWidgets.QSystemTrayIcon()
             Tools.registerApplication(self)
@@ -74,13 +115,11 @@ class MainApplication(QtWidgets.QApplication):
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-                self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020")) 
+                self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
+            self.loadingText.setText(f"Latest details...")
+            self.window.show()
+            self.popup.hide()
 
-            Thread(target=self.updateIfPossible).start()
-            
-            self.exec()
-            Tools.setSettings(self.lockFileName, False)
-            self.running = False
         except Exception as e:
             if(debugging):
                 raise e
@@ -1018,4 +1057,7 @@ QComboBox QAbstractItemView::item:selected{{
 }}
 """
 
-MainApplication()
+a = MainApplication()
+a.exec()
+a.running = False
+sys.exit()
