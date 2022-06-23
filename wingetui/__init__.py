@@ -89,15 +89,22 @@ class MainApplication(QtWidgets.QApplication):
         while True:
             try:
                 for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "RaiseWindow_*")):
-                    print("RaiseWindow_"+str(self.nowTime))
                     if Tools.getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
                         print("[   OK   ] Found reactivation lock file...")
                         Tools.setSettings("RaiseWindow_"+str(self.nowTime), False)
-                        self.callInMain.emit(self.window.hide)
-                        self.callInMain.emit(self.window.showMinimized)
-                        self.callInMain.emit(self.window.showNormal)
-                        self.callInMain.emit(self.window.activateWindow)
+                        if not self.window.isMaximized():
+                            self.callInMain.emit(self.window.hide)
+                            self.callInMain.emit(self.window.showMinimized)
+                            self.callInMain.emit(self.window.show)
+                            self.callInMain.emit(self.window.showNormal)
+                        else:
+                            self.callInMain.emit(self.window.hide)
+                            self.callInMain.emit(self.window.showMinimized)
+                            self.callInMain.emit(self.window.show)
+                            self.callInMain.emit(self.window.showMaximized)
+                        self.callInMain.emit(self.window.setFocus)
                         self.callInMain.emit(self.window.raise_)
+                        self.callInMain.emit(self.window.activateWindow)
             except Exception as e:
                 print(e)
             time.sleep(0.5)
