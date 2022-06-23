@@ -249,15 +249,18 @@ class Uninstall(QtWidgets.QWidget):
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
+            self.filter()
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
+            self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded):
+            self.filter()
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
@@ -555,6 +558,7 @@ class Discover(QtWidgets.QWidget):
             self.packageList.label.setText(self.countLabel.text())
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
+            self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
@@ -562,9 +566,11 @@ class Discover(QtWidgets.QWidget):
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
+            self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded):
+            self.filter()
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
@@ -909,12 +915,14 @@ class Upgrade(QtWidgets.QWidget):
             self.packageList.label.setText(self.countLabel.text())
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
+            self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
+            self.filter()
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
@@ -922,6 +930,7 @@ class Upgrade(QtWidgets.QWidget):
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
+            self.filter()
             self.updatelist()
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
