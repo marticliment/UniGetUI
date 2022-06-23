@@ -1,7 +1,7 @@
 import hashlib
 import socket
 import subprocess
-import sys, os, win32mica
+import sys, os, win32mica, glob
 import time
 from threading import Thread
 from tempfile import tempdir
@@ -24,16 +24,41 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 class MainApplication(QtWidgets.QApplication):
+    kill = QtCore.Signal()
+    callInMain = QtCore.Signal(object)
+    running = True
     def __init__(self):
         try:
             super().__init__(sys.argv)
             print("[        ] Starting main application...")
             os.chdir(os.path.expanduser("~"))
+            self.kill.connect(lambda: sys.exit(0))
+            self.callInMain.connect(lambda f: f())
 
+            self.nowTime = time.time()
+            self.lockFileName = f"WingetUI_{self.nowTime}"
+            Tools.setSettings(self.lockFileName, True)
+            try:
+                for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*")): # for every lock file
+                    timestamp = float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), ""))
+                    if(timestamp < self.nowTime): # If there's an older instance available: post a block file and wait until it has been deleted in a timeout. If this happens, quit
+                        print("Found lock file, reactivating...")
+                        Tools.setSettings("RaiseWindow_"+str(timestamp), True)
+                        for i in range(8):
+                            time.sleep(0.2)
+                            if not Tools.getSettings("RaiseWindow_"+str(timestamp), cache = False):
+                                print("Quitting...")
+                                Tools.setSettings(self.lockFileName, False)
+                                self.kill.emit()
+                        print("Reactivation signal ignored: RaiseWindow_"+str(timestamp))
+                        Tools.setSettings("RaiseWindow_"+str(timestamp), False)
+                        Tools.setSettings("WingetUI_"+str(timestamp), False)
+            except Exception as e:
+                print(e)
+
+            Thread(target=self.instanceThread, daemon=True).start()
             self.window = MainWindow.MainWindow()
-
             self.trayIcon = QtWidgets.QSystemTrayIcon()
-
             Tools.registerApplication(self)
             self.trayIcon.setIcon(QtGui.QIcon(realpath+"/icon.png"))
             self.trayIcon.setToolTip("WingetUI")
@@ -51,57 +76,76 @@ class MainApplication(QtWidgets.QApplication):
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020")) 
 
-            def updateIfPossible():
-                if not Tools.getSettings("DisableAutoUpdateWingetUI"):
-                    print("🔵 Starting update check")
-                    integrityPass = False
-                    dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
-                    if(dmname == dmname): # Check provider IP to prevent exploits
-                        integrityPass = True
-                    try:
-                        response = urlopen("https://versions.somepythonthings.tk/versions/wingetui.ver")
-                    except Exception as e:
-                        print(e)
-                        response = urlopen("http://www.somepythonthings.tk/versions/wingetui.ver")
-                        integrityPass = True
-                    print("🔵 Version URL:", response.url)
-                    response = response.read().decode("utf8")
-                    new_version_number = response.split("///")[0]
-                    provided_hash = response.split("///")[1].replace("\n", "").lower()
-                    if float(new_version_number) > Tools.version:
-                        print("🟢 Updates found!")
-                        if(integrityPass):
-                            url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
-                            filedata = urlopen(url)
-                            datatowrite = filedata.read()
-                            filename = ""
-                            with open(os.path.join(os.path.expanduser("~"), "WingetUI-Updater.exe"), 'wb') as f:
-                                f.write(datatowrite)
-                                filename = f.name
-                            if(hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash):
-                                print("🔵 Hash: ", provided_hash)
-                                print("🟢 Hash ok, starting update")
-                                while running:
-                                    time.sleep(0.1)
-                                if not Tools.getSettings("DisableAutoUpdateWingetUI"):
-                                    subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
-                                else:
-                                    print("🟠 Hash not ok")
-                                    print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
-                                    print("🟠 Provided hash: ", provided_hash)
-                            else:
-                                print("🟠 Can't verify update server authenticity, aborting")
-                                print("🟠 Provided DmName:", dmname)
-                                print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
-                        else:
-                            print("🟢 Updates not found")
-            Thread(target=updateIfPossible).start()
-            running = True
-            self.exec_()
-            running = False
+            Thread(target=self.updateIfPossible).start()
+            
+            self.exec()
+            Tools.setSettings(self.lockFileName, False)
+            self.running = False
         except Exception as e:
             if(debugging):
                 raise e
+
+    def instanceThread(self):
+        while True:
+            try:
+                for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "RaiseWindow_*")):
+                    print("RaiseWindow_"+str(self.nowTime))
+                    if Tools.getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
+                        print("[   OK   ] Found reactivation lock file...")
+                        Tools.setSettings("RaiseWindow_"+str(self.nowTime), False)
+                        self.callInMain.emit(self.window.hide)
+                        self.callInMain.emit(self.window.showMinimized)
+                        self.callInMain.emit(self.window.showNormal)
+                        self.callInMain.emit(self.window.activateWindow)
+                        self.callInMain.emit(self.window.raise_)
+            except Exception as e:
+                print(e)
+            time.sleep(0.5)
+
+    def updateIfPossible(self):
+        if not Tools.getSettings("DisableAutoUpdateWingetUI"):
+            print("🔵 Starting update check")
+            integrityPass = False
+            dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
+            if(dmname == dmname): # Check provider IP to prevent exploits
+                integrityPass = True
+            try:
+                response = urlopen("https://versions.somepythonthings.tk/versions/wingetui.ver")
+            except Exception as e:
+                print(e)
+                response = urlopen("http://www.somepythonthings.tk/versions/wingetui.ver")
+                integrityPass = True
+            print("🔵 Version URL:", response.url)
+            response = response.read().decode("utf8")
+            new_version_number = response.split("///")[0]
+            provided_hash = response.split("///")[1].replace("\n", "").lower()
+            if float(new_version_number) > Tools.version:
+                print("🟢 Updates found!")
+                if(integrityPass):
+                    url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
+                    filedata = urlopen(url)
+                    datatowrite = filedata.read()
+                    filename = ""
+                    with open(os.path.join(os.path.expanduser("~"), "WingetUI-Updater.exe"), 'wb') as f:
+                        f.write(datatowrite)
+                        filename = f.name
+                    if(hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash):
+                        print("🔵 Hash: ", provided_hash)
+                        print("🟢 Hash ok, starting update")
+                        while self.running:
+                            time.sleep(0.1)
+                        if not Tools.getSettings("DisableAutoUpdateWingetUI"):
+                            subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
+                        else:
+                            print("🟠 Hash not ok")
+                            print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
+                            print("🟠 Provided hash: ", provided_hash)
+                    else:
+                        print("🟠 Can't verify update server authenticity, aborting")
+                        print("🟠 Provided DmName:", dmname)
+                        print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
+                else:
+                    print("🟢 Updates not found")
 
 
 colors = Tools.getColors()

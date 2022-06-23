@@ -32,10 +32,12 @@ if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     except:
         pass
 
-def getSettings(s: str):
+def getSettings(s: str, cache = True):
     global settingsCache
     try:
         try:
+            if not cache:
+                raise KeyError("Cache disabled")
             return settingsCache[s]
         except KeyError:
             v = os.path.exists(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s))
