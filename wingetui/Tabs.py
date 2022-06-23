@@ -1,4 +1,5 @@
 from posixpath import relpath
+from turtle import update
 from PySide6 import QtWidgets, QtCore, QtGui
 import WingetTools, ScoopTools, sys, Tools, subprocess, time, os
 from threading import Thread
@@ -7,6 +8,11 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+
+getSettings = Tools.getSettings
+setSettings = Tools.setSettings
+getSettingsValue = Tools.getSettingsValue
+setSettingsValue = Tools.setSettingsValue
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -56,7 +62,7 @@ class Uninstall(QtWidgets.QWidget):
         self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search on your software")
         self.query.returnPressed.connect(self.filter)
-        self.query.textChanged.connect(self.filter)
+        self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
@@ -80,6 +86,8 @@ class Uninstall(QtWidgets.QWidget):
         self.forceCheckBox.setFixedWidth(140)
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
+        self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUninstall"))
+        self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUninstall", bool(not v)))
 
         img = QLabel()
         img.setFixedWidth(96)
@@ -356,6 +364,8 @@ class Discover(QtWidgets.QWidget):
         self.forceCheckBox.setFixedWidth(140)
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
+        self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnInstall"))
+        self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnInstall", bool(not v)))
          
         self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search something on Winget or Scoop")
@@ -674,7 +684,7 @@ class Upgrade(QtWidgets.QWidget):
         self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search available updates")
         self.query.returnPressed.connect(self.filter)
-        self.query.textChanged.connect(self.filter)
+        self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(40)
         self.query.setStyleSheet("margin-top: 10px;")
         self.query.setFixedWidth(250)
@@ -697,6 +707,8 @@ class Upgrade(QtWidgets.QWidget):
         self.forceCheckBox.setFixedWidth(140)
         self.forceCheckBox.setStyleSheet("margin-top: 10px;")
         self.forceCheckBox.setChecked(True)
+        self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUpgrade"))
+        self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUpgrade", bool(not v)))
 
         img = QLabel()
         img.setFixedWidth(96)
@@ -794,13 +806,17 @@ class Upgrade(QtWidgets.QWidget):
         self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
         self.showUnknownSection.setFixedWidth(190)
         self.showUnknownSection.setStyleSheet("margin-top: 10px;")
-        self.showUnknownSection.setChecked(True)
-        def updatelist():
-            nonlocal self
+        self.showUnknownSection.setChecked(getSettings("ShowUnknownResults"))
+        self.showUnknownSection.clicked.connect(lambda v: (setSettings("ShowUnknownResults", bool(v)), updatelist()))
+        def updatelist(selff = None):
+            if not selff:
+                nonlocal self
+            else:
+                self = selff
             for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
                 if item.text(2) == "Unknown":
                     item.setHidden(not self.showUnknownSection.isChecked())
-        self.showUnknownSection.clicked.connect(updatelist)
+        self.updatelist = updatelist
 
         h2Layout.addWidget(self.upgradeAllButton)
         h2Layout.addStretch()
@@ -906,6 +922,7 @@ class Upgrade(QtWidgets.QWidget):
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
+            self.updatelist()
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -937,6 +954,7 @@ class Upgrade(QtWidgets.QWidget):
                 item.setHidden(True)
             else:
                 item.setHidden(False)
+        self.updatelist()
         self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
