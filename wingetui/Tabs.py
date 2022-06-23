@@ -1003,6 +1003,18 @@ class About(QtWidgets.QScrollArea):
         self.setWidget(self.widget)
         self.layout.addWidget(QtWidgets.QLabel())
 
+        title = QtWidgets.QLabel("General Settings")
+        title.setStyleSheet("font-size: 40px;")
+        self.layout.addWidget(title)
+
+        self.layout.addWidget(QtWidgets.QLabel())
+        updateCheckBox = QCheckBox("Update WingetUI automatically")
+        updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
+        updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
+        self.layout.addWidget(updateCheckBox)
+
+        self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addWidget(QtWidgets.QLabel())
         title = QtWidgets.QLabel("About WingetUI "+str(Tools.version)+"")
         title.setStyleSheet("font-size: 40px;")
 

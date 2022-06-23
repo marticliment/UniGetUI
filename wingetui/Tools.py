@@ -22,8 +22,69 @@ else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 pending_programs = []
+settingsCache = {}
 current_program = ""
 version = 1.1
+
+if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
+    try:
+        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
+    except:
+        pass
+
+def getSettings(s: str):
+    global settingsCache
+    try:
+        try:
+            return settingsCache[s]
+        except KeyError:
+            v = os.path.exists(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s))
+            settingsCache[s] = v
+            return v
+    except Exception as e:
+        print(e)
+        return False
+
+def setSettings(s: str, v: bool):
+    global settingsCache
+    try:
+        settingsCache = {}
+        if(v):
+            open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w").close()
+        else:
+            try:
+                os.remove(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s))
+            except FileNotFoundError:
+                pass
+    except Exception as e:
+        print(e)
+
+def getSettingsValue(s: str):
+    global settingsCache
+    try:
+        try:
+            return settingsCache[s+"Value"]
+        except KeyError:
+            with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r") as sf:
+                v = sf.read()
+                settingsCache[s+"Value"] = v
+                return v
+    except FileNotFoundError:
+        return ""
+    except Exception as e:
+        print(e)
+        return ""
+
+def setSettingsValue(s: str, v: str):
+    global settingsCache
+    try:
+        settingsCache = {}
+        with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w") as sf:
+            sf.write(v)
+    except Exception as e:
+        print(e)
+
+
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)

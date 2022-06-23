@@ -52,36 +52,38 @@ class MainApplication(QtWidgets.QApplication):
                 self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020")) 
 
             def updateIfPossible():
-                        print("🔵 Starting update check")
-                        integrityPass = False
-                        dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
-                        if(dmname == dmname): # Check provider IP to prevent exploits
-                            integrityPass = True
-                        try:
-                            response = urlopen("https://versions.somepythonthings.tk/versions/wingetui.ver")
-                        except Exception as e:
-                            print(e)
-                            response = urlopen("http://www.somepythonthings.tk/versions/wingetui.ver")
-                            integrityPass = True
-                        print("🔵 Version URL:", response.url)
-                        response = response.read().decode("utf8")
-                        new_version_number = response.split("///")[0]
-                        provided_hash = response.split("///")[1].replace("\n", "").lower()
-                        if float(new_version_number) > Tools.version:
-                            print("🟢 Updates found!")
-                            if(integrityPass):
-                                url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
-                                filedata = urlopen(url)
-                                datatowrite = filedata.read()
-                                filename = ""
-                                with open(os.path.join(os.path.expanduser("~"), "WingetUI-Updater.exe"), 'wb') as f:
-                                    f.write(datatowrite)
-                                    filename = f.name
-                                if(hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash):
-                                    print("🔵 Hash: ", provided_hash)
-                                    print("🟢 Hash ok, starting update")
-                                    while running:
-                                        time.sleep(0.1)
+                if not Tools.getSettings("DisableAutoUpdateWingetUI"):
+                    print("🔵 Starting update check")
+                    integrityPass = False
+                    dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
+                    if(dmname == dmname): # Check provider IP to prevent exploits
+                        integrityPass = True
+                    try:
+                        response = urlopen("https://versions.somepythonthings.tk/versions/wingetui.ver")
+                    except Exception as e:
+                        print(e)
+                        response = urlopen("http://www.somepythonthings.tk/versions/wingetui.ver")
+                        integrityPass = True
+                    print("🔵 Version URL:", response.url)
+                    response = response.read().decode("utf8")
+                    new_version_number = response.split("///")[0]
+                    provided_hash = response.split("///")[1].replace("\n", "").lower()
+                    if float(new_version_number) > Tools.version:
+                        print("🟢 Updates found!")
+                        if(integrityPass):
+                            url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
+                            filedata = urlopen(url)
+                            datatowrite = filedata.read()
+                            filename = ""
+                            with open(os.path.join(os.path.expanduser("~"), "WingetUI-Updater.exe"), 'wb') as f:
+                                f.write(datatowrite)
+                                filename = f.name
+                            if(hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash):
+                                print("🔵 Hash: ", provided_hash)
+                                print("🟢 Hash ok, starting update")
+                                while running:
+                                    time.sleep(0.1)
+                                if not Tools.getSettings("DisableAutoUpdateWingetUI"):
                                     subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
                                 else:
                                     print("🟠 Hash not ok")
