@@ -10,7 +10,7 @@ from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-import MainWindow, Tools
+import MainWindow, Tools, WingetTools, ScoopTools
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -30,6 +30,13 @@ class MainApplication(QtWidgets.QApplication):
     kill = QtCore.Signal()
     callInMain = QtCore.Signal(object)
     running = True
+    componentStatus = {
+        "wingetFound": False,
+        "scoopFound": False,
+        "sudoFound": False,
+        "wingetVersion": "Unknown",
+        "scoopVersion": "Unknown", 
+    }
     def __init__(self):
         try:
             super().__init__(sys.argv)
@@ -60,10 +67,31 @@ class MainApplication(QtWidgets.QApplication):
             os.chdir(os.path.expanduser("~"))
             self.kill.connect(sys.exit)
             self.callInMain.connect(lambda f: f())
-            Thread(target=self.checkForRunningInstances).start()
+            Thread(target=self.loadStuffThread).start()
             self.loadingText.setText("Checking for other running instances...")
         except Exception as e:
             print(e)
+
+    def loadStuffThread(self):
+        self.loadStatus = 0 # There are 6 items (preparation threads)
+        
+        # Preparation threads
+        Thread(target=self.checkForRunningInstances).start()
+        Thread(target=self.detectWinget).start()
+        Thread(target=self.detectScoop).start()
+        Thread(target=self.detectSudo).start()
+
+        # Daemon threads
+        Thread(target=self.instanceThread, daemon=True).start()
+        Thread(target=self.updateIfPossible, daemon=True).start()
+
+        while self.loadStatus < 6:
+            time.sleep(0.01)
+
+        self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
+        self.callInMain.emit(lambda: self.loadingText.repaint())
+        self.callInMain.emit(self.loadMainUI)
+        print(self.componentStatus)
 
     def checkForRunningInstances(self):
             print("Scanning for instances...")
@@ -77,25 +105,77 @@ class MainApplication(QtWidgets.QApplication):
                 print("Found lock file(s), reactivating...")
                 for tst in validTimestamps:
                     Tools.setSettings("RaiseWindow_"+str(tst), True)
-                for i in range(8):
-                    time.sleep(0.2)
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Requesting a reactivation..."))
+                if validTimestamps != [] and timestamps != [self.nowTime]:
+                    for i in range(16):
+                        time.sleep(0.1)
+                        self.callInMain.emit(lambda: self.loadingText.setText(f"Sent handshake. Waiting for instance listener's answer... ({int(i/15*100)}%)"))
+                        for tst in validTimestamps:
+                            if not Tools.getSettings("RaiseWindow_"+str(tst), cache = False):
+                                print(f"Instance {tst} responded, quitting...")
+                                self.callInMain.emit(lambda: self.loadingText.setText(f"Instance {tst} responded, quitting..."))
+                                Tools.setSettings(self.lockFileName, False)
+                                self.kill.emit()
+                                sys.exit(0)
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Starting daemons..."))
+                    print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
                     for tst in validTimestamps:
-                        if not Tools.getSettings("RaiseWindow_"+str(tst), cache = False):
-                            print("Quitting...")
-                            Tools.setSettings(self.lockFileName, False)
-                            self.kill.emit()
-                            sys.exit(0)
-                print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
-                for tst in validTimestamps:
-                    Tools.setSettings("RaiseWindow_"+str(tst), False)
-                    Tools.setSettings("WingetUI_"+str(tst), False)
+                        Tools.setSettings("RaiseWindow_"+str(tst), False)
+                        Tools.setSettings("WingetUI_"+str(tst), False)
             except Exception as e:
                 print(e)
-            Thread(target=self.instanceThread, daemon=False).start()
-            Thread(target=self.updateIfPossible).start()
-            self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
-            self.callInMain.emit(self.loadMainUI)
+            self.loadStatus += 1
+
+    def detectWinget(self):
+        try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Locating winget..."))
+            o = subprocess.run(f"{WingetTools.winget} -v", shell=True, stdout=subprocess.PIPE)
+            self.componentStatus["wingetFound"] = o.returncode == 0
+            self.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Winget found: {self.componentStatus['wingetFound']}"))
+        except Exception as e:
+            print(e)
+        self.loadStatus += 1
+        print("updating scoop")
+        try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
+            o = subprocess.run(f"{WingetTools.winget} upgrade {' '.join(WingetTools.common_params)}", shell=True, stdout=subprocess.PIPE)
+            self.componentStatus["sudoFound"] = o.returncode == 0
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
+        except Exception as e:
+            print(e)
+        self.loadStatus += 1
+        print("winget ok")
+            
+    def detectScoop(self):
+        try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Locating scoop..."))
+            o = subprocess.run(f"scoop -v", shell=True, stdout=subprocess.PIPE)
+            self.componentStatus["scoopFound"] = o.returncode == 0
+            self.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Scoop found: {self.componentStatus['scoopFound']}"))
+        except Exception as e:
+            print(e)
+        self.loadStatus += 1
+        print("updating scoop")
+        try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
+            o = subprocess.run(f"scoop update", shell=True, stdout=subprocess.PIPE)
+            self.componentStatus["sudoFound"] = o.returncode == 0
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
+        except Exception as e:
+            print(e)
+        print("scoop ok")
+        self.loadStatus += 1
+
+    def detectSudo(self):
+        try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
+            o = subprocess.run(f"sudo", shell=True, stdout=subprocess.PIPE)
+            self.componentStatus["sudoFound"] = o.returncode == 0
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
+        except Exception as e:
+            print(e)
+        self.loadStatus += 1
 
     def loadMainUI(self):
         print("load main UI")
