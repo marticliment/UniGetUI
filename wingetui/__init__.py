@@ -71,23 +71,25 @@ class MainApplication(QtWidgets.QApplication):
             self.lockFileName = f"WingetUI_{self.nowTime}"
             Tools.setSettings(self.lockFileName, True)
             try:
-                for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*")): # for every lock file
-                    timestamp = float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), ""))
-                    if(timestamp < self.nowTime): # If there's an older instance available: post a block file and wait until it has been deleted in a timeout. If this happens, quit
-                        self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace ID={timestamp}..."))
-                        print("Found lock file, reactivating...")
-                        Tools.setSettings("RaiseWindow_"+str(timestamp), True)
-                        for i in range(8):
-                            time.sleep(0.2)
-                            self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace ID={timestamp}... ({int(i/7*100)}%)"))
-                            if not Tools.getSettings("RaiseWindow_"+str(timestamp), cache = False):
-                                print("Quitting...")
-                                #Tools.setSettings(self.lockFileName, False)
-                                self.kill.emit()
-                                sys.exit(0)
-                        print("Reactivation signal ignored: RaiseWindow_"+str(timestamp))
-                        Tools.setSettings("RaiseWindow_"+str(timestamp), False)
-                        Tools.setSettings("WingetUI_"+str(timestamp), False)
+                timestamps = [float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), "")) for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*"))] # get a list with the timestamps
+                validTimestamps = [timestamp for timestamp in timestamps if timestamp < self.nowTime]
+                self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace(s)..."))
+                print("Found lock file(s), reactivating...")
+                for tst in validTimestamps:
+                    Tools.setSettings("RaiseWindow_"+str(tst), True)
+                for i in range(8):
+                    time.sleep(0.2)
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Requesting a reactivation..."))
+                    for tst in validTimestamps:
+                        if not Tools.getSettings("RaiseWindow_"+str(tst), cache = False):
+                            print("Quitting...")
+                            Tools.setSettings(self.lockFileName, False)
+                            self.kill.emit()
+                            sys.exit(0)
+                print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
+                for tst in validTimestamps:
+                    Tools.setSettings("RaiseWindow_"+str(tst), False)
+                    Tools.setSettings("WingetUI_"+str(tst), False)
             except Exception as e:
                 print(e)
             Thread(target=self.instanceThread, daemon=False).start()
