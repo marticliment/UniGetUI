@@ -984,7 +984,7 @@ class Upgrade(QtWidgets.QWidget):
                     self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
         else:
             self.addInstallation(PackageUpdater(title, "", customCommand=f"{WingetTools.winget} upgrade --all "+" ".join(WingetTools.common_params)))
-            self.addInstallation(PackageUpdater(title, "", customCommand=f"scoop update"))
+            self.addInstallation(PackageUpdater(title, "", customCommand=f"scoop update & scoop update *"))
 
     def openInfo(self, title: str, id: str, store: str) -> None:
         if("…" in title):
