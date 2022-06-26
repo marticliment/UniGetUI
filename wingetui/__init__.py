@@ -36,6 +36,7 @@ class MainApplication(QtWidgets.QApplication):
         "sudoFound": False,
         "wingetVersion": "Unknown",
         "scoopVersion": "Unknown", 
+        "sudoVersion": "Unknown", 
     }
     def __init__(self):
         try:
@@ -88,6 +89,12 @@ class MainApplication(QtWidgets.QApplication):
         while self.loadStatus < 6:
             time.sleep(0.01)
 
+        if self.componentStatus["scoopFound"] and not self.componentStatus["sudoFound"]:
+            p = subprocess.Popen("scoop install gsudo", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+            while p.poll() is None:
+                line = p.stdout.readline().strip()
+                if line:
+                   self.callInMain.emit(lambda: self.loadingText.setText(str(line, encoding='utf-8', errors="ignore")))
         self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
         self.callInMain.emit(lambda: self.loadingText.repaint())
         self.callInMain.emit(self.loadMainUI)
@@ -139,7 +146,6 @@ class MainApplication(QtWidgets.QApplication):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
             o = subprocess.run(f"{WingetTools.winget} upgrade {' '.join(WingetTools.common_params)}", shell=True, stdout=subprocess.PIPE)
-            self.componentStatus["sudoFound"] = o.returncode == 0
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
         except Exception as e:
             print(e)
@@ -160,7 +166,6 @@ class MainApplication(QtWidgets.QApplication):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
             o = subprocess.run(f"scoop update", shell=True, stdout=subprocess.PIPE)
-            self.componentStatus["sudoFound"] = o.returncode == 0
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
         except Exception as e:
             print(e)
@@ -170,8 +175,9 @@ class MainApplication(QtWidgets.QApplication):
     def detectSudo(self):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
-            o = subprocess.run(f"sudo", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"gsudo -v", shell=True, stdout=subprocess.PIPE)
             self.componentStatus["sudoFound"] = o.returncode == 0
+            self.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[1]
             self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
         except Exception as e:
             print(e)
