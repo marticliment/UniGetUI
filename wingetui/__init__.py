@@ -200,13 +200,13 @@ class MainApplication(QtWidgets.QApplication):
             self.trayIcon.setToolTip("WingetUI")
             self.trayIcon.setVisible(True)
             if(not Tools.isDark()):
-                self.setStyle("fusion")
+                self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
                 if r != 0x32:
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
             else:
-                self.setStyle("fusion")
+                self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -533,6 +533,7 @@ QTreeWidget {{
     show-decoration-selected: 0;
     background-color: transparent;
     padding: 5px;
+    outline: none;
     border-radius: 6px;
     border: 0px solid #1f1f1f;
 }}
@@ -965,6 +966,7 @@ QTreeWidget {{
     show-decoration-selected: 0;
     background-color: transparent;
     padding: 5px;
+    outline: none;
     border-radius: 6px;
     border: 0px solid rgba(240, 240, 240, 55%);
 }}
