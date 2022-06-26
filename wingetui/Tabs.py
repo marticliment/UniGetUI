@@ -1012,8 +1012,9 @@ class Upgrade(QtWidgets.QWidget):
         self.installerswidget.addWidget(p)
 
 class About(QtWidgets.QScrollArea):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
+    def __init__(self, componentStatus: dict):
+        super().__init__()
+        self.componentStatus = componentStatus
         self.widget = QtWidgets.QWidget()
         self.setWidgetResizable(True)
         self.setStyleSheet("margin-left: 0px;")
@@ -1041,6 +1042,31 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(updateCheckBox)
 
         self.layout.addWidget(QtWidgets.QLabel())
+        self.layout.addWidget(QtWidgets.QLabel())
+        title = QtWidgets.QLabel("Component information")
+        title.setStyleSheet("font-size: 40px;")
+        self.layout.addWidget(title)
+
+        self.layout.addWidget(QtWidgets.QLabel())
+        
+        table = QTableWidget()
+        table.setStyleSheet("*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;}QTableCornerButton::section{background-color: transparent;}")
+        table.setColumnCount(2)
+        table.setRowCount(3)
+        table.setEnabled(False)
+        table.setHorizontalHeaderLabels(["Status", "Version"])
+        table.setColumnWidth(1, 200)
+        table.verticalHeader().setFixedWidth(100)
+        table.setVerticalHeaderLabels(["Winget", "  Scoop", "  gSudo"])
+        table.setItem(0, 0, QTableWidgetItem(str("Found" if self.componentStatus["wingetFound"] else "Not found")))
+        table.setItem(0, 1, QTableWidgetItem(str(self.componentStatus["wingetVersion"])))
+        table.setItem(1, 0, QTableWidgetItem(str("Found" if self.componentStatus["scoopFound"] else "Not found")))
+        table.setItem(1, 1, QTableWidgetItem(str(self.componentStatus["scoopVersion"])))
+        table.setItem(2, 0, QTableWidgetItem(str("Found" if self.componentStatus["sudoFound"] else "Not found")))
+        table.setItem(2, 1, QTableWidgetItem(str(self.componentStatus["sudoVersion"])))
+        table.setCornerWidget(QPushButton())
+        #table.cornerWidget().hide()
+        self.layout.addWidget(table)
         self.layout.addWidget(QtWidgets.QLabel())
         title = QtWidgets.QLabel("About WingetUI "+str(Tools.version)+"")
         title.setStyleSheet("font-size: 40px;")

@@ -12,9 +12,10 @@ else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, componentStatus: dict):
         self.oldbtn = None
-        super().__init__(parent=parent)
+        super().__init__()
+        self.componentStatus = componentStatus
         self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
@@ -63,7 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uninstall = Tabs.Uninstall(self.installerswidget)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
-        self.addTab(Tabs.About(), "About WingetUI")
+        self.addTab(Tabs.About(self.componentStatus), "About WingetUI")
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()

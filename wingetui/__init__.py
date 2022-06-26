@@ -88,13 +88,13 @@ class MainApplication(QtWidgets.QApplication):
 
         while self.loadStatus < 6:
             time.sleep(0.01)
-
+        """
         if self.componentStatus["scoopFound"] and not self.componentStatus["sudoFound"]:
             p = subprocess.Popen("scoop install gsudo", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
             while p.poll() is None:
                 line = p.stdout.readline().strip()
                 if line:
-                   self.callInMain.emit(lambda: self.loadingText.setText(str(line, encoding='utf-8', errors="ignore")))
+                   self.callInMain.emit(lambda: self.loadingText.setText(str(line, encoding='utf-8', errors="ignore")))"""
         self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
         self.callInMain.emit(lambda: self.loadingText.repaint())
         self.callInMain.emit(self.loadMainUI)
@@ -175,9 +175,16 @@ class MainApplication(QtWidgets.QApplication):
     def detectSudo(self):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
-            o = subprocess.run(f"gsudo -v", shell=True, stdout=subprocess.PIPE)
-            self.componentStatus["sudoFound"] = o.returncode == 0
-            self.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[1]
+            o = os.path.isfile(Tools.sudoPath)
+            self.componentStatus["sudoFound"] = o
+            self.componentStatus["sudoVersion"] = "Bundled version"
+            print()
+            print()
+            print()
+            print(o)
+            print()
+            print()
+            print()
             self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
         except Exception as e:
             print(e)
@@ -186,7 +193,7 @@ class MainApplication(QtWidgets.QApplication):
     def loadMainUI(self):
         print("load main UI")
         try:
-            self.window = MainWindow.MainWindow()
+            self.window = MainWindow.MainWindow(self.componentStatus)
             self.trayIcon = QtWidgets.QSystemTrayIcon()
             Tools.registerApplication(self)
             self.trayIcon.setIcon(QtGui.QIcon(realpath+"/icon.png"))

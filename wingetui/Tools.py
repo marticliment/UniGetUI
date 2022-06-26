@@ -21,10 +21,12 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
+sudoPath = os.path.join(os.path.join(realpath, "sudo"), "sudo.cmd")
+
 pending_programs = []
 settingsCache = {}
 current_program = ""
-version = 1.1
+version = 1.2
 
 if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     try:
