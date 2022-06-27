@@ -1,4 +1,5 @@
 import os
+from xml.dom.minidom import Attr
 
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import *
@@ -22,6 +23,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(realpath+"/icon.png"))
         self.resize(QtCore.QSize(1100, 700))
         self.loadWidgets()
+        self.blackmatt = QWidget(self)
+        self.blackmatt.setStyleSheet("background-color: rgba(0, 0, 0, 50%);")
+        self.blackmatt.hide()
+        self.blackmatt.move(0, 0)
+        self.blackmatt.resize(self.size())
         self.installEventFilter(self)
         self.setStyleSheet("""
             QTreeWidget::item{{
@@ -159,6 +165,14 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             event.ignore()
             self.hide()
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        try:
+            self.blackmatt.move(0, 0)
+            self.blackmatt.resize(self.size())
+        except AttributeError:
+            pass
+        return super().resizeEvent(event)
             
 
 

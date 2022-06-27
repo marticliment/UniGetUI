@@ -1852,6 +1852,7 @@ class Program(QMainWindow):
     def show(self) -> None:
         g: QRect = self.parent().window().geometry()
         self.resize(600, 600)
+        self.parent().window().blackmatt.show()
         self.move(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
         print(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
         return super().show()
@@ -1859,6 +1860,17 @@ class Program(QMainWindow):
     def mousePressEvent(self, event: QMouseEvent) -> None:
         #self.parent().window().activateWindow()
         return super().mousePressEvent(event)
+
+    def close(self) -> bool:
+        self.parent().window().blackmatt.hide()
+        return super().close()
+
+    def hide(self) -> None:
+        try:
+            self.parent().window().blackmatt.hide()
+        except AttributeError:
+            pass
+        return super().hide()
         
 
 
