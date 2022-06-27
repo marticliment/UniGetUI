@@ -1844,8 +1844,11 @@ class Program(QMainWindow):
             version = []
         else:
             version = ["--version", self.versionCombo.currentText()]
-            print(f"[  WARN  ]Issuing specific version {self.versionCombo.currentText()}")
-        p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId)
+            print(f"[  WARN  ] Issuing specific version {self.versionCombo.currentText()}")
+        if self.isAnUpdate:
+            p = PackageUpdater(title, self.store, version, args=cmdline_args, packageId=packageId)
+        else:
+            p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId)
         self.addProgram.emit(p)
         self.close()
 
