@@ -117,7 +117,7 @@ class Uninstall(QtWidgets.QWidget):
         #self.packageList.setColumnWidth(1, 300)
         #self.packageList.setColumnWidth(2, 200)
         self.packageList.setColumnHidden(2, True)
-        self.packageList.setColumnWidth(3, 100)
+        self.packageList.setColumnWidth(3, 120)
         self.packageList.setSortingEnabled(True)
         header = self.packageList.header()
         header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
@@ -780,7 +780,7 @@ class Upgrade(QtWidgets.QWidget):
         header.setSectionResizeMode(4, QtWidgets.QHeaderView.Fixed)
         self.packageList.setColumnWidth(2, 100)
         self.packageList.setColumnWidth(3, 100)
-        self.packageList.setColumnWidth(4, 100)
+        self.packageList.setColumnWidth(4, 120)
         
         self.loadingProgressBar = QtWidgets.QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
