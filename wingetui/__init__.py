@@ -164,6 +164,16 @@ class MainApplication(QtWidgets.QApplication):
         self.loadStatus += 1
         print("updating scoop")
         try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (1/2)"))
+            o = subprocess.run(f"scoop cleanup *", shell=True, stdout=subprocess.PIPE)
+        except Exception as e:
+            print(e)
+        try:
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (2/2)"))
+            o = subprocess.run(f"scoop cache rm *", shell=True, stdout=subprocess.PIPE)
+        except Exception as e:
+            print(e)
+        try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
             o = subprocess.run(f"scoop update", shell=True, stdout=subprocess.PIPE)
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
