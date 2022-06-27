@@ -1180,8 +1180,10 @@ class PackageInstaller(QtWidgets.QGroupBox):
     counterSignal = QtCore.Signal(int)
     callInMain = QtCore.Signal(object)
     changeBarOrientation = QtCore.Signal()
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId=""):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False):
         super().__init__(parent=parent)
+        self.runAsAdmin = admin
+        self.adminstr = [Tools.sudoPath] if self.runAsAdmin else []
         self.finishedInstallation = True
         self.callInMain.connect(lambda f: f())
         self.setMinimumHeight(500)
@@ -1268,18 +1270,19 @@ class PackageInstaller(QtWidgets.QGroupBox):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
+        self.addInfoLine.emit("Starting installation...")
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store == "winget"):
-            self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(self.adminstr + ["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=Tools.sudoLocation, env=os.environ)
             self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif(self.store == "scoop"):
-            self.p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "install", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "install", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=Tools.sudoLocation, env=os.environ)
             self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
-            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=Tools.sudoLocation, env=os.environ)
             self.t = Tools.KillableThread(target=Tools.genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
@@ -1390,8 +1393,8 @@ class PackageInstaller(QtWidgets.QGroupBox):
 
 class PackageUpdater(PackageInstaller):
 
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None):
-        super().__init__(title, store, version, parent, customCommand, args, packageId)
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False):
+        super().__init__(title, store, version, parent, customCommand, args, packageId, admin)
         self.packageItem = packageItem
     
     def startInstallation(self) -> None:
@@ -1402,19 +1405,20 @@ class PackageUpdater(PackageInstaller):
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
+        self.addInfoLine.emit("Applying update...")
         self.rightFast.stop()
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store == "winget"):
-            self.p = subprocess.Popen(["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(self.adminstr + ["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + WingetTools.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=Tools.sudoLocation, env=os.environ)
             self.t = Tools.KillableThread(target=WingetTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif(self.store == "scoop"):
-            self.p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "update", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "update", f"{self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=Tools.sudoLocation, env=os.environ)
             self.t = Tools.KillableThread(target=ScoopTools.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
-            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=Tools.sudoLocation, env=os.environ)
             self.t = Tools.KillableThread(target=Tools.genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
@@ -1610,6 +1614,7 @@ class Program(QMainWindow):
         self.layout.addStretch()
 
         self.hLayout = QtWidgets.QHBoxLayout()
+        self.oLayout = QtWidgets.QHBoxLayout()
         self.description = QtWidgets.QLabel("Description: Unknown")
         self.description.setWordWrap(True)
 
@@ -1653,9 +1658,6 @@ class Program(QMainWindow):
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QtCore.QSize(24, 24))
         self.versionCombo.setFixedHeight(25)
-        self.forceCheckbox = QtWidgets.QCheckBox()
-        self.forceCheckbox.setText("Force")
-        self.forceCheckbox.setChecked(False)
         self.installButton = QtWidgets.QPushButton()
         self.installButton.setText("Install")
         self.installButton.setObjectName("AccentButton")
@@ -1665,16 +1667,42 @@ class Program(QMainWindow):
         self.installButton.setFixedHeight(30)
 
         downloadGroupBox = QtWidgets.QGroupBox()
-        downloadGroupBox.setMinimumHeight(80)
+        downloadGroupBox.setMinimumHeight(100)
+        optionsGroupBox = QtWidgets.QGroupBox()
+
+        self.forceCheckbox = QtWidgets.QCheckBox()
+        self.forceCheckbox.setText("Skip hash check")
+        self.forceCheckbox.setChecked(False)
+        
+        self.interactiveCheckbox = QtWidgets.QCheckBox()
+        self.interactiveCheckbox.setText("Interactive installation")
+        self.interactiveCheckbox.setChecked(False)
+        
+        self.adminCheckbox = QtWidgets.QCheckBox()
+        self.adminCheckbox.setText("Run as admin")
+        self.adminCheckbox.setChecked(False)
+
+        self.oLayout.addStretch()
+        self.oLayout.addWidget(self.forceCheckbox)
+        self.oLayout.addWidget(self.interactiveCheckbox)
+        self.oLayout.addWidget(self.adminCheckbox)
+        self.oLayout.addStretch()
 
         hLayout.addWidget(self.versionLabel)
         hLayout.addWidget(self.versionCombo)
         hLayout.addWidget(QWidget(), stretch=1)
-        hLayout.addWidget(self.forceCheckbox)
         hLayout.addWidget(self.installButton)
-        downloadGroupBox.setLayout(hLayout)
+
+        vl = QVBoxLayout()
+        vl.addStretch()
+        vl.addLayout(hLayout)
+        vl.addLayout(self.oLayout)
+        vl.addStretch()
+
+        downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
         self.layout.addStretch()
+
 
         self.packageId = QLinkLabel("Program ID: Unknown")
         self.packageId.setWordWrap(True)
@@ -1786,6 +1814,10 @@ class Program(QMainWindow):
         self.loadingProgressBar.show()
         self.forceCheckbox.setChecked(False)
         self.forceCheckbox.setEnabled(False)
+        self.interactiveCheckbox.setChecked(False)
+        self.interactiveCheckbox.setEnabled(False)
+        self.adminCheckbox.setChecked(False)
+        self.adminCheckbox.setEnabled(False)
         self.description.setText("Loading...")
         self.author.setText("Author: "+"Loading...")
         self.publisher.setText("Publisher: "+"Loading...")
@@ -1815,6 +1847,10 @@ class Program(QMainWindow):
         self.versionCombo.setEnabled(True)
         if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)
+        if(self.store.lower() == "winget"):
+            self.interactiveCheckbox.setEnabled(True)
+        if(self.store.lower() == "winget"):
+            self.adminCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
         self.author.setText("Author: "+appInfo["author"])
@@ -1840,15 +1876,17 @@ class Program(QMainWindow):
         cmdline_args = []
         if(self.forceCheckbox.isChecked()):
             cmdline_args.append("--force")
+        if(self.interactiveCheckbox.isChecked()):
+            cmdline_args.append("--interactive")
         if(self.versionCombo.currentText()=="Latest"):
             version = []
         else:
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ] Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
-            p = PackageUpdater(title, self.store, version, args=cmdline_args, packageId=packageId)
+            p = PackageUpdater(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
         else:
-            p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId)
+            p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
         self.addProgram.emit(p)
         self.close()
 

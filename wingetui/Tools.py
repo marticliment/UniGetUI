@@ -22,6 +22,8 @@ else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 sudoPath = os.path.join(os.path.join(realpath, "sudo"), "sudo.cmd")
+sudoLocation = os.path.dirname(sudoPath)
+
 
 pending_programs = []
 settingsCache = {}

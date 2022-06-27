@@ -176,8 +176,10 @@ class MainApplication(QtWidgets.QApplication):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
             o = os.path.isfile(Tools.sudoPath)
+            if not os.path.isdir(Tools.sudoLocation):
+                Tools.sudoLocation = os.getcwd()
             self.componentStatus["sudoFound"] = o
-            self.componentStatus["sudoVersion"] = "Bundled version"
+            self.componentStatus["sudoVersion"] = Tools.sudoLocation
             print()
             print()
             print()
@@ -615,7 +617,7 @@ QCheckBox::indicator:unchecked {{
 }}
 QCheckBox::indicator:disabled {{
     background-color: rgba(71, 71, 71, 0%);
-    color: #bbbbbb;
+    color: #dddddd;
     border: 1px solid #444444;
     border-radius: 4px;
 }}
@@ -632,7 +634,7 @@ QCheckBox::indicator:checked {{
 QCheckBox::indicator:checked:disabled {{
     border: 1px solid #444444;
     background-color: #303030;
-    color: #bbbbbb;
+    color: #dddddd;
     border-radius: 4px;
 }}
 QCheckBox::indicator:checked:hover {{
@@ -1048,7 +1050,7 @@ QCheckBox::indicator:unchecked {{
 }}
 QCheckBox::indicator:disabled {{
     background-color: rgba(71, 71, 71, 0%);
-    color: #000000;
+    color: #444444;
     border: 1px solid #444444;
     border-radius: 4px;
 }}
@@ -1065,7 +1067,7 @@ QCheckBox::indicator:checked {{
 QCheckBox::indicator:checked:disabled {{
     border: 1px solid #444444;
     background-color: #303030;
-    color: #000000;
+    color: #444444;
     border-radius: 4px;
 }}
 QCheckBox::indicator:checked:hover {{
