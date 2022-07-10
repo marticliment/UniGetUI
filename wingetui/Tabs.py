@@ -1313,7 +1313,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
 
     
     def startInstallation(self) -> None:
-        while self.installId != Tools.current_program:
+        while self.installId != Tools.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
@@ -1449,7 +1449,7 @@ class PackageUpdater(PackageInstaller):
         self.packageItem = packageItem
     
     def startInstallation(self) -> None:
-        while self.installId != Tools.current_program:
+        while self.installId != Tools.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
@@ -1499,7 +1499,7 @@ class PackageUninstaller(PackageInstaller):
         self.label.setText(title+" Uninstallation")
         
     def startInstallation(self) -> None:
-        while self.installId != Tools.current_program:
+        while self.installId != Tools.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.leftSlow.stop()
         self.leftFast.stop()
