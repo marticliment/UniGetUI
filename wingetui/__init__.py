@@ -66,7 +66,7 @@ class MainApplication(QtWidgets.QApplication):
 
             print("[        ] Starting main application...")
             os.chdir(os.path.expanduser("~"))
-            self.kill.connect(sys.exit)
+            self.kill.connect(self.quit)
             self.callInMain.connect(lambda f: f())
             Thread(target=self.loadStuffThread).start()
             self.loadingText.setText("Checking for other running instances...")

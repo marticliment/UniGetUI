@@ -55,7 +55,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry
                 except Exception as e:
                     print(e)
         print("[   OK   ] Winget search finished")
-        finishSignal.emit("winget")
+        finishSignal.emit("winget")  # type: ignore
 
 def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
@@ -64,7 +64,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry
     counter = 0
     idSeparator = 0
     while p.poll() is None:
-        line = p.stdout.readline()
+        line = p.stdout.readline()  # type: ignore
         line = line.strip()
         if line:
             if(counter > 1):

@@ -983,8 +983,9 @@ class Upgrade(QtWidgets.QWidget):
                 else:
                     self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
         else:
-            self.addInstallation(PackageUpdater(title, "", customCommand=f"{WingetTools.winget} upgrade --all "+" ".join(WingetTools.common_params)))
-            self.addInstallation(PackageUpdater(title, "", customCommand=f"scoop update & scoop update *"))
+            for i in range(self.packageList.topLevelItemCount()):
+                program = self.packageList.topLevelItem(i)
+                self.update(program.text(0), program.text(1), packageItem=program)
 
     def openInfo(self, title: str, id: str, store: str) -> None:
         if("…" in title):
@@ -1180,7 +1181,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
     counterSignal = QtCore.Signal(int)
     callInMain = QtCore.Signal(object)
     changeBarOrientation = QtCore.Signal()
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False):
         super().__init__(parent=parent)
         self.runAsAdmin = admin
         self.adminstr = [Tools.sudoPath] if self.runAsAdmin else []
@@ -1393,7 +1394,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
 
 class PackageUpdater(PackageInstaller):
 
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False, useId: bool = False):
         super().__init__(title, store, version, parent, customCommand, args, packageId, admin)
         self.packageItem = packageItem
     
