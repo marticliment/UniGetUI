@@ -109,7 +109,7 @@ class Uninstall(QtWidgets.QWidget):
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = Tools.TreeWidget("a")
+        self.packageList = Tools.TreeWidget("Found 0 Packages")
         self.packageList.setIconSize(QtCore.QSize(24, 24))
         self.packageList.setColumnCount(4)
         self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "Installation source"])
@@ -450,7 +450,7 @@ class Discover(QtWidgets.QWidget):
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
         header.setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
         self.packageList.setColumnWidth(2, 100)
-        self.packageList.setColumnWidth(3, 100)
+        self.packageList.setColumnWidth(3, 150)
         
         self.loadingProgressBar = QtWidgets.QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
@@ -1649,9 +1649,9 @@ class Program(QMainWindow):
         class QComboBoxWithFluentMenu(QComboBox):
             def __init__(self, parent=None) -> None:
                 super().__init__(parent)
-                self.setItemDelegate(QStyledItemDelegate(self))
                 v = self.view().window()
                 Tools.ApplyMenuBlur(v.winId().__int__(), v, avoidOverrideStyleSheet=True)
+                self.setItemDelegate(QStyledItemDelegate(self))
 
 
         self.versionCombo = QComboBoxWithFluentMenu()
@@ -1831,9 +1831,9 @@ class Program(QMainWindow):
         self.storeLabel.setText(f"Source: {self.store.capitalize()}")
         self.versionCombo.addItems(["Loading..."])
         
-        if(store=="winget"):
+        if(store.lower()=="winget"):
             Thread(target=WingetTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
-        elif(store=="scoop"):
+        elif("scoop" in store.lower()):
             Thread(target=ScoopTools.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
@@ -1847,9 +1847,7 @@ class Program(QMainWindow):
         self.versionCombo.setEnabled(True)
         if(self.store.lower() == "winget"):
             self.forceCheckbox.setEnabled(True)
-        if(self.store.lower() == "winget"):
             self.interactiveCheckbox.setEnabled(True)
-        if(self.store.lower() == "winget"):
             self.adminCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])

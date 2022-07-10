@@ -27,7 +27,8 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     counter = 0
     for element in output:
         try:
-            signal.emit(element.split("(")[0].strip().capitalize(), f"scoop.{element.split('(')[0].strip()}", element.split("(")[1].replace(")", "").strip(), "Scoop")
+            print(element)
+            signal.emit(element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
         except IndexError as e:
             print("IndexError: "+str(e))
     print("[   OK   ] Scoop search finished")
@@ -49,14 +50,9 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
     counter = 0
     for element in output:
         try:
-            elList = element.split(" ")
-            if(len(elList)>=2):
-                if len(elList)==2 or elList[2].replace('[', '').replace(']', '') != " ":
-                    provider = "Scoop"
-                else:
-                    #print("aaa",  elList[2].replace('[', '').replace(']', ''), "aaa")
-                    provider = f"Scoop ({elList[2].replace('[', '').replace(']', '')} bucket)"
-                signal.emit(elList[0].capitalize(), f"scoop.{elList[0]}", elList[1], provider)
+            items = list(filter(None, element.split(" ")))
+            if(len(items)>=2):
+                signal.emit(items[0].capitalize(), f"scoop.{items[0]}", items[1], "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
@@ -74,14 +70,13 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
         line = line.strip()
         if line:
             if(counter > 1 and not b"---" in line):
-                if b"->" in line:
-                    output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore").strip()))
+                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore").strip()))
             else:
                 counter += 1
     counter = 0
     for element in output:
         try:
-            signal.emit(element.split(":")[0].strip().capitalize(), f"scoop.{element.split(':')[0].strip()}", element.split(":")[1].strip().split("->")[0].strip(), element.split(":")[1].strip().split("->")[1].strip(), "Scoop")
+            signal.emit(element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
@@ -90,8 +85,8 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     finishSignal.emit("scoop")
 
 def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
-    title = title.lower()
     print(f"[   OK   ] Starting get info for title {title}")
+    title = title.lower()
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     appInfo = {
