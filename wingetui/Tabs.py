@@ -191,9 +191,14 @@ class Uninstall(QtWidgets.QWidget):
         self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
         
     
-
-        Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        if not getSettings("DisableWinget"):
+            Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
@@ -316,8 +321,14 @@ class Uninstall(QtWidgets.QWidget):
         self.query.setText("")
         self.countLabel.setText("Searching for installed packages...")
         self.packageList.label.setText(self.countLabel.text())
-        Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        if not getSettings("DisableWinget"):
+            Thread(target=WingetTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
@@ -504,8 +515,14 @@ class Discover(QtWidgets.QWidget):
         self.versionIcon = QtGui.QIcon(Tools.getMedia("newversion"))
         self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
 
-        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        if not getSettings("DisableWinget"):
+            Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
         print("[   OK   ] Discover tab loaded")
 
         g = self.packageList.geometry()
@@ -640,8 +657,14 @@ class Discover(QtWidgets.QWidget):
         self.query.setText("")
         self.countLabel.setText("Searching for packages...")
         self.packageList.label.setText(self.countLabel.text())
-        Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        if not getSettings("DisableWinget"):
+            Thread(target=WingetTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=ScoopTools.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
@@ -861,8 +884,14 @@ class Upgrade(QtWidgets.QWidget):
         self.newVersionIcon = QtGui.QIcon(Tools.getMedia("newversion"))
         self.providerIcon = QtGui.QIcon(Tools.getMedia("provider"))
 
-        Thread(target=WingetTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=ScoopTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        if not getSettings("DisableWinget"):
+            Thread(target=WingetTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=ScoopTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
         print("[   OK   ] Upgrades tab loaded")
 
         g = self.packageList.geometry()
@@ -1006,8 +1035,14 @@ class Upgrade(QtWidgets.QWidget):
         self.query.setText("")
         self.countLabel.setText("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
-        Thread(target=WingetTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        Thread(target=ScoopTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        if not getSettings("DisableWinget"):
+            Thread(target=WingetTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=ScoopTools.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
@@ -1042,6 +1077,21 @@ class About(QtWidgets.QScrollArea):
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
         updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
         self.layout.addWidget(updateCheckBox)
+        self.layout.addWidget(QtWidgets.QLabel())
+        parallelInstalls = QCheckBox("Allow parallel installs (NOT RECOMMENDED)")
+        parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
+        parallelInstalls.clicked.connect(lambda v: setSettings("AllowParallelInstalls", bool(v)))
+        self.layout.addWidget(parallelInstalls)
+        self.layout.addWidget(QtWidgets.QLabel())
+        disableWinget = QCheckBox("Disable Winget")
+        disableWinget.setChecked(getSettings("DisableWinget"))
+        disableWinget.clicked.connect(lambda v: setSettings("DisableWinget", bool(v)))
+        self.layout.addWidget(disableWinget)
+        self.layout.addWidget(QtWidgets.QLabel())
+        disableScoop = QCheckBox("Disable Scoop")
+        disableScoop.setChecked(getSettings("DisableScoop"))
+        disableScoop.clicked.connect(lambda v: setSettings("DisableScoop", bool(v)))
+        self.layout.addWidget(disableScoop)
 
         self.layout.addWidget(QtWidgets.QLabel())
         self.layout.addWidget(QtWidgets.QLabel())
