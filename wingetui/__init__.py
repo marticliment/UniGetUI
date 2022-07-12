@@ -29,6 +29,9 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 class MainApplication(QtWidgets.QApplication):
     kill = QtCore.Signal()
     callInMain = QtCore.Signal(object)
+    setLoadBarValue = QtCore.Signal(str)
+    startAnim = QtCore.Signal(QtCore.QVariantAnimation)
+    changeBarOrientation = QtCore.Signal()
     running = True
     componentStatus = {
         "wingetFound": False,
@@ -62,6 +65,48 @@ class MainApplication(QtWidgets.QApplication):
             self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if Tools.isDark() else 'black'};font-size: 12px;")
             self.popup.layout().addWidget(self.loadingText)
             Tools.ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
+            
+            self.loadingProgressBar = QtWidgets.QProgressBar(self.popup)
+            self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;}}QProgressBar::chunk {{background-color: rgb({colors[2 if Tools.isDark() else 3]});border-radius: 2px;}}""")
+            self.loadingProgressBar.setRange(0, 1000)
+            self.loadingProgressBar.setValue(0)
+            self.loadingProgressBar.setGeometry(QRect(0, 396, 600, 4))
+            self.loadingProgressBar.setFixedHeight(4)
+            self.loadingProgressBar.setTextVisible(False)
+            self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+            self.startAnim.connect(lambda anim: anim.start())
+            self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        
+            self.leftSlow = QtCore.QVariantAnimation()
+            self.leftSlow.setStartValue(0)
+            self.leftSlow.setEndValue(1000)
+            self.leftSlow.setDuration(700)
+            self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+            self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+            
+            self.rightSlow = QtCore.QVariantAnimation()
+            self.rightSlow.setStartValue(1000)
+            self.rightSlow.setEndValue(0)
+            self.rightSlow.setDuration(700)
+            self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+            self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+            
+            self.leftFast = QtCore.QVariantAnimation()
+            self.leftFast.setStartValue(0)
+            self.leftFast.setEndValue(1000)
+            self.leftFast.setDuration(300)
+            self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+            self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+            self.rightFast = QtCore.QVariantAnimation()
+            self.rightFast.setStartValue(1000)
+            self.rightFast.setEndValue(0)
+            self.rightFast.setDuration(300)
+            self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+            self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+            
+            self.leftSlow.start()
+
             self.popup.show()
 
             print("[        ] Starting main application...")
@@ -150,7 +195,6 @@ class MainApplication(QtWidgets.QApplication):
         except Exception as e:
             print(e)
         self.loadStatus += 1
-        print("winget ok")
             
     def detectScoop(self):
         try:
@@ -162,7 +206,6 @@ class MainApplication(QtWidgets.QApplication):
         except Exception as e:
             print(e)
         self.loadStatus += 1
-        print("updating scoop")
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (1/2)"))
             o = subprocess.run(f"scoop cleanup *", shell=True, stdout=subprocess.PIPE)
@@ -179,7 +222,6 @@ class MainApplication(QtWidgets.QApplication):
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
         except Exception as e:
             print(e)
-        print("scoop ok")
         self.loadStatus += 1
 
     def detectSudo(self):
@@ -190,13 +232,6 @@ class MainApplication(QtWidgets.QApplication):
                 Tools.sudoLocation = os.getcwd()
             self.componentStatus["sudoFound"] = o
             self.componentStatus["sudoVersion"] = Tools.sudoLocation
-            print()
-            print()
-            print()
-            print(o)
-            print()
-            print()
-            print()
             self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
         except Exception as e:
             print(e)
@@ -214,6 +249,7 @@ class MainApplication(QtWidgets.QApplication):
             if(not Tools.isDark()):
                 self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
+                print(r)
                 if r != 0x32:
                     pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
