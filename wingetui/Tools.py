@@ -30,6 +30,7 @@ settingsCache = {}
 current_program = ""
 version = 1.2
 installersWidget = None
+updatesAvailable = False
 
 if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     try:

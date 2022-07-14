@@ -347,6 +347,7 @@ class MainApplication(QtWidgets.QApplication):
             provided_hash = response.split("///")[1].replace("\n", "").lower()
             if float(new_version_number) > Tools.version:
                 print("🟢 Updates found!")
+                Tools.updatesAvailable = True
                 if(integrityPass):
                     url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
                     filedata = urlopen(url)

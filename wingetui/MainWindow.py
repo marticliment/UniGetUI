@@ -152,12 +152,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if(Tools.pending_programs != []):
             if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
                 self.hide()
-                event.ignore()
             else:
-                event.ignore()
+                if not Tools.updatesAvailable:
+                    event.ignore()
+                else:
+                    event.accept()
         else:
-            event.ignore()
-            self.hide()
+            if not Tools.updatesAvailable:
+                event.ignore()
+                self.hide()
+            else:
+                event.accept()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         try:
