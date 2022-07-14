@@ -144,7 +144,7 @@ class Uninstall(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         w = QWidget()
         w.setLayout(layout)
-        w.setMaximumWidth(1000)
+        w.setMaximumWidth(1300)
 
 
 
@@ -484,7 +484,7 @@ class Discover(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         w = QWidget()
         w.setLayout(layout)
-        w.setMaximumWidth(1000)
+        w.setMaximumWidth(1300)
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
@@ -828,7 +828,7 @@ class Upgrade(QtWidgets.QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         w = QWidget()
         w.setLayout(layout)
-        w.setMaximumWidth(1000)
+        w.setMaximumWidth(1300)
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
