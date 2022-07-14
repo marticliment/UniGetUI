@@ -273,8 +273,12 @@ class MainApplication(QtWidgets.QApplication):
             quitAction.setText("Quit")
             quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
             menu.addAction(quitAction)
-            self.trayIcon.activated.connect(lambda r: menu.exec(QCursor.pos()) if r == QSystemTrayIcon.Context else None)
-
+            
+            def showWindow():
+                # This function will be defined when the MainWindow gets defined
+                pass
+            
+            self.trayIcon.activated.connect(lambda r: menu.exec(QCursor.pos()) if r == QSystemTrayIcon.Context else showWindow())
 
             menu.setStyleSheet("QMenu { menu-scrollable: 1; }")
             self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
@@ -282,6 +286,7 @@ class MainApplication(QtWidgets.QApplication):
 
             self.window = MainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu)
             showAction.triggered.connect(self.window.showWindow)
+            showWindow = self.window.showWindow
 
             if(not Tools.isDark()):
                 self.setStyle("windowsvista")
