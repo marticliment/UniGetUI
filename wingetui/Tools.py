@@ -29,6 +29,7 @@ pending_programs = []
 settingsCache = {}
 current_program = ""
 version = 1.2
+installersWidget = None
 
 if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     try:
@@ -315,3 +316,48 @@ class CustomLineEdit(QLineEdit):
             super().setStyleSheet(self.startStyleSheet+"color: grey;")
         else:
             super().setStyleSheet(self.startStyleSheet)
+
+class ResizableWidget(QWidget):
+    resized = Signal(QResizeEvent)
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+        
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.resized.emit(event)
+        return super().resizeEvent(event)
+
+
+class DynamicScrollArea(QWidget):
+    maxHeight = 200
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+        l = QVBoxLayout()
+        l.setContentsMargins(0, 0, 0, 0)
+        self.scrollArea = QScrollArea()
+        self.coushinWidget = QWidget()
+        l.addWidget(self.coushinWidget)
+        l.addWidget(self.scrollArea)
+        self.w = ResizableWidget()
+        self.w.resized.connect(self.rss)
+        self.vlayout = QVBoxLayout()
+        self.vlayout.setContentsMargins(0, 0, 0, 0)
+        self.w.setLayout(self.vlayout)
+        self.scrollArea.setWidget(self.w)
+        self.scrollArea.setFrameShape(QFrame.NoFrame)
+        self.scrollArea.setWidgetResizable(True)
+        self.setLayout(l)
+        self.rss()
+
+    def rss(self):
+        if self.w.sizeHint().height() >= self.maxHeight:
+            self.setFixedHeight(self.maxHeight)
+        else:
+            self.setFixedHeight(self.w.sizeHint().height()+10 if self.w.sizeHint().height() > 0 else 0)
+
+    def removeItem(self, item: QWidget):
+        self.vlayout.removeWidget(item)
+        self.rss()
+            
+
+if __name__ == "__main__":
+    import __init__

@@ -1437,7 +1437,6 @@ class PackageInstaller(QtWidgets.QGroupBox):
                 msgBox.exec_()
 
     def startCoolDown(self):
-        print("starting cooldown")
         op=QGraphicsOpacityEffect(self)
         def updateOp(v: float):
             op.setOpacity(v)
@@ -1452,9 +1451,15 @@ class PackageInstaller(QtWidgets.QGroupBox):
         a.setEasingCurve(QEasingCurve.Linear)
         a.setDuration(1000)
         a.valueChanged.connect(lambda v: updateOp(v))
-        a.finished.connect(self.hide)
+        a.finished.connect(self.close)
         f = lambda: (time.sleep(3), self.callInMain.emit(a.start))
         Thread(target=f, daemon=True).start()
+
+    def close(self):
+        Tools.installersWidget.removeItem(self)
+        super().close()
+        super().destroy()
+
 
 class PackageUpdater(PackageInstaller):
 
@@ -1492,6 +1497,11 @@ class PackageUpdater(PackageInstaller):
             if self.packageItem:
                 self.packageItem.setHidden(True)
         return super().finish(returncode, output)
+
+    
+    def close(self):
+        Tools.installersWidget.removeItem(self)
+        super().close()
 
 class PackageUninstaller(PackageInstaller):
     onCancel = QtCore.Signal()
@@ -1626,6 +1636,10 @@ class PackageUninstaller(PackageInstaller):
                 msgBox.setDefaultButton(Tools.MessageBox.Ok)
                 msgBox.setIcon(Tools.MessageBox.Warning)
                 msgBox.exec_()
+    
+    def close(self):
+        Tools.installersWidget.removeItem(self)
+        super().close()
 
 class Program(QMainWindow):
     onClose = QtCore.Signal()
@@ -1977,6 +1991,8 @@ class Program(QMainWindow):
         except AttributeError:
             pass
         return super().hide()
+
+        
         
 
 
