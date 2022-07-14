@@ -1069,8 +1069,9 @@ class Upgrade(QtWidgets.QWidget):
         self.installerswidget.addWidget(p)
 
 class About(QtWidgets.QScrollArea):
-    def __init__(self, componentStatus: dict):
+    def __init__(self, componentStatus: dict, packageInstaller: QWidget):
         super().__init__()
+        self.packageInstaller = packageInstaller
         self.setFrameShape(QFrame.NoFrame)
         self.componentStatus = componentStatus
         self.widget = QtWidgets.QWidget()
@@ -1116,9 +1117,21 @@ class About(QtWidgets.QScrollArea):
         disableScoop.setChecked(getSettings("DisableScoop"))
         disableScoop.clicked.connect(lambda v: setSettings("DisableScoop", bool(v)))
         self.layout.addWidget(disableScoop)
-
         self.layout.addWidget(QtWidgets.QLabel())
-        self.layout.addWidget(QtWidgets.QLabel())
+        l = QHBoxLayout()
+        button = QtWidgets.QPushButton("Add a bucket to scoop")
+        button.setFixedWidth(350)
+        button.setFixedHeight(25)
+        button.clicked.connect(lambda: self.scoopAddExtraBucket())
+        l.addWidget(button)
+        button = QtWidgets.QPushButton("Remove a bucket from scoop")
+        button.setFixedWidth(350)
+        button.setFixedHeight(25)
+        button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
+        l.addWidget(button)
+        l.addStretch()
+        l.setContentsMargins(0, 0, 0, 0)
+        self.layout.addLayout(l)
         title = QtWidgets.QLabel("Component information")
         title.setStyleSheet("font-size: 40px;")
         self.layout.addWidget(title)
@@ -1156,21 +1169,6 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"Project homepage:   <a style=\"color: {Tools.blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>"))
-        self.layout.addWidget(QtWidgets.QLabel())
-        l = QHBoxLayout()
-        button = QtWidgets.QPushButton("Add extra bucket (repo) to scoop")
-        button.setFixedWidth(350)
-        button.setFixedHeight(25)
-        button.clicked.connect(lambda: self.scoopAddExtraBucket())
-        l.addWidget(button)
-        button = QtWidgets.QPushButton("Remove extra bucket (repo) from scoop")
-        button.setFixedWidth(350)
-        button.setFixedHeight(25)
-        button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
-        l.addWidget(button)
-        l.addStretch()
-        l.setContentsMargins(0, 0, 0, 0)
-        self.layout.addLayout(l)
         self.layout.addSpacing(30)
         self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 27pt;"))
         self.layout.addWidget(QtWidgets.QLabel())
@@ -1199,15 +1197,17 @@ class About(QtWidgets.QScrollArea):
         print("[   OK   ] About tab loaded!")
         
     def scoopAddExtraBucket(self) -> None:
-        os.startfile(os.path.join(realpath, "scoopAddExtrasBucket.cmd"))
-        self.raise_()
-        self.show()
+        r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to add", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        if r[1]:
+            print(r[0])
+            self.packageInstaller.addWidget(PackageInstaller(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
-        os.startfile(os.path.join(realpath, "scoopRemoveExtrasBucket.cmd"))
-        self.raise_()
-        self.show()
-
+        r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to remove", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        if r[1]:
+            print(r[0])
+            self.packageInstaller.addWidget(PackageInstaller(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+    
 class LoadingProgress(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)

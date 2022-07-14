@@ -72,7 +72,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uninstall = Tabs.Uninstall(self.installerswidget, self.installedMenu)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
-        self.addTab(Tabs.About(self.componentStatus), "About WingetUI")
+        self.addTab(Tabs.About(self.componentStatus, self.installerswidget), "About WingetUI")
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()

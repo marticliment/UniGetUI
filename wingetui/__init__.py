@@ -382,7 +382,7 @@ darkSS = f"""
     color: #eeeeee;
     font-family: "Segoe UI Variable Display semib";
 }}
-#micawin {{
+#micawin,QInputDialog {{
     background-color: mainbg;
     color: red;
 }}
@@ -816,7 +816,7 @@ lightCSS = f"""
     color: #000000;
     font-family: "Segoe UI Variable Display"
 }}
-#micawin {{
+#micawin,QInputDialog {{
     background-color: mainbg;
     color: red;
 }}
