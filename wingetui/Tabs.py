@@ -1,5 +1,3 @@
-from posixpath import relpath
-from turtle import update
 from PySide6 import QtWidgets, QtCore, QtGui
 import WingetTools, ScoopTools, sys, Tools, subprocess, time, os
 from threading import Thread
