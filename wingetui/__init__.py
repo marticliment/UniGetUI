@@ -201,7 +201,7 @@ class MainApplication(QtWidgets.QApplication):
     def detectScoop(self):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating scoop..."))
-            o = subprocess.run(f"scoop -v", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"powershell -Command scoop -v", shell=True, stdout=subprocess.PIPE)
             self.componentStatus["scoopFound"] = o.returncode == 0
             self.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
             self.callInMain.emit(lambda: self.loadingText.setText(f"Scoop found: {self.componentStatus['scoopFound']}"))
@@ -210,17 +210,17 @@ class MainApplication(QtWidgets.QApplication):
         self.loadStatus += 1
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (1/2)"))
-            o = subprocess.run(f"scoop cleanup *", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"powershell -Command scoop cleanup *", shell=True, stdout=subprocess.PIPE)
         except Exception as e:
             print(e)
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (2/2)"))
-            o = subprocess.run(f"scoop cache rm *", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
         except Exception as e:
             print(e)
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
-            o = subprocess.run(f"scoop update", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
         except Exception as e:
             print(e)
