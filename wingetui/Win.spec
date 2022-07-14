@@ -11,7 +11,7 @@ import importlib, os
 a = Analysis(['__init__.py'],
              pathex=['Y:\WingetUI-Store\wingetui'],
              binaries=[('MainWindow.py', '.'), ('Tabs.py', '.'), ('Tools.py', '.'), ('WingetTools.py', '.'), ('ScoopTools.py', '.')],
-             datas=[('*.png', '.'), ('*.ico', '.'), ('*.cmd', '.'), ("winget-cli/", "winget-cli/")],
+             datas=[('*.png', '.'), ('*.ico', '.'), ('*.cmd', '.'), ("winget-cli/", "winget-cli/"), ("sudo/", "sudo/")],
              hiddenimports=['pkg_resources.py2_warn'],
              hookspath=[],
              runtime_hooks=[],
@@ -20,10 +20,6 @@ a = Analysis(['__init__.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
-
-
-#a.datas += [('./qtmodern/resources/frameless.qss', f'qtmodern/frameless.qss', "DATA")]
-#a.datas += [('./qtmodern/resources/style.qss', f'qtmodern/style.qss', "DATA")]
 
 
 pyz = PYZ(a.pure, a.zipped_data,
