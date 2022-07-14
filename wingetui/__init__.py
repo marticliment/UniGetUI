@@ -32,6 +32,8 @@ class MainApplication(QtWidgets.QApplication):
     setLoadBarValue = QtCore.Signal(str)
     startAnim = QtCore.Signal(QtCore.QVariantAnimation)
     changeBarOrientation = QtCore.Signal()
+    updatesMenu: QMenu = None# = QMenu("0 Packages")
+    installedMenu: QMenu = None#QMenu("0 Packages")
     running = True
     componentStatus = {
         "wingetFound": False,
@@ -240,12 +242,47 @@ class MainApplication(QtWidgets.QApplication):
     def loadMainUI(self):
         print("load main UI")
         try:
-            self.window = MainWindow.MainWindow(self.componentStatus)
             self.trayIcon = QtWidgets.QSystemTrayIcon()
             Tools.registerApplication(self)
             self.trayIcon.setIcon(QtGui.QIcon(realpath+"/icon.png"))
             self.trayIcon.setToolTip("WingetUI")
             self.trayIcon.setVisible(True)
+
+            menu = QMenu("WingetUI")
+            infoAction = QAction(f"WingetUI v{Tools.version}",menu)
+            infoAction.setEnabled(False)
+            menu.addAction(infoAction)
+            showAction = QAction("Show WingetUI",menu)
+            # Action defined later
+            menu.addAction(showAction)
+            self.trayIcon.setContextMenu(menu)
+            menu.addSeparator()
+            dAction = QAction("Available updates",menu)
+            dAction.setEnabled(False)
+            menu.addAction(dAction)
+            self.updatesMenu = QMenu("0 Found", menu)
+            menu.addMenu(self.updatesMenu)
+            menu.addSeparator()
+            dAction = QAction("Installed packages",menu)
+            dAction.setEnabled(False)
+            menu.addAction(dAction)
+            self.installedMenu = QMenu("0 Found", menu)
+            menu.addMenu(self.installedMenu)
+            menu.addSeparator()
+            quitAction = QAction(menu)
+            quitAction.setText("Quit")
+            quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
+            menu.addAction(quitAction)
+            self.trayIcon.activated.connect(lambda r: menu.exec(QCursor.pos()) if r == QSystemTrayIcon.Context else None)
+
+
+            menu.setStyleSheet("QMenu { menu-scrollable: 1; }")
+            self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
+            self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
+
+            self.window = MainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu)
+            showAction.triggered.connect(self.window.showWindow)
+
             if(not Tools.isDark()):
                 self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)

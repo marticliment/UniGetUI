@@ -13,9 +13,11 @@ else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, componentStatus: dict):
+    def __init__(self, componentStatus: dict, updatesMenu: QMenu, installedMenu: QMenu):
         self.oldbtn = None
         super().__init__()
+        self.updatesMenu = updatesMenu
+        self.installedMenu = installedMenu
         self.componentStatus = componentStatus
         self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
@@ -64,10 +66,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.discover = Tabs.Discover(self.installerswidget)
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.discover, "Discover Software")
-        self.updates = Tabs.Upgrade(self.installerswidget)
+        self.updates = Tabs.Upgrade(self.installerswidget, self.updatesMenu)
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.updates, "Software updates")
-        self.uninstall = Tabs.Uninstall(self.installerswidget)
+        self.uninstall = Tabs.Uninstall(self.installerswidget, self.installedMenu)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
         self.addTab(Tabs.About(self.componentStatus), "About WingetUI")

@@ -292,6 +292,10 @@ class Uninstall(QtWidgets.QWidget):
             item.setIcon(3, self.providerIcon)
             item.setText(3, store)
             self.packageList.addTopLevelItem(item)
+            action = QAction(name+" \t"+version, self.installedMenu)
+            action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
+            action.setShortcut(version)
+            self.installedMenu.addAction(action)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 0)
@@ -310,7 +314,7 @@ class Uninstall(QtWidgets.QWidget):
 
     def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None) -> None:
         if(Tools.MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.Yes) == Tools.MessageBox.Yes):
-           
+            print(id)
             if("…" in id):
                 self.addInstallation(PackageUninstaller(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
             else:
@@ -335,6 +339,8 @@ class Uninstall(QtWidgets.QWidget):
             Thread(target=ScoopTools.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         else:
             self.scoopLoaded = True
+        for action in self.installedMenu.actions():
+            self.installedMenu.removeAction(action)
     
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
@@ -438,7 +444,7 @@ class Discover(QtWidgets.QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QtWidgets.QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QtCore.QSize(24, 24))
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1)))
 
         def showMenu(pos: QPoint):
             contextMenu = QMenu(self)
@@ -991,7 +997,8 @@ class Upgrade(QtWidgets.QWidget):
             item.setText(4, store)
             item.setIcon(4, self.providerIcon)
             self.packageList.addTopLevelItem(item)
-            action = QAction(name+": "+newVersion, self.updatesMenu)
+            action = QAction(name+"  \t"+version+"\t → \t"+newVersion, self.updatesMenu)
+            action.triggered.connect(lambda : self.update(name, id, packageItem=item))
             action.setShortcut(version)
             self.updatesMenu.addAction(action)
     
@@ -1096,12 +1103,15 @@ class About(QtWidgets.QScrollArea):
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
         parallelInstalls.clicked.connect(lambda v: setSettings("AllowParallelInstalls", bool(v)))
         self.layout.addWidget(parallelInstalls)
+        parallelInstalls = QCheckBox("Double-clicking should install instead of showing further info")
+        parallelInstalls.setChecked(getSettings("InstallOnDoubleClick"))
+        parallelInstalls.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
+        self.layout.addWidget(parallelInstalls)
         self.layout.addWidget(QtWidgets.QLabel())
         disableWinget = QCheckBox("Disable Winget")
         disableWinget.setChecked(getSettings("DisableWinget"))
         disableWinget.clicked.connect(lambda v: setSettings("DisableWinget", bool(v)))
         self.layout.addWidget(disableWinget)
-        self.layout.addWidget(QtWidgets.QLabel())
         disableScoop = QCheckBox("Disable Scoop")
         disableScoop.setChecked(getSettings("DisableScoop"))
         disableScoop.clicked.connect(lambda v: setSettings("DisableScoop", bool(v)))
@@ -1490,16 +1500,16 @@ class PackageUninstaller(PackageInstaller):
     finishInstallation = QtCore.Signal(int, str)
     counterSignal = QtCore.Signal(int)
     changeBarOrientation = QtCore.Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId="", packageItem: QTreeWidgetItem = None):
+    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: QTreeWidgetItem = None):
         self.packageItem = packageItem
-        super().__init__(parent=None, title=title, store=store)
-        self.finishedInstallation = True
-        self.store = store.lower()
         self.useId = useId
-        self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
-        self.setFixedHeight(50)
         self.programName = title
         self.packageId = packageId
+        super().__init__(parent=None, title=title, store=store, packageId=packageId)
+        self.finishedInstallation = True
+        self.store = store.lower()
+        self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
+        self.setFixedHeight(50)
         self.label.setText(title+" Uninstallation")
         
     def startInstallation(self) -> None:
@@ -1518,10 +1528,12 @@ class PackageUninstaller(PackageInstaller):
                 self.p = subprocess.Popen([WingetTools.winget, "uninstall", "-e", "--id", f"{self.packageId}"]+WingetTools.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
                 self.t = Tools.KillableThread(target=WingetTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
                 self.t.start()
+                print(self.p.args)
             else:
                 self.p = subprocess.Popen([WingetTools.winget, "uninstall", "-e", "--name", f"{self.programName}"]+WingetTools.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
                 self.t = Tools.KillableThread(target=WingetTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
                 self.t.start()
+                print(self.p.args)
         elif("scoop" in self.store):
             self.p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "uninstall", "-p", f"{self.programName}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
             self.t = Tools.KillableThread(target=ScoopTools.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
