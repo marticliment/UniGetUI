@@ -44,7 +44,7 @@ class MainApplication(QtWidgets.QApplication):
     def __init__(self):
         try:
             super().__init__(sys.argv)
-            self.popup = QWidget()
+            self.popup = MainWindow.DraggableWindow()
             self.popup.setFixedSize(QSize(600, 400))
             self.popup.setWindowFlag(Qt.FramelessWindowHint)
             self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)

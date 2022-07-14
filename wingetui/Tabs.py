@@ -29,9 +29,10 @@ class Uninstall(QtWidgets.QWidget):
     startAnim = QtCore.Signal(QtCore.QVariantAnimation)
     changeBarOrientation = QtCore.Signal()
 
-    def __init__(self, installerswidget, parent=None):
+    def __init__(self, installerswidget, installedMenu: QMenu, parent=None):
         self.installerswidget = installerswidget
         super().__init__(parent=parent)
+        self.installedMenu = installedMenu # The available updates from the system tray icon menu
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.infobox = Program()
@@ -251,6 +252,7 @@ class Uninstall(QtWidgets.QWidget):
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
+            self.installedMenu.setTitle(f"{self.packageList.topLevelItemCount()} Found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
@@ -259,6 +261,7 @@ class Uninstall(QtWidgets.QWidget):
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
+            self.installedMenu.setTitle(f"{self.packageList.topLevelItemCount()} Found")
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -267,6 +270,7 @@ class Uninstall(QtWidgets.QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.filter()
             self.loadingProgressBar.hide()
+            self.installedMenu.setTitle(f"{self.packageList.topLevelItemCount()} Found")
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
@@ -681,9 +685,10 @@ class Upgrade(QtWidgets.QWidget):
     startAnim = QtCore.Signal(QtCore.QVariantAnimation)
     changeBarOrientation = QtCore.Signal()
 
-    def __init__(self, installerswidget, parent=None):
+    def __init__(self, installerswidget, updatesMenu: QMenu, parent=None):
         self.installerswidget = installerswidget
         super().__init__(parent=parent)
+        self.updatesMenu = updatesMenu # The available updates from the system tray icon menu
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.infobox = Program(self)
@@ -944,6 +949,7 @@ class Upgrade(QtWidgets.QWidget):
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
+            self.updatesMenu.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -951,6 +957,7 @@ class Upgrade(QtWidgets.QWidget):
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.updatesMenu.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.filter()
@@ -984,6 +991,9 @@ class Upgrade(QtWidgets.QWidget):
             item.setText(4, store)
             item.setIcon(4, self.providerIcon)
             self.packageList.addTopLevelItem(item)
+            action = QAction(name+": "+newVersion, self.updatesMenu)
+            action.setShortcut(version)
+            self.updatesMenu.addAction(action)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), QtCore.Qt.MatchContains, 0)
@@ -1035,6 +1045,8 @@ class Upgrade(QtWidgets.QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
+        for action in self.updatesMenu.actions():
+            self.updatesMenu.removeAction(action)
         self.countLabel.setText("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
@@ -1185,16 +1197,6 @@ class About(QtWidgets.QScrollArea):
         os.startfile(os.path.join(realpath, "scoopRemoveExtrasBucket.cmd"))
         self.raise_()
         self.show()
-
-
-
-class Installed(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-class Update(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
 
 class LoadingProgress(QtWidgets.QLabel):
     def __init__(self, parent=None):

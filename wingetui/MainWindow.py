@@ -173,8 +173,44 @@ class MainWindow(QtWidgets.QMainWindow):
         except AttributeError:
             pass
         return super().resizeEvent(event)
-            
 
+    def showWindow(self):
+        if not self.window().isMaximized():
+            self.window().hide()
+            self.window().showMinimized()
+            self.window().show()
+            self.window().showNormal()
+        else:
+            self.window().hide()
+            self.window().showMinimized()
+            self.window().show()
+            self.window().showMaximized()
+        self.window().setFocus()
+        self.window().raise_()
+        self.window().activateWindow()
+
+
+
+class DraggableWindow(QWidget):
+    pressed = False
+    oldPos = QPoint(0, 0)
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.pressed = True
+        self.oldPos = event.pos()
+        return super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        if self.pressed:
+            self.move(self.pos()+(event.pos()-self.oldPos))
+        return super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+        self.pressed = False
+        self.oldPos = event.pos()
+        return super().mouseReleaseEvent(event)
 
 if(__name__=="__main__"):
     import __init__

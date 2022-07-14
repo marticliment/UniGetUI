@@ -27,7 +27,6 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     counter = 0
     for element in output:
         try:
-            print(element)
             signal.emit(element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
         except IndexError as e:
             print("IndexError: "+str(e))
