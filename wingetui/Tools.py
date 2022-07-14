@@ -292,9 +292,8 @@ class ScrollWidget(QWidget):
         self.scroller = scroller
         super().__init__()
 
-    def wheelEvent(self, event: QWheelEvent) -> None:
-        self.scroller.wheelEvent(event)
-        return super().wheelEvent(event)
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        return super().resizeEvent(event)
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, parent = None):
