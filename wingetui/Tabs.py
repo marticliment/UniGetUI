@@ -58,7 +58,7 @@ class Uninstall(QtWidgets.QWidget):
         self.searchButton.setIcon(QtGui.QIcon(Tools.getMedia("search")))
 
         hLayout = QtWidgets.QHBoxLayout()
-        hLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search on your software")
@@ -382,7 +382,7 @@ class Discover(QtWidgets.QWidget):
         self.searchButton.setIcon(QtGui.QIcon(Tools.getMedia("search")))
 
         hLayout = QtWidgets.QHBoxLayout()
-        hLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.forceCheckBox = QCheckBox("Instant search")
         self.forceCheckBox.setFixedHeight(30)
@@ -721,7 +721,7 @@ class Upgrade(QtWidgets.QWidget):
         self.searchButton.setIcon(QtGui.QIcon(Tools.getMedia("search")))
 
         hLayout = QtWidgets.QHBoxLayout()
-        hLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = Tools.CustomLineEdit()
         self.query.setPlaceholderText(" Search available updates")
