@@ -4,7 +4,6 @@
 [![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
-[![Status](https://img.shields.io/badge/Development%20status-Active-brightgreen?style=for-the-badge)]()
 
 The main goal of this project is to create a GUI Store for the most common CLI package managers for Windows, such as Winget and Scoop. 
 
@@ -13,6 +12,8 @@ From here, you'll be able to download, install, upgrade and uninstall any softwa
 AppGet was supported in release 0.3, but since that project has been discontinued, the support has been removed.
 
 This project has no connection to the official Winget-CLI project - it's completely unofficial.
+
+[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
 # And you know what? It can uninstall MS Edge
 (or at least it did in my machine)
