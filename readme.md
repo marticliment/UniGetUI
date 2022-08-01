@@ -13,7 +13,7 @@ AppGet was supported in release 0.3, but since that project has been discontinue
 
 This project has no connection to the official Winget-CLI project - it's completely unofficial.
 
-[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Paused%20for%20vacation-yellow?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Paused-yellow?style=for-the-badge)]()
 
 # And you know what? It can uninstall MS Edge
 (or at least it did in my machine)
