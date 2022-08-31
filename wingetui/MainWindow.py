@@ -5,7 +5,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import Tabs, os, ctypes, sys, Tools
+import storeEngine, os, ctypes, sys, tools
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -42,7 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """)
 
         if(self.isAdmin()):
-            Tools.MessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
+            tools.MessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:
@@ -56,32 +56,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.buttonier.setFixedWidth(703)
         self.buttonier.setObjectName("buttonier")
         self.buttonier.setLayout(self.buttonLayout)
-        self.installationsWidget = Tools.DynamicScrollArea()
+        self.installationsWidget = tools.DynamicScrollArea()
         self.installerswidget: QLayout = self.installationsWidget.vlayout
-        Tools.installersWidget = self.installationsWidget
+        tools.installersWidget = self.installationsWidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         self.mainWidget.setStyleSheet("""
         QTabWidget::tab-bar {{
             alignment: center;
             }}""")
-        self.discover = Tabs.Discover(self.installerswidget)
+        self.discover = storeEngine.Discover(self.installerswidget)
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.discover, "Discover Software")
-        self.updates = Tabs.Upgrade(self.installerswidget, self.updatesMenu)
+        self.updates = storeEngine.Upgrade(self.installerswidget, self.updatesMenu)
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.updates, "Software updates")
-        self.uninstall = Tabs.Uninstall(self.installerswidget, self.installedMenu)
+        self.uninstall = storeEngine.Uninstall(self.installerswidget, self.installedMenu)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
-        self.addTab(Tabs.About(self.componentStatus, self.installerswidget), "About WingetUI")
+        self.addTab(storeEngine.About(self.componentStatus, self.installerswidget), "About WingetUI")
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()
                 self.setPlainText("click to show log")
 
             def mousePressEvent(self, e: QMouseEvent) -> None:
-                self.setPlainText(Tools.buffer.getvalue())
-                self.appendPlainText(Tools.errbuffer.getvalue())
+                self.setPlainText(tools.buffer.getvalue())
+                self.appendPlainText(tools.errbuffer.getvalue())
                 return super().mousePressEvent(e)
         p = Text()
         p.setReadOnly(True)
@@ -100,8 +100,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.showHideButton.setStyleSheet("padding: 2px;border-radius: 4px;")
         self.showHideButton.setIconSize(QSize(12, 12))
         self.showHideButton.setFixedSize(QSize(32, 16))
-        self.showHideButton.setIcon(QIcon(Tools.getMedia("collapse")))
-        self.showHideButton.clicked.connect(lambda: (self.installationsWidget.setVisible(not self.installationsWidget.isVisible()), self.showHideButton.setIcon(QIcon(Tools.getMedia("collapse"))) if self.installationsWidget.isVisible() else self.showHideButton.setIcon(QIcon(Tools.getMedia("expand")))))
+        self.showHideButton.setIcon(QIcon(tools.getMedia("collapse")))
+        self.showHideButton.clicked.connect(lambda: (self.installationsWidget.setVisible(not self.installationsWidget.isVisible()), self.showHideButton.setIcon(QIcon(tools.getMedia("collapse"))) if self.installationsWidget.isVisible() else self.showHideButton.setIcon(QIcon(tools.getMedia("expand")))))
         ebw = QWidget()
         ebw.setLayout(QHBoxLayout())
         ebw.layout().setContentsMargins(0, 0, 0, 0)
@@ -150,9 +150,9 @@ class MainWindow(QtWidgets.QMainWindow):
         return is_admin
     
     def closeEvent(self, event):
-        if(Tools.pending_programs != []):
-            if Tools.updatesAvailable or Tools.getSettings("DisablesystemTray"):
-                if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
+        if(tools.pending_programs != []):
+            if tools.updatesAvailable or tools.getSettings("DisablesystemTray"):
+                if(tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
                     event.accept()
                     self.app.quit()
                     sys.exit(0)
@@ -162,7 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.hide()
                 event.ignore()
         else:
-            if Tools.updatesAvailable or Tools.getSettings("DisablesystemTray"):
+            if tools.updatesAvailable or tools.getSettings("DisablesystemTray"):
                 event.accept()
                 self.app.quit()
                 sys.exit(0)

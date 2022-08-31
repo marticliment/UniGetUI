@@ -8,7 +8,6 @@ else:
     
 common_params = ["--source", "winget", "--accept-source-agreements"]
     
-#winget = os.path.join(os.path.join(realpath, "winget-cli"), "AppInstallerCLI.exe")
 winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 #winget = "winget"
 

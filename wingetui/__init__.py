@@ -10,7 +10,7 @@ from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-import MainWindow, Tools, WingetTools, ScoopTools
+import mainWindow, tools, wingetHelpers, scoopHelpers
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -46,7 +46,7 @@ class MainApplication(QtWidgets.QApplication):
     def __init__(self):
         try:
             super().__init__(sys.argv)
-            self.popup = MainWindow.DraggableWindow()
+            self.popup = mainWindow.DraggableWindow()
             self.popup.setFixedSize(QSize(600, 400))
             self.popup.setWindowFlag(Qt.FramelessWindowHint)
             self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)
@@ -55,21 +55,21 @@ class MainApplication(QtWidgets.QApplication):
             titlewidget = QHBoxLayout()
             titlewidget.addStretch()
             icon = QLabel()
-            icon.setPixmap(QtGui.QPixmap(realpath+"/icon.png"))
+            icon.setPixmap(QtGui.QPixmap(realpath+"/resources/icon.png"))
             text = QLabel("WingetUI")
-            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if Tools.isDark() else 'black'};font-size: 60px;")
+            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if tools.isDark() else 'black'};font-size: 60px;")
             titlewidget.addWidget(icon)
             titlewidget.addWidget(text)
             titlewidget.addStretch()
             self.popup.layout().addLayout(titlewidget)
             self.popup.layout().addStretch()
             self.loadingText = QLabel("Loading WingetUI...")
-            self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if Tools.isDark() else 'black'};font-size: 12px;")
+            self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if tools.isDark() else 'black'};font-size: 12px;")
             self.popup.layout().addWidget(self.loadingText)
-            Tools.ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
+            tools.ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
             
             self.loadingProgressBar = QtWidgets.QProgressBar(self.popup)
-            self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;}}QProgressBar::chunk {{background-color: rgb({colors[2 if Tools.isDark() else 3]});border-radius: 2px;}}""")
+            self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;}}QProgressBar::chunk {{background-color: rgb({colors[2 if tools.isDark() else 3]});border-radius: 2px;}}""")
             self.loadingProgressBar.setRange(0, 1000)
             self.loadingProgressBar.setValue(0)
             self.loadingProgressBar.setGeometry(QRect(0, 396, 600, 4))
@@ -125,13 +125,13 @@ class MainApplication(QtWidgets.QApplication):
         
         # Preparation threads
         Thread(target=self.checkForRunningInstances, daemon=True).start()
-        if not Tools.getSettings("DisableWinget"):
+        if not tools.getSettings("DisableWinget"):
             Thread(target=self.detectWinget, daemon=True).start()
         else:
             self.loadStatus += 2
             self.componentStatus["wingetFound"] = False
             self.componentStatus["wingetVersion"] = "Winget is disabled"
-        if not Tools.getSettings("DisableScoop"):
+        if not tools.getSettings("DisableScoop"):
             Thread(target=self.detectScoop, daemon=True).start()
         else:
             self.loadStatus += 2
@@ -161,30 +161,30 @@ class MainApplication(QtWidgets.QApplication):
             print("Scanning for instances...")
             self.nowTime = time.time()
             self.lockFileName = f"WingetUI_{self.nowTime}"
-            Tools.setSettings(self.lockFileName, True)
+            tools.setSettings(self.lockFileName, True)
             try:
                 timestamps = [float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), "")) for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*"))] # get a list with the timestamps
                 validTimestamps = [timestamp for timestamp in timestamps if timestamp < self.nowTime]
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace(s)..."))
                 print("Found lock file(s), reactivating...")
                 for tst in validTimestamps:
-                    Tools.setSettings("RaiseWindow_"+str(tst), True)
+                    tools.setSettings("RaiseWindow_"+str(tst), True)
                 if validTimestamps != [] and timestamps != [self.nowTime]:
                     for i in range(16):
                         time.sleep(0.1)
                         self.callInMain.emit(lambda: self.loadingText.setText(f"Sent handshake. Waiting for instance listener's answer... ({int(i/15*100)}%)"))
                         for tst in validTimestamps:
-                            if not Tools.getSettings("RaiseWindow_"+str(tst), cache = False):
+                            if not tools.getSettings("RaiseWindow_"+str(tst), cache = False):
                                 print(f"Instance {tst} responded, quitting...")
                                 self.callInMain.emit(lambda: self.loadingText.setText(f"Instance {tst} responded, quitting..."))
-                                Tools.setSettings(self.lockFileName, False)
+                                tools.setSettings(self.lockFileName, False)
                                 self.kill.emit()
                                 sys.exit(0)
                     self.callInMain.emit(lambda: self.loadingText.setText(f"Starting daemons..."))
                     print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
                     for tst in validTimestamps:
-                        Tools.setSettings("RaiseWindow_"+str(tst), False)
-                        Tools.setSettings("WingetUI_"+str(tst), False)
+                        tools.setSettings("RaiseWindow_"+str(tst), False)
+                        tools.setSettings("WingetUI_"+str(tst), False)
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -192,7 +192,7 @@ class MainApplication(QtWidgets.QApplication):
     def detectWinget(self):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating winget..."))
-            o = subprocess.run(f"{WingetTools.winget} -v", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
             self.componentStatus["wingetFound"] = o.returncode == 0
             self.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
             self.callInMain.emit(lambda: self.loadingText.setText(f"Winget found: {self.componentStatus['wingetFound']}"))
@@ -202,7 +202,7 @@ class MainApplication(QtWidgets.QApplication):
         print("updating scoop")
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
-            o = subprocess.run(f"{WingetTools.winget} upgrade {' '.join(WingetTools.common_params)}", shell=True, stdout=subprocess.PIPE)
+            o = subprocess.run(f"{wingetHelpers.winget} upgrade {' '.join(wingetHelpers.common_params)}", shell=True, stdout=subprocess.PIPE)
             self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
         except Exception as e:
             print(e)
@@ -237,11 +237,11 @@ class MainApplication(QtWidgets.QApplication):
     def detectSudo(self):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
-            o = os.path.isfile(Tools.sudoPath)
-            if not os.path.isdir(Tools.sudoLocation):
-                Tools.sudoLocation = os.getcwd()
+            o = os.path.isfile(tools.sudoPath)
+            if not os.path.isdir(tools.sudoLocation):
+                tools.sudoLocation = os.getcwd()
             self.componentStatus["sudoFound"] = o
-            self.componentStatus["sudoVersion"] = Tools.sudoLocation
+            self.componentStatus["sudoVersion"] = tools.sudoLocation
             self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
         except Exception as e:
             print(e)
@@ -251,13 +251,13 @@ class MainApplication(QtWidgets.QApplication):
         print("load main UI")
         try:
             self.trayIcon = QtWidgets.QSystemTrayIcon()
-            Tools.registerApplication(self)
-            self.trayIcon.setIcon(QtGui.QIcon(realpath+"/icon.png"))
+            tools.registerApplication(self)
+            self.trayIcon.setIcon(QtGui.QIcon(realpath+"/resources/icon.png"))
             self.trayIcon.setToolTip("WingetUI")
             self.trayIcon.setVisible(True)
 
             menu = QMenu("WingetUI")
-            infoAction = QAction(f"WingetUI v{Tools.version}",menu)
+            infoAction = QAction(f"WingetUI v{tools.version}",menu)
             infoAction.setEnabled(False)
             menu.addAction(infoAction)
             showAction = QAction("Show WingetUI",menu)
@@ -285,7 +285,7 @@ class MainApplication(QtWidgets.QApplication):
             menu.addAction(quitAction)
             
             def showWindow():
-                # This function will be defined when the MainWindow gets defined
+                # This function will be defined when the mainWindow gets defined
                 pass
             
             self.trayIcon.activated.connect(lambda r: menu.exec(QCursor.pos()) if r == QSystemTrayIcon.Context else showWindow())
@@ -294,12 +294,12 @@ class MainApplication(QtWidgets.QApplication):
             self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
             self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
 
-            self.window = MainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
+            self.window = mainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
             showAction.triggered.connect(self.window.showWindow)
             uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
             showWindow = self.window.showWindow
 
-            if(not Tools.isDark()):
+            if(not tools.isDark()):
                 self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
                 print(r)
@@ -324,9 +324,9 @@ class MainApplication(QtWidgets.QApplication):
         while True:
             try:
                 for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "RaiseWindow_*")):
-                    if Tools.getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
+                    if tools.getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
                         print("[   OK   ] Found reactivation lock file...")
-                        Tools.setSettings("RaiseWindow_"+str(self.nowTime), False)
+                        tools.setSettings("RaiseWindow_"+str(self.nowTime), False)
                         if not self.window.isMaximized():
                             self.callInMain.emit(self.window.hide)
                             self.callInMain.emit(self.window.showMinimized)
@@ -345,7 +345,7 @@ class MainApplication(QtWidgets.QApplication):
             time.sleep(0.5)
 
     def updateIfPossible(self):
-        if not Tools.getSettings("DisableAutoUpdateWingetUI"):
+        if not tools.getSettings("DisableAutoUpdateWingetUI"):
             print("🔵 Starting update check")
             integrityPass = False
             dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
@@ -361,9 +361,9 @@ class MainApplication(QtWidgets.QApplication):
             response = response.read().decode("utf8")
             new_version_number = response.split("///")[0]
             provided_hash = response.split("///")[1].replace("\n", "").lower()
-            if float(new_version_number) > Tools.version:
+            if float(new_version_number) > tools.version:
                 print("🟢 Updates found!")
-                Tools.updatesAvailable = True
+                tools.updatesAvailable = True
                 if(integrityPass):
                     url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
                     filedata = urlopen(url)
@@ -377,7 +377,7 @@ class MainApplication(QtWidgets.QApplication):
                         print("🟢 Hash ok, starting update")
                         while self.running:
                             time.sleep(0.1)
-                        if not Tools.getSettings("DisableAutoUpdateWingetUI"):
+                        if not tools.getSettings("DisableAutoUpdateWingetUI"):
                             subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
                         else:
                             print("🟠 Hash not ok")
@@ -391,7 +391,7 @@ class MainApplication(QtWidgets.QApplication):
                     print("🟢 Updates not found")
 
 
-colors = Tools.getColors()
+colors = tools.getColors()
 
 darkSS = f"""
 * {{
@@ -777,12 +777,12 @@ QComboBox::drop-down {{
     width: 30px;
 }}
 QComboBox::down-arrow {{
-    image: url("{Tools.getMedia("drop-down")}");
+    image: url("{tools.getMedia("drop-down")}");
     height: 8px;
     width: 8px;
 }}
 QComboBox::down-arrow:disabled {{
-    image: url("{Tools.getMedia("drop-down")}");
+    image: url("{tools.getMedia("drop-down")}");
     height: 2px;
     width: 2px;
 }}
@@ -1211,12 +1211,12 @@ QComboBox::drop-down {{
     width: 30px;
 }}
 QComboBox::down-arrow {{
-    image: url("{Tools.getMedia("drop-down")}");
+    image: url("{tools.getMedia("drop-down")}");
     height: 8px;
     width: 8px;
 }}
 QComboBox::down-arrow:disabled {{
-    image: url("{Tools.getMedia("drop-down")}");
+    image: url("{tools.getMedia("drop-down")}");
     height: 2px;
     width: 2px;
 }}

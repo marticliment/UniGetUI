@@ -1,6 +1,6 @@
 from PySide6 import QtCore
 import subprocess, time, os, sys, signal, re
-import Tools
+import tools
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -26,7 +26,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             else:
                 counter += 1
     counter = 0
-    lc = Tools.getSettings("LowercaseScoopApps")
+    lc = tools.getSettings("LowercaseScoopApps")
     for element in output:
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
@@ -49,7 +49,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
             else:
                 counter += 1
     counter = 0
-    lc = Tools.getSettings("LowercaseScoopApps")
+    lc = tools.getSettings("LowercaseScoopApps")
     for element in output:
         try:
             items = list(filter(None, element.split(" ")))
@@ -76,7 +76,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             else:
                 counter += 1
     counter = 0
-    lc = Tools.getSettings("LowercaseScoopApps")
+    lc = tools.getSettings("LowercaseScoopApps")
     for element in output:
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
@@ -114,7 +114,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
             output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
     manifest = False
     version = ""
-    lc = Tools.getSettings("LowercaseScoopApps")
+    lc = tools.getSettings("LowercaseScoopApps")
     for line in output:
         #print(line)
         if("Description" in line):

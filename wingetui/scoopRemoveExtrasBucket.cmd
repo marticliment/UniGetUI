@@ -1,1 +1,0 @@
-scoop bucket rm extras & pause

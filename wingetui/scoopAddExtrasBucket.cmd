@@ -1,1 +1,0 @@
-scoop bucket add extras & pause

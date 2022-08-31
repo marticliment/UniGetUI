@@ -185,7 +185,7 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
 
 
 def getPath(s):
-    return os.path.join(realpath, s).replace("\\", "/")
+    return os.path.join(os.path.join(realpath, "resources"), s).replace("\\", "/")
 
 def getIconMode() -> str:
     return "white" if isDark() else "black"
