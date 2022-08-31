@@ -1936,10 +1936,10 @@ class Program(QMainWindow):
             self.installButton.setText("Install")
         self.installButton.setEnabled(True)
         self.versionCombo.setEnabled(True)
+        self.adminCheckbox.setEnabled(True)
+        self.forceCheckbox.setEnabled(True)
         if(self.store.lower() == "winget"):
-            self.forceCheckbox.setEnabled(True)
             self.interactiveCheckbox.setEnabled(True)
-            self.adminCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
         self.author.setText("Author: "+appInfo["author"])
@@ -1964,7 +1964,10 @@ class Program(QMainWindow):
         print(f"[   OK   ] Starting installation of package {title} with id {packageId}")
         cmdline_args = []
         if(self.forceCheckbox.isChecked()):
-            cmdline_args.append("--force")
+            if self.store.lower() == "winget":
+                cmdline_args.append("--force")
+            elif self.store.lower() == "scoop":
+                cmdline_args.append("--skip")
         if(self.interactiveCheckbox.isChecked()):
             cmdline_args.append("--interactive")
         if(self.versionCombo.currentText()=="Latest"):
