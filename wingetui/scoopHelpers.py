@@ -2,14 +2,7 @@ from PySide6.QtCore import *
 import subprocess, os, sys, re
 from tools import *
 
-if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
-else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
-
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
-
-
 
 def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Starting scoop search...")

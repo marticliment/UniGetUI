@@ -7,6 +7,8 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
 
+import globals
+
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
@@ -18,13 +20,12 @@ if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
 sudoPath = os.path.join(os.path.join(realpath, "sudo"), "sudo.cmd")
 sudoLocation = os.path.dirname(sudoPath)
 
 
-pending_programs = []
 settingsCache = {}
-current_program = ""
 version = 1.2
 installersWidget = None
 updatesAvailable = False
@@ -132,29 +133,24 @@ if isDark():
 else:
     blueColor = f"rgb({getColors()[4]})"
 
-app = None
-
 def queueProgram(id: str):
-    global pending_programs
-    pending_programs.append(id)
+    globals.pending_programs.append(id)
 
 def removeProgram(id: str):
-    global pending_programs, current_program
     try:
-        pending_programs.remove(id)
+       globals.pending_programs.remove(id)
     except ValueError:
         pass
-    if(current_program == id):
-        current_program = ""
+    if(globals.current_program == id):
+        globals.current_program = ""
 
 def checkQueue():
-    global current_program, pending_programs
     print("[   OK   ] checkQueue Thread started!")
     while True:
-        if(current_program == ""):
+        if(globals.current_program == ""):
             try:
-                current_program = pending_programs[0]
-                print(f"[ THREAD ] Current program set to {current_program}")
+                globals.current_program = globals.pending_programs[0]
+                print(f"[ THREAD ] Current program set to {globals.current_program}")
             except IndexError:
                 pass
         time.sleep(0.2)
@@ -162,9 +158,6 @@ def checkQueue():
 
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
-    #window.setAttribute(Qt.WA_TranslucentBackground)
-    #window.setAttribute(Qt.WA_NoSystemBackground)
-
     mode = isDark()
     from blurwindow import GlobalBlur
     if not avoidOverrideStyleSheet:
@@ -229,11 +222,8 @@ class KillableThread(Thread):
 
 
 def notify(title: str, text: str) -> None:
-    app.trayIcon.showMessage(title, text)
+    globals.app.trayIcon.showMessage(title, text)
 
-def registerApplication(newApp):
-    global app
-    app = newApp
 
 def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] winget installer assistant thread started for process {p}")

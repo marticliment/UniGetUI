@@ -1,11 +1,7 @@
 from PySide6.QtCore import *
 import subprocess, time, os, sys
+from tools import *
 
-if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
-else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
-    
 common_params = ["--source", "winget", "--accept-source-agreements"]
     
 winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")

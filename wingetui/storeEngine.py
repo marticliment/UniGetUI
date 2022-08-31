@@ -5,10 +5,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
 
-if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
-else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+import globals
 
 class UninstallSoftwareSection(QWidget):
 
@@ -20,10 +17,8 @@ class UninstallSoftwareSection(QWidget):
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
 
-    def __init__(self, installerswidget, installedMenu: QMenu, parent=None):
-        self.installerswidget = installerswidget
-        super().__init__(parent=parent)
-        self.installedMenu = installedMenu # The available updates from the system tray icon menu
+    def __init__(self, parent = None):
+        super().__init__(parent = parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.infobox = PackageInfoPopupWindow()
@@ -243,7 +238,7 @@ class UninstallSoftwareSection(QWidget):
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
-            self.installedMenu.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
@@ -252,7 +247,7 @@ class UninstallSoftwareSection(QWidget):
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
-            self.installedMenu.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -261,7 +256,7 @@ class UninstallSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.filter()
             self.loadingProgressBar.hide()
-            self.installedMenu.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
@@ -283,10 +278,10 @@ class UninstallSoftwareSection(QWidget):
             item.setIcon(3, self.providerIcon)
             item.setText(3, store)
             self.packageList.addTopLevelItem(item)
-            action = QAction(name+" \t"+version, self.installedMenu)
+            action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
             action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
             action.setShortcut(version)
-            self.installedMenu.addAction(action)
+            globals.trayMenuInstalledList.addAction(action)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
@@ -330,11 +325,11 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
         else:
             self.scoopLoaded = True
-        for action in self.installedMenu.actions():
-            self.installedMenu.removeAction(action)
+        for action in globals.trayMenuInstalledList.actions():
+            globals.trayMenuInstalledList.removeAction(action)
     
     def addInstallation(self, p) -> None:
-        self.installerswidget.addWidget(p)
+        globals.installersWidget.addWidget(p)
 
 class DiscoverSoftwareSection(QWidget):
 
@@ -346,9 +341,8 @@ class DiscoverSoftwareSection(QWidget):
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
 
-    def __init__(self, installerswidget, parent=None):
-        self.installerswidget = installerswidget
-        super().__init__(parent=parent)
+    def __init__(self, parent = None):
+        super().__init__(parent = parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.infobox = PackageInfoPopupWindow(self)
@@ -670,7 +664,7 @@ class DiscoverSoftwareSection(QWidget):
             self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
-        self.installerswidget.addWidget(p)
+        globals.installersWidget.addWidget(p)
 
 class UpdateSoftwareSection(QWidget):
 
@@ -682,10 +676,8 @@ class UpdateSoftwareSection(QWidget):
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
 
-    def __init__(self, installerswidget, updatesMenu: QMenu, parent=None):
-        self.installerswidget = installerswidget
-        super().__init__(parent=parent)
-        self.updatesMenu = updatesMenu # The available updates from the system tray icon menu
+    def __init__(self, parent = None):
+        super().__init__(parent = parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.infobox = PackageInfoPopupWindow(self)
@@ -946,7 +938,7 @@ class UpdateSoftwareSection(QWidget):
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
-            self.updatesMenu.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -954,7 +946,7 @@ class UpdateSoftwareSection(QWidget):
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.updatesMenu.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.filter()
@@ -988,10 +980,10 @@ class UpdateSoftwareSection(QWidget):
             item.setText(4, store)
             item.setIcon(4, self.providerIcon)
             self.packageList.addTopLevelItem(item)
-            action = QAction(name+"  \t"+version+"\t → \t"+newVersion, self.updatesMenu)
+            action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
             action.triggered.connect(lambda : self.update(name, id, packageItem=item))
             action.setShortcut(version)
-            self.updatesMenu.addAction(action)
+            globals.trayMenuUpdatesList.addAction(action)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
@@ -1043,8 +1035,8 @@ class UpdateSoftwareSection(QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
-        for action in self.updatesMenu.actions():
-            self.updatesMenu.removeAction(action)
+        for action in globals.trayMenuUpdatesList.actions():
+            globals.trayMenuUpdatesList.removeAction(action)
         self.countLabel.setText("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
@@ -1057,14 +1049,12 @@ class UpdateSoftwareSection(QWidget):
             self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
-        self.installerswidget.addWidget(p)
+        globals.installersWidget.addWidget(p)
 
 class AboutSection(QScrollArea):
-    def __init__(self, componentStatus: dict, packageInstaller: QWidget):
-        super().__init__()
-        self.packageInstaller = packageInstaller
+    def __init__(self, parent = None):
+        super().__init__(parent = parent)
         self.setFrameShape(QFrame.NoFrame)
-        self.componentStatus = componentStatus
         self.widget = QWidget()
         self.setWidgetResizable(True)
         self.setStyleSheet("margin-left: 0px;")
@@ -1104,7 +1094,7 @@ class AboutSection(QScrollArea):
         changeDefaultInstallAction.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
         self.layout.addWidget(changeDefaultInstallAction)
         scoopPreventCaps = QCheckBox("Show scoop apps as lowercase")
-        changeDefaultInstallAction.setChecked(getSettings("LowercaseScoopApps"))
+        scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
         scoopPreventCaps.clicked.connect(lambda v: setSettings("LowercaseScoopApps", bool(v)))
         self.layout.addWidget(scoopPreventCaps)
         self.layout.addWidget(QLabel())
@@ -1148,12 +1138,12 @@ class AboutSection(QScrollArea):
         table.setColumnWidth(1, 200)
         table.verticalHeader().setFixedWidth(100)
         table.setVerticalHeaderLabels(["Winget", "  Scoop", "  Sudo"])
-        table.setItem(0, 0, QTableWidgetItem(str("Found" if self.componentStatus["wingetFound"] else "Not found")))
-        table.setItem(0, 1, QTableWidgetItem(str(self.componentStatus["wingetVersion"])))
-        table.setItem(1, 0, QTableWidgetItem(str("Found" if self.componentStatus["scoopFound"] else "Not found")))
-        table.setItem(1, 1, QTableWidgetItem(str(self.componentStatus["scoopVersion"])))
-        table.setItem(2, 0, QTableWidgetItem(str("Found" if self.componentStatus["sudoFound"] else "Not found")))
-        table.setItem(2, 1, QTableWidgetItem(str(self.componentStatus["sudoVersion"])))
+        table.setItem(0, 0, QTableWidgetItem(str("Found" if globals.componentStatus["wingetFound"] else "Not found")))
+        table.setItem(0, 1, QTableWidgetItem(str(globals.componentStatus["wingetVersion"])))
+        table.setItem(1, 0, QTableWidgetItem(str("Found" if globals.componentStatus["scoopFound"] else "Not found")))
+        table.setItem(1, 1, QTableWidgetItem(str(globals.componentStatus["scoopVersion"])))
+        table.setItem(2, 0, QTableWidgetItem(str("Found" if globals.componentStatus["sudoFound"] else "Not found")))
+        table.setItem(2, 1, QTableWidgetItem(str(globals.componentStatus["sudoVersion"])))
         table.setCornerWidget(QLabel("Components"))
         table.setCornerButtonEnabled(True)
         table.cornerWidget().setStyleSheet("background: transparent;")
@@ -1199,13 +1189,13 @@ class AboutSection(QScrollArea):
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to add", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            self.packageInstaller.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
+            globals.installersWidget.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to remove", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            self.packageInstaller.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            globals.installersWidget.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
     
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
@@ -1269,7 +1259,7 @@ class PackageInstallerWidget(QGroupBox):
         self.finishInstallation.connect(self.finish)
         self.layout.addWidget(self.info)
         self.counterSignal.connect(self.counter)
-        self.cancelButton = QPushButton(QIcon(realpath+"/cancel.png"), "Cancel")
+        self.cancelButton = QPushButton(QIcon(realpath+"/resources/cancel.png"), "Cancel")
         self.cancelButton.clicked.connect(self.cancel)
         self.cancelButton.setFixedHeight(30)
         self.info.setFixedHeight(30)
@@ -1316,7 +1306,7 @@ class PackageInstallerWidget(QGroupBox):
 
     
     def startInstallation(self) -> None:
-        while self.installId != current_program and not getSettings("AllowParallelInstalls"):
+        while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
@@ -1362,7 +1352,7 @@ class PackageInstallerWidget(QGroupBox):
         self.info.setText("Installation canceled by user!")
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText("Close")
-        self.cancelButton.setIcon(QIcon(realpath+"/warn.png"))
+        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
         self.progressbar.setValue(1000)
@@ -1389,7 +1379,7 @@ class PackageInstallerWidget(QGroupBox):
             if(returncode == 0):
                 notify("WingetUI", f"{self.programName} was {self.actionDone} successfully!")
                 self.cancelButton.setText("OK")
-                self.cancelButton.setIcon(QIcon(realpath+"/tick.png"))
+                self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was {self.actionDone} successfully!")
                 self.progressbar.setValue(1000)
@@ -1405,7 +1395,7 @@ class PackageInstallerWidget(QGroupBox):
                     msgBox.exec_()
             else:
                 self.cancelButton.setText("OK")
-                self.cancelButton.setIcon(QIcon(realpath+"/warn.png"))
+                self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
                 msgBox = MessageBox(self)
@@ -1445,7 +1435,7 @@ class PackageInstallerWidget(QGroupBox):
         Thread(target=f, daemon=True).start()
 
     def close(self):
-        installersWidget.removeItem(self)
+        globals.installersWidget.removeWidget(self)
         super().close()
         super().destroy()
 
@@ -1458,7 +1448,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.actionDoing = "updating"
     
     def startInstallation(self) -> None:
-        while self.installId != current_program and not getSettings("AllowParallelInstalls"):
+        while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
@@ -1487,10 +1477,9 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             if self.packageItem:
                 self.packageItem.setHidden(True)
         return super().finish(returncode, output)
-
     
     def close(self):
-        installersWidget.removeItem(self)
+        globals.installersWidget.removeWidget(self)
         super().close()
 
 class PackageUninstallerWidget(PackageInstallerWidget):
@@ -1513,7 +1502,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.label.setText(title+" Uninstallation")
         
     def startInstallation(self) -> None:
-        while self.installId != current_program and not getSettings("AllowParallelInstalls"):
+        while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.leftSlow.stop()
         self.leftFast.stop()
@@ -1561,7 +1550,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText("Close")
-        self.cancelButton.setIcon(QIcon(realpath+"/warn.png"))
+        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
         self.progressbar.setValue(1000)
@@ -1591,7 +1580,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             if(returncode == 0):
                 notify("WingetUI", f"{self.programName} was uninstalled successfully!")
                 self.cancelButton.setText("OK")
-                self.cancelButton.setIcon(QIcon(realpath+"/tick.png"))
+                self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was uninstalled successfully!")
                 self.progressbar.setValue(1000)
@@ -1607,7 +1596,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     msgBox.exec_()
             else:
                 self.cancelButton.setText("OK")
-                self.cancelButton.setIcon(QIcon(realpath+"/warn.png"))
+                self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
                 msgBox = MessageBox(self)
@@ -1628,7 +1617,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 msgBox.exec_()
     
     def close(self):
-        installersWidget.removeItem(self)
+        globals.installersWidget.removeWidget(self)
         super().close()
 
 class PackageInfoPopupWindow(QMainWindow):
@@ -1639,8 +1628,8 @@ class PackageInfoPopupWindow(QMainWindow):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent = None):
+        super().__init__(parent = parent)
         self.sc = QScrollArea()
         self.setWindowFlags(Qt.Window)
         self.setWindowModality(Qt.WindowModal)
@@ -1872,7 +1861,6 @@ class PackageInfoPopupWindow(QMainWindow):
         self.isAnUpdate = update
         self.installButton.setText("Please wait...")
         store = store.lower()
-        blueColor = blueColor
         if(goodTitle):
             self.title.setText(title)
         else:
@@ -1904,7 +1892,6 @@ class PackageInfoPopupWindow(QMainWindow):
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
-        blueColor = blueColor
         self.loadingProgressBar.hide()
         if self.isAnUpdate:
             self.installButton.setText("Update")
@@ -1980,11 +1967,6 @@ class PackageInfoPopupWindow(QMainWindow):
         except AttributeError:
             pass
         return super().hide()
-
-        
-        
-
-
 
 if(__name__=="__main__"):
     import __init__

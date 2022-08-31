@@ -8,12 +8,7 @@ import wingetHelpers, scoopHelpers
 from mainWindow import *
 from tools import *
 
-if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
-else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
-
-
+import globals
 
 debugging = True
 
@@ -31,14 +26,7 @@ class MainApplication(QApplication):
     updatesMenu: QMenu = None# = QMenu("0 Packages")
     installedMenu: QMenu = None#QMenu("0 Packages")
     running = True
-    componentStatus = {
-        "wingetFound": False,
-        "scoopFound": False,
-        "sudoFound": False,
-        "wingetVersion": "Unknown",
-        "scoopVersion": "Unknown", 
-        "sudoVersion": "Unknown", 
-    }
+    
     def __init__(self):
         try:
             super().__init__(sys.argv)
@@ -125,14 +113,14 @@ class MainApplication(QApplication):
             Thread(target=self.detectWinget, daemon=True).start()
         else:
             self.loadStatus += 2
-            self.componentStatus["wingetFound"] = False
-            self.componentStatus["wingetVersion"] = "Winget is disabled"
+            globals.componentStatus["wingetFound"] = False
+            globals.componentStatus["wingetVersion"] = "Winget is disabled"
         if not getSettings("DisableScoop"):
             Thread(target=self.detectScoop, daemon=True).start()
         else:
             self.loadStatus += 2
-            self.componentStatus["scoopFound"] = False
-            self.componentStatus["scoopVersion"] = "Scoop is disabled"
+            globals.componentStatus["scoopFound"] = False
+            globals.componentStatus["scoopVersion"] = "Scoop is disabled"
         Thread(target=self.detectSudo, daemon=True).start()
 
         # Daemon threads
@@ -144,7 +132,7 @@ class MainApplication(QApplication):
         self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
         self.callInMain.emit(lambda: self.loadingText.repaint())
         self.callInMain.emit(self.loadMainUI)
-        print(self.componentStatus)
+        print(globals.componentStatus)
 
     def checkForRunningInstances(self):
             print("Scanning for instances...")
@@ -182,9 +170,9 @@ class MainApplication(QApplication):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating winget..."))
             o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
-            self.componentStatus["wingetFound"] = o.returncode == 0
-            self.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
-            self.callInMain.emit(lambda: self.loadingText.setText(f"Winget found: {self.componentStatus['wingetFound']}"))
+            globals.componentStatus["wingetFound"] = o.returncode == 0
+            globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Winget found: {globals.componentStatus['wingetFound']}"))
         except Exception as e:
             print(e)
         self.loadStatus += 1
@@ -201,9 +189,9 @@ class MainApplication(QApplication):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating scoop..."))
             o = subprocess.run(f"powershell -Command scoop -v", shell=True, stdout=subprocess.PIPE)
-            self.componentStatus["scoopFound"] = o.returncode == 0
-            self.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
-            self.callInMain.emit(lambda: self.loadingText.setText(f"Scoop found: {self.componentStatus['scoopFound']}"))
+            globals.componentStatus["scoopFound"] = o.returncode == 0
+            globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Scoop found: {globals.componentStatus['scoopFound']}"))
         except Exception as e:
             print(e)
         self.loadStatus += 1
@@ -230,9 +218,9 @@ class MainApplication(QApplication):
             o = os.path.isfile(sudoPath)
             if not os.path.isdir(sudoLocation):
                 sudoLocation = os.getcwd() # This will be saved in tools.py
-            self.componentStatus["sudoFound"] = o
-            self.componentStatus["sudoVersion"] = sudoLocation.replace("/", "\\")
-            self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
+            globals.componentStatus["sudoFound"] = o
+            globals.componentStatus["sudoVersion"] = sudoLocation.replace("/", "\\")
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {globals.componentStatus['sudoFound']}"))
         except Exception as e:
             print(e)
         self.loadStatus += 1
@@ -240,35 +228,45 @@ class MainApplication(QApplication):
     def loadMainUI(self):
         print("Reached main ui load milestone")
         try:
-            self.trayIcon = QSystemTrayIcon()
-            registerApplication(self)
+            globals.trayIcon = QSystemTrayIcon()
+            self.trayIcon = globals.trayIcon
+            globals.app = self
             self.trayIcon.setIcon(QIcon(realpath+"/resources/icon.png"))
             self.trayIcon.setToolTip("WingetUI")
             self.trayIcon.setVisible(True)
 
             menu = QMenu("WingetUI")
+            globals.trayMenu = menu
             infoAction = QAction(f"WingetUI v{version}",menu)
             infoAction.setEnabled(False)
             menu.addAction(infoAction)
+            
             showAction = QAction("Show WingetUI",menu)
-            # Action defined later
             menu.addAction(showAction)
             self.trayIcon.setContextMenu(menu)
             menu.addSeparator()
+            
             dAction = QAction("Available updates",menu)
             dAction.setEnabled(False)
             menu.addAction(dAction)
+            
             self.updatesMenu = QMenu("0 Found", menu)
+            globals.trayMenuUpdatesList = self.updatesMenu
             menu.addMenu(self.updatesMenu)
+            
             uaAction = QAction("Update all", menu)
             menu.addAction(uaAction)
             menu.addSeparator()
+            
             dAction = QAction("Installed packages",menu)
             dAction.setEnabled(False)
             menu.addAction(dAction)
+            
             self.installedMenu = QMenu("0 Found", menu)
+            globals.trayMenuInstalledList = self.installedMenu
             menu.addMenu(self.installedMenu)
             menu.addSeparator()
+            
             quitAction = QAction(menu)
             quitAction.setText("Quit")
             quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
@@ -284,7 +282,7 @@ class MainApplication(QApplication):
             self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
             self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
 
-            self.window = RootWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
+            self.window = RootWindow()
             showAction.triggered.connect(self.window.showWindow)
             uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
             showWindow = self.window.showWindow
@@ -301,7 +299,7 @@ class MainApplication(QApplication):
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
                     pass#self.window.setAttribute(Qt.WA_TranslucentBackground)
-                self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
+                self.window.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
             self.loadingText.setText(f"Latest details...")
             self.window.show()
             self.popup.hide()
@@ -379,7 +377,6 @@ class MainApplication(QApplication):
                         print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
                 else:
                     print("🟢 Updates not found")
-
 
 colors = getColors()
 

@@ -3,26 +3,19 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 import os, ctypes, sys, tools
 
+import globals
+
 from storeEngine import *
 from tools import *
 
-if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
-else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
-
 class RootWindow(QMainWindow):
-    def __init__(self, componentStatus: dict, updatesMenu: QMenu, installedMenu: QMenu, app: QApplication):
+    def __init__(self):
         self.oldbtn = None
         super().__init__()
-        self.app = app
-        self.updatesMenu = updatesMenu
-        self.installedMenu = installedMenu
-        self.componentStatus = componentStatus
         self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
-        self.setWindowIcon(QIcon(realpath+"/icon.png"))
+        self.setWindowIcon(QIcon(realpath+"/resources/icon.png"))
         self.resize(QSize(1100, 700))
         self.loadWidgets()
         self.blackmatt = QWidget(self)
@@ -57,22 +50,22 @@ class RootWindow(QMainWindow):
         self.buttonier.setLayout(self.buttonLayout)
         self.installationsWidget = DynamicScrollArea()
         self.installerswidget: QLayout = self.installationsWidget.vlayout
-        installersWidget = self.installationsWidget
+        globals.installersWidget = self.installerswidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         self.mainWidget.setStyleSheet("""
         QTabWidget::tab-bar {{
             alignment: center;
             }}""")
-        self.discover = DiscoverSoftwareSection(self.installerswidget)
+        self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.discover, "Discover Software")
-        self.updates = UpdateSoftwareSection(self.installerswidget, self.updatesMenu)
+        self.updates = UpdateSoftwareSection()
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.updates, "Software updates")
-        self.uninstall = UninstallSoftwareSection(self.installerswidget, self.installedMenu)
+        self.uninstall = UninstallSoftwareSection()
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
-        self.addTab(AboutSection(self.componentStatus, self.installerswidget), "About WingetUI")
+        self.addTab(AboutSection(), "About WingetUI")
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()
@@ -149,11 +142,11 @@ class RootWindow(QMainWindow):
         return is_admin
     
     def closeEvent(self, event):
-        if(pending_programs != []):
+        if(globals.pending_programs != []):
             if updatesAvailable or getSettings("DisablesystemTray"):
                 if(tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
                     event.accept()
-                    self.app.quit()
+                    globals.app.quit()
                     sys.exit(0)
                 else:
                     event.ignore()
@@ -163,7 +156,7 @@ class RootWindow(QMainWindow):
         else:
             if updatesAvailable or getSettings("DisablesystemTray"):
                 event.accept()
-                self.app.quit()
+                globals.app.quit()
                 sys.exit(0)
             else:
                 self.hide()
@@ -191,8 +184,6 @@ class RootWindow(QMainWindow):
         self.window().setFocus()
         self.window().raise_()
         self.window().activateWindow()
-
-
 
 class DraggableWindow(QWidget):
     pressed = False
