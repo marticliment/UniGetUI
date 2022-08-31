@@ -294,7 +294,7 @@ class MainApplication(QtWidgets.QApplication):
             self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
             self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
 
-            self.window = mainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
+            self.window = mainWindow.RootWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
             showAction.triggered.connect(self.window.showWindow)
             uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
             showWindow = self.window.showWindow

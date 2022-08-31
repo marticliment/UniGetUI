@@ -17,7 +17,7 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
-class Uninstall(QtWidgets.QWidget):
+class UninstallSoftwareSection(QtWidgets.QWidget):
 
     addProgram = QtCore.Signal(str, str, str, str)
     hideLoadingWheel = QtCore.Signal(str)
@@ -33,7 +33,7 @@ class Uninstall(QtWidgets.QWidget):
         self.installedMenu = installedMenu # The available updates from the system tray icon menu
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = Program()
+        self.infobox = PackageInfoPopupWindow()
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
 
@@ -243,7 +243,7 @@ class Uninstall(QtWidgets.QWidget):
     
     def scoopNotFound(self) -> None:
         if(tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
-            self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
@@ -314,9 +314,9 @@ class Uninstall(QtWidgets.QWidget):
         if(tools.MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.Yes) == tools.MessageBox.Yes):
             print(id)
             if("…" in id):
-                self.addInstallation(PackageUninstaller(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
             else:
-                self.addInstallation(PackageUninstaller(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -343,7 +343,7 @@ class Uninstall(QtWidgets.QWidget):
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
 
-class Discover(QtWidgets.QWidget):
+class DiscoverSoftwareSection(QtWidgets.QWidget):
 
     addProgram = QtCore.Signal(str, str, str, str)
     hideLoadingWheel = QtCore.Signal(str)
@@ -358,7 +358,7 @@ class Discover(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = Program(self)
+        self.infobox = PackageInfoPopupWindow(self)
         self.setStyleSheet("margin: 0px;")
 
         self.programbox = QtWidgets.QWidget()
@@ -577,7 +577,7 @@ class Discover(QtWidgets.QWidget):
     
     def scoopNotFound(self) -> None:
         if(tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
-            self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
@@ -647,14 +647,14 @@ class Discover(QtWidgets.QWidget):
     def fastinstall(self, title: str, id: str) -> None:
         if not "scoop" in id:
             if("…" in title):
-                self.addInstallation(PackageInstaller(title, "winget", useId=True, packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "winget", useId=True, packageId=id.replace("…", "")))
             else:
-                self.addInstallation(PackageInstaller(title, "winget", packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "winget", packageId=id.replace("…", "")))
         else:
             if("…" in title):
-                self.addInstallation(PackageInstaller(title, "scoop", useId=True, packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=True, packageId=id.replace("…", "")))
             else:
-                self.addInstallation(PackageInstaller(title, "scoop", packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", packageId=id.replace("…", "")))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -679,7 +679,7 @@ class Discover(QtWidgets.QWidget):
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
 
-class Upgrade(QtWidgets.QWidget):
+class UpdateSoftwareSection(QtWidgets.QWidget):
 
     addProgram = QtCore.Signal(str, str, str, str, str)
     hideLoadingWheel = QtCore.Signal(str)
@@ -695,7 +695,7 @@ class Upgrade(QtWidgets.QWidget):
         self.updatesMenu = updatesMenu # The available updates from the system tray icon menu
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = Program(self)
+        self.infobox = PackageInfoPopupWindow(self)
         self.setStyleSheet("margin: 0px;")
 
         self.programbox = QtWidgets.QWidget()
@@ -947,7 +947,7 @@ class Upgrade(QtWidgets.QWidget):
     
     def scoopNotFound(self) -> None:
         if(tools.MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
-            self.layout.addWidget(PackageInstaller("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
         
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
@@ -1020,14 +1020,14 @@ class Upgrade(QtWidgets.QWidget):
         if not all:
             if not "scoop" in id:
                 if("…" in title):
-                    self.addInstallation(PackageUpdater(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
                 else:
-                    self.addInstallation(PackageUpdater(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem))
             else:
                 if("…" in title):
-                    self.addInstallation(PackageUpdater(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
                 else:
-                    self.addInstallation(PackageUpdater(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
         else:
             for i in range(self.packageList.topLevelItemCount()):
                 program = self.packageList.topLevelItem(i)
@@ -1066,7 +1066,7 @@ class Upgrade(QtWidgets.QWidget):
     def addInstallation(self, p) -> None:
         self.installerswidget.addWidget(p)
 
-class About(QtWidgets.QScrollArea):
+class AboutSection(QtWidgets.QScrollArea):
     def __init__(self, componentStatus: dict, packageInstaller: QWidget):
         super().__init__()
         self.packageInstaller = packageInstaller
@@ -1196,7 +1196,7 @@ class About(QtWidgets.QScrollArea):
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
         button = QtWidgets.QPushButton("Update/Reinstall WingetUI")
-        button.clicked.connect(lambda: self.layout.addWidget(PackageInstaller("WingetUI", "winget")))
+        button.clicked.connect(lambda: self.layout.addWidget(PackageInstallerWidget("WingetUI", "winget")))
         # self.layout.addWidget(button)
         self.layout.addWidget(QtWidgets.QWidget(), stretch=1)
     
@@ -1206,26 +1206,14 @@ class About(QtWidgets.QScrollArea):
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to add", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            self.packageInstaller.addWidget(PackageInstaller(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
+            self.packageInstaller.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to remove", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            self.packageInstaller.addWidget(PackageInstaller(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            self.packageInstaller.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
     
-class LoadingProgress(QtWidgets.QLabel):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.movie = QtGui.QMovie(realpath+"/loading.gif")
-        self.movie.start()
-        self.setMovie(self.movie)
-        self.show()
-    
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.movie.setScaledSize(self.size())
-
 class QLinkLabel(QtWidgets.QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
         super().__init__(text)
@@ -1243,7 +1231,7 @@ class QInfoProgressDialog(QtWidgets.QProgressDialog):
     def addTextLine(self, text: str) -> None:
         self.setLabelText("Downloading and installing, please wait...\n\n"+text)
 
-class PackageInstaller(QtWidgets.QGroupBox):
+class PackageInstallerWidget(QtWidgets.QGroupBox):
     onCancel = QtCore.Signal()
     killSubprocess = QtCore.Signal()
     addInfoLine = QtCore.Signal(str)
@@ -1468,8 +1456,7 @@ class PackageInstaller(QtWidgets.QGroupBox):
         super().close()
         super().destroy()
 
-
-class PackageUpdater(PackageInstaller):
+class PackageUpdaterWidget(PackageInstallerWidget):
 
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False, useId: bool = False):
         super().__init__(title, store, version, parent, customCommand, args, packageId, admin)
@@ -1513,7 +1500,7 @@ class PackageUpdater(PackageInstaller):
         tools.installersWidget.removeItem(self)
         super().close()
 
-class PackageUninstaller(PackageInstaller):
+class PackageUninstallerWidget(PackageInstallerWidget):
     onCancel = QtCore.Signal()
     killSubprocess = QtCore.Signal()
     addInfoLine = QtCore.Signal(str)
@@ -1651,11 +1638,11 @@ class PackageUninstaller(PackageInstaller):
         tools.installersWidget.removeItem(self)
         super().close()
 
-class Program(QMainWindow):
+class PackageInfoPopupWindow(QMainWindow):
     onClose = QtCore.Signal()
     loadInfo = QtCore.Signal(dict)
     closeDialog = QtCore.Signal()
-    addProgram = QtCore.Signal(PackageInstaller)
+    addProgram = QtCore.Signal(PackageInstallerWidget)
     setLoadBarValue = QtCore.Signal(str)
     startAnim = QtCore.Signal(QtCore.QVariantAnimation)
     changeBarOrientation = QtCore.Signal()
@@ -1841,10 +1828,6 @@ class Program(QMainWindow):
         self.backButton.clicked.connect(lambda: (self.onClose.emit(), self.close()))
         self.backButton.show()
 
-        
-        self.loadWheel = LoadingProgress(self)
-        self.loadWheel.resize(64, 64)
-        self.loadWheel.hide()
         self.hide()
 
         self.loadInfo.connect(self.printData)
@@ -1976,9 +1959,9 @@ class Program(QMainWindow):
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ] Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
-            p = PackageUpdater(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
+            p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
         else:
-            p = PackageInstaller(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
+            p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
         self.addProgram.emit(p)
         self.close()
 

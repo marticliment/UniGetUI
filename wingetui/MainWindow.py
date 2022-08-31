@@ -12,7 +12,7 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
-class MainWindow(QtWidgets.QMainWindow):
+class RootWindow(QtWidgets.QMainWindow):
     def __init__(self, componentStatus: dict, updatesMenu: QMenu, installedMenu: QMenu, app: QApplication):
         self.oldbtn = None
         super().__init__()
@@ -64,16 +64,16 @@ class MainWindow(QtWidgets.QMainWindow):
         QTabWidget::tab-bar {{
             alignment: center;
             }}""")
-        self.discover = storeEngine.Discover(self.installerswidget)
+        self.discover = storeEngine.DiscoverSoftwareSection(self.installerswidget)
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.discover, "Discover Software")
-        self.updates = storeEngine.Upgrade(self.installerswidget, self.updatesMenu)
+        self.updates = storeEngine.UpdateSoftwareSection(self.installerswidget, self.updatesMenu)
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.updates, "Software updates")
-        self.uninstall = storeEngine.Uninstall(self.installerswidget, self.installedMenu)
+        self.uninstall = storeEngine.UninstallSoftwareSection(self.installerswidget, self.installedMenu)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         self.addTab(self.uninstall, "Installed applications")
-        self.addTab(storeEngine.About(self.componentStatus, self.installerswidget), "About WingetUI")
+        self.addTab(storeEngine.AboutSection(self.componentStatus, self.installerswidget), "About WingetUI")
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()
