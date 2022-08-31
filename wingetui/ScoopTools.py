@@ -1,5 +1,6 @@
 from PySide6 import QtCore
 import subprocess, time, os, sys, signal, re
+import Tools
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -25,9 +26,10 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             else:
                 counter += 1
     counter = 0
+    lc = Tools.getSettings("LowercaseScoopApps")
     for element in output:
         try:
-            signal.emit(element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
+            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
         except IndexError as e:
             print("IndexError: "+str(e))
     print("[   OK   ] Scoop search finished")
@@ -47,11 +49,12 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
             else:
                 counter += 1
     counter = 0
+    lc = Tools.getSettings("LowercaseScoopApps")
     for element in output:
         try:
             items = list(filter(None, element.split(" ")))
             if(len(items)>=2):
-                signal.emit(items[0].capitalize(), f"scoop.{items[0]}", items[1], "Scoop")
+                signal.emit(items[0] if lc else items[0].capitalize(), f"scoop.{items[0]}", items[1], "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
@@ -73,9 +76,10 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             else:
                 counter += 1
     counter = 0
+    lc = Tools.getSettings("LowercaseScoopApps")
     for element in output:
         try:
-            signal.emit(element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
+            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
@@ -110,6 +114,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
             output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
     manifest = False
     version = ""
+    lc = Tools.getSettings("LowercaseScoopApps")
     for line in output:
         #print(line)
         if("Description" in line):
@@ -151,7 +156,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
                 print(type(e), e)
     print(f"[  INFO  ] Scoop does not support specific version installs")
     appInfo["versions"] = [version]
-    appInfo["title"] = appInfo["title"].capitalize()
+    appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
     signal.emit(appInfo)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
