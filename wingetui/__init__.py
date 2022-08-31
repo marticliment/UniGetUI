@@ -124,20 +124,20 @@ class MainApplication(QtWidgets.QApplication):
         self.loadStatus = 0 # There are 6 items (preparation threads)
         
         # Preparation threads
-        Thread(target=self.checkForRunningInstances).start()
+        Thread(target=self.checkForRunningInstances, daemon=True).start()
         if not Tools.getSettings("DisableWinget"):
-            Thread(target=self.detectWinget).start()
+            Thread(target=self.detectWinget, daemon=True).start()
         else:
             self.loadStatus += 2
             self.componentStatus["wingetFound"] = False
             self.componentStatus["wingetVersion"] = "Winget is disabled"
         if not Tools.getSettings("DisableScoop"):
-            Thread(target=self.detectScoop).start()
+            Thread(target=self.detectScoop, daemon=True).start()
         else:
             self.loadStatus += 2
             self.componentStatus["scoopFound"] = False
             self.componentStatus["scoopVersion"] = "Scoop is disabled"
-        Thread(target=self.detectSudo).start()
+        Thread(target=self.detectSudo, daemon=True).start()
 
         # Daemon threads
         Thread(target=self.instanceThread, daemon=True).start()
@@ -292,7 +292,7 @@ class MainApplication(QtWidgets.QApplication):
             self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
             self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
 
-            self.window = MainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu)
+            self.window = MainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
             showAction.triggered.connect(self.window.showWindow)
             showWindow = self.window.showWindow
 
@@ -1256,4 +1256,4 @@ QComboBox QAbstractItemView::item:selected{{
 a = MainApplication()
 a.exec()
 a.running = False
-sys.exit()
+sys.exit(0)

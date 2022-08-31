@@ -13,9 +13,10 @@ else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, componentStatus: dict, updatesMenu: QMenu, installedMenu: QMenu):
+    def __init__(self, componentStatus: dict, updatesMenu: QMenu, installedMenu: QMenu, app: QApplication):
         self.oldbtn = None
         super().__init__()
+        self.app = app
         self.updatesMenu = updatesMenu
         self.installedMenu = installedMenu
         self.componentStatus = componentStatus
@@ -153,6 +154,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if Tools.updatesAvailable or Tools.getSettings("DisablesystemTray"):
                 if(Tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", Tools.MessageBox.No | Tools.MessageBox.Yes, Tools.MessageBox.No) == Tools.MessageBox.Yes):
                     event.accept()
+                    self.app.quit()
+                    sys.exit(0)
                 else:
                     event.ignore()
             else:
@@ -161,6 +164,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             if Tools.updatesAvailable or Tools.getSettings("DisablesystemTray"):
                 event.accept()
+                self.app.quit()
+                sys.exit(0)
             else:
                 self.hide()
                 event.ignore()
