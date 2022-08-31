@@ -125,8 +125,18 @@ class MainApplication(QtWidgets.QApplication):
         
         # Preparation threads
         Thread(target=self.checkForRunningInstances).start()
-        Thread(target=self.detectWinget).start()
-        Thread(target=self.detectScoop).start()
+        if not Tools.getSettings("DisableWinget"):
+            Thread(target=self.detectWinget).start()
+        else:
+            self.loadStatus += 2
+            self.componentStatus["wingetFound"] = False
+            self.componentStatus["wingetVersion"] = "Winget is disabled"
+        if not Tools.getSettings("DisableScoop"):
+            Thread(target=self.detectScoop).start()
+        else:
+            self.loadStatus += 2
+            self.componentStatus["scoopFound"] = False
+            self.componentStatus["scoopVersion"] = "Scoop is disabled"
         Thread(target=self.detectSudo).start()
 
         # Daemon threads
@@ -209,13 +219,11 @@ class MainApplication(QtWidgets.QApplication):
             print(e)
         self.loadStatus += 1
         try:
-            self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (1/2)"))
-            o = subprocess.run(f"powershell -Command scoop cleanup *", shell=True, stdout=subprocess.PIPE)
-        except Exception as e:
-            print(e)
-        try:
-            self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache... (2/2)"))
-            o = subprocess.run(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
+            self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache..."))
+            p1 = subprocess.Popen(f"powershell -Command scoop cleanup *", shell=True, stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
+            p1.wait()
+            p2.wait()
         except Exception as e:
             print(e)
         try:
