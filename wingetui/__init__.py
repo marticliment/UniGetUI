@@ -270,6 +270,8 @@ class MainApplication(QtWidgets.QApplication):
             menu.addAction(dAction)
             self.updatesMenu = QMenu("0 Found", menu)
             menu.addMenu(self.updatesMenu)
+            uaAction = QAction("Update all", menu)
+            menu.addAction(uaAction)
             menu.addSeparator()
             dAction = QAction("Installed packages",menu)
             dAction.setEnabled(False)
@@ -294,6 +296,7 @@ class MainApplication(QtWidgets.QApplication):
 
             self.window = MainWindow.MainWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
             showAction.triggered.connect(self.window.showWindow)
+            uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
             showWindow = self.window.showWindow
 
             if(not Tools.isDark()):
