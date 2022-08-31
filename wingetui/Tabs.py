@@ -67,7 +67,7 @@ class Uninstall(QtWidgets.QWidget):
         self.query.setFixedWidth(250)
 
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
-        sct.activated.connect(self.query.setFocus)
+        sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
         sct.activated.connect(self.reload)
@@ -400,7 +400,7 @@ class Discover(QtWidgets.QWidget):
         self.query.setFixedWidth(250)
 
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
-        sct.activated.connect(self.query.setFocus)
+        sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
         sct.activated.connect(self.reload)
@@ -730,7 +730,7 @@ class Upgrade(QtWidgets.QWidget):
         self.query.setFixedWidth(250)
 
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
-        sct.activated.connect(self.query.setFocus)
+        sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
         sct.activated.connect(self.reload)
