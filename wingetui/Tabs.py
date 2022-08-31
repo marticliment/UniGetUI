@@ -1249,6 +1249,8 @@ class PackageInstaller(QtWidgets.QGroupBox):
     changeBarOrientation = QtCore.Signal()
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False):
         super().__init__(parent=parent)
+        self.actionDone = "installed"
+        self.actionDoing = "installing"
         self.runAsAdmin = admin
         self.adminstr = [Tools.sudoPath] if self.runAsAdmin else []
         self.finishedInstallation = True
@@ -1400,17 +1402,17 @@ class PackageInstaller(QtWidgets.QGroupBox):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                Tools.notify("WingetUI", f"{self.programName} was installed successfully!")
+                Tools.notify("WingetUI", f"{self.programName} was {self.actionDone} successfully!")
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QtGui.QIcon(realpath+"/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.info.setText(f"{self.programName} was installed successfully!")
+                self.info.setText(f"{self.programName} was {self.actionDone} successfully!")
                 self.progressbar.setValue(1000)
                 self.startCoolDown()
                 if(self.store == "powershell"):
                     msgBox = Tools.MessageBox(self)
                     msgBox.setWindowTitle("WingetUI")
-                    msgBox.setText(f"{self.programName} was installed successfully.")
+                    msgBox.setText(f"{self.programName} was {self.actionDone} successfully.")
                     msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
                     msgBox.setStandardButtons(Tools.MessageBox.Ok)
                     msgBox.setDefaultButton(Tools.MessageBox.Ok)
@@ -1428,9 +1430,9 @@ class PackageInstaller(QtWidgets.QGroupBox):
                     self.info.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
                     msgBox.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
                 else:
-                    Tools.notify("WingetUI", f"An error occurred while installing {self.programName}")
-                    self.info.setText(f"An error occurred during {self.programName} installation!")
-                    msgBox.setText(f"An error occurred while installing {self.programName}")
+                    Tools.notify("WingetUI", f"An error occurred while {self.actionDoing} {self.programName}")
+                    self.info.setText(f"An error occurred while {self.actionDoing} {self.programName}!")
+                    msgBox.setText(f"An error occurred while {self.actionDoing} {self.programName}")
                 msgBox.setInformativeText("Click \"Show Details\" to get the output of the installer.")
                 msgBox.setDetailedText(output)
                 msgBox.setStandardButtons(Tools.MessageBox.Ok)
@@ -1468,6 +1470,8 @@ class PackageUpdater(PackageInstaller):
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False, useId: bool = False):
         super().__init__(title, store, version, parent, customCommand, args, packageId, admin)
         self.packageItem = packageItem
+        self.actionDone = "updated"
+        self.actionDoing = "updating"
     
     def startInstallation(self) -> None:
         while self.installId != Tools.current_program and not getSettings("AllowParallelInstalls"):
