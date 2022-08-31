@@ -1,16 +1,12 @@
-import hashlib
-import socket
-import subprocess
-import sys, os, win32mica, glob
-import time
+import sys, os, win32mica, glob, subprocess, socket, hashlib, time
 from threading import Thread
-from tempfile import tempdir
 from urllib.request import urlopen
-from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-import mainWindow, tools, wingetHelpers, scoopHelpers
+import wingetHelpers, scoopHelpers
+from mainWindow import *
+from tools import *
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -21,17 +17,17 @@ else:
 
 debugging = True
 
-if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
-class MainApplication(QtWidgets.QApplication):
-    kill = QtCore.Signal()
-    callInMain = QtCore.Signal(object)
-    setLoadBarValue = QtCore.Signal(str)
-    startAnim = QtCore.Signal(QtCore.QVariantAnimation)
-    changeBarOrientation = QtCore.Signal()
+class MainApplication(QApplication):
+    kill = Signal()
+    callInMain = Signal(object)
+    setLoadBarValue = Signal(str)
+    startAnim = Signal(QVariantAnimation)
+    changeBarOrientation = Signal()
     updatesMenu: QMenu = None# = QMenu("0 Packages")
     installedMenu: QMenu = None#QMenu("0 Packages")
     running = True
@@ -46,7 +42,7 @@ class MainApplication(QtWidgets.QApplication):
     def __init__(self):
         try:
             super().__init__(sys.argv)
-            self.popup = mainWindow.DraggableWindow()
+            self.popup = DraggableWindow()
             self.popup.setFixedSize(QSize(600, 400))
             self.popup.setWindowFlag(Qt.FramelessWindowHint)
             self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)
@@ -55,21 +51,21 @@ class MainApplication(QtWidgets.QApplication):
             titlewidget = QHBoxLayout()
             titlewidget.addStretch()
             icon = QLabel()
-            icon.setPixmap(QtGui.QPixmap(realpath+"/resources/icon.png"))
+            icon.setPixmap(QPixmap(realpath+"/resources/icon.png"))
             text = QLabel("WingetUI")
-            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if tools.isDark() else 'black'};font-size: 60px;")
+            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if isDark() else 'black'};font-size: 60px;")
             titlewidget.addWidget(icon)
             titlewidget.addWidget(text)
             titlewidget.addStretch()
             self.popup.layout().addLayout(titlewidget)
             self.popup.layout().addStretch()
             self.loadingText = QLabel("Loading WingetUI...")
-            self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if tools.isDark() else 'black'};font-size: 12px;")
+            self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if isDark() else 'black'};font-size: 12px;")
             self.popup.layout().addWidget(self.loadingText)
-            tools.ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
+            ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
             
-            self.loadingProgressBar = QtWidgets.QProgressBar(self.popup)
-            self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;}}QProgressBar::chunk {{background-color: rgb({colors[2 if tools.isDark() else 3]});border-radius: 2px;}}""")
+            self.loadingProgressBar = QProgressBar(self.popup)
+            self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;}}QProgressBar::chunk {{background-color: rgb({colors[2 if isDark() else 3]});border-radius: 2px;}}""")
             self.loadingProgressBar.setRange(0, 1000)
             self.loadingProgressBar.setValue(0)
             self.loadingProgressBar.setGeometry(QRect(0, 396, 600, 4))
@@ -79,28 +75,28 @@ class MainApplication(QtWidgets.QApplication):
             self.startAnim.connect(lambda anim: anim.start())
             self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-            self.leftSlow = QtCore.QVariantAnimation()
+            self.leftSlow = QVariantAnimation()
             self.leftSlow.setStartValue(0)
             self.leftSlow.setEndValue(1000)
             self.leftSlow.setDuration(700)
             self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
             self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
             
-            self.rightSlow = QtCore.QVariantAnimation()
+            self.rightSlow = QVariantAnimation()
             self.rightSlow.setStartValue(1000)
             self.rightSlow.setEndValue(0)
             self.rightSlow.setDuration(700)
             self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
             self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
             
-            self.leftFast = QtCore.QVariantAnimation()
+            self.leftFast = QVariantAnimation()
             self.leftFast.setStartValue(0)
             self.leftFast.setEndValue(1000)
             self.leftFast.setDuration(300)
             self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
             self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
 
-            self.rightFast = QtCore.QVariantAnimation()
+            self.rightFast = QVariantAnimation()
             self.rightFast.setStartValue(1000)
             self.rightFast.setEndValue(0)
             self.rightFast.setDuration(300)
@@ -125,13 +121,13 @@ class MainApplication(QtWidgets.QApplication):
         
         # Preparation threads
         Thread(target=self.checkForRunningInstances, daemon=True).start()
-        if not tools.getSettings("DisableWinget"):
+        if not getSettings("DisableWinget"):
             Thread(target=self.detectWinget, daemon=True).start()
         else:
             self.loadStatus += 2
             self.componentStatus["wingetFound"] = False
             self.componentStatus["wingetVersion"] = "Winget is disabled"
-        if not tools.getSettings("DisableScoop"):
+        if not getSettings("DisableScoop"):
             Thread(target=self.detectScoop, daemon=True).start()
         else:
             self.loadStatus += 2
@@ -145,13 +141,6 @@ class MainApplication(QtWidgets.QApplication):
 
         while self.loadStatus < 6:
             time.sleep(0.01)
-        """
-        if self.componentStatus["scoopFound"] and not self.componentStatus["sudoFound"]:
-            p = subprocess.Popen("scoop install gsudo", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-            while p.poll() is None:
-                line = p.stdout.readline().strip()
-                if line:
-                   self.callInMain.emit(lambda: self.loadingText.setText(str(line, encoding='utf-8', errors="ignore")))"""
         self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
         self.callInMain.emit(lambda: self.loadingText.repaint())
         self.callInMain.emit(self.loadMainUI)
@@ -161,30 +150,30 @@ class MainApplication(QtWidgets.QApplication):
             print("Scanning for instances...")
             self.nowTime = time.time()
             self.lockFileName = f"WingetUI_{self.nowTime}"
-            tools.setSettings(self.lockFileName, True)
+            setSettings(self.lockFileName, True)
             try:
                 timestamps = [float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), "")) for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*"))] # get a list with the timestamps
                 validTimestamps = [timestamp for timestamp in timestamps if timestamp < self.nowTime]
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace(s)..."))
                 print("Found lock file(s), reactivating...")
                 for tst in validTimestamps:
-                    tools.setSettings("RaiseWindow_"+str(tst), True)
+                    setSettings("RaiseWindow_"+str(tst), True)
                 if validTimestamps != [] and timestamps != [self.nowTime]:
                     for i in range(16):
                         time.sleep(0.1)
                         self.callInMain.emit(lambda: self.loadingText.setText(f"Sent handshake. Waiting for instance listener's answer... ({int(i/15*100)}%)"))
                         for tst in validTimestamps:
-                            if not tools.getSettings("RaiseWindow_"+str(tst), cache = False):
+                            if not getSettings("RaiseWindow_"+str(tst), cache = False):
                                 print(f"Instance {tst} responded, quitting...")
                                 self.callInMain.emit(lambda: self.loadingText.setText(f"Instance {tst} responded, quitting..."))
-                                tools.setSettings(self.lockFileName, False)
+                                setSettings(self.lockFileName, False)
                                 self.kill.emit()
                                 sys.exit(0)
                     self.callInMain.emit(lambda: self.loadingText.setText(f"Starting daemons..."))
                     print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
                     for tst in validTimestamps:
-                        tools.setSettings("RaiseWindow_"+str(tst), False)
-                        tools.setSettings("WingetUI_"+str(tst), False)
+                        setSettings("RaiseWindow_"+str(tst), False)
+                        setSettings("WingetUI_"+str(tst), False)
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -207,7 +196,7 @@ class MainApplication(QtWidgets.QApplication):
         except Exception as e:
             print(e)
         self.loadStatus += 1
-            
+
     def detectScoop(self):
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating scoop..."))
@@ -235,29 +224,30 @@ class MainApplication(QtWidgets.QApplication):
         self.loadStatus += 1
 
     def detectSudo(self):
+        global sudoLocation
         try:
             self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
-            o = os.path.isfile(tools.sudoPath)
-            if not os.path.isdir(tools.sudoLocation):
-                tools.sudoLocation = os.getcwd()
+            o = os.path.isfile(sudoPath)
+            if not os.path.isdir(sudoLocation):
+                sudoLocation = os.getcwd() # This will be saved in tools.py
             self.componentStatus["sudoFound"] = o
-            self.componentStatus["sudoVersion"] = tools.sudoLocation
+            self.componentStatus["sudoVersion"] = sudoLocation.replace("/", "\\")
             self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {self.componentStatus['sudoFound']}"))
         except Exception as e:
             print(e)
         self.loadStatus += 1
 
     def loadMainUI(self):
-        print("load main UI")
+        print("Reached main ui load milestone")
         try:
-            self.trayIcon = QtWidgets.QSystemTrayIcon()
-            tools.registerApplication(self)
-            self.trayIcon.setIcon(QtGui.QIcon(realpath+"/resources/icon.png"))
+            self.trayIcon = QSystemTrayIcon()
+            registerApplication(self)
+            self.trayIcon.setIcon(QIcon(realpath+"/resources/icon.png"))
             self.trayIcon.setToolTip("WingetUI")
             self.trayIcon.setVisible(True)
 
             menu = QMenu("WingetUI")
-            infoAction = QAction(f"WingetUI v{tools.version}",menu)
+            infoAction = QAction(f"WingetUI v{version}",menu)
             infoAction.setEnabled(False)
             menu.addAction(infoAction)
             showAction = QAction("Show WingetUI",menu)
@@ -294,23 +284,23 @@ class MainApplication(QtWidgets.QApplication):
             self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
             self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
 
-            self.window = mainWindow.RootWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
+            self.window = RootWindow(self.componentStatus, self.updatesMenu, self.installedMenu, self)
             showAction.triggered.connect(self.window.showWindow)
             uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
             showWindow = self.window.showWindow
 
-            if(not tools.isDark()):
+            if(not isDark()):
                 self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
                 print(r)
                 if r != 0x32:
-                    pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+                    pass#self.window.setAttribute(Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
             else:
                 self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
-                    pass#self.window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+                    pass#self.window.setAttribute(Qt.WA_TranslucentBackground)
                 self.window.setStyleSheet(darkSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
             self.loadingText.setText(f"Latest details...")
             self.window.show()
@@ -324,9 +314,9 @@ class MainApplication(QtWidgets.QApplication):
         while True:
             try:
                 for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "RaiseWindow_*")):
-                    if tools.getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
+                    if getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
                         print("[   OK   ] Found reactivation lock file...")
-                        tools.setSettings("RaiseWindow_"+str(self.nowTime), False)
+                        setSettings("RaiseWindow_"+str(self.nowTime), False)
                         if not self.window.isMaximized():
                             self.callInMain.emit(self.window.hide)
                             self.callInMain.emit(self.window.showMinimized)
@@ -345,7 +335,7 @@ class MainApplication(QtWidgets.QApplication):
             time.sleep(0.5)
 
     def updateIfPossible(self):
-        if not tools.getSettings("DisableAutoUpdateWingetUI"):
+        if not getSettings("DisableAutoUpdateWingetUI"):
             print("🔵 Starting update check")
             integrityPass = False
             dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
@@ -361,9 +351,9 @@ class MainApplication(QtWidgets.QApplication):
             response = response.read().decode("utf8")
             new_version_number = response.split("///")[0]
             provided_hash = response.split("///")[1].replace("\n", "").lower()
-            if float(new_version_number) > tools.version:
+            if float(new_version_number) > version:
                 print("🟢 Updates found!")
-                tools.updatesAvailable = True
+                updatesAvailable = True
                 if(integrityPass):
                     url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
                     filedata = urlopen(url)
@@ -377,7 +367,7 @@ class MainApplication(QtWidgets.QApplication):
                         print("🟢 Hash ok, starting update")
                         while self.running:
                             time.sleep(0.1)
-                        if not tools.getSettings("DisableAutoUpdateWingetUI"):
+                        if not getSettings("DisableAutoUpdateWingetUI"):
                             subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
                         else:
                             print("🟠 Hash not ok")
@@ -391,7 +381,7 @@ class MainApplication(QtWidgets.QApplication):
                     print("🟢 Updates not found")
 
 
-colors = tools.getColors()
+colors = getColors()
 
 darkSS = f"""
 * {{
@@ -777,12 +767,12 @@ QComboBox::drop-down {{
     width: 30px;
 }}
 QComboBox::down-arrow {{
-    image: url("{tools.getMedia("drop-down")}");
+    image: url("{getMedia("drop-down")}");
     height: 8px;
     width: 8px;
 }}
 QComboBox::down-arrow:disabled {{
-    image: url("{tools.getMedia("drop-down")}");
+    image: url("{getMedia("drop-down")}");
     height: 2px;
     width: 2px;
 }}
@@ -1211,12 +1201,12 @@ QComboBox::drop-down {{
     width: 30px;
 }}
 QComboBox::down-arrow {{
-    image: url("{tools.getMedia("drop-down")}");
+    image: url("{getMedia("drop-down")}");
     height: 8px;
     width: 8px;
 }}
 QComboBox::down-arrow:disabled {{
-    image: url("{tools.getMedia("drop-down")}");
+    image: url("{getMedia("drop-down")}");
     height: 2px;
     width: 2px;
 }}

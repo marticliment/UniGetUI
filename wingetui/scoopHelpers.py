@@ -1,6 +1,6 @@
-from PySide6 import QtCore
-import subprocess, time, os, sys, signal, re
-import tools
+from PySide6.QtCore import *
+import subprocess, os, sys, re
+from tools import *
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -11,7 +11,7 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 
 
-def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -26,7 +26,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             else:
                 counter += 1
     counter = 0
-    lc = tools.getSettings("LowercaseScoopApps")
+    lc = getSettings("LowercaseScoopApps")
     for element in output:
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
@@ -35,7 +35,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
-def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -49,7 +49,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
             else:
                 counter += 1
     counter = 0
-    lc = tools.getSettings("LowercaseScoopApps")
+    lc = getSettings("LowercaseScoopApps")
     for element in output:
         try:
             items = list(filter(None, element.split(" ")))
@@ -62,7 +62,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
-def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "status"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -76,7 +76,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
             else:
                 counter += 1
     counter = 0
-    lc = tools.getSettings("LowercaseScoopApps")
+    lc = getSettings("LowercaseScoopApps")
     for element in output:
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
@@ -87,7 +87,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
-def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
+def getInfo(signal: Signal, title: str, id: str, goodTitle: bool) -> None:
     print(f"[   OK   ] Starting get info for title {title}")
     title = title.lower()
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
@@ -114,7 +114,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
             output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
     manifest = False
     version = ""
-    lc = tools.getSettings("LowercaseScoopApps")
+    lc = getSettings("LowercaseScoopApps")
     for line in output:
         #print(line)
         if("Description" in line):
@@ -159,7 +159,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
     signal.emit(appInfo)
     
-def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] scoop installer assistant thread started for process {p}")
     outputCode = 1
     output = ""
@@ -183,7 +183,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
     closeAndInform.emit(outputCode, output)
 
    
-def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] scoop uninstaller assistant thread started for process {p}")
     outputCode = 1
     output = ""

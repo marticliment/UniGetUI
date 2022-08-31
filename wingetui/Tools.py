@@ -1,10 +1,8 @@
 import winreg
 import io
-from PySide6 import QtCore
 from threading import Thread
 import sys, time, subprocess, os
 from PySide6.QtCore import *
-#from PySide6.QtWinExtras import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
@@ -20,7 +18,6 @@ if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
-
 sudoPath = os.path.join(os.path.join(realpath, "sudo"), "sudo.cmd")
 sudoLocation = os.path.dirname(sudoPath)
 
@@ -238,7 +235,7 @@ def registerApplication(newApp):
     global app
     app = newApp
 
-def genericInstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] winget installer assistant thread started for process {p}")
     outputCode = 1
     output = ""

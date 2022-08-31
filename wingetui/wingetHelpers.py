@@ -1,5 +1,5 @@
-from PySide6 import QtCore
-import subprocess, time, os, sys, signal
+from PySide6.QtCore import *
+import subprocess, time, os, sys
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -11,7 +11,7 @@ common_params = ["--source", "winget", "--accept-source-agreements"]
 winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 #winget = "winget"
 
-def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry: bool = False) -> None:
+def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "search", ""] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -56,7 +56,7 @@ def searchForPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry
         print("[   OK   ] Winget search finished")
         finishSignal.emit("winget")  # type: ignore
 
-def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry: bool = False) -> None:
+def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "upgrade"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -101,7 +101,7 @@ def searchForUpdates(signal: QtCore.Signal, finishSignal: QtCore.Signal, noretry
         print("[   OK   ] Winget search finished")
         finishSignal.emit("winget")
 
-def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal) -> None:
+def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -139,7 +139,7 @@ def searchForInstalledPackage(signal: QtCore.Signal, finishSignal: QtCore.Signal
     print("[   OK   ] Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 
-def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None:
+def getInfo(signal: Signal, title: str, id: str, goodTitle: bool) -> None:
     if not(goodTitle):
         print(f"[   OK   ] Acquiring title for id \"{title}\"")
         p = subprocess.Popen([winget, "search", f"{title}"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
@@ -212,7 +212,7 @@ def getInfo(signal: QtCore.Signal, title: str, id: str, goodTitle: bool) -> None
     appInfo["versions"] = output
     signal.emit(appInfo)
     
-def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] winget installer assistant thread started for process {p}")
     outputCode = 0
     counter = 0
@@ -230,7 +230,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSig
     outputCode = p.returncode
     closeAndInform.emit(outputCode, output)
  
-def uninstallAssistant(p: subprocess.Popen, closeAndInform: QtCore.Signal, infoSignal: QtCore.Signal, counterSignal: QtCore.Signal) -> None:
+def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] winget installer assistant thread started for process {p}")
     outputCode = 0
     counter = 0
