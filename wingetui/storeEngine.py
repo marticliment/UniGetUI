@@ -7,330 +7,6 @@ from tools import *
 
 import globals
 
-class UninstallSoftwareSection(QWidget):
-
-    addProgram = Signal(str, str, str, str)
-    hideLoadingWheel = Signal(str)
-    clearList = Signal()
-    askForScoopInstall = Signal(str)
-    setLoadBarValue = Signal(str)
-    startAnim = Signal(QVariantAnimation)
-    changeBarOrientation = Signal()
-
-    def __init__(self, parent = None):
-        super().__init__(parent = parent)
-        self.scoopLoaded = False
-        self.wingetLoaded = False
-        self.infobox = PackageInfoPopupWindow()
-        self.setStyleSheet("margin: 0px;")
-        self.infobox.onClose.connect(self.showQuery)
-
-        self.programbox = QWidget()
-
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(5, 5, 5, 5)
-        self.setLayout(self.layout)
-
-        self.reloadButton = QPushButton()
-        self.reloadButton.setFixedSize(30, 40)
-        self.reloadButton.setStyleSheet("margin-top: 10px;")
-        self.reloadButton.clicked.connect(self.reload)
-        self.reloadButton.setIcon(QIcon(getMedia("reload")))
-
-        self.searchButton = QPushButton()
-        self.searchButton.setFixedSize(30, 40)
-        self.searchButton.setStyleSheet("margin-top: 10px;")
-        self.searchButton.clicked.connect(self.filter)
-        self.searchButton.setIcon(QIcon(getMedia("search")))
-
-        hLayout = QHBoxLayout()
-        hLayout.setContentsMargins(25, 0, 25, 0)
-
-        self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" Search on your software")
-        self.query.returnPressed.connect(self.filter)
-        self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
-        self.query.setFixedHeight(40)
-        self.query.setStyleSheet("margin-top: 10px;")
-        self.query.setFixedWidth(250)
-
-        sct = QShortcut(QKeySequence("Ctrl+F"), self)
-        sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
-
-        sct = QShortcut(QKeySequence("Ctrl+R"), self)
-        sct.activated.connect(self.reload)
-        
-        sct = QShortcut(QKeySequence("F5"), self)
-        sct.activated.connect(self.reload)
-
-        sct = QShortcut(QKeySequence("Esc"), self)
-        sct.activated.connect(self.query.clear)
-
-
-        self.forceCheckBox = QCheckBox("Instant search")
-        self.forceCheckBox.setFixedHeight(30)
-        self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.forceCheckBox.setFixedWidth(140)
-        self.forceCheckBox.setStyleSheet("margin-top: 10px;")
-        self.forceCheckBox.setChecked(True)
-        self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUninstall"))
-        self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUninstall", bool(not v)))
-
-        img = QLabel()
-        img.setFixedWidth(96)
-        img.setPixmap(QIcon(getMedia("red_trash")).pixmap(QSize(80, 80)))
-        hLayout.addWidget(img)
-
-        v = QVBoxLayout()
-        self.discoverLabel = QLabel("Installed packages")
-        self.discoverLabel.setStyleSheet("font-size: 40px;")
-        v.addWidget(self.discoverLabel)
-
-        hLayout.addLayout(v)
-        hLayout.addWidget(self.forceCheckBox)
-        hLayout.addWidget(self.query)
-        hLayout.addWidget(self.searchButton)
-        hLayout.addWidget(self.reloadButton)
-
-        
-        self.packageListScrollBar = QScrollBar()
-        self.packageListScrollBar.setOrientation(Qt.Vertical)
-
-        self.packageList = TreeWidget("Found 0 Packages")
-        self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.setColumnCount(4)
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "Installation source"])
-        #self.packageList.setColumnWidth(0, 300)
-        #self.packageList.setColumnWidth(1, 300)
-        #self.packageList.setColumnWidth(2, 200)
-        self.packageList.setColumnHidden(2, False)
-        self.packageList.setColumnWidth(3, 120)
-        self.packageList.setSortingEnabled(True)
-        header = self.packageList.header()
-        header.setSectionResizeMode(QHeaderView.ResizeToContents)
-        header.setStretchLastSection(False)
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.Stretch)
-        header.setSectionResizeMode(3, QHeaderView.Fixed)
-
-        self.packageList.setVerticalScrollBar(self.packageListScrollBar)
-        self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3), packageItem=item))
-        
-        
-        
-        self.loadingProgressBar = QProgressBar()
-        self.loadingProgressBar.setRange(0, 1000)
-        self.loadingProgressBar.setValue(0)
-        self.loadingProgressBar.setFixedHeight(4)
-        self.loadingProgressBar.setTextVisible(False)
-
-        
-        layout = QVBoxLayout()
-        w = QWidget()
-        w.setLayout(layout)
-        w.setMaximumWidth(1300)
-
-
-
-        self.bodyWidget = QWidget()
-        l = QHBoxLayout()
-        l.addWidget(ScrollWidget(self.packageList), stretch=0)
-        l.addWidget(w)
-        l.setContentsMargins(0, 0, 0, 0)
-        l.addWidget(ScrollWidget(self.packageList), stretch=0)
-        l.addWidget(self.packageListScrollBar)
-        self.bodyWidget.setLayout(l)
-
-
-        self.countLabel = QLabel("Searching for installed packages...")
-        self.packageList.label.setText(self.countLabel.text())
-        self.countLabel.setObjectName("greyLabel")
-        layout.addLayout(hLayout)
-        layout.setContentsMargins(5, 0, 0, 5)
-        v.addWidget(self.countLabel)
-        layout.addWidget(self.loadingProgressBar)
-        layout.addWidget(self.packageList)
-        self.programbox.setLayout(l)
-        self.layout.addWidget(self.programbox, stretch=1)
-        self.layout.addWidget(self.infobox, stretch=1)
-        self.infobox.hide()
-
-        self.addProgram.connect(self.addItem)
-        self.clearList.connect(self.packageList.clear)
-        self.askForScoopInstall.connect(self.scoopNotFound)
-
-        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
-        self.infobox.addProgram.connect(self.addInstallation)
-        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
-        self.startAnim.connect(lambda anim: anim.start())
-        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-        
-
-        self.reloadButton.setEnabled(False)
-        self.searchButton.setEnabled(False)
-        self.query.setEnabled(False)
-        
-        self.installIcon = QIcon(getMedia("install"))
-        self.IDIcon = QIcon(getMedia("ID"))
-        self.versionIcon = QIcon(getMedia("version"))
-        self.providerIcon = QIcon(getMedia("provider"))
-        
-    
-        if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        print("[   OK   ] Discover tab loaded")
-
-        g = self.packageList.geometry()
-            
-        Thread(target=self.checkIfScoop, daemon=True)
-        
-        self.leftSlow = QVariantAnimation()
-        self.leftSlow.setStartValue(0)
-        self.leftSlow.setEndValue(1000)
-        self.leftSlow.setDuration(700)
-        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
-        self.rightSlow = QVariantAnimation()
-        self.rightSlow.setStartValue(1000)
-        self.rightSlow.setEndValue(0)
-        self.rightSlow.setDuration(700)
-        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
-        self.leftFast = QVariantAnimation()
-        self.leftFast.setStartValue(0)
-        self.leftFast.setEndValue(1000)
-        self.leftFast.setDuration(300)
-        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
-
-        self.rightFast = QVariantAnimation()
-        self.rightFast.setStartValue(1000)
-        self.rightFast.setEndValue(0)
-        self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
-        self.leftSlow.start()
-
-    
-    def checkIfScoop(self) -> None:
-        if(subprocess.call("scooop --version", shell=True) != 0):
-            self.askForScoopInstall.emit()
-        else:
-            print("[   OK   ] Scoop found")
-    
-    def scoopNotFound(self) -> None:
-        if(MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", MessageBox.No | MessageBox.Yes, MessageBox.No) == MessageBox.Yes):
-            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
-        
-
-    def hideLoadingWheelIfNeeded(self, store: str) -> None:
-        if(store == "winget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
-            self.wingetLoaded = True
-            self.reloadButton.setEnabled(True)
-            self.searchButton.setEnabled(True)
-            self.filter()
-            self.query.setEnabled(True)
-        elif(store == "scoop"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
-            self.scoopLoaded = True
-            self.reloadButton.setEnabled(True)
-            self.filter()
-            self.searchButton.setEnabled(True)
-            self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded):
-            self.filter()
-            self.loadingProgressBar.hide()
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
-            self.packageList.label.setText(self.countLabel.text())
-            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
-
-    def resizeEvent(self, event = None):
-        g = self.packageList.geometry()
-        if(event):
-            return super().resizeEvent(event)
-
-    def addItem(self, name: str, id: str, version: str, store) -> None:
-        if not "---" in name:
-            item = QTreeWidgetItem()
-            item.setText(0, name)
-            item.setText(1, id)
-            item.setIcon(0, self.installIcon)
-            item.setIcon(1, self.IDIcon)
-            item.setIcon(2, self.versionIcon)
-            item.setText(2, version)
-            item.setIcon(3, self.providerIcon)
-            item.setText(3, store)
-            self.packageList.addTopLevelItem(item)
-            action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
-            action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
-            action.setShortcut(version)
-            globals.trayMenuInstalledList.addAction(action)
-    
-    def filter(self) -> None:
-        resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
-        resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
-        print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
-        for item in self.packageList.findItems('', Qt.MatchContains, 0):
-            if not(item in resultsFound):
-                item.setHidden(True)
-            else:
-                item.setHidden(False)
-        self.packageList.scrollToItem(self.packageList.currentItem())
-    
-    def showQuery(self) -> None:
-        self.programbox.show()
-        self.infobox.hide()
-
-    def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None) -> None:
-        if(MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes):
-            print(id)
-            if("…" in id):
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
-            else:
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
-    
-    def reload(self) -> None:
-        self.scoopLoaded = False
-        self.wingetLoaded = False
-        self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
-        self.searchButton.setEnabled(False)
-        self.query.setEnabled(False)
-        self.packageList.clear()
-        self.query.setText("")
-        self.countLabel.setText("Searching for installed packages...")
-        self.packageList.label.setText(self.countLabel.text())
-        if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        for action in globals.trayMenuInstalledList.actions():
-            globals.trayMenuInstalledList.removeAction(action)
-    
-    def addInstallation(self, p) -> None:
-        globals.installersWidget.addWidget(p)
-
 class DiscoverSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
@@ -959,6 +635,7 @@ class UpdateSoftwareSection(QWidget):
             self.packageList.label.setText(self.countLabel.text())
             self.filter()
             self.updatelist()
+            actions = []
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -968,7 +645,7 @@ class UpdateSoftwareSection(QWidget):
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
         if not "---" in name:
-            item = QTreeWidgetItem()
+            item = TreeWidgetItemWithQAction()
             item.setText(0, name)
             item.setIcon(0, self.installIcon)
             item.setText(1, id)
@@ -983,6 +660,7 @@ class UpdateSoftwareSection(QWidget):
             action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
             action.triggered.connect(lambda : self.update(name, id, packageItem=item))
             action.setShortcut(version)
+            item.setAction(action)
             globals.trayMenuUpdatesList.addAction(action)
     
     def filter(self) -> None:
@@ -1051,6 +729,332 @@ class UpdateSoftwareSection(QWidget):
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addWidget(p)
+
+class UninstallSoftwareSection(QWidget):
+
+    addProgram = Signal(str, str, str, str)
+    hideLoadingWheel = Signal(str)
+    clearList = Signal()
+    askForScoopInstall = Signal(str)
+    setLoadBarValue = Signal(str)
+    startAnim = Signal(QVariantAnimation)
+    changeBarOrientation = Signal()
+
+    def __init__(self, parent = None):
+        super().__init__(parent = parent)
+        self.scoopLoaded = False
+        self.wingetLoaded = False
+        self.infobox = PackageInfoPopupWindow()
+        self.setStyleSheet("margin: 0px;")
+        self.infobox.onClose.connect(self.showQuery)
+
+        self.programbox = QWidget()
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(5, 5, 5, 5)
+        self.setLayout(self.layout)
+
+        self.reloadButton = QPushButton()
+        self.reloadButton.setFixedSize(30, 40)
+        self.reloadButton.setStyleSheet("margin-top: 10px;")
+        self.reloadButton.clicked.connect(self.reload)
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+
+        self.searchButton = QPushButton()
+        self.searchButton.setFixedSize(30, 40)
+        self.searchButton.setStyleSheet("margin-top: 10px;")
+        self.searchButton.clicked.connect(self.filter)
+        self.searchButton.setIcon(QIcon(getMedia("search")))
+
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(25, 0, 25, 0)
+
+        self.query = CustomLineEdit()
+        self.query.setPlaceholderText(" Search on your software")
+        self.query.returnPressed.connect(self.filter)
+        self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
+        self.query.setFixedHeight(40)
+        self.query.setStyleSheet("margin-top: 10px;")
+        self.query.setFixedWidth(250)
+
+        sct = QShortcut(QKeySequence("Ctrl+F"), self)
+        sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
+
+        sct = QShortcut(QKeySequence("Ctrl+R"), self)
+        sct.activated.connect(self.reload)
+        
+        sct = QShortcut(QKeySequence("F5"), self)
+        sct.activated.connect(self.reload)
+
+        sct = QShortcut(QKeySequence("Esc"), self)
+        sct.activated.connect(self.query.clear)
+
+
+        self.forceCheckBox = QCheckBox("Instant search")
+        self.forceCheckBox.setFixedHeight(30)
+        self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
+        self.forceCheckBox.setFixedWidth(140)
+        self.forceCheckBox.setStyleSheet("margin-top: 10px;")
+        self.forceCheckBox.setChecked(True)
+        self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUninstall"))
+        self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUninstall", bool(not v)))
+
+        img = QLabel()
+        img.setFixedWidth(96)
+        img.setPixmap(QIcon(getMedia("red_trash")).pixmap(QSize(80, 80)))
+        hLayout.addWidget(img)
+
+        v = QVBoxLayout()
+        self.discoverLabel = QLabel("Installed packages")
+        self.discoverLabel.setStyleSheet("font-size: 40px;")
+        v.addWidget(self.discoverLabel)
+
+        hLayout.addLayout(v)
+        hLayout.addWidget(self.forceCheckBox)
+        hLayout.addWidget(self.query)
+        hLayout.addWidget(self.searchButton)
+        hLayout.addWidget(self.reloadButton)
+
+        
+        self.packageListScrollBar = QScrollBar()
+        self.packageListScrollBar.setOrientation(Qt.Vertical)
+
+        self.packageList = TreeWidget("Found 0 Packages")
+        self.packageList.setIconSize(QSize(24, 24))
+        self.packageList.setColumnCount(4)
+        self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "Installation source"])
+        #self.packageList.setColumnWidth(0, 300)
+        #self.packageList.setColumnWidth(1, 300)
+        #self.packageList.setColumnWidth(2, 200)
+        self.packageList.setColumnHidden(2, False)
+        self.packageList.setColumnWidth(3, 120)
+        self.packageList.setSortingEnabled(True)
+        header = self.packageList.header()
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
+        header.setStretchLastSection(False)
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Fixed)
+
+        self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3), packageItem=item))
+        
+        
+        
+        self.loadingProgressBar = QProgressBar()
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+
+        
+        layout = QVBoxLayout()
+        w = QWidget()
+        w.setLayout(layout)
+        w.setMaximumWidth(1300)
+
+
+
+        self.bodyWidget = QWidget()
+        l = QHBoxLayout()
+        l.addWidget(ScrollWidget(self.packageList), stretch=0)
+        l.addWidget(w)
+        l.setContentsMargins(0, 0, 0, 0)
+        l.addWidget(ScrollWidget(self.packageList), stretch=0)
+        l.addWidget(self.packageListScrollBar)
+        self.bodyWidget.setLayout(l)
+
+
+        self.countLabel = QLabel("Searching for installed packages...")
+        self.packageList.label.setText(self.countLabel.text())
+        self.countLabel.setObjectName("greyLabel")
+        layout.addLayout(hLayout)
+        layout.setContentsMargins(5, 0, 0, 5)
+        v.addWidget(self.countLabel)
+        layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.packageList)
+        self.programbox.setLayout(l)
+        self.layout.addWidget(self.programbox, stretch=1)
+        self.layout.addWidget(self.infobox, stretch=1)
+        self.infobox.hide()
+
+        self.addProgram.connect(self.addItem)
+        self.clearList.connect(self.packageList.clear)
+        self.askForScoopInstall.connect(self.scoopNotFound)
+
+        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
+        self.infobox.addProgram.connect(self.addInstallation)
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        
+
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        
+        self.installIcon = QIcon(getMedia("install"))
+        self.IDIcon = QIcon(getMedia("ID"))
+        self.versionIcon = QIcon(getMedia("version"))
+        self.providerIcon = QIcon(getMedia("provider"))
+        
+    
+        if not getSettings("DisableWinget"):
+            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
+        print("[   OK   ] Discover tab loaded")
+
+        g = self.packageList.geometry()
+            
+        Thread(target=self.checkIfScoop, daemon=True)
+        
+        self.leftSlow = QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.rightSlow = QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+        
+        self.leftFast = QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.leftSlow.start()
+
+    
+    def checkIfScoop(self) -> None:
+        if(subprocess.call("scooop --version", shell=True) != 0):
+            self.askForScoopInstall.emit()
+        else:
+            print("[   OK   ] Scoop found")
+    
+    def scoopNotFound(self) -> None:
+        if(MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", MessageBox.No | MessageBox.Yes, MessageBox.No) == MessageBox.Yes):
+            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
+        
+
+    def hideLoadingWheelIfNeeded(self, store: str) -> None:
+        if(store == "winget"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            self.wingetLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.filter()
+            self.query.setEnabled(True)
+        elif(store == "scoop"):
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.packageList.label.setText(self.countLabel.text())
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            self.scoopLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.filter()
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        if(self.wingetLoaded and self.scoopLoaded):
+            self.filter()
+            self.loadingProgressBar.hide()
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.packageList.label.setText(self.countLabel.text())
+            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
+
+    def resizeEvent(self, event = None):
+        g = self.packageList.geometry()
+        if(event):
+            return super().resizeEvent(event)
+
+    def addItem(self, name: str, id: str, version: str, store) -> None:
+        if not "---" in name:
+            item = TreeWidgetItemWithQAction()
+            item.setText(0, name)
+            item.setText(1, id)
+            item.setIcon(0, self.installIcon)
+            item.setIcon(1, self.IDIcon)
+            item.setIcon(2, self.versionIcon)
+            item.setText(2, version)
+            item.setIcon(3, self.providerIcon)
+            item.setText(3, store)
+            self.packageList.addTopLevelItem(item)
+            action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
+            action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
+            action.setShortcut(version)
+            item.setAction(action)
+            globals.trayMenuInstalledList.addAction(action)
+    
+    def filter(self) -> None:
+        resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
+        resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
+        print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
+        for item in self.packageList.findItems('', Qt.MatchContains, 0):
+            if not(item in resultsFound):
+                item.setHidden(True)
+            else:
+                item.setHidden(False)
+        self.packageList.scrollToItem(self.packageList.currentItem())
+    
+    def showQuery(self) -> None:
+        self.programbox.show()
+        self.infobox.hide()
+
+    def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None) -> None:
+        if(MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes):
+            print(id)
+            if("…" in id):
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
+            else:
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+    
+    def reload(self) -> None:
+        self.scoopLoaded = False
+        self.wingetLoaded = False
+        self.loadingProgressBar.show()
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        self.packageList.clear()
+        self.query.setText("")
+        self.countLabel.setText("Searching for installed packages...")
+        self.packageList.label.setText(self.countLabel.text())
+        if not getSettings("DisableWinget"):
+            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.wingetLoaded = True
+        if not getSettings("DisableScoop"):
+            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+        else:
+            self.scoopLoaded = True
+        for action in globals.trayMenuInstalledList.actions():
+            globals.trayMenuInstalledList.removeAction(action)
+    
+    def addInstallation(self, p) -> None:
+        globals.installersWidget.addWidget(p)
+
 
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):
