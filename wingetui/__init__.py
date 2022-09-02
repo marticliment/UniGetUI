@@ -380,7 +380,7 @@ class MainApplication(QApplication):
 
 colors = getColors()
 
-darkSS = f"""
+darkCSS = f"""
 * {{
     background-color: transparent;
     color: #eeeeee;
