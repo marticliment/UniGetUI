@@ -1136,7 +1136,7 @@ class AboutSection(QScrollArea):
         table.setEnabled(False)
         table.setShowGrid(False)
         table.setHorizontalHeaderLabels(["Status", "Version"])
-        table.setColumnWidth(1, 200)
+        table.setColumnWidth(1, 500)
         table.verticalHeader().setFixedWidth(100)
         table.setVerticalHeaderLabels(["Winget", "  Scoop", "  Sudo"])
         table.setItem(0, 0, QTableWidgetItem(str("Found" if globals.componentStatus["wingetFound"] else "Not found")))
