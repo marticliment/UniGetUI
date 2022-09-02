@@ -1015,8 +1015,9 @@ class UpdateSoftwareSection(QWidget):
                     self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
         else:
             for i in range(self.packageList.topLevelItemCount()):
-                program = self.packageList.topLevelItem(i)
-                self.update(program.text(0), program.text(1), packageItem=program)
+                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                if not program.isHidden():
+                    self.update(program.text(0), program.text(1), packageItem=program)
 
     def openInfo(self, title: str, id: str, store: str) -> None:
         if("…" in title):
