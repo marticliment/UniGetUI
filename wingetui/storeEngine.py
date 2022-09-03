@@ -1231,6 +1231,8 @@ class PackageInstallerWidget(QGroupBox):
         super().__init__(parent=parent)
         self.actionDone = "installed"
         self.actionDoing = "installing"
+        self.actionName = "installation"
+        self.actionVerb = "install"
         self.runAsAdmin = admin
         self.adminstr = [sudoPath] if self.runAsAdmin else []
         self.finishedInstallation = True
@@ -1335,7 +1337,6 @@ class PackageInstallerWidget(QGroupBox):
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
-    
     def counter(self, line: int) -> None:
         if(line == 1):
             self.progressbar.setValue(250)
@@ -1382,7 +1383,7 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                notify("WingetUI", f"{self.programName} was {self.actionDone} successfully!")
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(f"{self.actionName.capitalize()} succeeded", f"{self.programName} was {self.actionDone} successfully!", QIcon(getMedia("notif_info"))))
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
@@ -1403,22 +1404,32 @@ class PackageInstallerWidget(QGroupBox):
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
-                msgBox = MessageBox(self)
-                msgBox.setWindowTitle("WingetUI")
-                if(returncode == 2):
-                    notify("WingetUI", f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
-                    self.info.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
-                    msgBox.setText(f"The hash of the installer does not coincide with the hash specified in the manifest. {self.programName} installation has been aborted")
-                else:
-                    notify("WingetUI", f"An error occurred while {self.actionDoing} {self.programName}")
-                    self.info.setText(f"An error occurred while {self.actionDoing} {self.programName}!")
-                    msgBox.setText(f"An error occurred while {self.actionDoing} {self.programName}")
-                msgBox.setInformativeText("Click \"Show Details\" to get the output of the installer.")
-                msgBox.setDetailedText(output)
-                msgBox.setStandardButtons(MessageBox.Ok)
-                msgBox.setDefaultButton(MessageBox.Ok)
-                msgBox.setIcon(MessageBox.Warning)
-                msgBox.exec_()
+                self.err = ErrorMessage(self.window())
+                if(returncode == 2):  # if the installer's hash does not coincide
+                    errorData = {
+                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
+                        "mainTitle": f"{self.actionName.capitalize()} aborted",
+                        "mainText": f"The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {self.actionVerb} the package again skipping the hash check.",
+                        "buttonTitle": "Close",
+                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                        "icon": QIcon(getMedia("warn")),
+                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
+                        "notifText": f"The installer has an invalid checksum",
+                        "notifIcon": QIcon(getMedia("notif_warn")),
+                    }
+                else: # if there's a generic error
+                    errorData = {
+                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
+                        "mainTitle": f"{self.actionName.capitalize()} failed",
+                        "mainText": f"We could not {self.actionVerb} {self.programName}. Please try again later. Click on \"Show details\" to get the logs from the installer.",
+                        "buttonTitle": "Close",
+                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                        "icon": QIcon(getMedia("warn")),
+                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
+                        "notifText": f"{self.programName} {self.actionName} failed",
+                        "notifIcon": QIcon(getMedia("notif_warn")),
+                    }
+                self.err.showErrorMessage(errorData)
 
     def startCoolDown(self):
         op=QGraphicsOpacityEffect(self)
@@ -1451,12 +1462,14 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.packageItem = packageItem
         self.actionDone = "updated"
         self.actionDoing = "updating"
+        self.actionName = "update"
+        self.actionVerb = "update"
     
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
         self.finishedInstallation = False
-        print("[   OK   ] Have permission to install, starting installation threads...")
+        print("[   OK   ] Have permission to update, starting update threads...")
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -1500,6 +1513,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.programName = title
         self.packageId = packageId
         super().__init__(parent=None, title=title, store=store, packageId=packageId)
+        self.actionDone = "uninstalled"
+        self.actionDoing = "uninstalling"
+        self.actionName = "uninstallation"
+        self.actionVerb = "uninstall"
         self.finishedInstallation = True
         self.store = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
@@ -1583,11 +1600,11 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                notify("WingetUI", f"{self.programName} was uninstalled successfully!")
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(f"{self.actionName.capitalize()} succeeded", f"{self.programName} was {self.actionDone} successfully!", QIcon(getMedia("notif_info"))))
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.info.setText(f"{self.programName} was uninstalled successfully!")
+                self.info.setText(f"{self.programName} was {self.actionDone} successfully!")
                 self.progressbar.setValue(1000)
                 self.startCoolDown()
                 if(self.store == "powershell"):
@@ -1604,22 +1621,32 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
-                msgBox = MessageBox(self)
-                msgBox.setWindowTitle("WingetUI")
-                if(returncode == 2):
-                    notify("WingetUI", f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
-                    self.info.setText(f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
-                    msgBox.setText(f"The hash of the uninstaller does not coincide with the hash specified in the manifest. {self.programName} uninstallation has been aborted")
-                else:
-                    notify("WingetUI", f"An error occurred while uninstalling {self.programName}")
-                    self.info.setText(f"An error occurred during {self.programName} uninstallation!")
-                    msgBox.setText(f"An error occurred while uninstalling {self.programName}")
-                msgBox.setInformativeText("Click \"Show Details\" to get the output of the uninstaller.")
-                msgBox.setDetailedText(output)
-                msgBox.setStandardButtons(MessageBox.Ok)
-                msgBox.setDefaultButton(MessageBox.Ok)
-                msgBox.setIcon(MessageBox.Warning)
-                msgBox.exec_()
+                self.err = ErrorMessage(self.window())
+                if(returncode == 2):  # if the installer's hash does not coincide
+                    errorData = {
+                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
+                        "mainTitle": f"{self.actionName.capitalize()} aborted",
+                        "mainText": f"The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {self.actionVerb} the package again skipping the hash check.",
+                        "buttonTitle": "Close",
+                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                        "icon": QIcon(getMedia("warn")),
+                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
+                        "notifText": f"The installer has an invalid checksum",
+                        "notifIcon": QIcon(getMedia("notif_warn")),
+                    }
+                else: # if there's a generic error
+                    errorData = {
+                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
+                        "mainTitle": f"{self.actionName.capitalize()} failed",
+                        "mainText": f"We could not {self.actionVerb} {self.programName}. Please try again later. Click on \"Show details\" to get the logs from the installer.",
+                        "buttonTitle": "Close",
+                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                        "icon": QIcon(getMedia("warn")),
+                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
+                        "notifText": f"{self.programName} {self.actionName} failed",
+                        "notifIcon": QIcon(getMedia("notif_warn")),
+                    }
+                self.err.showErrorMessage(errorData)
     
     def close(self):
         globals.installersWidget.removeWidget(self)

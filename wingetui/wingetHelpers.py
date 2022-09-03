@@ -224,6 +224,8 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             output += line+"\n"
     p.wait()
     outputCode = p.returncode
+    if outputCode == 0x8A150011:
+        outputCode = 2
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:

@@ -95,6 +95,9 @@ class MainApplication(QApplication):
 
             self.popup.show()
 
+            
+            
+
             print("[        ] Starting main application...")
             os.chdir(os.path.expanduser("~"))
             self.kill.connect(self.quit)
@@ -812,6 +815,14 @@ QListWidget::item{{
     background-color: transparent;
     color: transparent;
 }}
+QPlainTextEdit{{
+    border: 1px solid #1b1b1b;
+    border-radius: 6px;
+    padding: 6px;
+    color: white;
+    background-color: #212121;
+    font-family: "Consolas";
+}}
 """
 
 lightCSS = f"""
@@ -1240,6 +1251,14 @@ QComboBox QAbstractItemView::item:selected{{
     border-radius: 8px;
     background-color:rgba(255, 255, 255, 55%);
     border: 1px solid rgba(220, 220, 220, 55%);
+}}
+QPlainTextEdit{{
+    border: 1px solid #eeeeee;
+    border-radius: 6px;
+    padding: 6px;
+    color: black;
+    background-color: #ffffff;
+    font-family: "Consolas";
 }}
 """
 

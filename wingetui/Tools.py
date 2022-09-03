@@ -1,3 +1,4 @@
+from ast import Attribute
 import winreg
 import io
 from threading import Thread
@@ -360,6 +361,139 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def setHidden(self, hide: bool) -> None:
         self.itemAction.setVisible(not hide)
         return super().setHidden(hide)
+
+class ErrorMessage(QWidget):
+    showerr = Signal(dict, bool)
+    fHeight = 100
+    callInMain = Signal(object)
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.showerr.connect(self.em)
+        self.callInMain.connect(lambda f: f())
+        self.setWindowFlag(Qt.Window)
+        self.setObjectName("bg")
+        self.setStyleSheet("QWidget#bg{background-color: transparent;}")
+        ApplyMica(self.winId().__int__(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.hide()
+        l = QVBoxLayout()
+        self.titleLabel = QLabel()
+        self.titleLabel.setStyleSheet("font-size: 20pt;")
+        l.addSpacing(10)
+        l.addWidget(self.titleLabel)
+        l.addSpacing(2)
+        self.textLabel = QLabel()
+        self.textLabel.setWordWrap(True)
+        l.addWidget(self.textLabel)
+        l.addSpacing(10)
+        l.addStretch()
+        self.iconLabel = QLabel()
+        self.iconLabel.setFixedSize(64, 64)
+        layout = QVBoxLayout()
+        hl = QHBoxLayout()
+        hl.addWidget(self.iconLabel)
+        hl.addLayout(l)
+        hl.addSpacing(16)
+        layout.addLayout(hl)
+        hl = QHBoxLayout()
+        self.okButton = QPushButton()
+        self.okButton.setFixedHeight(30)
+        self.okButton.clicked.connect(self.delete)
+        self.moreInfoButton = QPushButton("Show details")
+        self.moreInfoButton.setFixedHeight(30)
+        self.moreInfoButton.clicked.connect(self.moreInfo)
+        #hl.addStretch()
+        hl.addWidget(self.moreInfoButton)
+        hl.addWidget(self.okButton)
+        layout.addLayout(hl)
+        self.moreInfoTextArea = QPlainTextEdit()
+        self.moreInfoTextArea.setReadOnly(True)
+        self.moreInfoTextArea.setVisible(False)
+        self.moreInfoTextArea.setMinimumHeight(120)
+        layout.addWidget(self.moreInfoTextArea, stretch=1)
+        self.setLayout(layout)
+        self.setMinimumWidth(320)
+
+    def delete(self):
+        self.hide()
+
+    def moreInfo(self):
+        spacingAdded = False
+        self.moreInfoTextArea.setVisible(not self.moreInfoTextArea.isVisible())
+        self.moreInfoButton.setText("Hide details" if self.moreInfoTextArea.isVisible() else "Show details")
+        if self.moreInfoTextArea.isVisible():
+            # show textedit
+            s = self.size()
+            s.setHeight(s.height() + self.moreInfoTextArea.height() + (self.layout().spacing() if not spacingAdded else 0))
+            spacingAdded = True
+            self.resize(s)
+            self.setMinimumWidth(450)
+            self.setMinimumHeight(self.minimumSizeHint().height())
+            self.setMaximumHeight(2048)
+        else:
+            # Hide textedit
+            s = self.size()
+            s.setHeight(s.height() - self.moreInfoTextArea.height() - self.layout().spacing())
+            self.setMaximumSize(s)
+            self.resize(s)
+            self.setMaximumSize(2048, 2048)
+            self.setMinimumWidth(450)
+            self.fHeight = self.minimumSizeHint().height()
+            self.setFixedHeight(self.fHeight)
+            self.setMinimumHeight(self.fHeight)
+            self.setMaximumHeight(self.fHeight+1)
+
+    
+    def showErrorMessage(self, data: dict, showNotification = True):
+        self.showerr.emit(data, showNotification)
+
+    def em(self, data: dict, showNotification = True):
+        errorData = {
+            "titlebarTitle": "Window title",
+            "mainTitle": "Error message",
+            "mainText": "An error occurred",
+            "buttonTitle": "Ok",
+            "errorDetails": "The details say that there were no details to detail the detailed error",
+            "icon": QIcon(getMedia("cancel")),
+            "notifTitle": "Error notification",
+            "notifText": "An error occurred",
+            "notifIcon": QIcon(getMedia("cancel")),
+        } | data
+        self.setWindowTitle(errorData["titlebarTitle"])
+        self.titleLabel.setText(errorData["mainTitle"])
+        self.textLabel.setText(errorData["mainText"])
+        self.okButton.setText(errorData["buttonTitle"])
+        self.iconLabel.setPixmap(QIcon(errorData["icon"]).pixmap(64, 64))
+        self.moreInfoTextArea.setPlainText(errorData["errorDetails"])
+        self.setMinimumWidth(450)
+        self.resize(self.minimumSizeHint())
+        wVisible = False
+        wExists = False
+        if self.parent():
+            try:
+                if self.parent().window():
+                    wExists = True
+                    if self.parent().window().isVisible():
+                        wVisible = True
+                        g: QRect = self.parent().window().geometry()
+                        self.move(g.x()+g.width()//2-self.width()//2, g.y()+g.height()//2-self.height()//2)
+            except AttributeError:
+                print("Parent has no window!")
+        if showNotification:
+            if not wVisible:
+                globals.trayIcon.showMessage(errorData["notifTitle"], errorData["notifText"], errorData["notifIcon"])
+        if wExists:
+            if wVisible:
+                self.show()
+                globals.app.beep()
+            else:
+                def waitNShow():
+                    while not self.parent().window().isVisible():
+                        time.sleep(0.5)
+                    self.callInMain.emit(lambda: (self.show(), globals.app.beep()))
+                Thread(target=waitNShow, daemon=True, name="Error message waiting to be shown").start()
+        else:
+            self.show()
+            globals.app.beep()
 
             
 
