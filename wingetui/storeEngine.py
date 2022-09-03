@@ -441,7 +441,7 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
             inf = QAction("Show info")
-            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(4).lower()))
+            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(4).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
             inst = QAction("Update")
             inst.setIcon(QIcon(getMedia("performinstall")))
@@ -656,7 +656,7 @@ class UpdateSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str, all = False, packageItem: QTreeWidgetItem = None) -> None:
+    def update(self, title: str, id: str, all = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if not all:
             if not "scoop" in id:
                 if("…" in title):
@@ -674,11 +674,11 @@ class UpdateSoftwareSection(QWidget):
                 if not program.isHidden():
                     self.update(program.text(0), program.text(1), packageItem=program)
 
-    def openInfo(self, title: str, id: str, store: str) -> None:
+    def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if("…" in title):
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True)
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True, packageItem=packageItem)
         else:
-            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store, update=True)
+            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store, update=True, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
     
@@ -1457,7 +1457,9 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.t.start()
 
     def finish(self, returncode: int, output: str = "") -> None:
+        print(returncode)
         if returncode == 0 and not self.canceled:
+            print(self.packageItem)
             if self.packageItem:
                 self.packageItem.setHidden(True)
         return super().finish(returncode, output)
@@ -1626,6 +1628,7 @@ class PackageInfoPopupWindow(QMainWindow):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    packageItem: QTreeWidgetItem = None
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.sc = QScrollArea()
@@ -1852,7 +1855,8 @@ class PackageInfoPopupWindow(QMainWindow):
         if(event):
             return super().resizeEvent(event)
     
-    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False) -> None:
+    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False, packageItem: QTreeWidgetItem = None) -> None:
+        self.packageItem = packageItem
         self.store = store
         self.installButton.setEnabled(False)
         self.versionCombo.setEnabled(False)
@@ -1937,9 +1941,9 @@ class PackageInfoPopupWindow(QMainWindow):
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ] Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
+            p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem)
         else:
-            p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked())
+            p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem)
         self.addProgram.emit(p)
         self.close()
 

@@ -326,13 +326,13 @@ class MainApplication(QApplication):
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
                 print(r)
                 if r != 0x32:
-                    pass#self.window.setAttribute(Qt.WA_TranslucentBackground)
+                    pass
                 self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
             else:
                 self.setStyle("windowsvista")
                 r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
                 if r != 0x32:
-                    pass#self.window.setAttribute(Qt.WA_TranslucentBackground)
+                    pass
                 self.window.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
             self.loadingText.setText(f"Latest details...")
             self.window.show()
