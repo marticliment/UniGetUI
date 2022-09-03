@@ -301,6 +301,7 @@ class MainApplication(QApplication):
                 pass
             
             self.trayIcon.activated.connect(lambda r: (applyMenuStyle(),menu.exec(QCursor.pos())) if r == QSystemTrayIcon.Context else showWindow())
+            self.trayIcon.messageClicked.connect(lambda: showWindow())
             self.installedMenu.aboutToShow.connect(lambda: applyMenuStyle())
             self.updatesMenu.aboutToShow.connect(lambda: applyMenuStyle())
 
