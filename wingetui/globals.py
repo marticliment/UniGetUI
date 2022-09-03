@@ -20,3 +20,6 @@ trayMenuUpdatesList: QMenu = None
 
 pending_programs: list = []
 current_program: str = ""
+
+updatesHeader: QAction = None
+installedHeader: QAction = None

@@ -9,6 +9,7 @@ from mainWindow import *
 from tools import *
 
 import globals
+from blurwindow import GlobalBlur, ExtendFrameIntoClientArea
 
 debugging = True
 
@@ -41,7 +42,7 @@ class MainApplication(QApplication):
             icon = QLabel()
             icon.setPixmap(QPixmap(realpath+"/resources/icon.png"))
             text = QLabel("WingetUI")
-            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display semib\"; color: {'white' if isDark() else 'black'};font-size: 60px;")
+            text.setStyleSheet(f"font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"; color: {'white' if isDark() else 'black'};font-size: 60px;")
             titlewidget.addWidget(icon)
             titlewidget.addWidget(text)
             titlewidget.addStretch()
@@ -241,36 +242,56 @@ class MainApplication(QApplication):
             menu = QMenu("WingetUI")
             globals.trayMenu = menu
             infoAction = QAction(f"WingetUI v{version}",menu)
+            infoAction.setIcon(QIcon(getMedia("info")))
             infoAction.setEnabled(False)
             menu.addAction(infoAction)
             
             showAction = QAction("Show WingetUI",menu)
+            showAction.setIcon(QIcon(getMedia("menu_show")))
             menu.addAction(showAction)
             self.trayIcon.setContextMenu(menu)
             menu.addSeparator()
             
             dAction = QAction("Available updates",menu)
+            dAction.setIcon(QIcon(getMedia("menu_updates")))
             dAction.setEnabled(False)
             menu.addAction(dAction)
             
-            self.updatesMenu = QMenu("0 Found", menu)
+            self.updatesMenu = menu.addMenu("0 updates found")
+            self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
+            self.updatesMenu.setParent(menu)
             globals.trayMenuUpdatesList = self.updatesMenu
             menu.addMenu(self.updatesMenu)
             
+            globals.updatesHeader = QAction("App Name  \tInstalled Version \t → \t New version", menu)
+            globals.updatesHeader.setEnabled(False)
+            globals.updatesHeader.setIcon(QIcon(getMedia("version")))
+            self.updatesMenu.addAction(globals.updatesHeader)
+            
             uaAction = QAction("Update all", menu)
+            uaAction.setIcon(QIcon(getMedia("menu_installall")))
             menu.addAction(uaAction)
             menu.addSeparator()
             
             dAction = QAction("Installed packages",menu)
+            dAction.setIcon(QIcon(getMedia("menu_uninstall")))
             dAction.setEnabled(False)
             menu.addAction(dAction)
             
-            self.installedMenu = QMenu("0 Found", menu)
+            self.installedMenu = menu.addMenu("0 packages found")
+            self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
+            self.installedMenu.setParent(menu)
             globals.trayMenuInstalledList = self.installedMenu
             menu.addMenu(self.installedMenu)
             menu.addSeparator()
             
+            globals.installedHeader = QAction("App Name\tInstalled Version", menu)
+            globals.installedHeader.setIcon(QIcon(getMedia("version")))
+            globals.installedHeader.setEnabled(False)
+            self.installedMenu.addAction(globals.installedHeader)
+
             quitAction = QAction(menu)
+            quitAction.setIcon(QIcon(getMedia("menu_close")))
             quitAction.setText("Quit")
             quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
             menu.addAction(quitAction)
@@ -279,11 +300,20 @@ class MainApplication(QApplication):
                 # This function will be defined when the mainWindow gets defined
                 pass
             
-            self.trayIcon.activated.connect(lambda r: menu.exec(QCursor.pos()) if r == QSystemTrayIcon.Context else showWindow())
+            self.trayIcon.activated.connect(lambda r: (applyMenuStyle(),menu.exec(QCursor.pos())) if r == QSystemTrayIcon.Context else showWindow())
+            self.installedMenu.aboutToShow.connect(lambda: applyMenuStyle())
+            self.updatesMenu.aboutToShow.connect(lambda: applyMenuStyle())
 
-            menu.setStyleSheet("QMenu { menu-scrollable: 1; }")
-            self.updatesMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
-            self.installedMenu.setStyleSheet("QMenu { menu-scrollable: 1; }")
+            def applyMenuStyle():
+                for mn in (menu, self.updatesMenu, self.installedMenu):
+                    if isDark():
+                        GlobalBlur(mn.winId().__int__(), Acrylic=True, hexColor="#21212140", Dark=True)
+                        ExtendFrameIntoClientArea(mn.winId().__int__())
+                        mn.setStyleSheet(menuDarkCSS)
+                    else:
+                        GlobalBlur(mn.winId().__int__(), Acrylic=True, hexColor="#eeeeee40", Dark=False)
+                        ExtendFrameIntoClientArea(mn.winId().__int__())
+                        mn.setStyleSheet(menuLightCSS)
 
             self.window = RootWindow()
             showAction.triggered.connect(self.window.showWindow)
@@ -825,6 +855,75 @@ QPlainTextEdit{{
 }}
 """
 
+menuDarkCSS = f"""
+* {{
+    border-radius: 8px;
+    background-color: transparent;
+}}
+QWidget{{
+    background-color: transparent;
+    border-radius: 8px;
+    menu-scrollable: 1;
+}}
+QMenu {{
+    font-family: "Segoe UI Variable Display Semib";
+    border: 1px solid #111111;
+    padding: 2px;
+    outline: 0px;
+    color: white;
+    icon-size: 32px;
+    background: rgba(0, 0, 0, 0.01%);
+    border-radius: 8px;
+}}
+QMenu::separator {{
+    margin: -2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 20%);
+}}
+QMenu::icon {{
+    padding-left: 10px;
+    padding-left: 10px;
+}}
+QMenu::item {{
+    height: 30px;
+    border: none;
+    background: transparent;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+    margin: 2px;
+}}
+QMenu::item:selected {{
+    background: rgba(255, 255, 255, 6%);
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+}}
+QMenu::item:disabled {{
+    background: transparent;
+    height: 30px;
+    outline: none;
+    color: grey;
+    border: none;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+}}
+QMenu::item:selected:disabled {{
+    background: transparent;
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+}}"""
+
 lightCSS = f"""
 * {{
     background-color: transparent;
@@ -1260,6 +1359,71 @@ QPlainTextEdit{{
     background-color: #ffffff;
     font-family: "Consolas";
 }}
+"""
+
+menuLightCSS = f"""
+QWidget{{
+    background-color: transparent;
+    menu-scrollable: 1;
+    border-radius: 8px;
+}}
+QMenu {{
+    font-family: "Segoe UI Variable Display";
+    border: 1px solid rgb(200, 200, 200);
+    padding: 2px;
+    outline: 0px;
+    color: black;
+    icon-size: 32px;
+    background: rgba(220, 220, 220, 1%)/*#262626*/;
+    border-radius: 8px;
+}}
+QMenu::separator {{
+    margin: -2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 20%);
+}}
+QMenu::icon{{
+    padding-left: 10px;
+}}
+QMenu::item{{
+    height: 30px;
+    border: none;
+    background: transparent;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+    margin: 2px;
+}}
+QMenu::item:selected{{
+    background: rgba(0, 0, 0, 10%);
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+}}
+QMenu::item:disabled{{
+    background: transparent;
+    height: 30px;
+    outline: none;
+    color: grey;
+    border: none;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+}}   
+QMenu::item:selected:disabled{{
+    background: transparent;
+    height: 30px;
+    outline: none;
+    border: none;
+    padding-right: 20px;
+    padding-left: 0px;
+    border-radius: 4px;
+}}           
 """
 
 a = MainApplication()

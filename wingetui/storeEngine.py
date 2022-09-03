@@ -171,7 +171,6 @@ class DiscoverSoftwareSection(QWidget):
 
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
-        self.askForScoopInstall.connect(self.scoopNotFound)
 
         self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
@@ -200,7 +199,6 @@ class DiscoverSoftwareSection(QWidget):
 
         g = self.packageList.geometry()
             
-        Thread(target=self.checkIfScoop, daemon=True)
         
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
@@ -232,16 +230,7 @@ class DiscoverSoftwareSection(QWidget):
         
         self.leftSlow.start()
         
-    def checkIfScoop(self) -> None:
-        if(subprocess.call("scooop --version", shell=True) != 0):
-            self.askForScoopInstall.emit()
-        else:
-            print("[   OK   ] Scoop found")
-    
-    def scoopNotFound(self) -> None:
-        if(MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", MessageBox.No | MessageBox.Yes, MessageBox.No) == MessageBox.Yes):
-            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
-        
+   
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
@@ -538,7 +527,6 @@ class UpdateSoftwareSection(QWidget):
 
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
-        self.askForScoopInstall.connect(self.scoopNotFound)
 
         self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
@@ -567,9 +555,7 @@ class UpdateSoftwareSection(QWidget):
         print("[   OK   ] Upgrades tab loaded")
 
         g = self.packageList.geometry()
-            
-        Thread(target=self.checkIfScoop, daemon=True)
-        
+                    
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
@@ -600,21 +586,11 @@ class UpdateSoftwareSection(QWidget):
         
         self.leftSlow.start()
 
-    def checkIfScoop(self) -> None:
-        if(subprocess.call("scooop --version", shell=True) != 0):
-            self.askForScoopInstall.emit()
-        else:
-            print("[   OK   ] Scoop found")
-    
-    def scoopNotFound(self) -> None:
-        if(MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", MessageBox.No | MessageBox.Yes, MessageBox.No) == MessageBox.Yes):
-            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
-        
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -622,7 +598,7 @@ class UpdateSoftwareSection(QWidget):
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} upates found")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.filter()
@@ -631,6 +607,7 @@ class UpdateSoftwareSection(QWidget):
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
+            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} upates found")
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
             self.filter()
@@ -716,6 +693,7 @@ class UpdateSoftwareSection(QWidget):
         self.query.setText("")
         for action in globals.trayMenuUpdatesList.actions():
             globals.trayMenuUpdatesList.removeAction(action)
+        globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
         self.countLabel.setText("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
@@ -882,7 +860,6 @@ class UninstallSoftwareSection(QWidget):
 
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
-        self.askForScoopInstall.connect(self.scoopNotFound)
 
         self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
@@ -913,7 +890,6 @@ class UninstallSoftwareSection(QWidget):
 
         g = self.packageList.geometry()
             
-        Thread(target=self.checkIfScoop, daemon=True)
         
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
@@ -945,23 +921,12 @@ class UninstallSoftwareSection(QWidget):
         
         self.leftSlow.start()
 
-    
-    def checkIfScoop(self) -> None:
-        if(subprocess.call("scooop --version", shell=True) != 0):
-            self.askForScoopInstall.emit()
-        else:
-            print("[   OK   ] Scoop found")
-    
-    def scoopNotFound(self) -> None:
-        if(MessageBox.question(self, "Warning", "Scoop was not found on the system. Do you want to install scoop?", MessageBox.No | MessageBox.Yes, MessageBox.No) == MessageBox.Yes):
-            self.layout.addWidget(PackageInstallerWidget("Scoop", "PowerShell", "", None, "powershell -Command \"Set-ExecutionPolicy RemoteSigned -scope CurrentUser;Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')\""))
-        
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
@@ -970,7 +935,7 @@ class UninstallSoftwareSection(QWidget):
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -979,7 +944,7 @@ class UninstallSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.filter()
             self.loadingProgressBar.hide()
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} Found")
+            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
@@ -1051,6 +1016,7 @@ class UninstallSoftwareSection(QWidget):
             self.scoopLoaded = True
         for action in globals.trayMenuInstalledList.actions():
             globals.trayMenuInstalledList.removeAction(action)
+        globals.trayMenuInstalledList.addAction(globals.installedHeader)
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addWidget(p)
