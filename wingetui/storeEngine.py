@@ -115,10 +115,24 @@ class DiscoverSoftwareSection(QWidget):
             inf = QAction("Show info")
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3)))
             inf.setIcon(QIcon(getMedia("info")))
-            inst = QAction("Install")
-            inst.setIcon(QIcon(getMedia("performinstall")))
-            inst.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1)))
-            contextMenu.addAction(inst)
+            ins1 = QAction("Install")
+            ins1.setIcon(QIcon(getMedia("performinstall")))
+            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1)))
+            ins2 = QAction("Run as administrator")
+            ins2.setIcon(QIcon(getMedia("runasadmin")))
+            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), admin=True))
+            ins3 = QAction("Skip hash check")
+            ins3.setIcon(QIcon(getMedia("checksum")))
+            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), skiphash=True))
+            ins4 = QAction("Interactive installation")
+            ins4.setIcon(QIcon(getMedia("interactive")))
+            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), interactive=True))
+            contextMenu.addAction(ins1)
+            contextMenu.addSeparator()
+            contextMenu.addAction(ins2)
+            if self.packageList.currentItem().text(3).lower() == "winget":
+                contextMenu.addAction(ins4)
+            contextMenu.addAction(ins3)
             contextMenu.addSeparator()
             contextMenu.addAction(inf)
             contextMenu.exec(QCursor.pos())
@@ -230,7 +244,6 @@ class DiscoverSoftwareSection(QWidget):
         
         self.leftSlow.start()
         
-   
     def hideLoadingWheelIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
@@ -296,17 +309,17 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
-    def fastinstall(self, title: str, id: str) -> None:
+    def fastinstall(self, title: str, id: str, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         if not "scoop" in id:
             if("…" in title):
-                self.addInstallation(PackageInstallerWidget(title, "winget", useId=True, packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "winget", useId=True, packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
             else:
-                self.addInstallation(PackageInstallerWidget(title, "winget", packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "winget", packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
         else:
             if("…" in title):
-                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=True, packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
             else:
-                self.addInstallation(PackageInstallerWidget(title, "scoop", packageId=id.replace("…", "")))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -443,10 +456,24 @@ class UpdateSoftwareSection(QWidget):
             inf = QAction("Show info")
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(4).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
-            inst = QAction("Update")
-            inst.setIcon(QIcon(getMedia("performinstall")))
-            inst.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1)))
-            contextMenu.addAction(inst)
+            ins1 = QAction("Update")
+            ins1.setIcon(QIcon(getMedia("menu_updates")))
+            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem()))
+            ins2 = QAction("Run as administrator")
+            ins2.setIcon(QIcon(getMedia("runasadmin")))
+            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem(), admin=True))
+            ins3 = QAction("Skip hash check")
+            ins3.setIcon(QIcon(getMedia("checksum")))
+            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem(), skiphash=True))
+            ins4 = QAction("Interactive update")
+            ins4.setIcon(QIcon(getMedia("interactive")))
+            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem(), interactive=True))
+            contextMenu.addAction(ins1)
+            contextMenu.addSeparator()
+            contextMenu.addAction(ins2)
+            if self.packageList.currentItem().text(3).lower() == "winget":
+                contextMenu.addAction(ins4)
+            contextMenu.addAction(ins3)
             contextMenu.addSeparator()
             contextMenu.addAction(inf)
             contextMenu.exec(QCursor.pos())
@@ -656,18 +683,18 @@ class UpdateSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str, all = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
+    def update(self, title: str, id: str, all = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         if not all:
             if not "scoop" in id:
                 if("…" in title):
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
                 else:
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
             else:
                 if("…" in title):
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
                 else:
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem))
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
         else:
             for i in range(self.packageList.topLevelItemCount()):
                 program: QTreeWidgetItem = self.packageList.topLevelItem(i)
@@ -813,13 +840,37 @@ class UninstallSoftwareSection(QWidget):
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(3, QHeaderView.Fixed)
+        self.packageList.sortByColumn(0, Qt.AscendingOrder)
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(0), item.text(1), packageItem=item))
 
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3), packageItem=item))
         
-        
+        def showMenu(pos: QPoint):
+            contextMenu = QMenu(self)
+            contextMenu.setParent(self)
+            contextMenu.setStyleSheet("* {background: red;color: black}")
+            ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
+            ins1 = QAction("Uninstall")
+            ins1.setIcon(QIcon(getMedia("menu_uninstall")))
+            ins1.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
+            ins2 = QAction("Run as administrator")
+            ins2.setIcon(QIcon(getMedia("runasadmin")))
+            ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem(), admin=True))
+            ins3 = QAction("Remove permanent data")
+            ins3.setIcon(QIcon(getMedia("menu_close")))
+            ins3.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem(), removeData=True))
+            contextMenu.addAction(ins1)
+            contextMenu.addSeparator()
+            contextMenu.addAction(ins2)
+            if self.packageList.currentItem().text(3).lower() != "winget":
+                contextMenu.addAction(ins3)
+            contextMenu.exec(QCursor.pos())
+
+        self.packageList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.packageList.customContextMenuRequested.connect(showMenu)
         
         self.loadingProgressBar = QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
@@ -987,13 +1038,13 @@ class UninstallSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None) -> None:
+    def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None, admin: bool = False, removeData: bool = False, interactive: bool = False) -> None:
         if(MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes):
             print(id)
             if("…" in id):
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem))
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
             else:
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem))
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -1193,7 +1244,7 @@ class PackageInstallerWidget(QGroupBox):
     counterSignal = Signal(int)
     callInMain = Signal(object)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False, packageItem: QTreeWidgetItem = None):
         super().__init__(parent=parent)
         self.actionDone = "installed"
         self.actionDoing = "installing"
@@ -1291,7 +1342,7 @@ class PackageInstallerWidget(QGroupBox):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
-            self.p = subprocess.Popen(self.adminstr + ["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
@@ -1444,7 +1495,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
-            self.p = subprocess.Popen(self.adminstr + ["winget", "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
@@ -1475,17 +1526,20 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: QTreeWidgetItem = None):
+    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: QTreeWidgetItem = None, admin: bool = False, removeData: bool = False):
         self.packageItem = packageItem
         self.useId = useId
         self.programName = title
         self.packageId = packageId
-        super().__init__(parent=None, title=title, store=store, packageId=packageId)
+        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin)
         self.actionDone = "uninstalled"
+        self.removeData = removeData
         self.actionDoing = "uninstalling"
         self.actionName = "uninstallation"
         self.actionVerb = "uninstall"
         self.finishedInstallation = True
+        self.runAsAdmin = admin
+        self.adminstr = [sudoPath] if self.runAsAdmin else []
         self.store = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
@@ -1504,17 +1558,17 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
             if self.useId:
-                self.p = subprocess.Popen([wingetHelpers.winget, "uninstall", "-e", "--id", f"{self.packageId}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e", "--id", f"{self.packageId}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
                 self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
                 self.t.start()
                 print(self.p.args)
             else:
-                self.p = subprocess.Popen([wingetHelpers.winget, "uninstall", "-e", "--name", f"{self.programName}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e", "--name", f"{self.programName}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
                 self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
                 self.t.start()
                 print(self.p.args)
         elif("scoop" in self.store):
-            self.p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "uninstall", "-p", f"{self.programName}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ)
+            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.programName}"] + [""] if self.removeData else ["-p"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
