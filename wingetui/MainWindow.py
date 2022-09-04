@@ -50,7 +50,7 @@ class RootWindow(QMainWindow):
         self.buttonier.setLayout(self.buttonLayout)
         self.installationsWidget = DynamicScrollArea()
         self.installerswidget: QLayout = self.installationsWidget.vlayout
-        globals.installersWidget = self.installerswidget
+        globals.installersWidget = self.installationsWidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         self.mainWidget.setStyleSheet("""
         QTabWidget::tab-bar {{

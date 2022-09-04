@@ -2,6 +2,16 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 
+class DynamicScrollAreaType(QWidget):
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+    def rss(self):
+        pass
+    def removeItem(self, item: QWidget):
+        pass
+    def addItem(self, item: QWidget):
+        pass
+
 componentStatus: dict = {
     "wingetFound": False,
     "scoopFound": False,
@@ -11,7 +21,7 @@ componentStatus: dict = {
     "sudoVersion": "Unknown", 
 }
 app: QApplication = None
-installersWidget: QLayout = None
+installersWidget: DynamicScrollAreaType = None
 trayIcon: QSystemTrayIcon = None
 mainWindow: QMainWindow = None
 trayMenu: QMenu = None

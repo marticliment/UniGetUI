@@ -347,6 +347,9 @@ class DynamicScrollArea(QWidget):
         self.vlayout.removeWidget(item)
         self.rss()
 
+    def addItem(self, item: QWidget):
+        self.vlayout.addWidget(item)
+
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction
     def __init__(self):

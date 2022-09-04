@@ -342,7 +342,7 @@ class DiscoverSoftwareSection(QWidget):
             self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
-        globals.installersWidget.addWidget(p)
+        globals.installersWidget.addItem(p)
 
 class UpdateSoftwareSection(QWidget):
 
@@ -733,7 +733,7 @@ class UpdateSoftwareSection(QWidget):
             self.scoopLoaded = True
     
     def addInstallation(self, p) -> None:
-        globals.installersWidget.addWidget(p)
+        globals.installersWidget.addItem(p)
 
 class UninstallSoftwareSection(QWidget):
 
@@ -1070,7 +1070,7 @@ class UninstallSoftwareSection(QWidget):
         globals.trayMenuInstalledList.addAction(globals.installedHeader)
     
     def addInstallation(self, p) -> None:
-        globals.installersWidget.addWidget(p)
+        globals.installersWidget.addItem(p)
 
 
 class AboutSection(QScrollArea):
@@ -1211,13 +1211,13 @@ class AboutSection(QScrollArea):
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to add", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
+            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to remove", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addWidget(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
     
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
@@ -1327,13 +1327,16 @@ class PackageInstallerWidget(QGroupBox):
         self.waitThread.start()
         print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
         
-
+    
     
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
-        self.finishedInstallation = False
         print("[   OK   ] Have permission to install, starting installation threads...")
+        self.callInMain.emit(self.runInstallation)
+
+    def runInstallation(self) -> None:
+        self.finishedInstallation = False
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -1449,26 +1452,43 @@ class PackageInstallerWidget(QGroupBox):
                 self.err.showErrorMessage(errorData)
 
     def startCoolDown(self):
-        op=QGraphicsOpacityEffect(self)
+        op1=QGraphicsOpacityEffect(self)
+        op2=QGraphicsOpacityEffect(self)
+        op3=QGraphicsOpacityEffect(self)
+        op4=QGraphicsOpacityEffect(self)
+        ops = [op1, op2, op3, op4]
         def updateOp(v: float):
-            op.setOpacity(v)
-            for widget in [self, self.cancelButton, self.label, self.progressbar, self.info]:
+            i = 0
+            for widget in [self.cancelButton, self.label, self.progressbar, self.info]:
+                ops[i].setOpacity(v)
                 widget: QWidget
-                widget.setGraphicsEffect(op)
+                widget.setGraphicsEffect(ops[i])
                 widget.setAutoFillBackground(True)
+                i += 1
         updateOp(1)
         a = QVariantAnimation(self)
         a.setStartValue(1.0)
         a.setEndValue(0.0)
         a.setEasingCurve(QEasingCurve.Linear)
-        a.setDuration(1000)
+        a.setDuration(300)
         a.valueChanged.connect(lambda v: updateOp(v))
-        a.finished.connect(self.close)
+        a.finished.connect(self.heightAnim)
         f = lambda: (time.sleep(3), self.callInMain.emit(a.start))
         Thread(target=f, daemon=True).start()
 
+    def heightAnim(self):
+        a = QVariantAnimation(self)
+        a.setStartValue(self.height())
+        a.setEndValue(0)
+        a.setEasingCurve(QEasingCurve.InOutCubic)
+        a.setDuration(300)
+        a.valueChanged.connect(lambda v: self.setFixedHeight(v))
+        a.finished.connect(self.close)
+        a.start()
+        
+
     def close(self):
-        globals.installersWidget.removeWidget(self)
+        globals.installersWidget.removeItem(self)
         super().close()
         super().destroy()
 
@@ -1485,8 +1505,11 @@ class PackageUpdaterWidget(PackageInstallerWidget):
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
+        print("[   OK   ] Have permission to install, starting installation threads...")
+        self.callInMain.emit(self.runInstallation)
+
+    def runInstallation(self) -> None:
         self.finishedInstallation = False
-        print("[   OK   ] Have permission to update, starting update threads...")
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -1516,7 +1539,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         return super().finish(returncode, output)
     
     def close(self):
-        globals.installersWidget.removeWidget(self)
+        globals.installersWidget.removeItem(self)
         super().close()
 
 class PackageUninstallerWidget(PackageInstallerWidget):
@@ -1548,6 +1571,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
+        print("[   OK   ] Have permission to install, starting installation threads...")
+        self.callInMain.emit(self.runInstallation)
+
+    def runInstallation(self) -> None:
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -1555,7 +1582,6 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
-        print("[   OK   ] Have permission to install, starting installation threads...")
         if(self.store == "winget"):
             if self.useId:
                 self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e", "--id", f"{self.packageId}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
@@ -1671,7 +1697,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 self.err.showErrorMessage(errorData)
     
     def close(self):
-        globals.installersWidget.removeWidget(self)
+        globals.installersWidget.removeItem(self)
         super().close()
 
 class PackageInfoPopupWindow(QMainWindow):
