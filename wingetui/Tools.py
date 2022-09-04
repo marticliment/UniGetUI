@@ -27,7 +27,7 @@ sudoLocation = os.path.dirname(sudoPath)
 
 
 settingsCache = {}
-version = 1.2
+version = 1.3
 installersWidget = None
 updatesAvailable = False
 

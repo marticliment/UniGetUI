@@ -526,6 +526,7 @@ class UpdateSoftwareSection(QWidget):
         h2Layout = QHBoxLayout()
         h2Layout.setContentsMargins(27, 0, 27, 0)
         self.upgradeAllButton = QPushButton("Upgrade all packages")
+        self.upgradeAllButton.setFixedWidth(200)
         self.upgradeAllButton.clicked.connect(lambda: self.update("", "", all=True))
         self.upgradeSelected = QPushButton("Upgrade selected packages")
         self.upgradeSelected.clicked.connect(lambda: self.update("", "", selected=True))

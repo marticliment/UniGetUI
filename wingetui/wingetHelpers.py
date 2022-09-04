@@ -54,7 +54,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
-    p = subprocess.Popen([winget, "upgrade"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen([winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     idSeparator = 0

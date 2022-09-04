@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Package IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap8 mp wincap rescap desktop com build" xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:uap8="http://schemas.microsoft.com/appx/manifest/uap/windows10/8" xmlns:wincap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/windowscapabilities" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build">
+<Package IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap8 mp wincap rescap desktop com desktop6 build" xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:uap8="http://schemas.microsoft.com/appx/manifest/uap/windows10/8" xmlns:wincap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/windowscapabilities" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build">
   
-  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.17.10271.0" ProcessorArchitecture="x64"/>
+  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.18.2091.0" ProcessorArchitecture="x64"/>
   <mp:PhoneIdentity PhoneProductId="199c15cd-11cc-42bc-99de-619509297b5e" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35"/>
   <Properties>
     <DisplayName>ms-resource:appDisplayName</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Assets\AppPackageStoreLogo.png</Logo>
+    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
+    <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.0"/>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.25120.0"/>
     <TargetDeviceFamily Name="Windows.Holographic" MinVersion="10.0.20346.0" MaxVersionTested="10.0.22000.0"/>
     <PackageDependency Name="Microsoft.UI.Xaml.2.7" MinVersion="7.2109.13004.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
-    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.30035.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
+    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.30704.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"/>
   </Dependencies>
   <Resources>
     <Resource Language="EN-US"/>
@@ -33,11 +35,16 @@
         <uap:SplashScreen Image="Assets\AppPackageSplashScreen.png" BackgroundColor="#FFFFFF"/>
       </uap:VisualElements>
       <Extensions>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="AppInstallerElevatedAppServiceClient.exe"/>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="AppInstallerFullTrustAppServiceClient.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="ElevatedDeployment" Parameters="ElevatedDeployment"/>
+            <desktop:ParameterGroup GroupId="GroupPolicy" Parameters="GroupPolicy"/>
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="ms-appinstaller">
             <uap:Logo>Assets\FileIcons\FileLogoExtensions.png</uap:Logo>
-            <uap:DisplayName>Windows 10 Application Package</uap:DisplayName>
+            <uap:DisplayName>Windows Application Package</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
         <uap:Extension Category="windows.protocol">
@@ -49,7 +56,7 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="packageextension">
             <uap:Logo>Assets\FileIcons\FileLogoExtensions.png</uap:Logo>
-            <uap:InfoTip>Windows 10 Application Package</uap:InfoTip>
+            <uap:InfoTip>Windows Application Package</uap:InfoTip>
             <uap:SupportedFileTypes>
               <uap:FileType>.msix</uap:FileType>
               <uap:FileType>.msixbundle</uap:FileType>
@@ -74,6 +81,9 @@
         </Extension>
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="AppInstaller.ElevatedDeployment"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="AppInstaller.GroupPolicies"/>
         </uap:Extension>
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="AppInstaller.OnBlockActivation"/>
@@ -121,6 +131,7 @@
               <com:Class Id="572DED96-9C60-4526-8F92-EE7D91D38C1A" DisplayName="FindPackagesOptions Server"/>
               <com:Class Id="526534B8-7E46-47C8-8416-B1685C327D37" DisplayName="CreateCompositePackageCatalogOptions Server"/>
               <com:Class Id="1095F097-EB96-453B-B4E6-1613637F3B14" DisplayName="InstallOptions Server"/>
+              <com:Class Id="E1D9A11E-9F85-4D87-9C17-2B93143ADB8D" DisplayName="UninstallOptions Server"/>
               <com:Class Id="D02C9DAF-99DC-429C-B503-4E504E4AB000" DisplayName="PackageMatchFilter Server"/>
             </com:ExeServer>
           </com:ComServer>
@@ -140,6 +151,7 @@
     <rescap:Capability Name="runFullTrust"/>
     <rescap:Capability Name="allowElevation"/>
     <rescap:Capability Name="confirmAppClose"/>
+    <rescap:Capability Name="unvirtualizedResources"/>
     <uap4:CustomCapability Name="Microsoft.deployFullTrustOnHost_8wekyb3d8bbwe"/>
   </Capabilities>
   <Extensions>
@@ -152,17 +164,17 @@
     </Extension>
   </Extensions>
   <build:Metadata>
-    <build:Item Name="cl.exe" Version="19.29.30139.0 built by: vcwrkspc"/>
+    <build:Item Name="cl.exe" Version="19.32.31332.0"/>
     <build:Item Name="CodeSharingProject" Value="248F659F-DAC5-46E8-AC09-60EC9FC95053"/>
-    <build:Item Name="VisualStudio" Version="16.0"/>
-    <build:Item Name="OperatingSystem" Version="10.0.17763.1 (WinBuild.160101.0800)"/>
-    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="16.0.31910.33"/>
+    <build:Item Name="VisualStudio" Version="17.0"/>
+    <build:Item Name="OperatingSystem" Version="10.0.20348.1 (WinBuild.160101.0800)"/>
+    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="17.2.32427.441"/>
     <build:Item Name="ProjectGUID" Value="{2910e195-72ee-433c-a714-8add7c86118b}"/>
     <build:Item Name="ilc.exe" Version="1.4.24211.07 built by: PROJECTNSVC2"/>
     <build:Item Name="OptimizingToolset" Value="ilc.exe"/>
     <build:Item Name="UseDotNetNativeSharedAssemblyFrameworkPackage" Value="True"/>
     <build:Item Name="UniversalGenericsOptOut" Value="false"/>
     <build:Item Name="Microsoft.Windows.UI.Xaml.Build.Tasks.dll" Version="0.0.0.0"/>
-    <build:Item Name="MakePri.exe" Version="10.0.22000.120 (WinBuild.160101.0800)"/>
+    <build:Item Name="makepri.exe" Version="10.0.25120.1000 (WinBuild.160101.0800)"/>
   </build:Metadata>
 </Package>
