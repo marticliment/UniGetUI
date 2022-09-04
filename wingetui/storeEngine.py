@@ -1,3 +1,4 @@
+from xml.dom.minidom import Attr
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os
 from threading import Thread
 from PySide6.QtCore import *
@@ -432,21 +433,22 @@ class UpdateSoftwareSection(QWidget):
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = TreeWidget("a")
+        self.packageList = TreeWidget("ª")
         self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.setColumnCount(5)
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "New Version", "Installation source"])
-        self.packageList.setColumnWidth(0, 350)
-        self.packageList.setColumnWidth(1, 200)
-        self.packageList.setColumnWidth(2, 125)
+        self.packageList.setColumnCount(6)
+        self.packageList.setHeaderLabels(["", "Package name", "Package ID", "Installed Version", "New Version", "Installation source"])
+        self.packageList.setColumnWidth(0, 50)
+        self.packageList.setColumnWidth(1, 350)
+        self.packageList.setColumnWidth(2, 200)
         self.packageList.setColumnWidth(3, 125)
-        self.packageList.setColumnWidth(4, 100)
+        self.packageList.setColumnWidth(4, 125)
+        self.packageList.setColumnWidth(5, 100)
         self.packageList.setSortingEnabled(True)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(0), item.text(1), packageItem=item))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(1), item.text(2), packageItem=item))
         
         def showMenu(pos: QPoint):
             contextMenu = QMenu(self)
@@ -454,24 +456,24 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
             inf = QAction("Show info")
-            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(4).lower(), self.packageList.currentItem()))
+            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction("Update")
             ins1.setIcon(QIcon(getMedia("menu_updates")))
-            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem()))
+            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem()))
             ins2 = QAction("Run as administrator")
             ins2.setIcon(QIcon(getMedia("runasadmin")))
-            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem(), admin=True))
+            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem(), admin=True))
             ins3 = QAction("Skip hash check")
             ins3.setIcon(QIcon(getMedia("checksum")))
-            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem(), skiphash=True))
+            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem(), skiphash=True))
             ins4 = QAction("Interactive update")
             ins4.setIcon(QIcon(getMedia("interactive")))
-            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), packageItem=self.packageList.currentItem(), interactive=True))
+            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem(), interactive=True))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
-            if self.packageList.currentItem().text(3).lower() == "winget":
+            if self.packageList.currentItem().text(4).lower() == "winget":
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
@@ -484,14 +486,16 @@ class UpdateSoftwareSection(QWidget):
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.setStretchLastSection(False)
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.Fixed)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QHeaderView.Fixed)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
         header.setSectionResizeMode(3, QHeaderView.Fixed)
         header.setSectionResizeMode(4, QHeaderView.Fixed)
-        self.packageList.setColumnWidth(2, 100)
+        header.setSectionResizeMode(5, QHeaderView.Fixed)
+        self.packageList.setColumnWidth(0, 46)
         self.packageList.setColumnWidth(3, 100)
-        self.packageList.setColumnWidth(4, 120)
+        self.packageList.setColumnWidth(4, 100)
+        self.packageList.setColumnWidth(5, 120)
         
         self.loadingProgressBar = QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
@@ -518,6 +522,9 @@ class UpdateSoftwareSection(QWidget):
         h2Layout.setContentsMargins(27, 0, 27, 0)
         self.upgradeAllButton = QPushButton("Upgrade all packages")
         self.upgradeAllButton.clicked.connect(lambda: self.update("", "", all=True))
+        self.upgradeSelected = QPushButton("Upgrade selected packages")
+        self.upgradeSelected.clicked.connect(lambda: self.update("", "", selected=True))
+        self.upgradeSelected.setFixedWidth(200)
         self.showUnknownSection = QCheckBox("Show unknown versions")
         self.showUnknownSection.setFixedHeight(30)
         self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
@@ -531,11 +538,12 @@ class UpdateSoftwareSection(QWidget):
             else:
                 self = selff
             for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
-                if item.text(2) == "Unknown":
+                if item.text(3) == "Unknown":
                     item.setHidden(not self.showUnknownSection.isChecked())
         self.updatelist = updatelist
 
         h2Layout.addWidget(self.upgradeAllButton)
+        h2Layout.addWidget(self.upgradeSelected)
         h2Layout.addStretch()
         h2Layout.addWidget(self.showUnknownSection)
 
@@ -650,17 +658,21 @@ class UpdateSoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
         if not "---" in name:
             item = TreeWidgetItemWithQAction()
-            item.setText(0, name)
-            item.setIcon(0, self.installIcon)
-            item.setText(1, id)
-            item.setIcon(1, self.IDIcon)
-            item.setText(2, version)
-            item.setIcon(2, self.versionIcon)
-            item.setText(3, newVersion)
-            item.setIcon(3, self.newVersionIcon)
-            item.setText(4, store)
-            item.setIcon(4, self.providerIcon)
+            item.setText(1, name)
+            item.setIcon(1, self.installIcon)
+            item.setText(2, id)
+            item.setIcon(2, self.IDIcon)
+            item.setText(3, version)
+            item.setIcon(3, self.versionIcon)
+            item.setText(4, newVersion)
+            item.setIcon(4, self.newVersionIcon)
+            item.setText(5, store)
+            item.setIcon(5, self.providerIcon)
             self.packageList.addTopLevelItem(item)
+            c = QCheckBox()
+            c.setChecked(True)
+            c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
+            self.packageList.setItemWidget(item, 0, c)
             action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
             action.triggered.connect(lambda : self.update(name, id, packageItem=item))
             action.setShortcut(version)
@@ -668,8 +680,8 @@ class UpdateSoftwareSection(QWidget):
             globals.trayMenuUpdatesList.addAction(action)
     
     def filter(self) -> None:
-        resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
-        resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
+        resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
+        resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
         print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
         for item in self.packageList.findItems('', Qt.MatchContains, 0):
             if not(item in resultsFound):
@@ -683,8 +695,22 @@ class UpdateSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str, all = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
-        if not all:
+    def update(self, title: str, id: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+        if all:
+            for i in range(self.packageList.topLevelItemCount()):
+                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                if not program.isHidden():
+                    self.update(program.text(1), program.text(2), packageItem=program)
+        elif selected:
+            for i in range(self.packageList.topLevelItemCount()):
+                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                if not program.isHidden():
+                    try:
+                        if self.packageList.itemWidget(program, 0).isChecked():
+                           self.update(program.text(1), program.text(2), packageItem=program)
+                    except AttributeError:
+                        pass
+        else:
             if not "scoop" in id:
                 if("…" in title):
                     self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
@@ -695,11 +721,7 @@ class UpdateSoftwareSection(QWidget):
                     self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
                 else:
                     self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
-        else:
-            for i in range(self.packageList.topLevelItemCount()):
-                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
-                if not program.isHidden():
-                    self.update(program.text(0), program.text(1), packageItem=program)
+            
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if("…" in title):
