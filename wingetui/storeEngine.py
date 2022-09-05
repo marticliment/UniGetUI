@@ -668,6 +668,8 @@ class UpdateSoftwareSection(QWidget):
             self.packageList.label.setText(self.countLabel.text())
             self.filter()
             self.updatelist()
+            if not getSettings("DisableAutoCheckforUpdates"):
+                Thread(target=lambda: (time.sleep(3600), self.reload()), daemon=True, name="AutoCheckForUpdates Thread").start()
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -1156,6 +1158,10 @@ class AboutSection(QScrollArea):
         notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
         notifyAboutUpdates.clicked.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
         self.layout.addWidget(notifyAboutUpdates)
+        checkForUpdates = QCheckBox("Check for updates periodically")
+        checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
+        checkForUpdates.clicked.connect(lambda v: setSettings("DisableAutoCheckforUpdates", not bool(v)))
+        self.layout.addWidget(checkForUpdates)
         self.layout.addWidget(QLabel())
         parallelInstalls = QCheckBox("Allow parallel installs (NOT RECOMMENDED)")
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
