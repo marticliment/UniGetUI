@@ -1,0 +1,11 @@
+#!/bin/bash
+# This is a wrapper for gsudo intended to be used from WSL. 
+# Ensures WSLENV is set before calling gsudo, to let gsudo know the WSL context.
+# Also allows `gsudo` usage, no need for `gsudo.exe`
+# On git-bash/cygwin, by setting MSYS_NO_PATHCONV, it disables path translation so the original bash command can be elevated as-is.
+# You can also use 'gsudo.exe [command]' syntax (to avoids this wrapper),
+
+# For better experience (fix credentials cache) in git-bash/MinGw create this wrapper can be added as function in .bashrc:
+# 		gsudo() { WSLENV=WSL_DISTRO_NAME:USER:$WSLENV MSYS_NO_PATHCONV=1 gsudo.exe "$@"; }
+
+WSLENV=WSL_DISTRO_NAME:USER:$WSLENV MSYS_NO_PATHCONV=1 gsudo.exe "$@"

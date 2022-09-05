@@ -221,11 +221,9 @@ try:
             global sudoLocation
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
-                o = os.path.isfile(sudoPath)
-                if not os.path.isdir(sudoLocation):
-                    sudoLocation = os.getcwd() # This will be saved in tools.py
-                globals.componentStatus["sudoFound"] = o
-                globals.componentStatus["sudoVersion"] = sudoLocation.replace("/", "\\")
+                o = subprocess.run(f"{sudoPath} -v", shell=True, stdout=subprocess.PIPE)
+                globals.componentStatus["sudoFound"] = o.returncode == 0
+                globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {globals.componentStatus['sudoFound']}"))
             except Exception as e:
                 print(e)
