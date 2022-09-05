@@ -182,11 +182,12 @@ try:
             except Exception as e:
                 print(e)
             self.loadStatus += 1
-            print("updating scoop")
+            print("updating winget")
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
-                o = subprocess.run(f"{wingetHelpers.winget} upgrade {' '.join(wingetHelpers.common_params)}", shell=True, stdout=subprocess.PIPE)
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
+                if not getSettings("DisableUpdateIndexes"):
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
+                    o = subprocess.run(f"{wingetHelpers.winget} upgrade {' '.join(wingetHelpers.common_params)}", shell=True, stdout=subprocess.PIPE)
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -202,17 +203,17 @@ try:
                 print(e)
             self.loadStatus += 1
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache..."))
-                p1 = subprocess.Popen(f"powershell -Command scoop cleanup *", shell=True, stdout=subprocess.PIPE)
-                p2 = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
-                p1.wait()
-                p2.wait()
+                if not getSettings("DisableUpdateIndexes"):
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache..."))
+                    p = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
+                    p.wait()
             except Exception as e:
                 print(e)
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
-                o = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
+                if not getSettings("DisableUpdateIndexes"):
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
+                    o = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
+                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
