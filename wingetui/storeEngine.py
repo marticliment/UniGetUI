@@ -1145,7 +1145,6 @@ class AboutSection(QScrollArea):
         self.setWidget(self.widget)
         self.announcements = QAnnouncements()
         self.layout.addWidget(self.announcements)
-        Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         title = QLabel("General Settings")
         title.setStyleSheet("font-size: 40px;")
         self.layout.addWidget(title)
@@ -1287,6 +1286,10 @@ class AboutSection(QScrollArea):
         if r[1]:
             print(r[0])
             globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+
+    def showEvent(self, event: QShowEvent) -> None:
+        Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
+        return super().showEvent(event)
     
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
