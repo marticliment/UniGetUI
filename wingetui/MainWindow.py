@@ -109,7 +109,6 @@ class RootWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         w.setLayout(vl)
         self.setCentralWidget(w)
-        self.show()
         self.uninstall.resizeEvent()
         self.discover.resizeEvent()
         self.updates.resizeEvent()

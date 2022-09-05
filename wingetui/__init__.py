@@ -26,13 +26,14 @@ try:
         setLoadBarValue = Signal(str)
         startAnim = Signal(QVariantAnimation)
         changeBarOrientation = Signal()
-        updatesMenu: QMenu = None# = QMenu("0 Packages")
-        installedMenu: QMenu = None#QMenu("0 Packages")
+        updatesMenu: QMenu = None
+        installedMenu: QMenu = None
         running = True
         
         def __init__(self):
             try:
                 super().__init__(sys.argv)
+                self.isDaemon: bool = "--daemon" in sys.argv
                 self.popup = DraggableWindow()
                 self.popup.setFixedSize(QSize(600, 400))
                 self.popup.setWindowFlag(Qt.FramelessWindowHint)
@@ -94,8 +95,9 @@ try:
                 self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
                 self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
                 
-                self.leftSlow.start()
-                self.popup.show()
+                if not self.isDaemon:
+                    self.leftSlow.start()
+                    self.popup.show()
 
                 print("[        ] Starting main application...")
                 os.chdir(os.path.expanduser("~"))
@@ -336,7 +338,8 @@ try:
                         pass
                     self.window.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
                 self.loadingText.setText(f"Latest details...")
-                self.window.show()
+                if not self.isDaemon:
+                    self.window.show()
             except Exception as e:
                 import webbrowser, traceback, platform
                 try:
