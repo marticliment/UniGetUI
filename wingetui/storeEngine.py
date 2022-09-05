@@ -1143,8 +1143,9 @@ class AboutSection(QScrollArea):
         l.addStretch()
         self.widget.setLayout(l)
         self.setWidget(self.widget)
-        self.layout.addWidget(QLabel())
-
+        self.announcements = QAnnouncements()
+        self.layout.addWidget(self.announcements)
+        Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         title = QLabel("General Settings")
         title.setStyleSheet("font-size: 40px;")
         self.layout.addWidget(title)

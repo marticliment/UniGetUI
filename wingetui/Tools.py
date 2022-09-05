@@ -7,6 +7,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
+from urllib.request import urlopen
 
 import globals
 
@@ -505,6 +506,104 @@ class ErrorMessage(QWidget):
         else:
             self.show()
             globals.app.beep()
+
+
+class QAnnouncements(QLabel):
+    callInMain = Signal(object)
+
+    def __init__(self):
+        super().__init__()
+        self.area = QScrollArea()
+        self.setMaximumWidth(self.getPx(1000))
+        self.callInMain.connect(lambda f: f())
+        self.setFixedHeight(self.getPx(110))
+        self.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.setStyleSheet(f"#subtitleLabel{{border-bottom-left-radius: {self.getPx(4)}px;border-bottom-right-radius: {self.getPx(4)}px;border-bottom: {self.getPx(1)}px;font-size: 12pt;}}*{{padding: 3px;}}")
+        self.setTtext("Fetching latest announcement, please wait...")
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        self.pictureLabel = QLabel()
+        self.pictureLabel.setContentsMargins(0, 0, 0, 0)
+        self.pictureLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.textLabel = QLabel()
+        self.textLabel.setOpenExternalLinks(True)
+        self.textLabel.setContentsMargins(self.getPx(10), 0, self.getPx(10), 0)
+        self.textLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        layout.addStretch()
+        layout.addWidget(self.textLabel, stretch=0)
+        layout.addWidget(self.pictureLabel, stretch=0)
+        layout.addStretch()
+        self.w = QWidget()
+        self.w.setObjectName("backgroundWindow")
+        self.w.setLayout(layout)
+        self.w.setContentsMargins(0, 0, 0, 0)
+        self.area.setWidget(self.w)
+        l = QVBoxLayout()
+        l.setSpacing(0)
+        l.setContentsMargins(0, self.getPx(5), 0, self.getPx(5))
+        l.addWidget(self.area, stretch=1)
+        self.area.setWidgetResizable(True)
+        self.area.setContentsMargins(0, 0, 0, 0)
+        self.area.setObjectName("backgroundWindow")
+        self.area.setStyleSheet("border: 0px solid black; padding: 0px; margin: 0px;")
+        self.area.setFrameShape(QFrame.NoFrame)
+        self.area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.pictureLabel.setFixedHeight(self.area.height())
+        self.textLabel.setFixedHeight(self.area.height())
+        self.setLayout(l)
+
+
+
+    def loadAnnouncements(self, useHttps: bool = True):
+        try:
+            response = urlopen(f"http{'s' if useHttps else ''}://www.somepythonthings.tk/resources/wingetui.announcement")
+            print("🔵 Announcement URL:", response.url)
+            response = response.read().decode("utf8")
+            self.callInMain.emit(lambda: self.setTtext(""))
+            announcement_body = response.split("////")[0].strip().replace("http://", "ignore:").replace("https://", "ignoreSecure:").replace("linkId", "http://somepythonthings.tk/redirect/").replace("linkColor", f"rgb({getColors()[2 if isDark() else 4]})")
+            self.callInMain.emit(lambda: self.textLabel.setText(announcement_body))
+            self.callInMain.emit(lambda: self.pictureLabel.setText("Loading media..."))
+            announcement_image_url = response.split("////")[1].strip()
+            try:
+                response = urlopen(announcement_image_url)
+                print("🔵 Image URL:", response.url)
+                response = response.read()
+                self.file =  open(os.path.join(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui")), "announcement.png"), "wb")
+                self.file.write(response)
+                self.callInMain.emit(lambda: self.pictureLabel.setText(""))
+                self.file.close()
+                h = self.area.height()
+                self.callInMain.emit(lambda: self.pictureLabel.setFixedHeight(h))
+                self.callInMain.emit(lambda: self.textLabel.setFixedHeight(h))
+                self.callInMain.emit(lambda: self.pictureLabel.setPixmap(QPixmap(self.file.name).scaledToHeight(h-self.getPx(8), Qt.SmoothTransformation)))
+            except Exception as ex:
+                s = "Couldn't load the announcement image"+"\n\n"+str(ex)
+                self.callInMain.emit(lambda: self.pictureLabel.setText(s))
+                print("🟠 Unable to retrieve announcement image")
+                print(ex)
+        except Exception as e:
+            if useHttps:
+                self.loadAnnouncements(useHttps=False)
+            else:
+                s = "Couldn't load the announcements. Please try again later"+"\n\n"+str(e)
+                self.callInMain.emit(lambda: self.setTtext(s))
+                print("🟠 Unable to retrieve latest announcement")
+                print(e)
+
+    def showEvent(self, a0: QShowEvent) -> None:
+        return super().showEvent(a0)
+
+    def getPx(self, i: int) -> int:
+        return i
+
+    def setTtext(self, a0: str) -> None:
+        return super().setText(a0)
+
+    def setText(self, a: str) -> None:
+        raise Exception("This member should not be used under any circumstances")
 
             
 
