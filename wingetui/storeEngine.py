@@ -722,7 +722,7 @@ class UpdateSoftwareSection(QWidget):
                         pass
         else:
             if not "scoop" in id:
-                if("…" in title):
+                if("…" in title or " " in title):
                     self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
                 else:
                     self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
@@ -1288,6 +1288,7 @@ class PackageInstallerWidget(QGroupBox):
         self.actionName = "installation"
         self.actionVerb = "install"
         self.runAsAdmin = admin
+        self.useId = useId
         self.adminstr = [sudoPath] if self.runAsAdmin else []
         self.finishedInstallation = True
         self.callInMain.connect(lambda f: f())
@@ -1382,7 +1383,10 @@ class PackageInstallerWidget(QGroupBox):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
-            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            if self.useId:
+                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--id", f"{self.packageId}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            else:
+                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
@@ -1532,7 +1536,7 @@ class PackageInstallerWidget(QGroupBox):
 class PackageUpdaterWidget(PackageInstallerWidget):
 
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False, useId: bool = False):
-        super().__init__(title, store, version, parent, customCommand, args, packageId, admin)
+        super().__init__(title, store, version, parent, customCommand, args, packageId, admin, useId)
         self.packageItem = packageItem
         self.actionDone = "updated"
         self.actionDoing = "updating"
@@ -1555,7 +1559,11 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
-            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            if self.useId:
+                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--id", f"{self.packageId}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            else:
+                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            print(self.p.args)
             self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
