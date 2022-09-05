@@ -649,12 +649,25 @@ class UpdateSoftwareSection(QWidget):
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} upates found")
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.loadingProgressBar.hide()
+            count = 0
+            lastVisibleItem = None
+            for i in range(self.packageList.topLevelItemCount()):
+                if not self.packageList.topLevelItem(i).isHidden():
+                    count += 1
+                    lastVisibleItem = self.packageList.topLevelItem(i)
+            self.countLabel.setText("Found packages: "+str(count))
+            self.packageList.label.setText(str(count))
+            if not getSettings("DisableUpdatesNotifications"):
+                if count > 1:
+                    notify("Updates found!", f"{count} apps can be updated")
+                elif count == 1:
+                    notify("Updates found!", f"{lastVisibleItem.text(1)} can be updated")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{count} upates found")
+            self.countLabel.setText("Found packages: "+str(count))
             self.packageList.label.setText(self.countLabel.text())
             self.filter()
             self.updatelist()
-            actions = []
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -1139,6 +1152,10 @@ class AboutSection(QScrollArea):
         doCloseWingetUI.setChecked(not getSettings("DisablesystemTray"))
         doCloseWingetUI.clicked.connect(lambda v: setSettings("DisablesystemTray", not bool(v)))
         self.layout.addWidget(doCloseWingetUI)
+        notifyAboutUpdates = QCheckBox("Show a notification when there are available updates")
+        notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
+        notifyAboutUpdates.clicked.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
+        self.layout.addWidget(notifyAboutUpdates)
         self.layout.addWidget(QLabel())
         parallelInstalls = QCheckBox("Allow parallel installs (NOT RECOMMENDED)")
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))

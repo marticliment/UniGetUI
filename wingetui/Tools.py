@@ -222,8 +222,8 @@ class KillableThread(Thread):
         return self.localtrace 
 
 
-def notify(title: str, text: str) -> None:
-    globals.app.trayIcon.showMessage(title, text)
+def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
+    globals.trayIcon.showMessage(title, text, QIcon(iconpath))
 
 
 def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
