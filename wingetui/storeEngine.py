@@ -663,6 +663,10 @@ class UpdateSoftwareSection(QWidget):
                     notify("Updates found!", f"{count} apps can be updated")
                 elif count == 1:
                     notify("Updates found!", f"{lastVisibleItem.text(1)} can be updated")
+            if count > 0:
+                globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
+            else:
+                globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             globals.trayMenuUpdatesList.menuAction().setText(f"{count} upates found")
             self.countLabel.setText("Found packages: "+str(count))
             self.packageList.label.setText(self.countLabel.text())
@@ -1488,6 +1492,7 @@ class PackageInstallerWidget(QGroupBox):
                     msgBox.setIcon(MessageBox.Information)
                     msgBox.exec_()
             else:
+                globals.trayIcon.setIcon(QIcon(getMedia("redicon"))) 
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
@@ -1737,6 +1742,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     msgBox.setIcon(MessageBox.Information)
                     msgBox.exec_()
             else:
+                globals.trayIcon.setIcon(QIcon(getMedia("redicon"))) 
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
