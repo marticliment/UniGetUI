@@ -101,7 +101,7 @@ try:
 
                 print("[        ] Starting main application...")
                 os.chdir(os.path.expanduser("~"))
-                self.kill.connect(self.quit)
+                self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
                 Thread(target=self.loadStuffThread).start()
                 self.loadingText.setText("Checking for other running instances...")

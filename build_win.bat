@@ -1,7 +1,8 @@
 del "WingetUI.exe"
-cd wingetui
 rmdir /Q /S build
 rmdir /Q /S dist
+rmdir /Q /S Output
+cd wingetui
 python -m PyInstaller "Win.spec"
 cd dist
 taskkill /im WingetUI.exe /f
