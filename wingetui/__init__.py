@@ -447,6 +447,7 @@ try:
         background-color: transparent;
         color: #eeeeee;
         font-family: "Segoe UI Variable Display semib";
+        outline: none;
     }}
     #micawin,QInputDialog {{
         background-color: mainbg;
@@ -957,7 +958,8 @@ try:
     * {{
         background-color: transparent;
         color: #000000;
-        font-family: "Segoe UI Variable Display"
+        font-family: "Segoe UI Variable Display";
+        outline: none;
     }}
     #micawin,QInputDialog {{
         background-color: mainbg;
