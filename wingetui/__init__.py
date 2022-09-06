@@ -208,6 +208,9 @@ try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache..."))
                     p = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
+                    if(getSettings("EnableScoopCleanup")):
+                        p2 = subprocess.Popen(f"powershell -Command scoop cleanup --all", shell=True, stdout=subprocess.PIPE)
+                        p2.wait()
                     p.wait()
             except Exception as e:
                 print(e)
@@ -323,20 +326,9 @@ try:
                 showAction.triggered.connect(self.window.showWindow)
                 uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
                 showWindow = self.window.showWindow
-
-                if(not isDark()):
-                    self.setStyle("windowsvista")
-                    r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.LIGHT)
-                    print(r)
-                    if r != 0x32:
-                        pass
-                    self.window.setStyleSheet(lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
-                else:
-                    self.setStyle("windowsvista")
-                    r = win32mica.ApplyMica(self.window.winId(), win32mica.MICAMODE.DARK)
-                    if r != 0x32:
-                        pass
-                    self.window.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
+                self.setStyle("winvowsvista")
+                globals.darkCSS = darkCSS
+                globals.lightCSS = lightCSS
                 self.loadingText.setText(f"Latest details...")
                 if not self.isDaemon:
                     self.window.show()
@@ -1127,6 +1119,7 @@ try:
         font-family: "Segoe UI Variable Display";
         font-size: 9pt;
         width: 300px;
+        color: black;
         padding: 5px;
         border-radius: 6px;
         border: 0.6px solid rgba(86, 86, 86, 25%);

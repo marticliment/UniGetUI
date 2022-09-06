@@ -1,7 +1,7 @@
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import os, ctypes, sys, tools
+import os, ctypes, sys, tools, win32mica
 
 import globals
 
@@ -182,6 +182,20 @@ class RootWindow(QMainWindow):
         self.window().setFocus()
         self.window().raise_()
         self.window().activateWindow()
+
+    def showEvent(self, event: QShowEvent) -> None:
+        if(not isDark()):
+            r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.LIGHT)
+            print(r)
+            if r != 0x32:
+                pass
+            self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
+        else:
+            r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.DARK)
+            if r != 0x32:
+                pass
+            self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
+        return super().showEvent(event)
 
 class DraggableWindow(QWidget):
     pressed = False

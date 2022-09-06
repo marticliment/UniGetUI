@@ -1192,6 +1192,11 @@ class AboutSection(QScrollArea):
         disableUpdateIndexes.setChecked(getSettings("DisableUpdateIndexes"))
         disableUpdateIndexes.clicked.connect(lambda v: setSettings("DisableUpdateIndexes", bool(v)))
         self.layout.addWidget(disableUpdateIndexes)
+        enableScoopCleanup = QCheckBox("Enable scoop cleanup on lanuch")
+        enableScoopCleanup.setChecked(getSettings("EnableScoopCleanup"))
+        enableScoopCleanup.clicked.connect(lambda v: setSettings("EnableScoopCleanup", bool(v)))
+        self.layout.addWidget(enableScoopCleanup)
+        
         self.layout.addWidget(QLabel())
         l = QHBoxLayout()
         button = QPushButton("Add a bucket to scoop")
