@@ -1154,7 +1154,7 @@ class AboutSection(QScrollArea):
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
         updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
         self.layout.addWidget(updateCheckBox)
-        doCloseWingetUI = QCheckBox("Minimze WingetUI to the system tray instead of closing it")
+        doCloseWingetUI = QCheckBox("Keep WingetUI always running on the system tray")
         doCloseWingetUI.setChecked(not getSettings("DisablesystemTray"))
         doCloseWingetUI.clicked.connect(lambda v: setSettings("DisablesystemTray", not bool(v)))
         self.layout.addWidget(doCloseWingetUI)

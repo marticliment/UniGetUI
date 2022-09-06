@@ -1461,7 +1461,9 @@ try:
         border-radius: 4px;
     }}           
     """
-
+    if "--daemon" in sys.argv:
+        if getSettings("DisablesystemTray"):
+            sys.exit(0)
     a = MainApplication()
     a.exec()
     a.running = False
