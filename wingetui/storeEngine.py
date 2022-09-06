@@ -640,7 +640,7 @@ class UpdateSoftwareSection(QWidget):
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} upates found")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
             self.filter()
@@ -667,7 +667,7 @@ class UpdateSoftwareSection(QWidget):
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
-            globals.trayMenuUpdatesList.menuAction().setText(f"{count} upates found")
+            globals.trayMenuUpdatesList.menuAction().setText(f"{count} updates found")
             self.countLabel.setText("Found packages: "+str(count))
             self.packageList.label.setText(self.countLabel.text())
             self.filter()
