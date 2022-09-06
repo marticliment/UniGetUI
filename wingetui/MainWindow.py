@@ -33,8 +33,7 @@ class RootWindow(QMainWindow):
             QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
 
-        if(self.isAdmin()):
-            MessageBox.warning(self, "Admin rights", "It looks like you have ran this software with admin rights. We do not recommend doing this. Proceed with caution")
+        
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:

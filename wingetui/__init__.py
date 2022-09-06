@@ -340,6 +340,18 @@ try:
                 self.loadingText.setText(f"Latest details...")
                 if not self.isDaemon:
                     self.window.show()
+                    if(self.window.isAdmin()):
+                        self.err = ErrorMessage(self.window)
+                        errorData = {
+                            "titlebarTitle": f"WingetUI",
+                            "mainTitle": f"Administrator privileges",
+                            "mainText": f"It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we hightly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why.",
+                            "buttonTitle": "Ok",
+                            "errorDetails": "There are two main reasons to not run WingetUI as administrator:\n The first one is that the scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click tyhe item -> Install/Update/Uninstall as administrator.",
+                            "icon": QIcon(getMedia("infocolor")),
+                        }
+                        self.err.showErrorMessage(errorData, showNotification=False)
+        
             except Exception as e:
                 import webbrowser, traceback, platform
                 try:
