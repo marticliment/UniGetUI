@@ -1238,7 +1238,7 @@ class AboutSection(QScrollArea):
         table.setCornerButtonEnabled(True)
         table.cornerWidget().setStyleSheet("background: transparent;")
         self.layout.addWidget(table)
-        title = QLabel("About WingetUI "+str(version)+"")
+        title = QLabel("About WingetUI "+str(versionName)+"")
         title.setStyleSheet("font-size: 40px;")
 
         self.layout.addWidget(title)

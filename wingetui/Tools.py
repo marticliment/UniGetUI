@@ -28,7 +28,8 @@ sudoLocation = os.path.dirname(sudoPath)
 
 
 settingsCache = {}
-version = 1.3
+version = 1.31
+versionName = "1.3.1"
 installersWidget = None
 updatesAvailable = False
 
