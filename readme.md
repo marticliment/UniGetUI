@@ -1,4 +1,4 @@
-# WingetUI: A Graphical User Interface to manage the most common CLI package managers such as Winget and Scoop.
+# WingetUI: A package manager UI for Winget and Scoop
 
 [![Downloads@latest](https://img.shields.io/github/downloads/martinet101/WingetUI/total?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases)
