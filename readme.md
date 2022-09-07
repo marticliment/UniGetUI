@@ -45,7 +45,7 @@ This project has no connection to the official Winget-CLI project - it's complet
  
 It's easy! Download and install the latest version of WingetUI by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)!
 
-You can also install WingetUI from winget: `winget install "WingetUI Store"`
+You can also install WingetUI from winget: `winget install wingetui`
 
 You can also install the app through [Scoop](https://scoop.sh/) (⚠️might cause issues, please install manually for the moment) since it's part of the Extras bucket (`scoop bucket add extras`).
 
