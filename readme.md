@@ -1,4 +1,4 @@
-# WingetUI: A Graphical User Interface to manage the most common CLI package managers such as Winget and Scoop.
+# WingetUI: A package manager UI for Winget and Scoop
 
 [![Downloads@latest](https://img.shields.io/github/downloads/martinet101/WingetUI/total?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases)
@@ -45,7 +45,9 @@ This project has no connection to the official Winget-CLI project - it's complet
  
 It's easy! Download and install the latest version of WingetUI by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)!
 
-You can also install the app through [Scoop](https://scoop.sh/) since it's part of the Extras bucket (`scoop bucket add extras`).
+You can also install WingetUI from winget: `winget install "WingetUI Store"`
+
+You can also install the app through [Scoop](https://scoop.sh/) (⚠️might cause issues, please install manually for the moment) since it's part of the Extras bucket (`scoop bucket add extras`).
 
 To install it that way, execute the following in a CLI: `scoop install wingetui`
 
