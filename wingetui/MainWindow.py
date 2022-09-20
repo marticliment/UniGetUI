@@ -195,19 +195,20 @@ class RootWindow(QMainWindow):
         return super().resizeEvent(event)
 
     def showWindow(self):
-        if not self.window().isMaximized():
-            self.window().hide()
-            self.window().showMinimized()
-            self.window().show()
-            self.window().showNormal()
+        if not self.window().isVisible():
+            if not self.window().isMaximized():
+                self.window().hide()
+                self.window().show()
+                self.window().showNormal()
+            else:
+                self.window().hide()
+                self.window().show()
+                self.window().showMaximized()
+            self.window().setFocus()
+            self.window().raise_()
+            self.window().activateWindow()
         else:
-            self.window().hide()
-            self.window().showMinimized()
-            self.window().show()
-            self.window().showMaximized()
-        self.window().setFocus()
-        self.window().raise_()
-        self.window().activateWindow()
+            self.hide()
 
     def showEvent(self, event: QShowEvent) -> None:
         if(not isDark()):
