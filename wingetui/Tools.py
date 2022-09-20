@@ -326,10 +326,11 @@ class ResizableWidget(QWidget):
 
 class DynamicScrollArea(QWidget):
     maxHeight = 200
-    def __init__(self, parent = None) -> None:
+    def __init__(self, showHideArrow: QWidget = None, parent = None) -> None:
         super().__init__(parent)
         l = QVBoxLayout()
-        l.setContentsMargins(0, 0, 0, 0)
+        self.showHideArrow = showHideArrow
+        l.setContentsMargins(5, 5, 5, 5)
         self.scrollArea = QScrollArea()
         self.coushinWidget = QWidget()
         l.addWidget(self.coushinWidget)
@@ -355,16 +356,17 @@ class DynamicScrollArea(QWidget):
     def removeItem(self, item: QWidget):
         self.vlayout.removeWidget(item)
         self.rss()
-        if self.itemCount == 1:
-            globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
         self.itemCount -= 1
+        if self.itemCount <= 0:
+            self.itemCount += 0
+            globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
+            self.showHideArrow.hide()
 
     def addItem(self, item: QWidget):
         self.vlayout.addWidget(item)
-        if self.itemCount == 0:
-            self.trayIcon = globals.trayIcon.icon()
         self.itemCount += 1
-        globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
+        self.showHideArrow.show()
+        globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
 
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction

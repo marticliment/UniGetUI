@@ -47,7 +47,8 @@ class RootWindow(QMainWindow):
         self.buttonier.setFixedWidth(703)
         self.buttonier.setObjectName("buttonier")
         self.buttonier.setLayout(self.buttonLayout)
-        self.installationsWidget = DynamicScrollArea()
+        self.showHideButton = QPushButton()
+        self.installationsWidget = DynamicScrollArea(self.showHideButton)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
         globals.installersWidget = self.installationsWidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)
@@ -87,9 +88,9 @@ class RootWindow(QMainWindow):
         vl.addLayout(hl)
         vl.addWidget(self.mainWidget, stretch=1)
         self.buttonBox.buttons()[0].setChecked(True)
-        self.showHideButton = QPushButton()
         self.showHideButton.setStyleSheet("padding: 2px;border-radius: 4px;")
         self.showHideButton.setIconSize(QSize(12, 12))
+        self.showHideButton.hide()
         self.showHideButton.setFixedSize(QSize(32, 16))
         self.showHideButton.setIcon(QIcon(getMedia("collapse")))
         self.showHideButton.clicked.connect(lambda: (self.installationsWidget.setVisible(not self.installationsWidget.isVisible()), self.showHideButton.setIcon(QIcon(getMedia("collapse"))) if self.installationsWidget.isVisible() else self.showHideButton.setIcon(QIcon(getMedia("expand")))))

@@ -1626,6 +1626,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
     
     def close(self):
         globals.installersWidget.removeItem(self)
+        super().destroy()
         super().close()
 
 class PackageUninstallerWidget(PackageInstallerWidget):
