@@ -1569,7 +1569,6 @@ class PackageInstallerWidget(QGroupBox):
         a.finished.connect(self.close)
         a.start()
         
-
     def close(self):
         globals.installersWidget.removeItem(self)
         super().close()
@@ -1787,6 +1786,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     def close(self):
         globals.installersWidget.removeItem(self)
         super().close()
+        super().destroy()
 
 class PackageInfoPopupWindow(QMainWindow):
     onClose = Signal()
