@@ -303,24 +303,24 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, title: str, id: str, store: str) -> None:
-        if("…" in title):
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
-        else:
+        if("…" in id):
             self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
+        else:
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
     def fastinstall(self, title: str, id: str, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         if not "scoop" in id:
-            if("…" in title):
-                self.addInstallation(PackageInstallerWidget(title, "winget", useId=True, packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
-            else:
+            if ("…" in id):
                 self.addInstallation(PackageInstallerWidget(title, "winget", packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
-        else:
-            if("…" in title):
-                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
             else:
+                self.addInstallation(PackageInstallerWidget(title, "winget", useId=True, packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
+        else:
+            if ("…" in id):
                 self.addInstallation(PackageInstallerWidget(title, "scoop", packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
+            else:
+                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -741,22 +741,22 @@ class UpdateSoftwareSection(QWidget):
                         pass
         else:
             if not "scoop" in id:
-                if("…" in title or " " in title):
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
-                else:
+                if ("…" in id):
                     self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
-            else:
-                if("…" in title):
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
                 else:
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
+            else:
+                if ("…" in id):
                     self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
-            
+                else:
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+     
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        if("…" in title):
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True, packageItem=packageItem)
-        else:
+        if("…" in id):
             self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store, update=True, packageItem=packageItem)
+        else:
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
     
@@ -1428,6 +1428,7 @@ class PackageInstallerWidget(QGroupBox):
                 self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--id", f"{self.packageId}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             else:
                 self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            print(self.p.args)
             self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
@@ -2110,9 +2111,9 @@ class PackageInfoPopupWindow(QMainWindow):
             version = ["--version", self.versionCombo.currentText()]
             print(f"[  WARN  ] Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem)
+            p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         else:
-            p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem)
+            p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         self.addProgram.emit(p)
         self.close()
 

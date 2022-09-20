@@ -351,7 +351,7 @@ class DynamicScrollArea(QWidget):
         if self.w.sizeHint().height() >= self.maxHeight:
             self.setFixedHeight(self.maxHeight)
         else:
-            self.setFixedHeight(self.w.sizeHint().height()+10 if self.w.sizeHint().height() > 0 else 4)
+            self.setFixedHeight(self.w.sizeHint().height()+20 if self.w.sizeHint().height() > 0 else 4)
 
     def removeItem(self, item: QWidget):
         self.vlayout.removeWidget(item)

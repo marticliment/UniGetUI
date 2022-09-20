@@ -137,7 +137,8 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
 
 def getInfo(signal: Signal, title: str, id: str, goodTitle: bool) -> None:
     if not(goodTitle):
-        print(f"[   OK   ] Acquiring title for id \"{title}\"")
+        p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        """print(f"[   OK   ] Acquiring title for id \"{title}\"")
         p = subprocess.Popen([winget, "search", f"{title}"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
         while p.poll() is None:
@@ -148,9 +149,12 @@ def getInfo(signal: Signal, title: str, id: str, goodTitle: bool) -> None:
         try:
             title = output[-1][0:output[0].split("\r")[-1].index("Id")].strip()
         except:
-            pass
-    print(f"[   OK   ] Starting get info for title {title}")
-    p = subprocess.Popen([winget, "show", f"{title}"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+            pass"""
+        print(f"[   OK   ] Starting get info for id {id}")
+    else:
+        p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        print(f"[   OK   ] Starting get info for title {title}")
+
     output = []
     appInfo = {
         "title": title,
