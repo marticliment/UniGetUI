@@ -82,7 +82,7 @@ class DiscoverSoftwareSection(QWidget):
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Discover packages")
-        self.discoverLabel.setStyleSheet("font-size: 40px;")
+        self.discoverLabel.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
         v.addWidget(self.discoverLabel)
 
         hLayout.addLayout(v)
@@ -421,7 +421,7 @@ class UpdateSoftwareSection(QWidget):
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Available updates")
-        self.discoverLabel.setStyleSheet("font-size: 40px;")
+        self.discoverLabel.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
         v.addWidget(self.discoverLabel)
 
         hLayout.addLayout(v)
@@ -863,7 +863,7 @@ class UninstallSoftwareSection(QWidget):
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Installed packages")
-        self.discoverLabel.setStyleSheet("font-size: 40px;")
+        self.discoverLabel.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
         v.addWidget(self.discoverLabel)
 
         hLayout.addLayout(v)

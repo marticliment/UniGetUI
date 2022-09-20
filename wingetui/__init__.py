@@ -450,7 +450,7 @@ try:
     * {{
         background-color: transparent;
         color: #eeeeee;
-        font-family: "Segoe UI Variable Display semib";
+        font-family: "Segoe UI Variable Text";
         outline: none;
     }}
     #micawin,QInputDialog {{
@@ -543,7 +543,7 @@ try:
         border-radius: 6px;
         border: 1px solid rgba(86, 86, 86, 25%);
         height: 25px;
-        font-size: 10pt;
+        font-size: 9pt;
         border-top: 1px solid rgba(99, 99, 99, 25%);
         margin: 0px;
     }}
@@ -553,7 +553,7 @@ try:
         border-radius: 6px;
         border: 0px solid rgba(255, 255, 255, 1%);
         height: 25px;
-        font-size: 10pt;
+        font-size: 9pt;
         border-top: 0px solid rgba(255, 255, 255, 1%);
     }}
     QPushButton:hover {{
@@ -569,8 +569,10 @@ try:
         border-radius: 6px;
         border: 0px solid transparent;
         height: 25px;
-        font-size: 10pt;
+        font-size: 9pt;
         margin: 0px;
+        font-family: "Segoe UI Variable Display Semib";
+        font-size: 9pt;
     }}
     #Headerbutton:hover {{
         background-color:rgba(100, 100, 100, 12%);
@@ -613,7 +615,7 @@ try:
     }}
     QLineEdit {{
         background-color: rgba(81, 81, 81, 25%);
-        font-family: "Segoe UI Variable Display";
+        font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         width: 300px;
         padding: 5px;
@@ -623,7 +625,7 @@ try:
     }}
     QLineEdit:disabled {{
         background-color: rgba(81, 81, 81, 25%);
-        font-family: "Segoe UI Variable Display";
+        font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         width: 300px;
         padding: 5px;
@@ -912,7 +914,7 @@ try:
         padding: 2px;
         outline: 0px;
         color: white;
-        background: #262626;
+        font-family: "Segoe UI Variable Text";
         border-radius: 8px;
     }}
     QMenu::separator {{
@@ -941,6 +943,16 @@ try:
         padding-left: 10px;
         border-radius: 4px;
     }}  
+    QMenu::item:disabled{{
+        background: transparent;
+        height: 30px;
+        outline: none;
+        border: none;
+        color: grey;
+        padding-right: 10px;
+        padding-left: 10px;
+        border-radius: 4px;
+    }}
     QMenu::item:selected:disabled{{
         background: transparent;
         height: 30px;
@@ -955,7 +967,7 @@ try:
     * {{
         background-color: transparent;
         color: #000000;
-        font-family: "Segoe UI Variable Display";
+        font-family: "Segoe UI Variable Text";
         outline: none;
     }}
     #micawin,QInputDialog {{
@@ -1040,7 +1052,7 @@ try:
         border-top: 1px solid rgba(220, 220, 220, 75%);
         border-radius: 6px;
         height: 25px;
-        font-size: 10pt;
+        font-size: 9pt;
         margin: 0px;
     }}
     #FlatButton {{
@@ -1049,7 +1061,7 @@ try:
         border-radius: 6px;
         border: 0px solid rgba(255, 255, 255, 1%);
         height: 25px;
-        font-size: 10pt;
+        font-size: 9pt;
         border-top: 0px solid rgba(255, 255, 255, 1%);
     }}
     QPushButton:hover {{
@@ -1089,8 +1101,10 @@ try:
         border-radius: 6px;
         border: 0px solid transparent;
         height: 25px;
-        font-size: 10pt;
+        font-size: 9pt;
         margin: 0px;
+        font-family: "Segoe UI Variable Display";
+        font-size: 9pt;
     }}
     #Headerbutton:hover {{
         background-color:rgba(240, 240, 240, 12%);
@@ -1109,7 +1123,7 @@ try:
     }}
     QLineEdit {{
         background-color: rgba(255, 255, 255, 25%);
-        font-family: "Segoe UI Variable Display";
+        font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         width: 300px;
         color: black;
@@ -1120,7 +1134,7 @@ try:
     }}
     QLineEdit:disabled {{
         background-color: rgba(255, 255, 255, 25%);
-        font-family: "Segoe UI Variable Display";
+        font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         width: 300px;
         padding: 5px;
@@ -1397,7 +1411,7 @@ try:
         border-radius: 8px;
     }}
     QMenu {{
-        font-family: "Segoe UI Variable Display";
+        font-family: "Segoe UI Variable Text";
         border: 1px solid rgb(200, 200, 200);
         padding: 2px;
         outline: 0px;
