@@ -544,6 +544,7 @@ class QAnnouncements(QLabel):
         self.w = QWidget()
         self.w.setObjectName("backgroundWindow")
         self.w.setLayout(layout)
+        self.pictureLabel.setText("Loading media...")
         self.w.setContentsMargins(0, 0, 0, 0)
         self.area.setWidget(self.w)
         l = QVBoxLayout()
@@ -571,7 +572,6 @@ class QAnnouncements(QLabel):
             self.callInMain.emit(lambda: self.setTtext(""))
             announcement_body = response.split("////")[0].strip().replace("http://", "ignore:").replace("https://", "ignoreSecure:").replace("linkId", "http://somepythonthings.tk/redirect/").replace("linkColor", f"rgb({getColors()[2 if isDark() else 4]})")
             self.callInMain.emit(lambda: self.textLabel.setText(announcement_body))
-            self.callInMain.emit(lambda: self.pictureLabel.setText("Loading media..."))
             announcement_image_url = response.split("////")[1].strip()
             try:
                 response = urlopen(announcement_image_url)
