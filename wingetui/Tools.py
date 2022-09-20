@@ -294,6 +294,12 @@ class CustomLineEdit(QLineEdit):
         self.textChanged.connect(self.updateTextColor)
         self.updateTextColor(self.text())
 
+    def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
+        m = self.createStandardContextMenu()
+        m.setContentsMargins(0, 0, 0, 0)
+        ApplyMenuBlur(m.winId(), m)
+        m.exec(arg__1.globalPos())
+
     def updateTextColor(self, text: str) -> None:
         if text == "":
             self.startStyleSheet = super().styleSheet()

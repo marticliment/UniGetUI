@@ -458,7 +458,6 @@ try:
         color: red;
     }}
     QMenu {{
-        border: 1px solid rgb(60, 60, 60);
         padding: 2px;
         outline: 0px;
         color: white;
@@ -481,6 +480,16 @@ try:
         padding-left: 10px;
         border-radius: 4px;
         margin: 2px;
+    }} 
+    QMenu::item:disabled{{
+        background: transparent;
+        height: 30px;
+        color: grey;
+        outline: none;
+        border: none;
+        padding-right: 10px;
+        padding-left: 10px;
+        border-radius: 4px;
     }}
     QMenu::item:selected{{
         background: rgba(255, 255, 255, 10%);
@@ -900,61 +909,45 @@ try:
         menu-scrollable: 1;
     }}
     QMenu {{
-        font-family: "Segoe UI Variable Display Semib";
-        border: 1px solid #111111;
         padding: 2px;
         outline: 0px;
         color: white;
-        icon-size: 32px;
-        background: rgba(0, 0, 0, 0.01%);
+        background: #262626;
         border-radius: 8px;
     }}
     QMenu::separator {{
-        margin: -2px;
-        margin-top: 2px;
-        margin-bottom: 2px;
+        margin: 2px;
         height: 1px;
-        background-color: rgba(255, 255, 255, 20%);
+        background: rgb(60, 60, 60);
     }}
-    QMenu::icon {{
-        padding-left: 10px;
+    QMenu::icon{{
         padding-left: 10px;
     }}
-    QMenu::item {{
+    QMenu::item{{
         height: 30px;
         border: none;
         background: transparent;
-        padding-right: 20px;
-        padding-left: 0px;
+        padding-right: 10px;
+        padding-left: 10px;
         border-radius: 4px;
         margin: 2px;
     }}
-    QMenu::item:selected {{
-        background: rgba(255, 255, 255, 6%);
+    QMenu::item:selected{{
+        background: rgba(255, 255, 255, 10%);
         height: 30px;
         outline: none;
         border: none;
-        padding-right: 20px;
-        padding-left: 0px;
+        padding-right: 10px;
+        padding-left: 10px;
         border-radius: 4px;
-    }}
-    QMenu::item:disabled {{
-        background: transparent;
-        height: 30px;
-        outline: none;
-        color: grey;
-        border: none;
-        padding-right: 20px;
-        padding-left: 0px;
-        border-radius: 4px;
-    }}
-    QMenu::item:selected:disabled {{
+    }}  
+    QMenu::item:selected:disabled{{
         background: transparent;
         height: 30px;
         outline: none;
         border: none;
-        padding-right: 20px;
-        padding-left: 0px;
+        padding-right: 10px;
+        padding-left: 10px;
         border-radius: 4px;
     }}"""
 

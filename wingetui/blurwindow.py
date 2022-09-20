@@ -57,10 +57,10 @@ def ExtendFrameIntoClientArea(hwnd):
 
     DwmExtendFrameIntoClientArea = dwm.DwmExtendFrameIntoClientArea
     m = _MARGINS()
-    m.cxLeftWidth = 0
-    m.cxRightWidth = 0
-    m.cyTopHeight = 0
-    m.cyBottomHeight = 25
+    m.cxLeftWidth = -1
+    m.cxRightWidth = -1
+    m.cyTopHeight = -1
+    m.cyBottomHeight = -1
     return DwmExtendFrameIntoClientArea(hwnd, m)
 
 def HEXtoRGBAint(HEX:str):
