@@ -11,12 +11,14 @@ from urllib.request import urlopen
 
 import globals
 
+
+
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
 errbuffer = io.StringIO()
-#sys.stdout = buffer = io.StringIO()
-#sys.stderr = errbuffer = io.StringIO()
+sys.stdout = buffer = io.StringIO()
+sys.stderr = errbuffer = io.StringIO()
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -26,6 +28,13 @@ else:
 sudoPath = os.path.join(os.path.join(realpath, "sudo"), "gsudo.exe")
 sudoLocation = os.path.dirname(sudoPath)
 
+
+def report(exception) -> None: # Exception reporter
+    import traceback
+    for line in traceback.format_exception(*sys.exc_info()):
+        print("🔴 "+line)
+        print("🔴 "+line, file=old_stdout)
+    print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
 settingsCache = {}
 version = 1.31
@@ -356,17 +365,16 @@ class DynamicScrollArea(QWidget):
     def removeItem(self, item: QWidget):
         self.vlayout.removeWidget(item)
         self.rss()
-        self.itemCount -= 1
+        self.itemCount = self.vlayout.count()
         if self.itemCount <= 0:
-            self.itemCount += 0
             globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
             self.showHideArrow.hide()
 
     def addItem(self, item: QWidget):
         self.vlayout.addWidget(item)
-        self.itemCount += 1
+        self.itemCount = self.vlayout.count()
         self.showHideArrow.show()
-        globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
+        globals.trayIcon.setIcon(QIcon(getMedia("icon")))
 
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction

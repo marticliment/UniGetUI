@@ -178,6 +178,8 @@ try:
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Locating winget..."))
                 o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
+                print(o.stdout)
+                print(o.stderr)
                 globals.componentStatus["wingetFound"] = o.returncode == 0
                 globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Winget found: {globals.componentStatus['wingetFound']}"))
@@ -198,6 +200,8 @@ try:
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Locating scoop..."))
                 o = subprocess.run(f"powershell -Command scoop -v", shell=True, stdout=subprocess.PIPE)
+                print(o.stdout)
+                print(o.stderr)
                 globals.componentStatus["scoopFound"] = o.returncode == 0
                 globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
                 self.callInMain.emit(lambda: self.loadingText.setText(f"Scoop found: {globals.componentStatus['scoopFound']}"))

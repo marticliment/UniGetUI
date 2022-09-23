@@ -17,7 +17,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            if(counter > 1):
+            if(counter > 0):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
@@ -29,7 +29,9 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                     while l.split("Id")[1].split(" ")[i] == "":
                         verSeparator += 1
                         i += 1
-                counter += 1
+                    counter += 1
+    print(p.stdout)
+    print(p.stderr)
     if p.returncode != 0 and not noretry:
         time.sleep(1)
         print(p.returncode)
@@ -46,9 +48,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                     element = str(element, "utf-8")
                     signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
                 except Exception as e:
-                    print(type(e), str(e))
-                except Exception as e:
-                    print(e)
+                    report(e)
         print("[   OK   ] Winget search finished")
         finishSignal.emit("winget")  # type: ignore
 
@@ -62,7 +62,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()  # type: ignore
         line = line.strip()
         if line:
-            if(counter > 1):
+            if(counter > 0):
                 if not b"upgrades available" in line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
@@ -73,7 +73,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                     idSeparator = len(l.split("Id")[0])
                     verSeparator = len(l.split("Version")[0])
                     newVerSeparator = len(l.split("Available")[0])
-                counter += 1
+                    counter += 1
     
     if p.returncode != 0 and not noretry:
         time.sleep(1)
@@ -91,9 +91,9 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                     element = str(element, "utf-8")
                     signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
                 except Exception as e:
-                    print(type(e), str(e))
+                    report(e)
                 except Exception as e:
-                    print(e)
+                    report(e)
         print("[   OK   ] Winget search finished")
         finishSignal.emit("winget")
 
@@ -107,7 +107,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            if(counter > 2 and not b"---" in line):
+            if(counter > 0 and not b"---" in line):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
@@ -115,10 +115,12 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
                     verSeparator = len(l.split("Version")[0])
-                counter += 1
+                    counter += 1
     counter = 0
     emptyStr = ""
     wingetName = "Winget"
+    print(p.stdout)
+    print(output)
     for element in output:
         try:
             element = bytes(element, "utf-8")
@@ -129,9 +131,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 element = str(element, "utf-8")
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
             except Exception as e:
-                print(type(e), str(e))
-            except Exception as e:
-                print(e)
+                report(e)
     print("[   OK   ] Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 

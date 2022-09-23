@@ -893,7 +893,6 @@ class UninstallSoftwareSection(QWidget):
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(3, QHeaderView.Fixed)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(0), item.text(1), packageItem=item))
 
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -1503,7 +1502,7 @@ class PackageInstallerWidget(QGroupBox):
                     msgBox.setIcon(MessageBox.Information)
                     msgBox.exec_()
             else:
-                globals.trayIcon.setIcon(QIcon(getMedia("redicon"))) 
+                globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
@@ -1753,7 +1752,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     msgBox.setIcon(MessageBox.Information)
                     msgBox.exec_()
             else:
-                globals.trayIcon.setIcon(QIcon(getMedia("redicon"))) 
+                globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
