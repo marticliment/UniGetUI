@@ -894,6 +894,11 @@ try:
         background-color: #212121;
         font-family: "Consolas";
     }}
+    QToolTip {{
+        background-color: #303030;
+        border: 1px solid #202020;
+        border-radius: 0px;
+    }}
     """
 
     menuDarkCSS = f"""

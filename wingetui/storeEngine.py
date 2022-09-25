@@ -148,7 +148,7 @@ class DiscoverSoftwareSection(QWidget):
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(2, QHeaderView.Fixed)
         header.setSectionResizeMode(3, QHeaderView.Fixed)
-        self.packageList.setColumnWidth(2, 100)
+        self.packageList.setColumnWidth(2, 150)
         self.packageList.setColumnWidth(3, 150)
         
         self.loadingProgressBar = QProgressBar()
@@ -276,7 +276,7 @@ class DiscoverSoftwareSection(QWidget):
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:
-            item = QTreeWidgetItem()
+            item = TreeWidgetItemWithQAction()
             item.setText(0, name)
             item.setText(1, id)
             item.setIcon(0, self.installIcon)

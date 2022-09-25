@@ -17,8 +17,8 @@ old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
 errbuffer = io.StringIO()
-sys.stdout = buffer = io.StringIO()
-sys.stderr = errbuffer = io.StringIO()
+#sys.stdout = buffer = io.StringIO()
+#sys.stderr = errbuffer = io.StringIO()
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -388,8 +388,13 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
         return self.itemAction
 
     def setHidden(self, hide: bool) -> None:
-        self.itemAction.setVisible(not hide)
+        if self.itemAction != QAction:
+            self.itemAction.setVisible(not hide)
         return super().setHidden(hide)
+    
+    def setText(self, column: int, text: str) -> None:
+        self.setToolTip(column, text)
+        return super().setText(column, text)
 
 class ErrorMessage(QWidget):
     showerr = Signal(dict, bool)
