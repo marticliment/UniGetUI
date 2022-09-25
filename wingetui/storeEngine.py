@@ -657,9 +657,6 @@ class UpdateSoftwareSection(QWidget):
                     count += 1
                     lastVisibleItem = self.packageList.topLevelItem(i)
             self.countLabel.setText("Found packages: "+str(count))
-            if count == 0:
-                self.reload()
-                return
             self.packageList.label.setText(str(count))
             if not getSettings("DisableUpdatesNotifications"):
                 if count > 1:
