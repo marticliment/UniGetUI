@@ -71,6 +71,8 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     counter = 0
     lc = getSettings("LowercaseScoopApps")
     for element in output:
+        if "WARN" in output:
+            continue
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
         except IndexError as e:
