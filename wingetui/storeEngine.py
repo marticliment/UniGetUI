@@ -533,11 +533,25 @@ class UpdateSoftwareSection(QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
+        def blacklistSelectedPackages():
+            for i in range(self.packageList.topLevelItemCount()):
+                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                if not program.isHidden():
+                    try:
+                        if self.packageList.itemWidget(program, 0).isChecked():
+                            setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+program.text(2)+",")
+                            program.setHidden(True)
+                    except AttributeError:
+                        pass
+
         h2Layout = QHBoxLayout()
         h2Layout.setContentsMargins(27, 0, 27, 0)
         self.upgradeAllButton = QPushButton("Upgrade all packages")
         self.upgradeAllButton.setFixedWidth(200)
         self.upgradeAllButton.clicked.connect(lambda: self.update("", "", all=True))
+        self.blacklistButton = QPushButton("Blacklist selected packages")
+        self.blacklistButton.setFixedWidth(200)
+        self.blacklistButton.clicked.connect(lambda: blacklistSelectedPackages())
         self.upgradeSelected = QPushButton("Upgrade selected packages")
         self.upgradeSelected.clicked.connect(lambda: self.update("", "", selected=True))
         self.upgradeSelected.setFixedWidth(200)
@@ -560,6 +574,7 @@ class UpdateSoftwareSection(QWidget):
 
         h2Layout.addWidget(self.upgradeAllButton)
         h2Layout.addWidget(self.upgradeSelected)
+        h2Layout.addWidget(self.blacklistButton)
         h2Layout.addStretch()
         h2Layout.addWidget(self.showUnknownSection)
 
