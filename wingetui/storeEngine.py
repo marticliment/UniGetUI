@@ -1206,6 +1206,10 @@ class AboutSection(QScrollArea):
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
         scoopPreventCaps.clicked.connect(lambda v: setSettings("LowercaseScoopApps", bool(v)))
         self.layout.addWidget(scoopPreventCaps)
+        dontUseBuiltInGsudo = QCheckBox("Use installed GSudo instead of the bundled one (requires app restart)")
+        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
+        dontUseBuiltInGsudo.clicked.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        self.layout.addWidget(dontUseBuiltInGsudo)
         self.layout.addWidget(QLabel())
         disableWinget = QCheckBox("Disable Winget")
         disableWinget.setChecked(getSettings("DisableWinget"))
@@ -1619,6 +1623,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
+            print(self.adminstr)
             if self.useId:
                 self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--id", f"{self.packageId}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             else:

@@ -1,4 +1,5 @@
 from ast import Attribute
+import shutil
 import winreg
 import io
 from threading import Thread
@@ -25,8 +26,6 @@ if hasattr(sys, 'frozen'):
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
-sudoPath = os.path.join(os.path.join(realpath, "sudo"), "gsudo.exe")
-sudoLocation = os.path.dirname(sudoPath)
 
 
 def report(exception) -> None: # Exception reporter
@@ -102,7 +101,10 @@ def setSettingsValue(s: str, v: str):
     except Exception as e:
         print(e)
 
-
+sudoPath = os.path.join(os.path.join(realpath, "sudo"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
+sudoLocation = os.path.dirname(sudoPath)
+print(sudoPath)
+print(sudoLocation)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
