@@ -11,7 +11,7 @@ import globals
 class DiscoverSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
-    hideLoadingWheel = Signal(str)
+    finishLoading = Signal(str)
     clearList = Signal()
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
@@ -106,7 +106,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
 
         def showMenu(pos: QPoint):
             contextMenu = QMenu(self)
@@ -118,16 +118,16 @@ class DiscoverSoftwareSection(QWidget):
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction("Install")
             ins1.setIcon(QIcon(getMedia("performinstall")))
-            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1)))
+            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3)))
             ins2 = QAction("Run as administrator")
             ins2.setIcon(QIcon(getMedia("runasadmin")))
-            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), admin=True))
+            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True))
             ins3 = QAction("Skip hash check")
             ins3.setIcon(QIcon(getMedia("checksum")))
-            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), skiphash=True))
+            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), skiphash=True))
             ins4 = QAction("Interactive installation")
             ins4.setIcon(QIcon(getMedia("interactive")))
-            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), interactive=True))
+            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -187,7 +187,7 @@ class DiscoverSoftwareSection(QWidget):
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
 
-        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
+        self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
@@ -203,11 +203,11 @@ class DiscoverSoftwareSection(QWidget):
         self.providerIcon = QIcon(getMedia("provider"))
 
         if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.wingetLoaded = True
         if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
         print("[   OK   ] Discover tab loaded")
@@ -245,7 +245,7 @@ class DiscoverSoftwareSection(QWidget):
         
         self.leftSlow.start()
         
-    def hideLoadingWheelIfNeeded(self, store: str) -> None:
+    def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
@@ -310,8 +310,8 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
-    def fastinstall(self, title: str, id: str, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
-        if not "scoop" in id:
+    def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+        if not "scoop" in store.lower():
             if ("…" in id):
                 self.addInstallation(PackageInstallerWidget(title, "winget", packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
             else:
@@ -334,11 +334,11 @@ class DiscoverSoftwareSection(QWidget):
         self.countLabel.setText("Searching for packages...")
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.wingetLoaded = True
         if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
     
@@ -348,7 +348,7 @@ class DiscoverSoftwareSection(QWidget):
 class UpdateSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str, str)
-    hideLoadingWheel = Signal(str)
+    finishLoading = Signal(str)
     clearList = Signal()
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
@@ -448,7 +448,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(1), item.text(2), packageItem=item))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(1), item.text(2), item.text(5), packageItem=item))
         
         def showMenu(pos: QPoint):
             contextMenu = QMenu(self)
@@ -460,16 +460,16 @@ class UpdateSoftwareSection(QWidget):
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction("Update")
             ins1.setIcon(QIcon(getMedia("menu_updates")))
-            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem()))
+            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
             ins2 = QAction("Run as administrator")
             ins2.setIcon(QIcon(getMedia("runasadmin")))
-            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem(), admin=True))
+            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
             ins3 = QAction("Skip hash check")
             ins3.setIcon(QIcon(getMedia("checksum")))
-            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem(), skiphash=True))
+            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
             ins4 = QAction("Interactive update")
             ins4.setIcon(QIcon(getMedia("interactive")))
-            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), packageItem=self.packageList.currentItem(), interactive=True))
+            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -569,7 +569,7 @@ class UpdateSoftwareSection(QWidget):
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
 
-        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
+        self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
@@ -587,11 +587,11 @@ class UpdateSoftwareSection(QWidget):
 
         self.blacklist = getSettingsValue("BlacklistedUpdates")
         if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=wingetHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.wingetLoaded = True
         if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
         print("[   OK   ] Upgrades tab loaded")
@@ -628,7 +628,7 @@ class UpdateSoftwareSection(QWidget):
         
         self.leftSlow.start()
 
-    def hideLoadingWheelIfNeeded(self, store: str) -> None:
+    def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
@@ -657,6 +657,9 @@ class UpdateSoftwareSection(QWidget):
                     count += 1
                     lastVisibleItem = self.packageList.topLevelItem(i)
             self.countLabel.setText("Found packages: "+str(count))
+            if count == 0:
+                self.reload()
+                return
             self.packageList.label.setText(str(count))
             if not getSettings("DisableUpdatesNotifications"):
                 if count > 1:
@@ -724,7 +727,7 @@ class UpdateSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+    def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         if all:
             for i in range(self.packageList.topLevelItemCount()):
                 program: QTreeWidgetItem = self.packageList.topLevelItem(i)
@@ -740,7 +743,7 @@ class UpdateSoftwareSection(QWidget):
                     except AttributeError:
                         pass
         else:
-            if not "scoop" in id:
+            if not "scoop" in store.lower():
                 if ("…" in id):
                     self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
                 else:
@@ -776,11 +779,11 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.label.setText(self.countLabel.text())
         self.blacklist = getSettingsValue("BlacklistedUpdates")
         if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=wingetHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.wingetLoaded = True
         if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
     
@@ -790,7 +793,7 @@ class UpdateSoftwareSection(QWidget):
 class UninstallSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
-    hideLoadingWheel = Signal(str)
+    finishLoading = Signal(str)
     clearList = Signal()
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
@@ -969,7 +972,7 @@ class UninstallSoftwareSection(QWidget):
         self.addProgram.connect(self.addItem)
         self.clearList.connect(self.packageList.clear)
 
-        self.hideLoadingWheel.connect(self.hideLoadingWheelIfNeeded)
+        self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
@@ -987,11 +990,11 @@ class UninstallSoftwareSection(QWidget):
         
     
         if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.wingetLoaded = True
         if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
         print("[   OK   ] Discover tab loaded")
@@ -1038,7 +1041,7 @@ class UninstallSoftwareSection(QWidget):
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
 
-    def hideLoadingWheelIfNeeded(self, store: str) -> None:
+    def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
@@ -1123,11 +1126,11 @@ class UninstallSoftwareSection(QWidget):
         self.countLabel.setText("Searching for installed packages...")
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.wingetLoaded = True
         if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.hideLoadingWheel), daemon=True).start()
+            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
         for action in globals.trayMenuInstalledList.actions():
@@ -1635,7 +1638,11 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         if returncode == 0 and not self.canceled:
             print(self.packageItem)
             if self.packageItem:
-                self.packageItem.setHidden(True)
+                try:
+                    i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
+                    del i
+                except Exception as e:
+                    report(e)
         return super().finish(returncode, output)
     
     def close(self):
@@ -1737,7 +1744,11 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode == 0 and not self.canceled:
             if self.packageItem:
-                self.packageItem.setHidden(True)
+                try:
+                    i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
+                    del i
+                except Exception as e:
+                    report(e)
         self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         removeProgram(self.installId)

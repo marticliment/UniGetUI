@@ -396,6 +396,9 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
         self.setToolTip(column, text)
         return super().setText(column, text)
 
+    def treeWidget(self) -> TreeWidget:
+        return super().treeWidget()
+
 class ErrorMessage(QWidget):
     showerr = Signal(dict, bool)
     fHeight = 100
