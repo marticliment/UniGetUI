@@ -532,6 +532,31 @@ class ErrorMessage(QWidget):
             globals.app.beep()
 
 
+class QLinkLabel(QLabel):
+    def __init__(self, text: str = "", stylesheet: str = ""):
+        super().__init__(text)
+        self.setStyleSheet(stylesheet)
+        self.setTextFormat(Qt.RichText)
+        self.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.setWordWrap(True)
+        self.setOpenExternalLinks(True)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showmenu)
+        self.lineedit = QLineEdit(self)
+        self.lineedit.hide()
+        self.lineedit.setReadOnly(True)
+
+    def setText(self, text: str) -> None:
+        super().setText(text)
+
+    def showmenu(self, pos: QPoint) -> None:
+        self.lineedit.setText(self.selectedText())
+        self.lineedit.selectAll()
+        c = QLineEdit.createStandardContextMenu(self.lineedit)
+        ApplyMenuBlur(c.winId().__int__(), c)
+        c.exec(QCursor.pos())
+
+
 class QAnnouncements(QLabel):
     callInMain = Signal(object)
 

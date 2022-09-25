@@ -618,6 +618,7 @@ try:
         border-radius: 6px;
         border: 0.6px solid rgba(86, 86, 86, 25%);
         border-bottom: 2px solid rgb({colors[4]});
+        selection-background-color: rgb({colors[2]});
     }}
     QLineEdit:disabled {{
         background-color: rgba(81, 81, 81, 25%);
@@ -628,7 +629,9 @@ try:
         border-radius: 6px;
         border: 0.6px solid rgba(86, 86, 86, 25%);
     }}
-
+    QLabel{{
+        selection-background-color: rgb({colors[2]});
+    }}
     QScrollBar:vertical {{
         background: transparent;
         border: 1px solid #1f1f1f;
@@ -1402,6 +1405,9 @@ try:
         color: black;
         background-color: #ffffff;
         font-family: "Consolas";
+    }}
+    QLabel{{
+        selection-background-color: rgb({colors[3]});
     }}
     """
 

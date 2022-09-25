@@ -1324,15 +1324,6 @@ class AboutSection(QScrollArea):
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
     
-class QLinkLabel(QLabel):
-    def __init__(self, text: str = "", stylesheet: str = ""):
-        super().__init__(text)
-        self.setStyleSheet(stylesheet)
-        self.setTextFormat(Qt.RichText)
-        self.setTextInteractionFlags(Qt.TextBrowserInteraction)
-        self.setWordWrap(True)
-        self.setOpenExternalLinks(True)
-
 class QInfoProgressDialog(QProgressDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -1863,7 +1854,7 @@ class PackageInfoPopupWindow(QMainWindow):
         
         self.vLayout = QVBoxLayout()
         self.layout = QVBoxLayout()
-        self.title = QLabel()
+        self.title = QLinkLabel()
         self.title.setStyleSheet("font-size: 40px;")
         self.title.setText("Loading...")
 
@@ -1881,7 +1872,7 @@ class PackageInfoPopupWindow(QMainWindow):
 
         self.hLayout = QHBoxLayout()
         self.oLayout = QHBoxLayout()
-        self.description = QLabel("Description: Unknown")
+        self.description = QLinkLabel("Description: Unknown")
         self.description.setWordWrap(True)
 
         self.layout.addWidget(self.description)
@@ -1891,12 +1882,12 @@ class PackageInfoPopupWindow(QMainWindow):
 
         self.layout.addWidget(self.homepage)
 
-        self.publisher = QLabel("Publisher: Unknown")
+        self.publisher = QLinkLabel("Publisher: Unknown")
         self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
-        self.author = QLabel("Author: Unknown")
+        self.author = QLinkLabel("Author: Unknown")
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
@@ -1909,7 +1900,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.layout.addStretch()
         
         hLayout = QHBoxLayout()
-        self.versionLabel = QLabel("Version: ")
+        self.versionLabel = QLinkLabel("Version: ")
 
         
         class QComboBoxWithFluentMenu(QComboBox):

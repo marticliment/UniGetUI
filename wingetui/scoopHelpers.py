@@ -14,8 +14,8 @@ def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
         line = line.strip()
         if line:
             if(counter > 1 and not b"---" in line):
-                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
-                #print(line, ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+                output.append(ansi_escape.sub('',                 #print(line, ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+str(line, encoding='utf-8', errors="ignore")))
             else:
                 counter += 1
     counter = 0
@@ -72,6 +72,8 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     lc = getSettings("LowercaseScoopApps")
     for element in output:
         if "WARN" in output:
+            continue
+        if "fatal" in output:
             continue
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
