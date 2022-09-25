@@ -190,7 +190,7 @@ try:
             try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
-                    o = subprocess.run(f"{wingetHelpers.winget} upgrade {' '.join(wingetHelpers.common_params)}", shell=True, stdout=subprocess.PIPE)
+                    o = subprocess.run(f"{wingetHelpers.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
                     self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
             except Exception as e:
                 print(e)

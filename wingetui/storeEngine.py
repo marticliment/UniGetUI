@@ -358,9 +358,11 @@ class UpdateSoftwareSection(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    callInMain = Signal(object)
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
+        self.callInMain.connect(lambda f: f())
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.infobox = PackageInfoPopupWindow(self)
@@ -681,7 +683,7 @@ class UpdateSoftwareSection(QWidget):
             self.filter()
             self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
-                Thread(target=lambda: (time.sleep(3600), self.reload()), daemon=True, name="AutoCheckForUpdates Thread").start()
+                Thread(target=lambda: (time.sleep(3600), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
             print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
@@ -769,6 +771,19 @@ class UpdateSoftwareSection(QWidget):
             self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+
+    def reloadSources(self):
+        print("Reloading sources...")
+        try:
+            o1 = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
+            print("Updated scoop packages with result", o1.returncode)
+            o2 = subprocess.run(f"{wingetHelpers.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
+            print("Updated Winget packages with result", o2.returncode)
+            print(o1.stdout)
+            print(o2.stdout)
+        except Exception as e:
+            report(e)
+        self.callInMain.emit(self.reload)
     
     def reload(self) -> None:
         self.scoopLoaded = False
