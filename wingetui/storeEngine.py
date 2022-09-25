@@ -109,6 +109,10 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
 
         def showMenu(pos: QPoint):
+            if not self.packageList.currentItem():
+                return
+            if self.packageList.currentItem().isHidden():
+                return
             contextMenu = QMenu(self)
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
@@ -451,6 +455,10 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.update(item.text(1), item.text(2), item.text(5), packageItem=item))
         
         def showMenu(pos: QPoint):
+            if not self.packageList.currentItem():
+                return
+            if self.packageList.currentItem().isHidden():
+                return
             contextMenu = QMenu(self)
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
@@ -902,6 +910,10 @@ class UninstallSoftwareSection(QWidget):
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(0), item.text(1), item.text(3), packageItem=item))
         
         def showMenu(pos: QPoint):
+            if not self.packageList.currentItem():
+                return
+            if self.packageList.currentItem().isHidden():
+                return
             contextMenu = QMenu(self)
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
