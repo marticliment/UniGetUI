@@ -801,7 +801,7 @@ class UninstallSoftwareSection(QWidget):
         super().__init__(parent = parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = PackageInfoPopupWindow()
+        self.infobox = PackageInfoPopupWindow(self)
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
 
@@ -913,11 +913,17 @@ class UninstallSoftwareSection(QWidget):
             ins3 = QAction("Remove permanent data")
             ins3.setIcon(QIcon(getMedia("menu_close")))
             ins3.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem(), removeData=True))
+            ins4 = QAction("Show package info")
+            ins4.setIcon(QIcon(getMedia("info")))
+            ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), "scoop"))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
             if self.packageList.currentItem().text(3).lower() != "winget":
                 contextMenu.addAction(ins3)
+                contextMenu.addSeparator()
+                contextMenu.addAction(ins4)
+
             contextMenu.exec(QCursor.pos())
 
         self.packageList.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -1022,6 +1028,14 @@ class UninstallSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+
+    def openInfo(self, title: str, id: str, store: str) -> None:
+        if("…" in id):
+            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
+        else:
+            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
+        self.infobox.show()
+        ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
 
     def hideLoadingWheelIfNeeded(self, store: str) -> None:

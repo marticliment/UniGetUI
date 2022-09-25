@@ -22,7 +22,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
     lc = getSettings("LowercaseScoopApps")
     for element in output:
         try:
-            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
+            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
         except IndexError as e:
             print("IndexError: "+str(e))
     print("[   OK   ] Scoop search finished")
@@ -47,7 +47,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
         try:
             items = list(filter(None, element.split(" ")))
             if(len(items)>=2):
-                signal.emit(items[0] if lc else items[0].capitalize(), f"scoop.{items[0]}", items[1], "Scoop")
+                signal.emit(items[0] if lc else items[0].capitalize(), f"{items[0]}", items[1], "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
@@ -72,7 +72,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     lc = getSettings("LowercaseScoopApps")
     for element in output:
         try:
-            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"scoop.{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
+            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
