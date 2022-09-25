@@ -714,13 +714,15 @@ class UpdateSoftwareSection(QWidget):
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
-        print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
-        for item in self.packageList.findItems('', Qt.MatchContains, 0):
+        print(f"[   OK   ] Searching for stringg \"{self.query.text()}\"")
+        for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not(item in resultsFound):
                 item.setHidden(True)
+                item.treeWidget().itemWidget(item, 0).hide()
             else:
                 item.setHidden(False)
-        self.updatelist()
+                if item.text(3) == "Unknown":
+                    item.setHidden(not self.showUnknownSection.isChecked())
         self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
