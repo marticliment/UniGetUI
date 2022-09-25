@@ -36,8 +36,8 @@ def report(exception) -> None: # Exception reporter
     print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
 settingsCache = {}
-version = 1.31
-versionName = "1.3.1"
+version = 1.39
+versionName = "1.4.0-beta"
 installersWidget = None
 updatesAvailable = False
 
