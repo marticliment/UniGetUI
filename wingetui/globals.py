@@ -47,3 +47,5 @@ darkCSS: str = ""
 discover: Section = None
 updates: Section = None
 uninstall: Section = None
+
+lastFocusedWindow: int = 0

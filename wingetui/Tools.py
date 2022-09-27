@@ -656,6 +656,18 @@ class QAnnouncements(QLabel):
     def setText(self, a: str) -> None:
         raise Exception("This member should not be used under any circumstances")
 
+def foregroundWindowThread():
+    """
+    This thread will periodically get the window focused by the user every 10 secs, so the tray icon can monitor wether the app should be shown or not.
+    """
+    import win32gui
+    while True:
+        fw = win32gui.GetForegroundWindow()
+        time.sleep(2)
+        globals.lastFocusedWindow = fw
+        time.sleep(8)
+
+Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
             
 
 if __name__ == "__main__":

@@ -206,25 +206,22 @@ class RootWindow(QMainWindow):
         return super().resizeEvent(event)
 
     def showWindow(self):
-        Thread(target=lambda:(time.sleep(1.1), self.callInMain.emit(self.showWindowIdNeeded)), daemon=True, name="ShowWindow Thread").start()
-
-    def showWindowIdNeeded(self):
-        if not self.window().isVisible():
+        if globals.lastFocusedWindow != self.winId():
             if not self.window().isMaximized():
-                #self.window().hide()
                 self.window().show()
                 self.window().showNormal()
             else:
-                #self.window().hide()
                 self.window().show()
                 self.window().showMaximized()
             self.window().setFocus()
             self.window().raise_()
             self.window().activateWindow()
             try:
-                self.widgets[self.updates].click()
+                if self.updates.countLabel.text() != "Found packages: 0":
+                    self.widgets[self.updates].click()
             except Exception as e:
                 report(e)
+            globals.lastFocusedWindow = self.winId()
         else:
             self.hide()
 
