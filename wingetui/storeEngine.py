@@ -1,3 +1,4 @@
+from struct import pack
 from xml.dom.minidom import Attr
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os
 from threading import Thread
@@ -106,7 +107,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3)) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
 
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
@@ -118,20 +119,20 @@ class DiscoverSoftwareSection(QWidget):
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
             inf = QAction("Show info")
-            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3)))
+            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction("Install")
             ins1.setIcon(QIcon(getMedia("performinstall")))
-            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3)))
+            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
             ins2 = QAction("Run as administrator")
             ins2.setIcon(QIcon(getMedia("runasadmin")))
-            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True))
+            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True, packageItem=self.packageList.currentItem()))
             ins3 = QAction("Skip hash check")
             ins3.setIcon(QIcon(getMedia("checksum")))
-            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), skiphash=True))
+            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), skiphash=True, packageItem=self.packageList.currentItem()))
             ins4 = QAction("Interactive installation")
             ins4.setIcon(QIcon(getMedia("interactive")))
-            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True))
+            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True, packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -306,19 +307,16 @@ class DiscoverSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def openInfo(self, title: str, id: str, store: str) -> None:
-        if("…" in id):
-            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
-        else:
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
+    def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
+        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
-        ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+        ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
-    def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+    def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if not "scoop" in store.lower():
-                self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
+                self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
         else:
-                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -474,6 +472,9 @@ class UpdateSoftwareSection(QWidget):
             ins4 = QAction("Interactive update")
             ins4.setIcon(QIcon(getMedia("interactive")))
             ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+            ins5 = QAction("Uninstall package")
+            ins5.setIcon(QIcon(getMedia("menu_uninstall")))
+            ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -481,9 +482,10 @@ class UpdateSoftwareSection(QWidget):
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
-            ins5 = QAction("Ignore updates for this package")
-            ins5.setIcon(QIcon(getMedia("blacklist")))
-            ins5.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True)))
+            ins6 = QAction("Ignore updates for this package")
+            ins6.setIcon(QIcon(getMedia("blacklist")))
+            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True)))
+            contextMenu.addAction(ins6)
             contextMenu.addAction(ins5)
             contextMenu.addSeparator()
             contextMenu.addAction(inf)
@@ -769,12 +771,9 @@ class UpdateSoftwareSection(QWidget):
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        if("…" in id):
-            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store, update=True, packageItem=packageItem)
-        else:
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store, update=True, packageItem=packageItem)
+        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=not("…" in id), store=store, update=True, packageItem=packageItem)
         self.infobox.show()
-        ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+        ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
     def reloadSources(self):
         print("Reloading sources...")
@@ -951,7 +950,7 @@ class UninstallSoftwareSection(QWidget):
             ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True))
             ins4 = QAction("Show package info")
             ins4.setIcon(QIcon(getMedia("info")))
-            ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), "scoop"))
+            ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), "scoop", self.packageList.currentItem()))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -1067,13 +1066,10 @@ class UninstallSoftwareSection(QWidget):
         
         self.leftSlow.start()
 
-    def openInfo(self, title: str, id: str, store: str) -> None:
-        if("…" in id):
-            self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=True, store=store)
-        else:
-            self.infobox.loadProgram(id.replace("…", ""), id.replace("…", ""), goodTitle=False, store=store)
+    def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
+        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
-        ApplyMenuBlur(self.infobox.winId(),self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+        ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
 
     def finishLoadingIfNeeded(self, store: str) -> None:
@@ -1333,9 +1329,6 @@ class AboutSection(QScrollArea):
         button.clicked.connect(lambda: MessageBox.aboutQt(self, "WingetUI: About Qt"))
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
-        button = QPushButton("Update/Reinstall WingetUI")
-        button.clicked.connect(lambda: self.layout.addWidget(PackageInstallerWidget("WingetUI", "winget")))
-        # self.layout.addWidget(button)
         self.layout.addWidget(QWidget(), stretch=1)
     
         print("[   OK   ] About tab loaded!")
@@ -1355,14 +1348,6 @@ class AboutSection(QScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
-    
-class QInfoProgressDialog(QProgressDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setFixedWidth(300)
-        
-    def addTextLine(self, text: str) -> None:
-        self.setLabelText("Downloading and installing, please wait...\n\n"+text)
 
 class PackageInstallerWidget(QGroupBox):
     onCancel = Signal()
@@ -1374,6 +1359,7 @@ class PackageInstallerWidget(QGroupBox):
     changeBarOrientation = Signal()
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False, packageItem: TreeWidgetItemWithQAction = None):
         super().__init__(parent=parent)
+        self.packageItem = packageItem
         self.actionDone = "installed"
         self.actionDoing = "installing"
         self.actionName = "installation"
@@ -1456,8 +1442,6 @@ class PackageInstallerWidget(QGroupBox):
         self.waitThread.start()
         print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
         
-    
-    
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
@@ -1542,6 +1526,8 @@ class PackageInstallerWidget(QGroupBox):
                 self.cancelButton.clicked.connect(self.close)
                 self.info.setText(f"{self.programName} was {self.actionDone} successfully!")
                 self.progressbar.setValue(1000)
+                if type(self) == PackageInstallerWidget:
+                    globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
                 self.startCoolDown()
                 if(self.store == "powershell"):
                     msgBox = MessageBox(self)
@@ -1671,11 +1657,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
     def finish(self, returncode: int, output: str = "") -> None:
         print(returncode)
         if returncode == 0 and not self.canceled:
-            print(self.packageItem)
             if self.packageItem:
                 try:
                     i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
-                    globals.uninstall.addItem(i)
+                    del i
                 except Exception as e:
                     report(e)
         return super().finish(returncode, output)
