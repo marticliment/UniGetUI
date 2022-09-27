@@ -12,6 +12,13 @@ class DynamicScrollAreaType(QWidget):
     def addItem(self, item: QWidget):
         pass
 
+class Section(QWidget):
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent, parent)
+
+    def addTreeWidgetItem(item: QTreeWidgetItem):
+       pass
+
 componentStatus: dict = {
     "wingetFound": False,
     "scoopFound": False,
@@ -36,3 +43,7 @@ installedHeader: QAction = None
 
 lightCSS: str = ""
 darkCSS: str = ""
+
+discover: Section = None
+updates: Section = None
+uninstall: Section = None

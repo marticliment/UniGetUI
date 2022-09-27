@@ -58,12 +58,15 @@ class RootWindow(QMainWindow):
             }}""")
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
+        globals.discover = self.discover
         self.addTab(self.discover, "Discover Software")
         self.updates = UpdateSoftwareSection()
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
+        globals.updates = self.updates
         self.addTab(self.updates, "Software updates")
         self.uninstall = UninstallSoftwareSection()
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
+        globals.uninstall = self.uninstall
         self.addTab(self.uninstall, "Installed applications")
         self.addTab(AboutSection(), "About WingetUI")
         class Text(QPlainTextEdit):

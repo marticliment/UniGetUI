@@ -316,15 +316,9 @@ class DiscoverSoftwareSection(QWidget):
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         if not "scoop" in store.lower():
-            if ("…" in id):
-                self.addInstallation(PackageInstallerWidget(title, "winget", packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
-            else:
-                self.addInstallation(PackageInstallerWidget(title, "winget", useId=True, packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
+                self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
         else:
-            if ("…" in id):
-                self.addInstallation(PackageInstallerWidget(title, "scoop", packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
-            else:
-                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""]))
     
     def reload(self) -> None:
         self.scoopLoaded = False
@@ -535,7 +529,7 @@ class UpdateSoftwareSection(QWidget):
 
         def blacklistSelectedPackages():
             for i in range(self.packageList.topLevelItemCount()):
-                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
                 if not program.isHidden():
                     try:
                         if self.packageList.itemWidget(program, 0).isChecked():
@@ -548,12 +542,12 @@ class UpdateSoftwareSection(QWidget):
         h2Layout.setContentsMargins(27, 0, 27, 0)
         self.upgradeAllButton = QPushButton("Upgrade all packages")
         self.upgradeAllButton.setFixedWidth(200)
-        self.upgradeAllButton.clicked.connect(lambda: self.update("", "", all=True))
+        self.upgradeAllButton.clicked.connect(lambda: self.updateAll())
         self.blacklistButton = QPushButton("Blacklist selected packages")
         self.blacklistButton.setFixedWidth(200)
         self.blacklistButton.clicked.connect(lambda: blacklistSelectedPackages())
         self.upgradeSelected = QPushButton("Upgrade selected packages")
-        self.upgradeSelected.clicked.connect(lambda: self.update("", "", selected=True))
+        self.upgradeSelected.clicked.connect(lambda: self.updateSelected())
         self.upgradeSelected.setFixedWidth(200)
         self.showUnknownSection = QCheckBox("Show unknown versions")
         self.showUnknownSection.setFixedHeight(30)
@@ -751,32 +745,27 @@ class UpdateSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
-        if all:
+    def updateAll(self) -> None:
             for i in range(self.packageList.topLevelItemCount()):
-                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
                 if not program.isHidden():
                     self.update(program.text(1), program.text(2), packageItem=program)
-        elif selected:
+
+    def updateSelected(self) -> None:
             for i in range(self.packageList.topLevelItemCount()):
-                program: QTreeWidgetItem = self.packageList.topLevelItem(i)
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
                 if not program.isHidden():
                     try:
                         if self.packageList.itemWidget(program, 0).isChecked():
                            self.update(program.text(1), program.text(2), packageItem=program)
                     except AttributeError:
                         pass
-        else:
+    
+    def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
             if not "scoop" in store.lower():
-                if ("…" in id):
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
-                else:
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "", "--force" if skiphash else ""]))))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
             else:
-                if ("…" in id):
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop", packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
-                else:
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop", useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop",  useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -957,6 +946,9 @@ class UninstallSoftwareSection(QWidget):
             ins3 = QAction("Remove permanent data")
             ins3.setIcon(QIcon(getMedia("menu_close")))
             ins3.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem(), removeData=True))
+            ins5 = QAction("Interactive uninstall")
+            ins5.setIcon(QIcon(getMedia("interactive")))
+            ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True))
             ins4 = QAction("Show package info")
             ins4.setIcon(QIcon(getMedia("info")))
             ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), "scoop"))
@@ -967,6 +959,8 @@ class UninstallSoftwareSection(QWidget):
                 contextMenu.addAction(ins3)
                 contextMenu.addSeparator()
                 contextMenu.addAction(ins4)
+            else:
+                contextMenu.addAction(ins5)
 
             contextMenu.exec(QCursor.pos())
 
@@ -1131,6 +1125,10 @@ class UninstallSoftwareSection(QWidget):
             action.setShortcut(version)
             item.setAction(action)
             globals.trayMenuInstalledList.addAction(action)
+
+    def addTreeWidgetItem(self, item: TreeWidgetItemWithQAction) -> None:
+        self.packageList.addTopLevelItem(item)
+        globals.trayMenuInstalledList.addAction(item.itemAction)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
@@ -1147,14 +1145,14 @@ class UninstallSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def uninstall(self, title: str, id: str, store: str, packageItem: QTreeWidgetItem = None, admin: bool = False, removeData: bool = False, interactive: bool = False) -> None:
+    def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False) -> None:
         if(MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes):
             print(id)
-            if("…" in id):
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=False, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
+            if not "scoop" in store:
+                    self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
             else:
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=True, packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
-    
+                    self.addInstallation(PackageUninstallerWidget(title, "scoop" , useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
+
     def reload(self) -> None:
         self.scoopLoaded = False
         self.wingetLoaded = False
@@ -1374,7 +1372,7 @@ class PackageInstallerWidget(QGroupBox):
     counterSignal = Signal(int)
     callInMain = Signal(object)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False, packageItem: QTreeWidgetItem = None):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False, packageItem: TreeWidgetItemWithQAction = None):
         super().__init__(parent=parent)
         self.actionDone = "installed"
         self.actionDoing = "installing"
@@ -1629,7 +1627,7 @@ class PackageInstallerWidget(QGroupBox):
 
 class PackageUpdaterWidget(PackageInstallerWidget):
 
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: QTreeWidgetItem = None, admin: bool = False, useId: bool = False):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, useId: bool = False):
         super().__init__(title, store, version, parent, customCommand, args, packageId, admin, useId)
         self.packageItem = packageItem
         self.actionDone = "updated"
@@ -1677,7 +1675,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             if self.packageItem:
                 try:
                     i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
-                    del i
+                    globals.uninstall.addItem(i)
                 except Exception as e:
                     report(e)
         return super().finish(returncode, output)
@@ -1694,12 +1692,12 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: QTreeWidgetItem = None, admin: bool = False, removeData: bool = False):
+    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = []):
         self.packageItem = packageItem
         self.useId = useId
         self.programName = title
         self.packageId = packageId
-        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin)
+        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args)
         self.actionDone = "uninstalled"
         self.removeData = removeData
         self.actionDoing = "uninstalling"
@@ -1728,16 +1726,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
         if(self.store == "winget"):
-            if self.useId:
-                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e", "--id", f"{self.packageId}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
-                self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-                self.t.start()
-                print(self.p.args)
-            else:
-                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e", "--name", f"{self.programName}"]+wingetHelpers.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
-                self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-                self.t.start()
-                print(self.p.args)
+            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+            print(self.p.args)
         elif("scoop" in self.store):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.programName}"] + [""] if self.removeData else ["-p"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
@@ -1859,7 +1851,7 @@ class PackageInfoPopupWindow(QMainWindow):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
-    packageItem: QTreeWidgetItem = None
+    packageItem: TreeWidgetItemWithQAction = None
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.sc = QScrollArea()
@@ -2086,7 +2078,7 @@ class PackageInfoPopupWindow(QMainWindow):
         if(event):
             return super().resizeEvent(event)
     
-    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False, packageItem: QTreeWidgetItem = None) -> None:
+    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.packageItem = packageItem
         self.store = store
         self.installButton.setEnabled(False)
@@ -2166,6 +2158,8 @@ class PackageInfoPopupWindow(QMainWindow):
                 cmdline_args.append("--skip")
         if(self.interactiveCheckbox.isChecked()):
             cmdline_args.append("--interactive")
+        else:
+            cmdline_args.append("--silent")
         if(self.versionCombo.currentText()=="Latest"):
             version = []
         else:
