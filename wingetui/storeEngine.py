@@ -308,7 +308,7 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=not("…" in id), store=store, packageItem=packageItem)
+        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
@@ -771,7 +771,7 @@ class UpdateSoftwareSection(QWidget):
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=not("…" in id), store=store, update=True, packageItem=packageItem)
+        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, update=True, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
@@ -1067,7 +1067,7 @@ class UninstallSoftwareSection(QWidget):
         self.leftSlow.start()
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), goodTitle=not("…" in id), store=store, packageItem=packageItem)
+        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
@@ -2063,7 +2063,7 @@ class PackageInfoPopupWindow(QMainWindow):
         if(event):
             return super().resizeEvent(event)
     
-    def loadProgram(self, title: str, id: str, goodTitle: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
+    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.packageItem = packageItem
         self.store = store
         self.installButton.setEnabled(False)
@@ -2071,10 +2071,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.isAnUpdate = update
         self.installButton.setText("Please wait...")
         store = store.lower()
-        if(goodTitle):
-            self.title.setText(title)
-        else:
-            self.title.setText(id)
+        self.title.setText(id)
             
         self.loadingProgressBar.show()
         self.forceCheckbox.setChecked(False)
@@ -2097,9 +2094,9 @@ class PackageInfoPopupWindow(QMainWindow):
         self.versionCombo.addItems(["Loading..."])
         
         if(store.lower()=="winget"):
-            Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
+            Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
         elif("scoop" in store.lower()):
-            Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, goodTitle), daemon=True).start()
+            Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
         self.loadingProgressBar.hide()

@@ -135,21 +135,9 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 
-def getInfo(signal: Signal, title: str, id: str, goodTitle: bool) -> None:
-    if not(goodTitle):
+def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
+    if useId:
         p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-        """print(f"[   OK   ] Acquiring title for id \"{title}\"")
-        p = subprocess.Popen([winget, "search", f"{title}"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-        output = []
-        while p.poll() is None:
-            line = p.stdout.readline()
-            line = line.strip()
-            if line and not b"---" in line:
-                output.append(str(line, encoding='utf-8', errors="ignore"))
-        try:
-            title = output[-1][0:output[0].split("\r")[-1].index("Id")].strip()
-        except:
-            pass"""
         print(f"[   OK   ] Starting get info for id {id}")
     else:
         p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)

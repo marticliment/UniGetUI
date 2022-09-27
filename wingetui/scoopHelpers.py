@@ -84,7 +84,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
-def getInfo(signal: Signal, title: str, id: str, goodTitle: bool) -> None:
+def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     print(f"[   OK   ] Starting get info for title {title}")
     title = title.lower()
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
