@@ -1,7 +1,10 @@
+from turtle import isvisible
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 import os, ctypes, sys, tools, win32mica
+import win32gui
+
 
 import globals
 
@@ -9,9 +12,11 @@ from storeEngine import *
 from tools import *
 
 class RootWindow(QMainWindow):
+    callInMain = Signal(object)
     def __init__(self):
         self.oldbtn = None
         super().__init__()
+        self.callInMain.connect(lambda f: f())
         self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
@@ -37,6 +42,7 @@ class RootWindow(QMainWindow):
         print("[   OK   ] Main application loaded...")
 
     def loadWidgets(self) -> None:
+        self.widgets = {}
         self.mainWidget = QStackedWidget()
         self.buttonBox = QButtonGroup()
         self.buttonLayout = QHBoxLayout()
@@ -59,16 +65,17 @@ class RootWindow(QMainWindow):
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.discover = self.discover
-        self.addTab(self.discover, "Discover Software")
+        self.widgets[self.discover] = self.addTab(self.discover, "Discover Software")
         self.updates = UpdateSoftwareSection()
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.updates = self.updates
-        self.addTab(self.updates, "Software updates")
+        self.widgets[self.updates] = self.addTab(self.updates, "Software updates")
         self.uninstall = UninstallSoftwareSection()
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
-        self.addTab(self.uninstall, "Installed applications")
-        self.addTab(AboutSection(), "About WingetUI")
+        self.widgets[self.uninstall] = self.addTab(self.uninstall, "Installed applications")
+        self.aboutSection = AboutSection()
+        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI")
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()
@@ -134,7 +141,7 @@ class RootWindow(QMainWindow):
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
-    def addTab(self, widget: QWidget, label: str) -> None:
+    def addTab(self, widget: QWidget, label: str) -> QPushButton:
         i = self.mainWidget.addWidget(widget)
         btn = QPushButton(label)
         btn.setCheckable(True)
@@ -148,6 +155,7 @@ class RootWindow(QMainWindow):
         self.oldbtn = btn
         self.buttonBox.addButton(btn)
         self.buttonLayout.addWidget(btn)
+        return btn
 
     def warnAboutAdmin(self):
             self.err = ErrorMessage(self)
@@ -198,18 +206,25 @@ class RootWindow(QMainWindow):
         return super().resizeEvent(event)
 
     def showWindow(self):
+        Thread(target=lambda:(time.sleep(1.1), self.callInMain.emit(self.showWindowIdNeeded)), daemon=True, name="ShowWindow Thread").start()
+
+    def showWindowIdNeeded(self):
         if not self.window().isVisible():
             if not self.window().isMaximized():
-                self.window().hide()
+                #self.window().hide()
                 self.window().show()
                 self.window().showNormal()
             else:
-                self.window().hide()
+                #self.window().hide()
                 self.window().show()
                 self.window().showMaximized()
             self.window().setFocus()
             self.window().raise_()
             self.window().activateWindow()
+            try:
+                self.widgets[self.updates].click()
+            except Exception as e:
+                report(e)
         else:
             self.hide()
 
