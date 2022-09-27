@@ -2071,7 +2071,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.isAnUpdate = update
         self.installButton.setText("Please wait...")
         store = store.lower()
-        self.title.setText(id)
+        self.title.setText(title)
             
         self.loadingProgressBar.show()
         self.forceCheckbox.setChecked(False)
