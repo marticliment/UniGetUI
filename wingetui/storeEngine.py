@@ -1694,7 +1694,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.useId = useId
         self.programName = title
         self.packageId = packageId
-        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args)
+        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args, packageItem=packageItem)
         self.actionDone = "uninstalled"
         self.removeData = removeData
         self.actionDoing = "uninstalling"
