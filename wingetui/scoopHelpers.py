@@ -1,3 +1,4 @@
+from random import vonmisesvariate
 from PySide6.QtCore import *
 import subprocess, os, sys, re
 from tools import *
@@ -84,24 +85,25 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     print("[   OK   ] Scoop search finished")
     finishSignal.emit("scoop")
 
-def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
+def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = False) -> None:
     print(f"[   OK   ] Starting get info for title {title}")
     title = title.lower()
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}", "--verbose"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
+    unknownStr = "Unknown" if verbose else "Loading..."
     appInfo = {
         "title": title,
         "id": id,
-        "publisher": "Unknown",
-        "author": "Unknown",
-        "description": "Unknown",
-        "homepage": "Unknown",
-        "license": "Unknown",
-        "license-url": "Unknown",
-        "installer-sha256": "Unknown",
-        "installer-url": "Unknown",
+        "publisher": unknownStr,
+        "author": unknownStr,
+        "description": unknownStr,
+        "homepage": unknownStr,
+        "license": unknownStr,
+        "license-url": unknownStr,
+        "installer-sha256": unknownStr,
+        "installer-url": unknownStr,
         "installer-type": "Scoop shim",
-        "manifest": "Unknown",
+        "manifest": unknownStr,
         "versions": [],
     }
     while p.poll() is None:
@@ -155,6 +157,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     appInfo["versions"] = [version]
     appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
     signal.emit(appInfo)
+    if not verbose:
+        getInfo(signal, title, id, useId, verbose=True)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"[   OK   ] scoop installer assistant thread started for process {p}")

@@ -1850,6 +1850,11 @@ class PackageInfoPopupWindow(QMainWindow):
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
     packageItem: TreeWidgetItemWithQAction = None
+    finishedCount: int = 0
+    
+    pressed = False
+    oldPos = QPoint(0, 0)
+
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.sc = QScrollArea()
@@ -1992,6 +1997,9 @@ class PackageInfoPopupWindow(QMainWindow):
         self.manifest = QLinkLabel("Manifest: Unknown")
         self.manifest.setWordWrap(True)
         self.layout.addWidget(self.manifest)
+        self.lastver = QLinkLabel("Latest version: Unknown")
+        self.lastver.setWordWrap(True)
+        self.layout.addWidget(self.lastver)
         self.sha = QLinkLabel("Installer SHA256 (Latest version): Unknown")
         self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
@@ -2098,6 +2106,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.publisher.setText("Publisher: "+"Loading...")
         self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"\">{'Loading...'}</a>")
         self.license.setText(f"License: {'Loading...'} (<a style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>)")
+        self.lastver.setText("Latest version: Loading...")
         self.sha.setText(f"Installer SHA256 (Latest version): {'Loading...'}")
         self.link.setText(f"Installer URL (Latest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
         self.type.setText(f"Installer type (Latest version): {'Loading...'}")
@@ -2106,13 +2115,16 @@ class PackageInfoPopupWindow(QMainWindow):
         self.storeLabel.setText(f"Source: {self.store.capitalize()}")
         self.versionCombo.addItems(["Loading..."])
         
+        self.finishedCount = 0
         if(store.lower()=="winget"):
             Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
         elif("scoop" in store.lower()):
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
 
     def printData(self, appInfo: dict) -> None:
-        self.loadingProgressBar.hide()
+        self.finishedCount += 1
+        if not("scoop" in self.store.lower()) or self.finishedCount > 1:
+            self.loadingProgressBar.hide()
         if self.isAnUpdate:
             self.installButton.setText("Update")
         else:
@@ -2129,6 +2141,10 @@ class PackageInfoPopupWindow(QMainWindow):
         self.publisher.setText("Publisher: "+appInfo["publisher"])
         self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
         self.license.setText(f"License: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
+        try:
+            self.lastver.setText(f"Latest version: {appInfo['versions'][0]}")
+        except IndexError:
+            self.lastver.setText(f"Latest version: Unknown")
         self.sha.setText(f"Installer SHA256 (Latest version): {appInfo['installer-sha256']}")
         self.link.setText(f"Installer URL (Latest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"Installer type (Latest version): {appInfo['installer-type']}")
@@ -2175,10 +2191,6 @@ class PackageInfoPopupWindow(QMainWindow):
         print(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
         return super().show()
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        #self.parent().window().activateWindow()
-        return super().mousePressEvent(event)
-
     def close(self) -> bool:
         self.parent().window().blackmatt.hide()
         return super().close()
@@ -2189,6 +2201,26 @@ class PackageInfoPopupWindow(QMainWindow):
         except AttributeError:
             pass
         return super().hide()
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.pressed = True
+        self.oldPos = event.pos()
+        return super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if self.pressed:
+            try:
+                if not globals.mainWindow.isMaximized() and not globals.mainWindow.isMinimized():
+                    globals.mainWindow.move(globals.mainWindow.pos()+(event.pos()-self.oldPos))
+            except AttributeError as e:
+                report(e)
+            self.move(self.pos()+(event.pos()-self.oldPos))
+        return super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        self.pressed = False
+        self.oldPos = event.pos()
+        return super().mouseReleaseEvent(event)
 
 if(__name__=="__main__"):
     import __init__

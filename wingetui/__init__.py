@@ -327,6 +327,7 @@ try:
                             mn.setStyleSheet(menuLightCSS)
 
                 self.window = RootWindow()
+                globals.mainWindow = self.window
                 showAction.triggered.connect(self.window.showWindow)
                 uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
                 showWindow = self.window.showWindow

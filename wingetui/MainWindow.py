@@ -13,6 +13,9 @@ from tools import *
 
 class RootWindow(QMainWindow):
     callInMain = Signal(object)
+    pressed = False
+    oldPos = QPoint(0, 0)
+
     def __init__(self):
         self.oldbtn = None
         super().__init__()
