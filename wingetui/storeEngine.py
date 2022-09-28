@@ -1,11 +1,12 @@
+from __future__ import annotations # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 from struct import pack
 from xml.dom.minidom import Attr
-import wingetHelpers, scoopHelpers, sys, subprocess, time, os
+import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
+from Tools import *
 
 import globals
 
@@ -842,6 +843,7 @@ class UninstallSoftwareSection(QWidget):
         self.infobox = PackageInfoPopupWindow(self)
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
+        self.allPkgSelected = False
 
         self.programbox = QWidget()
 
@@ -864,6 +866,9 @@ class UninstallSoftwareSection(QWidget):
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
 
+        hLayoutExport = QHBoxLayout()
+        hLayout.setContentsMargins(25, 0, 25, 0)
+
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" Search on your software")
         self.query.returnPressed.connect(self.filter)
@@ -877,7 +882,7 @@ class UninstallSoftwareSection(QWidget):
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
         sct.activated.connect(self.reload)
-        
+
         sct = QShortcut(QKeySequence("F5"), self)
         sct.activated.connect(self.reload)
 
@@ -893,6 +898,19 @@ class UninstallSoftwareSection(QWidget):
         self.forceCheckBox.setChecked(True)
         self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUninstall"))
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUninstall", bool(not v)))
+
+        self.selectAllPkgsCheckBox = QCheckBox("Select all")
+        self.selectAllPkgsCheckBox.setFixedHeight(30)
+        self.selectAllPkgsCheckBox.setLayoutDirection(Qt.RightToLeft)
+        self.selectAllPkgsCheckBox.setFixedWidth(140)
+        self.selectAllPkgsCheckBox.setStyleSheet("margin-top: 10px;")
+        self.selectAllPkgsCheckBox.setChecked(self.allPkgSelected)
+        self.selectAllPkgsCheckBox.clicked.connect(lambda v: self.selectAllInstalled())
+
+        self.exportSelectionButton = QPushButton("Export Selection")
+        self.exportSelectionButton.setFixedWidth(300)
+        self.exportSelectionButton.setStyleSheet("margin-top: 10px;")
+        self.exportSelectionButton.clicked.connect(lambda v: self.exportSelection())
 
         img = QLabel()
         img.setFixedWidth(96)
@@ -910,14 +928,18 @@ class UninstallSoftwareSection(QWidget):
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
+        hLayoutExport.addLayout(v)
+        hLayoutExport.addWidget(self.selectAllPkgsCheckBox)
+        hLayoutExport.addWidget(self.exportSelectionButton)
         
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList = TreeWidget("Found 0 Packages")
         self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.setColumnCount(4)
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Installed Version", "Installation source"])
+        self.headers = ["Package name", "Package ID", "Installed Version", "Installation source", " "] # empty header added for checkbox
+        self.packageList.setColumnCount(len(self.headers))
+        self.packageList.setHeaderLabels(self.headers)
         #self.packageList.setColumnWidth(0, 300)
         #self.packageList.setColumnWidth(1, 300)
         #self.packageList.setColumnWidth(2, 200)
@@ -1004,6 +1026,7 @@ class UninstallSoftwareSection(QWidget):
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
+        layout.addLayout(hLayoutExport)
         layout.setContentsMargins(5, 0, 0, 5)
         v.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
@@ -1125,6 +1148,7 @@ class UninstallSoftwareSection(QWidget):
             item.setText(2, version)
             item.setIcon(3, self.providerIcon)
             item.setText(3, store)
+            item.setCheckState(4, Qt.CheckState.Unchecked)
             self.packageList.addTopLevelItem(item)
             action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
             action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
@@ -1185,6 +1209,60 @@ class UninstallSoftwareSection(QWidget):
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
 
+    def selectAllInstalled(self) -> None:
+        self.allPkgSelected = not self.allPkgSelected
+        for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
+            if (self.allPkgSelected):
+                item.setCheckState(4, Qt.CheckState.Checked)
+            else:
+                item.setCheckState(4, Qt.CheckState.Unchecked)
+    
+    def exportSelection(self) -> None:
+        """
+        Export all selected packages into a file.
+
+        Target format: {"winget": wingetschema, "scoop": scoopschema}
+
+        Winget implementation: In progress
+        Scoop implementation: To be done
+        
+        Winget docs
+        ---
+        JSON schema for export file: https://raw.githubusercontent.com/microsoft/winget-cli/master/schemas/JSON/packages/packages.schema.1.0.json
+
+        """
+        wingetPackagesList = []
+
+        for i in range(self.packageList.topLevelItemCount()):
+            item = self.packageList.topLevelItem(i)
+            if (item.checkState(4) and item.text(3) == "Winget"):
+                wingetPackage = {"PackageIdentifier": item.text(1)}
+                wingetPackagesList.append(wingetPackage)
+
+        wingetDetails = {
+            "Argument": "https://cdn.winget.microsoft.com/cache",
+            "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
+            "Name": "winget",
+            "Type" : "Microsoft.PreIndexed.Package"
+        }
+        wingetExportSchema = {
+            "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
+            "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
+            "Sources": [{
+                "Packages": wingetPackagesList,
+                "SourceDetails": wingetDetails}],
+            "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
+        }
+        scoopExportSchema = {}
+        overAllSchema = {
+            "winget": wingetExportSchema,
+            "scoop":scoopExportSchema
+        }
+
+        filename = QFileDialog.getSaveFileName(self, "Save File", filter='JSON (*.json)')
+
+        with open(filename[0], 'w') as f:
+            f.write(json.dumps(overAllSchema, indent=4))
 
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):

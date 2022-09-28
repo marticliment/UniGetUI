@@ -9,7 +9,7 @@ import win32gui
 import globals
 
 from storeEngine import *
-from tools import *
+from Tools import *
 
 class RootWindow(QMainWindow):
     callInMain = Signal(object)
