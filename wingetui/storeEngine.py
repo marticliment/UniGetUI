@@ -351,6 +351,7 @@ class UpdateSoftwareSection(QWidget):
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
     callInMain = Signal(object)
+    availableUpdates: int = 0
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -566,6 +567,7 @@ class UpdateSoftwareSection(QWidget):
             for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
                 if item.text(3) == "Unknown":
                     item.setHidden(not self.showUnknownSection.isChecked())
+            self.updatePackageNumber()
         self.updatelist = updatelist
 
         h2Layout.addWidget(self.upgradeAllButton)
@@ -651,7 +653,7 @@ class UpdateSoftwareSection(QWidget):
 
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             self.packageList.label.setText(self.countLabel.text())
             globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
             self.wingetLoaded = True
@@ -660,7 +662,7 @@ class UpdateSoftwareSection(QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
             self.packageList.label.setText(self.countLabel.text())
             self.scoopLoaded = True
@@ -677,7 +679,6 @@ class UpdateSoftwareSection(QWidget):
                 if not self.packageList.topLevelItem(i).isHidden():
                     count += 1
                     lastVisibleItem = self.packageList.topLevelItem(i)
-            self.countLabel.setText("Found packages: "+str(count))
             self.packageList.label.setText(str(count))
             if not getSettings("DisableUpdatesNotifications"):
                 if count > 1:
@@ -688,8 +689,7 @@ class UpdateSoftwareSection(QWidget):
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
-            globals.trayMenuUpdatesList.menuAction().setText(f"{count} updates found")
-            self.countLabel.setText("Found packages: "+str(count))
+            self.updatePackageNumber()
             self.packageList.label.setText(self.countLabel.text())
             self.filter()
             self.updatelist()
@@ -742,6 +742,15 @@ class UpdateSoftwareSection(QWidget):
                 if item.text(3) == "Unknown":
                     item.setHidden(not self.showUnknownSection.isChecked())
         self.packageList.scrollToItem(self.packageList.currentItem())
+
+    def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
+        self.availableUpdates = 0
+        for item in self.packageList.findItems('', Qt.MatchContains, 1):
+            if not item.isHidden():
+                self.availableUpdates += 1
+        self.countLabel.setText(f"Available updates: {self.availableUpdates}")
+        globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (f"WingetUI - {self.availableUpdates} update is available" if self.availableUpdates == 1 else f"WingetUI - {self.availableUpdates} updates are available") )
+        globals.trayMenuUpdatesList.menuAction().setText(f"{self.availableUpdates} updates found")
     
     def showQuery(self) -> None:
         self.programbox.show()
@@ -789,6 +798,7 @@ class UpdateSoftwareSection(QWidget):
         self.callInMain.emit(self.reload)
     
     def reload(self) -> None:
+        self.availableUpdates = 0
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.loadingProgressBar.show()
@@ -1659,11 +1669,13 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         if returncode == 0 and not self.canceled:
             if self.packageItem:
                 try:
+                    self.packageItem.setHidden(True)
                     i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
                     del i
                 except Exception as e:
                     report(e)
-        return super().finish(returncode, output)
+                globals.updates.updatePackageNumber()
+        super().finish(returncode, output)
     
     def close(self):
         globals.installersWidget.removeItem(self)
@@ -1759,6 +1771,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if returncode == 0 and not self.canceled:
             if self.packageItem:
                 try:
+                    self.packageItem.setHidden(True)
                     i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
                     del i
                 except Exception as e:
