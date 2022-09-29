@@ -7,8 +7,8 @@ try:
     from PySide6.QtCore import *
     from PySide6.QtWidgets import *
     import wingetHelpers, scoopHelpers
-    from MainWindow import *
-    from Tools import *
+    from mainWindow import *
+    from tools import *
 
     import globals
     from blurwindow import GlobalBlur, ExtendFrameIntoClientArea
