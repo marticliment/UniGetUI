@@ -509,6 +509,14 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setColumnWidth(3, 100)
         self.packageList.setColumnWidth(4, 100)
         self.packageList.setColumnWidth(5, 120)
+
+        def toggleItemState():
+            item = self.packageList.currentItem()
+            checkbox = self.packageList.itemWidget(item, 0)
+            checkbox.setChecked(not checkbox.isChecked())
+
+        sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
+        sct.activated.connect(toggleItemState)
         
         self.loadingProgressBar = QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
@@ -909,7 +917,7 @@ class UninstallSoftwareSection(QWidget):
 
         self.exportSelectionButton = QPushButton("Export Selection (beta)")
         self.exportSelectionButton.setFixedWidth(300)
-        self.exportSelectionButton.setStyleSheet("margin-top: 10px;")
+        self.exportSelectionButton.setStyleSheet("margin-top: 0px;")
         self.exportSelectionButton.clicked.connect(lambda v: self.exportSelection())
 
         img = QLabel()
@@ -956,6 +964,14 @@ class UninstallSoftwareSection(QWidget):
         header.setSectionResizeMode(2, QHeaderView.Stretch)
         header.setSectionResizeMode(4, QHeaderView.Fixed)
         self.packageList.sortByColumn(1, Qt.AscendingOrder)
+        
+        def toggleItemState():
+            item = self.packageList.currentItem()
+            checkbox = self.packageList.itemWidget(item, 0)
+            checkbox.setChecked(not checkbox.isChecked())
+
+        sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
+        sct.activated.connect(toggleItemState)
 
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
