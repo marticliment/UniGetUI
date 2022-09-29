@@ -610,7 +610,6 @@ class UpdateSoftwareSection(QWidget):
             self.updatePackageNumber()
         self.updatelist = updatelist
 
-        self.toolbar.addSeparator()
         w = QWidget()
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolbar.addWidget(w)
@@ -1115,13 +1114,6 @@ class UninstallSoftwareSection(QWidget):
         self.exportAction.triggered.connect(lambda: self.exportSelection())
         self.toolbar.addAction(self.exportAction)
 
-        self.showUnknownSection = QCheckBox("Show unknown versions")
-        self.showUnknownSection.setFixedHeight(30)
-        self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
-        self.showUnknownSection.setFixedWidth(190)
-        self.showUnknownSection.setStyleSheet("margin-top: 0px;")
-        self.showUnknownSection.setChecked(getSettings("ShowUnknownResults"))
-        self.showUnknownSection.clicked.connect(lambda v: (setSettings("ShowUnknownResults", bool(v)), updatelist()))
         def updatelist(selff = None):
             if not selff:
                 nonlocal self
@@ -1133,11 +1125,9 @@ class UninstallSoftwareSection(QWidget):
             self.updatePackageNumber()
         self.updatelist = updatelist
 
-        self.toolbar.addSeparator()
         w = QWidget()
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolbar.addWidget(w)
-        self.toolbar.addWidget(self.showUnknownSection)
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
 
