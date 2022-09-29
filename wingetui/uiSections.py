@@ -562,7 +562,7 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addWidget(TenPxSpacer())
         self.upgradeSelected = QAction(QIcon(getMedia("menu_installall")), "", self.toolbar)
-        self.upgradeSelected.triggered.connect(lambda: self.update(self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem())))
+        self.upgradeSelected.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
         self.toolbar.addAction(self.upgradeSelected)
         self.toolbar.widgetForAction(self.upgradeSelected).setFixedSize(40, 45)
         self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "Upgrade all", self.toolbar)
@@ -914,8 +914,8 @@ class UninstallSoftwareSection(QWidget):
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
 
-        hLayoutExport = QHBoxLayout()
-        hLayout.setContentsMargins(25, 0, 25, 0)
+        #hLayoutExport = QHBoxLayout()
+        #hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" Search on your software")
@@ -947,18 +947,6 @@ class UninstallSoftwareSection(QWidget):
         self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUninstall"))
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUninstall", bool(not v)))
 
-        self.selectAllPkgsCheckBox = QCheckBox("Select all")
-        self.selectAllPkgsCheckBox.setFixedHeight(30)
-        self.selectAllPkgsCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.selectAllPkgsCheckBox.setFixedWidth(140)
-        self.selectAllPkgsCheckBox.setStyleSheet("margin-top: 0px;")
-        self.selectAllPkgsCheckBox.setChecked(self.allPkgSelected)
-        self.selectAllPkgsCheckBox.clicked.connect(lambda v: self.selectAllInstalled())
-
-        self.exportSelectionButton = QPushButton("Export Selection (beta)")
-        self.exportSelectionButton.setFixedWidth(300)
-        self.exportSelectionButton.setStyleSheet("margin-top: 0px;")
-        self.exportSelectionButton.clicked.connect(lambda v: self.exportSelection())
 
         img = QLabel()
         img.setFixedWidth(96)
@@ -976,11 +964,11 @@ class UninstallSoftwareSection(QWidget):
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
-        hLayoutExport.addLayout(v)
-        hLayoutExport.addWidget(self.selectAllPkgsCheckBox)
-        hLayoutExport.addStretch()
-        hLayoutExport.setContentsMargins(0, 0, 0, 0)
-        hLayoutExport.addWidget(self.exportSelectionButton)
+        #hLayoutExport.addLayout(v)
+        #hLayoutExport.addWidget(self.selectAllPkgsCheckBox)
+        #hLayoutExport.addStretch()
+        #hLayoutExport.setContentsMargins(0, 0, 0, 0)
+        #hLayoutExport.addWidget(self.exportSelectionButton)
         
         self.packageListScrollBar = QScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
@@ -1080,12 +1068,86 @@ class UninstallSoftwareSection(QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
+        self.selectAllPkgsCheckBox = QCheckBox("Select all")
+        self.selectAllPkgsCheckBox.setFixedHeight(30)
+        self.selectAllPkgsCheckBox.setLayoutDirection(Qt.RightToLeft)
+        self.selectAllPkgsCheckBox.setFixedWidth(140)
+        self.selectAllPkgsCheckBox.setStyleSheet("margin-top: 0px;")
+        self.selectAllPkgsCheckBox.setChecked(self.allPkgSelected)
+        self.selectAllPkgsCheckBox.clicked.connect(lambda v: self.selectAllInstalled())
+
+        self.exportSelectionButton = QPushButton("Export selection (beta)")
+        self.exportSelectionButton.setFixedWidth(300)
+        self.exportSelectionButton.setStyleSheet("margin-top: 0px;")
+        self.exportSelectionButton.clicked.connect(self.exportSelection)
+
+        self.toolbar = QToolBar(self)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.toolbar.addWidget(TenPxSpacer())
+        self.upgradeSelected = QAction(QIcon(getMedia("menu_uninstall")), "", self.toolbar)
+        self.upgradeSelected.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem()))
+        self.toolbar.addAction(self.upgradeSelected)
+        self.toolbar.widgetForAction(self.upgradeSelected).setFixedSize(40, 45)
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Uninstall selected", self.toolbar)
+        self.upgradeSelectedAction.triggered.connect(lambda: self.uninstallSelected())
+        self.toolbar.addAction(self.upgradeSelectedAction)
+
+        self.toolbar.addSeparator()
+
+        def setAllSelected(checked: bool) -> None:
+            for i in range(self.packageList.topLevelItemCount()):
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+                self.packageList.itemWidget(program, 0).setChecked(checked)
+
+        self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", self.toolbar)
+        self.selectAllAction.triggered.connect(lambda: setAllSelected(True))
+        self.toolbar.addAction(self.selectAllAction)
+        self.toolbar.widgetForAction(self.selectAllAction).setFixedSize(40, 45)
+        self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", self.toolbar)
+        self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
+        self.toolbar.addAction(self.selectNoneAction)
+        self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
+
+        self.toolbar.addSeparator()
+
+        self.exportAction = QAction(QIcon(getMedia("export")), "Export selected packages (beta)", self.toolbar)
+        self.exportAction.triggered.connect(lambda: self.exportSelection())
+        self.toolbar.addAction(self.exportAction)
+
+        self.showUnknownSection = QCheckBox("Show unknown versions")
+        self.showUnknownSection.setFixedHeight(30)
+        self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
+        self.showUnknownSection.setFixedWidth(190)
+        self.showUnknownSection.setStyleSheet("margin-top: 0px;")
+        self.showUnknownSection.setChecked(getSettings("ShowUnknownResults"))
+        self.showUnknownSection.clicked.connect(lambda v: (setSettings("ShowUnknownResults", bool(v)), updatelist()))
+        def updatelist(selff = None):
+            if not selff:
+                nonlocal self
+            else:
+                self = selff
+            for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
+                if item.text(3) == "Unknown":
+                    item.setHidden(not self.showUnknownSection.isChecked())
+            self.updatePackageNumber()
+        self.updatelist = updatelist
+
+        self.toolbar.addSeparator()
+        w = QWidget()
+        w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolbar.addWidget(w)
+        self.toolbar.addWidget(self.showUnknownSection)
+        self.toolbar.addWidget(TenPxSpacer())
+        self.toolbar.addWidget(TenPxSpacer())
+
+
 
         self.countLabel = QLabel("Searching for installed packages...")
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
-        layout.addLayout(hLayoutExport)
+        layout.addWidget(self.toolbar)
         layout.setContentsMargins(5, 0, 0, 5)
         v.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
@@ -1157,6 +1219,16 @@ class UninstallSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+
+    def uninstallSelected(self) -> None:
+            for i in range(self.packageList.topLevelItemCount()):
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+                if not program.isHidden():
+                    try:
+                        if self.packageList.itemWidget(program, 0).isChecked():
+                           self.uninstall(program.text(1), program.text(2), program.text(4), packageItem=program)
+                    except AttributeError:
+                        pass
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, packageItem=packageItem)
