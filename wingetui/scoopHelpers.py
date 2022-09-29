@@ -6,7 +6,7 @@ from tools import *
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
-    print("[   OK   ] Starting scoop search...")
+    print("🟢 Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -26,11 +26,11 @@ str(line, encoding='utf-8', errors="ignore")))
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
         except IndexError as e:
             print("IndexError: "+str(e))
-    print("[   OK   ] Scoop search finished")
+    print("🟢 Scoop search finished")
     finishSignal.emit("scoop")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    print("[   OK   ] Starting scoop search...")
+    print("🟢 Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 1
@@ -53,11 +53,11 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
             print("IndexError: "+str(e))
         except Exception as e:
             print(e)
-    print("[   OK   ] Scoop search finished")
+    print("🟢 Scoop search finished")
     finishSignal.emit("scoop")
 
 def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
-    print("[   OK   ] Starting scoop search...")
+    print("🟢 Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "status"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -82,11 +82,11 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
             print("IndexError: "+str(e))
         except Exception as e:
             print(e)
-    print("[   OK   ] Scoop search finished")
+    print("🟢 Scoop search finished")
     finishSignal.emit("scoop")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = False) -> None:
-    print(f"[   OK   ] Starting get info for title {title}")
+    print(f"🟢 Starting get info for title {title}")
     title = title.lower()
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
@@ -150,10 +150,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
                 try:
                     appInfo["description"] = data["description"] if data["description"] != "" else appInfo["description"]
                 except KeyError:
-                    print("[  WARN  ] No description found in the manifest")
+                    print("🟡 No description found in the manifest")
             except Exception as e:
                 print(type(e), e)
-    print(f"[  INFO  ] Scoop does not support specific version installs")
+    print(f"🔵 Scoop does not support specific version installs")
     appInfo["versions"] = [version]
     appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
     signal.emit(appInfo)
@@ -161,7 +161,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
         getInfo(signal, title, id, useId, verbose=True)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"[   OK   ] scoop installer assistant thread started for process {p}")
+    print(f"🟢 scoop installer assistant thread started for process {p}")
     outputCode = 1
     output = ""
     while p.poll() is None:
@@ -185,7 +185,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
 
    
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"[   OK   ] scoop uninstaller assistant thread started for process {p}")
+    print(f"🟢 scoop uninstaller assistant thread started for process {p}")
     outputCode = 1
     output = ""
     while p.poll() is None:

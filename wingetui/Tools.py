@@ -18,15 +18,16 @@ old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
 errbuffer = io.StringIO()
-#sys.stdout = buffer = io.StringIO()
-#sys.stderr = errbuffer = io.StringIO()
+sys.stdout = buffer = io.StringIO()
+sys.stderr = errbuffer = io.StringIO()
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
 
-
+def cprint(*args) -> None:
+    print(*args, file=old_stdout)
 
 def report(exception) -> None: # Exception reporter
     import traceback
@@ -159,12 +160,12 @@ def removeProgram(id: str):
         globals.current_program = ""
 
 def checkQueue():
-    print("[   OK   ] checkQueue Thread started!")
+    print("🟢 checkQueue Thread started!")
     while True:
         if(globals.current_program == ""):
             try:
                 globals.current_program = globals.pending_programs[0]
-                print(f"[ THREAD ] Current program set to {globals.current_program}")
+                print(f"🔵 Current program set to {globals.current_program}")
             except IndexError:
                 pass
         time.sleep(0.2)
@@ -240,7 +241,7 @@ def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> Non
 
 
 def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    print(f"🟢 winget installer assistant thread started for process {p}")
     outputCode = 1
     output = ""
     while p.poll() is None:

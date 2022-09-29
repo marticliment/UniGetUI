@@ -99,7 +99,7 @@ try:
                     self.leftSlow.start()
                     self.popup.show()
 
-                print("[        ] Starting main application...")
+                print("🔵 Starting main application...")
                 os.chdir(os.path.expanduser("~"))
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
@@ -376,7 +376,7 @@ try:
                 try:
                     for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "RaiseWindow_*")):
                         if getSettings("RaiseWindow_"+str(self.nowTime), cache = False):
-                            print("[   OK   ] Found reactivation lock file...")
+                            print("🟢 Found reactivation lock file...")
                             setSettings("RaiseWindow_"+str(self.nowTime), False)
                             if not self.window.isMaximized():
                                 self.callInMain.emit(self.window.hide)

@@ -99,12 +99,12 @@ class PackageInstallerWidget(QGroupBox):
 
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
-        print(f"[   OK   ] Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
+        print(f"🟢 Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
         
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
-        print("[   OK   ] Have permission to install, starting installation threads...")
+        print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
     def runInstallation(self) -> None:
@@ -147,7 +147,7 @@ class PackageInstallerWidget(QGroupBox):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
-        print("[        ] Sending cancel signal...")
+        print("🔵 Sending cancel signal...")
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
             self.finishedInstallation = True
@@ -283,7 +283,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
-        print("[   OK   ] Have permission to install, starting installation threads...")
+        print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
     def runInstallation(self) -> None:
@@ -360,7 +360,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
-        print("[   OK   ] Have permission to install, starting installation threads...")
+        print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
     def runInstallation(self) -> None:
@@ -392,7 +392,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.progressbar.setValue(750)
 
     def cancel(self):
-        print("[        ] Sending cancel signal...")
+        print("🔵 Sending cancel signal...")
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -674,7 +674,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.centralwidget = QWidget()
         self.centralwidget.setLayout(self.hLayout)
         if(isDark()):
-            print("[        ] Is Dark")
+            print("🔵 Is Dark")
         self.sc.setWidget(self.centralwidget)
         self.setCentralWidget(self.sc)
 
@@ -809,7 +809,7 @@ class PackageInfoPopupWindow(QMainWindow):
     def install(self):
         title = self.title.text()
         packageId = self.packageId.text().replace('Package ID:', '').strip()
-        print(f"[   OK   ] Starting installation of package {title} with id {packageId}")
+        print(f"🟢 Starting installation of package {title} with id {packageId}")
         cmdline_args = []
         if(self.forceCheckbox.isChecked()):
             if self.store.lower() == "winget":
@@ -824,7 +824,7 @@ class PackageInfoPopupWindow(QMainWindow):
             version = []
         else:
             version = ["--version", self.versionCombo.currentText()]
-            print(f"[  WARN  ] Issuing specific version {self.versionCombo.currentText()}")
+            print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
             p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         else:

@@ -43,7 +43,7 @@ class RootWindow(QMainWindow):
         """)
 
         
-        print("[   OK   ] Main application loaded...")
+        print("🟢 Main application loaded...")
 
     def loadWidgets(self) -> None:
         self.widgets = {}
@@ -80,12 +80,12 @@ class RootWindow(QMainWindow):
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
         self.widgets[self.uninstall] = self.addTab(self.uninstall, "Installed applications")
-        self.aboutSection = AboutSection()
-        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI", addToMenu=True, actionIcon="info")
         self.settingsSection = SettingsSection()
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, "WingetUI Settings", addToMenu=True, actionIcon="settings")
-        #self.aboutSection = AboutSection()
-        #self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI", addToMenu=True)
+        self.aboutSection = AboutSection()
+        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI", addToMenu=True, actionIcon="info")
+        self.aboutSection = DebuggingSection()
+        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "WingetUI log", addToMenu=True, actionIcon="buggy")
 
         class Text(QPlainTextEdit):
             def __init__(self):

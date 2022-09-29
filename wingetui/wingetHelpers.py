@@ -8,7 +8,7 @@ winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 #winget = "winget"
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    print(f"[   OK   ] Starting winget search, winget on {winget}...")
+    print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "search", ""] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -49,11 +49,11 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                     signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
                 except Exception as e:
                     report(e)
-        print("[   OK   ] Winget search finished")
+        print("🟢 Winget search finished")
         finishSignal.emit("winget")  # type: ignore
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    print(f"[   OK   ] Starting winget search, winget on {winget}...")
+    print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -94,11 +94,11 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                     report(e)
                 except Exception as e:
                     report(e)
-        print("[   OK   ] Winget search finished")
+        print("🟢 Winget search finished")
         finishSignal.emit("winget")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    print(f"[   OK   ] Starting winget search, winget on {winget}...")
+    print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -132,16 +132,16 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
             except Exception as e:
                 report(e)
-    print("[   OK   ] Winget uninstallable packages search finished")
+    print("🟢 Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     if useId:
         p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-        print(f"[   OK   ] Starting get info for id {id}")
+        print(f"🟢 Starting get info for id {id}")
     else:
         p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-        print(f"[   OK   ] Starting get info for title {title}")
+        print(f"🟢 Starting get info for title {title}")
 
     output = []
     appInfo = {
@@ -185,7 +185,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
             appInfo["installer-url"] = line.replace("Download Url:", "").strip()
         elif("Type:" in line):
             appInfo["installer-type"] = line.replace("Type:", "").strip()
-    print(f"[   OK   ] Loading versions for {title}")
+    print(f"🟢 Loading versions for {title}")
     p = subprocess.Popen([winget, "show", f"{title}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
@@ -201,7 +201,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     signal.emit(appInfo)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    print(f"🟢 winget installer assistant thread started for process {p}")
     outputCode = 0
     counter = 0
     output = ""
@@ -221,7 +221,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"[   OK   ] winget installer assistant thread started for process {p}")
+    print(f"🟢 winget installer assistant thread started for process {p}")
     outputCode = 0
     counter = 0
     output = ""

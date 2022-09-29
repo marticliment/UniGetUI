@@ -216,7 +216,7 @@ class DiscoverSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
-        print("[   OK   ] Discover tab loaded")
+        print("🟢 Discover tab loaded")
 
         g = self.packageList.geometry()
             
@@ -273,7 +273,7 @@ class DiscoverSoftwareSection(QWidget):
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
-            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
+            print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
@@ -296,7 +296,7 @@ class DiscoverSoftwareSection(QWidget):
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
-        print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
         for item in self.packageList.findItems('', Qt.MatchContains, 0):
             if not(item in resultsFound):
                 item.setHidden(True)
@@ -626,7 +626,7 @@ class UpdateSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
-        print("[   OK   ] Upgrades tab loaded")
+        print("🟢 Upgrades tab loaded")
 
         g = self.packageList.geometry()
                     
@@ -704,7 +704,7 @@ class UpdateSoftwareSection(QWidget):
             self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
                 Thread(target=lambda: (time.sleep(3600), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
-            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
+            print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
@@ -741,7 +741,7 @@ class UpdateSoftwareSection(QWidget):
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
-        print(f"[   OK   ] Searching for stringg \"{self.query.text()}\"")
+        print(f"🟢 Searching for stringg \"{self.query.text()}\"")
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not(item in resultsFound):
                 item.setHidden(True)
@@ -1083,7 +1083,7 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
-        print("[   OK   ] Discover tab loaded")
+        print("🟢 Discover tab loaded")
 
         g = self.packageList.geometry()
             
@@ -1149,7 +1149,7 @@ class UninstallSoftwareSection(QWidget):
             globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
             self.packageList.label.setText(self.countLabel.text())
-            print("[   OK   ] Total packages: "+str(self.packageList.topLevelItemCount()))
+            print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event = None):
         g = self.packageList.geometry()
@@ -1181,7 +1181,7 @@ class UninstallSoftwareSection(QWidget):
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
-        print(f"[   OK   ] Searching for string \"{self.query.text()}\"")
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
         for item in self.packageList.findItems('', Qt.MatchContains, 0):
             if not(item in resultsFound):
                 item.setHidden(True)
@@ -1360,7 +1360,7 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel())
         self.layout.addStretch()
     
-        print("[   OK   ] About tab loaded!")
+        print("🟢 About tab loaded!")
         
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
@@ -1494,7 +1494,7 @@ class SettingsSection(QScrollArea):
         self.layout.addLayout(l)
         self.layout.addStretch()
         
-        print("[   OK   ] Settings tab loaded!")
+        print("🟢 Settings tab loaded!")
         
     def scoopAddExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to add", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
@@ -1511,6 +1511,112 @@ class SettingsSection(QScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
+
+class DebuggingSection(QWidget):
+    def __init__(self):
+        super().__init__()
+        class QPlainTextEditWithFluentMenu(QPlainTextEdit):
+            def __init__(self):
+                super().__init__()
+
+            def contextMenuEvent(self, e: QContextMenuEvent) -> None:
+                menu = self.createStandardContextMenu()
+                menu.addSeparator()
+
+                a = QAction()
+                a.setText(("Reload log"))
+                a.triggered.connect(lambda: self.textEdit.setPlainText(buffer.getvalue()))
+                menu.addAction(a)
+
+                a2 = QAction()
+                a2.setText(("Export log as a file"))
+                a2.triggered.connect(lambda: saveLog())
+                menu.addAction(a2)
+
+                a3 = QAction()
+                a3.setText(("Copy log to clipboard"))
+                a3.triggered.connect(lambda: copyLog())
+                menu.addAction(a3)
+
+                ApplyMenuBlur(menu.winId().__int__(), menu)
+                menu.exec(e.globalPos())
+
+        self.setObjectName("background")
+
+        self.setLayout(QVBoxLayout())
+        self.setContentsMargins(0, 0, 0, 0)
+
+        self.textEdit = QPlainTextEditWithFluentMenu()
+        self.textEdit.setReadOnly(True)
+        if isDark():
+            self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #161616;}}")
+        else:
+            self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #dddddd;}}")
+
+        self.textEdit.setPlainText(buffer.getvalue())
+
+        reloadButton = QPushButton(("Reload log"))
+        reloadButton.setFixedWidth(200)
+        reloadButton.clicked.connect(lambda: self.textEdit.setPlainText(buffer.getvalue()))
+
+        def saveLog():
+            try:
+                print("🔵 Saving log...")
+                f = QFileDialog.getSaveFileName(self, "Save log", os.path.expanduser("~"), "Text file (.txt)")
+                if f[0]:
+                    fpath = f[0]
+                    if not ".txt" in fpath.lower():
+                        fpath += ".txt"
+                    with open(fpath, "wb") as fobj:
+                        fobj.write(buffer.getvalue().encode("utf-8"))
+                        fobj.close()
+                    os.startfile(fpath)
+                    print("🟢 log saved successfully")
+                    self.textEdit.setPlainText(buffer.getvalue())
+                else:
+                    print("🟡 log save cancelled!")
+                    self.textEdit.setPlainText(buffer.getvalue())
+            except Exception as e:
+                report(e)
+                self.textEdit.setPlainText(buffer.getvalue())
+
+        exportButtom = QPushButton(("Export log as a file"))
+        exportButtom.setFixedWidth(200)
+        exportButtom.clicked.connect(lambda: saveLog())
+
+        def copyLog():
+            try:
+                print("🔵 Copying log to the clipboard...")
+                globals.app.clipboard().setText(buffer.getvalue())
+                print("🟢 Log copied to the clipboard successfully!")
+                self.textEdit.setPlainText(buffer.getvalue())
+            except Exception as e:
+                report(e)
+                self.textEdit.setPlainText(buffer.getvalue())
+
+        copyButton = QPushButton(("Copy log to clipboard"))
+        copyButton.setFixedWidth(200)
+        copyButton.clicked.connect(lambda: copyLog())
+
+        hl = QHBoxLayout()
+        hl.setSpacing(5)
+        hl.setContentsMargins(10, 10, 10, 0)
+        hl.addWidget(exportButtom)
+        hl.addWidget(copyButton)
+        hl.addStretch()
+        hl.addWidget(reloadButton)
+
+        self.layout().setSpacing(0)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.layout().addLayout(hl, stretch=0)
+        self.layout().addWidget(self.textEdit, stretch=1)
+
+        self.setAutoFillBackground(True)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.textEdit.setPlainText(buffer.getvalue())
+        return super().showEvent(event)
+
 
 if __name__ == "__main__":
     import __init__
