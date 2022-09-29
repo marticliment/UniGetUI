@@ -329,7 +329,7 @@ try:
                 self.window = RootWindow()
                 globals.mainWindow = self.window
                 showAction.triggered.connect(self.window.showWindow)
-                uaAction.triggered.connect(self.window.updates.upgradeAllButton.click)
+                uaAction.triggered.connect(self.window.updates.upgradeAllAction.trigger)
                 showWindow = self.window.showWindow
                 self.setStyle("winvowsvista")
                 globals.darkCSS = darkCSS
@@ -700,6 +700,7 @@ try:
         show-decoration-selected: 0;
         background-color: transparent;
         padding: 5px;
+        margin: 0px;
         outline: none;
         border-radius: 6px;
         border: 0px solid #1f1f1f;
@@ -902,6 +903,30 @@ try:
         background-color: #303030;
         border: 1px solid #202020;
         border-radius: 0px;
+    }}
+    QToolButton {{
+        background-color:rgba(0, 0, 0, 1%);
+        border-radius: 4px;
+        border: 0px solid transparent;
+        margin: 5px;
+        margin-right: 0px;
+        font-size: 9pt;
+        font-family: "Segoe UI Variable Display Semib";
+        font-size: 9pt;
+        padding: 4px;
+    }}
+    QToolButton:hover {{
+        background-color:rgba(100, 100, 100, 12%);
+        border-radius: 4px;
+        margin: 5px;
+        margin-right: 0px;
+        padding: 4px;
+    }}
+    QToolBar:separator {{
+        width: 1px;
+        margin: 5px;
+        margin-right: 0px;
+        background-color: rgba(255, 255, 255, 10%);
     }}
     """
 
@@ -1409,6 +1434,30 @@ try:
     }}
     QLabel{{
         selection-background-color: rgb({colors[3]});
+    }}
+    QToolButton {{
+        background-color:rgba(255, 255, 255, 1%);
+        border-radius: 4px;
+        border: 0px solid transparent;
+        margin: 5px;
+        margin-right: 0px;
+        font-size: 9pt;
+        font-family: "Segoe UI Variable Display Semib";
+        font-size: 9pt;
+        padding: 4px;
+    }}
+    QToolButton:hover {{
+        background-color:rgba(0, 0, 0, 6%);
+        border-radius: 4px;
+        margin: 5px;
+        margin-right: 0px;
+        padding: 4px;
+    }}
+    QToolBar:separator {{
+        width: 1px;
+        margin: 5px;
+        margin-right: 0px;
+        background-color: rgba(0, 0, 0, 10%);
     }}
     """
 

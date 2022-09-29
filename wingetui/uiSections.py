@@ -462,7 +462,7 @@ class UpdateSoftwareSection(QWidget):
             inf = QAction("Show info")
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
-            ins1 = QAction("Update")
+            ins1 = QAction("Upgrade")
             ins1.setIcon(QIcon(getMedia("menu_updates")))
             ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
             ins2 = QAction("Run as administrator")
@@ -550,22 +550,53 @@ class UpdateSoftwareSection(QWidget):
                     except AttributeError:
                         pass
 
-        h2Layout = QHBoxLayout()
-        h2Layout.setContentsMargins(27, 0, 27, 0)
-        self.upgradeAllButton = QPushButton("Upgrade all packages")
-        self.upgradeAllButton.setFixedWidth(200)
-        self.upgradeAllButton.clicked.connect(lambda: self.updateAll())
-        self.blacklistButton = QPushButton("Blacklist selected packages")
-        self.blacklistButton.setFixedWidth(200)
-        self.blacklistButton.clicked.connect(lambda: blacklistSelectedPackages())
-        self.upgradeSelected = QPushButton("Upgrade selected packages")
-        self.upgradeSelected.clicked.connect(lambda: self.updateSelected())
-        self.upgradeSelected.setFixedWidth(200)
+        def setAllSelected(checked: bool) -> None:
+            for i in range(self.packageList.topLevelItemCount()):
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+                self.packageList.itemWidget(program, 0).setChecked(checked)
+
+        #h2Layout = QHBoxLayout()
+        #h2Layout.setContentsMargins(27, 0, 27, 0)
+        self.toolbar = QToolBar(self)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.toolbar.addWidget(TenPxSpacer())
+        self.upgradeSelected = QAction(QIcon(getMedia("menu_installall")), "", self.toolbar)
+        self.upgradeSelected.triggered.connect(lambda: self.update(self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem())))
+        self.toolbar.addAction(self.upgradeSelected)
+        self.toolbar.widgetForAction(self.upgradeSelected).setFixedSize(40, 45)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "Upgrade all", self.toolbar)
+        self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
+        self.toolbar.addAction(self.upgradeAllAction)
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Upgrade selected", self.toolbar)
+        self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
+        self.toolbar.addAction(self.upgradeSelectedAction)
+
+        self.toolbar.addSeparator()
+
+        self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", self.toolbar)
+        self.selectAllAction.triggered.connect(lambda: setAllSelected(True))
+        self.toolbar.addAction(self.selectAllAction)
+        self.toolbar.widgetForAction(self.selectAllAction).setFixedSize(40, 45)
+        self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", self.toolbar)
+        self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
+        self.toolbar.addAction(self.selectNoneAction)
+        self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
+
+        self.toolbar.addSeparator()
+
+        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), "Blacklist selected packages", self.toolbar)
+        self.selectAllAction.triggered.connect(lambda: blacklistSelectedPackages())
+        self.toolbar.addAction(self.selectAllAction)
+        self.selectAllAction = QAction(QIcon(getMedia("undelete")), "Reset blacklist", self.toolbar)
+        self.selectAllAction.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", ""), self.reload()))
+        self.toolbar.addAction(self.selectAllAction)
+
         self.showUnknownSection = QCheckBox("Show unknown versions")
         self.showUnknownSection.setFixedHeight(30)
         self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
         self.showUnknownSection.setFixedWidth(190)
-        self.showUnknownSection.setStyleSheet("margin-top: 10px;")
+        self.showUnknownSection.setStyleSheet("margin-top: 0px;")
         self.showUnknownSection.setChecked(getSettings("ShowUnknownResults"))
         self.showUnknownSection.clicked.connect(lambda v: (setSettings("ShowUnknownResults", bool(v)), updatelist()))
         def updatelist(selff = None):
@@ -579,17 +610,26 @@ class UpdateSoftwareSection(QWidget):
             self.updatePackageNumber()
         self.updatelist = updatelist
 
-        h2Layout.addWidget(self.upgradeAllButton)
-        h2Layout.addWidget(self.upgradeSelected)
-        h2Layout.addWidget(self.blacklistButton)
-        h2Layout.addStretch()
-        h2Layout.addWidget(self.showUnknownSection)
+        self.toolbar.addSeparator()
+        w = QWidget()
+        w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolbar.addWidget(w)
+        self.toolbar.addWidget(self.showUnknownSection)
+        self.toolbar.addWidget(TenPxSpacer())
+        self.toolbar.addWidget(TenPxSpacer())
+
+
+        #h2Layout.addWidget(self.upgradeAllButton)
+        #h2Layout.addWidget(self.upgradeSelected)
+        #h2Layout.addWidget(self.blacklistButton)
+        #h2Layout.addStretch()
+        #h2Layout.addWidget(self.showUnknownSection)
 
         self.countLabel = QLabel("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
-        layout.addLayout(h2Layout)
+        layout.addWidget(self.toolbar)
         layout.setContentsMargins(5, 0, 0, 5)
         v.addWidget(self.countLabel)
         layout.addWidget(self.loadingProgressBar)
@@ -766,10 +806,10 @@ class UpdateSoftwareSection(QWidget):
         self.infobox.hide()
 
     def updateAll(self) -> None:
-            for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
-                if not program.isHidden():
-                    self.update(program.text(1), program.text(2), packageItem=program)
+        for i in range(self.packageList.topLevelItemCount()):
+            program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+            if not program.isHidden():
+                self.update(program.text(1), program.text(2), program.text(5), packageItem=program)
 
     def updateSelected(self) -> None:
             for i in range(self.packageList.topLevelItemCount()):
@@ -777,7 +817,7 @@ class UpdateSoftwareSection(QWidget):
                 if not program.isHidden():
                     try:
                         if self.packageList.itemWidget(program, 0).isChecked():
-                           self.update(program.text(1), program.text(2), packageItem=program)
+                           self.update(program.text(1), program.text(2), program.text(5), packageItem=program)
                     except AttributeError:
                         pass
     

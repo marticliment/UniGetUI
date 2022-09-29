@@ -33,7 +33,7 @@ def report(exception) -> None: # Exception reporter
     import traceback
     for line in traceback.format_exception(*sys.exc_info()):
         print("🔴 "+line)
-        print("🔴 "+line, file=old_stdout)
+        cprint("🔴 "+line)
     print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
 settingsCache = {}
@@ -663,6 +663,11 @@ class PushButtonWithAction(QPushButton):
         super().__init__(text)
         self.action = QAction(text, self)
         self.action.triggered.connect(self.click)
+
+class TenPxSpacer(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setFixedWidth(10)
 
 def foregroundWindowThread():
     """
