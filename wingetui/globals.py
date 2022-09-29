@@ -34,6 +34,7 @@ mainWindow: QMainWindow = None
 trayMenu: QMenu = None
 trayMenuInstalledList: QMenu = None
 trayMenuUpdatesList: QMenu = None
+extrasMenuButton: QPushButton = None
 
 pending_programs: list = []
 current_program: str = ""

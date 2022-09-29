@@ -8,6 +8,7 @@ import win32gui
 
 import globals
 
+from uiSections import *
 from storeEngine import *
 from tools import *
 
@@ -47,15 +48,17 @@ class RootWindow(QMainWindow):
     def loadWidgets(self) -> None:
         self.widgets = {}
         self.mainWidget = QStackedWidget()
+        self.extrasMenu = QMenu("", self)
         self.buttonBox = QButtonGroup()
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.setContentsMargins(2, 6, 4, 6)
         self.buttonLayout.setSpacing(5)
         self.buttonier = QWidget()
         self.buttonier.setFixedHeight(54)
-        self.buttonier.setFixedWidth(703)
+        self.buttonier.setFixedWidth(540)
         self.buttonier.setObjectName("buttonier")
         self.buttonier.setLayout(self.buttonLayout)
+        self.extrasMenuButton = QPushButton()
         self.showHideButton = QPushButton()
         self.installationsWidget = DynamicScrollArea(self.showHideButton)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
@@ -78,7 +81,12 @@ class RootWindow(QMainWindow):
         globals.uninstall = self.uninstall
         self.widgets[self.uninstall] = self.addTab(self.uninstall, "Installed applications")
         self.aboutSection = AboutSection()
-        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI")
+        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI", addToMenu=True, actionIcon="info")
+        self.settingsSection = SettingsSection()
+        self.widgets[self.settingsSection] = self.addTab(self.settingsSection, "WingetUI Settings", addToMenu=True, actionIcon="settings")
+        #self.aboutSection = AboutSection()
+        #self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI", addToMenu=True)
+
         class Text(QPlainTextEdit):
             def __init__(self):
                 super().__init__()
@@ -88,9 +96,15 @@ class RootWindow(QMainWindow):
                 self.setPlainText(buffer.getvalue())
                 self.appendPlainText(errbuffer.getvalue())
                 return super().mousePressEvent(e)
+
+            def showEvent(self, e: QShowEvent) -> None:
+                self.setPlainText(buffer.getvalue())
+                self.appendPlainText(errbuffer.getvalue())
+                return super().showEvent(e)
+
         p = Text()
         p.setReadOnly(True)
-        #self.addTab(p, "Debugging log")
+        #self.addTab(p, "Debugging log", addToMenu=True)
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()
@@ -103,13 +117,29 @@ class RootWindow(QMainWindow):
         self.adminButton.setChecked(True)
         self.adminButton.setObjectName("Headerbutton")
         if self.isAdmin():
-            hl.addSpacing(4)
+            hl.addSpacing(8)
             hl.addWidget(self.adminButton)
+        else:
+            hl.addSpacing(48)
         hl.addStretch()
         hl.addWidget(self.buttonier)
         hl.addStretch()
-        if self.isAdmin():
-            hl.addSpacing(40)
+
+        def showExtrasMenu():
+            ApplyMenuBlur(self.extrasMenu.winId(), self.extrasMenu)
+            self.extrasMenu.exec(QCursor.pos())
+
+        self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
+        self.extrasMenuButton.clicked.connect(lambda: showExtrasMenu())
+        self.extrasMenuButton.setFixedWidth(40)
+        self.extrasMenuButton.setIconSize(QSize(24, 24))
+        self.extrasMenuButton.setCheckable(True)
+        self.extrasMenuButton.setFixedHeight(40)
+        self.extrasMenuButton.setObjectName("Headerbutton")
+        self.buttonBox.addButton(self.extrasMenuButton)
+        globals.extrasMenuButton = self.extrasMenuButton
+        hl.addWidget(self.extrasMenuButton)
+        hl.addSpacing(8)
         hl.setContentsMargins(0, 0, 0, 0)
         vl.addLayout(hl)
         vl.addWidget(self.mainWidget, stretch=1)
@@ -139,14 +169,14 @@ class RootWindow(QMainWindow):
         self.discover.resizeEvent()
         self.updates.resizeEvent()
         sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
-        sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 3 else 0), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
+        sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 4 else 0), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
-    def addTab(self, widget: QWidget, label: str) -> QPushButton:
+    def addTab(self, widget: QWidget, label: str, addToMenu: bool = False, actionIcon: str = "") -> QPushButton:
         i = self.mainWidget.addWidget(widget)
-        btn = QPushButton(label)
+        btn = PushButtonWithAction(label)
         btn.setCheckable(True)
         btn.setFixedHeight(40)
         btn.setObjectName("Headerbutton")
@@ -156,8 +186,14 @@ class RootWindow(QMainWindow):
             self.oldbtn.setStyleSheet("" + self.oldbtn.styleSheet())
             btn.setStyleSheet("" + btn.styleSheet())
         self.oldbtn = btn
-        self.buttonBox.addButton(btn)
-        self.buttonLayout.addWidget(btn)
+        if addToMenu:
+            btn.action.setIcon(QIcon(getMedia(actionIcon)))
+            btn.action.setParent(self.extrasMenu)
+            btn.clicked.connect(self.extrasMenuButton.setChecked(True))
+            self.extrasMenu.addAction(btn.action)
+        else:
+            self.buttonLayout.addWidget(btn)
+            self.buttonBox.addButton(btn)
         return btn
 
     def warnAboutAdmin(self):

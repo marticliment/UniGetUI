@@ -656,6 +656,13 @@ class QAnnouncements(QLabel):
     def setText(self, a: str) -> None:
         raise Exception("This member should not be used under any circumstances")
 
+class PushButtonWithAction(QPushButton):
+    action: QAction = None
+    def __init__(self, text: str = ""):
+        super().__init__(text)
+        self.action = QAction(text, self)
+        self.action.triggered.connect(self.click)
+
 def foregroundWindowThread():
     """
     This thread will periodically get the window focused by the user every 10 secs, so the tray icon can monitor wether the app should be shown or not.
