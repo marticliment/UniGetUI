@@ -305,6 +305,7 @@ class CustomLineEdit(QLineEdit):
         super().__init__(parent=parent)
         self.textChanged.connect(self.updateTextColor)
         self.updateTextColor(self.text())
+        self.setClearButtonEnabled(True)
 
     def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
         m = self.createStandardContextMenu()
