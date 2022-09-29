@@ -5,7 +5,7 @@ from tools import *
 common_params = ["--source", "winget", "--accept-source-agreements"]
     
 winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
-# winget = "winget"
+#winget = "winget"
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"[   OK   ] Starting winget search, winget on {winget}...")
