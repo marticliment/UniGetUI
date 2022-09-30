@@ -761,7 +761,12 @@ class UpdateSoftwareSection(QWidget):
             self.filter()
             self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
-                Thread(target=lambda: (time.sleep(3600), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
+                try:
+                    waitTime = int(getSettingsValue("UpdatesCheckInterval"))
+                except ValueError:
+                    print(f"🟡 Can't get custom interval time! (got value was '{getSettingsValue('UpdatesCheckInterval')}')")
+                    waitTime = 3600
+                Thread(target=lambda: (time.sleep(waitTime), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
@@ -1575,18 +1580,56 @@ class SettingsSection(QScrollArea):
 
 
         self.layout.addWidget(QLabel())
-        subtitle = QLabel("Backround app options")
+        subtitle = QLabel("Notification tray options")
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
         self.layout.addWidget(subtitle)
-
-        notifyAboutUpdates = QCheckBox("Show a notification when there are available updates")
-        notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
-        notifyAboutUpdates.clicked.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
-        self.layout.addWidget(notifyAboutUpdates)
         checkForUpdates = QCheckBox("Check for updates periodically")
         checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
         checkForUpdates.clicked.connect(lambda v: setSettings("DisableAutoCheckforUpdates", not bool(v)))
         self.layout.addWidget(checkForUpdates)
+
+        updatesFrequencyText = QLabel("Check for updates every:")
+        
+        times = {
+            "30 minutes": "1800",
+            "1 hour": "3600",
+            "2 hours": "7200",
+            "4 hours": "14400",
+            "8 hours": "28800",
+        }
+        invertedTimes = {
+            "1800" : "30 minutes",
+            "3600" : "1 hour",
+            "7200" : "2 hours",
+            "14400": "4 hours",
+            "28800": "8 hours",
+        }
+
+        updatesFrequency = QComboBox()
+        updatesFrequency.insertItems(0, list(times.keys()))
+        currentValue = getSettingsValue("UpdatesCheckInterval")
+        try:
+            updatesFrequency.setCurrentText(invertedTimes[currentValue])
+        except KeyError:
+            updatesFrequency.setCurrentText("1 hour")
+        except Exception as e:
+            report(e)
+        
+        updatesFrequency.currentTextChanged.connect(lambda v: setSettingsValue("UpdatesCheckInterval", times[v]))
+
+        hl = QHBoxLayout()
+        hl.setContentsMargins(0, 0, 0, 0)
+        hl.addWidget(updatesFrequencyText)
+        hl.addSpacing(20)
+        hl.addWidget(updatesFrequency)
+        hl.addStretch()
+
+
+        self.layout.addLayout(hl)
+        notifyAboutUpdates = QCheckBox("Show a notification when there are available updates")
+        notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
+        notifyAboutUpdates.clicked.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
+        self.layout.addWidget(notifyAboutUpdates)
         self.layout.addWidget(QLabel())
 
 
