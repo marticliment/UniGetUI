@@ -1211,14 +1211,23 @@ class UninstallSoftwareSection(QWidget):
         self.leftSlow.start()
 
     def uninstallSelected(self) -> None:
-            for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
-                if not program.isHidden():
-                    try:
-                        if self.packageList.itemWidget(program, 0).isChecked():
-                           self.uninstall(program.text(1), program.text(2), program.text(4), packageItem=program)
-                    except AttributeError:
-                        pass
+        toUninstall = []
+        for i in range(self.packageList.topLevelItemCount()):
+            program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+            if not program.isHidden():
+                try:
+                    if self.packageList.itemWidget(program, 0).isChecked():
+                        toUninstall.append(program)
+                except AttributeError:
+                    pass
+        conf = False
+        if len(toUninstall) == 1:
+            conf = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {toUninstall[0].text(1)}?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
+        elif len(toUninstall) > 1:
+            conf = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {len(toUninstall)} packages?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
+        if conf:
+            for program in toUninstall:
+                self.uninstall(program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True)
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, packageItem=packageItem)
@@ -1295,9 +1304,13 @@ class UninstallSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False) -> None:
-        if(MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes):
-            print(id)
+    def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
+        if avoidConfirm:
+            answer = True
+        else:
+            answer = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
+        if answer:
+            print("🔵 Uninstalling", id)
             if not "scoop" in store:
                     self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
             else:
