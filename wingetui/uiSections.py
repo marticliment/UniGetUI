@@ -1270,7 +1270,7 @@ class UninstallSoftwareSection(QWidget):
             item.setIcon(4, self.providerIcon)
             item.setText(4, store)
             c = QCheckBox()
-            c.setChecked(True)
+            c.setChecked(False)
             c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
             self.packageList.addTopLevelItem(item)
             self.packageList.setItemWidget(item, 0, c)
@@ -1533,7 +1533,6 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(QLabel())
 
 
-        self.layout.addWidget(QLabel())
         subtitle = QLabel("Package manager preferences")
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
         self.layout.addWidget(subtitle)
