@@ -383,11 +383,7 @@ try:
             globals.installedHeader.setIcon(QIcon(getMedia("version")))
             self.quitAction.setIcon(QIcon(getMedia("menu_close")))
             self.showAction.setIcon(QIcon(getMedia("menu_show")))
-            globals.themeChanged = True
-            #if not isDark():
-            #    self.window.setStyleSheet(globals.darkCSS.replace("mainbg", "#202020"))
-            #else:
-            #    self.window.setStyleSheet(globals.lightCSS.replace("mainbg", "#ffffff")) 
+            globals.themeChanged = True 
             globals.mainWindow.setAttribute(Qt.WA_DeleteOnClose, True)
             globals.mainWindow.close()
             globals.mainWindow.deleteLater()

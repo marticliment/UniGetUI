@@ -354,6 +354,7 @@ class UpdateSoftwareSection(QWidget):
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
+        
         self.callInMain.connect(lambda f: f())
         self.scoopLoaded = False
         self.wingetLoaded = False
@@ -1538,6 +1539,42 @@ class SettingsSection(QScrollArea):
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
         self.layout.addWidget(subtitle)
         self.layout.addWidget(QLabel())
+
+        themeTextLabel = QLabel("Application theme:")
+        
+        themes = {
+            "Light": "light",
+            "Dark": "dark",
+            "Follow system color scheme": "auto"
+        }
+        invertedThemes = {
+            "light" : "Light",
+            "dark" : "Dark",
+            "auto" : "Follow system color scheme"
+        }
+
+        themeText = QComboBox()
+        themeText.setFixedWidth(250)
+        themeText.insertItems(0, list(themes.keys()))
+        currentValue = getSettingsValue("PreferredTheme")
+        try:
+            themeText.setCurrentText(invertedThemes[currentValue])
+        except KeyError:
+            themeText.setCurrentText("1 hour")
+        except Exception as e:
+            report(e)
+        
+        themeText.currentTextChanged.connect(lambda v: setSettingsValue("PreferredTheme", themes[v]))
+
+        hl = QHBoxLayout()
+        hl.setContentsMargins(0, 0, 0, 0)
+        hl.addWidget(themeTextLabel)
+        hl.addSpacing(20)
+        hl.addWidget(themeText)
+        hl.addStretch()
+
+
+        self.layout.addLayout(hl)
 
         updateCheckBox = QCheckBox("Update WingetUI automatically")
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))

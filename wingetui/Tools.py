@@ -141,6 +141,12 @@ def getColors() -> list:
     return colors
 
 def isDark() -> bool:
+    prefs = getSettingsValue("PreferredTheme")
+    match prefs:
+        case "dark":
+            return True
+        case "light":
+            return False      
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0
 
 if isDark():
