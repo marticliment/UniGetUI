@@ -1526,7 +1526,7 @@ try:
     }}           
     """
     if "--daemon" in sys.argv:
-        if getSettings("DisablesystemTray"):
+        if getSettings("DisableAutostart"):
             sys.exit(0)
     a = MainApplication()
     a.exec()
