@@ -275,10 +275,8 @@ class DiscoverSoftwareSection(QWidget):
             self.packageList.label.setText(self.countLabel.text())
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
-    def resizeEvent(self, event = None):
-        g = self.packageList.geometry()
-        if(event):
-            return super().resizeEvent(event)
+    def resizeEvent(self, event: QResizeEvent):
+        return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:
@@ -463,7 +461,7 @@ class UpdateSoftwareSection(QWidget):
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction("Upgrade")
-            ins1.setIcon(QIcon(getMedia("menu_updates")))
+            ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
             ins2 = QAction("Run as administrator")
             ins2.setIcon(QIcon(getMedia("runasadmin")))
@@ -561,10 +559,30 @@ class UpdateSoftwareSection(QWidget):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         self.toolbar.addWidget(TenPxSpacer())
-        self.upgradeSelected = QAction(QIcon(getMedia("menu_installall")), "", self.toolbar)
+        self.upgradeSelected = QAction(QIcon(getMedia("newversion")), "", self.toolbar)
         self.upgradeSelected.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
         self.toolbar.addAction(self.upgradeSelected)
-        self.toolbar.widgetForAction(self.upgradeSelected).setFixedSize(40, 45)
+        
+        inf = QAction("", self.toolbar)# ("Show info")
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
+        inf.setIcon(QIcon(getMedia("info")))
+        ins2 = QAction("", self.toolbar)# ("Run as administrator")
+        ins2.setIcon(QIcon(getMedia("runasadmin")))
+        ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
+        ins3 = QAction("", self.toolbar)# ("Skip hash check")
+        ins3.setIcon(QIcon(getMedia("checksum")))
+        ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
+        ins4 = QAction("", self.toolbar)# ("Interactive update")
+        ins4.setIcon(QIcon(getMedia("interactive")))
+        ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+
+        for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
+            self.toolbar.addAction(action)
+            self.toolbar.widgetForAction(action).setFixedSize(40, 45)
+
+
+        self.toolbar.addSeparator()
+
         self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "Upgrade all", self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
         self.toolbar.addAction(self.upgradeAllAction)
@@ -585,7 +603,7 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), "Blacklist selected packages", self.toolbar)
+        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), "Blacklist apps", self.toolbar)
         self.selectAllAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.selectAllAction)
         self.selectAllAction = QAction(QIcon(getMedia("undelete")), "Reset blacklist", self.toolbar)
@@ -611,6 +629,7 @@ class UpdateSoftwareSection(QWidget):
         self.updatelist = updatelist
 
         w = QWidget()
+        w.setMinimumWidth(1)
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolbar.addWidget(w)
         self.toolbar.addWidget(self.showUnknownSection)
@@ -622,7 +641,7 @@ class UpdateSoftwareSection(QWidget):
         #h2Layout.addWidget(self.upgradeSelected)
         #h2Layout.addWidget(self.blacklistButton)
         #h2Layout.addStretch()
-        #h2Layout.addWidget(self.showUnknownSection)
+        #h2Layout.addWidget(self.showUnknownVersions)
 
         self.countLabel = QLabel("Checking for updates...")
         self.packageList.label.setText(self.countLabel.text())
@@ -745,10 +764,10 @@ class UpdateSoftwareSection(QWidget):
                 Thread(target=lambda: (time.sleep(3600), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
-    def resizeEvent(self, event = None):
-        g = self.packageList.geometry()
-        if(event):
-            return super().resizeEvent(event)
+    def resizeEvent(self, event: QResizeEvent):
+        cprint(self.width())
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<1070 else Qt.ToolButtonTextBesideIcon)
+        return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
         if not "---" in name:
@@ -1067,18 +1086,18 @@ class UninstallSoftwareSection(QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
-        self.selectAllPkgsCheckBox = QCheckBox("Select all")
-        self.selectAllPkgsCheckBox.setFixedHeight(30)
-        self.selectAllPkgsCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.selectAllPkgsCheckBox.setFixedWidth(140)
-        self.selectAllPkgsCheckBox.setStyleSheet("margin-top: 0px;")
-        self.selectAllPkgsCheckBox.setChecked(self.allPkgSelected)
-        self.selectAllPkgsCheckBox.clicked.connect(lambda v: self.selectAllInstalled())
+        #self.selectAllPkgsCheckBox = QCheckBox("Select all")
+        #self.selectAllPkgsCheckBox.setFixedHeight(30)
+        #self.selectAllPkgsCheckBox.setLayoutDirection(Qt.RightToLeft)
+        ##self.selectAllPkgsCheckBox.setFixedWidth(140)
+        #self.selectAllPkgsCheckBox.setStyleSheet("margin-top: 0px;")
+        #self.selectAllPkgsCheckBox.setChecked(self.allPkgSelected)
+        #self.selectAllPkgsCheckBox.clicked.connect(lambda v: self.selectAllInstalled())
 
-        self.exportSelectionButton = QPushButton("Export selection (beta)")
-        self.exportSelectionButton.setFixedWidth(300)
-        self.exportSelectionButton.setStyleSheet("margin-top: 0px;")
-        self.exportSelectionButton.clicked.connect(self.exportSelection)
+        #self.exportSelectionButton = QPushButton("Export selection (beta)")
+        #self.exportSelectionButton.setFixedWidth(300)
+        #self.exportSelectionButton.setStyleSheet("margin-top: 0px;")
+        #self.exportSelectionButton.clicked.connect(self.exportSelection)
 
         self.toolbar = QToolBar(self)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -1088,7 +1107,22 @@ class UninstallSoftwareSection(QWidget):
         self.upgradeSelected.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem()))
         self.toolbar.addAction(self.upgradeSelected)
         self.toolbar.widgetForAction(self.upgradeSelected).setFixedSize(40, 45)
-        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Uninstall selected", self.toolbar)
+
+        ins2 = QAction("", self.toolbar)# ("Run as administrator")
+        ins2.setIcon(QIcon(getMedia("runasadmin")))
+        ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
+        ins5 = QAction("", self.toolbar)# ("Interactive uninstall")
+        ins5.setIcon(QIcon(getMedia("interactive")))
+        ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
+        
+        for action in [self.upgradeSelected, ins2, ins5]:
+            self.toolbar.addAction(action)
+            self.toolbar.widgetForAction(action).setFixedSize(40, 45)
+
+
+        self.toolbar.addSeparator()
+
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Uninstall selected packages", self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.uninstallSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
 
@@ -1113,17 +1147,6 @@ class UninstallSoftwareSection(QWidget):
         self.exportAction = QAction(QIcon(getMedia("export")), "Export selected packages (beta)", self.toolbar)
         self.exportAction.triggered.connect(lambda: self.exportSelection())
         self.toolbar.addAction(self.exportAction)
-
-        def updatelist(selff = None):
-            if not selff:
-                nonlocal self
-            else:
-                self = selff
-            for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
-                if item.text(3) == "Unknown":
-                    item.setHidden(not self.showUnknownSection.isChecked())
-            self.updatePackageNumber()
-        self.updatelist = updatelist
 
         w = QWidget()
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -1262,10 +1285,10 @@ class UninstallSoftwareSection(QWidget):
             self.packageList.label.setText(self.countLabel.text())
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
-    def resizeEvent(self, event = None):
-        g = self.packageList.geometry()
-        if(event):
-            return super().resizeEvent(event)
+    def resizeEvent(self, event: QResizeEvent):
+        cprint(self.width())
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<700 else Qt.ToolButtonTextBesideIcon)
+        return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:

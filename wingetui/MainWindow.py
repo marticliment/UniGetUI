@@ -165,9 +165,6 @@ class RootWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         w.setLayout(vl)
         self.setCentralWidget(w)
-        self.uninstall.resizeEvent()
-        self.discover.resizeEvent()
-        self.updates.resizeEvent()
         sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 4 else 0), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
