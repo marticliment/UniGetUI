@@ -140,7 +140,7 @@ def getColors() -> list:
         i += 4
     return colors
 
-def isDark() -> str:
+def isDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0
 
 if isDark():
@@ -681,6 +681,29 @@ def foregroundWindowThread():
         globals.lastFocusedWindow = fw
         time.sleep(8)
 
+
+class ThemeSignal(QObject):
+    signal = Signal()
+
+    def __init__(self):
+        super().__init__()
+
+def themeThread(ts):
+    oldResult = isDark()
+    while True:
+        if oldResult != isDark():
+            oldResult = isDark()            
+            while globals.mainWindow.isVisible():
+                cprint("🟡 MainWindow is visible, can't reload!")
+                time.sleep(1)
+            ts.signal.emit()
+        time.sleep(1)
+
+
+ts = ThemeSignal()
+ts.signal.connect(lambda: globals.app.reloadWindow())
+
+Thread(target=themeThread, args=(ts,), daemon=True, name="UI Theme thread").start()
 Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
             
 

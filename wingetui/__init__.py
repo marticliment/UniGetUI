@@ -32,7 +32,7 @@ try:
         
         def __init__(self):
             try:
-                super().__init__(sys.argv + ["-platform", f"windows:darkmode={1 if isDark() else 0}"])
+                super().__init__(sys.argv + ["-platform", f"windows:darkmode={0 if isDark() else 0}"])
                 self.isDaemon: bool = "--daemon" in sys.argv
                 self.popup = DraggableWindow()
                 self.popup.setFixedSize(QSize(600, 400))
@@ -251,21 +251,21 @@ try:
 
                 menu = QMenu("WingetUI")
                 globals.trayMenu = menu
-                infoAction = QAction(f"WingetUI v{versionName}",menu)
-                infoAction.setIcon(QIcon(getMedia("info")))
-                infoAction.setEnabled(False)
-                menu.addAction(infoAction)
+                self.infoAction = QAction(f"WingetUI v{versionName}",menu)
+                self.infoAction.setIcon(QIcon(getMedia("info")))
+                self.infoAction.setEnabled(False)
+                menu.addAction(self.infoAction)
                 
-                showAction = QAction("Show WingetUI",menu)
-                showAction.setIcon(QIcon(getMedia("menu_show")))
-                menu.addAction(showAction)
+                self.showAction = QAction("Show WingetUI",menu)
+                self.showAction.setIcon(QIcon(getMedia("menu_show")))
+                menu.addAction(self.showAction)
                 self.trayIcon.setContextMenu(menu)
                 menu.addSeparator()
                 
-                dAction = QAction("Available updates",menu)
-                dAction.setIcon(QIcon(getMedia("menu_updates")))
-                dAction.setEnabled(False)
-                menu.addAction(dAction)
+                self.dAction = QAction("Available updates",menu)
+                self.dAction.setIcon(QIcon(getMedia("menu_updates")))
+                self.dAction.setEnabled(False)
+                menu.addAction(self.dAction)
                 
                 self.updatesMenu = menu.addMenu("0 updates found")
                 self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
@@ -278,15 +278,15 @@ try:
                 globals.updatesHeader.setIcon(QIcon(getMedia("version")))
                 self.updatesMenu.addAction(globals.updatesHeader)
                 
-                uaAction = QAction("Update all", menu)
-                uaAction.setIcon(QIcon(getMedia("menu_installall")))
-                menu.addAction(uaAction)
+                self.uaAction = QAction("Update all", menu)
+                self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
+                menu.addAction(self.uaAction)
                 menu.addSeparator()
                 
-                dAction = QAction("Installed packages",menu)
-                dAction.setIcon(QIcon(getMedia("menu_uninstall")))
-                dAction.setEnabled(False)
-                menu.addAction(dAction)
+                self.iAction = QAction("Installed packages",menu)
+                self.iAction.setIcon(QIcon(getMedia("menu_uninstall")))
+                self.iAction.setEnabled(False)
+                menu.addAction(self.iAction)
                 
                 self.installedMenu = menu.addMenu("0 packages found")
                 self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
@@ -300,11 +300,11 @@ try:
                 globals.installedHeader.setEnabled(False)
                 self.installedMenu.addAction(globals.installedHeader)
 
-                quitAction = QAction(menu)
-                quitAction.setIcon(QIcon(getMedia("menu_close")))
-                quitAction.setText("Quit")
-                quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
-                menu.addAction(quitAction)
+                self.quitAction = QAction(menu)
+                self.quitAction.setIcon(QIcon(getMedia("menu_close")))
+                self.quitAction.setText("Quit")
+                self.quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
+                menu.addAction(self.quitAction)
                 
                 def showWindow():
                     # This function will be defined when the mainWindow gets defined
@@ -326,14 +326,14 @@ try:
                             ExtendFrameIntoClientArea(mn.winId().__int__())
                             mn.setStyleSheet(menuLightCSS)
 
-                self.window = RootWindow()
-                globals.mainWindow = self.window
-                showAction.triggered.connect(self.window.showWindow)
-                uaAction.triggered.connect(self.window.updates.upgradeAllAction.trigger)
-                showWindow = self.window.showWindow
                 self.setStyle("winvowsvista")
                 globals.darkCSS = darkCSS
                 globals.lightCSS = lightCSS
+                self.window = RootWindow()
+                globals.mainWindow = self.window
+                self.showAction.triggered.connect(self.window.showWindow)
+                self.uaAction.triggered.connect(self.window.updates.upgradeAllAction.trigger)
+                showWindow = self.showAction.trigger
                 self.loadingText.setText(f"Latest details...")
                 if not self.isDaemon:
                     self.window.show()
@@ -370,7 +370,32 @@ try:
                 webbrowser.open(("https://www.somepythonthings.tk/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
                 print(traceback_info)
             self.popup.hide()
-        
+
+        def reloadWindow(self):
+            cprint("Reloading...")
+            self.infoAction.setIcon(QIcon(getMedia("info")))
+            self.dAction.setIcon(QIcon(getMedia("menu_updates")))
+            self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
+            globals.updatesHeader.setIcon(QIcon(getMedia("version")))
+            self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
+            self.iAction.setIcon(QIcon(getMedia("menu_uninstall")))
+            self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
+            globals.installedHeader.setIcon(QIcon(getMedia("version")))
+            self.quitAction.setIcon(QIcon(getMedia("menu_close")))
+            self.showAction.setIcon(QIcon(getMedia("menu_show")))
+            globals.themeChanged = True
+            #if not isDark():
+            #    self.window.setStyleSheet(globals.darkCSS.replace("mainbg", "#202020"))
+            #else:
+            #    self.window.setStyleSheet(globals.lightCSS.replace("mainbg", "#ffffff")) 
+            globals.mainWindow.setAttribute(Qt.WA_DeleteOnClose, True)
+            globals.mainWindow.close()
+            globals.mainWindow.deleteLater()
+            self.window = RootWindow()
+            globals.mainWindow = self.window
+            self.showAction.triggered.disconnect()
+            self.showAction.triggered.connect(self.window.showWindow)
+
         def instanceThread(self):
             while True:
                 try:

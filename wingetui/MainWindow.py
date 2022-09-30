@@ -16,10 +16,13 @@ class RootWindow(QMainWindow):
     callInMain = Signal(object)
     pressed = False
     oldPos = QPoint(0, 0)
+    isWinDark = False
+    appliedStyleSheet = False
 
     def __init__(self):
         self.oldbtn = None
         super().__init__()
+        self.isWinDark = isDark()
         self.callInMain.connect(lambda f: f())
         self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
         self.setMinimumSize(700, 560)
@@ -213,6 +216,9 @@ class RootWindow(QMainWindow):
         return is_admin
     
     def closeEvent(self, event):
+        if(globals.themeChanged):
+            globals.themeChanged = False
+            event.accept()
         if(globals.pending_programs != []):
             if updatesAvailable or getSettings("DisablesystemTray"):
                 if(tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
@@ -262,17 +268,19 @@ class RootWindow(QMainWindow):
             self.hide()
 
     def showEvent(self, event: QShowEvent) -> None:
-        if(not isDark()):
+        if(not self.isWinDark):
+            cprint("dark")
             r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.LIGHT)
             print(r)
-            if r != 0x32:
-                pass
-            self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
+            if not self.appliedStyleSheet and globals.lightCSS != "":
+                self.appliedStyleSheet = True
+                self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
         else:
+            cprint("light")
             r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.DARK)
-            if r != 0x32:
-                pass
-            self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
+            if not self.appliedStyleSheet and globals.darkCSS != "":
+                self.appliedStyleSheet = True
+                self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
         return super().showEvent(event)
 
 class DraggableWindow(QWidget):
