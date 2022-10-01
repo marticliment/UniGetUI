@@ -108,26 +108,41 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
         line = line.strip()
         if line:
             if(counter > 0 and not b"---" in line):
-                output.append(str(line, encoding='utf-8', errors="ignore"))
+                output.append(line)
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
                 l = l.split("\r")[-1]
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
+                    cprint(idSeparator)
                     verSeparator = len(l.split("Version")[0])
                     counter += 1
     counter = 0
     emptyStr = ""
     wingetName = "Winget"
-    print(p.stdout)
-    print(output)
+    for i in output:
+        print(i)
     for element in output:
         try:
-            element = bytes(element, "utf-8")
-            export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
-            signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").strip(), wingetName)
+            element = str(element, "utf-8", errors="ignore")
+            verElement = element[idSeparator:].strip()
+            verElement.replace("\t", " ")
+            while "  " in verElement:
+                verElement = verElement.replace("  ", " ")
+            iOffset = 0
+            id = verElement.split(" ")[iOffset+0]
+            ver = verElement.split(" ")[iOffset+1]
+            if len(id)==1:
+                iOffset + 1
+                id = verElement.split(" ")[iOffset+0]
+                ver = verElement.split(" ")[iOffset+1]
+            if ver.strip() in ("<", "-"):
+                iOffset += 1
+                ver = verElement.split(" ")[iOffset+1]
+            signal.emit(element[0:idSeparator].strip(), id, ver, wingetName)
         except Exception as e:
             try:
+                report(e)
                 element = str(element, "utf-8")
                 signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
             except Exception as e:

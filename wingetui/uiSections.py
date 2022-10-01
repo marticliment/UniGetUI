@@ -771,7 +771,6 @@ class UpdateSoftwareSection(QWidget):
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
-        cprint(self.width())
         self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<1070 else Qt.ToolButtonTextBesideIcon)
         return super().resizeEvent(event)
 
@@ -1150,8 +1149,12 @@ class UninstallSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.exportAction = QAction(QIcon(getMedia("export")), "Export selected packages (beta)", self.toolbar)
+        self.exportAction = QAction(QIcon(getMedia("export")), "Export selected packages to a file", self.toolbar)
         self.exportAction.triggered.connect(lambda: self.exportSelection())
+        self.toolbar.addAction(self.exportAction)
+
+        self.exportAction = QAction(QIcon(getMedia("export")), "Export all", self.toolbar)
+        self.exportAction.triggered.connect(lambda: self.exportSelection(all=True))
         self.toolbar.addAction(self.exportAction)
 
         w = QWidget()
@@ -1292,13 +1295,18 @@ class UninstallSoftwareSection(QWidget):
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
-        cprint(self.width())
-        self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<700 else Qt.ToolButtonTextBesideIcon)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<820 else Qt.ToolButtonTextBesideIcon)
         return super().resizeEvent(event)
 
-    def addItem(self, name: str, id: str, version: str, store) -> None:
+    def addItem(self, name: str, id: str, version: str, store: str) -> None:
         if not "---" in name:
             item = TreeWidgetItemWithQAction()
+            if store.lower() == "winget":
+                for illegal_char in ("{", "}", "_", " "):
+                    if illegal_char in id:
+                        store = "Local PC"
+                if id.count(".") != 1:
+                    store = "Local PC"
             item.setText(1, name)
             item.setText(2, id)
             item.setIcon(1, self.installIcon)
@@ -1376,7 +1384,7 @@ class UninstallSoftwareSection(QWidget):
         for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
             self.packageList.itemWidget(item, 0).setChecked(self.allPkgSelected)
     
-    def exportSelection(self) -> None:
+    def exportSelection(self, all: bool = False) -> None:
         """
         Export all selected packages into a file.
 
@@ -1391,37 +1399,49 @@ class UninstallSoftwareSection(QWidget):
 
         """
         wingetPackagesList = []
+        scoopPackageList = []
 
-        for i in range(self.packageList.topLevelItemCount()):
-            item = self.packageList.topLevelItem(i)
-            if (self.packageList.itemWidget(item, 0).isChecked() and item.text(4).lower() == "winget"):
-                wingetPackage = {"PackageIdentifier": item.text(2)}
-                wingetPackagesList.append(wingetPackage)
+        try:
+            for i in range(self.packageList.topLevelItemCount()):
+                item = self.packageList.topLevelItem(i)
+                if ((self.packageList.itemWidget(item, 0).isChecked() or all) and item.text(4).lower() == "winget"):
+                    id = item.text(2).strip()
+                    wingetPackage = {"PackageIdentifier": id}
+                    wingetPackagesList.append(wingetPackage)
+                elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and "scoop" in item.text(4).lower()):
+                    scoopPackage = {"Name": item.text(2)}
+                    scoopPackageList.append(scoopPackage)
 
-        wingetDetails = {
-            "Argument": "https://cdn.winget.microsoft.com/cache",
-            "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
-            "Name": "winget",
-            "Type" : "Microsoft.PreIndexed.Package"
-        }
-        wingetExportSchema = {
-            "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-            "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
-            "Sources": [{
-                "Packages": wingetPackagesList,
-                "SourceDetails": wingetDetails}],
-            "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
-        }
-        scoopExportSchema = {}
-        overAllSchema = {
-            "winget": wingetExportSchema,
-            "scoop":scoopExportSchema
-        }
+            wingetDetails = {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type" : "Microsoft.PreIndexed.Package"
+            }
+            wingetExportSchema = {
+                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
+                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
+                "Sources": [{
+                    "Packages": wingetPackagesList,
+                    "SourceDetails": wingetDetails}],
+                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
+            }
+            scoopExportSchema = {
+                "apps": scoopPackageList,
+            }
+            overAllSchema = {
+                "winget": wingetExportSchema,
+                "scoop": scoopExportSchema
+            }
 
-        filename = QFileDialog.getSaveFileName(self, "Save File", filter='JSON (*.json)')
+            filename = QFileDialog.getSaveFileName(self, "Save File", "wingetui exported packages", filter='JSON (*.json)')
+            if filename[0] != "":
+                with open(filename[0], 'w') as f:
+                    f.write(json.dumps(overAllSchema, indent=4))
 
-        with open(filename[0], 'w') as f:
-            f.write(json.dumps(overAllSchema, indent=4))
+        except Exception as e:
+            report(e)
+
 
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):
