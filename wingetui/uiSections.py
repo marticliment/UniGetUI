@@ -26,6 +26,7 @@ class DiscoverSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.infobox = PackageInfoPopupWindow(self)
         self.setStyleSheet("margin: 0px;")
+        self.packageReference: dict[str, TreeWidgetItemWithQAction] = {}
 
         self.programbox = QWidget()
 
@@ -202,6 +203,13 @@ class DiscoverSoftwareSection(QWidget):
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
 
+        self.toolbar.addSeparator()
+
+        self.importAction = QAction("Import packages from a file", self.toolbar)
+        self.importAction.setIcon(QIcon(getMedia("import")))
+        self.importAction.triggered.connect(lambda: self.importPackages())
+        self.toolbar.addAction(self.importAction)
+
 
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
@@ -280,6 +288,38 @@ class DiscoverSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+
+    def importPackages(self):
+        try:
+            packageList = []
+            file = QFileDialog.getOpenFileName(self, "Select package file", filter="JSON (*.json)")[0]
+            if file != "":
+                f = open(file, "r")
+                contents = json.load(f)
+                f.close()
+                try:
+                    packages = contents["winget"]["Sources"][0]["Packages"]
+                    for pkg in packages:
+                        packageList.append(pkg["PackageIdentifier"])
+                except KeyError as e:
+                    cprint(e)
+                    print("🟠 Invalid winget section")
+                try:
+                    packages = contents["scoop"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    cprint(e)
+                    print("🟠 Invalid scoop section")
+                cprint(packageList)
+                for packageId in packageList:
+                    try:
+                        item = self.packageReference[packageId.lower()]
+                        self.fastinstall(item.text(0), item.text(1), item.text(3))
+                    except KeyError:
+                        print(f"🟠 Can't find package {packageId} in the package reference")
+        except Exception as e:
+            report(e)
         
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
@@ -320,6 +360,7 @@ class DiscoverSoftwareSection(QWidget):
             item.setText(3, store)
             item.setText(2, version)
             self.packageList.addTopLevelItem(item)
+            self.packageReference[id.lower()] = item
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
@@ -348,6 +389,7 @@ class DiscoverSoftwareSection(QWidget):
                 self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
+        self.packageReference = {}
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.loadingProgressBar.show()

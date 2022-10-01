@@ -258,7 +258,7 @@ class RootWindow(QMainWindow):
             self.window().raise_()
             self.window().activateWindow()
             try:
-                if self.updates.countLabel.text() != "Found packages: 0":
+                if self.updates.availableUpdates > 0:
                     self.widgets[self.updates].click()
             except Exception as e:
                 report(e)
