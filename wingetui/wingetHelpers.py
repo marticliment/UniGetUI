@@ -106,7 +106,6 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                 #signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
             except Exception as e:
                 try:
-                    element = str(element, "utf-8")
                     signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
                 except Exception as e:
                     report(e)

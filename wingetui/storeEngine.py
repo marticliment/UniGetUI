@@ -534,7 +534,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.vLayout = QVBoxLayout()
         self.layout = QVBoxLayout()
         self.title = QLinkLabel()
-        self.title.setStyleSheet("font-size: 40px;")
+        self.title.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.title.setText("Loading...")
 
         fortyWidget = QWidget()
