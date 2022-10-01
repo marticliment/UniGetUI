@@ -1557,7 +1557,7 @@ except Exception as e:
     import webbrowser, traceback, platform
     try:
         from tools import version as appversion
-    except Exception as e:
+    except Exception as e2:
         appversion = "Unknown"
     os_info = f"" + \
         f"                        OS: {platform.system()}\n"+\
