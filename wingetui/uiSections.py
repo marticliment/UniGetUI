@@ -79,13 +79,13 @@ class DiscoverSoftwareSection(QWidget):
         sct.activated.connect(self.query.clear)
 
         img = QLabel()
-        img.setFixedWidth(96)
-        img.setPixmap(QIcon(getMedia("store_logo")).pixmap(QSize(80, 80)))
+        img.setFixedWidth(80)
+        img.setPixmap(QIcon(getMedia("store_logo")).pixmap(QSize(64, 64)))
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Discover packages")
-        self.discoverLabel.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         hLayout.addLayout(v)
@@ -163,6 +163,7 @@ class DiscoverSoftwareSection(QWidget):
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 15px;margin-right: 15px;")
 
         layout = QVBoxLayout()
         w = QWidget()
@@ -483,13 +484,13 @@ class UpdateSoftwareSection(QWidget):
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUpgrade", bool(not v)))
 
         img = QLabel()
-        img.setFixedWidth(96)
-        img.setPixmap(QIcon(getMedia("upgrade")).pixmap(QSize(80, 80)))
+        img.setFixedWidth(80)
+        img.setPixmap(QIcon(getMedia("upgrade")).pixmap(QSize(64, 64)))
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Available updates")
-        self.discoverLabel.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         hLayout.addLayout(v)
@@ -591,6 +592,7 @@ class UpdateSoftwareSection(QWidget):
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 15px;margin-right: 15px;")
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1041,13 +1043,13 @@ class UninstallSoftwareSection(QWidget):
 
 
         img = QLabel()
-        img.setFixedWidth(96)
-        img.setPixmap(QIcon(getMedia("red_trash")).pixmap(QSize(80, 80)))
+        img.setFixedWidth(80)
+        img.setPixmap(QIcon(getMedia("red_trash")).pixmap(QSize(64, 64)))
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Installed packages")
-        self.discoverLabel.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         hLayout.addLayout(v)
@@ -1143,6 +1145,7 @@ class UninstallSoftwareSection(QWidget):
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 15px;margin-right: 15px;")
 
         
         layout = QVBoxLayout()
@@ -1534,7 +1537,7 @@ class AboutSection(QScrollArea):
         self.announcements = QAnnouncements()
         self.layout.addWidget(self.announcements)
         title = QLabel("Component information")
-        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
 
         self.layout.addWidget(QLabel())
@@ -1562,7 +1565,7 @@ class AboutSection(QScrollArea):
         table.cornerWidget().setStyleSheet("background: transparent;")
         self.layout.addWidget(table)
         title = QLabel("About WingetUI "+str(versionName)+"")
-        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
 
         self.layout.addWidget(title)
         self.layout.addWidget(QLabel())
@@ -1572,7 +1575,7 @@ class AboutSection(QScrollArea):
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"Project homepage:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>"))
         self.layout.addSpacing(30)
-        self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 27pt;"))
+        self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QLabel())
@@ -1622,11 +1625,11 @@ class SettingsSection(QScrollArea):
         self.announcements.setMinimumWidth(800)
         self.layout.addWidget(self.announcements)
         title = QLabel("General Settings")
-        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
 
         subtitle = QLabel("General preferences")
-        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
         self.layout.addWidget(QLabel())
 
@@ -1685,7 +1688,7 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(QLabel())
     
         subtitle = QLabel("Startup options")
-        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
 
         doCloseWingetUI = QCheckBox("Close WingetUI to the notification area")
@@ -1708,7 +1711,7 @@ class SettingsSection(QScrollArea):
 
         self.layout.addWidget(QLabel())
         subtitle = QLabel("Notification tray options")
-        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
         checkForUpdates = QCheckBox("Check for updates periodically")
         checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
@@ -1761,7 +1764,7 @@ class SettingsSection(QScrollArea):
 
 
         subtitle = QLabel("Package manager preferences")
-        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display {'semib' if isDark() else ''}\"")
+        subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
 
         parallelInstalls = QCheckBox("Allow parallel installs (NOT RECOMMENDED)")
