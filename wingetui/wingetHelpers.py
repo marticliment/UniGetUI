@@ -62,12 +62,14 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()  # type: ignore
         line = line.strip()
         if line:
+            cprint(line)
             if(counter > 0):
                 if not b"upgrades available" in line:
                     output.append(line)
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                l = l.split("\r")[-1]
+                cprint(l)
+                l = l.split("\r")[-1].split("/")[-1]
                 print(l)
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
@@ -126,7 +128,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 output.append(line)
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                l = l.split("\r")[-1]
+                l = l.split("\r")[-1].split("/")[-1]
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
                     cprint(idSeparator)
