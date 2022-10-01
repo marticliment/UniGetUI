@@ -1082,16 +1082,17 @@ class UninstallSoftwareSection(QWidget):
             ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
             ins4 = QAction("Show package info")
             ins4.setIcon(QIcon(getMedia("info")))
-            ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), "scoop", self.packageList.currentItem()))
+            ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
-            if self.packageList.currentItem().text(4).lower() != "winget":
+            if "scoop" in self.packageList.currentItem().text(4).lower():
                 contextMenu.addAction(ins3)
                 contextMenu.addSeparator()
-                contextMenu.addAction(ins4)
             else:
                 contextMenu.addAction(ins5)
+            if self.packageList.currentItem().text(4).lower() != "local pc":
+                contextMenu.addAction(ins4)
 
             contextMenu.exec(QCursor.pos())
 
