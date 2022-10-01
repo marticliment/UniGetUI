@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.3.1"
+#define MyAppVersion "1.4.0"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -56,7 +56,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
 
 [Files]
-Source: "Y:\WinGetUI-Store\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TaskKill('WingetUI.exe')
+Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TaskKill('WingetUI.exe')    
+Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs; BeforeInstall: TaskKill('WingetUI.exe')
 Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                                 
 Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall  
 Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: "{app}"; Flags: deleteafterinstall

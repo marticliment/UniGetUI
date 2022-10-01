@@ -3,7 +3,7 @@ echo This script is going to install scoop and it's required dependencies requir
 pause
 powershell -NoProfile -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
 echo Installing scoop...
-powershell -NoProfile -Command "Invoke-WebRequest get.scoop.sh | Invoke-Expression"
+powershell -NoProfile -Command 'iex "& {$(irm get.scoop.sh)} -RunAsAdmin"'
 echo Installing git...
 powershell -NoProfile -Command "scoop install git"
 echo Done!
