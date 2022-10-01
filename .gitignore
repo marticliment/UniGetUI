@@ -12,3 +12,5 @@ installer.iss
 Output/
 *.old
 vcredist.exe
+wingetuiBin/
+wingetui_bin/
