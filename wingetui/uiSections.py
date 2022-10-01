@@ -177,11 +177,41 @@ class DiscoverSoftwareSection(QWidget):
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
 
+        self.toolbar = QToolBar(self)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.toolbar.addWidget(TenPxSpacer())
+        self.upgradeSelected = QAction(QIcon(getMedia("newversion")), "", self.toolbar)
+        self.upgradeSelected.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem()))
+        self.toolbar.addAction(self.upgradeSelected)
+        
+        inf = QAction("", self.toolbar)# ("Show info")
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), self.packageList.currentItem()))
+        inf.setIcon(QIcon(getMedia("info")))
+        ins2 = QAction("", self.toolbar)# ("Run as administrator")
+        ins2.setIcon(QIcon(getMedia("runasadmin")))
+        ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), admin=True))
+        ins3 = QAction("", self.toolbar)# ("Skip hash check")
+        ins3.setIcon(QIcon(getMedia("checksum")))
+        ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
+        ins4 = QAction("", self.toolbar)# ("Interactive update")
+        ins4.setIcon(QIcon(getMedia("interactive")))
+        ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+
+        for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
+            self.toolbar.addAction(action)
+            self.toolbar.widgetForAction(action).setFixedSize(40, 45)
+
+
+        self.toolbar.addWidget(TenPxSpacer())
+        self.toolbar.addWidget(TenPxSpacer())
+
         self.countLabel = QLabel("Searching for packages...")
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         v.addWidget(self.countLabel)
         layout.addLayout(hLayout)
+        layout.addWidget(self.toolbar)
         layout.setContentsMargins(5, 0, 0, 5)
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.packageList)
