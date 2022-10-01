@@ -9,10 +9,10 @@ import importlib, os
 
 
 a = Analysis(['__init__.py'],
-             pathex=['Y:\WingetUI-Store\wingetui'],
-             binaries=[('__init__.py', '.'), ('blurwindow.py', '.'), ('globals.py', '.'), ('mainWindow.py', '.'), ('scoopHelpers.py', '.'), ('storeEngine.py', '.'), ('tools.py', '.'), ('wingetHelpers.py', '.')],
+             pathex=['Y:\WingetUI-Store\wingetui_bin'],
+             binaries=[('blurwindow.pyc', '.'), ('globals.pyc', '.'), ('mainWindow.pyc', '.'), ('scoopHelpers.pyc', '.'), ('storeEngine.pyc', '.'), ('tools.pyc', '.'), ('wingetHelpers.pyc', '.'), ("uiSections.pyc", ".")],
              datas=[('resources/', 'resources/'), ("winget-cli/", "winget-cli/"), ("sudo/", "sudo/")],
-             hiddenimports=['pkg_resources.py2_warn'],
+             hiddenimports=['pkg_resources.py2_warn', "win32gui"],
              hookspath=[],
              runtime_hooks=[],
              excludes=['eel', 'tkinter', "PyQt5"],
@@ -24,19 +24,34 @@ a = Analysis(['__init__.py'],
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
-exe = EXE(pyz,
-          a.scripts,
-          a.binaries,
-          a.zipfiles,
-          a.datas,
-          [],
-          name='WingetUI',
-          icon="resources/icon.ico",
-          debug=False,
-          bootloader_ignore_signals=False,
-          strip=False,
-          upx=True,
-          upx_exclude=[],
-          runtime_tmpdir="%userprofile%\\.wingetui",
-          console=False,
-          version="../wingetui-version-file")
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name='wingetui',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon="resources/icon.ico",
+    version="../wingetui-version-file"
+)
+
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='wingetuiBin',
+)

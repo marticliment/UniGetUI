@@ -80,7 +80,7 @@ class DiscoverSoftwareSection(QWidget):
 
         img = QLabel()
         img.setFixedWidth(80)
-        img.setPixmap(QIcon(getMedia("store_logo")).pixmap(QSize(64, 64)))
+        img.setPixmap(QIcon(getMedia("desktop_download")).pixmap(QSize(64, 64)))
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
@@ -1044,7 +1044,7 @@ class UninstallSoftwareSection(QWidget):
 
         img = QLabel()
         img.setFixedWidth(80)
-        img.setPixmap(QIcon(getMedia("red_trash")).pixmap(QSize(64, 64)))
+        img.setPixmap(QIcon(getMedia("workstation")).pixmap(QSize(64, 64)))
         hLayout.addWidget(img)
 
         v = QVBoxLayout()

@@ -251,7 +251,7 @@ try:
 
                 menu = QMenu("WingetUI")
                 globals.trayMenu = menu
-                self.infoAction = QAction(f"WingetUI v{versionName}",menu)
+                self.infoAction = QAction(f"WingetUI version {versionName}",menu)
                 self.infoAction.setIcon(QIcon(getMedia("info")))
                 self.infoAction.setEnabled(False)
                 menu.addAction(self.infoAction)
