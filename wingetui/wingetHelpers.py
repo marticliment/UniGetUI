@@ -64,7 +64,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         if line:
             if(counter > 0):
                 if not b"upgrades available" in line:
-                    output.append(str(line, encoding='utf-8', errors="ignore"))
+                    output.append(line)
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
                 l = l.split("\r")[-1]
@@ -83,9 +83,27 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         counter = 0
         for element in output:
             try:
-                element = bytes(element, "utf-8")
-                export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
-                signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
+                element = str(element, "utf-8", errors="ignore")
+                verElement = element[idSeparator:].strip()
+                verElement.replace("\t", " ")
+                while "  " in verElement:
+                    verElement = verElement.replace("  ", " ")
+                iOffset = 0
+                id = verElement.split(" ")[iOffset+0]
+                ver = verElement.split(" ")[iOffset+1]
+                newver = verElement.split(" ")[iOffset+2]
+                if len(id)==1:
+                    iOffset + 1
+                    id = verElement.split(" ")[iOffset+0]
+                    newver = verElement.split(" ")[iOffset+2]
+                    ver = verElement.split(" ")[iOffset+1]
+                if ver.strip() in ("<", "-"):
+                    iOffset += 1
+                    ver = verElement.split(" ")[iOffset+1]
+                    newver = verElement.split(" ")[iOffset+2]
+                signal.emit(element[0:idSeparator].strip(), id, ver, newver, "Winget")
+                #export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
+                #signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
             except Exception as e:
                 try:
                     element = str(element, "utf-8")
