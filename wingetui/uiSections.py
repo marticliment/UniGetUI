@@ -200,9 +200,19 @@ class DiscoverSoftwareSection(QWidget):
         ins4.setIcon(QIcon(getMedia("interactive")))
         ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), interactive=True))
 
+        
+        tooltips = {
+            self.upgradeSelected: "Install selected package",
+            inf: "Show package info",
+            ins2: "Run the installer with administrator privileges",
+            ins3: "Skip the hash check",
+            ins4: "Interactive installation",
+        }
+
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
+            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
         self.toolbar.addSeparator()
 
@@ -648,9 +658,19 @@ class UpdateSoftwareSection(QWidget):
         ins4.setIcon(QIcon(getMedia("interactive")))
         ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
 
+        
+        tooltips = {
+            self.upgradeSelected: "Install selected package",
+            inf: "Show package info",
+            ins2: "Run the installer with administrator privileges",
+            ins3: "Skip the hash check",
+            ins4: "Interactive installation",
+        }
+
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
+            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
 
         self.toolbar.addSeparator()
@@ -672,6 +692,8 @@ class UpdateSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip("Select none")
+        self.toolbar.widgetForAction(self.selectAllAction).setToolTip("Select all")
 
         self.toolbar.addSeparator()
 
@@ -1200,9 +1222,17 @@ class UninstallSoftwareSection(QWidget):
         ins5.setIcon(QIcon(getMedia("interactive")))
         ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
         
+        
+        tooltips = {
+            self.upgradeSelected: "Uninstall selected package",
+            ins2: "Uninstall with administrator privileges",
+            ins5: "Interactive uninstall",
+        }
+
         for action in [self.upgradeSelected, ins2, ins5]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
+            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
 
         self.toolbar.addSeparator()
@@ -1226,6 +1256,8 @@ class UninstallSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip("Select none")
+        self.toolbar.widgetForAction(self.selectAllAction).setToolTip("Select all")
 
         self.toolbar.addSeparator()
 
