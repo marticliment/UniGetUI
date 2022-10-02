@@ -69,7 +69,8 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
                 cprint(l)
-                l = l.split("\r")[-1].split("/")[-1]
+                for char in ("\r", "/", "|", "\\", "-"):
+                    l = l.split(char)[-1].strip()
                 print(l)
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
@@ -128,7 +129,8 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 output.append(line)
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                l = l.split("\r")[-1].split("/")[-1]
+                for char in ("\r", "/", "|", "\\", "-"):
+                    l = l.split(char)[-1].strip()
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
                     cprint(idSeparator)
