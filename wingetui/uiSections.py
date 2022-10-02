@@ -1692,7 +1692,7 @@ class SettingsSection(QScrollArea):
         try:
             themeText.setCurrentText(invertedThemes[currentValue])
         except KeyError:
-            themeText.setCurrentText("1 hour")
+            themeText.setCurrentText("Follow system color scheme")
         except Exception as e:
             report(e)
         
