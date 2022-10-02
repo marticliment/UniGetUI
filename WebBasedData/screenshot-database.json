@@ -1,0 +1,10 @@
+{
+  "winget": {
+    "Contoso.Package1": ["https://example.com/media/img1.png", "https://example.com/media/img2.png"],
+    "Contoso.Package2": ["https://example.com/images/main.png"],
+    "Contoso.Package3": [],
+  },
+  "scoop": {
+  }
+
+}
