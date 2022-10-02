@@ -483,10 +483,10 @@ class UpdateSoftwareSection(QWidget):
         self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnUpgrade"))
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnUpgrade", bool(not v)))
 
-        img = QLabel()
-        img.setFixedWidth(80)
-        img.setPixmap(QIcon(getMedia("upgrade")).pixmap(QSize(64, 64)))
-        hLayout.addWidget(img)
+        self.img = QLabel()
+        self.img.setFixedWidth(80)
+        self.img.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
+        hLayout.addWidget(self.img)
 
         v = QVBoxLayout()
         self.discoverLabel = QLabel("Available updates")
@@ -894,6 +894,13 @@ class UpdateSoftwareSection(QWidget):
         self.countLabel.setText(f"Available updates: {self.availableUpdates}")
         globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (f"WingetUI - {self.availableUpdates} update is available" if self.availableUpdates == 1 else f"WingetUI - {self.availableUpdates} updates are available") )
         globals.trayMenuUpdatesList.menuAction().setText(f"{self.availableUpdates} updates found")
+        if self.availableUpdates > 0:
+            self.packageList.label.hide()
+            self.img.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
+        else:
+            self.packageList.label.setText("Hooray! No updates were found!")
+            self.packageList.label.show()
+            self.img.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
     
     def showQuery(self) -> None:
         self.programbox.show()
