@@ -51,6 +51,7 @@ You can also install the app through [Scoop](https://scoop.sh/) (⚠️might cau
 
 To install it that way, execute the following in a CLI: `scoop install wingetui`
 
+_(See the [WIKI](https://github.com/martinet101/WingetUI/wiki) for more information)_
 
 # Screenshots
  
@@ -67,3 +68,20 @@ To install it that way, execute the following in a CLI: `scoop install wingetui`
 ![alt text](/media/winget_5.png)
 
 ![alt text](/media/winget_7.png)
+
+# FAQ
+
+**Q: I am unable to update some Winget package**<br>
+A: This is likely a winget-cli issue. Please check if it is possible to install/update the package through PowerShell or cmd using the commands `winget upgrade` or `winget install` (for example: `winget upgrade --id Microsoft.PowerToys`). If this doesn't work you may try to get help at https://github.com/microsoft/winget-pkgs.<br>
+
+**Q: Can WingetUI be in my language?**<br>
+A: Not yet. See more details at https://github.com/martinet101/WingetUI/issues/67 <br>
+
+**Q: My antivirus is telling me that WingetUI is a virus/My antivirus is uninstalling WingetUI/My browser is blocking WingetUI download**<br>
+A: Just whitelist WingetUI on the antivirus quarantine box/antivirus settings<br>
+
+**Q: Will Chocolatey be supported?**<br>
+A: Maybe in the future. See more details at https://github.com/martinet101/WingetUI/issues/56<br>
+
+**Q: Can I add "msstore" as a source for Winget?**<br>
+A: This is not possible nor planned for the near future. See more details at https://github.com/martinet101/WingetUI/issues/87
