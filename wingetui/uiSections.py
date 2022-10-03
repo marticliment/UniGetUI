@@ -845,7 +845,7 @@ class UpdateSoftwareSection(QWidget):
                 if count > 1:
                     notify("Updates found!", f"{count} apps can be updated")
                 elif count == 1:
-                    notify("Updates found!", f"{lastVisibleItem.text(1)} can be updated")
+                    notify("Update found!", f"{lastVisibleItem.text(1)} can be updated")
             if count > 0:
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
