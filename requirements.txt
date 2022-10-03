@@ -1,3 +1,4 @@
 PySide6
 win32mica
 PyInstaller
+pywin32
