@@ -233,6 +233,7 @@ class RootWindow(QMainWindow):
                     event.ignore()
             else:
                 self.hide()
+                globals.lastFocusedWindow = 0
                 event.ignore()
         else:
             if globals.updatesAvailable:
@@ -246,6 +247,7 @@ class RootWindow(QMainWindow):
                     sys.exit(0)
                 else:
                     self.hide()
+                    globals.lastFocusedWindow = 0
                     event.ignore()
 
     def resizeEvent(self, event: QResizeEvent) -> None:

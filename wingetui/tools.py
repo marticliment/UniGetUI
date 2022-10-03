@@ -671,6 +671,20 @@ class PushButtonWithAction(QPushButton):
         self.action = QAction(text, self)
         self.action.triggered.connect(self.click)
 
+
+class CustomComboBox(QComboBox):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self.setItemDelegate(QStyledItemDelegate(self))
+
+    def showEvent(self, event: QShowEvent) -> None:
+        v = self.view().window()
+        ApplyMenuBlur(v.winId(), v)
+        return super().showEvent(event)
+
+    def dg(self):
+        pass
+
 class TenPxSpacer(QWidget):
     def __init__(self) -> None:
         super().__init__()

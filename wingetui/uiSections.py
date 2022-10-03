@@ -1685,7 +1685,7 @@ class SettingsSection(QScrollArea):
             "auto" : "Follow system color scheme"
         }
 
-        themeText = QComboBox()
+        themeText = CustomComboBox()
         themeText.setFixedWidth(250)
         themeText.insertItems(0, list(themes.keys()))
         currentValue = getSettingsValue("PreferredTheme")
@@ -1774,7 +1774,7 @@ class SettingsSection(QScrollArea):
             "28800": "8 hours",
         }
 
-        updatesFrequency = QComboBox()
+        updatesFrequency = CustomComboBox()
         updatesFrequency.insertItems(0, list(times.keys()))
         currentValue = getSettingsValue("UpdatesCheckInterval")
         try:

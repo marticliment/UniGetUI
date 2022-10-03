@@ -532,19 +532,24 @@ try:
         border: 1px solid rgba(36, 36, 36, 50%);
         padding: 4px;
         outline: 0px;
-        padding-right: 0px;
         background-color: #303030;
         border-radius: 8px;
     }}
+    QAbstractItemView{{
+        margin: 0px;
+        padding: 0px;
+    }}
     QComboBox QAbstractItemView::item{{
-        height: 10px;
+        height: 6px;
         border: none;
-        padding-left: 10px;
+        padding: 4px;
+        margin: 2px;
+        background-color: none;
         border-radius: 4px;
     }}
     QComboBox QAbstractItemView::item:selected{{
         background: rgba(255, 255, 255, 6%);
-        height: 10px;
+        height: 6px;
         outline: none;
         border: none;
         padding-left: 10px;
@@ -1413,21 +1418,31 @@ try:
         width: 2px;
     }}
     QComboBox QAbstractItemView {{
-        border: 1px solid rgba(36, 36, 36, 50%);
-        padding: 4px;
+        padding: 0px;
+        margin: 0px;
         outline: 0px;
-        padding-right: 0px;
         background-color: #ffffff;
         border-radius: 8px;
         color: black;
     }}
     QComboBox QAbstractItemView::item{{
         height: 30px;
+        margin: 4px;
         border: none;
         padding-left: 10px;
         color: black;
         border-radius: 4px;
+        background: rgba(255, 255, 255, 1%);
+    }}
+    QComboBox QAbstractItemView::item:hover{{
+        background: rgba(255, 255, 255, 6%);
+        height: 30px;
+        outline: none;
+        border: none;
+        padding-left: 10px;
         background-color: white;
+        color: black;
+        border-radius: 4px;
     }}
     QComboBox QAbstractItemView::item:selected{{
         background: rgba(255, 255, 255, 6%);

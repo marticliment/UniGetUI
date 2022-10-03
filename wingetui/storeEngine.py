@@ -582,15 +582,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.versionLabel = QLinkLabel("Version: ")
 
         
-        class QComboBoxWithFluentMenu(QComboBox):
-            def __init__(self, parent=None) -> None:
-                super().__init__(parent)
-                v = self.view().window()
-                ApplyMenuBlur(v.winId().__int__(), v, avoidOverrideStyleSheet=True)
-                self.setItemDelegate(QStyledItemDelegate(self))
-
-
-        self.versionCombo = QComboBoxWithFluentMenu()
+        self.versionCombo = CustomComboBox()
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
         self.versionCombo.setFixedHeight(25)
