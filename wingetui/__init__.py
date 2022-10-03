@@ -447,10 +447,11 @@ try:
                         if(hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash):
                             print("🔵 Hash: ", provided_hash)
                             print("🟢 Hash ok, starting update")
-                            while self.running:
+                            globals.updatesAvailable = True
+                            while self.window.isVisible():
                                 time.sleep(0.1)
                             if not getSettings("DisableAutoUpdateWingetUI"):
-                                subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
+                                subprocess.run('start /B "" "{0}" /verysilent'.format(filename), shell=True)
                             else:
                                 print("🟠 Hash not ok")
                                 print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())

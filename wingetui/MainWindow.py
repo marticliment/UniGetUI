@@ -219,24 +219,34 @@ class RootWindow(QMainWindow):
             globals.themeChanged = False
             event.accept()
         if(globals.pending_programs != []):
-            if updatesAvailable or getSettings("DisablesystemTray"):
+            if getSettings("DisablesystemTray"):
                 if(tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
-                    event.accept()
-                    globals.app.quit()
-                    sys.exit(0)
+                    if globals.updatesAvailable:
+                        self.hide()
+                        globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
+                        event.ignore()
+                    else:
+                        event.accept()
+                        globals.app.quit()
+                        sys.exit(0)
                 else:
                     event.ignore()
             else:
                 self.hide()
                 event.ignore()
         else:
-            if updatesAvailable or getSettings("DisablesystemTray"):
-                event.accept()
-                globals.app.quit()
-                sys.exit(0)
-            else:
+            if globals.updatesAvailable:
                 self.hide()
+                globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
                 event.ignore()
+            else:
+                if getSettings("DisablesystemTray"):
+                    event.accept()
+                    globals.app.quit()
+                    sys.exit(0)
+                else:
+                    self.hide()
+                    event.ignore()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         try:
