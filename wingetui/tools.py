@@ -103,7 +103,11 @@ def setSettingsValue(s: str, v: str):
         print(e)
 
 sudoPath = os.path.join(os.path.join(realpath, "sudo"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
-sudoLocation = os.path.dirname(sudoPath)
+try:
+    sudoLocation = os.path.dirname(sudoPath)
+except TypeError as e:
+    report(e)
+    sudoLocation = os.path.expanduser("~")
 print(sudoPath)
 print(sudoLocation)
 
