@@ -115,6 +115,8 @@ class PackageInstallerWidget(QGroupBox):
         self.rightFast.stop()
         self.addInfoLine.emit("Starting installation...")
         self.progressbar.setValue(0)
+        self.packageId = self.packageId.replace("…", "")
+        self.programName = self.programName.replace("…", "")
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
             if self.useId:
@@ -294,6 +296,8 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.addInfoLine.emit("Applying update...")
         self.rightFast.stop()
         self.progressbar.setValue(0)
+        self.packageId = self.packageId.replace("…", "")
+        self.programName = self.programName.replace("…", "")
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
             print(self.adminstr)
@@ -368,6 +372,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
+        self.packageId = self.packageId.replace("…", "")
+        self.programName = self.programName.replace("…", "")
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False

@@ -3,13 +3,17 @@ import subprocess, time, os, sys
 from tools import *
 
 common_params = ["--source", "winget", "--accept-source-agreements"]
-    
-winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
-#winget = "winget"
+
+
+if getSettings("UseSystemWinget"):
+    winget = "winget.exe"
+else:
+    winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
+
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen([winget, "search", ""] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(["mode", "400,30&", winget, "search", ""] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -17,6 +21,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()
         line = line.strip()
         if line:
+            cprint(line)
             if(counter > 0):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
@@ -54,7 +59,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen([winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen([winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -117,7 +122,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen([winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen([winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -170,17 +175,21 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     finishSignal.emit("winget")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
+    oldid = id
+    id = id.replace("…", "")
+    oldtitle = title
+    title = title.replace("…", "")
     if useId:
-        p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for id {id}")
     else:
-        p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for title {title}")
 
     output = []
     appInfo = {
-        "title": title,
-        "id": id,
+        "title": oldtitle,
+        "id": oldid,
         "publisher": "Unknown",
         "author": "Unknown",
         "description": "Unknown",
@@ -220,7 +229,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         elif("Type:" in line):
             appInfo["installer-type"] = line.replace("Type:", "").strip()
     print(f"🟢 Loading versions for {title}")
-    p = subprocess.Popen([winget, "show", f"{title}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen([winget, "show", f"{title}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     while p.poll() is None:

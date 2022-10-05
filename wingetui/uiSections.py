@@ -386,15 +386,15 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, packageItem=packageItem)
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if not "scoop" in store.lower():
-                self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
+                self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
         else:
-                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id.replace("…", ""), admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
+                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
         self.packageReference = {}
@@ -946,13 +946,13 @@ class UpdateSoftwareSection(QWidget):
     
     def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
             if not "scoop" in store.lower():
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
             else:
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop",  useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+                    self.addInstallation(PackageUpdaterWidget(title, "scoop",  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, update=True, packageItem=packageItem)
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
@@ -1374,7 +1374,7 @@ class UninstallSoftwareSection(QWidget):
                 self.uninstall(program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True)
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title.replace("…", ""), id.replace("…", ""), useId=not("…" in id), store=store, packageItem=packageItem)
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
         ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
@@ -1461,9 +1461,9 @@ class UninstallSoftwareSection(QWidget):
         if answer:
             print("🔵 Uninstalling", id)
             if not "scoop" in store.lower():
-                    self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
+                    self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
             else:
-                    self.addInstallation(PackageUninstallerWidget(title, "scoop" , useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
+                    self.addInstallation(PackageUninstallerWidget(title, "scoop" , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def reload(self) -> None:
         self.scoopLoaded = False
