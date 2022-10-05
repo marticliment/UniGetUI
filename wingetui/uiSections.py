@@ -1460,7 +1460,7 @@ class UninstallSoftwareSection(QWidget):
             answer = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
         if answer:
             print("🔵 Uninstalling", id)
-            if not "scoop" in store:
+            if not "scoop" in store.lower():
                     self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
             else:
                     self.addInstallation(PackageUninstallerWidget(title, "scoop" , useId=not("…" in id), packageId=id.replace("…", ""), packageItem=packageItem, admin=admin, removeData=removeData))
