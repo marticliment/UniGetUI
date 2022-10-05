@@ -59,7 +59,6 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
 def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
     print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-    output = []
     counter = 0
     idSeparator = 0
     while p.poll() is None:

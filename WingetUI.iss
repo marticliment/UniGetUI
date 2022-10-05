@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.4.1"
+#define MyAppVersion "1.4.2"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -31,6 +31,7 @@ SolidCompression=yes
 WizardStyle=classic      
 WizardImageFile=Y:\WingetUI-Store\INSTALLER.BMP
 DisableWelcomePage=no
+UsePreviousTasks=no
 
 
 [Languages]
@@ -50,7 +51,10 @@ begin
      ewWaitUntilTerminated, ResultCode);
 end;
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Desktop icon"; Flags: unchecked      
+Name: "ignorescoop"; Description: "Keep scoop as it is (best when updating WingetUI)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive  
+Name: "installscoop"; Description: "Enable and install scoop (and its dependencies)"; GroupDescription: "Scoop Package Manager"; Flags:   unchecked   exclusive
+Name: "disablescoop"; Description: "Disable scoop (recommended if you don't know what is happening)"; GroupDescription: "Scoop Package Manager"; Flags:      unchecked    exclusive
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
@@ -59,8 +63,10 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TaskKill('WingetUI.exe')    
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs; BeforeInstall: TaskKill('WingetUI.exe')
 Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                                 
-Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall  
+Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                               
+Source: "Y:\WinGetUI-Store\disable_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall  
 Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: "{app}"; Flags: deleteafterinstall
+Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -70,7 +76,8 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\remove-old.cmd"; Flags: runhidden   
-Filename: "{app}\install_scoop.cmd"; Flags: runhidden
+Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
+Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /passive /norestart"
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall
 
