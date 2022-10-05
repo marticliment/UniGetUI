@@ -528,32 +528,49 @@ try:
         padding-left: 10px;
         border-radius: 4px;
     }}
-    QComboBox QAbstractItemView {{
-        border: 1px solid rgba(36, 36, 36, 50%);
-        padding: 4px;
-        outline: 0px;
-        background-color: #303030;
+    QComboBox {{
+        width: {(100)}px;
+        background-color:rgba(81, 81, 81, 25%);
         border-radius: 8px;
-    }}
-    QAbstractItemView{{
-        margin: 0px;
-        padding: 0px;
-    }}
-    QComboBox QAbstractItemView::item{{
-        height: 6px;
-        border: none;
-        padding: 4px;
-        margin: 2px;
-        background-color: none;
-        border-radius: 4px;
-    }}
-    QComboBox QAbstractItemView::item:selected{{
-        background: rgba(255, 255, 255, 6%);
-        height: 6px;
-        outline: none;
-        border: none;
+        border: 1px solidrgba(86, 86, 86, 25%);
+        height: {(25)}px;
         padding-left: 10px;
-        border-radius: 4px;
+        border-top: 1px solidrgba(99, 99, 99, 25%);
+    }}
+    QComboBox:disabled {{
+        width: {(100)}px;
+        background-color: #303030;
+        color: #bbbbbb;
+        border-radius: 8px;
+        border: 0.6px solid #262626;
+        height: {(25)}px;
+        padding-left: 10px;
+    }}
+    QComboBox:hover {{
+        background-color:rgba(86, 86, 86, 25%);
+        border-radius: 8px;
+        border: 1px solidrgba(100, 100, 100, 25%);
+        height: {(25)}px;
+        padding-left: 10px;
+        border-top: 1px solid rgba(107, 107, 107, 25%);
+    }}
+    QComboBox::drop-down {{
+        subcontrol-origin: padding;
+        subcontrol-position: top right;
+        padding: 5px;
+        border-radius: 8px;
+        border: none;
+        width: 30px;
+    }}
+    QComboBox::down-arrow {{
+        image: url("{getMedia(f"collapse")}");
+        height: 8px;
+        width: 8px;
+    }}
+    QComboBox::down-arrow:disabled {{
+        image: url("{getMedia(f"collapse")}");
+        height: 2px;
+        width: 2px;
     }}
     QMessageBox{{
         background-color: #202020;
