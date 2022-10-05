@@ -301,7 +301,7 @@ class RootWindow(QMainWindow):
         globals.lastFocusedWindow = 0
     
     def focusOutEvent(self, event: QEvent) -> None:
-        Thread(lambda: (time.sleep(0.3), self.loseFocusUpdate())).start()
+        Thread(target=lambda: (time.sleep(0.3), self.loseFocusUpdate())).start()
         return super().focusOutEvent(event)
 
 class DraggableWindow(QWidget):
