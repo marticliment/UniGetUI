@@ -265,15 +265,17 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
             appInfo["installer-type"] = line.replace("Type:", "").strip()
     print(f"🟢 Loading versions for {title}")    
     if useId:
-        p = subprocess.Popen([winget, "show", "--id", "-e", f"{id}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     else:
-        p = subprocess.Popen([winget, "show", "--name", "-e", f"{title}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
+    cprint(p.args)
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
         if line:
+            cprint(line)
             if(counter > 2):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
