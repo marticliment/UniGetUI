@@ -18,8 +18,9 @@ old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
 errbuffer = io.StringIO()
-sys.stdout = buffer = io.StringIO()
-sys.stderr = errbuffer = io.StringIO()
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    sys.stdout = buffer = io.StringIO()
+    sys.stderr = errbuffer = io.StringIO()
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -37,8 +38,8 @@ def report(exception) -> None: # Exception reporter
     print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
 settingsCache = {}
-version = 1.41
-versionName = "1.4.1"
+version = 1.409
+versionName = "1.4.2-beta"
 installersWidget = None
 updatesAvailable = False
 

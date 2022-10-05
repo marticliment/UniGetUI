@@ -887,7 +887,7 @@ class UpdateSoftwareSection(QWidget):
                 c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
                 self.packageList.setItemWidget(item, 0, c)
                 action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
-                action.triggered.connect(lambda : self.update(name, id, packageItem=item))
+                action.triggered.connect(lambda : self.update(name, id, store, packageItem=item))
                 action.setShortcut(version)
                 item.setAction(action)
                 globals.trayMenuUpdatesList.addAction(action)
