@@ -277,6 +277,7 @@ class RootWindow(QMainWindow):
             globals.lastFocusedWindow = self.winId()
         else:
             self.hide()
+            globals.lastFocusedWindow = 0
 
     def showEvent(self, event: QShowEvent) -> None:
         if(not self.isWinDark):
@@ -291,6 +292,17 @@ class RootWindow(QMainWindow):
                 self.appliedStyleSheet = True
                 self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
         return super().showEvent(event)
+
+    def enterEvent(self, event: QEnterEvent) -> None:
+        globals.lastFocusedWindow = self.winId()
+        return super().enterEvent(event)
+
+    def loseFocusUpdate(self):
+        globals.lastFocusedWindow = 0
+    
+    def focusOutEvent(self, event: QEvent) -> None:
+        Thread(lambda: (time.sleep(0.3), self.loseFocusUpdate())).start()
+        return super().focusOutEvent(event)
 
 class DraggableWindow(QWidget):
     pressed = False
