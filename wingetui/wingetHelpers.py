@@ -211,6 +211,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         oldid = id
         oldtitle = title
         useId = True
+    elif "…" in oldtitle:
+        title = searchForOnlyOnePackage(oldid)[0]
+        oldtitle = title
     if useId:
         p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for id {id}")
@@ -260,8 +263,11 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
             appInfo["installer-url"] = line.replace("Download Url:", "").strip()
         elif("Type:" in line):
             appInfo["installer-type"] = line.replace("Type:", "").strip()
-    print(f"🟢 Loading versions for {title}")
-    p = subprocess.Popen([winget, "show", f"{title}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    print(f"🟢 Loading versions for {title}")    
+    if useId:
+        p = subprocess.Popen([winget, "show", "--id", "-e", f"{id}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    else:
+        p = subprocess.Popen([winget, "show", "--name", "-e", f"{title}", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     while p.poll() is None:
