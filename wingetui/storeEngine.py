@@ -811,7 +811,7 @@ class PackageInfoPopupWindow(QMainWindow):
         if(self.interactiveCheckbox.isChecked()):
             cmdline_args.append("--interactive")
         else:
-            if not "scoop" in self.store:
+            if not "scoop" in self.store.lower():
                 cmdline_args.append("--silent")
         if(self.versionCombo.currentText()=="Latest"):
             version = []
