@@ -57,6 +57,33 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         print("🟢 Winget search finished")
         finishSignal.emit("winget")  # type: ignore
 
+def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
+    print(f"🟢 Starting winget search, winget on {winget}...")
+    p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    output = []
+    counter = 0
+    idSeparator = 0
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        if line:
+            cprint(line)
+            if(counter > 0):
+                if not b"---" in line:
+                    return str(line[:idSeparator], "utf-8", errors="ignore").strip(), str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
+            else:
+                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
+                l = l.split("\r")[-1]
+                if("Id" in l):
+                    idSeparator = len(l.split("Id")[0])
+                    verSeparator = idSeparator+2
+                    i=0
+                    while l.split("Id")[1].split(" ")[i] == "":
+                        verSeparator += 1
+                        i += 1
+                    counter += 1
+    return id
+
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen([winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
@@ -179,13 +206,18 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     id = id.replace("…", "")
     oldtitle = title
     title = title.replace("…", "")
+    if "…" in oldid and "…" in oldtitle:
+        title, id = searchForOnlyOnePackage(oldid)
+        oldid = id
+        oldtitle = title
+        useId = True
     if useId:
         p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for id {id}")
     else:
         p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for title {title}")
-
+    cprint(p.args)
     output = []
     appInfo = {
         "title": oldtitle,
