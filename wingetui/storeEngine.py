@@ -833,10 +833,10 @@ class PackageInfoPopupWindow(QMainWindow):
 
     def show(self) -> None:
         g: QRect = self.parent().window().geometry()
-        self.resize(600, 600)
+        self.resize(700, 650)
         self.parent().window().blackmatt.show()
-        self.move(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
-        print(g.x()+g.width()//2-600//2, g.y()+g.height()//2-600//2)
+        self.move(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
+        print(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
         return super().show()
 
     def close(self) -> bool:
