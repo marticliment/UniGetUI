@@ -97,7 +97,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
-        self.packageListScrollBar = QScrollBar()
+        self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList: TreeWidget = TreeWidget("a")
@@ -509,7 +509,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.addWidget(self.searchButton)
         hLayout.addWidget(self.reloadButton)
 
-        self.packageListScrollBar = QScrollBar()
+        self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList = TreeWidget("ª")
@@ -1093,7 +1093,7 @@ class UninstallSoftwareSection(QWidget):
         #hLayoutExport.setContentsMargins(0, 0, 0, 0)
         #hLayoutExport.addWidget(self.exportSelectionButton)
         
-        self.packageListScrollBar = QScrollBar()
+        self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList = TreeWidget("Found 0 Packages")

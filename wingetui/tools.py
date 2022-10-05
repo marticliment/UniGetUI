@@ -706,6 +706,14 @@ def foregroundWindowThread():
         globals.lastFocusedWindow = fw
         time.sleep(8)
 
+class CustomScrollBar(QScrollBar):
+    def __init__(self):
+        super().__init__()
+        self.rangeChanged.connect(self.showHideIfNeeded)
+
+    def showHideIfNeeded(self, min: int, max: int):
+        self.setVisible(min != max)
+
 
 class ThemeSignal(QObject):
     signal = Signal()
