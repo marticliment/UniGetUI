@@ -21,7 +21,6 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            cprint(line)
             if(counter > 0):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
@@ -67,7 +66,6 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            cprint(line)
             if(counter > 0):
                 if not b"---" in line:
                     return str(line[:idSeparator], "utf-8", errors="ignore").strip(), str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
@@ -94,13 +92,11 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()  # type: ignore
         line = line.strip()
         if line:
-            cprint(line)
             if(counter > 0):
                 if not b"upgrades available" in line:
                     output.append(line)
             else:
                 l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                cprint(l)
                 for char in ("\r", "/", "|", "\\", "-"):
                     l = l.split(char)[-1].strip()
                 print(l)
@@ -165,7 +161,6 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                     l = l.split(char)[-1].strip()
                 if("Id" in l):
                     idSeparator = len(l.split("Id")[0])
-                    cprint(idSeparator)
                     verSeparator = len(l.split("Version")[0])
                     counter += 1
     counter = 0
@@ -220,7 +215,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     else:
         p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for title {title}")
-    cprint(p.args)
+    print(p.args)
     output = []
     appInfo = {
         "title": oldtitle,
@@ -270,12 +265,11 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
-    cprint(p.args)
+    print(p.args)
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            cprint(line)
             if(counter > 2):
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
