@@ -653,7 +653,8 @@ class UpdateSoftwareSection(QWidget):
         def setAllSelected(checked: bool) -> None:
             for i in range(self.packageList.topLevelItemCount()):
                 program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
-                self.packageList.itemWidget(program, 0).setChecked(checked)
+                if not program.isHidden():
+                    self.packageList.itemWidget(program, 0).setChecked(checked)
 
         #h2Layout = QHBoxLayout()
         #h2Layout.setContentsMargins(27, 0, 27, 0)
@@ -1289,8 +1290,9 @@ class UninstallSoftwareSection(QWidget):
 
         def setAllSelected(checked: bool) -> None:
             for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
-                self.packageList.itemWidget(program, 0).setChecked(checked)
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)                
+                if not program.isHidden():
+                    self.packageList.itemWidget(program, 0).setChecked(checked)
 
         self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", self.toolbar)
         self.selectAllAction.triggered.connect(lambda: setAllSelected(True))
