@@ -83,7 +83,7 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen([winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    p = subprocess.Popen(["mode", "400,30&", winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -144,7 +144,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen([winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    p = subprocess.Popen(["mode", "400,30&", winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
