@@ -31,7 +31,7 @@ SolidCompression=yes
 WizardStyle=classic      
 WizardImageFile=Y:\WingetUI-Store\INSTALLER.BMP
 DisableWelcomePage=no
-UsePreviousTasks=no
+UsePreviousTasks=yes
 
 
 [Languages]
@@ -50,11 +50,11 @@ begin
     Exec('taskkill.exe', '/f /im ' + '"' + FileName + '"', '', SW_HIDE,
      ewWaitUntilTerminated, ResultCode);
 end;
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Desktop icon"; Flags: unchecked      
-Name: "ignorescoop"; Description: "Keep scoop as it is (best when updating WingetUI)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive  
-Name: "installscoop"; Description: "Enable and install scoop (and its dependencies)"; GroupDescription: "Scoop Package Manager"; Flags:   unchecked   exclusive
-Name: "disablescoop"; Description: "Disable scoop (recommended if you don't know what is happening)"; GroupDescription: "Scoop Package Manager"; Flags:      unchecked    exclusive
+Name: "installscoop"; Description: "Enable and install scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
+Name: "disablescoop"; Description: "Do not install scoop (recommended)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
@@ -79,5 +79,5 @@ Filename: "{app}\remove-old.cmd"; Flags: runhidden
 Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /passive /norestart"
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall; 
 

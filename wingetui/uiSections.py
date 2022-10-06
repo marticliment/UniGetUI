@@ -332,7 +332,10 @@ class DiscoverSoftwareSection(QWidget):
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -340,7 +343,10 @@ class DiscoverSoftwareSection(QWidget):
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -836,7 +842,10 @@ class UpdateSoftwareSection(QWidget):
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
             globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
@@ -846,7 +855,10 @@ class UpdateSoftwareSection(QWidget):
         elif(store == "scoop"):
             self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
             globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
-            self.packageList.label.setText(self.countLabel.text())
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
             self.scoopLoaded = True
             self.filter()
             self.reloadButton.setEnabled(True)
@@ -1428,7 +1440,10 @@ class UninstallSoftwareSection(QWidget):
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
             globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
@@ -1437,7 +1452,10 @@ class UninstallSoftwareSection(QWidget):
             self.query.setEnabled(True)
         elif(store == "scoop"):
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            self.packageList.label.setText(self.countLabel.text())
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
             globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
@@ -1904,10 +1922,10 @@ class SettingsSection(QScrollArea):
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
         l.addWidget(button)
-        button = QPushButton("Ensure scoop is properly installed")
+        button = QPushButton("Install scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
-        button.clicked.connect(lambda: os.startfile(os.path.join(realpath, "resources/install_scoop.cmd")))
+        button.clicked.connect(lambda: (setSettings("DisableScoop", False), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
         l.addWidget(button)
         l.setContentsMargins(0, 0, 0, 0)
         self.layout.addLayout(l)
