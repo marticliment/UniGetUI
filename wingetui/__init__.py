@@ -899,8 +899,8 @@ try:
     QComboBox QAbstractItemView {{
         border: 1px solid rgba(36, 36, 36, 50%);
         padding: 4px;
+        margin: 0px;
         outline: 0px;
-        padding-right: 0px;
         background-color: #303030;
         border-radius: 8px;
     }}
@@ -1389,31 +1389,7 @@ try:
         background-color: rgb({colors[2]});
         border-radius: 4px;
     }}
-    QComboBox {{
-        width: 100px;
-        background-color:rgba(255, 255, 255, 55%);
-        border: 1px solid rgba(220, 220, 220, 55%);
-        border-radius: 6px;
-        height: 30px;
-        padding-left: 10px;
-    }}
-    QComboBox:disabled {{
-        width: 100px;
-        background-color: #bbbbbb;
-        color: #000000;
-        border-radius: 6px;
-        border: 0.6px solid #262626;
-        height: 25px;
-        padding-left: 10px;
-    }}
-    QComboBox:hover {{
-        border-radius: 6px;
-        height: 25px;
-        padding-left: 10px;
-        background-color: rgba(255, 255, 255, 90%);
-        border: 1px solid rgba(220, 220, 220, 65%);
-        border-top: 1px solid rgba(220, 220, 220, 80%);
-    }}
+    
     QComboBox::drop-down {{
         subcontrol-origin: padding;
         subcontrol-position: top right;
@@ -1452,24 +1428,46 @@ try:
         background: rgba(255, 255, 255, 1%);
     }}
     QComboBox QAbstractItemView::item:hover{{
-        background: rgba(255, 255, 255, 6%);
+        background: rgba(0, 0, 0, 10%);
         height: 30px;
         outline: none;
         border: none;
         padding-left: 10px;
-        background-color: white;
         color: black;
         border-radius: 4px;
     }}
     QComboBox QAbstractItemView::item:selected{{
-        background: rgba(255, 255, 255, 6%);
+        background: rgba(0, 0, 0, 10%);
         height: 30px;
         outline: none;
         border: none;
         padding-left: 10px;
-        background-color: white;
         color: black;
         border-radius: 4px;
+    }}
+    QComboBox {{
+        width: 150px;
+        background-color:rgba(255, 255, 255, 55%);
+        border: 1px solid rgba(220, 220, 220, 55%);
+        border-top: 1px solid rgba(220, 220, 220, 75%);
+        border-radius: 6px;
+        height: 30px;
+        padding-left: 10px;
+        font-size: 9pt;
+        margin: 0px;
+    }}
+    QComboBox:hover {{
+        background-color: rgba(255, 255, 255, 90%);
+        border: 1px solid rgba(220, 220, 220, 65%);
+        border-top: 1px solid rgba(220, 220, 220, 80%);
+        border-radius: 6px;
+        height: 30px;
+    }}
+    QComboBox:disabled{{
+        color: #000000;
+        background-color: rgba(200,200,200, 80%);
+        border-color: rgb(200, 200, 200);
+        border-bottom-color: rgb(200, 200, 200);
     }}
     #package {{
         margin: 0px;

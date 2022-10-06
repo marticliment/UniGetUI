@@ -591,7 +591,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.versionCombo = CustomComboBox()
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
-        self.versionCombo.setFixedHeight(25)
+        self.versionCombo.setFixedHeight(35)
         self.installButton = QPushButton()
         self.installButton.setText("Install")
         self.installButton.setObjectName("AccentButton")
@@ -869,6 +869,13 @@ class PackageInfoPopupWindow(QMainWindow):
         self.pressed = False
         self.oldPos = event.pos()
         return super().mouseReleaseEvent(event)
+
+    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+        self.leftFast.stop()
+        self.leftSlow.stop()
+        self.rightFast.stop()
+        self.rightSlow.stop()
+        return super().destroy(destroyWindow, destroySubWindows)
 
 if(__name__=="__main__"):
     import __init__
