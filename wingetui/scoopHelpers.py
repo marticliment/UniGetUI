@@ -47,6 +47,8 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     lc = getSettings("LowercaseScoopApps")
     for element in output:
         try:
+            if "Name" in element:
+                continue
             items = list(filter(None, element.split(" ")))
             if(len(items)>=2):
                 signal.emit(items[0] if lc else items[0].capitalize(), f"{items[0]}", items[1], "Scoop")
@@ -77,7 +79,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
             continue
         if "fatal" in element:
             continue
-        if "name" in element.lower():
+        if "Name" in element:
             continue
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
