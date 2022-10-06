@@ -817,8 +817,8 @@ try:
         border-radius: 2px;
     }}
     QCheckBox::indicator{{
-        height: 12px;
-        width: 12px;
+        height: 16px;
+        width: 16px;
     }}
     QCheckBox::indicator:unchecked {{
         background-color: rgba(30, 30, 30, 25%);
@@ -826,9 +826,9 @@ try:
         border-radius: 4px;
     }}
     QCheckBox::indicator:disabled {{
-        background-color: rgba(71, 71, 71, 0%);
+        background-color: rgba(30, 30, 30, 5%);
         color: #dddddd;
-        border: 1px solid #444444;
+        border: 1px solid rgba(255, 255, 255, 5%);
         border-radius: 4px;
     }}
     QCheckBox::indicator:unchecked:hover {{
@@ -838,8 +838,9 @@ try:
     }}
     QCheckBox::indicator:checked {{
         border: 1px solid #444444;
-        background-color: rgb({colors[1]});
+        background-color: rgba({colors[1]}, 80%);
         border-radius: 4px;
+        image: url("{getMedia("tick")}");
     }}
     QCheckBox::indicator:checked:disabled {{
         border: 1px solid #444444;
@@ -1148,20 +1149,20 @@ try:
     #AccentButton{{
         color: #000000;
         font-size: 8pt;
-        background-color: rgb({colors[1]});
-        border-color: rgb({colors[1]});
-        border-bottom-color: rgb({colors[2]});
+        background-color: rgb({colors[2]});
+        border-color: rgb({colors[3]});
+        border-bottom-color: rgb({colors[4]});
     }}
     #AccentButton:hover{{
-        background-color: rgba({colors[1]}, 80%);
-        border-color: rgb({colors[2]});
-        border-bottom-color: rgb({colors[2]});
+        background-color: rgba({colors[3]}, 80%);
+        border-color: rgb({colors[4]});
+        border-bottom-color: rgb({colors[5]});
     }}
     #AccentButton:pressed{{
         color: #000000;
-        background-color: rgba({colors[1]}, 80%);
-        border-color: rgb({colors[2]});
-        border-bottom-color: rgb({colors[2]});
+        background-color: rgba({colors[4]}, 80%);
+        border-color: rgb({colors[5]});
+        border-bottom-color: rgb({colors[5]});
     }}
     #AccentButton:disabled{{
         color: #000000;
@@ -1354,29 +1355,30 @@ try:
         border-radius: 2px;
     }}
     QCheckBox::indicator{{
-        height: 12px;
-        width: 12px;
+        height: 16px;
+        width: 16px;
     }}
     QCheckBox::indicator:unchecked {{
-        background-color: rgba(30, 30, 30, 25%);
-        border: 1px solid #444444;
+        background-color: rgba(255, 255, 255, 25%);
+        border: 1px solid rgba(0, 0, 0, 10%);
         border-radius: 4px;
     }}
     QCheckBox::indicator:disabled {{
-        background-color: rgba(71, 71, 71, 0%);
+        background-color: rgba(240, 240, 240, 0%);
         color: #444444;
-        border: 1px solid #444444;
+        border: 1px solid rgba(0, 0, 0, 5%);
         border-radius: 4px;
     }}
     QCheckBox::indicator:unchecked:hover {{
-        background-color: #2a2a2a;
-        border: 1px solid #444444;
+        background-color: rgba(0, 0, 0, 5%);
+        border: 1px solid rgba(0, 0, 0, 20%);
         border-radius: 4px;
     }}
     QCheckBox::indicator:checked {{
-        border: 1px solid #444444;
-        background-color: rgb({colors[1]});
+        border: 1px solid rgb({colors[3]});
+        background-color: rgb({colors[2]});
         border-radius: 4px;
+        image: url("{getMedia("tick")}");
     }}
     QCheckBox::indicator:checked:disabled {{
         border: 1px solid #444444;
@@ -1385,8 +1387,8 @@ try:
         border-radius: 4px;
     }}
     QCheckBox::indicator:checked:hover {{
-        border: 1px solid #444444;
-        background-color: rgb({colors[2]});
+        border: 1px solid rgb({colors[3]});
+        background-color: rgb({colors[3]});
         border-radius: 4px;
     }}
     
