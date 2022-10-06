@@ -73,9 +73,11 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     counter = 0
     lc = getSettings("LowercaseScoopApps")
     for element in output:
-        if "WARN" in output:
+        if "WARN" in element:
             continue
-        if "fatal" in output:
+        if "fatal" in element:
+            continue
+        if "name" in element.lower():
             continue
         try:
             signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
