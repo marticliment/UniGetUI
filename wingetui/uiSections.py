@@ -350,7 +350,7 @@ class DiscoverSoftwareSection(QWidget):
             self.filter()
             self.loadingProgressBar.hide()
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
-            self.packageList.label.setText(self.countLabel.text())
+            self.packageList.label.setText("")
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
@@ -374,11 +374,21 @@ class DiscoverSoftwareSection(QWidget):
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         print(f"🟢 Searching for string \"{self.query.text()}\"")
+        found = 0
         for item in self.packageList.findItems('', Qt.MatchContains, 0):
             if not(item in resultsFound):
                 item.setHidden(True)
             else:
                 item.setHidden(False)
+                found += 1
+        if found == 0:
+            if self.packageList.label.text() == "":
+                self.packageList.label.show()
+                self.packageList.label.setText("No packages found matching the input criteria")
+        else:
+            if self.packageList.label.text() == "No packages found matching the input criteria":
+                self.packageList.label.hide()
+                self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
@@ -419,6 +429,16 @@ class DiscoverSoftwareSection(QWidget):
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
+    
+    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
+            anim: QVariantAnimation
+            anim.pause()
+            anim.stop()
+            anim.valueChanged.disconnect()
+            anim.finished.disconnect()
+            anim.deleteLater()
+        return super().destroy(destroyWindow, destroySubWindows)
 
 class UpdateSoftwareSection(QWidget):
 
@@ -851,7 +871,7 @@ class UpdateSoftwareSection(QWidget):
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.updatePackageNumber()
-            self.packageList.label.setText(self.countLabel.text())
+            self.packageList.label.setText()
             self.filter()
             self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
@@ -898,6 +918,7 @@ class UpdateSoftwareSection(QWidget):
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
         print(f"🟢 Searching for stringg \"{self.query.text()}\"")
+        found = 0
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not(item in resultsFound):
                 item.setHidden(True)
@@ -906,6 +927,18 @@ class UpdateSoftwareSection(QWidget):
                 item.setHidden(False)
                 if item.text(3) == "Unknown":
                     item.setHidden(not self.showUnknownSection.isChecked())
+                    if self.showUnknownSection.isChecked():
+                        found += 1
+                else:
+                    found += 1
+        if found == 0:
+            if self.packageList.label.text() == "":
+                self.packageList.label.show()
+                self.packageList.label.setText("No packages found matching the input criteria")
+        else:
+            if self.packageList.label.text() == "No packages found matching the input criteria":
+                self.packageList.label.hide()
+                self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
 
     def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
@@ -918,6 +951,7 @@ class UpdateSoftwareSection(QWidget):
         globals.trayMenuUpdatesList.menuAction().setText(f"{self.availableUpdates} updates found")
         if self.availableUpdates > 0:
             self.packageList.label.hide()
+            self.packageList.label.setText("")
             self.img.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
         else:
             self.packageList.label.setText("Hooray! No updates were found!")
@@ -996,6 +1030,16 @@ class UpdateSoftwareSection(QWidget):
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
+
+    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
+            anim: QVariantAnimation
+            anim.pause()
+            anim.stop()
+            anim.valueChanged.disconnect()
+            anim.finished.disconnect()
+            anim.deleteLater()
+        return super().destroy(destroyWindow, destroySubWindows)
 
 class UninstallSoftwareSection(QWidget):
 
@@ -1403,7 +1447,7 @@ class UninstallSoftwareSection(QWidget):
             self.loadingProgressBar.hide()
             globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
             self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
-            self.packageList.label.setText(self.countLabel.text())
+            self.packageList.label.setText("")
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
@@ -1442,11 +1486,21 @@ class UninstallSoftwareSection(QWidget):
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
         print(f"🟢 Searching for string \"{self.query.text()}\"")
+        found = 0
         for item in self.packageList.findItems('', Qt.MatchContains, 0):
             if not(item in resultsFound):
                 item.setHidden(True)
             else:
                 item.setHidden(False)
+                found += 1
+        if found == 0:
+            if self.packageList.label.text() == "":
+                self.packageList.label.show()
+                self.packageList.label.setText("No packages found matching the input criteria")
+        else:
+            if self.packageList.label.text() == "No packages found matching the input criteria":
+                self.packageList.label.hide()
+                self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
@@ -1553,6 +1607,16 @@ class UninstallSoftwareSection(QWidget):
 
         except Exception as e:
             report(e)
+
+    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
+            anim: QVariantAnimation
+            anim.pause()
+            anim.stop()
+            anim.valueChanged.disconnect()
+            anim.finished.disconnect()
+            anim.deleteLater()
+        return super().destroy(destroyWindow, destroySubWindows)
 
 
 class AboutSection(QScrollArea):

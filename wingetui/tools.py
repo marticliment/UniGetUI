@@ -295,7 +295,7 @@ class TreeWidget(QTreeWidget):
         return super().resizeEvent(event)
 
     def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
-        self.label.hide()
+        self.label.setText("")
         return super().addTopLevelItem(item)
 
     def clear(self) -> None:

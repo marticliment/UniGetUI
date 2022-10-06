@@ -871,10 +871,13 @@ class PackageInfoPopupWindow(QMainWindow):
         return super().mouseReleaseEvent(event)
 
     def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
-        self.leftFast.stop()
-        self.leftSlow.stop()
-        self.rightFast.stop()
-        self.rightSlow.stop()
+        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
+            anim: QVariantAnimation
+            anim.pause()
+            anim.stop()
+            anim.valueChanged.disconnect()
+            anim.finished.disconnect()
+            anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
 
 if(__name__=="__main__"):
