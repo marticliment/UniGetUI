@@ -1181,12 +1181,12 @@ try:
         font-size: 9pt;
     }}
     #Headerbutton:hover {{
-        background-color:rgba(240, 240, 240, 12%);
+        background-color:rgba(0, 0, 0, 5%);
         border-radius: 8px;
         height: 30px;
     }}
     #Headerbutton:checked {{
-        background-color:rgba(200, 200, 200, 75%);
+        background-color:rgba(0, 0, 0, 10%);
         border-radius: 8px;
         border: 0px solid rgba(100, 100, 100, 25%);
         height: 30px;
@@ -1252,7 +1252,7 @@ try:
         background: none;
     }}
     QHeaderView,QAbstractItemView {{
-        background-color: rgba(240, 240, 240, 55%);
+        background-color: rgba(255, 255, 255, 55%);
         border-radius: 6px;
         border: none;
         padding: 1px;
