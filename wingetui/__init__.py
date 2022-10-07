@@ -448,20 +448,21 @@ try:
                             print("🔵 Hash: ", provided_hash)
                             print("🟢 Hash ok, starting update")
                             globals.updatesAvailable = True
-                            while self.window.isVisible():
+                            globals.canUpdate = not self.window.isVisible()
+                            while not globals.canUpdate:
                                 time.sleep(0.1)
                             if not getSettings("DisableAutoUpdateWingetUI"):
                                 subprocess.run('start /B "" "{0}" /verysilent'.format(filename), shell=True)
-                            else:
-                                print("🟠 Hash not ok")
-                                print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
-                                print("🟠 Provided hash: ", provided_hash)
                         else:
-                            print("🟠 Can't verify update server authenticity, aborting")
-                            print("🟠 Provided DmName:", dmname)
-                            print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
+                            print("🟠 Hash not ok")
+                            print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
+                            print("🟠 Provided hash: ", provided_hash)
                     else:
-                        print("🟢 Updates not found")
+                        print("🟠 Can't verify update server authenticity, aborting")
+                        print("🟠 Provided DmName:", dmname)
+                        print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
+                else:
+                    print("🟢 Updates not found")
 
     colors = getColors()
 

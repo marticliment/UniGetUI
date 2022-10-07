@@ -52,3 +52,4 @@ uninstall: Section = None
 lastFocusedWindow: int = 0
 themeChanged: bool = False
 updatesAvailable: bool = False
+canUpdate: bool = False

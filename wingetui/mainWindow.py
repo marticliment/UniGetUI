@@ -223,6 +223,7 @@ class RootWindow(QMainWindow):
                 if(tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
                     if globals.updatesAvailable:
                         self.hide()
+                        globals.canUpdate = True
                         globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
                         event.ignore()
                     else:
@@ -232,12 +233,19 @@ class RootWindow(QMainWindow):
                 else:
                     event.ignore()
             else:
-                self.hide()
-                globals.lastFocusedWindow = 0
-                event.ignore()
+                if globals.updatesAvailable:
+                    self.hide()
+                    globals.canUpdate = True
+                    globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
+                    event.ignore()
+                else:
+                    self.hide()
+                    globals.lastFocusedWindow = 0
+                    event.ignore()
         else:
             if globals.updatesAvailable:
                 self.hide()
+                globals.canUpdate = True
                 globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
                 event.ignore()
             else:
