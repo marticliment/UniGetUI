@@ -102,7 +102,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList: TreeWidget = TreeWidget("a")
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
+        self.packageList.setHeaderLabels([_("Package name"), _("Package ID"), _("Version"), _("Origin")])
         self.packageList.setColumnCount(4)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
         self.packageList.setSortingEnabled(True)
@@ -492,7 +492,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" Search available updates")
+        self.query.setPlaceholderText(" "+_("Search for available updates"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -511,7 +511,7 @@ class UpdateSoftwareSection(QWidget):
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
 
-        self.forceCheckBox = QCheckBox("Instant search")
+        self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
         self.forceCheckBox.setFixedWidth(98)
@@ -526,7 +526,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.addWidget(self.img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Software updates")
+        self.discoverLabel = QLabel(_("Software updates"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -542,7 +542,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList = TreeWidget("ª")
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.setColumnCount(6)
-        self.packageList.setHeaderLabels(["", "Package name", "Package ID", "Installed Version", "New Version", "Installation source"])
+        self.packageList.setHeaderLabels(["", _("Package name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Installation source")])
         self.packageList.setColumnWidth(0, 50)
         self.packageList.setColumnWidth(1, 350)
         self.packageList.setColumnWidth(2, 200)
@@ -565,22 +565,22 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
-            inf = QAction("Show info")
+            inf = QAction(_("Show info"))
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
-            ins1 = QAction("Update")
+            ins1 = QAction(_("Update"))
             ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
-            ins2 = QAction("Run as administrator")
+            ins2 = QAction(_("Run as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
-            ins3 = QAction("Skip hash check")
+            ins3 = QAction(_("Skip hash check"))
             ins3.setIcon(QIcon(getMedia("checksum")))
             ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
-            ins4 = QAction("Interactive update")
+            ins4 = QAction(_("Interactive update"))
             ins4.setIcon(QIcon(getMedia("interactive")))
             ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
-            ins5 = QAction("Uninstall package")
+            ins5 = QAction(_("Uninstall package"))
             ins5.setIcon(QIcon(getMedia("menu_uninstall")))
             ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
@@ -590,7 +590,7 @@ class UpdateSoftwareSection(QWidget):
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
-            ins6 = QAction("Ignore updates for this package")
+            ins6 = QAction(_("Ignore updates for this package"))
             ins6.setIcon(QIcon(getMedia("blacklist")))
             ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True)))
             contextMenu.addAction(ins6)
@@ -688,11 +688,11 @@ class UpdateSoftwareSection(QWidget):
 
         
         tooltips = {
-            self.upgradeSelected: "Install selected package",
-            inf: "Show package info",
-            ins2: "Run the installer with administrator privileges",
-            ins3: "Skip the hash check",
-            ins4: "Interactive installation",
+            self.upgradeSelected: _("Install selected package"),
+            inf: _("Show package info"),
+            ins2: _("Run the installer with administrator privileges"),
+            ins3: _("Skip the hash check"),
+            ins4: _("Interactive installation"),
         }
 
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
@@ -703,10 +703,10 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "Upgrade all", self.toolbar)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _("Upgrade all"), self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
         self.toolbar.addAction(self.upgradeAllAction)
-        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Upgrade selected", self.toolbar)
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Upgrade selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
 
@@ -720,19 +720,19 @@ class UpdateSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
-        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip("Select none")
-        self.toolbar.widgetForAction(self.selectAllAction).setToolTip("Select all")
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Select none"))
+        self.toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
 
         self.toolbar.addSeparator()
 
-        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), "Blacklist apps", self.toolbar)
+        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist apps"), self.toolbar)
         self.selectAllAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.selectAllAction)
-        self.selectAllAction = QAction(QIcon(getMedia("undelete")), "Reset blacklist", self.toolbar)
+        self.selectAllAction = QAction(QIcon(getMedia("undelete")), _("Reset blacklist"), self.toolbar)
         self.selectAllAction.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", ""), self.reload()))
         self.toolbar.addAction(self.selectAllAction)
 
-        self.showUnknownSection = QCheckBox("Show unknown versions")
+        self.showUnknownSection = QCheckBox(_("Show unknown versions"))
         self.showUnknownSection.setFixedHeight(30)
         self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
         self.showUnknownSection.setFixedWidth(190)
@@ -765,7 +765,7 @@ class UpdateSoftwareSection(QWidget):
         #h2Layout.addStretch()
         #h2Layout.addWidget(self.showUnknownVersions)
 
-        self.countLabel = QLabel("Checking for updates...")
+        self.countLabel = QLabel(_("Checking for updates..."))
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
@@ -842,20 +842,20 @@ class UpdateSoftwareSection(QWidget):
 
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
+            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
@@ -868,6 +868,7 @@ class UpdateSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
             self.loadingProgressBar.hide()
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(self.packageList.topLevelItemCount())))
             count = 0
             lastVisibleItem = None
             for i in range(self.packageList.topLevelItemCount()):
@@ -877,9 +878,9 @@ class UpdateSoftwareSection(QWidget):
             self.packageList.label.setText(str(count))
             if not getSettings("DisableUpdatesNotifications"):
                 if count > 1:
-                    notify("Updates found!", f"{count} apps can be updated")
+                    notify(_("Updates found!"), _("{0} apps can be updated").format(count))
                 elif count == 1:
-                    notify("Update found!", f"{lastVisibleItem.text(1)} can be updated")
+                    notify(_("Update found!"), _("{0} can be updated").format(lastVisibleItem.text(1)))
             if count > 0:
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
@@ -948,9 +949,9 @@ class UpdateSoftwareSection(QWidget):
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
-                self.packageList.label.setText("No packages found matching the input criteria")
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
         else:
-            if self.packageList.label.text() == "No packages found matching the input criteria":
+            if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
@@ -960,15 +961,15 @@ class UpdateSoftwareSection(QWidget):
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not item.isHidden():
                 self.availableUpdates += 1
-        self.countLabel.setText(f"Available updates: {self.availableUpdates}")
-        globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (f"WingetUI - {self.availableUpdates} update is available" if self.availableUpdates == 1 else f"WingetUI - {self.availableUpdates} updates are available") )
-        globals.trayMenuUpdatesList.menuAction().setText(f"{self.availableUpdates} updates found")
+        self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
+        globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (_("WingetUI - 1 update is available") if self.availableUpdates == 1 else _("WingetUI - {0} updates are available").format(self.availableUpdates)) )
+        globals.trayMenuUpdatesList.menuAction().setText(_("{0} updates found").format(self.availableUpdates))
         if self.availableUpdates > 0:
             self.packageList.label.hide()
             self.packageList.label.setText("")
             self.img.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
         else:
-            self.packageList.label.setText("Hooray! No updates were found!")
+            self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
             self.img.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
     
@@ -1030,7 +1031,7 @@ class UpdateSoftwareSection(QWidget):
         for action in globals.trayMenuUpdatesList.actions():
             globals.trayMenuUpdatesList.removeAction(action)
         globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
-        self.countLabel.setText("Checking for updates...")
+        self.countLabel.setText(_("Checking for updates..."))
         self.packageList.label.setText(self.countLabel.text())
         self.blacklist = getSettingsValue("BlacklistedUpdates")
         if not getSettings("DisableWinget"):
