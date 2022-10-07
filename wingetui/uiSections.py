@@ -8,6 +8,7 @@ from tools import *
 from storeEngine import *
 
 import globals
+from tools import _
 
 
 class DiscoverSoftwareSection(QWidget):
@@ -49,7 +50,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
 
-        self.forceCheckBox = QCheckBox("Instant search")
+        self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
         self.forceCheckBox.setFixedWidth(98)
@@ -59,7 +60,7 @@ class DiscoverSoftwareSection(QWidget):
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnInstall", bool(not v)))
          
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" Search something on Winget or Scoop")
+        self.query.setPlaceholderText(" "+_("Search for something on Winget or Scoop"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -84,7 +85,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Discover packages")
+        self.discoverLabel = QLabel(_("Discover packages"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -120,19 +121,19 @@ class DiscoverSoftwareSection(QWidget):
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
-            inf = QAction("Show info")
+            inf = QAction(_("Show info"))
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
-            ins1 = QAction("Install")
+            ins1 = QAction(_("Install"))
             ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
-            ins2 = QAction("Run as administrator")
+            ins2 = QAction(_("Run as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True, packageItem=self.packageList.currentItem()))
-            ins3 = QAction("Skip hash check")
+            ins3 = QAction(_("Skip hash check"))
             ins3.setIcon(QIcon(getMedia("checksum")))
             ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), skiphash=True, packageItem=self.packageList.currentItem()))
-            ins4 = QAction("Interactive installation")
+            ins4 = QAction(_("Interactive installation"))
             ins4.setIcon(QIcon(getMedia("interactive")))
             ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True, packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
@@ -202,11 +203,11 @@ class DiscoverSoftwareSection(QWidget):
 
         
         tooltips = {
-            self.upgradeSelected: "Install selected package",
-            inf: "Show package info",
-            ins2: "Run the installer with administrator privileges",
-            ins3: "Skip the hash check",
-            ins4: "Interactive installation",
+            self.upgradeSelected: _("Install selected package"),
+            inf: _("Show package info"),
+            ins2: _("Run the installer with administrator privileges"),
+            ins3: _("Skip the hash check"),
+            ins4: _("Interactive installation"),
         }
 
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
@@ -216,7 +217,7 @@ class DiscoverSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.importAction = QAction("Import packages from a file", self.toolbar)
+        self.importAction = QAction(_("Import packages from a file"), self.toolbar)
         self.importAction.setIcon(QIcon(getMedia("import")))
         self.importAction.triggered.connect(lambda: self.importPackages())
         self.toolbar.addAction(self.importAction)
@@ -225,7 +226,7 @@ class DiscoverSoftwareSection(QWidget):
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
 
-        self.countLabel = QLabel("Searching for packages...")
+        self.countLabel = QLabel(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         v.addWidget(self.countLabel)
@@ -303,7 +304,7 @@ class DiscoverSoftwareSection(QWidget):
     def importPackages(self):
         try:
             packageList = []
-            file = QFileDialog.getOpenFileName(self, "Select package file", filter="JSON (*.json)")[0]
+            file = QFileDialog.getOpenFileName(self, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
                 contents = json.load(f)
@@ -331,7 +332,7 @@ class DiscoverSoftwareSection(QWidget):
         
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
@@ -342,7 +343,7 @@ class DiscoverSoftwareSection(QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
@@ -355,7 +356,7 @@ class DiscoverSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.filter()
             self.loadingProgressBar.hide()
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
             self.packageList.label.setText("")
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
@@ -390,9 +391,9 @@ class DiscoverSoftwareSection(QWidget):
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
-                self.packageList.label.setText("No packages found matching the input criteria")
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
         else:
-            if self.packageList.label.text() == "No packages found matching the input criteria":
+            if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
@@ -422,7 +423,7 @@ class DiscoverSoftwareSection(QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
-        self.countLabel.setText("Searching for packages...")
+        self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
             Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
