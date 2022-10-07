@@ -9,11 +9,10 @@ try:
     import wingetHelpers, scoopHelpers
     from mainWindow import *
     from tools import *
+    from tools import _
 
     import globals
     from blurwindow import GlobalBlur, ExtendFrameIntoClientArea
-
-    debugging = True
 
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -51,7 +50,7 @@ try:
                 titlewidget.addStretch()
                 self.popup.layout().addLayout(titlewidget)
                 self.popup.layout().addStretch()
-                self.loadingText = QLabel("Loading WingetUI...")
+                self.loadingText = QLabel(_("Loading WingetUI..."))
                 self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Text\"; color: {'white' if isDark() else 'black'};font-size: 12px;")
                 self.popup.layout().addWidget(self.loadingText)
                 ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
@@ -104,7 +103,7 @@ try:
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
                 Thread(target=self.loadStuffThread, daemon=True).start()
-                self.loadingText.setText("Checking for other running instances...")
+                self.loadingText.setText(_("Checking for other running instances..."))
             except Exception as e:
                 raise e
 
@@ -137,7 +136,7 @@ try:
             except Exception as e:
                 print(e)
             finally:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Loading UI components..."))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Loading UI components...")))
                 self.callInMain.emit(lambda: self.loadingText.repaint())
                 self.callInMain.emit(self.loadMainUI)
                 print(globals.componentStatus)
@@ -150,22 +149,22 @@ try:
                 try:
                     timestamps = [float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), "")) for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*"))] # get a list with the timestamps
                     validTimestamps = [timestamp for timestamp in timestamps if timestamp < self.nowTime]
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Evaluating found instace(s)..."))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Checking found instace(s)...")))
                     print("Found lock file(s), reactivating...")
                     for tst in validTimestamps:
                         setSettings("RaiseWindow_"+str(tst), True)
                     if validTimestamps != [] and timestamps != [self.nowTime]:
                         for i in range(16):
                             time.sleep(0.1)
-                            self.callInMain.emit(lambda: self.loadingText.setText(f"Sent handshake. Waiting for instance listener's answer... ({int(i/15*100)}%)"))
+                            self.callInMain.emit(lambda: self.loadingText.setText(_("Sent handshake. Waiting for instance listener's answer... ({0}%)").format(int(i/15*100))))
                             for tst in validTimestamps:
                                 if not getSettings("RaiseWindow_"+str(tst), cache = False):
                                     print(f"Instance {tst} responded, quitting...")
-                                    self.callInMain.emit(lambda: self.loadingText.setText(f"Instance {tst} responded, quitting..."))
+                                    self.callInMain.emit(lambda: self.loadingText.setText(_("Instance {0} responded, quitting...").format(tst)))
                                     setSettings(self.lockFileName, False)
                                     self.kill.emit()
                                     sys.exit(0)
-                        self.callInMain.emit(lambda: self.loadingText.setText(f"Starting daemons..."))
+                        self.callInMain.emit(lambda: self.loadingText.setText(_("Starting daemons...")))
                         print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
                         for tst in validTimestamps:
                             setSettings("RaiseWindow_"+str(tst), False)
@@ -176,41 +175,41 @@ try:
 
         def detectWinget(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Locating winget..."))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating winget...")))
                 o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
                 globals.componentStatus["wingetFound"] = o.returncode == 0
                 globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Winget found: {globals.componentStatus['wingetFound']}"))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Winget found: {0}").format(globals.componentStatus['wingetFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
             print("updating winget")
             try:
                 if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updating winget sources..."))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating winget sources...")))
                     o = subprocess.run(f"{wingetHelpers.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updated winget sources"))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated winget sources")))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
 
         def detectScoop(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Locating scoop..."))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating scoop...")))
                 o = subprocess.run(f"powershell -Command scoop -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
                 globals.componentStatus["scoopFound"] = o.returncode == 0
                 globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Scoop found: {globals.componentStatus['scoopFound']}"))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Scoop found: {0}").format(globals.componentStatus['scoopFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
             try:
                 if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Clearing scoop cache..."))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing scoop cache...")))
                     p = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
                     if(getSettings("EnableScoopCleanup")):
                         p2 = subprocess.Popen(f"powershell -Command scoop cleanup --all", shell=True, stdout=subprocess.PIPE)
@@ -220,9 +219,9 @@ try:
                 print(e)
             try:
                 if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updating scoop sources..."))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating scoop sources...")))
                     o = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
-                    self.callInMain.emit(lambda: self.loadingText.setText(f"Updated scoop sources"))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated scoop sources")))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -230,11 +229,11 @@ try:
         def detectSudo(self):
             global sudoLocation
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Locating sudo..."))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating sudo...")))
                 o = subprocess.run(f"{sudoPath} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["sudoFound"] = o.returncode == 0
                 globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
-                self.callInMain.emit(lambda: self.loadingText.setText(f"Sudo found: {globals.componentStatus['sudoFound']}"))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Sudo found: {0}").format(globals.componentStatus['sudoFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -251,58 +250,58 @@ try:
 
                 menu = QMenu("WingetUI")
                 globals.trayMenu = menu
-                self.infoAction = QAction(f"WingetUI version {versionName}",menu)
+                self.infoAction = QAction(_("WingetUI version {0}").format(versionName), menu)
                 self.infoAction.setIcon(QIcon(getMedia("info")))
                 self.infoAction.setEnabled(False)
                 menu.addAction(self.infoAction)
                 
-                self.showAction = QAction("Show WingetUI",menu)
+                self.showAction = QAction(_("Show WingetUI"), menu)
                 self.showAction.setIcon(QIcon(getMedia("menu_show")))
                 menu.addAction(self.showAction)
                 self.trayIcon.setContextMenu(menu)
                 menu.addSeparator()
                 
-                self.dAction = QAction("Available updates",menu)
+                self.dAction = QAction(_("Available updates"), menu)
                 self.dAction.setIcon(QIcon(getMedia("menu_updates")))
                 self.dAction.setEnabled(False)
                 menu.addAction(self.dAction)
                 
-                self.updatesMenu = menu.addMenu("0 updates found")
+                self.updatesMenu = menu.addMenu(_("0 updates found"))
                 self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
                 self.updatesMenu.setParent(menu)
                 globals.trayMenuUpdatesList = self.updatesMenu
                 menu.addMenu(self.updatesMenu)
                 
-                globals.updatesHeader = QAction("App Name  \tInstalled Version \t → \t New version", menu)
+                globals.updatesHeader = QAction(_("App Name  \tInstalled Version \t → \t New version"), menu)
                 globals.updatesHeader.setEnabled(False)
                 globals.updatesHeader.setIcon(QIcon(getMedia("version")))
                 self.updatesMenu.addAction(globals.updatesHeader)
                 
-                self.uaAction = QAction("Update all", menu)
+                self.uaAction = QAction(_("Update all"), menu)
                 self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
                 menu.addAction(self.uaAction)
                 menu.addSeparator()
                 
-                self.iAction = QAction("Installed packages",menu)
+                self.iAction = QAction(_("Installed packages"),menu)
                 self.iAction.setIcon(QIcon(getMedia("menu_uninstall")))
                 self.iAction.setEnabled(False)
                 menu.addAction(self.iAction)
                 
-                self.installedMenu = menu.addMenu("0 packages found")
+                self.installedMenu = menu.addMenu(_("0 packages found"))
                 self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
                 self.installedMenu.setParent(menu)
                 globals.trayMenuInstalledList = self.installedMenu
                 menu.addMenu(self.installedMenu)
                 menu.addSeparator()
                 
-                globals.installedHeader = QAction("App Name\tInstalled Version", menu)
+                globals.installedHeader = QAction(_("App Name\tInstalled Version"), menu)
                 globals.installedHeader.setIcon(QIcon(getMedia("version")))
                 globals.installedHeader.setEnabled(False)
                 self.installedMenu.addAction(globals.installedHeader)
 
                 self.quitAction = QAction(menu)
                 self.quitAction.setIcon(QIcon(getMedia("menu_close")))
-                self.quitAction.setText("Quit")
+                self.quitAction.setText(_("Quit"))
                 self.quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
                 menu.addAction(self.quitAction)
                 
@@ -334,7 +333,7 @@ try:
                 self.showAction.triggered.connect(self.window.showWindow)
                 self.uaAction.triggered.connect(self.window.updates.upgradeAllAction.trigger)
                 showWindow = self.showAction.trigger
-                self.loadingText.setText(f"Latest details...")
+                self.loadingText.setText(_("Latest details..."))
                 if not self.isDaemon:
                     self.window.show()
                     if(self.window.isAdmin()):

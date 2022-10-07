@@ -10,6 +10,7 @@ from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
 from urllib.request import urlopen
 from versions import *
+from languages import *
 
 import globals
 
@@ -19,6 +20,10 @@ old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
 errbuffer = io.StringIO()
+settingsCache = {}
+installersWidget = None
+updatesAvailable = False
+
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdout = buffer = io.StringIO()
     sys.stderr = errbuffer = io.StringIO()
@@ -27,6 +32,12 @@ if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
+if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
+    try:
+        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
+    except:
+        pass
 
 def cprint(*args) -> None:
     print(*args, file=old_stdout)
@@ -38,15 +49,24 @@ def report(exception) -> None: # Exception reporter
         cprint("🔴 "+line)
     print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
-settingsCache = {}
-installersWidget = None
-updatesAvailable = False
-
-if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
+def _(s): # Translate function
+    global lang
+    return "-"*len(s)
     try:
-        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
-    except:
-        pass
+        t = lang[s]
+        return (t+"✅[Found]✅" if debugLang else t) if t else f"{s}⚠️[UntranslatedString]⚠️" if debugLang else eng_(s)
+    except KeyError:
+        if debugLang: print(s)
+        return f"{eng_(s)}🔴[MissingString]🔴" if debugLang else eng_(s)
+
+def eng_(s): # English translate function
+    try:
+        t = englang[s]
+        return t if t else s
+    except KeyError:
+        if debugLang:
+            print(s)
+        return s
 
 def getSettings(s: str, cache = True):
     global settingsCache

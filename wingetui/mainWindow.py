@@ -6,6 +6,7 @@ import win32gui
 
 
 import globals
+from tools import _
 
 from uiSections import *
 from storeEngine import *
@@ -23,7 +24,7 @@ class RootWindow(QMainWindow):
         super().__init__()
         self.isWinDark = isDark()
         self.callInMain.connect(lambda f: f())
-        self.setWindowTitle("WingetUI: A Graphical User interface to manage Winget and Scoop packages")
+        self.setWindowTitle("WingetUI")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
         self.setWindowIcon(QIcon(realpath+"/resources/icon.png"))
@@ -73,40 +74,22 @@ class RootWindow(QMainWindow):
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.discover = self.discover
-        self.widgets[self.discover] = self.addTab(self.discover, "Discover packages")
+        self.widgets[self.discover] = self.addTab(self.discover, _("Discover packages"))
         self.updates = UpdateSoftwareSection()
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.updates = self.updates
-        self.widgets[self.updates] = self.addTab(self.updates, "Software updates")
+        self.widgets[self.updates] = self.addTab(self.updates, _("Software updates"))
         self.uninstall = UninstallSoftwareSection()
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
-        self.widgets[self.uninstall] = self.addTab(self.uninstall, "Installed packages")
+        self.widgets[self.uninstall] = self.addTab(self.uninstall, _("Installed packages"))
         self.settingsSection = SettingsSection()
-        self.widgets[self.settingsSection] = self.addTab(self.settingsSection, "WingetUI Settings", addToMenu=True, actionIcon="settings")
+        self.widgets[self.settingsSection] = self.addTab(self.settingsSection, _("WingetUI Settings"), addToMenu=True, actionIcon="settings")
         self.aboutSection = AboutSection()
-        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "About WingetUI", addToMenu=True, actionIcon="info")
+        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, _("About WingetUI"), addToMenu=True, actionIcon="info")
         self.aboutSection = DebuggingSection()
-        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, "WingetUI log", addToMenu=True, actionIcon="buggy")
+        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
 
-        class Text(QPlainTextEdit):
-            def __init__(self):
-                super().__init__()
-                self.setPlainText("click to show log")
-
-            def mousePressEvent(self, e: QMouseEvent) -> None:
-                self.setPlainText(buffer.getvalue())
-                self.appendPlainText(errbuffer.getvalue())
-                return super().mousePressEvent(e)
-
-            def showEvent(self, e: QShowEvent) -> None:
-                self.setPlainText(buffer.getvalue())
-                self.appendPlainText(errbuffer.getvalue())
-                return super().showEvent(e)
-
-        p = Text()
-        p.setReadOnly(True)
-        #self.addTab(p, "Debugging log", addToMenu=True)
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()
@@ -198,11 +181,11 @@ class RootWindow(QMainWindow):
     def warnAboutAdmin(self):
             self.err = ErrorMessage(self)
             errorData = {
-                "titlebarTitle": f"WingetUI",
-                "mainTitle": f"Administrator privileges",
-                "mainText": f"It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we hightly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why.",
-                "buttonTitle": "Ok",
-                "errorDetails": "There are two main reasons to not run WingetUI as administrator:\n The first one is that the scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click tyhe item -> Install/Update/Uninstall as administrator.",
+                "titlebarTitle": _("WingetUI"),
+                "mainTitle": _("Administrator privileges"),
+                "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we hightly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why."),
+                "buttonTitle": _("Ok"),
+                "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click tyhe item -> Install/Update/Uninstall as administrator."),
                 "icon": QIcon(getMedia("infocolor")),
             }
             self.err.showErrorMessage(errorData, showNotification=False)
@@ -220,11 +203,11 @@ class RootWindow(QMainWindow):
             event.accept()
         if(globals.pending_programs != []):
             if getSettings("DisablesystemTray"):
-                if(tools.MessageBox.question(self, "Warning", "There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to close the application?", tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
+                if(tools.MessageBox.question(self, _("Warning"), _("There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to quit WingetUI?"), tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
                     if globals.updatesAvailable:
                         self.hide()
                         globals.canUpdate = True
-                        globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
+                        globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
                         event.ignore()
                     else:
                         event.accept()
@@ -236,7 +219,7 @@ class RootWindow(QMainWindow):
                 if globals.updatesAvailable:
                     self.hide()
                     globals.canUpdate = True
-                    globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
+                    globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
                     event.ignore()
                 else:
                     self.hide()
@@ -246,7 +229,7 @@ class RootWindow(QMainWindow):
             if globals.updatesAvailable:
                 self.hide()
                 globals.canUpdate = True
-                globals.trayIcon.showMessage("Updating WingetUI", "WingetUI is being updated. When finished, WingetUI will restart itself", QIcon(getMedia("notif_info")))
+                globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
                 event.ignore()
             else:
                 if getSettings("DisablesystemTray"):
