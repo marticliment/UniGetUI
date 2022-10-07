@@ -452,7 +452,7 @@ try:
                             while not globals.canUpdate:
                                 time.sleep(0.1)
                             if not getSettings("DisableAutoUpdateWingetUI"):
-                                subprocess.run('start /B "" "{0}" /verysilent'.format(filename), shell=True)
+                                subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
                         else:
                             print("🟠 Hash not ok")
                             print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())

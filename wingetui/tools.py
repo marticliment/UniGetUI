@@ -9,6 +9,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
 from urllib.request import urlopen
+from versions import *
 
 import globals
 
@@ -38,8 +39,6 @@ def report(exception) -> None: # Exception reporter
     print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
 settingsCache = {}
-version = 1.41
-versionName = "1.4.2"
 installersWidget = None
 updatesAvailable = False
 
