@@ -78,7 +78,7 @@ _(See the [WIKI](https://github.com/martinet101/WingetUI/wiki) for more informat
 A: This is likely a Winget-CLI issue. Please check if it is possible to install/update the package through PowerShell or cmd using the commands `winget upgrade` or `winget install` (for example: `winget upgrade --id Microsoft.PowerToys`). If this doesn't work, you may try to get help at https://github.com/microsoft/winget-pkgs.<br>
 
 **Q: I am unable to fully see some package name/id (trimmed with ellipsis)**<br>
-A: This is a known Winget-CLI bug. See more details at https://github.com/martinet101/WingetUI/issues/196<br>
+A: This is a known Winget-CLI limitation. See more details at https://github.com/martinet101/WingetUI/issues/196<br>
 
 **Q: Can WingetUI be in my language?**<br>
 A: Not yet. See more details at https://github.com/martinet101/WingetUI/issues/67 <br>
