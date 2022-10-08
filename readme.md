@@ -75,13 +75,13 @@ _(See the [WIKI](https://github.com/martinet101/WingetUI/wiki) for more informat
 # FAQ
 
 **Q: I am unable to install or update some Winget package**<br>
-A: This is likely a Winget-CLI issue. Please check if it is possible to install/update the package through PowerShell or cmd using the commands `winget upgrade` or `winget install` (for example: `winget upgrade --id Microsoft.PowerToys`). If this doesn't work, you may try to get help at https://github.com/microsoft/winget-pkgs.<br>
+A: This is likely a Winget-CLI issue. Please check if it is possible to install/update the package through PowerShell or cmd using the commands `winget upgrade` or `winget install` (for example: `winget upgrade --id Microsoft.PowerToys`). If this doesn't work, you may try to get help at https://github.com/microsoft/winget-pkgs<br>
 
 **Q: I am unable to fully see some package name/id (trimmed with ellipsis)**<br>
 A: This is a known Winget-CLI limitation. See more details at https://github.com/martinet101/WingetUI/issues/196<br>
 
 **Q: Can WingetUI be in my language?**<br>
-A: Not yet. See more details at https://github.com/martinet101/WingetUI/issues/67 <br>
+A: Not yet. See more details at https://github.com/martinet101/WingetUI/issues/67<br>
 
 **Q: My antivirus is telling me that WingetUI is a virus/My antivirus is uninstalling WingetUI/My browser is blocking WingetUI download**<br>
 A: Just whitelist WingetUI on the antivirus quarantine box/antivirus settings<br>
@@ -90,4 +90,4 @@ A: Just whitelist WingetUI on the antivirus quarantine box/antivirus settings<br
 A: Maybe in the future. See more details at https://github.com/martinet101/WingetUI/issues/56<br>
 
 **Q: Can I add "msstore" as a source for Winget?**<br>
-A: This is not possible nor planned for the near future. See more details at https://github.com/martinet101/WingetUI/issues/87
+A: This is not possible nor planned for the near future. See more details at https://github.com/martinet101/WingetUI/issues/87<br>
