@@ -301,6 +301,7 @@ class TreeWidget(QTreeWidget):
         op=QGraphicsOpacityEffect(self.label)
         op.setOpacity(0.5)
         self.label.setGraphicsEffect(op)
+        self.label.setAttribute(Qt.WA_TransparentForMouseEvents)
         self.label.setAutoFillBackground(True)
         font = self.label.font()
         font.setBold(True)
@@ -468,7 +469,7 @@ class ErrorMessage(QWidget):
         self.okButton = QPushButton()
         self.okButton.setFixedHeight(30)
         self.okButton.clicked.connect(self.delete)
-        self.moreInfoButton = QPushButton("Show details")
+        self.moreInfoButton = QPushButton(_("Show details"))
         self.moreInfoButton.setFixedHeight(30)
         self.moreInfoButton.clicked.connect(self.moreInfo)
         #hl.addStretch()
@@ -489,7 +490,7 @@ class ErrorMessage(QWidget):
     def moreInfo(self):
         spacingAdded = False
         self.moreInfoTextArea.setVisible(not self.moreInfoTextArea.isVisible())
-        self.moreInfoButton.setText("Hide details" if self.moreInfoTextArea.isVisible() else "Show details")
+        self.moreInfoButton.setText(_("Hide details") if self.moreInfoTextArea.isVisible() else _("Show details"))
         if self.moreInfoTextArea.isVisible():
             # show textedit
             s = self.size()
