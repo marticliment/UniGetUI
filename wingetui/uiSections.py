@@ -1693,7 +1693,7 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(title)
         self.layout.addWidget(QLabel())
 
-        description = QLabel("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop.\nThis project has no connection with the winget-cli official project, and it's totally unofficial.")
+        description = QLabel("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for Windows, such as Winget and Scoop.\nThis project has no connection with the Winget-CLI official project, and it's totally unofficial.")
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"Project homepage:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>"))
