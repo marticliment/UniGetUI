@@ -84,7 +84,7 @@ A: This is a known Winget-CLI limitation. See more details at https://github.com
 A: Not yet. See more details at https://github.com/martinet101/WingetUI/issues/67<br>
 
 **Q: My antivirus is telling me that WingetUI is a virus/My antivirus is uninstalling WingetUI/My browser is blocking WingetUI download**<br>
-A: Just whitelist WingetUI on the antivirus quarantine box/antivirus settings<br>
+A: Just whitelist WingetUI on the antivirus quarantine box/antivirus settings.<br>
 
 **Q: Will Chocolatey be supported?**<br>
 A: Maybe in the future. See more details at https://github.com/martinet101/WingetUI/issues/56<br>
