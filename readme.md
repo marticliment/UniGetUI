@@ -48,7 +48,7 @@ It's easy! Download and install the latest version of WingetUI by clicking [here
 
 You can also install WingetUI using [Winget-CLI](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
 
-You can install the app through [Scoop](https://scoop.sh/) as well (⚠️might cause issues, please install manually or through Winget-CLI for the moment)
+You can install the app through [Scoop](https://scoop.sh/) as well (⚠️might cause issues, please install manually or through Winget-CLI for the moment).
 
 To install it that way, first it's necessary to add the Extras bucket: `scoop bucket add extras`
 
