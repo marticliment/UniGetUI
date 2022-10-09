@@ -91,3 +91,5 @@ A: Maybe in the future. See more details at https://github.com/martinet101/Winge
 
 **Q: Can I add "msstore" as a source for Winget?**<br>
 A: This is not possible nor planned for the near future. See more details at https://github.com/martinet101/WingetUI/issues/87<br>
+
+_(See the [WIKI](https://github.com/martinet101/WingetUI/wiki) for more information)_
