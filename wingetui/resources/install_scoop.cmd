@@ -1,5 +1,5 @@
 @echo off
-echo This script is going to install scoop and it's required dependencies required by WingetUI.
+echo This script is going to install scoop and its dependencies required by WingetUI.
 pause
 powershell -NoProfile -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
 echo Installing scoop...
