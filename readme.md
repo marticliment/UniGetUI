@@ -1,95 +1,133 @@
-# WingetUI: A package manager UI for Winget and Scoop
+# WingetUI: A package manager UI
 
 [![Downloads@latest](https://img.shields.io/github/downloads/martinet101/WingetUI/total?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
-The main goal of this project is to create a GUI Store for the most common CLI package managers for Windows, such as Winget and Scoop. 
+The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/). 
 
-From here, you'll be able to download, install, upgrade and uninstall any software published on Winget or Scoop.
+With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
-AppGet was supported in release 0.3, but since that project has been discontinued, the support has been removed.
-
-This project has no connection to the official Winget-CLI project — it's completely unofficial.
+**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
-# And you know what? It can uninstall MS Edge
-(or at least it did in my machine)
-
-
-![ezgif-3-901ac5902a](https://user-images.githubusercontent.com/53119851/169247775-e02ed0b1-ba34-4552-966a-676979d89925.png)
+![image](https://user-images.githubusercontent.com/67732686/195120018-212b6703-535c-4b17-9443-f0065550e631.png)
 
 
 # Features
 
  - The ability to install packages from Scoop and Winget (the idea is to add more package managers in the future).
- 
- - The ability to update and uninstall previously installed packages.
- - The user doesn't need to install any of the package managers.
- - Smooth and responsive UI (starting from v1.0).
- - Support for managing Scoop buckets.
- - The user can select the version that should be installed for any of the apps.
- - The user will be notified whether the installation/upgrade/uninstallation was completed successfully or not.
+ - The ability to update and uninstall previously installed packages — as well as local PC apps!
+ - The ability to both import and export the packages of your choice, so that you can easily install them in the future.
+ - The user doesn't need to install any of the package managers. (Although the app does include the ability to install Scoop for you!)
+ - Includes support for managing Scoop buckets.
+ - The user can select the version that they want to install of any particular app.
+ - The user will be notified whether the installation/update/uninstallation of an app was completed successfully or not.
  - The ability to queue installations in order to prevent conflicts.
  - A dark theme is available to prevent you from burning your eyes. :sunglasses:
- - The ability to show some package-related information (like license, SHA256 hash, homepage, etc.) before installing.
- - 5800+ packages available to install, such as Google Chrome, WhatsApp, Adobe Reader or ADB Tools!
+ - The ability to show package-related information (like its license, SHA256 hash, homepage, etc.) before installation.
+ - More than 6800 packages available and counting, including apps like Google Chrome, WhatsApp, Adobe Reader and ADB Tools!
  - More features are coming!
 
-# Support me :)
+# Consider supporting me. 
+
+**It really does make a big difference, and is very much appreciated.**
 
 <a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
+Thank you! :)
+
 # Installation
+
+There are multiple ways to install WingetUI — choose the one which you prefer!
  
-It's easy! Download and install the latest version of WingetUI by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)!
+The first is by downloading the latest version of its installer by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe).
 
-You can also install WingetUI using [Winget-CLI](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
+The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
 
-You can install the app through [Scoop](https://scoop.sh/) as well (⚠️might cause issues, please install manually or through Winget-CLI for the moment).
+The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
-To install it that way, first it's necessary to add the Extras bucket: `scoop bucket add extras`
+⚠️ **Currently there are known issues between WingetUI and Scoop!** ⚠️
 
-Then, execute the following in a CLI: `scoop install wingetui`
+**Please install the app with its own installer or through Winget for the moment.**
 
-<br><p align="center"><i>(See the <a href="https://github.com/martinet101/WingetUI/wiki">WIKI</a> for more information)</i></p>
+In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
+
+Then, to install WingetUI, execute the following command: `scoop install wingetui`
+
+<br><p align="center"><i>Check out the <a href="https://github.com/martinet101/WingetUI/wiki">Wiki</a> for more information!</i></p>
 
 # Screenshots
  
-![alt text](/media/winget_1.png)
+![image](https://user-images.githubusercontent.com/67732686/195112595-28c5928b-2b0a-4730-b864-04037e644b72.png)
 
-![alt text](/media/winget_2.png)
+![image](https://user-images.githubusercontent.com/67732686/195112809-9719d303-9b70-45f3-9d94-aff9604e52e7.png)
 
-![alt text](/media/winget_3.png)
+![image](https://user-images.githubusercontent.com/67732686/195113058-655ce7aa-3a40-4621-9758-4839edd4fab5.png)
 
-![alt text](/media/winget_4.png)
+![image](https://user-images.githubusercontent.com/67732686/195113334-8dad53ac-80db-4894-ac91-8eebdc6bee91.png)
 
-![alt text](/media/winget_6.png)
+![image](https://user-images.githubusercontent.com/67732686/195113504-529a561a-0ccf-4969-bbc5-3625a245030b.png)
 
-![alt text](/media/winget_5.png)
+![image](https://user-images.githubusercontent.com/67732686/195113616-8e97bfb9-d463-41a8-b071-9f2180514ff9.png)
 
-![alt text](/media/winget_7.png)
+![image](https://user-images.githubusercontent.com/67732686/195113692-a4938fce-1be2-488d-bbfd-f44ab4aeb512.png)
+
+![image](https://user-images.githubusercontent.com/67732686/195114107-abe537df-3ee4-4d81-8707-a189e83b7abe.png)
+
 
 # FAQ
 
-**Q: I am unable to install or update some Winget package**<br>
-A: This is likely a Winget-CLI issue. Please check if it is possible to install/update the package through PowerShell or cmd using the commands `winget upgrade` and `winget install` (for example: `winget upgrade --id Microsoft.PowerToys`). If this doesn't work, you may try to get help at https://github.com/microsoft/winget-pkgs<br>
+**Q: I am unable to install or update a specific Winget package! What should I do?**<br>
 
-**Q: I am unable to fully see some package name/id (trimmed with ellipsis)**<br>
-A: This is a known Winget-CLI limitation. See more details at https://github.com/martinet101/WingetUI/issues/196<br>
+A: This is likely an issue with Winget rather than WingetUI. 
 
-**Q: Can WingetUI be in my language?**<br>
-A: Not yet. See more details at https://github.com/martinet101/WingetUI/issues/67<br>
+Please check if it's possible to install/update the package through PowerShell or the Command Prompt by using the commands `winget upgrade` or `winget install`, depending on the situation (for example: `winget upgrade --id Microsoft.PowerToys`). 
 
-**Q: My antivirus is telling me that WingetUI is a virus/My antivirus is uninstalling WingetUI/My browser is blocking WingetUI download**<br>
-A: Just whitelist WingetUI on the antivirus quarantine box/antivirus settings.<br>
+If this doesn't work, consider asking for help at [Winget's own project page](https://github.com/microsoft/winget-cli).<br>
+
+#
+
+**Q: The name of a package is trimmed with ellipsis — how do I see its full name/id?**<br>
+
+A: This is a known limitation of Winget. 
+
+See more details in issue https://github.com/martinet101/WingetUI/issues/196.<br>
+
+#
+
+**Q: Can I use WingetUI in my language?**<br>
+
+A: Not yet. 
+
+See more details in issue https://github.com/martinet101/WingetUI/issues/67.<br>
+
+#
+
+**Q: My antivirus is telling me that WingetUI is a virus! / My browser is blocking the download of WingetUI!**<br>
+
+A: The reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of WingetUI — is because they're not being used by a relatively large amount of people.
+
+Combine that with the fact that you might be downloading something that was recently released, and simply blocking the app is in many cases a good precaution to take in order to prevent actual malware.
+
+Since WingetUI is safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
+
+#
 
 **Q: Will Chocolatey be supported?**<br>
-A: Maybe in the future. See more details at https://github.com/martinet101/WingetUI/issues/56<br>
 
-**Q: Can I add "msstore" as a source for Winget?**<br>
-A: This is not possible nor planned for the near future. See more details at https://github.com/martinet101/WingetUI/issues/87<br>
+A: Maybe in the future. 
 
-<br><p align="center"><i>(See the <a href="https://github.com/martinet101/WingetUI/wiki">WIKI</a> for more information)</i></p>
+See more details in issue https://github.com/martinet101/WingetUI/issues/56.<br>
+
+#
+
+**Q: Can I add "msstore" as a source for Winget in the app?**<br>
+
+A: This is not possible, nor is it planned for the near future. 
+
+See more details in issue https://github.com/martinet101/WingetUI/issues/87.<br>
+
+<br><p align="center"><i>Check out the <a href="https://github.com/martinet101/WingetUI/wiki">Wiki</a> for more information!</i></p>
