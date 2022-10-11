@@ -108,7 +108,7 @@ See more details in issue https://github.com/martinet101/WingetUI/issues/67.<br>
 
 **Q: My antivirus is telling me that WingetUI is a virus! / My browser is blocking the download of WingetUI!**<br>
 
-A: The reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of WingetUI — is because they're not being used by a relatively large amount of people.
+A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of WingetUI — is because they're not being used by a relatively large amount of people.
 
 Combine that with the fact that you might be downloading something that was recently released, and simply blocking the app is in many cases a good precaution to take in order to prevent actual malware.
 
