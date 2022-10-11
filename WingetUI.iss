@@ -3,7 +3,7 @@
 
 #define MyAppName "WingetUI"
 #define MyAppVersion "1.4.2"
-#define MyAppPublisher "Martí Climent"
+#define MyAppPublisher "MartÃ­ Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
 
@@ -53,8 +53,8 @@ end;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Desktop icon"; Flags: unchecked      
-Name: "installscoop"; Description: "Enable and install scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
-Name: "disablescoop"; Description: "Do not install scoop (recommended)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
+Name: "disablescoop"; Description: "Do not install Scoop (recommended)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
+Name: "installscoop"; Description: "Enable and install Scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
