@@ -7,7 +7,7 @@
 
 The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/). 
 
-With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
+With this app, you'll be able to download, install, and uninstall any software that's published on the supported package managers — and so much more.
 
 **Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
 
@@ -19,7 +19,7 @@ With this app, you'll be able to download, install, update and uninstall any sof
 # Features
 
  - The ability to install packages from Scoop and Winget (the idea is to add more package managers in the future).
- - The ability to update and uninstall previously installed packages — as well as local PC apps!
+ - The ability to upgrade and uninstall previously installed packages — as well as uninstall local PC apps!
  - The ability to both import and export the packages of your choice, so that you can easily install them in the future.
  - The user doesn't need to install any of the package managers. (Although the app does include the ability to install Scoop for you!)
  - Includes support for managing Scoop buckets.
@@ -28,8 +28,8 @@ With this app, you'll be able to download, install, update and uninstall any sof
  - The ability to queue installations in order to prevent conflicts.
  - A dark theme is available to prevent you from burning your eyes. :sunglasses:
  - The ability to show package-related information (like its license, SHA256 hash, homepage, etc.) before installation.
- - More than 6800 packages available and counting, including apps like Google Chrome, WhatsApp, Adobe Reader and ADB Tools!
- - More features are coming!
+ - More than 6800 packages available and counting!
+ - More features are coming in the future!
 
 # Consider supporting me. 
 
@@ -51,7 +51,7 @@ The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
 ⚠️ **Currently there are known issues between WingetUI and Scoop!** ⚠️
 
-**Please install the app with its own installer or through Winget for the moment.**
+**Please install the app with its own installer or through Winget for the time being.**
 
 In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
 
@@ -80,11 +80,11 @@ Then, to install WingetUI, execute the following command: `scoop install wingetu
 
 # FAQ
 
-**Q: I am unable to install or update a specific Winget package! What should I do?**<br>
+**Q: I am unable to install or upgrade a specific Winget package! What should I do?**<br>
 
 A: This is likely an issue with Winget rather than WingetUI. 
 
-Please check if it's possible to install/update the package through PowerShell or the Command Prompt by using the commands `winget upgrade` or `winget install`, depending on the situation (for example: `winget upgrade --id Microsoft.PowerToys`). 
+Please check if it's possible to install/upgrade the package through PowerShell or the Command Prompt by using the commands `winget upgrade` or `winget install`, depending on the situation (for example: `winget upgrade --id Microsoft.PowerToys`). 
 
 If this doesn't work, consider asking for help at [Winget's own project page](https://github.com/microsoft/winget-cli).<br>
 
