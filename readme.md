@@ -110,9 +110,9 @@ See more details in issue https://github.com/martinet101/WingetUI/issues/67.<br>
 
 A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of WingetUI — is because they're not being used by a relatively large amount of people.
 
-Combine that with the fact that you might be downloading something that was recently released, and simply blocking the app is in many cases a good precaution to take in order to prevent actual malware.
+Combine that with the fact that you might be downloading something that was recently released, and simply blocking unknown apps is in many cases a good precaution to take in order to prevent actual malware.
 
-Since WingetUI is safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
+Since WingetUI is open source and safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
 
 #
 
