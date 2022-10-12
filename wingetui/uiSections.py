@@ -84,7 +84,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Discover packages")
+        self.discoverLabel = QLabel("Discover Packages")
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -101,7 +101,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList: TreeWidget = TreeWidget("a")
-        self.packageList.setHeaderLabels(["Package name", "Package ID", "Version", "Origin"])
+        self.packageList.setHeaderLabels(["Package Name", "Package ID", "Version", "Source"])
         self.packageList.setColumnCount(4)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
         self.packageList.setSortingEnabled(True)
@@ -525,7 +525,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.addWidget(self.img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Software updates")
+        self.discoverLabel = QLabel("Software Updates")
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -541,7 +541,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList = TreeWidget("ª")
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.setColumnCount(6)
-        self.packageList.setHeaderLabels(["", "Package name", "Package ID", "Installed Version", "New Version", "Installation source"])
+        self.packageList.setHeaderLabels(["", "Package Name", "Package ID", "Installed Version", "New Version", "Source"])
         self.packageList.setColumnWidth(0, 50)
         self.packageList.setColumnWidth(1, 350)
         self.packageList.setColumnWidth(2, 200)
@@ -1134,7 +1134,7 @@ class UninstallSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Installed packages")
+        self.discoverLabel = QLabel("Installed Packages")
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -1155,7 +1155,7 @@ class UninstallSoftwareSection(QWidget):
 
         self.packageList = TreeWidget("Found 0 Packages")
         self.packageList.setIconSize(QSize(24, 24))
-        self.headers = ["", "Package name", "Package ID", "Installed Version", "Installation source"] # empty header added for checkbox
+        self.headers = ["", "Package Name", "Package ID", "Installed Version", "Source"] # empty header added for checkbox
         self.packageList.setColumnCount(len(self.headers))
         self.packageList.setHeaderLabels(self.headers)
         self.packageList.setColumnWidth(0, 46)
@@ -1659,7 +1659,7 @@ class AboutSection(QScrollArea):
         self.setWidget(self.widget)
         self.announcements = QAnnouncements()
         self.layout.addWidget(self.announcements)
-        title = QLabel("Component information")
+        title = QLabel("Component Information")
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
 
@@ -1691,12 +1691,11 @@ class AboutSection(QScrollArea):
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
 
         self.layout.addWidget(title)
-        self.layout.addWidget(QLabel())
-
-        description = QLabel("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for Windows, such as Winget and Scoop.\nThis project has no connection to the official Winget-CLI project — it's completely unofficial.")
+        self.layout.addWidget(QLinkLabel())
+        description = QLinkLabel(f"The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.\nThis project has no connection with the official <a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget project </a> — it's completely unofficial. ")
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
-        self.layout.addWidget(QLinkLabel(f"Project homepage:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI\">https://github.com/martinet101/WinGetUI</a>"))
+        self.layout.addWidget(QLinkLabel(f"Homepage:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
         self.layout.addSpacing(30)
         self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
         self.layout.addWidget(QLabel())
@@ -1750,6 +1749,7 @@ class SettingsSection(QScrollArea):
         title = QLabel("WingetUI Settings")
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
+        self.layout.addSpacing(20)
 
         subtitle = QLabel("General preferences")
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
@@ -1796,11 +1796,11 @@ class SettingsSection(QScrollArea):
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
         updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
         self.layout.addWidget(updateCheckBox)
-        changeDefaultInstallAction = QCheckBox("Directly install when double-clicking an item on the Discover packages tab (instead of showing the package info)")
+        changeDefaultInstallAction = QCheckBox("Directly install when double-clicking an item on the Discover Packages tab (instead of showing the package info)")
         changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
         changeDefaultInstallAction.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
         self.layout.addWidget(changeDefaultInstallAction)
-        changeDefaultUpdateAction = QCheckBox("Show info about the package on the Software updates tab")
+        changeDefaultUpdateAction = QCheckBox("Show info about the package on the Software Updates tab")
         changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
         changeDefaultUpdateAction.clicked.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
         self.layout.addWidget(changeDefaultUpdateAction)
@@ -1912,17 +1912,17 @@ class SettingsSection(QScrollArea):
         
         self.layout.addWidget(QLabel())
         l = QHBoxLayout()
-        button = QPushButton("Add a bucket to scoop")
+        button = QPushButton("Add a bucket to Scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopAddExtraBucket())
         l.addWidget(button)
-        button = QPushButton("Remove a bucket from scoop")
+        button = QPushButton("Remove a bucket from Scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
         l.addWidget(button)
-        button = QPushButton("Install scoop")
+        button = QPushButton("Install Scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: (setSettings("DisableScoop", False), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
