@@ -3,7 +3,7 @@ import shutil
 import winreg
 import io
 from threading import Thread
-import sys, time, subprocess, os
+import sys, time, subprocess, os, json, locale
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -23,6 +23,8 @@ errbuffer = io.StringIO()
 settingsCache = {}
 installersWidget = None
 updatesAvailable = False
+
+missingTranslationList = []
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdout = buffer = io.StringIO()
@@ -51,13 +53,14 @@ def report(exception) -> None: # Exception reporter
 
 def _(s): # Translate function
     global lang
-    return "-"*len(s)
     try:
         t = lang[s]
-        return (t+"✅[Found]✅" if debugLang else t) if t else f"{s}⚠️[UntranslatedString]⚠️" if debugLang else eng_(s)
+        return ("🟢"+t+"🟢" if debugLang else t) if t else f"🟡{s}🟡" if debugLang else eng_(s)
     except KeyError:
         if debugLang: print(s)
-        return f"{eng_(s)}🔴[MissingString]🔴" if debugLang else eng_(s)
+        if not s in missingTranslationList:
+            missingTranslationList.append(s)
+        return f"🔴{eng_(s)}🔴" if debugLang else eng_(s)
 
 def eng_(s): # English translate function
     try:
@@ -758,6 +761,55 @@ ts.signal.connect(lambda: globals.app.reloadWindow())
 
 Thread(target=themeThread, args=(ts,), daemon=True, name="UI Theme thread").start()
 Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
+
+if getSettingsValue("PreferredLanguage") == "":
+    setSettingsValue("PreferredLanguage", "default")
+
+def loadLangFile(file: str, bundled: bool = False) -> dict:
+    try:
+        path = os.path.join(os.path.expanduser("~"), ".elevenclock/lang/"+file)
+        if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled or True:
+            #print(f"🟡 Using bundled lang file (forced={bundled})")
+            path = getPath("../lang/"+file)
+        #else:
+        #    print("🟢 Using cached lang file")
+        with open(path, "r", encoding='utf-8') as file:
+            return json.load(file)
+    except Exception as e:
+        report(e)
+        return {}
+
+t0 = time.time()
+
+langName = getSettingsValue("PreferredLanguage")
+try:
+    if (langName == "default"):
+        langName = locale.getdefaultlocale()[0]
+    langNames = [langName, langName[0:2]]
+    langFound = False
+    for ln in langNames:
+        if (ln in languages):
+            lang = loadLangFile(languages[ln]) | {"locale": ln}
+            langFound = True
+            #if not getSettings("DisableLangAutoUpdater"):
+            #    Thread(target=updateLangFile, args=(languages[ln],), name=f"DAEMON: Update lang_{ln}.json").start()
+            break
+    if (langFound == False):
+        raise Exception(f"Value not found for {langNames}")
+except Exception as e:
+    report(e)
+    lang = loadLangFile(languages["en"]) | {"locale": "en"}
+    print("🔴 Unknown language")
+
+langName = lang['locale']
+
+try:
+    englang = loadLangFile(languages["en"], bundled=True) | {"locale": "en"}
+except Exception as e:
+    report(e)
+    englang = {"locale": "en"}
+
+print(f"It took {time.time()-t0} to load all language files")
             
 
 if __name__ == "__main__":

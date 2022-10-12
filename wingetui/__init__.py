@@ -272,7 +272,7 @@ try:
                 globals.trayMenuUpdatesList = self.updatesMenu
                 menu.addMenu(self.updatesMenu)
                 
-                globals.updatesHeader = QAction(_("App Name  \tInstalled Version \t → \t New version"), menu)
+                globals.updatesHeader = QAction(f"{_('App Name')}  \t{_('Installed Version')} \t → \t {_('New version')}", menu)
                 globals.updatesHeader.setEnabled(False)
                 globals.updatesHeader.setIcon(QIcon(getMedia("version")))
                 self.updatesMenu.addAction(globals.updatesHeader)
@@ -294,7 +294,7 @@ try:
                 menu.addMenu(self.installedMenu)
                 menu.addSeparator()
                 
-                globals.installedHeader = QAction(_("App Name\tInstalled Version"), menu)
+                globals.installedHeader = QAction(f"{_('App Name')}\t{_('Installed Version')}", menu)
                 globals.installedHeader.setIcon(QIcon(getMedia("version")))
                 globals.installedHeader.setEnabled(False)
                 self.installedMenu.addAction(globals.installedHeader)

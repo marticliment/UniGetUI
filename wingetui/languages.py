@@ -10,4 +10,3 @@ for key in languageReference.keys():
         languages[key] = f"lang_{key}.json"
 
 debugLang = False
-

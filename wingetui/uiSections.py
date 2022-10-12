@@ -447,6 +447,10 @@ class DiscoverSoftwareSection(QWidget):
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
 
+    def showEvent(self, event: QShowEvent) -> None:
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        return super().showEvent(event)
+
 class UpdateSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str, str)
@@ -886,7 +890,7 @@ class UpdateSoftwareSection(QWidget):
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.updatePackageNumber()
-            self.packageList.label.setText()
+            self.packageList.label.setText("")
             self.filter()
             self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
@@ -1055,6 +1059,10 @@ class UpdateSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        return super().showEvent(event)
 
 class UninstallSoftwareSection(QWidget):
 
@@ -1624,6 +1632,10 @@ class UninstallSoftwareSection(QWidget):
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
 
+    def showEvent(self, event: QShowEvent) -> None:
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        return super().showEvent(event)
+
 
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):
@@ -1689,13 +1701,13 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"PySide6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
-        self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
+        self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
         self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
         self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;Unlicense:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
-        self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
+        self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
         self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel(f"{_('Icons')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('By Icons8')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
+        self.layout.addWidget(QLinkLabel(f"{('Icons')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{('By Icons8')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
         self.layout.addWidget(QLinkLabel())
         self.layout.addWidget(QLinkLabel())
         button = QPushButton(_("About Qt6"))
@@ -1948,8 +1960,15 @@ class DebuggingSection(QWidget):
 
                 a = QAction()
                 a.setText(_("Reload log"))
-                a.triggered.connect(lambda: self.textEdit.setPlainText(buffer.getvalue()))
+                a.triggered.connect(lambda: self.setPlainText(buffer.getvalue()))
                 menu.addAction(a)
+
+                
+                a4 = QAction()
+                a4.setText(_("Show missing translation strings"))
+                a4.triggered.connect(lambda: self.setPlainText('\n'.join(missingTranslationList)))#buffer.getvalue()))
+                menu.addAction(a4)
+
 
                 a2 = QAction()
                 a2.setText(_("Export log as a file"))
