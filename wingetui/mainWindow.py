@@ -73,15 +73,15 @@ class RootWindow(QMainWindow):
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.discover = self.discover
-        self.widgets[self.discover] = self.addTab(self.discover, "Discover packages")
+        self.widgets[self.discover] = self.addTab(self.discover, "Discover Packages")
         self.updates = UpdateSoftwareSection()
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.updates = self.updates
-        self.widgets[self.updates] = self.addTab(self.updates, "Software updates")
+        self.widgets[self.updates] = self.addTab(self.updates, "Software Updates")
         self.uninstall = UninstallSoftwareSection()
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
-        self.widgets[self.uninstall] = self.addTab(self.uninstall, "Installed packages")
+        self.widgets[self.uninstall] = self.addTab(self.uninstall, "Installed Packages")
         self.settingsSection = SettingsSection()
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, "WingetUI Settings", addToMenu=True, actionIcon="settings")
         self.aboutSection = AboutSection()
