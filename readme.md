@@ -7,7 +7,7 @@
 
 The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/). 
 
-With this app, you'll be able to download, install, and uninstall any software that's published on the supported package managers — and so much more.
+With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
 **Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
 
