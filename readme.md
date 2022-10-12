@@ -5,11 +5,11 @@
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
-The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/). 
+<br>The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
 
 With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
-**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
+<br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
@@ -41,19 +41,17 @@ Thank you! :)
 
 # Installation
 
-There are multiple ways to install WingetUI — choose the one which you prefer!
- 
-The first is by downloading the latest version of its installer by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe).
+<p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br><br></p>
 
-The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
+- The first is by downloading the latest version of its installer by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe).
+- The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
+- The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
-The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
+<br>⚠️ **Currently there are known issues between WingetUI and Scoop!** 
 
-⚠️ **Currently there are known issues between WingetUI and Scoop!** ⚠️
+**Please install the app with its own installer or through Winget for the time being.** ⚠️
 
-**Please install the app with its own installer or through Winget for the time being.**
-
-In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
+<br>In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
 
 Then, to install WingetUI, execute the following command: `scoop install wingetui`
 
