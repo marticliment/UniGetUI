@@ -1759,7 +1759,7 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(QLabel())
 
         selectedLanguageLabel = QLabel(_("WingetUI display language:")+" (Language)") # The non-translated (Language) string is there to let people know what the language option is if you accidentaly change the language
-        selectedLanguageCombo = QComboBox()
+        selectedLanguageCombo = CustomComboBox()
         selectedLanguageButton = QPushButton()
         selectedLanguageButton.setObjectName("AccentButton")
         selectedLanguageCombo.setFixedWidth(200)
