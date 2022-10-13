@@ -5,6 +5,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
+from tools import _
 
 import globals
 
@@ -19,10 +20,10 @@ class PackageInstallerWidget(QGroupBox):
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False, packageItem: TreeWidgetItemWithQAction = None):
         super().__init__(parent=parent)
         self.packageItem = packageItem
-        self.actionDone = "installed"
-        self.actionDoing = "installing"
-        self.actionName = "installation"
-        self.actionVerb = "install"
+        self.actionDone = _("installed")
+        self.actionDoing = _("installing")
+        self.actionName = _("installation")
+        self.actionVerb = _("install")
         self.runAsAdmin = admin
         self.useId = useId
         self.adminstr = [sudoPath] if self.runAsAdmin else []
@@ -39,7 +40,7 @@ class PackageInstallerWidget(QGroupBox):
         self.cmdline_args = args
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(30, 10, 10, 10)
-        self.label = QLabel(title+" Installation")
+        self.label = QLabel(_("{0} installation").format(title))
         self.layout.addWidget(self.label)
         self.layout.addSpacing(5)
         self.progressbar = QProgressBar()
@@ -51,13 +52,13 @@ class PackageInstallerWidget(QGroupBox):
         self.layout.addWidget(self.progressbar, stretch=1)
         self.info = QLineEdit()
         self.info.setStyleSheet("color: grey; border-bottom: inherit;")
-        self.info.setText("Waiting for other installations to finish...")
+        self.info.setText(_("Waiting for other installations to finish..."))
         self.info.setReadOnly(True)
         self.addInfoLine.connect(lambda text: self.info.setText(text))
         self.finishInstallation.connect(self.finish)
         self.layout.addWidget(self.info)
         self.counterSignal.connect(self.counter)
-        self.cancelButton = QPushButton(QIcon(realpath+"/resources/cancel.png"), "Cancel")
+        self.cancelButton = QPushButton(QIcon(realpath+"/resources/cancel.png"), _("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
         self.cancelButton.setFixedHeight(30)
         self.info.setFixedHeight(30)
@@ -113,7 +114,7 @@ class PackageInstallerWidget(QGroupBox):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
-        self.addInfoLine.emit("Starting installation...")
+        self.addInfoLine.emit(_("Starting installation..."))
         self.progressbar.setValue(0)
         self.packageId = self.packageId.replace("…", "")
         self.programName = self.programName.replace("…", "")
@@ -153,9 +154,9 @@ class PackageInstallerWidget(QGroupBox):
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
             self.finishedInstallation = True
-        self.info.setText("Installation canceled by user!")
+        self.info.setText(_("Installation canceled by user!"))
         self.cancelButton.setEnabled(True)
-        self.cancelButton.setText("Close")
+        self.cancelButton.setText(_("Close"))
         self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
@@ -181,11 +182,11 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                self.callInMain.emit(lambda: globals.trayIcon.showMessage(f"{self.actionName.capitalize()} succeeded", f"{self.programName} was {self.actionDone} successfully!", QIcon(getMedia("notif_info"))))
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                 self.cancelButton.setText("OK")
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.info.setText(f"{self.programName} was {self.actionDone} successfully!")
+                self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
                 self.progressbar.setValue(1000)
                 if type(self) == PackageInstallerWidget:
                     globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
@@ -194,14 +195,14 @@ class PackageInstallerWidget(QGroupBox):
                     msgBox = MessageBox(self)
                     msgBox.setWindowTitle("WingetUI")
                     msgBox.setText(f"{self.programName} was {self.actionDone} successfully.")
-                    msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
+                    msgBox.setInformativeText("You will need to restart the application in order to get the {self.programName} new packages")
                     msgBox.setStandardButtons(MessageBox.Ok)
                     msgBox.setDefaultButton(MessageBox.Ok)
                     msgBox.setIcon(MessageBox.Information)
                     msgBox.exec_()
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
-                self.cancelButton.setText("OK")
+                self.cancelButton.setText(_("OK"))
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
@@ -209,25 +210,25 @@ class PackageInstallerWidget(QGroupBox):
                 if(returncode == 2):  # if the installer's hash does not coincide
                     errorData = {
                         "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
-                        "mainTitle": f"{self.actionName.capitalize()} aborted",
-                        "mainText": f"The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {self.actionVerb} the package again skipping the hash check.",
-                        "buttonTitle": "Close",
+                        "mainTitle": _("{0} aborted").format(self.actionName.capitalize()),
+                        "mainText": _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb),
+                        "buttonTitle": _("Close"),
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("warn")),
-                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
-                        "notifText": f"The installer has an invalid checksum",
+                        "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                        "notifText": _("The installer has an invalid checksum"),
                         "notifIcon": QIcon(getMedia("notif_warn")),
                     }
                 else: # if there's a generic error
                     errorData = {
-                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
-                        "mainTitle": f"{self.actionName.capitalize()} failed",
-                        "mainText": f"We could not {self.actionVerb} {self.programName}. Please try again later. Click on \"Show details\" to get the logs from the installer.",
-                        "buttonTitle": "Close",
+                        "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                        "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
+                        "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName),
+                        "buttonTitle": _("Close"),
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("warn")),
-                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
-                        "notifText": f"{self.programName} {self.actionName} failed",
+                        "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                        "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
                         "notifIcon": QIcon(getMedia("notif_warn")),
                     }
                 self.err.showErrorMessage(errorData)
@@ -277,10 +278,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
     def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, useId: bool = False):
         super().__init__(title, store, version, parent, customCommand, args, packageId, admin, useId)
         self.packageItem = packageItem
-        self.actionDone = "updated"
-        self.actionDoing = "updating"
-        self.actionName = "update"
-        self.actionVerb = "update"
+        self.actionDone = _("updated")
+        self.actionDoing = _("updating")
+        self.actionName = _("update(noun)")
+        self.actionVerb = _("update(verb)")
     
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -293,7 +294,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
-        self.addInfoLine.emit("Applying update...")
+        self.addInfoLine.emit(_("Applying update..."))
         self.rightFast.stop()
         self.progressbar.setValue(0)
         self.packageId = self.packageId.replace("…", "")
@@ -348,18 +349,18 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.programName = title
         self.packageId = packageId
         super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args, packageItem=packageItem)
-        self.actionDone = "uninstalled"
+        self.actionDone = _("uninstalled")
         self.removeData = removeData
-        self.actionDoing = "uninstalling"
-        self.actionName = "uninstallation"
-        self.actionVerb = "uninstall"
+        self.actionDoing = _("uninstalling")
+        self.actionName = _("uninstallation")
+        self.actionVerb = _("uninstall")
         self.finishedInstallation = True
         self.runAsAdmin = admin
         self.adminstr = [sudoPath] if self.runAsAdmin else []
         self.store = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
-        self.label.setText(title+" Uninstallation")
+        self.label.setText(_("{} Uninstallation").format(title))
         
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -403,12 +404,12 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
-        self.info.setText("Installation canceled by user!")
+        self.info.setText(_("Uninstall canceled by user!"))
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
             self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
-        self.cancelButton.setText("Close")
+        self.cancelButton.setText(_("Close"))
         self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
@@ -443,51 +444,29 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if not(self.canceled):
             if(returncode == 0):
                 self.callInMain.emit(lambda: globals.trayIcon.showMessage(f"{self.actionName.capitalize()} succeeded", f"{self.programName} was {self.actionDone} successfully!", QIcon(getMedia("notif_info"))))
-                self.cancelButton.setText("OK")
+                self.cancelButton.setText(_("OK"))
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
-                self.info.setText(f"{self.programName} was {self.actionDone} successfully!")
+                self.info.setText(f"{self.programName} was uninstalled successfully!")
                 self.progressbar.setValue(1000)
                 self.startCoolDown()
-                if(self.store == "powershell"):
-                    msgBox = MessageBox(self)
-                    msgBox.setWindowTitle("WingetUI")
-                    msgBox.setText(f"{self.programName} was uninstalled successfully.")
-                    msgBox.setInformativeText(f"You will need to restart the application in order to get the {self.programName} new packages")
-                    msgBox.setStandardButtons(MessageBox.Ok)
-                    msgBox.setDefaultButton(MessageBox.Ok)
-                    msgBox.setIcon(MessageBox.Information)
-                    msgBox.exec_()
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
-                self.cancelButton.setText("OK")
+                self.cancelButton.setText(_("OK"))
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
                 self.cancelButton.clicked.connect(self.close)
                 self.progressbar.setValue(1000)
                 self.err = ErrorMessage(self.window())
-                if(returncode == 2):  # if the installer's hash does not coincide
-                    errorData = {
-                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
-                        "mainTitle": f"{self.actionName.capitalize()} aborted",
-                        "mainText": f"The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {self.actionVerb} the package again skipping the hash check.",
-                        "buttonTitle": "Close",
-                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                        "icon": QIcon(getMedia("warn")),
-                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
-                        "notifText": f"The installer has an invalid checksum",
-                        "notifIcon": QIcon(getMedia("notif_warn")),
-                    }
-                else: # if there's a generic error
-                    errorData = {
-                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
-                        "mainTitle": f"{self.actionName.capitalize()} failed",
-                        "mainText": f"We could not {self.actionVerb} {self.programName}. Please try again later. Click on \"Show details\" to get the logs from the installer.",
-                        "buttonTitle": "Close",
-                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                        "icon": QIcon(getMedia("warn")),
-                        "notifTitle": f"Can't {self.actionVerb} {self.programName}",
-                        "notifText": f"{self.programName} {self.actionName} failed",
-                        "notifIcon": QIcon(getMedia("notif_warn")),
+                errorData = {
+                    "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                    "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
+                    "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller.").format(self.actionVerb, self.programName),
+                    "buttonTitle": _("Close"),
+                    "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                    "icon": QIcon(getMedia("warn")),
+                    "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                    "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
+                    "notifIcon": QIcon(getMedia("notif_warn")),
                     }
                 self.err.showErrorMessage(errorData)
     
@@ -541,7 +520,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.layout = QVBoxLayout()
         self.title = QLinkLabel()
         self.title.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
-        self.title.setText("Loading...")
+        self.title.setText(_("Loading..."))
 
         fortyWidget = QWidget()
         fortyWidget.setFixedWidth(120)
@@ -557,35 +536,35 @@ class PackageInfoPopupWindow(QMainWindow):
 
         self.hLayout = QHBoxLayout()
         self.oLayout = QHBoxLayout()
-        self.description = QLinkLabel("Description: Unknown")
+        self.description = QLinkLabel(_('Description:')+" "+_('Unknown'))
         self.description.setWordWrap(True)
 
         self.layout.addWidget(self.description)
 
-        self.homepage = QLinkLabel("Homepage URL: Unknown")
+        self.homepage = QLinkLabel(_('Homepage URL:')+" "+_('Unknown'))
         self.homepage.setWordWrap(True)
 
         self.layout.addWidget(self.homepage)
 
-        self.publisher = QLinkLabel("Publisher: Unknown")
+        self.publisher = QLinkLabel(_('Publisher:')+" "+_('Unknown'))
         self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
-        self.author = QLinkLabel("Author: Unknown")
+        self.author = QLinkLabel(_('Author:')+" "+_('Unknown'))
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
         self.layout.addStretch()
 
-        self.license = QLinkLabel("License: Unknown")
+        self.license = QLinkLabel(_('License:')+" "+_('Unknown'))
         self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
         self.layout.addStretch()
         
         hLayout = QHBoxLayout()
-        self.versionLabel = QLinkLabel("Version: ")
+        self.versionLabel = QLinkLabel(_("Version:"))
 
         
         self.versionCombo = CustomComboBox()
@@ -593,7 +572,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.versionCombo.setIconSize(QSize(24, 24))
         self.versionCombo.setFixedHeight(35)
         self.installButton = QPushButton()
-        self.installButton.setText("Install")
+        self.installButton.setText(_("Install"))
         self.installButton.setObjectName("AccentButton")
         self.installButton.setIconSize(QSize(24, 24))
         self.installButton.clicked.connect(self.install)
@@ -605,15 +584,15 @@ class PackageInfoPopupWindow(QMainWindow):
         optionsGroupBox = QGroupBox()
 
         self.forceCheckbox = QCheckBox()
-        self.forceCheckbox.setText("Skip hash check")
+        self.forceCheckbox.setText(_("Skip hash check"))
         self.forceCheckbox.setChecked(False)
         
         self.interactiveCheckbox = QCheckBox()
-        self.interactiveCheckbox.setText("Interactive installation")
+        self.interactiveCheckbox.setText(_("Interactive installation"))
         self.interactiveCheckbox.setChecked(False)
         
         self.adminCheckbox = QCheckBox()
-        self.adminCheckbox.setText("Run as admin")
+        self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
 
         self.oLayout.addStretch()
@@ -638,29 +617,29 @@ class PackageInfoPopupWindow(QMainWindow):
         self.layout.addStretch()
 
 
-        self.packageId = QLinkLabel("Program ID: Unknown")
+        self.packageId = QLinkLabel(_('Program ID:')+" "+_('Unknown'))
         self.packageId.setWordWrap(True)
         self.layout.addWidget(self.packageId)
-        self.manifest = QLinkLabel("Manifest: Unknown")
+        self.manifest = QLinkLabel(_('Manifest:')+" "+_('Unknown'))
         self.manifest.setWordWrap(True)
         self.layout.addWidget(self.manifest)
-        self.lastver = QLinkLabel("Latest version: Unknown")
+        self.lastver = QLinkLabel(_('Latest version:')+" "+_('Unknown'))
         self.lastver.setWordWrap(True)
         self.layout.addWidget(self.lastver)
-        self.sha = QLinkLabel("Installer SHA256 (Latest version): Unknown")
+        self.sha = QLinkLabel(_('Installer SHA256 (Latest version):')+" "+_('Unknown'))
         self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
-        self.link = QLinkLabel("Installer URL (Latest version): Unknown")
+        self.link = QLinkLabel(_('Installer URL (Latest version):')+" "+_('Unknown'))
         self.link.setWordWrap(True)
         self.layout.addWidget(self.link)
-        self.type = QLinkLabel("Installer type (Latest version): Unknown")
+        self.type = QLinkLabel(_('Installer type (Latest version):')+" "+_('Unknown'))
         self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
         self.storeLabel = QLinkLabel(f"Source: {self.store}")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
         self.layout.addStretch()
-        self.advert = QLinkLabel("ALERT: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE.")
+        self.advert = QLinkLabel(_("DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE."))
         self.advert.setWordWrap(True)
         self.layout.addWidget(self.advert)
 
@@ -737,7 +716,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.installButton.setEnabled(False)
         self.versionCombo.setEnabled(False)
         self.isAnUpdate = update
-        self.installButton.setText("Please wait...")
+        self.installButton.setText(_("Please wait..."))
         store = store.lower()
         self.title.setText(title)
             
@@ -748,19 +727,19 @@ class PackageInfoPopupWindow(QMainWindow):
         self.interactiveCheckbox.setEnabled(False)
         self.adminCheckbox.setChecked(False)
         self.adminCheckbox.setEnabled(False)
-        self.description.setText("Loading...")
-        self.author.setText("Author: "+"Loading...")
-        self.publisher.setText("Publisher: "+"Loading...")
-        self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"\">{'Loading...'}</a>")
-        self.license.setText(f"License: {'Loading...'} (<a style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>)")
-        self.lastver.setText("Latest version: Loading...")
-        self.sha.setText(f"Installer SHA256 (Latest version): {'Loading...'}")
-        self.link.setText(f"Installer URL (Latest version): <a  style=\"color: {blueColor};\" href=\"\">{'Loading...'}</a>")
-        self.type.setText(f"Installer type (Latest version): {'Loading...'}")
-        self.packageId.setText(f"Package ID: {'Loading...'}")
-        self.manifest.setText(f"Manifest: {'Loading...'}")
-        self.storeLabel.setText(f"Source: {self.store.capitalize()}")
-        self.versionCombo.addItems(["Loading..."])
+        self.description.setText(_("Loading..."))
+        self.author.setText(_("Author")+": "+_("Loading..."))
+        self.publisher.setText(f"{_('Publisher')}: "+_("Loading..."))
+        self.homepage.setText(f"{_('Homepage')}: <a style=\"color: {blueColor};\"  href=\"\">{_('Loading...')}</a>")
+        self.license.setText(f"{_('License')}: {_('Loading...')} (<a style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>)")
+        self.lastver.setText(f"{_('Latest version')}: {_('Loading...')}")
+        self.sha.setText(f"{_('Installer SHA256')} ({_('Latest version')}): {_('Loading...')}")
+        self.link.setText(f"{_('Installer URL')} ({_('Latest version')}): <a  style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>")
+        self.type.setText(f"{_('Installer type')} ({_('Latest version')}): {_('Loading...')}")
+        self.packageId.setText(f"{_('Package ID')}: {_('Loading...')}")
+        self.manifest.setText(f"{_('Manifest')}: {_('Loading...')}")
+        self.storeLabel.setText(f"{_('Source')}: {self.store.capitalize()}")
+        self.versionCombo.addItems([_("Loading...")])
         
         self.finishedCount = 0
         if(store.lower()=="winget"):
@@ -773,9 +752,9 @@ class PackageInfoPopupWindow(QMainWindow):
         if not("scoop" in self.store.lower()) or self.finishedCount > 1:
             self.loadingProgressBar.hide()
         if self.isAnUpdate:
-            self.installButton.setText("Update")
+            self.installButton.setText(_("Update"))
         else:
-            self.installButton.setText("Install")
+            self.installButton.setText(_("Install"))
         self.installButton.setEnabled(True)
         self.versionCombo.setEnabled(True)
         self.adminCheckbox.setEnabled(True)
@@ -784,19 +763,19 @@ class PackageInfoPopupWindow(QMainWindow):
             self.interactiveCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
-        self.author.setText("Author: "+appInfo["author"])
-        self.publisher.setText("Publisher: "+appInfo["publisher"])
-        self.homepage.setText(f"Homepage: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
-        self.license.setText(f"License: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
+        self.author.setText(f"{_('Author')}: "+appInfo["author"])
+        self.publisher.setText(f"{_('Publisher')}: "+appInfo["publisher"])
+        self.homepage.setText(f"{_('Homepage')}: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
+        self.license.setText(f"{_('License')}: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
         try:
-            self.lastver.setText(f"Latest version: {appInfo['versions'][0]}")
+            self.lastver.setText(f"{_('Latest version')}: {appInfo['versions'][0]}")
         except IndexError:
-            self.lastver.setText(f"Latest version: Unknown")
-        self.sha.setText(f"Installer SHA256 (Latest version): {appInfo['installer-sha256']}")
-        self.link.setText(f"Installer URL (Latest version): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
-        self.type.setText(f"Installer type (Latest version): {appInfo['installer-type']}")
-        self.packageId.setText(f"Package ID: {appInfo['id']}")
-        self.manifest.setText(f"Manifest: <a style=\"color: {blueColor};\" href=\"file:///"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
+            self.lastver.setText(_('Latest version:')+" "+_('Unknown'))
+        self.sha.setText(f"{_('Installer SHA256')} ({_('Latest version')}): {appInfo['installer-sha256']}")
+        self.link.setText(f"{_('Installer URL')} ({_('Latest version')}): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
+        self.type.setText(f"{_('Installer type')} ({_('Latest version')}): {appInfo['installer-type']}")
+        self.packageId.setText(f"{_('Package ID')}: {appInfo['id']}")
+        self.manifest.setText(f"{_('Manifest')}: <a style=\"color: {blueColor};\" href=\"file:///"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
         try:
@@ -806,7 +785,7 @@ class PackageInfoPopupWindow(QMainWindow):
 
     def install(self):
         title = self.title.text()
-        packageId = self.packageId.text().replace('Package ID:', '').strip()
+        packageId = self.packageId.text().replace(_('Package ID')+":", '').strip()
         print(f"🟢 Starting installation of package {title} with id {packageId}")
         cmdline_args = []
         if(self.forceCheckbox.isChecked()):
@@ -819,7 +798,7 @@ class PackageInfoPopupWindow(QMainWindow):
         else:
             if not "scoop" in self.store.lower():
                 cmdline_args.append("--silent")
-        if(self.versionCombo.currentText()=="Latest"):
+        if(self.versionCombo.currentText()==_("Latest") or self.versionCombo.currentText() == "Latest"):
             version = []
         else:
             version = ["--version", self.versionCombo.currentText()]

@@ -6,8 +6,10 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
 from storeEngine import *
+from lang.translated_percentage import untranslatedPercentage
 
 import globals
+from tools import _
 
 
 class DiscoverSoftwareSection(QWidget):
@@ -49,7 +51,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
 
-        self.forceCheckBox = QCheckBox("Instant search")
+        self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
         self.forceCheckBox.setFixedWidth(98)
@@ -59,7 +61,7 @@ class DiscoverSoftwareSection(QWidget):
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnInstall", bool(not v)))
          
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" Search something on Winget or Scoop")
+        self.query.setPlaceholderText(" "+_("Search for something on Winget or Scoop"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -84,7 +86,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Discover Packages")
+        self.discoverLabel = QLabel(_("Discover Packages"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -101,7 +103,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList: TreeWidget = TreeWidget("a")
-        self.packageList.setHeaderLabels(["Package Name", "Package ID", "Version", "Source"])
+        self.packageList.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
         self.packageList.setColumnCount(4)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
         self.packageList.setSortingEnabled(True)
@@ -120,19 +122,19 @@ class DiscoverSoftwareSection(QWidget):
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
-            inf = QAction("Show info")
+            inf = QAction(_("Show info"))
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
-            ins1 = QAction("Install")
+            ins1 = QAction(_("Install"))
             ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
-            ins2 = QAction("Run as administrator")
+            ins2 = QAction(_("Run as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True, packageItem=self.packageList.currentItem()))
-            ins3 = QAction("Skip hash check")
+            ins3 = QAction(_("Skip hash check"))
             ins3.setIcon(QIcon(getMedia("checksum")))
             ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), skiphash=True, packageItem=self.packageList.currentItem()))
-            ins4 = QAction("Interactive installation")
+            ins4 = QAction(_("Interactive installation"))
             ins4.setIcon(QIcon(getMedia("interactive")))
             ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True, packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
@@ -202,11 +204,11 @@ class DiscoverSoftwareSection(QWidget):
 
         
         tooltips = {
-            self.upgradeSelected: "Install selected package",
-            inf: "Show package info",
-            ins2: "Run the installer with administrator privileges",
-            ins3: "Skip the hash check",
-            ins4: "Interactive installation",
+            self.upgradeSelected: _("Install selected package"),
+            inf: _("Show package info"),
+            ins2: _("Run the installer with administrator privileges"),
+            ins3: _("Skip the hash check"),
+            ins4: _("Interactive installation"),
         }
 
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
@@ -216,7 +218,7 @@ class DiscoverSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.importAction = QAction("Import packages from a file", self.toolbar)
+        self.importAction = QAction(_("Import packages from a file"), self.toolbar)
         self.importAction.setIcon(QIcon(getMedia("import")))
         self.importAction.triggered.connect(lambda: self.importPackages())
         self.toolbar.addAction(self.importAction)
@@ -225,7 +227,7 @@ class DiscoverSoftwareSection(QWidget):
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
 
-        self.countLabel = QLabel("Searching for packages...")
+        self.countLabel = QLabel(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         v.addWidget(self.countLabel)
@@ -303,7 +305,7 @@ class DiscoverSoftwareSection(QWidget):
     def importPackages(self):
         try:
             packageList = []
-            file = QFileDialog.getOpenFileName(self, "Select package file", filter="JSON (*.json)")[0]
+            file = QFileDialog.getOpenFileName(self, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
                 contents = json.load(f)
@@ -331,7 +333,7 @@ class DiscoverSoftwareSection(QWidget):
         
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
@@ -342,7 +344,7 @@ class DiscoverSoftwareSection(QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
@@ -355,7 +357,7 @@ class DiscoverSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.filter()
             self.loadingProgressBar.hide()
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
             self.packageList.label.setText("")
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
@@ -390,9 +392,9 @@ class DiscoverSoftwareSection(QWidget):
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
-                self.packageList.label.setText("No packages found matching the input criteria")
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
         else:
-            if self.packageList.label.text() == "No packages found matching the input criteria":
+            if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
@@ -422,7 +424,7 @@ class DiscoverSoftwareSection(QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
-        self.countLabel.setText("Searching for packages...")
+        self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
             Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
@@ -445,6 +447,10 @@ class DiscoverSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        return super().showEvent(event)
 
 class UpdateSoftwareSection(QWidget):
 
@@ -491,7 +497,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" Search available updates")
+        self.query.setPlaceholderText(" "+_("Search for available updates"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -510,7 +516,7 @@ class UpdateSoftwareSection(QWidget):
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
 
-        self.forceCheckBox = QCheckBox("Instant search")
+        self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
         self.forceCheckBox.setFixedWidth(98)
@@ -525,7 +531,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.addWidget(self.img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Software Updates")
+        self.discoverLabel = QLabel(_("Software Updates"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -541,7 +547,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList = TreeWidget("ª")
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.setColumnCount(6)
-        self.packageList.setHeaderLabels(["", "Package Name", "Package ID", "Installed Version", "New Version", "Source"])
+        self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Source")])
         self.packageList.setColumnWidth(0, 50)
         self.packageList.setColumnWidth(1, 350)
         self.packageList.setColumnWidth(2, 200)
@@ -564,22 +570,22 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
-            inf = QAction("Show info")
+            inf = QAction(_("Show info"))
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
-            ins1 = QAction("Update")
+            ins1 = QAction(_("Update"))
             ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
-            ins2 = QAction("Run as administrator")
+            ins2 = QAction(_("Run as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
-            ins3 = QAction("Skip hash check")
+            ins3 = QAction(_("Skip hash check"))
             ins3.setIcon(QIcon(getMedia("checksum")))
             ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
-            ins4 = QAction("Interactive update")
+            ins4 = QAction(_("Interactive update"))
             ins4.setIcon(QIcon(getMedia("interactive")))
             ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
-            ins5 = QAction("Uninstall package")
+            ins5 = QAction(_("Uninstall package"))
             ins5.setIcon(QIcon(getMedia("menu_uninstall")))
             ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
@@ -589,7 +595,7 @@ class UpdateSoftwareSection(QWidget):
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
-            ins6 = QAction("Ignore updates for this package")
+            ins6 = QAction(_("Ignore updates for this package"))
             ins6.setIcon(QIcon(getMedia("blacklist")))
             ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True)))
             contextMenu.addAction(ins6)
@@ -687,11 +693,11 @@ class UpdateSoftwareSection(QWidget):
 
         
         tooltips = {
-            self.upgradeSelected: "Install selected package",
-            inf: "Show package info",
-            ins2: "Run the installer with administrator privileges",
-            ins3: "Skip the hash check",
-            ins4: "Interactive installation",
+            self.upgradeSelected: _("Install selected package"),
+            inf: _("Show package info"),
+            ins2: _("Run the installer with administrator privileges"),
+            ins3: _("Skip the hash check"),
+            ins4: _("Interactive installation"),
         }
 
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
@@ -702,10 +708,10 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "Upgrade all", self.toolbar)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _("Upgrade all"), self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
         self.toolbar.addAction(self.upgradeAllAction)
-        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Upgrade selected", self.toolbar)
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Upgrade selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
 
@@ -719,19 +725,19 @@ class UpdateSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
-        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip("Select none")
-        self.toolbar.widgetForAction(self.selectAllAction).setToolTip("Select all")
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Select none"))
+        self.toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
 
         self.toolbar.addSeparator()
 
-        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), "Blacklist apps", self.toolbar)
+        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist apps"), self.toolbar)
         self.selectAllAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.selectAllAction)
-        self.selectAllAction = QAction(QIcon(getMedia("undelete")), "Reset blacklist", self.toolbar)
+        self.selectAllAction = QAction(QIcon(getMedia("undelete")), _("Reset blacklist"), self.toolbar)
         self.selectAllAction.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", ""), self.reload()))
         self.toolbar.addAction(self.selectAllAction)
 
-        self.showUnknownSection = QCheckBox("Show unknown versions")
+        self.showUnknownSection = QCheckBox(_("Show unknown versions"))
         self.showUnknownSection.setFixedHeight(30)
         self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
         self.showUnknownSection.setFixedWidth(190)
@@ -764,7 +770,7 @@ class UpdateSoftwareSection(QWidget):
         #h2Layout.addStretch()
         #h2Layout.addWidget(self.showUnknownVersions)
 
-        self.countLabel = QLabel("Checking for updates...")
+        self.countLabel = QLabel(_("Checking for updates..."))
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
@@ -841,20 +847,20 @@ class UpdateSoftwareSection(QWidget):
 
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Available updates: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
-            globals.trayMenuUpdatesList.menuAction().setText(f"{self.packageList.topLevelItemCount()} updates found")
+            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
@@ -867,6 +873,7 @@ class UpdateSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.loadingProgressBar.hide()
             self.loadingProgressBar.hide()
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(self.packageList.topLevelItemCount())))
             count = 0
             lastVisibleItem = None
             for i in range(self.packageList.topLevelItemCount()):
@@ -876,15 +883,15 @@ class UpdateSoftwareSection(QWidget):
             self.packageList.label.setText(str(count))
             if not getSettings("DisableUpdatesNotifications"):
                 if count > 1:
-                    notify("Updates found!", f"{count} apps can be updated")
+                    notify(_("Updates found!"), _("{0} apps can be updated").format(count))
                 elif count == 1:
-                    notify("Update found!", f"{lastVisibleItem.text(1)} can be updated")
+                    notify(_("Update found!"), _("{0} can be updated").format(lastVisibleItem.text(1)))
             if count > 0:
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.updatePackageNumber()
-            self.packageList.label.setText()
+            self.packageList.label.setText("")
             self.filter()
             self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
@@ -947,9 +954,9 @@ class UpdateSoftwareSection(QWidget):
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
-                self.packageList.label.setText("No packages found matching the input criteria")
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
         else:
-            if self.packageList.label.text() == "No packages found matching the input criteria":
+            if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
@@ -959,15 +966,15 @@ class UpdateSoftwareSection(QWidget):
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not item.isHidden():
                 self.availableUpdates += 1
-        self.countLabel.setText(f"Available updates: {self.availableUpdates}")
-        globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (f"WingetUI - {self.availableUpdates} update is available" if self.availableUpdates == 1 else f"WingetUI - {self.availableUpdates} updates are available") )
-        globals.trayMenuUpdatesList.menuAction().setText(f"{self.availableUpdates} updates found")
+        self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
+        globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (_("WingetUI - 1 update is available") if self.availableUpdates == 1 else _("WingetUI - {0} updates are available").format(self.availableUpdates)) )
+        globals.trayMenuUpdatesList.menuAction().setText(_("{0} updates found").format(self.availableUpdates))
         if self.availableUpdates > 0:
             self.packageList.label.hide()
             self.packageList.label.setText("")
             self.img.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
         else:
-            self.packageList.label.setText("Hooray! No updates were found!")
+            self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
             self.img.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
     
@@ -1029,7 +1036,7 @@ class UpdateSoftwareSection(QWidget):
         for action in globals.trayMenuUpdatesList.actions():
             globals.trayMenuUpdatesList.removeAction(action)
         globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
-        self.countLabel.setText("Checking for updates...")
+        self.countLabel.setText(_("Checking for updates..."))
         self.packageList.label.setText(self.countLabel.text())
         self.blacklist = getSettingsValue("BlacklistedUpdates")
         if not getSettings("DisableWinget"):
@@ -1053,6 +1060,10 @@ class UpdateSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        return super().showEvent(event)
 
 class UninstallSoftwareSection(QWidget):
 
@@ -1098,7 +1109,7 @@ class UninstallSoftwareSection(QWidget):
         #hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" Search on your software")
+        self.query.setPlaceholderText(" "+_("Search on your software"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -1118,7 +1129,7 @@ class UninstallSoftwareSection(QWidget):
         sct.activated.connect(self.query.clear)
 
 
-        self.forceCheckBox = QCheckBox("Instant search")
+        self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
         self.forceCheckBox.setFixedWidth(98)
@@ -1134,7 +1145,7 @@ class UninstallSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel("Installed Packages")
+        self.discoverLabel = QLabel(_("Installed Packages"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -1153,9 +1164,10 @@ class UninstallSoftwareSection(QWidget):
         self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList = TreeWidget("Found 0 Packages")
+        self.packageList = TreeWidget(_("Found 0 Packages"))
         self.packageList.setIconSize(QSize(24, 24))
-        self.headers = ["", "Package Name", "Package ID", "Installed Version", "Source"] # empty header added for checkbox
+        self.headers = ["", _("Package Name"), _("Package ID"), _("Installed Version"), _("Source")] # empty header added for checkbox
+
         self.packageList.setColumnCount(len(self.headers))
         self.packageList.setHeaderLabels(self.headers)
         self.packageList.setColumnWidth(0, 46)
@@ -1195,19 +1207,19 @@ class UninstallSoftwareSection(QWidget):
             contextMenu.setParent(self)
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
-            ins1 = QAction("Uninstall")
+            ins1 = QAction(_("Uninstall"))
             ins1.setIcon(QIcon(getMedia("menu_uninstall")))
             ins1.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem()))
-            ins2 = QAction("Run as administrator")
+            ins2 = QAction(_("Run as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
-            ins3 = QAction("Remove permanent data")
+            ins3 = QAction(_("Remove permanent data"))
             ins3.setIcon(QIcon(getMedia("menu_close")))
             ins3.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), removeData=True))
-            ins5 = QAction("Interactive uninstall")
+            ins5 = QAction(_("Interactive uninstall"))
             ins5.setIcon(QIcon(getMedia("interactive")))
             ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
-            ins4 = QAction("Show package info")
+            ins4 = QAction(_("Show package info"))
             ins4.setIcon(QIcon(getMedia("info")))
             ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
             contextMenu.addAction(ins1)
@@ -1232,14 +1244,11 @@ class UninstallSoftwareSection(QWidget):
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
         self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 15px;margin-right: 15px;")
-
         
         layout = QVBoxLayout()
         w = QWidget()
         w.setLayout(layout)
         w.setMaximumWidth(1300)
-
-
 
         self.bodyWidget = QWidget()
         l = QHBoxLayout()
@@ -1249,19 +1258,6 @@ class UninstallSoftwareSection(QWidget):
         l.addWidget(ScrollWidget(self.packageList), stretch=0)
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
-
-        #self.selectAllPkgsCheckBox = QCheckBox("Select all")
-        #self.selectAllPkgsCheckBox.setFixedHeight(30)
-        #self.selectAllPkgsCheckBox.setLayoutDirection(Qt.RightToLeft)
-        ##self.selectAllPkgsCheckBox.setFixedWidth(140)
-        #self.selectAllPkgsCheckBox.setStyleSheet("margin-top: 0px;")
-        #self.selectAllPkgsCheckBox.setChecked(self.allPkgSelected)
-        #self.selectAllPkgsCheckBox.clicked.connect(lambda v: self.selectAllInstalled())
-
-        #self.exportSelectionButton = QPushButton("Export selection (beta)")
-        #self.exportSelectionButton.setFixedWidth(300)
-        #self.exportSelectionButton.setStyleSheet("margin-top: 0px;")
-        #self.exportSelectionButton.clicked.connect(self.exportSelection)
 
         self.toolbar = QToolBar(self)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -1281,9 +1277,9 @@ class UninstallSoftwareSection(QWidget):
         
         
         tooltips = {
-            self.upgradeSelected: "Uninstall selected package",
-            ins2: "Uninstall with administrator privileges",
-            ins5: "Interactive uninstall",
+            self.upgradeSelected: _("Uninstall selected package"),
+            ins2: _("Uninstall with administrator privileges"),
+            ins5: _("Interactive uninstall"),
         }
 
         for action in [self.upgradeSelected, ins2, ins5]:
@@ -1294,7 +1290,7 @@ class UninstallSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), "Uninstall selected packages", self.toolbar)
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Uninstall selected packages"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.uninstallSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
 
@@ -1314,16 +1310,16 @@ class UninstallSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
-        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip("Select none")
-        self.toolbar.widgetForAction(self.selectAllAction).setToolTip("Select all")
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Select none"))
+        self.toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
 
         self.toolbar.addSeparator()
 
-        self.exportAction = QAction(QIcon(getMedia("export")), "Export selected packages to a file", self.toolbar)
+        self.exportAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), self.toolbar)
         self.exportAction.triggered.connect(lambda: self.exportSelection())
         self.toolbar.addAction(self.exportAction)
 
-        self.exportAction = QAction(QIcon(getMedia("export")), "Export all", self.toolbar)
+        self.exportAction = QAction(QIcon(getMedia("export")), _("Export all"), self.toolbar)
         self.exportAction.triggered.connect(lambda: self.exportSelection(all=True))
         self.toolbar.addAction(self.exportAction)
 
@@ -1335,7 +1331,7 @@ class UninstallSoftwareSection(QWidget):
 
 
 
-        self.countLabel = QLabel("Searching for installed packages...")
+        self.countLabel = QLabel(_("Searching for installed packages..."))
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
         layout.addLayout(hLayout)
@@ -1424,9 +1420,9 @@ class UninstallSoftwareSection(QWidget):
                     pass
         conf = False
         if len(toUninstall) == 1:
-            conf = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {toUninstall[0].text(1)}?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
+            conf = MessageBox.question(self, _("Are you sure?"), _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)), MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
         elif len(toUninstall) > 1:
-            conf = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {len(toUninstall)} packages?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
+            conf = MessageBox.question(self, _("Are you sure?"), _("Do you really want to uninstall {0} packages?").format(len(toUninstall)), MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
         if conf:
             for program in toUninstall:
                 self.uninstall(program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True)
@@ -1439,24 +1435,24 @@ class UninstallSoftwareSection(QWidget):
 
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
+            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
             self.filter()
             self.query.setEnabled(True)
         elif(store == "scoop"):
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount())+", not finished yet...")
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
+            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
             self.filter()
@@ -1465,8 +1461,8 @@ class UninstallSoftwareSection(QWidget):
         if(self.wingetLoaded and self.scoopLoaded):
             self.filter()
             self.loadingProgressBar.hide()
-            globals.trayMenuInstalledList.setTitle(f"{self.packageList.topLevelItemCount()} packages found")
-            self.countLabel.setText("Found packages: "+str(self.packageList.topLevelItemCount()))
+            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
+            self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
             self.packageList.label.setText("")
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
@@ -1516,9 +1512,9 @@ class UninstallSoftwareSection(QWidget):
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
-                self.packageList.label.setText("No packages found matching the input criteria")
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
         else:
-            if self.packageList.label.text() == "No packages found matching the input criteria":
+            if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
         self.packageList.scrollToItem(self.packageList.currentItem())
@@ -1531,7 +1527,7 @@ class UninstallSoftwareSection(QWidget):
         if avoidConfirm:
             answer = True
         else:
-            answer = MessageBox.question(self, "Are you sure?", f"Do you really want to uninstall {title}?", MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
+            answer = MessageBox.question(self, _("Are you sure?"), _("Do you really want to uninstall {0}?").format(title), MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
         if answer:
             print("🔵 Uninstalling", id)
             if not "scoop" in store.lower():
@@ -1548,7 +1544,7 @@ class UninstallSoftwareSection(QWidget):
         self.query.setEnabled(False)
         self.packageList.clear()
         self.query.setText("")
-        self.countLabel.setText("Searching for installed packages...")
+        self.countLabel.setText(_("Searching for installed packages..."))
         self.packageList.label.setText(self.countLabel.text())
         if not getSettings("DisableWinget"):
             Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
@@ -1620,7 +1616,7 @@ class UninstallSoftwareSection(QWidget):
                 "scoop": scoopExportSchema
             }
 
-            filename = QFileDialog.getSaveFileName(self, "Save File", "wingetui exported packages", filter='JSON (*.json)')
+            filename = QFileDialog.getSaveFileName(self, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
             if filename[0] != "":
                 with open(filename[0], 'w') as f:
                     f.write(json.dumps(overAllSchema, indent=4))
@@ -1637,6 +1633,10 @@ class UninstallSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        return super().showEvent(event)
 
 
 class AboutSection(QScrollArea):
@@ -1659,7 +1659,7 @@ class AboutSection(QScrollArea):
         self.setWidget(self.widget)
         self.announcements = QAnnouncements()
         self.layout.addWidget(self.announcements)
-        title = QLabel("Component Information")
+        title = QLabel(_("Component Information"))
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
 
@@ -1673,48 +1673,49 @@ class AboutSection(QScrollArea):
         table.setEnabled(False)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         table.setShowGrid(False)
-        table.setHorizontalHeaderLabels(["Status", "Version"])
+        table.setHorizontalHeaderLabels([_("Status"), _("Version")])
         table.setColumnWidth(1, 500)
         table.verticalHeader().setFixedWidth(100)
         table.setVerticalHeaderLabels(["Winget", "  Scoop", " GSudo"])
-        table.setItem(0, 0, QTableWidgetItem(str("Found" if globals.componentStatus["wingetFound"] else "Not found")))
+        table.setItem(0, 0, QTableWidgetItem(_("Found") if globals.componentStatus["wingetFound"] else _("Not found")))
         table.setItem(0, 1, QTableWidgetItem(str(globals.componentStatus["wingetVersion"])))
-        table.setItem(1, 0, QTableWidgetItem(str("Found" if globals.componentStatus["scoopFound"] else "Not found")))
+        table.setItem(1, 0, QTableWidgetItem(_("Found") if globals.componentStatus["scoopFound"] else _("Not found")))
         table.setItem(1, 1, QTableWidgetItem(str(globals.componentStatus["scoopVersion"])))
-        table.setItem(2, 0, QTableWidgetItem(str("Found" if globals.componentStatus["sudoFound"] else "Not found")))
+        table.setItem(2, 0, QTableWidgetItem(_("Found") if globals.componentStatus["sudoFound"] else _("Not found")))
         table.setItem(2, 1, QTableWidgetItem(str(globals.componentStatus["sudoVersion"])))
         table.setCornerWidget(QLabel(""))
         table.setCornerButtonEnabled(True)
         table.cornerWidget().setStyleSheet("background: transparent;")
         self.layout.addWidget(table)
-        title = QLabel("About WingetUI "+str(versionName)+"")
+        title = QLabel(_("About WingetUI version {0}").format(versionName))
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
 
         self.layout.addWidget(title)
-        self.layout.addWidget(QLinkLabel())
-        description = QLinkLabel(f"The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.\nThis project has no connection with the official <a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget project </a> — it's completely unofficial. ")
+        self.layout.addWidget(QLabel())
+
+        description = QLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the winget-cli official project, and it's totally unofficial."))
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
-        self.layout.addWidget(QLinkLabel(f"Homepage:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
+        self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
         self.layout.addSpacing(30)
-        self.layout.addWidget(QLinkLabel("Licenses:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
+        self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"PySide6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
-        self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSF License:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
+        self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
         self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MIT License:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
+        self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
         self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;Unlicense:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
-        self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;MIT License:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
+        self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
         self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel(f"Icons:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;By Icons8:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
+        self.layout.addWidget(QLinkLabel(f"{('Icons')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{('By Icons8')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
         self.layout.addWidget(QLinkLabel())
         self.layout.addWidget(QLinkLabel())
-        button = QPushButton("About Qt")
+        button = QPushButton(_("About Qt6"))
         button.setFixedWidth(710)
         button.setFixedHeight(25)
-        button.clicked.connect(lambda: MessageBox.aboutQt(self, "WingetUI: About Qt"))
+        button.clicked.connect(lambda: MessageBox.aboutQt(self, _("WingetUI - About Qt6")))
         self.layout.addWidget(button)
         self.layout.addWidget(QLinkLabel())
         self.layout.addStretch()
@@ -1746,27 +1747,109 @@ class SettingsSection(QScrollArea):
         self.announcements = QAnnouncements()
         self.announcements.setMinimumWidth(800)
         self.layout.addWidget(self.announcements)
-        title = QLabel("WingetUI Settings")
+        title = QLabel(_("WingetUI Settings"))
+
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
         self.layout.addSpacing(20)
 
-        subtitle = QLabel("General preferences")
+        subtitle = QLabel(_("General preferences"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
         self.layout.addWidget(QLabel())
 
-        themeTextLabel = QLabel("Application theme:")
+        selectedLanguageLabel = QLabel(_("WingetUI display language:")+" (Language)") # The non-translated (Language) string is there to let people know what the language option is if you accidentaly change the language
+        selectedLanguageCombo = QComboBox()
+        selectedLanguageButton = QPushButton()
+        selectedLanguageButton.setObjectName("AccentButton")
+        selectedLanguageCombo.setFixedWidth(200)
+        selectedLanguageButton.setFixedWidth(200)
+        selectedLanguageButton.setFixedHeight(30)
+        selectedLanguageButton.setVisible(False)
+        selectedLanguageButton.setText(_("Restart WingetUI")+" (Restart)")
+
+        langListWithPercentage = []
+        langDictWithPercentage = {}
+        invertedLangDict = {}
+        for key, value in languageReference.items():
+            if (key in untranslatedPercentage):
+                perc = untranslatedPercentage[key]
+                if (perc == "0%"): continue
+                if not key in lang["locale"]:
+                    langListWithPercentage.append(f"{value} ({perc})")
+                    langDictWithPercentage[key] = f"{value} ({perc})"
+                    invertedLangDict[f"{value} ({perc})"] = key
+                else:
+                    k = len(lang.keys())
+                    v = len([val for val in lang.values() if val != None])
+                    perc = f"{int(v/k*100)}%"
+                    langListWithPercentage.append(f"{value} ({perc})")
+                    langDictWithPercentage[key] = f"{value} ({perc})"
+                    invertedLangDict[f"{value} ({perc})"] = key
+            else:
+                invertedLangDict[value] = key
+                langDictWithPercentage[key] = value
+                langListWithPercentage.append(value)
+        try:
+            cprint(invertedLangDict)
+            selectedLanguageCombo.insertItems(0, langListWithPercentage)
+            selectedLanguageCombo.setCurrentIndex(langListWithPercentage.index(langDictWithPercentage[langName]))
+        except Exception as e:
+            report(e)
+            selectedLanguageCombo.insertItems(0, langListWithPercentage)
+
+        def changeLang():
+            selectedLanguageButton.setVisible(True)
+            i = selectedLanguageCombo.currentIndex()
+            selectedLang = invertedLangDict[selectedLanguageCombo.currentText()] # list(languageReference.keys())[i]
+            cprint(invertedLangDict[selectedLanguageCombo.currentText()])
+            setSettingsValue("PreferredLanguage", selectedLang)
+
+        def restartElevenClockByLangChange():
+            subprocess.run(str("start /B \"\" \""+sys.executable)+"\"", shell=True)
+            globals.app.quit()
+
+        selectedLanguageButton.clicked.connect(restartElevenClockByLangChange)
+        selectedLanguageCombo.currentTextChanged.connect(changeLang)
+        
+        hl = QHBoxLayout()
+        hl.setContentsMargins(0, 0, 0, 0)
+        hl.addWidget(selectedLanguageLabel)
+        hl.addSpacing(20)
+        hl.addWidget(selectedLanguageCombo)
+        hl.addWidget(selectedLanguageButton)
+        hl.addStretch()
+        self.layout.addLayout(hl)
+
+        updateCheckBox = QCheckBox(_("Update WingetUI automatically"))
+        updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
+        updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
+        self.layout.addWidget(updateCheckBox)
+        changeDefaultInstallAction = QCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
+        changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
+        changeDefaultInstallAction.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
+        self.layout.addWidget(changeDefaultInstallAction)
+        changeDefaultUpdateAction = QCheckBox(_("Show info about the package on the Updates tab"))
+        changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
+        changeDefaultUpdateAction.clicked.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
+        self.layout.addWidget(changeDefaultUpdateAction)
+        dontUseBuiltInGsudo = QCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
+        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
+        dontUseBuiltInGsudo.clicked.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        self.layout.addWidget(dontUseBuiltInGsudo)
+        
+
+        themeTextLabel = QLabel(_("Application theme:"))
         
         themes = {
-            "Light": "light",
-            "Dark": "dark",
-            "Follow system color scheme": "auto"
+            _("Light"): "light",
+            _("Dark"): "dark",
+            _("Follow system color scheme"): "auto"
         }
         invertedThemes = {
-            "light" : "Light",
-            "dark" : "Dark",
-            "auto" : "Follow system color scheme"
+            "light" : _("Light"),
+            "dark" : _("Dark"),
+            "auto" : _("Follow system color scheme")
         }
 
         themeText = CustomComboBox()
@@ -1776,7 +1859,7 @@ class SettingsSection(QScrollArea):
         try:
             themeText.setCurrentText(invertedThemes[currentValue])
         except KeyError:
-            themeText.setCurrentText("Follow system color scheme")
+            themeText.setCurrentText(_("Follow system color scheme"))
         except Exception as e:
             report(e)
         
@@ -1789,73 +1872,56 @@ class SettingsSection(QScrollArea):
         hl.addWidget(themeText)
         hl.addStretch()
 
-
         self.layout.addLayout(hl)
 
-        updateCheckBox = QCheckBox("Update WingetUI automatically")
-        updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
-        updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
-        self.layout.addWidget(updateCheckBox)
-        changeDefaultInstallAction = QCheckBox("Directly install when double-clicking an item on the Discover Packages tab (instead of showing the package info)")
-        changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
-        changeDefaultInstallAction.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
-        self.layout.addWidget(changeDefaultInstallAction)
-        changeDefaultUpdateAction = QCheckBox("Show info about the package on the Software Updates tab")
-        changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
-        changeDefaultUpdateAction.clicked.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
-        self.layout.addWidget(changeDefaultUpdateAction)
-        dontUseBuiltInGsudo = QCheckBox("Use installed GSudo instead of the bundled one (requires app restart)")
-        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
-        dontUseBuiltInGsudo.clicked.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
-        self.layout.addWidget(dontUseBuiltInGsudo)
         self.layout.addWidget(QLabel())
     
-        subtitle = QLabel("Startup options")
+        subtitle = QLabel(_("Startup options"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
 
-        doCloseWingetUI = QCheckBox("Close WingetUI to the notification area")
+        doCloseWingetUI = QCheckBox(_("Close WingetUI to the notification area"))
         doCloseWingetUI.setChecked(not getSettings("DisablesystemTray"))
         doCloseWingetUI.clicked.connect(lambda v: setSettings("DisablesystemTray", not bool(v)))
         self.layout.addWidget(doCloseWingetUI)
-        doCloseWingetUI = QCheckBox("Autostart WingetUI in the notifications area")
+        doCloseWingetUI = QCheckBox(_("Autostart WingetUI in the notifications area"))
         doCloseWingetUI.setChecked(not getSettings("DisableAutostart"))
         doCloseWingetUI.clicked.connect(lambda v: setSettings("DisableAutostart", not bool(v)))
         self.layout.addWidget(doCloseWingetUI)
-        disableUpdateIndexes = QCheckBox("Do not update package indexes on launch")
+        disableUpdateIndexes = QCheckBox(_("Do not update package indexes on launch"))
         disableUpdateIndexes.setChecked(getSettings("DisableUpdateIndexes"))
         disableUpdateIndexes.clicked.connect(lambda v: setSettings("DisableUpdateIndexes", bool(v)))
         self.layout.addWidget(disableUpdateIndexes)
-        enableScoopCleanup = QCheckBox("Enable Scoop cleanup on launch")
+        enableScoopCleanup = QCheckBox(_("Enable Scoop cleanup on launch"))
         enableScoopCleanup.setChecked(getSettings("EnableScoopCleanup"))
         enableScoopCleanup.clicked.connect(lambda v: setSettings("EnableScoopCleanup", bool(v)))
         self.layout.addWidget(enableScoopCleanup)
 
 
         self.layout.addWidget(QLabel())
-        subtitle = QLabel("Notification tray options")
+        subtitle = QLabel(_("Notification tray options"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
-        checkForUpdates = QCheckBox("Check for updates periodically")
+        checkForUpdates = QCheckBox(_("Check for updates periodically"))
         checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
         checkForUpdates.clicked.connect(lambda v: setSettings("DisableAutoCheckforUpdates", not bool(v)))
         self.layout.addWidget(checkForUpdates)
 
-        updatesFrequencyText = QLabel("Check for updates every:")
+        updatesFrequencyText = QLabel(_("Check for updates every:"))
         
         times = {
-            "30 minutes": "1800",
-            "1 hour": "3600",
-            "2 hours": "7200",
-            "4 hours": "14400",
-            "8 hours": "28800",
+            _("30 minutes"): "1800",
+            _("1 hour"): "3600",
+            _("2 hours"): "7200",
+            _("4 hours"): "14400",
+            _("8 hours"): "28800",
         }
         invertedTimes = {
-            "1800" : "30 minutes",
-            "3600" : "1 hour",
-            "7200" : "2 hours",
-            "14400": "4 hours",
-            "28800": "8 hours",
+            "1800" : _("30 minutes"),
+            "3600" : _("1 hour"),
+            "7200" : _("2 hours"),
+            "14400": _("4 hours"),
+            "28800": _("8 hours"),
         }
 
         updatesFrequency = CustomComboBox()
@@ -1864,7 +1930,7 @@ class SettingsSection(QScrollArea):
         try:
             updatesFrequency.setCurrentText(invertedTimes[currentValue])
         except KeyError:
-            updatesFrequency.setCurrentText("1 hour")
+            updatesFrequency.setCurrentText(_("1 hour"))
         except Exception as e:
             report(e)
         
@@ -1879,30 +1945,30 @@ class SettingsSection(QScrollArea):
 
 
         self.layout.addLayout(hl)
-        notifyAboutUpdates = QCheckBox("Show a notification when there are available updates")
+        notifyAboutUpdates = QCheckBox(_("Show a notification when there are available updates"))
         notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
         notifyAboutUpdates.clicked.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
         self.layout.addWidget(notifyAboutUpdates)
         self.layout.addWidget(QLabel())
 
 
-        subtitle = QLabel("Package manager preferences")
+        subtitle = QLabel(_("Package managers preferences"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
 
-        parallelInstalls = QCheckBox("Allow parallel installs (NOT RECOMMENDED)")
+        parallelInstalls = QCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
         parallelInstalls.clicked.connect(lambda v: setSettings("AllowParallelInstalls", bool(v)))
         self.layout.addWidget(parallelInstalls)
-        disableWinget = QCheckBox("Disable Winget")
+        disableWinget = QCheckBox(_("Disable Winget"))
         disableWinget.setChecked(getSettings("DisableWinget"))
         disableWinget.clicked.connect(lambda v: setSettings("DisableWinget", bool(v)))
         self.layout.addWidget(disableWinget)
-        disableScoop = QCheckBox("Disable Scoop")
+        disableScoop = QCheckBox(_("Disable Scoop"))
         disableScoop.setChecked(getSettings("DisableScoop"))
         disableScoop.clicked.connect(lambda v: setSettings("DisableScoop", bool(v)))
         self.layout.addWidget(disableScoop)
-        scoopPreventCaps = QCheckBox("Show Scoop apps as lowercase")
+        scoopPreventCaps = QCheckBox(_("Show Scoop apps as lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
         scoopPreventCaps.clicked.connect(lambda v: setSettings("LowercaseScoopApps", bool(v)))
         self.layout.addWidget(scoopPreventCaps)
@@ -1912,17 +1978,18 @@ class SettingsSection(QScrollArea):
         
         self.layout.addWidget(QLabel())
         l = QHBoxLayout()
+        button = QPushButton(_("Add a bucket to Scoop"))
         button = QPushButton("Add a bucket to Scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopAddExtraBucket())
         l.addWidget(button)
-        button = QPushButton("Remove a bucket from Scoop")
+        button = QPushButton(_("Remove a bucket from Scoop"))
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
         l.addWidget(button)
-        button = QPushButton("Install Scoop")
+        button = QPushButton(_("Install Scoop"))
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: (setSettings("DisableScoop", False), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
@@ -1934,13 +2001,13 @@ class SettingsSection(QScrollArea):
         print("🟢 Settings tab loaded!")
         
     def scoopAddExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to add", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to add"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
             globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, "Scoop bucket manager", "What bucket do you want to remove", ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to remove"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
             globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
@@ -1961,17 +2028,24 @@ class DebuggingSection(QWidget):
                 menu.addSeparator()
 
                 a = QAction()
-                a.setText(("Reload log"))
-                a.triggered.connect(lambda: self.textEdit.setPlainText(buffer.getvalue()))
+                a.setText(_("Reload log"))
+                a.triggered.connect(lambda: self.setPlainText(buffer.getvalue()))
                 menu.addAction(a)
 
+                
+                a4 = QAction()
+                a4.setText(_("Show missing translation strings"))
+                a4.triggered.connect(lambda: self.setPlainText('\n'.join(missingTranslationList)))#buffer.getvalue()))
+                menu.addAction(a4)
+
+
                 a2 = QAction()
-                a2.setText(("Export log as a file"))
+                a2.setText(_("Export log as a file"))
                 a2.triggered.connect(lambda: saveLog())
                 menu.addAction(a2)
 
                 a3 = QAction()
-                a3.setText(("Copy log to clipboard"))
+                a3.setText(_("Copy log to clipboard"))
                 a3.triggered.connect(lambda: copyLog())
                 menu.addAction(a3)
 
@@ -1992,14 +2066,14 @@ class DebuggingSection(QWidget):
 
         self.textEdit.setPlainText(buffer.getvalue())
 
-        reloadButton = QPushButton(("Reload log"))
+        reloadButton = QPushButton(_("Reload log"))
         reloadButton.setFixedWidth(200)
         reloadButton.clicked.connect(lambda: self.textEdit.setPlainText(buffer.getvalue()))
 
         def saveLog():
             try:
                 print("🔵 Saving log...")
-                f = QFileDialog.getSaveFileName(self, "Save log", os.path.expanduser("~"), "Text file (.txt)")
+                f = QFileDialog.getSaveFileName(self, _("Export log"), os.path.expanduser("~"), f"{_('Text file')} (.txt)")
                 if f[0]:
                     fpath = f[0]
                     if not ".txt" in fpath.lower():
@@ -2017,7 +2091,7 @@ class DebuggingSection(QWidget):
                 report(e)
                 self.textEdit.setPlainText(buffer.getvalue())
 
-        exportButtom = QPushButton(("Export log as a file"))
+        exportButtom = QPushButton(_("Export log as a file"))
         exportButtom.setFixedWidth(200)
         exportButtom.clicked.connect(lambda: saveLog())
 
@@ -2031,7 +2105,7 @@ class DebuggingSection(QWidget):
                 report(e)
                 self.textEdit.setPlainText(buffer.getvalue())
 
-        copyButton = QPushButton(("Copy log to clipboard"))
+        copyButton = QPushButton(_("Copy log to clipboard"))
         copyButton.setFixedWidth(200)
         copyButton.clicked.connect(lambda: copyLog())
 

@@ -3,13 +3,14 @@ import shutil
 import winreg
 import io
 from threading import Thread
-import sys, time, subprocess, os
+import sys, time, subprocess, os, json, locale
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import ApplyMica, MICAMODE
 from urllib.request import urlopen
 from versions import *
+from languages import *
 
 import globals
 
@@ -19,6 +20,12 @@ old_stdout = sys.stdout
 old_stderr = sys.stderr
 buffer = io.StringIO()
 errbuffer = io.StringIO()
+settingsCache = {}
+installersWidget = None
+updatesAvailable = False
+
+missingTranslationList = []
+
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdout = buffer = io.StringIO()
     sys.stderr = errbuffer = io.StringIO()
@@ -27,6 +34,12 @@ if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
     realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
+if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
+    try:
+        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
+    except:
+        pass
 
 def cprint(*args) -> None:
     print(*args, file=old_stdout)
@@ -38,15 +51,25 @@ def report(exception) -> None: # Exception reporter
         cprint("🔴 "+line)
     print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
 
-settingsCache = {}
-installersWidget = None
-updatesAvailable = False
-
-if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
+def _(s): # Translate function
+    global lang
     try:
-        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
-    except:
-        pass
+        t = lang[s]
+        return ("🟢"+t+"🟢" if debugLang else t) if t else f"🟡{s}🟡" if debugLang else eng_(s)
+    except KeyError:
+        if debugLang: print(s)
+        if not s in missingTranslationList:
+            missingTranslationList.append(s)
+        return f"🔴{eng_(s)}🔴" if debugLang else eng_(s)
+
+def eng_(s): # English translate function
+    try:
+        t = englang[s]
+        return t if t else s
+    except KeyError:
+        if debugLang:
+            print(s)
+        return s
 
 def getSettings(s: str, cache = True):
     global settingsCache
@@ -281,6 +304,7 @@ class TreeWidget(QTreeWidget):
         op=QGraphicsOpacityEffect(self.label)
         op.setOpacity(0.5)
         self.label.setGraphicsEffect(op)
+        self.label.setAttribute(Qt.WA_TransparentForMouseEvents)
         self.label.setAutoFillBackground(True)
         font = self.label.font()
         font.setBold(True)
@@ -448,7 +472,7 @@ class ErrorMessage(QWidget):
         self.okButton = QPushButton()
         self.okButton.setFixedHeight(30)
         self.okButton.clicked.connect(self.delete)
-        self.moreInfoButton = QPushButton("Show details")
+        self.moreInfoButton = QPushButton(_("Show details"))
         self.moreInfoButton.setFixedHeight(30)
         self.moreInfoButton.clicked.connect(self.moreInfo)
         #hl.addStretch()
@@ -469,7 +493,7 @@ class ErrorMessage(QWidget):
     def moreInfo(self):
         spacingAdded = False
         self.moreInfoTextArea.setVisible(not self.moreInfoTextArea.isVisible())
-        self.moreInfoButton.setText("Hide details" if self.moreInfoTextArea.isVisible() else "Show details")
+        self.moreInfoButton.setText(_("Hide details") if self.moreInfoTextArea.isVisible() else _("Show details"))
         if self.moreInfoTextArea.isVisible():
             # show textedit
             s = self.size()
@@ -737,6 +761,55 @@ ts.signal.connect(lambda: globals.app.reloadWindow())
 
 Thread(target=themeThread, args=(ts,), daemon=True, name="UI Theme thread").start()
 Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
+
+if getSettingsValue("PreferredLanguage") == "":
+    setSettingsValue("PreferredLanguage", "default")
+
+def loadLangFile(file: str, bundled: bool = False) -> dict:
+    try:
+        path = os.path.join(os.path.expanduser("~"), ".elevenclock/lang/"+file)
+        if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled or True:
+            #print(f"🟡 Using bundled lang file (forced={bundled})")
+            path = getPath("../lang/"+file)
+        #else:
+        #    print("🟢 Using cached lang file")
+        with open(path, "r", encoding='utf-8') as file:
+            return json.load(file)
+    except Exception as e:
+        report(e)
+        return {}
+
+t0 = time.time()
+
+langName = getSettingsValue("PreferredLanguage")
+try:
+    if (langName == "default"):
+        langName = locale.getdefaultlocale()[0]
+    langNames = [langName, langName[0:2]]
+    langFound = False
+    for ln in langNames:
+        if (ln in languages):
+            lang = loadLangFile(languages[ln]) | {"locale": ln}
+            langFound = True
+            #if not getSettings("DisableLangAutoUpdater"):
+            #    Thread(target=updateLangFile, args=(languages[ln],), name=f"DAEMON: Update lang_{ln}.json").start()
+            break
+    if (langFound == False):
+        raise Exception(f"Value not found for {langNames}")
+except Exception as e:
+    report(e)
+    lang = loadLangFile(languages["en"]) | {"locale": "en"}
+    print("🔴 Unknown language")
+
+langName = lang['locale']
+
+try:
+    englang = loadLangFile(languages["en"], bundled=True) | {"locale": "en"}
+except Exception as e:
+    report(e)
+    englang = {"locale": "en"}
+
+print(f"It took {time.time()-t0} to load all language files")
             
 
 if __name__ == "__main__":
