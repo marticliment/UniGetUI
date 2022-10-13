@@ -138,7 +138,7 @@ print()
 print("  Updating README.md...")
 
 
-"""
+
 readmeFilename = "../../README.md"
 
 f = open(readmeFilename, "r+", encoding="utf-8")
@@ -157,7 +157,7 @@ if (isSomeChanges):
     f.write(data)
     f.truncate()
 f.close()
-"""
+
 
 print("  Process complete!")
 print()

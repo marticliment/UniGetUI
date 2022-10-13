@@ -6,6 +6,8 @@ languageReference = {
     "default": "System language",
     "ca"    : "Catalan - Català",
     "en"    : "English - English",
+    "pt_BR" : "Portuguese (Brazil)",
+    "pt_PT" : "Portuguese (Portugal)",
 }
 
 
