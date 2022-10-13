@@ -1,6 +1,6 @@
 .vscode/
 wingetui/__pycache__
-wingetui/lang/__pycache__
+wingetui/lang/__pycache__/*
 wingetui/build/
 wingetui/dist/
 wingetui/winget-cli.1.2.0/
