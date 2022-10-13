@@ -1979,7 +1979,6 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(QLabel())
         l = QHBoxLayout()
         button = QPushButton(_("Add a bucket to Scoop"))
-        button = QPushButton("Add a bucket to Scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopAddExtraBucket())
@@ -2001,16 +2000,16 @@ class SettingsSection(QScrollArea):
         print("🟢 Settings tab loaded!")
         
     def scoopAddExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to add"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
             globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to remove"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            globals.installersWidget.addItem(PackageUninstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
 
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()

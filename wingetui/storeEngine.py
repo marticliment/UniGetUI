@@ -343,12 +343,12 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = []):
+    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = [], customCommand: list = []):
         self.packageItem = packageItem
         self.useId = useId
         self.programName = title
         self.packageId = packageId
-        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args, packageItem=packageItem)
+        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args, packageItem=packageItem, customCommand=customCommand)
         self.actionDone = _("uninstalled")
         self.removeData = removeData
         self.actionDoing = _("uninstalling")
@@ -387,6 +387,11 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.programName}"] + (["-p"] if self.removeData else [""])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+        else:
+            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+
 
     
     def counter(self, line: int) -> None:
@@ -443,7 +448,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
         if not(self.canceled):
             if(returncode == 0):
-                self.callInMain.emit(lambda: globals.trayIcon.showMessage(f"{self.actionName.capitalize()} succeeded", f"{self.programName} was {self.actionDone} successfully!", QIcon(getMedia("notif_info"))))
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                 self.cancelButton.setText(_("OK"))
                 self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                 self.cancelButton.clicked.connect(self.close)
