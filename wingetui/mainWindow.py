@@ -74,15 +74,15 @@ class RootWindow(QMainWindow):
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.discover = self.discover
-        self.widgets[self.discover] = self.addTab(self.discover, _("Discover packages"))
+        self.widgets[self.discover] = self.addTab(self.discover, _("Discover Packages"))
         self.updates = UpdateSoftwareSection()
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.updates = self.updates
-        self.widgets[self.updates] = self.addTab(self.updates, _("Software updates"))
+        self.widgets[self.updates] = self.addTab(self.updates, _("Software Updates"))
         self.uninstall = UninstallSoftwareSection()
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
-        self.widgets[self.uninstall] = self.addTab(self.uninstall, _("Installed packages"))
+        self.widgets[self.uninstall] = self.addTab(self.uninstall, _("Installed Packages"))
         self.settingsSection = SettingsSection()
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, _("WingetUI Settings"), addToMenu=True, actionIcon="settings")
         self.aboutSection = AboutSection()
@@ -185,7 +185,7 @@ class RootWindow(QMainWindow):
                 "mainTitle": _("Administrator privileges"),
                 "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we hightly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why."),
                 "buttonTitle": _("Ok"),
-                "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click tyhe item -> Install/Update/Uninstall as administrator."),
+                "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator."),
                 "icon": QIcon(getMedia("infocolor")),
             }
             self.err.showErrorMessage(errorData, showNotification=False)

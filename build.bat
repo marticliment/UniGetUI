@@ -49,8 +49,8 @@ if exist %INSTALLATOR% (
     %INSTALLATOR% "WingetUI.iss"
     "wingetui Installer.exe"
 ) else (
-    echo "Make installer is skipped, because installator missing."
-    echo "Running app..."
+    echo "Make installer was skipped, because the installer is missing."
+    echo "Running WingetUI..."
     start /b wingetuiBin/wingetui.exe
 )
 

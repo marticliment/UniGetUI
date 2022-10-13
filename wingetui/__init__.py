@@ -175,7 +175,7 @@ try:
 
         def detectWinget(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating winget...")))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Winget...")))
                 o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
@@ -188,16 +188,16 @@ try:
             print("updating winget")
             try:
                 if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating winget sources...")))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Winget sources...")))
                     o = subprocess.run(f"{wingetHelpers.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated winget sources")))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Winget sources")))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
 
         def detectScoop(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating scoop...")))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Scoop...")))
                 o = subprocess.run(f"powershell -Command scoop -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
@@ -209,7 +209,7 @@ try:
             self.loadStatus += 1
             try:
                 if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing scoop cache...")))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
                     p = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
                     if(getSettings("EnableScoopCleanup")):
                         p2 = subprocess.Popen(f"powershell -Command scoop cleanup --all", shell=True, stdout=subprocess.PIPE)
@@ -219,9 +219,9 @@ try:
                 print(e)
             try:
                 if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating scoop sources...")))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Scoop sources...")))
                     o = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated scoop sources")))
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Scoop sources")))
             except Exception as e:
                 print(e)
             self.loadStatus += 1

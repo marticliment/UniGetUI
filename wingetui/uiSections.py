@@ -86,7 +86,7 @@ class DiscoverSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel(_("Discover packages"))
+        self.discoverLabel = QLabel(_("Discover Packages"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -103,7 +103,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList: TreeWidget = TreeWidget("a")
-        self.packageList.setHeaderLabels([_("Package name"), _("Package ID"), _("Version"), _("Origin")])
+        self.packageList.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
         self.packageList.setColumnCount(4)
         self.packageList.sortByColumn(0, Qt.AscendingOrder)
         self.packageList.setSortingEnabled(True)
@@ -531,7 +531,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.addWidget(self.img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel(_("Software updates"))
+        self.discoverLabel = QLabel(_("Software Updates"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -547,7 +547,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList = TreeWidget("ª")
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.setColumnCount(6)
-        self.packageList.setHeaderLabels(["", _("Package name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Installation source")])
+        self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Source")])
         self.packageList.setColumnWidth(0, 50)
         self.packageList.setColumnWidth(1, 350)
         self.packageList.setColumnWidth(2, 200)
@@ -1145,7 +1145,7 @@ class UninstallSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
-        self.discoverLabel = QLabel(_("Installed packages"))
+        self.discoverLabel = QLabel(_("Installed Packages"))
         self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
@@ -1166,7 +1166,8 @@ class UninstallSoftwareSection(QWidget):
 
         self.packageList = TreeWidget(_("Found 0 Packages"))
         self.packageList.setIconSize(QSize(24, 24))
-        self.headers = ["", _("Package name"), _("Package ID"), _("Installed Version"), _("Installation source")] # empty header added for checkbox
+        self.headers = ["", _("Package Name"), _("Package ID"), _("Installed Version"), _("Source")] # empty header added for checkbox
+
         self.packageList.setColumnCount(len(self.headers))
         self.packageList.setHeaderLabels(self.headers)
         self.packageList.setColumnWidth(0, 46)
@@ -1658,7 +1659,7 @@ class AboutSection(QScrollArea):
         self.setWidget(self.widget)
         self.announcements = QAnnouncements()
         self.layout.addWidget(self.announcements)
-        title = QLabel(_("Component information"))
+        title = QLabel(_("Component Information"))
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
 
@@ -1692,10 +1693,10 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(title)
         self.layout.addWidget(QLabel())
 
-        description = QLabel(_("The main goal of this project is to give a GUI Store to the most common CLI Package Managers for windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the winget-cli official project, and it's totally unofficial."))
+        description = QLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the winget-cli official project, and it's totally unofficial."))
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
-        self.layout.addWidget(QLinkLabel(f"{_('Project homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
+        self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
         self.layout.addSpacing(30)
         self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
         self.layout.addWidget(QLabel())
@@ -1746,9 +1747,11 @@ class SettingsSection(QScrollArea):
         self.announcements = QAnnouncements()
         self.announcements.setMinimumWidth(800)
         self.layout.addWidget(self.announcements)
-        title = QLabel(_("General Settings"))
+        title = QLabel(_("WingetUI Settings"))
+
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
+        self.layout.addSpacing(20)
 
         subtitle = QLabel(_("General preferences"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
@@ -1869,7 +1872,6 @@ class SettingsSection(QScrollArea):
         hl.addWidget(themeText)
         hl.addStretch()
 
-
         self.layout.addLayout(hl)
 
         self.layout.addWidget(QLabel())
@@ -1882,7 +1884,7 @@ class SettingsSection(QScrollArea):
         doCloseWingetUI.setChecked(not getSettings("DisablesystemTray"))
         doCloseWingetUI.clicked.connect(lambda v: setSettings("DisablesystemTray", not bool(v)))
         self.layout.addWidget(doCloseWingetUI)
-        doCloseWingetUI = QCheckBox(_("Autostart wingetUI in the notifications area"))
+        doCloseWingetUI = QCheckBox(_("Autostart WingetUI in the notifications area"))
         doCloseWingetUI.setChecked(not getSettings("DisableAutostart"))
         doCloseWingetUI.clicked.connect(lambda v: setSettings("DisableAutostart", not bool(v)))
         self.layout.addWidget(doCloseWingetUI)
@@ -1890,7 +1892,7 @@ class SettingsSection(QScrollArea):
         disableUpdateIndexes.setChecked(getSettings("DisableUpdateIndexes"))
         disableUpdateIndexes.clicked.connect(lambda v: setSettings("DisableUpdateIndexes", bool(v)))
         self.layout.addWidget(disableUpdateIndexes)
-        enableScoopCleanup = QCheckBox(_("Enable scoop cleanup on launch"))
+        enableScoopCleanup = QCheckBox(_("Enable Scoop cleanup on launch"))
         enableScoopCleanup.setChecked(getSettings("EnableScoopCleanup"))
         enableScoopCleanup.clicked.connect(lambda v: setSettings("EnableScoopCleanup", bool(v)))
         self.layout.addWidget(enableScoopCleanup)
@@ -1966,7 +1968,7 @@ class SettingsSection(QScrollArea):
         disableScoop.setChecked(getSettings("DisableScoop"))
         disableScoop.clicked.connect(lambda v: setSettings("DisableScoop", bool(v)))
         self.layout.addWidget(disableScoop)
-        scoopPreventCaps = QCheckBox(_("Show scoop apps as lowercase"))
+        scoopPreventCaps = QCheckBox(_("Show Scoop apps as lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
         scoopPreventCaps.clicked.connect(lambda v: setSettings("LowercaseScoopApps", bool(v)))
         self.layout.addWidget(scoopPreventCaps)
@@ -1976,17 +1978,18 @@ class SettingsSection(QScrollArea):
         
         self.layout.addWidget(QLabel())
         l = QHBoxLayout()
-        button = QPushButton(_("Add a bucket to scoop"))
+        button = QPushButton(_("Add a bucket to Scoop"))
+        button = QPushButton("Add a bucket to Scoop")
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopAddExtraBucket())
         l.addWidget(button)
-        button = QPushButton(_("Remove a bucket from scoop"))
+        button = QPushButton(_("Remove a bucket from Scoop"))
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
         l.addWidget(button)
-        button = QPushButton(_("Install scoop"))
+        button = QPushButton(_("Install Scoop"))
         #button.setFixedWidth(350)
         button.setFixedHeight(30)
         button.clicked.connect(lambda: (setSettings("DisableScoop", False), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
