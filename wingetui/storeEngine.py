@@ -189,17 +189,9 @@ class PackageInstallerWidget(QGroupBox):
                 self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
                 self.progressbar.setValue(1000)
                 if type(self) == PackageInstallerWidget:
-                    globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
+                    if self.packageItem:
+                        globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
                 self.startCoolDown()
-                if(self.store == "powershell"):
-                    msgBox = MessageBox(self)
-                    msgBox.setWindowTitle("WingetUI")
-                    msgBox.setText(f"{self.programName} was {self.actionDone} successfully.")
-                    msgBox.setInformativeText("You will need to restart the application in order to get the {self.programName} new packages")
-                    msgBox.setStandardButtons(MessageBox.Ok)
-                    msgBox.setDefaultButton(MessageBox.Ok)
-                    msgBox.setIcon(MessageBox.Information)
-                    msgBox.exec_()
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
                 self.cancelButton.setText(_("OK"))
