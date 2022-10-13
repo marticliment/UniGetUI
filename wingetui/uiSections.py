@@ -1699,9 +1699,8 @@ class AboutSection(QScrollArea):
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
 
         self.layout.addWidget(title)
-        self.layout.addWidget(QLabel())
-
-        description = QLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the winget-cli official project, and it's totally unofficial."))
+        self.layout.addWidget(QLinkLabel())
+        description = QLinkLabel(f"The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.\nThis project has no connection with the official <a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget project </a> — it's completely unofficial. ")
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
