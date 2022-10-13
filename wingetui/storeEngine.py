@@ -280,8 +280,8 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.packageItem = packageItem
         self.actionDone = _("updated")
         self.actionDoing = _("updating")
-        self.actionName = _("update")
-        self.actionVerb = _("update")
+        self.actionName = _("update(noun)")
+        self.actionVerb = _("update(verb)")
     
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):

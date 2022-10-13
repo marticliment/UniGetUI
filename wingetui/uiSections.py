@@ -6,6 +6,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
 from storeEngine import *
+from lang.translated_percentage import untranslatedPercentage
 
 import globals
 from tools import _
@@ -1754,6 +1755,87 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(subtitle)
         self.layout.addWidget(QLabel())
 
+        selectedLanguageLabel = QLabel(_("WingetUI display language:")+" (Language)") # The non-translated (Language) string is there to let people know what the language option is if you accidentaly change the language
+        selectedLanguageCombo = QComboBox()
+        selectedLanguageButton = QPushButton()
+        selectedLanguageButton.setObjectName("AccentButton")
+        selectedLanguageCombo.setFixedWidth(200)
+        selectedLanguageButton.setFixedWidth(200)
+        selectedLanguageButton.setFixedHeight(30)
+        selectedLanguageButton.setVisible(False)
+        selectedLanguageButton.setText(_("Restart WingetUI")+" (Restart)")
+
+        langListWithPercentage = []
+        langDictWithPercentage = {}
+        invertedLangDict = {}
+        for key, value in languageReference.items():
+            if (key in untranslatedPercentage):
+                perc = untranslatedPercentage[key]
+                if (perc == "0%"): continue
+                if not key in lang["locale"]:
+                    langListWithPercentage.append(f"{value} ({perc})")
+                    langDictWithPercentage[key] = f"{value} ({perc})"
+                    invertedLangDict[f"{value} ({perc})"] = key
+                else:
+                    k = len(lang.keys())
+                    v = len([val for val in lang.values() if val != None])
+                    perc = f"{int(v/k*100)}%"
+                    langListWithPercentage.append(f"{value} ({perc})")
+                    langDictWithPercentage[key] = f"{value} ({perc})"
+                    invertedLangDict[f"{value} ({perc})"] = key
+            else:
+                invertedLangDict[value] = key
+                langDictWithPercentage[key] = value
+                langListWithPercentage.append(value)
+        try:
+            cprint(invertedLangDict)
+            selectedLanguageCombo.insertItems(0, langListWithPercentage)
+            selectedLanguageCombo.setCurrentIndex(langListWithPercentage.index(langDictWithPercentage[langName]))
+        except Exception as e:
+            report(e)
+            selectedLanguageCombo.insertItems(0, langListWithPercentage)
+
+        def changeLang():
+            selectedLanguageButton.setVisible(True)
+            i = selectedLanguageCombo.currentIndex()
+            selectedLang = invertedLangDict[selectedLanguageCombo.currentText()] # list(languageReference.keys())[i]
+            cprint(invertedLangDict[selectedLanguageCombo.currentText()])
+            setSettingsValue("PreferredLanguage", selectedLang)
+
+        def restartElevenClockByLangChange():
+            subprocess.run(str("start /B \"\" \""+sys.executable)+"\"", shell=True)
+            globals.app.quit()
+
+        selectedLanguageButton.clicked.connect(restartElevenClockByLangChange)
+        selectedLanguageCombo.currentTextChanged.connect(changeLang)
+        
+        hl = QHBoxLayout()
+        hl.setContentsMargins(0, 0, 0, 0)
+        hl.addWidget(selectedLanguageLabel)
+        hl.addSpacing(20)
+        hl.addWidget(selectedLanguageCombo)
+        hl.addWidget(selectedLanguageButton)
+        hl.addStretch()
+        self.layout.addLayout(hl)
+
+        updateCheckBox = QCheckBox(_("Update WingetUI automatically"))
+        updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
+        updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
+        self.layout.addWidget(updateCheckBox)
+        changeDefaultInstallAction = QCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
+        changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
+        changeDefaultInstallAction.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
+        self.layout.addWidget(changeDefaultInstallAction)
+        changeDefaultUpdateAction = QCheckBox(_("Show info about the package on the Updates tab"))
+        changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
+        changeDefaultUpdateAction.clicked.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
+        self.layout.addWidget(changeDefaultUpdateAction)
+        dontUseBuiltInGsudo = QCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
+        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
+        dontUseBuiltInGsudo.clicked.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        self.layout.addWidget(dontUseBuiltInGsudo)
+        
+
         themeTextLabel = QLabel(_("Application theme:"))
         
         themes = {
@@ -1790,22 +1872,6 @@ class SettingsSection(QScrollArea):
 
         self.layout.addLayout(hl)
 
-        updateCheckBox = QCheckBox(_("Update WingetUI automatically"))
-        updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
-        updateCheckBox.clicked.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
-        self.layout.addWidget(updateCheckBox)
-        changeDefaultInstallAction = QCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
-        changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
-        changeDefaultInstallAction.clicked.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
-        self.layout.addWidget(changeDefaultInstallAction)
-        changeDefaultUpdateAction = QCheckBox(_("Show info about the package on the Updates tab"))
-        changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
-        changeDefaultUpdateAction.clicked.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
-        self.layout.addWidget(changeDefaultUpdateAction)
-        dontUseBuiltInGsudo = QCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
-        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
-        dontUseBuiltInGsudo.clicked.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
-        self.layout.addWidget(dontUseBuiltInGsudo)
         self.layout.addWidget(QLabel())
     
         subtitle = QLabel(_("Startup options"))
