@@ -186,7 +186,7 @@ class DiscoverSoftwareSection(QWidget):
 
         self.toolbar.addWidget(TenPxSpacer())
         self.upgradeSelected = QAction(QIcon(getMedia("newversion")), "", self.toolbar)
-        self.upgradeSelected.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem()))
+        self.upgradeSelected.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem()))
         self.toolbar.addAction(self.upgradeSelected)
         
         inf = QAction("", self.toolbar)# ("Show info")
