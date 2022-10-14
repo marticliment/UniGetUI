@@ -5,7 +5,9 @@ from pathlib import Path
 languageReference = {
     "default": "System language",
     "ca"    : "Catalan - Català",
+    "zh"    : "Chinese - 中文",
     "en"    : "English - English",
+    "fr"    : "French - Français",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
 }
