@@ -636,7 +636,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
         self.layout.addStretch()
-        self.advert = QLinkLabel(_("DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED SOFTWARE."))
+        self.advert = QLinkLabel(_("DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APP."))
         self.advert.setWordWrap(True)
         self.layout.addWidget(self.advert)
 
