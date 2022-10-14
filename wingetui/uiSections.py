@@ -21,6 +21,8 @@ class DiscoverSoftwareSection(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    discoverLabelDefaultWidth: int = 0
+    discoverLabelIsSmall: bool = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -86,11 +88,17 @@ class DiscoverSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
+        v.setSpacing(0)
+        v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel(_("Discover Packages"))
-        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
-        hLayout.addLayout(v)
+        self.titleWidget = QWidget()
+        self.titleWidget.setContentsMargins(0, 0, 0, 0)
+        self.titleWidget.setLayout(v)
+
+        hLayout.addWidget(self.titleWidget, stretch=1)
         hLayout.addStretch()
         forceCheckBox = QVBoxLayout()
         forceCheckBox.addWidget(self.forceCheckBox)
@@ -362,8 +370,19 @@ class DiscoverSoftwareSection(QWidget):
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
-        self.forceCheckBox.setMaximumSize(self.forceCheckBox.sizeHint().width(), 30)
-        self.discoverLabel.setFixedWidth(self.discoverLabel.sizeHint().width())
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()+15
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
@@ -451,7 +470,19 @@ class DiscoverSoftwareSection(QWidget):
         return super().destroy(destroyWindow, destroySubWindows)
 
     def showEvent(self, event: QShowEvent) -> None:
-        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()+15
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
         return super().showEvent(event)
 
 class UpdateSoftwareSection(QWidget):
@@ -465,6 +496,8 @@ class UpdateSoftwareSection(QWidget):
     changeBarOrientation = Signal()
     callInMain = Signal(object)
     availableUpdates: int = 0
+    discoverLabelDefaultWidth: int = 0
+    discoverLabelIsSmall: bool = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -535,11 +568,17 @@ class UpdateSoftwareSection(QWidget):
         hLayout.addWidget(self.img)
 
         v = QVBoxLayout()
+        v.setSpacing(0)
+        v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel(_("Software Updates"))
-        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
-        hLayout.addLayout(v)
+        self.titleWidget = QWidget()
+        self.titleWidget.setContentsMargins(0, 0, 0, 0)
+        self.titleWidget.setLayout(v)
+
+        hLayout.addWidget(self.titleWidget, stretch=1)
         hLayout.addWidget(self.forceCheckBox)
         hLayout.addWidget(self.query)
         hLayout.addWidget(self.searchButton)
@@ -908,6 +947,19 @@ class UpdateSoftwareSection(QWidget):
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()+15
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<1070 else Qt.ToolButtonTextBesideIcon)
         return super().resizeEvent(event)
 
@@ -1066,7 +1118,20 @@ class UpdateSoftwareSection(QWidget):
         return super().destroy(destroyWindow, destroySubWindows)
 
     def showEvent(self, event: QShowEvent) -> None:
-        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()+15
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         return super().showEvent(event)
 
 class UninstallSoftwareSection(QWidget):
@@ -1078,6 +1143,8 @@ class UninstallSoftwareSection(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    discoverLabelDefaultWidth: int = 0
+    discoverLabelIsSmall: bool = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -1151,11 +1218,17 @@ class UninstallSoftwareSection(QWidget):
         hLayout.addWidget(img)
 
         v = QVBoxLayout()
+        v.setSpacing(0)
+        v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel(_("Installed Packages"))
-        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
-        hLayout.addLayout(v)
+        self.titleWidget = QWidget()
+        self.titleWidget.setContentsMargins(0, 0, 0, 0)
+        self.titleWidget.setLayout(v)
+
+        hLayout.addWidget(self.titleWidget, stretch=1)
         hLayout.addWidget(self.forceCheckBox)
         hLayout.addWidget(self.query)
         hLayout.addWidget(self.searchButton)
@@ -1473,8 +1546,38 @@ class UninstallSoftwareSection(QWidget):
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()+15
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly if self.width()<820 else Qt.ToolButtonTextBesideIcon)
         return super().resizeEvent(event)
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()+15
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+        return super().showEvent(event)
+
 
     def addItem(self, name: str, id: str, version: str, store: str) -> None:
         if not "---" in name:
@@ -1639,10 +1742,6 @@ class UninstallSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
-
-    def showEvent(self, event: QShowEvent) -> None:
-        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width())
-        return super().showEvent(event)
 
 
 class AboutSection(QScrollArea):
