@@ -54,7 +54,6 @@ class DiscoverSoftwareSection(QWidget):
         self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
         self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.forceCheckBox.setFixedWidth(98)
         self.forceCheckBox.setStyleSheet("margin-top: 0px;")
         self.forceCheckBox.setChecked(True)
         self.forceCheckBox.setChecked(not getSettings("DisableInstantSearchOnInstall"))
@@ -66,8 +65,9 @@ class DiscoverSoftwareSection(QWidget):
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
         self.query.setStyleSheet("margin-top: 0px;")
-        self.query.setFixedWidth(250)
-
+        self.query.setMinimumWidth(50)
+        self.query.setMaximumWidth(250)
+        self.query.setBaseSize(250, 30)
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
@@ -362,6 +362,8 @@ class DiscoverSoftwareSection(QWidget):
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def resizeEvent(self, event: QResizeEvent):
+        self.forceCheckBox.setMaximumSize(self.forceCheckBox.sizeHint().width(), 30)
+        self.discoverLabel.setFixedWidth(self.discoverLabel.sizeHint().width())
         return super().resizeEvent(event)
 
     def addItem(self, name: str, id: str, version: str, store) -> None:
@@ -502,7 +504,9 @@ class UpdateSoftwareSection(QWidget):
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
         self.query.setStyleSheet("margin-top: 0px;")
-        self.query.setFixedWidth(250)
+        self.query.setMinimumWidth(50)
+        self.query.setMaximumWidth(250)
+        self.query.setBaseSize(250, 30)
 
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
@@ -1114,7 +1118,9 @@ class UninstallSoftwareSection(QWidget):
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
         self.query.setStyleSheet("margin-top: 0px;")
-        self.query.setFixedWidth(250)
+        self.query.setMinimumWidth(50)
+        self.query.setMaximumWidth(250)
+        self.query.setBaseSize(250, 30)
 
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
