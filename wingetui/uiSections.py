@@ -1699,9 +1699,8 @@ class AboutSection(QScrollArea):
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
 
         self.layout.addWidget(title)
-        self.layout.addWidget(QLabel())
-
-        description = QLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the winget-cli official project, and it's totally unofficial."))
+        self.layout.addWidget(QLinkLabel())
+        description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
@@ -1910,7 +1909,7 @@ class SettingsSection(QScrollArea):
         subtitle = QLabel(_("Notification tray options"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
-        checkForUpdates = QCheckBox(_("Check for updates periodically"))
+        checkForUpdates = QCheckBox(_("Check for package updates periodically"))
         checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
         checkForUpdates.clicked.connect(lambda v: setSettings("DisableAutoCheckforUpdates", not bool(v)))
         self.layout.addWidget(checkForUpdates)
@@ -2008,16 +2007,16 @@ class SettingsSection(QScrollArea):
         print("🟢 Settings tab loaded!")
         
     def scoopAddExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
+            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("What bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageUninstallerWidget(f"{r[0]} scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            globals.installersWidget.addItem(PackageUninstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
 
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()

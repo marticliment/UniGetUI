@@ -59,7 +59,7 @@ Then, to install WingetUI, execute the following command: `scoop install wingetu
 
 
 ## Translating ElevenClock to other languages
-In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki][https://github.com/martinet101/WingetUI/wiki#translating-wingetui] for more info.
+In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/martinet101/WingetUI/wiki#translating-wingetui) for more info.
 
 
 ### Currently Supported languages
