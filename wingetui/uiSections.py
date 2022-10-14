@@ -1909,7 +1909,7 @@ class SettingsSection(QScrollArea):
         subtitle = QLabel(_("Notification tray options"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
-        checkForUpdates = QCheckBox(_("Check for updates periodically"))
+        checkForUpdates = QCheckBox(_("Check for package updates periodically"))
         checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
         checkForUpdates.clicked.connect(lambda v: setSettings("DisableAutoCheckforUpdates", not bool(v)))
         self.layout.addWidget(checkForUpdates)
