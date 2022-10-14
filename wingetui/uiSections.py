@@ -1700,7 +1700,7 @@ class AboutSection(QScrollArea):
 
         self.layout.addWidget(title)
         self.layout.addWidget(QLinkLabel())
-        description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.\nThis project has no connection with the official {0} project — it's completely unofficial. ").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
+        description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
