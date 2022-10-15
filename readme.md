@@ -9,7 +9,9 @@
 
 With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
-<br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
+<br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial. 
+
+Beware that neither Microsoft nor the creators of Wingetui are responsible for the downloaded apps. 
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
@@ -119,14 +121,6 @@ If this doesn't work, consider asking for help at [Winget's own project page](ht
 A: This is a known limitation of Winget. 
 
 See more details in issue https://github.com/martinet101/WingetUI/issues/196.<br>
-
-#
-
-**Q: Can I use WingetUI in my language?**<br>
-
-A: Not yet. 
-
-See more details in issue https://github.com/martinet101/WingetUI/issues/67.<br>
 
 #
 
