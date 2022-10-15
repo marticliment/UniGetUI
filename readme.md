@@ -11,7 +11,7 @@ With this app, you'll be able to download, install, update and uninstall any sof
 
 <br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial. 
 
-Beware that neither Microsoft nor the creators of Wingetui are responsible for the downloaded apps. 
+Beware that neither Microsoft nor the creators of WingetUI are responsible for the downloaded apps. 
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
