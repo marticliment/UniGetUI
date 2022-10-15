@@ -2,8 +2,7 @@
 # The following list includes ONLY non-full translated files.
 
 untranslatedPercentage = {
-  "fr": "75%",
-  "pt_BR": "60%",
-  "pt_PT": "59%",
+  "pt_BR": "77%",
+  "pt_PT": "77%",
   "zh": "0%"
 }
