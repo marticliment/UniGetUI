@@ -62,7 +62,7 @@ class DiscoverSoftwareSection(QWidget):
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnInstall", bool(not v)))
          
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" "+_("Search for something on Winget or Scoop"))
+        self.query.setPlaceholderText(" "+_("Search for packages on Winget and Scoop"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -537,7 +537,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" "+_("Search for available updates"))
+        self.query.setPlaceholderText(" "+_("Search on available updates"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
