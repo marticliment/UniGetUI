@@ -136,7 +136,7 @@ class DiscoverSoftwareSection(QWidget):
             ins1 = QAction(_("Install"))
             ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
-            ins2 = QAction(_("Run as administrator"))
+            ins2 = QAction(_("Install as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True, packageItem=self.packageList.currentItem()))
             ins3 = QAction(_("Skip hash check"))
@@ -624,7 +624,7 @@ class UpdateSoftwareSection(QWidget):
             ins1 = QAction(_("Update"))
             ins1.setIcon(QIcon(getMedia("newversion")))
             ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
-            ins2 = QAction(_("Run as administrator"))
+            ins2 = QAction(_("Update as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
             ins3 = QAction(_("Skip hash check"))
@@ -743,9 +743,9 @@ class UpdateSoftwareSection(QWidget):
         tooltips = {
             self.upgradeSelected: _("Update package"),
             inf: _("Show package info"),
-            ins2: _("Run the installer with administrator privileges"),
+            ins2: _("Update with administrator privileges"),
             ins3: _("Skip the hash check"),
-            ins4: _("Interactive installation"),
+            ins4: _("Interactive update"),
         }
 
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
@@ -1301,7 +1301,7 @@ class UninstallSoftwareSection(QWidget):
             ins1 = QAction(_("Uninstall"))
             ins1.setIcon(QIcon(getMedia("menu_uninstall")))
             ins1.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem()))
-            ins2 = QAction(_("Run as administrator"))
+            ins2 = QAction(_("Uninstall as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
             ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
             ins3 = QAction(_("Remove permanent data"))
