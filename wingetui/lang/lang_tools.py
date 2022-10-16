@@ -8,6 +8,7 @@ languageReference = {
     "zh"    : "Chinese - 中文",
     "en"    : "English - English",
     "fr"    : "French - Français",
+    "hi"    : "Hindi - हन्दी",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
 }
