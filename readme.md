@@ -45,8 +45,17 @@ Thank you! :)
 
 <p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br><br></p>
 
-- The first is by downloading the latest version of its installer by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe).
-- The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
+- The first is by downloading the latest version of the installer:
+
+<p align="center"><b><a href="https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download WingetUI</a></b></p>
+<br>
+
+- The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/):
+
+Run the following command in PowerShell or Command Prompt: `winget install wingetui`
+
+<br>
+
 - The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
 <br>⚠️ **Currently there are known issues between WingetUI and Scoop!** 
