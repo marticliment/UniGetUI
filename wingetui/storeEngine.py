@@ -154,7 +154,7 @@ class PackageInstallerWidget(QGroupBox):
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
             self.finishedInstallation = True
-        self.info.setText(_("Installation canceled by user!"))
+        self.info.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
         self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
@@ -401,7 +401,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
-        self.info.setText(_("Uninstall canceled by user!"))
+        self.info.setText(_("Uninstall canceled by the user!"))
         if not self.finishedInstallation:
             subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
             self.finishedInstallation = True

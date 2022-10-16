@@ -62,7 +62,7 @@ class DiscoverSoftwareSection(QWidget):
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnInstall", bool(not v)))
          
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" "+_("Search for something on Winget or Scoop"))
+        self.query.setPlaceholderText(" "+_("Search for packages on Winget and Scoop"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -212,7 +212,7 @@ class DiscoverSoftwareSection(QWidget):
 
         
         tooltips = {
-            self.upgradeSelected: _("Install selected package"),
+            self.upgradeSelected: _("Install package"),
             inf: _("Show package info"),
             ins2: _("Run the installer with administrator privileges"),
             ins3: _("Skip the hash check"),
@@ -537,7 +537,7 @@ class UpdateSoftwareSection(QWidget):
         hLayout.setContentsMargins(25, 0, 25, 0)
 
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" "+_("Search for available updates"))
+        self.query.setPlaceholderText(" "+_("Search on available updates"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
@@ -741,7 +741,7 @@ class UpdateSoftwareSection(QWidget):
 
         
         tooltips = {
-            self.upgradeSelected: _("Install selected package"),
+            self.upgradeSelected: _("Update package"),
             inf: _("Show package info"),
             ins2: _("Run the installer with administrator privileges"),
             ins3: _("Skip the hash check"),
@@ -756,10 +756,10 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _("Upgrade all"), self.toolbar)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _("Update all"), self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
         self.toolbar.addAction(self.upgradeAllAction)
-        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Upgrade selected"), self.toolbar)
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Update selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
 
@@ -1367,7 +1367,7 @@ class UninstallSoftwareSection(QWidget):
         
         
         tooltips = {
-            self.upgradeSelected: _("Uninstall selected package"),
+            self.upgradeSelected: _("Uninstall package"),
             ins2: _("Uninstall with administrator privileges"),
             ins5: _("Interactive uninstall"),
         }

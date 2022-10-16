@@ -9,7 +9,9 @@
 
 With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
-<br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial.
+<br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial. 
+
+Beware that neither Microsoft nor the creators of WingetUI are responsible for the downloaded apps. 
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
@@ -43,8 +45,17 @@ Thank you! :)
 
 <p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br><br></p>
 
-- The first is by downloading the latest version of its installer by clicking [here](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe).
-- The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/): `winget install wingetui`
+- The first is by downloading the latest version of the installer:
+
+<p align="center"><b><a href="https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download WingetUI</a></b></p>
+<br>
+
+- The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/):
+
+Run the following command in PowerShell or Command Prompt: `winget install wingetui`
+
+<br>
+
 - The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
 <br>⚠️ **Currently there are known issues between WingetUI and Scoop!** 
@@ -58,7 +69,7 @@ Then, to install WingetUI, execute the following command: `scoop install wingetu
 <br><p align="center"><i>Check out the <a href="https://github.com/martinet101/WingetUI/wiki">Wiki</a> for more information!</i></p>
 
 
-## Translating ElevenClock to other languages
+## Translating WingetUI to other languages
 In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/martinet101/WingetUI/wiki#translating-wingetui) for more info.
 
 
@@ -120,14 +131,6 @@ If this doesn't work, consider asking for help at [Winget's own project page](ht
 A: This is a known limitation of Winget. 
 
 See more details in issue https://github.com/martinet101/WingetUI/issues/196.<br>
-
-#
-
-**Q: Can I use WingetUI in my language?**<br>
-
-A: Not yet. 
-
-See more details in issue https://github.com/martinet101/WingetUI/issues/67.<br>
 
 #
 
