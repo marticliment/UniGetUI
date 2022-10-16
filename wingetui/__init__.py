@@ -113,6 +113,7 @@ try:
                 
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
+                Thread(target=self.downloadPackagesMetadata, daemon=True).start()
                 if not getSettings("DisableWinget"):
                     Thread(target=self.detectWinget, daemon=True).start()
                 else:
@@ -131,7 +132,7 @@ try:
                 Thread(target=self.instanceThread, daemon=True).start()
                 Thread(target=self.updateIfPossible, daemon=True).start()
 
-                while self.loadStatus < 6:
+                while self.loadStatus < 7:
                     time.sleep(0.01)
             except Exception as e:
                 print(e)
@@ -236,6 +237,27 @@ try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Sudo found: {0}").format(globals.componentStatus['sudoFound'])))
             except Exception as e:
                 print(e)
+            self.loadStatus += 1
+
+        def downloadPackagesMetadata(self):
+            try: 
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
+                data = urlopen("https://raw.githubusercontent.com/martinet101/WingetUI/screenshots-and-icons/WebBasedData/screenshot-database.json").read()
+                try:
+                    os.makedirs(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta"))
+                except FileExistsError:
+                    pass
+                with open(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/packages.json"), "wb") as f:
+                    f.write(data)
+                print("🟢 Downloaded latest metadata to local file")
+            except Exception as e:
+                report(e)
+            try:
+                with open(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/packages.json"), "rb") as f:
+                    globals.packageMeta = json.load(f)
+                print("🔵 Loaded metadata from local file")
+            except Exception as e:
+                report(e)
             self.loadStatus += 1
 
         def loadMainUI(self):

@@ -53,3 +53,5 @@ lastFocusedWindow: int = 0
 themeChanged: bool = False
 updatesAvailable: bool = False
 canUpdate: bool = False
+
+packageMeta: dict = {}

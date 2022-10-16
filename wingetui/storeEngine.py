@@ -480,6 +480,7 @@ class PackageInfoPopupWindow(QMainWindow):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    callInMain = Signal(object)
     packageItem: TreeWidgetItemWithQAction = None
     finishedCount: int = 0
     
@@ -488,6 +489,7 @@ class PackageInfoPopupWindow(QMainWindow):
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
+        self.callInMain.connect(lambda f: f())
         self.sc = QScrollArea()
         self.setWindowFlags(Qt.Window)
         self.setWindowModality(Qt.WindowModal)
@@ -519,6 +521,11 @@ class PackageInfoPopupWindow(QMainWindow):
         self.title.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.title.setText(_("Loading..."))
 
+        self.appIcon = QLabel()
+        self.appIcon.setFixedSize(QSize(96, 96))
+        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'#303030' if isDark() else 'white'};")
+        self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
+
         fortyWidget = QWidget()
         fortyWidget.setFixedWidth(120)
 
@@ -528,7 +535,12 @@ class PackageInfoPopupWindow(QMainWindow):
 
         self.mainGroupBox = QGroupBox()
 
-        self.layout.addWidget(self.title)
+        hl = QHBoxLayout()
+        hl.addWidget(self.appIcon)
+        hl.addSpacing(16)
+        hl.addWidget(self.title)
+        
+        self.layout.addLayout(hl)
         self.layout.addStretch()
 
         self.hLayout = QHBoxLayout()
@@ -737,12 +749,39 @@ class PackageInfoPopupWindow(QMainWindow):
         self.manifest.setText(f"{_('Manifest')}: {_('Loading...')}")
         self.storeLabel.setText(f"{_('Source')}: {self.store.capitalize()}")
         self.versionCombo.addItems([_("Loading...")])
+
+        self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
+        Thread(target=self.loadPackageIcon, args=(id, store)).start()
         
         self.finishedCount = 0
         if(store.lower()=="winget"):
             Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
         elif("scoop" in store.lower()):
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
+
+    def loadPackageIcon(self, id: str, store: str) -> None:
+        try:
+            iconprov = "winget" if not "scoop" in store.lower() else "scoop"
+            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconprov}.{id}.png")
+            if not os.path.exists(iconpath):
+                iconurl = globals.packageMeta[iconprov][id]["icon"]
+                print("🔵 Found icon: ", iconurl)
+                icondata = urlopen(iconurl).read()
+                with open(iconpath, "wb") as f:
+                    f.write(icondata)
+            else:
+                cprint(f"🔵 Found cached image in {iconpath}")
+            self.callInMain.emit(lambda: print("ª"))
+            self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
+        except Exception as e:
+            try:
+                if type(e) != KeyError:
+                    report(e)
+                else:
+                    print(f"🟠 Icon {id} not found in json")
+                pass # TODO: implement fallback icon loader
+            except Exception as e:
+                report(e)
 
     def printData(self, appInfo: dict) -> None:
         self.finishedCount += 1
