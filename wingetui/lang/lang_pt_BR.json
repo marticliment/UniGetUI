@@ -49,7 +49,7 @@
   "Disable Scoop" : "Desativar Scoop",
   "Disable Winget" : "Desativar Winget",
   "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "AVISO: NEM A MICROSOFT NEM OS CRIADORES DO WINGETUI SÃO RESPONSÁVEIS PELOS APLICATIVOS BAIXADOS.                                                                       ",
-  "Discover Packages" : "Descobrir Software",
+  "Discover Packages" : "Descobrir Pacotes",
   "Do not update package indexes on launch" : "Não atualizar os índices de pacotes na inicialização",
   "Do you really want to uninstall {0}?" : "Você realmente deseja desinstalar o {0}?",
   "Enable Scoop cleanup on launch" : "Ativar a limpeza do Scoop ao iniciar",
