@@ -32,7 +32,7 @@ class RootWindow(QMainWindow):
         self.resize(QSize(1100, 700))
         self.loadWidgets()
         self.blackmatt = QWidget(self)
-        self.blackmatt.setStyleSheet("background-color: rgba(0, 0, 0, 30%);border-top-left-radius: 16px;border-top-right-radius: 16px;")
+        self.blackmatt.setStyleSheet("background-color: rgba(0, 0, 0, 30%);border-top-left-radius: 8px;border-top-right-radius: 8px;")
         self.blackmatt.hide()
         self.blackmatt.move(0, 0)
         self.blackmatt.resize(self.size())

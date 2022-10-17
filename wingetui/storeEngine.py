@@ -1,5 +1,6 @@
 from __future__ import annotations
 from decimal import setcontext
+from email.mime import image
 from functools import partial
 from multiprocessing.sharedctypes import Value # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
@@ -591,12 +592,32 @@ class PackageInfoPopupWindow(QWidget):
         self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};}}")
         self.screenshotsWidget.setFixedHeight(150)
         self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.layout.addWidget(self.screenshotsWidget)
 
+
         self.imagesLayout = QHBoxLayout()
+        self.imagesLayout.setContentsMargins(0, 0, 0, 0)
+        self.imagesLayout.setSpacing(0)
         self.imagesWidget = QWidget()
         self.imagesWidget.setLayout(self.imagesLayout)
         self.screenshotsWidget.setWidget(self.imagesWidget)
+
+        self.imagesCarrousel: list[QLabel] = []
+        for i in range(20):
+            l = QLabel(f"{i}")
+            l.setStyleSheet("border-radius: 4px;margin: 0px;margin-right: 4px;")
+            self.imagesCarrousel.append(l)
+            self.imagesLayout.addWidget(l)
+        
+        self.imagesScrollbar = CustomScrollBar()
+        self.imagesScrollbar.setOrientation(Qt.Horizontal)
+        self.screenshotsWidget.setHorizontalScrollBar(self.imagesScrollbar)
+        self.imagesScrollbar.move(self.screenshotsWidget.x(), self.screenshotsWidget.y()+self.screenshotsWidget.width()-16)
+        self.imagesScrollbar.show()
+        self.imagesScrollbar.setFixedHeight(12)
+
+        self.layout.addWidget(self.imagesScrollbar)
 
         hLayout = QHBoxLayout()
         self.versionLabel = QLinkLabel(_("Version:"))
@@ -747,6 +768,8 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.setParent(self)
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
+
+
     
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
@@ -756,6 +779,7 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.move(self.width()-16, 44)
         self.verticalScrollbar.resize(12, self.height()-64)
         self.backButton.move(self.width()-40, 0)
+        self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         if(event):
             return super().resizeEvent(event)
     
@@ -791,9 +815,9 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.addItems([_("Loading...")])
 
         def resetLayoutWidget():
-            self.imagesLayout = QHBoxLayout()
-            self.imagesWidget.setLayout(self.imagesLayout)
-            Thread(target=self.loadPackageScreenshots, args=(id, store, self.imagesLayout)).start()
+            for l in self.imagesCarrousel:
+                l.setPixmap(QPixmap())
+            Thread(target=self.loadPackageScreenshots, args=(id, store)).start()
 
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
@@ -828,20 +852,21 @@ class PackageInfoPopupWindow(QWidget):
             except Exception as e:
                 report(e)
 
-    def loadPackageScreenshots(self, id: str, store: str, layout: QHBoxLayout) -> None:
+    def loadPackageScreenshots(self, id: str, store: str) -> None:
         try:
             self.validImageCount = 0
             self.canContinueWithImageLoading = 0
-            def addImage(image: str):
-                l = QLabel()
-                p = QPixmap(image).scaledToHeight(96, Qt.SmoothTransformation)
-                if not p.isNull():
-                    l.setPixmap(p)
-                    layout.addWidget(l)
-                    self.validImageCount = self.validImageCount + 1
-                    print("Valid screenshot", self.validImageCount)
-                self.canContinueWithImageLoading -= 1
             imageprov = "winget" if not "scoop" in store.lower() else "scoop"
+            count = 0
+            for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+                try:
+                    self.callInMain.emit(lambda: self.imagesCarrousel[i].show())   
+                    self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)))    
+                    count += 1            
+                except Exception as e:
+                    report(e)
+            for i in range(count+1, 20):
+                self.callInMain.emit(lambda: self.imagesCarrousel[i].hide())
             for i in range(len(globals.packageMeta[imageprov][id]["images"])):
                 try:
                     imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
@@ -853,17 +878,23 @@ class PackageInfoPopupWindow(QWidget):
                             f.write(icondata)
                     else:
                         cprint(f"🔵 Found cached image in {imagepath}")
-                    self.canContinueWithImageLoading += 1
-                    self.callInMain.emit(partial(addImage, imagepath))
+                    p = QPixmap(imagepath)
+                    if not p.isNull():
+                        p = p.scaledToHeight(128, Qt.SmoothTransformation)
+                        self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p))
+                        self.callInMain.emit(lambda: self.imagesCarrousel[self.validImageCount].show())
+                        self.validImageCount += 1
+                    else:
+                        print(f"🟠 {imagepath} is a null image")                    
                 except Exception as e:
                     report(e)
-            while self.canContinueWithImageLoading > 0:
-                time.sleep(0.01)
             if self.validImageCount == 0:
                 cprint("🟠 No valid screenshots were found")
             else:
-                self.callInMain.emit(partial(layout.addStretch))
-                self.callInMain.emit(partial(self.imagesWidget.setLayout, layout))
+                cprint(f"🟢 {self.validImageCount} vaild images found!")
+            for i in range(self.validImageCount+1, 20):
+                self.callInMain.emit(self.imagesCarrousel[i].hide)
+
         except Exception as e:
             try:
                 if type(e) != KeyError:
@@ -946,6 +977,7 @@ class PackageInfoPopupWindow(QWidget):
         self.raise_()
         globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
         self.dgeff.setBlurRadius(40)
+        self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         return super().show()
 
     def close(self) -> bool:
