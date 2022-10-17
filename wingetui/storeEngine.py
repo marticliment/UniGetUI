@@ -1,4 +1,5 @@
-from __future__ import annotations # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+from __future__ import annotations
+from decimal import setcontext # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
@@ -472,7 +473,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         super().close()
         super().destroy()
 
-class PackageInfoPopupWindow(QMainWindow):
+class PackageInfoPopupWindow(QWidget):
     onClose = Signal()
     loadInfo = Signal(dict)
     closeDialog = Signal()
@@ -487,24 +488,34 @@ class PackageInfoPopupWindow(QMainWindow):
     pressed = False
     oldPos = QPoint(0, 0)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super().__init__(parent = parent)
         self.callInMain.connect(lambda f: f())
         self.sc = QScrollArea()
-        self.setWindowFlags(Qt.Window)
-        self.setWindowModality(Qt.WindowModal)
-        self.setWindowFlag(Qt.Tool)
-        self.setFocusPolicy(Qt.NoFocus)
-        self.setWindowFlag(Qt.FramelessWindowHint)
+        #self.setWindowFlags(Qt.Window)
+        #self.setWindowModality(Qt.WindowModal)
+        #self.setWindowFlag(Qt.Tool)
+        #self.setFocusPolicy(Qt.NoFocus)
+        #self.setWindowFlag(Qt.FramelessWindowHint)
+
+        self.dgeff = QGraphicsBlurEffect()
+
         self.store = ""
-        self.sct = QShortcut(QKeySequence("Esc"), self)
+        self.setObjectName("bg")
+        self.sct = QShortcut(QKeySequence("Esc"), self.sc)
         self.sct.activated.connect(lambda: self.close())
         self.sc.setWidgetResizable(True)
-        self.setStyleSheet("""
-        QScrollArea{
+        self.sc.setStyleSheet(f"""
+        QGroupBox {{
+            border: 0px;
+        }}
+        QScrollArea{{
             border-radius: 5px;
             padding: 5px;
-        }
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
+            border-radius: 16px;
+            border: 1px solid #88888888;
+        }}
         """)
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
@@ -534,6 +545,7 @@ class PackageInfoPopupWindow(QMainWindow):
         fortyTopWidget.setMinimumHeight(30)
 
         self.mainGroupBox = QGroupBox()
+        self.mainGroupBox.setFlat(True)
 
         hl = QHBoxLayout()
         hl.addWidget(self.appIcon)
@@ -589,8 +601,8 @@ class PackageInfoPopupWindow(QMainWindow):
         self.installButton.setFixedHeight(30)
 
         downloadGroupBox = QGroupBox()
+        downloadGroupBox.setFlat(True)
         downloadGroupBox.setMinimumHeight(100)
-        optionsGroupBox = QGroupBox()
 
         self.forceCheckbox = QCheckBox()
         self.forceCheckbox.setText(_("Skip hash check"))
@@ -662,7 +674,11 @@ class PackageInfoPopupWindow(QMainWindow):
         if(isDark()):
             print("🔵 Is Dark")
         self.sc.setWidget(self.centralwidget)
-        self.setCentralWidget(self.sc)
+
+        l = QHBoxLayout()
+        l.setContentsMargins(0,0, 0, 0)
+        l.addWidget(self.sc)
+        self.setLayout(l)
 
 
         self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
@@ -671,7 +687,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.backButton.move(self.width()-40, 0)
         self.backButton.resize(40, 40)
         self.backButton.setFlat(True)
-        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent}QPushButton:hover{background-color:red;}")
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
         self.backButton.clicked.connect(lambda: (self.onClose.emit(), self.close()))
         self.backButton.show()
 
@@ -713,8 +729,8 @@ class PackageInfoPopupWindow(QMainWindow):
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
-        self.loadingProgressBar.move(0, 0)
-        self.loadingProgressBar.resize(self.width(), 4)
+        self.loadingProgressBar.move(16, 0)
+        self.loadingProgressBar.resize(self.width()-32, 4)
         self.backButton.move(self.width()-40, 0)
         if(event):
             return super().resizeEvent(event)
@@ -847,42 +863,43 @@ class PackageInfoPopupWindow(QMainWindow):
         self.close()
 
     def show(self) -> None:
-        g: QRect = self.parent().window().geometry()
+        g = QRect(0, 0, self.parent().window().geometry().width(), self.parent().window().geometry().height())
         self.resize(700, 650)
         self.parent().window().blackmatt.show()
         self.move(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
-        print(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
+        self.raise_()
+        globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
+        self.dgeff.setBlurRadius(40)
         return super().show()
 
     def close(self) -> bool:
+        #globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
+        self.dgeff.setBlurRadius(1)
         self.parent().window().blackmatt.hide()
         return super().close()
 
     def hide(self) -> None:
         try:
+            #globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
+            self.dgeff.setBlurRadius(0)
             self.parent().window().blackmatt.hide()
         except AttributeError:
             pass
         return super().hide()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.pressed = True
-        self.oldPos = event.pos()
+        #self.pressed = True
+        #self.oldPos = event.pos()
         return super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if self.pressed:
-            try:
-                if not globals.mainWindow.isMaximized() and not globals.mainWindow.isMinimized():
-                    globals.mainWindow.move(globals.mainWindow.pos()+(event.pos()-self.oldPos))
-            except AttributeError as e:
-                report(e)
-            self.move(self.pos()+(event.pos()-self.oldPos))
+        #if self.pressed:
+        #    self.window().move(self.pos()+(event.pos()-self.oldPos))
         return super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        self.pressed = False
-        self.oldPos = event.pos()
+        #self.pressed = False
+        #self.oldPos = event.pos()
         return super().mouseReleaseEvent(event)
 
     def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
