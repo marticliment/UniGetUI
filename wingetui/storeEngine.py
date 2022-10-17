@@ -1,5 +1,7 @@
 from __future__ import annotations
-from decimal import setcontext # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+from decimal import setcontext
+from functools import partial
+from multiprocessing.sharedctypes import Value # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
@@ -576,14 +578,26 @@ class PackageInfoPopupWindow(QWidget):
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
-        self.layout.addStretch()
+        self.layout.addSpacing(10)
 
         self.license = QLinkLabel(_('License:')+" "+_('Unknown'))
         self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
-        self.layout.addStretch()
+        self.layout.addSpacing(10)
         
+        self.screenshotsWidget = QScrollArea()
+        self.screenshotsWidget.setWidgetResizable(True)
+        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};}}")
+        self.screenshotsWidget.setFixedHeight(150)
+        self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.layout.addWidget(self.screenshotsWidget)
+
+        self.imagesLayout = QHBoxLayout()
+        self.imagesWidget = QWidget()
+        self.imagesWidget.setLayout(self.imagesLayout)
+        self.screenshotsWidget.setWidget(self.imagesWidget)
+
         hLayout = QHBoxLayout()
         self.versionLabel = QLinkLabel(_("Version:"))
 
@@ -602,7 +616,6 @@ class PackageInfoPopupWindow(QWidget):
 
         downloadGroupBox = QGroupBox()
         downloadGroupBox.setFlat(True)
-        downloadGroupBox.setMinimumHeight(100)
 
         self.forceCheckbox = QCheckBox()
         self.forceCheckbox.setText(_("Skip hash check"))
@@ -616,11 +629,10 @@ class PackageInfoPopupWindow(QWidget):
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
 
-        self.oLayout.addStretch()
+
         self.oLayout.addWidget(self.forceCheckbox)
         self.oLayout.addWidget(self.interactiveCheckbox)
         self.oLayout.addWidget(self.adminCheckbox)
-        self.oLayout.addStretch()
 
         hLayout.addWidget(self.versionLabel)
         hLayout.addWidget(self.versionCombo)
@@ -635,8 +647,8 @@ class PackageInfoPopupWindow(QWidget):
 
         downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
-        self.layout.addStretch()
 
+        self.layout.addSpacing(10)
 
         self.packageId = QLinkLabel(_('Program ID:')+" "+_('Unknown'))
         self.packageId.setWordWrap(True)
@@ -659,6 +671,8 @@ class PackageInfoPopupWindow(QWidget):
         self.storeLabel = QLinkLabel(f"Source: {self.store}")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
+
+        self.layout.addSpacing(10)
         self.layout.addStretch()
         self.advert = QLinkLabel(_("DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS."))
         self.advert.setWordWrap(True)
@@ -725,12 +739,22 @@ class PackageInfoPopupWindow(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+        
+        self.sc.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.sc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.verticalScrollbar = CustomScrollBar()
+        self.sc.setVerticalScrollBar(self.verticalScrollbar)
+        self.verticalScrollbar.setParent(self)
+        self.verticalScrollbar.show()
+        self.verticalScrollbar.setFixedWidth(12)
     
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
         self.loadingProgressBar.move(16, 0)
         self.loadingProgressBar.resize(self.width()-32, 4)
+        self.verticalScrollbar.move(self.width()-16, 44)
+        self.verticalScrollbar.resize(12, self.height()-64)
         self.backButton.move(self.width()-40, 0)
         if(event):
             return super().resizeEvent(event)
@@ -766,6 +790,12 @@ class PackageInfoPopupWindow(QWidget):
         self.storeLabel.setText(f"{_('Source')}: {self.store.capitalize()}")
         self.versionCombo.addItems([_("Loading...")])
 
+        def resetLayoutWidget():
+            self.imagesLayout = QHBoxLayout()
+            self.imagesWidget.setLayout(self.imagesLayout)
+            Thread(target=self.loadPackageScreenshots, args=(id, store, self.imagesLayout)).start()
+
+        self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
         Thread(target=self.loadPackageIcon, args=(id, store)).start()
         
@@ -778,7 +808,7 @@ class PackageInfoPopupWindow(QWidget):
     def loadPackageIcon(self, id: str, store: str) -> None:
         try:
             iconprov = "winget" if not "scoop" in store.lower() else "scoop"
-            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconprov}.{id}.png")
+            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconprov}.{id}.icon.png")
             if not os.path.exists(iconpath):
                 iconurl = globals.packageMeta[iconprov][id]["icon"]
                 print("🔵 Found icon: ", iconurl)
@@ -787,7 +817,6 @@ class PackageInfoPopupWindow(QWidget):
                     f.write(icondata)
             else:
                 cprint(f"🔵 Found cached image in {iconpath}")
-            self.callInMain.emit(lambda: print("ª"))
             self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
         except Exception as e:
             try:
@@ -798,6 +827,53 @@ class PackageInfoPopupWindow(QWidget):
                 pass # TODO: implement fallback icon loader
             except Exception as e:
                 report(e)
+
+    def loadPackageScreenshots(self, id: str, store: str, layout: QHBoxLayout) -> None:
+        try:
+            self.validImageCount = 0
+            self.canContinueWithImageLoading = 0
+            def addImage(image: str):
+                l = QLabel()
+                p = QPixmap(image).scaledToHeight(96, Qt.SmoothTransformation)
+                if not p.isNull():
+                    l.setPixmap(p)
+                    layout.addWidget(l)
+                    self.validImageCount = self.validImageCount + 1
+                    print("Valid screenshot", self.validImageCount)
+                self.canContinueWithImageLoading -= 1
+            imageprov = "winget" if not "scoop" in store.lower() else "scoop"
+            for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+                try:
+                    imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
+                    if not os.path.exists(imagepath):
+                        iconurl = globals.packageMeta[imageprov][id]["images"][i]
+                        print("🔵 Found icon: ", iconurl)
+                        icondata = urlopen(iconurl).read()
+                        with open(imagepath, "wb") as f:
+                            f.write(icondata)
+                    else:
+                        cprint(f"🔵 Found cached image in {imagepath}")
+                    self.canContinueWithImageLoading += 1
+                    self.callInMain.emit(partial(addImage, imagepath))
+                except Exception as e:
+                    report(e)
+            while self.canContinueWithImageLoading > 0:
+                time.sleep(0.01)
+            if self.validImageCount == 0:
+                cprint("🟠 No valid screenshots were found")
+            else:
+                self.callInMain.emit(partial(layout.addStretch))
+                self.callInMain.emit(partial(self.imagesWidget.setLayout, layout))
+        except Exception as e:
+            try:
+                if type(e) != KeyError:
+                    report(e)
+                else:
+                    print(f"🟠 Icon {id} not found in json")
+                pass # TODO: implement fallback icon loader
+            except Exception as e:
+                report(e)
+
 
     def printData(self, appInfo: dict) -> None:
         self.finishedCount += 1
