@@ -213,7 +213,7 @@ class DiscoverSoftwareSection(QWidget):
         
         tooltips = {
             self.upgradeSelected: _("Install package"),
-            inf: _("Show package info"),
+            inf: _("Show info"),
             ins2: _("Run the installer with administrator privileges"),
             ins3: _("Skip the hash check"),
             ins4: _("Interactive installation"),
