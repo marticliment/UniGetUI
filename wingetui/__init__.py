@@ -242,7 +242,7 @@ try:
         def downloadPackagesMetadata(self):
             try: 
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
-                data = urlopen("https://raw.githubusercontent.com/martinet101/WingetUI/screenshots-and-icons/WebBasedData/screenshot-database.json").read()
+                data = urlopen("https://raw.githubusercontent.com/martinet101/WingetUI/main/WebBasedData/screenshot-database.json").read()
                 try:
                     os.makedirs(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta"))
                 except FileExistsError:
