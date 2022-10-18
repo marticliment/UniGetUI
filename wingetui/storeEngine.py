@@ -655,7 +655,7 @@ class PackageInfoPopupWindow(QWidget):
             self.imagesLayout.addWidget(l)
 
         self.contributeLabel = QLabel()
-        self.contributeLabel.setText(f"""{_('Does this package have a missing icon?')}<br>{_('Are these screenshots wron or blurry?')}<br>{_('The icons and screenshots are maintained by users like you!')}<br><a  style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI/wiki/Home#the-icon-and-screenshots-database\">{_('Contribute to the icon and screenshot repository')}</a>
+        self.contributeLabel.setText(f"""{_('Is this package missing the icon?')}<br>{_('Are these screenshots wron or blurry?')}<br>{_('The icons and screenshots are maintained by users like you!')}<br><a  style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI/wiki/Home#the-icon-and-screenshots-database\">{_('Contribute to the icon and screenshot repository')}</a>
         """)
         self.contributeLabel.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.contributeLabel.setOpenExternalLinks(True)
