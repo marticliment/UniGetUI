@@ -1,3 +1,4 @@
+from xml.dom.minidom import Attr
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -31,7 +32,7 @@ class RootWindow(QMainWindow):
         self.resize(QSize(1100, 700))
         self.loadWidgets()
         self.blackmatt = QWidget(self)
-        self.blackmatt.setStyleSheet("background-color: rgba(0, 0, 0, 50%);")
+        self.blackmatt.setStyleSheet("background-color: rgba(0, 0, 0, 30%);border-top-left-radius: 8px;border-top-right-radius: 8px;")
         self.blackmatt.hide()
         self.blackmatt.move(0, 0)
         self.blackmatt.resize(self.size())
@@ -49,6 +50,10 @@ class RootWindow(QMainWindow):
         print("🟢 Main application loaded...")
 
     def loadWidgets(self) -> None:
+
+        self.infobox = PackageInfoPopupWindow(self)
+        globals.infobox = self.infobox
+
         self.widgets = {}
         self.mainWidget = QStackedWidget()
         self.extrasMenu = QMenu("", self)
@@ -150,11 +155,14 @@ class RootWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         w.setLayout(vl)
         self.setCentralWidget(w)
+        globals.centralWindowLayout = w
         sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 4 else 0), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
+
+
 
     def addTab(self, widget: QWidget, label: str, addToMenu: bool = False, actionIcon: str = "") -> QPushButton:
         i = self.mainWidget.addWidget(widget)
@@ -245,6 +253,11 @@ class RootWindow(QMainWindow):
         try:
             self.blackmatt.move(0, 0)
             self.blackmatt.resize(self.size())
+        except AttributeError:
+            pass
+        try:
+            s = self.infobox.size()
+            self.infobox.move((self.width()-s.width())//2, (self.height()-s.height())//2)
         except AttributeError:
             pass
         return super().resizeEvent(event)

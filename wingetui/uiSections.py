@@ -28,7 +28,7 @@ class DiscoverSoftwareSection(QWidget):
         super().__init__(parent = parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = PackageInfoPopupWindow(self)
+        self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
         self.packageReference: dict[str, TreeWidgetItemWithQAction] = {}
 
@@ -432,7 +432,7 @@ class DiscoverSoftwareSection(QWidget):
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
-        ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+        #ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if not "scoop" in store.lower():
@@ -510,7 +510,7 @@ class UpdateSoftwareSection(QWidget):
         self.callInMain.connect(lambda f: f())
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = PackageInfoPopupWindow(self)
+        self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
 
         self.programbox = QWidget()
@@ -1076,7 +1076,7 @@ class UpdateSoftwareSection(QWidget):
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem)
         self.infobox.show()
-        ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+        #ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
     def reloadSources(self):
         print("Reloading sources...")
@@ -1162,7 +1162,7 @@ class UninstallSoftwareSection(QWidget):
         super().__init__(parent = parent)
         self.scoopLoaded = False
         self.wingetLoaded = False
-        self.infobox = PackageInfoPopupWindow(self)
+        self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
         self.allPkgSelected = False
@@ -1437,7 +1437,6 @@ class UninstallSoftwareSection(QWidget):
         layout.addLayout(hl2)
         self.programbox.setLayout(l)
         self.layout.addWidget(self.programbox, stretch=1)
-        self.layout.addWidget(self.infobox, stretch=1)
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
@@ -1525,7 +1524,7 @@ class UninstallSoftwareSection(QWidget):
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
-        ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
+        #ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
 
     def finishLoadingIfNeeded(self, store: str) -> None:

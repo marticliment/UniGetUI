@@ -53,3 +53,7 @@ lastFocusedWindow: int = 0
 themeChanged: bool = False
 updatesAvailable: bool = False
 canUpdate: bool = False
+
+packageMeta: dict = {}
+infobox: QWidget = None
+centralWindowLayout: QWidget = None

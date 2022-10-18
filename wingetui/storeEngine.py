@@ -1,4 +1,8 @@
-from __future__ import annotations # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+from __future__ import annotations
+from decimal import setcontext
+from email.mime import image
+from functools import partial
+from multiprocessing.sharedctypes import Value # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
@@ -472,7 +476,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         super().close()
         super().destroy()
 
-class PackageInfoPopupWindow(QMainWindow):
+class PackageInfoPopupWindow(QWidget):
     onClose = Signal()
     loadInfo = Signal(dict)
     closeDialog = Signal()
@@ -480,29 +484,36 @@ class PackageInfoPopupWindow(QMainWindow):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    callInMain = Signal(object)
     packageItem: TreeWidgetItemWithQAction = None
     finishedCount: int = 0
     
     pressed = False
     oldPos = QPoint(0, 0)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super().__init__(parent = parent)
+        self.callInMain.connect(lambda f: f())
         self.sc = QScrollArea()
-        self.setWindowFlags(Qt.Window)
-        self.setWindowModality(Qt.WindowModal)
-        self.setWindowFlag(Qt.Tool)
-        self.setFocusPolicy(Qt.NoFocus)
-        self.setWindowFlag(Qt.FramelessWindowHint)
+
+        self.dgeff = QGraphicsBlurEffect()
+
         self.store = ""
-        self.sct = QShortcut(QKeySequence("Esc"), self)
+        self.setObjectName("bg")
+        self.sct = QShortcut(QKeySequence("Esc"), self.sc)
         self.sct.activated.connect(lambda: self.close())
         self.sc.setWidgetResizable(True)
-        self.setStyleSheet("""
-        QScrollArea{
+        self.sc.setStyleSheet(f"""
+        QGroupBox {{
+            border: 0px;
+        }}
+        QScrollArea{{
             border-radius: 5px;
             padding: 5px;
-        }
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
+            border-radius: 16px;
+            border: 1px solid #88888888;
+        }}
         """)
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
@@ -519,6 +530,11 @@ class PackageInfoPopupWindow(QMainWindow):
         self.title.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.title.setText(_("Loading..."))
 
+        self.appIcon = QLabel()
+        self.appIcon.setFixedSize(QSize(96, 96))
+        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'#303030' if isDark() else 'white'};")
+        self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
+
         fortyWidget = QWidget()
         fortyWidget.setFixedWidth(120)
 
@@ -527,8 +543,14 @@ class PackageInfoPopupWindow(QMainWindow):
         fortyTopWidget.setMinimumHeight(30)
 
         self.mainGroupBox = QGroupBox()
+        self.mainGroupBox.setFlat(True)
 
-        self.layout.addWidget(self.title)
+        hl = QHBoxLayout()
+        hl.addWidget(self.appIcon)
+        hl.addSpacing(16)
+        hl.addWidget(self.title)
+        
+        self.layout.addLayout(hl)
         self.layout.addStretch()
 
         self.hLayout = QHBoxLayout()
@@ -552,14 +574,103 @@ class PackageInfoPopupWindow(QMainWindow):
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
-        self.layout.addStretch()
+        self.layout.addSpacing(10)
 
         self.license = QLinkLabel(_('License:')+" "+_('Unknown'))
         self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
-        self.layout.addStretch()
+        self.layout.addSpacing(10)
         
+        self.screenshotsWidget = QScrollArea()
+        self.screenshotsWidget.setWidgetResizable(True)
+        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};}}")
+        self.screenshotsWidget.setFixedHeight(150)
+        self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.layout.addWidget(self.screenshotsWidget)
+        self.centralwidget = QWidget(self)
+
+        self.blackCover = QWidget(self.centralwidget)
+        self.blackCover.setStyleSheet("border: none;border-radius: 16px; margin: 0px;background-color: rgba(0, 0, 0, 30%);")
+        self.blackCover.hide()
+        blackCover = self.blackCover
+
+        self.imagesLayout = QHBoxLayout()
+        self.imagesLayout.setContentsMargins(0, 0, 0, 0)
+        self.imagesLayout.setSpacing(0)
+        self.imagesWidget = QWidget()
+        self.imagesWidget.setLayout(self.imagesLayout)
+        self.screenshotsWidget.setWidget(self.imagesWidget)
+        self.imagesLayout.addStretch()
+
+        class LabelWithImageViewer(QLabel):
+            currentPixmap = QPixmap()
+            def __init__(self, parent: QWidget):
+                super().__init__()
+                self.parentwidget: PackageInfoPopupWindow = parent
+                self.clickableButton = QPushButton(self)
+                self.setMinimumWidth(0)
+                self.viewer = QLabel(self.parentwidget)
+                self.viewer.hide()
+                self.viewer.setStyleSheet(f"QLabel{{padding: 16px; border-radius: 16px; background-color: {'#202020' if isDark() else 'white'};border: 1px solid #88888888;}}")
+                e = QGraphicsDropShadowEffect()
+                e.setColor(Qt.black)
+                e.setBlurRadius(10)
+                self.viewer.setGraphicsEffect(e)
+                self.clickableButton.clicked.connect(self.showBigImage)
+                self.backButton = QPushButton(QIcon(getMedia("close")), "", self.viewer)
+                self.backButton.setFlat(True)
+                self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:rgba(31, 31, 31, 50%);border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+                self.backButton.clicked.connect(lambda: (self.viewer.close(), blackCover.hide()))
+                self.clickableButton.setStyleSheet(f"QPushButton{{background-color: rgba(127, 127, 127, 1%);border: 0px;border-radius: 0px;}}QPushButton:hover{{background-color: rgba({'255, 255, 255' if not isDark() else '0, 0, 0'}, 10%)}}")
+
+            def resizeEvent(self, event: QResizeEvent) -> None:
+                self.clickableButton.move(0, 0)
+                self.clickableButton.resize(self.size())
+                return super().resizeEvent(event)
+
+            def showBigImage(self):
+                blackCover.show()
+                p = self.currentPixmap.scaledToWidth(self.parentwidget.width()-55)
+                self.viewer.setPixmap(p)
+                self.viewer.show()
+                self.viewer.setFixedSize(p.width()+32, p.height()+32)
+                self.viewer.move(8, 120)
+                self.viewer.raise_()
+                blackCover.stackUnder(self.viewer)
+                self.backButton.move(self.viewer.width()-40, 0)
+                self.backButton.resize(40, 40)
+                self.backButton.show()
+
+            def setPixmap(self, arg__1: QPixmap) -> None:
+                self.currentPixmap = arg__1
+                return super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
+
+        self.imagesCarrousel: list[LabelWithImageViewer] = []
+        for i in range(20):
+            l = LabelWithImageViewer(self.centralwidget)
+            l.setStyleSheet("border-radius: 4px;margin: 0px;margin-right: 4px;")
+            self.imagesCarrousel.append(l)
+            self.imagesLayout.addWidget(l)
+
+        self.contributeLabel = QLabel()
+        self.contributeLabel.setText(f"""{_('Does this package have a missing icon?')}<br>{_('Are these screenshots wron or blurry?')}<br>{_('The icons and screenshots are maintained by users like you!')}<br><a  style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI/wiki/Home#the-icon-and-screenshots-database\">{_('Contribute to the icon and screenshot repository')}</a>
+        """)
+        self.contributeLabel.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.contributeLabel.setOpenExternalLinks(True)
+        self.imagesLayout.addWidget(self.contributeLabel)
+        self.imagesLayout.addStretch()
+        
+        self.imagesScrollbar = CustomScrollBar()
+        self.imagesScrollbar.setOrientation(Qt.Horizontal)
+        self.screenshotsWidget.setHorizontalScrollBar(self.imagesScrollbar)
+        self.imagesScrollbar.move(self.screenshotsWidget.x(), self.screenshotsWidget.y()+self.screenshotsWidget.width()-16)
+        self.imagesScrollbar.show()
+        self.imagesScrollbar.setFixedHeight(12)
+
+        self.layout.addWidget(self.imagesScrollbar)
+
         hLayout = QHBoxLayout()
         self.versionLabel = QLinkLabel(_("Version:"))
 
@@ -577,8 +688,7 @@ class PackageInfoPopupWindow(QMainWindow):
         self.installButton.setFixedHeight(30)
 
         downloadGroupBox = QGroupBox()
-        downloadGroupBox.setMinimumHeight(100)
-        optionsGroupBox = QGroupBox()
+        downloadGroupBox.setFlat(True)
 
         self.forceCheckbox = QCheckBox()
         self.forceCheckbox.setText(_("Skip hash check"))
@@ -592,11 +702,10 @@ class PackageInfoPopupWindow(QMainWindow):
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
 
-        self.oLayout.addStretch()
+
         self.oLayout.addWidget(self.forceCheckbox)
         self.oLayout.addWidget(self.interactiveCheckbox)
         self.oLayout.addWidget(self.adminCheckbox)
-        self.oLayout.addStretch()
 
         hLayout.addWidget(self.versionLabel)
         hLayout.addWidget(self.versionCombo)
@@ -611,8 +720,8 @@ class PackageInfoPopupWindow(QMainWindow):
 
         downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
-        self.layout.addStretch()
 
+        self.layout.addSpacing(10)
 
         self.packageId = QLinkLabel(_('Program ID:')+" "+_('Unknown'))
         self.packageId.setWordWrap(True)
@@ -635,6 +744,8 @@ class PackageInfoPopupWindow(QMainWindow):
         self.storeLabel = QLinkLabel(f"Source: {self.store}")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
+
+        self.layout.addSpacing(10)
         self.layout.addStretch()
         self.advert = QLinkLabel(_("DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS."))
         self.advert.setWordWrap(True)
@@ -645,21 +756,23 @@ class PackageInfoPopupWindow(QMainWindow):
         self.vLayout.addWidget(self.mainGroupBox)
         self.hLayout.addLayout(self.vLayout, stretch=0)
 
-        self.centralwidget = QWidget()
         self.centralwidget.setLayout(self.hLayout)
         if(isDark()):
             print("🔵 Is Dark")
         self.sc.setWidget(self.centralwidget)
-        self.setCentralWidget(self.sc)
+
+        l = QHBoxLayout()
+        l.setContentsMargins(0,0, 0, 0)
+        l.addWidget(self.sc)
+        self.setLayout(l)
 
 
         self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
-        self.backButton.setStyleSheet("font-size: 22px;")
         self.setStyleSheet("margin: 0px;")
         self.backButton.move(self.width()-40, 0)
         self.backButton.resize(40, 40)
         self.backButton.setFlat(True)
-        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent}QPushButton:hover{background-color:red;}")
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
         self.backButton.clicked.connect(lambda: (self.onClose.emit(), self.close()))
         self.backButton.show()
 
@@ -697,13 +810,25 @@ class PackageInfoPopupWindow(QMainWindow):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+        
+        self.sc.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.verticalScrollbar = CustomScrollBar()
+        self.sc.setVerticalScrollBar(self.verticalScrollbar)
+        self.verticalScrollbar.setParent(self)
+        self.verticalScrollbar.show()
+        self.verticalScrollbar.setFixedWidth(12)
+
+
     
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
-        self.loadingProgressBar.move(0, 0)
-        self.loadingProgressBar.resize(self.width(), 4)
+        self.loadingProgressBar.move(16, 0)
+        self.loadingProgressBar.resize(self.width()-32, 4)
+        self.verticalScrollbar.move(self.width()-16, 44)
+        self.verticalScrollbar.resize(12, self.height()-64)
         self.backButton.move(self.width()-40, 0)
+        self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         if(event):
             return super().resizeEvent(event)
     
@@ -737,12 +862,97 @@ class PackageInfoPopupWindow(QMainWindow):
         self.manifest.setText(f"{_('Manifest')}: {_('Loading...')}")
         self.storeLabel.setText(f"{_('Source')}: {self.store.capitalize()}")
         self.versionCombo.addItems([_("Loading...")])
+
+        def resetLayoutWidget():
+            for l in self.imagesCarrousel:
+                l.setPixmap(QPixmap())
+            Thread(target=self.loadPackageScreenshots, args=(id, store)).start()
+
+        self.callInMain.emit(lambda: resetLayoutWidget())
+        self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
+        Thread(target=self.loadPackageIcon, args=(id, store)).start()
         
         self.finishedCount = 0
         if(store.lower()=="winget"):
             Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
         elif("scoop" in store.lower()):
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
+
+    def loadPackageIcon(self, id: str, store: str) -> None:
+        try:
+            iconprov = "winget" if not "scoop" in store.lower() else "scoop"
+            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconprov}.{id}.icon.png")
+            if not os.path.exists(iconpath):
+                iconurl = globals.packageMeta[iconprov][id]["icon"]
+                print("🔵 Found icon: ", iconurl)
+                icondata = urlopen(iconurl).read()
+                with open(iconpath, "wb") as f:
+                    f.write(icondata)
+            else:
+                cprint(f"🔵 Found cached image in {iconpath}")
+            self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
+        except Exception as e:
+            try:
+                if type(e) != KeyError:
+                    report(e)
+                else:
+                    print(f"🟠 Icon {id} not found in json")
+                pass # TODO: implement fallback icon loader
+            except Exception as e:
+                report(e)
+
+    def loadPackageScreenshots(self, id: str, store: str) -> None:
+        try:
+            self.validImageCount = 0
+            self.canContinueWithImageLoading = 0
+            imageprov = "winget" if not "scoop" in store.lower() else "scoop"
+            count = 0
+            for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+                try:
+                    self.callInMain.emit(self.imagesCarrousel[i].show)   
+                    self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)))    
+                    count += 1            
+                except Exception as e:
+                    report(e)
+            for i in range(count+1, 20):
+                self.callInMain.emit(self.imagesCarrousel[i].hide)
+            for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+                try:
+                    imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
+                    if not os.path.exists(imagepath):
+                        iconurl = globals.packageMeta[imageprov][id]["images"][i]
+                        print("🔵 Found icon: ", iconurl)
+                        icondata = urlopen(iconurl).read()
+                        with open(imagepath, "wb") as f:
+                            f.write(icondata)
+                    else:
+                        cprint(f"🔵 Found cached image in {imagepath}")
+                    p = QPixmap(imagepath)
+                    if not p.isNull():
+                        self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p))
+                        self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
+                        self.validImageCount += 1
+                    else:
+                        print(f"🟠 {imagepath} is a null image")                    
+                except Exception as e:
+                    report(e)
+            if self.validImageCount == 0:
+                cprint("🟠 No valid screenshots were found")
+            else:
+                cprint(f"🟢 {self.validImageCount} vaild images found!")
+            for i in range(self.validImageCount+1, 20):
+                self.callInMain.emit(self.imagesCarrousel[i].hide)
+
+        except Exception as e:
+            try:
+                if type(e) != KeyError:
+                    report(e)
+                else:
+                    print(f"🟠 Icon {id} not found in json")
+                pass # TODO: implement fallback icon loader
+            except Exception as e:
+                report(e)
+
 
     def printData(self, appInfo: dict) -> None:
         self.finishedCount += 1
@@ -808,42 +1018,50 @@ class PackageInfoPopupWindow(QMainWindow):
         self.close()
 
     def show(self) -> None:
-        g: QRect = self.parent().window().geometry()
+        self.blackCover.hide()
+        g = QRect(0, 0, self.parent().window().geometry().width(), self.parent().window().geometry().height())
         self.resize(700, 650)
         self.parent().window().blackmatt.show()
         self.move(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
-        print(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
+        self.raise_()
+        globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
+        self.dgeff.setBlurRadius(40)
+        self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
+        self.blackCover.resize(self.width(), self.centralwidget.height())
         return super().show()
 
     def close(self) -> bool:
+        self.blackCover.hide()
+        for label in self.imagesCarrousel:
+            label.viewer.close()
+        self.dgeff.setBlurRadius(1)
         self.parent().window().blackmatt.hide()
         return super().close()
 
     def hide(self) -> None:
+        self.blackCover.hide()
         try:
+            for label in self.imagesCarrousel:
+                label.viewer.close()
+            self.dgeff.setBlurRadius(0)
             self.parent().window().blackmatt.hide()
         except AttributeError:
             pass
         return super().hide()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.pressed = True
-        self.oldPos = event.pos()
+        #self.pressed = True
+        #self.oldPos = event.pos()
         return super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if self.pressed:
-            try:
-                if not globals.mainWindow.isMaximized() and not globals.mainWindow.isMinimized():
-                    globals.mainWindow.move(globals.mainWindow.pos()+(event.pos()-self.oldPos))
-            except AttributeError as e:
-                report(e)
-            self.move(self.pos()+(event.pos()-self.oldPos))
+        #if self.pressed:
+        #    self.window().move(self.pos()+(event.pos()-self.oldPos))
         return super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        self.pressed = False
-        self.oldPos = event.pos()
+        #self.pressed = False
+        #self.oldPos = event.pos()
         return super().mouseReleaseEvent(event)
 
     def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
