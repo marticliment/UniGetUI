@@ -495,11 +495,6 @@ class PackageInfoPopupWindow(QWidget):
         super().__init__(parent = parent)
         self.callInMain.connect(lambda f: f())
         self.sc = QScrollArea()
-        #self.setWindowFlags(Qt.Window)
-        #self.setWindowModality(Qt.WindowModal)
-        #self.setWindowFlag(Qt.Tool)
-        #self.setFocusPolicy(Qt.NoFocus)
-        #self.setWindowFlag(Qt.FramelessWindowHint)
 
         self.dgeff = QGraphicsBlurEffect()
 
@@ -594,7 +589,12 @@ class PackageInfoPopupWindow(QWidget):
         self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.layout.addWidget(self.screenshotsWidget)
+        self.centralwidget = QWidget(self)
 
+        self.blackCover = QWidget(self.centralwidget)
+        self.blackCover.setStyleSheet("border: none;border-radius: 16px; margin: 0px;background-color: rgba(0, 0, 0, 30%);")
+        self.blackCover.hide()
+        blackCover = self.blackCover
 
         self.imagesLayout = QHBoxLayout()
         self.imagesLayout.setContentsMargins(0, 0, 0, 0)
@@ -602,13 +602,65 @@ class PackageInfoPopupWindow(QWidget):
         self.imagesWidget = QWidget()
         self.imagesWidget.setLayout(self.imagesLayout)
         self.screenshotsWidget.setWidget(self.imagesWidget)
+        self.imagesLayout.addStretch()
 
-        self.imagesCarrousel: list[QLabel] = []
+        class LabelWithImageViewer(QLabel):
+            currentPixmap = QPixmap()
+            def __init__(self, parent: QWidget):
+                super().__init__()
+                self.parentwidget: PackageInfoPopupWindow = parent
+                self.clickableButton = QPushButton(self)
+                self.setMinimumWidth(0)
+                self.viewer = QLabel(self.parentwidget)
+                self.viewer.hide()
+                self.viewer.setStyleSheet(f"QLabel{{padding: 16px; border-radius: 16px; background-color: {'#202020' if isDark() else 'white'};border: 1px solid #88888888;}}")
+                e = QGraphicsDropShadowEffect()
+                e.setColor(Qt.black)
+                e.setBlurRadius(10)
+                self.viewer.setGraphicsEffect(e)
+                self.clickableButton.clicked.connect(self.showBigImage)
+                self.backButton = QPushButton(QIcon(getMedia("close")), "", self.viewer)
+                self.backButton.setFlat(True)
+                self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:rgba(31, 31, 31, 50%);border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+                self.backButton.clicked.connect(lambda: (self.viewer.close(), blackCover.hide()))
+                self.clickableButton.setStyleSheet(f"QPushButton{{background-color: rgba(127, 127, 127, 1%);border: 0px;border-radius: 0px;}}QPushButton:hover{{background-color: rgba({'255, 255, 255' if not isDark() else '0, 0, 0'}, 10%)}}")
+
+            def resizeEvent(self, event: QResizeEvent) -> None:
+                self.clickableButton.move(0, 0)
+                self.clickableButton.resize(self.size())
+                return super().resizeEvent(event)
+
+            def showBigImage(self):
+                blackCover.show()
+                p = self.currentPixmap.scaledToWidth(self.parentwidget.width()-55)
+                self.viewer.setPixmap(p)
+                self.viewer.show()
+                self.viewer.setFixedSize(p.width()+32, p.height()+32)
+                self.viewer.move(8, 120)
+                self.viewer.raise_()
+                blackCover.stackUnder(self.viewer)
+                self.backButton.move(self.viewer.width()-40, 0)
+                self.backButton.resize(40, 40)
+                self.backButton.show()
+
+            def setPixmap(self, arg__1: QPixmap) -> None:
+                self.currentPixmap = arg__1
+                return super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
+
+        self.imagesCarrousel: list[LabelWithImageViewer] = []
         for i in range(20):
-            l = QLabel(f"{i}")
+            l = LabelWithImageViewer(self.centralwidget)
             l.setStyleSheet("border-radius: 4px;margin: 0px;margin-right: 4px;")
             self.imagesCarrousel.append(l)
             self.imagesLayout.addWidget(l)
+
+        self.contributeLabel = QLabel()
+        self.contributeLabel.setText(f"""{_('Does this package have a missing icon?')}<br>{_('Are these screenshots wron or blurry?')}<br>{_('The icons and screenshots are maintained by users like you!')}<br><a  style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI/wiki/Home#the-icon-and-screenshots-database\">{_('Contribute to the icon and screenshot repository')}</a>
+        """)
+        self.contributeLabel.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.contributeLabel.setOpenExternalLinks(True)
+        self.imagesLayout.addWidget(self.contributeLabel)
+        self.imagesLayout.addStretch()
         
         self.imagesScrollbar = CustomScrollBar()
         self.imagesScrollbar.setOrientation(Qt.Horizontal)
@@ -704,7 +756,6 @@ class PackageInfoPopupWindow(QWidget):
         self.vLayout.addWidget(self.mainGroupBox)
         self.hLayout.addLayout(self.vLayout, stretch=0)
 
-        self.centralwidget = QWidget()
         self.centralwidget.setLayout(self.hLayout)
         if(isDark()):
             print("🔵 Is Dark")
@@ -717,7 +768,6 @@ class PackageInfoPopupWindow(QWidget):
 
 
         self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
-        self.backButton.setStyleSheet("font-size: 22px;")
         self.setStyleSheet("margin: 0px;")
         self.backButton.move(self.width()-40, 0)
         self.backButton.resize(40, 40)
@@ -762,7 +812,6 @@ class PackageInfoPopupWindow(QWidget):
         self.leftSlow.start()
         
         self.sc.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        #self.sc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.verticalScrollbar = CustomScrollBar()
         self.sc.setVerticalScrollBar(self.verticalScrollbar)
         self.verticalScrollbar.setParent(self)
@@ -860,13 +909,13 @@ class PackageInfoPopupWindow(QWidget):
             count = 0
             for i in range(len(globals.packageMeta[imageprov][id]["images"])):
                 try:
-                    self.callInMain.emit(lambda: self.imagesCarrousel[i].show())   
+                    self.callInMain.emit(self.imagesCarrousel[i].show)   
                     self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)))    
                     count += 1            
                 except Exception as e:
                     report(e)
             for i in range(count+1, 20):
-                self.callInMain.emit(lambda: self.imagesCarrousel[i].hide())
+                self.callInMain.emit(self.imagesCarrousel[i].hide)
             for i in range(len(globals.packageMeta[imageprov][id]["images"])):
                 try:
                     imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
@@ -880,9 +929,8 @@ class PackageInfoPopupWindow(QWidget):
                         cprint(f"🔵 Found cached image in {imagepath}")
                     p = QPixmap(imagepath)
                     if not p.isNull():
-                        p = p.scaledToHeight(128, Qt.SmoothTransformation)
                         self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p))
-                        self.callInMain.emit(lambda: self.imagesCarrousel[self.validImageCount].show())
+                        self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
                         self.validImageCount += 1
                     else:
                         print(f"🟠 {imagepath} is a null image")                    
@@ -970,6 +1018,7 @@ class PackageInfoPopupWindow(QWidget):
         self.close()
 
     def show(self) -> None:
+        self.blackCover.hide()
         g = QRect(0, 0, self.parent().window().geometry().width(), self.parent().window().geometry().height())
         self.resize(700, 650)
         self.parent().window().blackmatt.show()
@@ -978,17 +1027,22 @@ class PackageInfoPopupWindow(QWidget):
         globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
         self.dgeff.setBlurRadius(40)
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
+        self.blackCover.resize(self.width(), self.centralwidget.height())
         return super().show()
 
     def close(self) -> bool:
-        #globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
+        self.blackCover.hide()
+        for label in self.imagesCarrousel:
+            label.viewer.close()
         self.dgeff.setBlurRadius(1)
         self.parent().window().blackmatt.hide()
         return super().close()
 
     def hide(self) -> None:
+        self.blackCover.hide()
         try:
-            #globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
+            for label in self.imagesCarrousel:
+                label.viewer.close()
             self.dgeff.setBlurRadius(0)
             self.parent().window().blackmatt.hide()
         except AttributeError:
