@@ -131,7 +131,7 @@ If this doesn't work, consider asking for help at [Winget's own project page](ht
 
 A: This is a known limitation of Winget. 
 
-See more details in issue https://github.com/martinet101/WingetUI/issues/196.<br>
+See more details in issue https://github.com/microsoft/winget-cli/issues/2603.<br>
 
 #
 
