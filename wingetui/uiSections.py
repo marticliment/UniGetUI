@@ -213,7 +213,7 @@ class DiscoverSoftwareSection(QWidget):
         
         tooltips = {
             self.upgradeSelected: _("Install package"),
-            inf: _("Show info"),
+            inf: _("Show package info"),
             ins2: _("Run the installer with administrator privileges"),
             ins3: _("Skip the hash check"),
             ins4: _("Interactive installation"),
@@ -1310,7 +1310,7 @@ class UninstallSoftwareSection(QWidget):
             ins5 = QAction(_("Interactive uninstall"))
             ins5.setIcon(QIcon(getMedia("interactive")))
             ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
-            ins4 = QAction(_("Show package info"))
+            ins4 = QAction(_("Show info"))
             ins4.setIcon(QIcon(getMedia("info")))
             ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
             contextMenu.addAction(ins1)
