@@ -58,10 +58,6 @@ Run the following command in PowerShell or Command Prompt: `winget install winge
 
 - The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
-<br>⚠️ **Currently there are known issues between WingetUI and Scoop!** 
-
-**Please install the app with its own installer or through Winget for the time being.** ⚠️
-
 <br>In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
 
 Then, to install WingetUI, execute the following command: `scoop install wingetui`
