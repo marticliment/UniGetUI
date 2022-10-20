@@ -51,7 +51,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 continue
             items = list(filter(None, element.split(" ")))
             if(len(items)>=2):
-                signal.emit(items[0] if lc else items[0].capitalize(), f"{items[0]}", items[1], "Scoop")
+                signal.emit(items[0] if lc else items[0].capitalize(), f"{items[0]}", items[1], f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
         except IndexError as e:
             print("IndexError: "+str(e))
         except Exception as e:
@@ -82,11 +82,9 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
         if "Name" in element:
             continue
         try:
-            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), "Scoop")
-        except IndexError as e:
-            print("IndexError: "+str(e))
+            signal.emit(element.split(" ")[0].strip() if lc else element.split(" ")[0].strip().capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), f"Scoop")
         except Exception as e:
-            print(e)
+            report(e)
     print("🟢 Scoop search finished")
     finishSignal.emit("scoop")
 
