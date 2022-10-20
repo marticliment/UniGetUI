@@ -44,12 +44,35 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         counter = 0
         for element in output:
             try:
-                element = bytes(element, "utf-8")
-                export = (element[0:idSeparator], element[idSeparator:verSeparator], element[verSeparator:])
-                signal.emit(str(export[0], "utf-8").strip(), str(export[1], "utf-8").strip(), str(export[2], "utf-8").split(" ")[0].strip(), "Winget")
+                verElement = element[idSeparator:].strip()
+                verElement.replace("\t", " ")
+                while "  " in verElement:
+                    verElement = verElement.replace("  ", " ")
+                iOffset = 0
+                id = verElement.split(" ")[iOffset+0]
+                ver = verElement.split(" ")[iOffset+1]
+                if len(id)==1:
+                    iOffset + 1
+                    id = verElement.split(" ")[iOffset+0]
+                    ver = verElement.split(" ")[iOffset+1]
+                if ver.strip() in ("<", "-", ""):
+                    iOffset += 1
+                    ver = verElement.split(" ")[iOffset+1]
+                if not "  " in element[0:idSeparator].strip():
+                    signal.emit(element[0:idSeparator].strip(), id, ver, "Winget")
+                else:
+                    print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
+                    element = bytes(element, "utf-8")
+                    print(element, verSeparator)
+                    export = (element[0:idSeparator], str(element[idSeparator:], "utf-8").strip().split(" ")[0], list(filter(None, str(element[idSeparator:], "utf-8").strip().split(" ")))[1])
+                    signal.emit(str(export[0], "utf-8").strip(), export[1], export[2], "Winget")
             except Exception as e:
                 try:
-                    element = str(element, "utf-8")
+                    report(e)
+                    try:
+                        element = str(element, "utf-8")
+                    except Exception as e:
+                        print(e)
                     signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
                 except Exception as e:
                     report(e)
@@ -165,8 +188,6 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     counter = 0
     emptyStr = ""
     wingetName = "Winget"
-    for i in output:
-        print(i)
     for element in output:
         try:
             element = str(element, "utf-8", errors="ignore")
