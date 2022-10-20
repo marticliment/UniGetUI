@@ -22,7 +22,7 @@
   "Allow parallel installs (NOT RECOMMENDED)" : null,
   "Application theme:" : null,
   "App Name" : null,
-  "Are these screenshots wron or blurry?" : null,
+  "Are these screenshots wron or blurry?" : "Are these screenshots wrong or blurry?",
   "Are you sure?" : null,
   "Author" : null,
   "Author:" : null,
