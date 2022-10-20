@@ -257,6 +257,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         line = line.strip()
         if line:
             output.append(str(line, encoding='utf-8', errors="ignore"))
+    print(p.stdout)
     for line in output:
         if("Publisher:" in line):
             appInfo["publisher"] = line.replace("Publisher:", "").strip()
@@ -333,6 +334,8 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             output += line+"\n"
     p.wait()
     outputCode = p.returncode
+    if "1603" in output:
+        outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
 

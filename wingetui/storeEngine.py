@@ -425,51 +425,55 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
         
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 0 and not self.canceled:
-            if self.packageItem:
-                try:
-                    self.packageItem.setHidden(True)
-                    i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
-                    del i
-                except Exception as e:
-                    report(e)
-        self.finishedInstallation = True
-        self.cancelButton.setEnabled(True)
-        removeProgram(self.installId)
-        try: self.waitThread.kill()
-        except: pass
-        try: self.t.kill()
-        except: pass
-        try: self.p.kill()
-        except: pass
-        if not(self.canceled):
-            if(returncode == 0):
-                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
-                self.cancelButton.setText(_("OK"))
-                self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
-                self.cancelButton.clicked.connect(self.close)
-                self.info.setText(f"{self.programName} was uninstalled successfully!")
-                self.progressbar.setValue(1000)
-                self.startCoolDown()
-            else:
-                globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
-                self.cancelButton.setText(_("OK"))
-                self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
-                self.cancelButton.clicked.connect(self.close)
-                self.progressbar.setValue(1000)
-                self.err = ErrorMessage(self.window())
-                errorData = {
-                    "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
-                    "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
-                    "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller.").format(self.actionVerb, self.programName),
-                    "buttonTitle": _("Close"),
-                    "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                    "icon": QIcon(getMedia("warn")),
-                    "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                    "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
-                    "notifIcon": QIcon(getMedia("notif_warn")),
-                    }
-                self.err.showErrorMessage(errorData)
+        if returncode == 1603:
+            self.adminstr = [sudoPath]
+            self.runInstallation()
+        else:
+            if returncode == 0 and not self.canceled:
+                if self.packageItem:
+                    try:
+                        self.packageItem.setHidden(True)
+                        i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
+                        del i
+                    except Exception as e:
+                        report(e)
+            self.finishedInstallation = True
+            self.cancelButton.setEnabled(True)
+            removeProgram(self.installId)
+            try: self.waitThread.kill()
+            except: pass
+            try: self.t.kill()
+            except: pass
+            try: self.p.kill()
+            except: pass
+            if not(self.canceled):
+                if(returncode == 0):
+                    self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
+                    self.cancelButton.setText(_("OK"))
+                    self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
+                    self.cancelButton.clicked.connect(self.close)
+                    self.info.setText(f"{self.programName} was uninstalled successfully!")
+                    self.progressbar.setValue(1000)
+                    self.startCoolDown()
+                else:
+                    globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
+                    self.cancelButton.setText(_("OK"))
+                    self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+                    self.cancelButton.clicked.connect(self.close)
+                    self.progressbar.setValue(1000)
+                    self.err = ErrorMessage(self.window())
+                    errorData = {
+                        "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                        "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
+                        "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller.").format(self.actionVerb, self.programName),
+                        "buttonTitle": _("Close"),
+                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                        "icon": QIcon(getMedia("warn")),
+                        "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                        "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
+                        "notifIcon": QIcon(getMedia("notif_warn")),
+                        }
+                    self.err.showErrorMessage(errorData)
     
     def close(self):
         globals.installersWidget.removeItem(self)
