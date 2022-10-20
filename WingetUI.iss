@@ -76,7 +76,7 @@ end;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Desktop icon"; Flags: unchecked      
-Name: "disablescoop"; Description: "Do not install Scoop (recommended for beginners)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
+Name: "disablescoop"; Description: "Do not install Scoop (recommended for most users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
 Name: "installscoop"; Description: "Enable and install Scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
 [Registry]
