@@ -1612,8 +1612,14 @@ class UninstallSoftwareSection(QWidget):
                 for illegal_char in ("{", "}", "_", " "):
                     if illegal_char in id:
                         store = "Local PC"
-                if id.count(".") != 1:
-                    store = "Local PC"
+                if store.lower() == "winget":
+                    if id.count(".") != 1:
+                        store = "Local PC"
+                        if id.count(".") > 1:
+                            for letter in id:
+                                if letter in "AABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                                    store = "Winget"
+                                    break
             item.setText(1, name)
             item.setText(2, id)
             item.setIcon(1, self.installIcon)
