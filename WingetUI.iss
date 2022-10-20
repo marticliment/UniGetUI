@@ -35,7 +35,30 @@ UsePreviousTasks=yes
 
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "English"; MessagesFile: "compiler:Default.isl"    
+Name: "Armenian"; MessagesFile: "compiler:Languages\Armenian.isl"
+Name: "BrazilianPortuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "Catalan"; MessagesFile: "compiler:Languages\Catalan.isl"
+Name: "Corsican"; MessagesFile: "compiler:Languages\Corsican.isl"
+Name: "Czech"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "Danish"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "Dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "Finnish"; MessagesFile: "compiler:Languages\Finnish.isl"
+Name: "French"; MessagesFile: "compiler:Languages\French.isl"
+Name: "German"; MessagesFile: "compiler:Languages\German.isl"
+Name: "Hebrew"; MessagesFile: "compiler:Languages\Hebrew.isl"
+Name: "Icelandic"; MessagesFile: "compiler:Languages\Icelandic.isl"
+Name: "Italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "Japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "Norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
+Name: "Polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "Portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "Russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "Slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
+Name: "Spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "Turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
+Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+
 [Code]
 procedure InitializeWizard;
 begin
@@ -53,7 +76,7 @@ end;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Desktop icon"; Flags: unchecked      
-Name: "disablescoop"; Description: "Do not install Scoop (recommended)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
+Name: "disablescoop"; Description: "Do not install Scoop (recommended for beginners)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
 Name: "installscoop"; Description: "Enable and install Scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
 [Registry]
