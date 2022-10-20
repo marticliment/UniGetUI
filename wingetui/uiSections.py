@@ -1134,7 +1134,7 @@ class UpdateSoftwareSection(QWidget):
         else:
             if self.isToolbarSmall:
                 self.isToolbarSmall = False
-                
+                self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         self.showUnknownSection.setFixedWidth(self.showUnknownSection.sizeHint().width()+10)
 
@@ -1349,6 +1349,25 @@ class UninstallSoftwareSection(QWidget):
         self.toolbar.addAction(self.upgradeSelected)
         self.toolbar.widgetForAction(self.upgradeSelected).setFixedSize(40, 45)
 
+        def showInfo():
+            item = self.packageList.currentItem()
+            if item.text(4).lower() == "local pc":
+                self.err = ErrorMessage(self.window())
+                errorData = {
+                        "titlebarTitle": _("Unable to load informarion"),
+                        "mainTitle": _("Unable to load informarion"),
+                        "mainText": _("We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop."),
+                        "buttonTitle": _("Ok"),
+                        "errorDetails": _("Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them."),
+                        "icon": QIcon(getMedia("warn")),
+                    }
+                self.err.showErrorMessage(errorData, showNotification=False)
+            else:
+                self.openInfo(item.text(1), item.text(2), item.text(5).lower(), item)
+
+        inf = QAction("", self.toolbar)# ("Show info")
+        inf.triggered.connect(showInfo)
+        inf.setIcon(QIcon(getMedia("info")))
         ins2 = QAction("", self.toolbar)# ("Run as administrator")
         ins2.setIcon(QIcon(getMedia("runasadmin")))
         ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
@@ -1359,11 +1378,12 @@ class UninstallSoftwareSection(QWidget):
         
         tooltips = {
             self.upgradeSelected: _("Uninstall package"),
+            inf: _("Show package info"),
             ins2: _("Uninstall with administrator privileges"),
             ins5: _("Interactive uninstall"),
         }
 
-        for action in [self.upgradeSelected, ins2, ins5]:
+        for action in [self.upgradeSelected, inf, ins2, ins5]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
             self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
