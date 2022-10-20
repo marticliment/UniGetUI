@@ -975,8 +975,12 @@ class PackageInfoPopupWindow(QWidget):
             self.interactiveCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
-        self.author.setText(f"{_('Author')}: <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["author"]+"</a>")
-        self.publisher.setText(f"{_('Publisher')}: <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["publisher"]+"</a>")
+        if self.store.lower() == "winget":
+            self.author.setText(f"{_('Author')}: <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["author"]+"</a>")
+            self.publisher.setText(f"{_('Publisher')}: <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["publisher"]+"</a>")
+        else:
+            self.author.setText(f"{_('Author')}: "+appInfo["author"])
+            self.publisher.setText(f"{_('Publisher')}: "+appInfo["publisher"])
         self.homepage.setText(f"{_('Homepage')}: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
         self.license.setText(f"{_('License')}: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
         try:
