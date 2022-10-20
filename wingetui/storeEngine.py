@@ -487,6 +487,7 @@ class PackageInfoPopupWindow(QWidget):
     callInMain = Signal(object)
     packageItem: TreeWidgetItemWithQAction = None
     finishedCount: int = 0
+    backgroundApplied: bool = False
     
     pressed = False
     oldPos = QPoint(0, 0)
@@ -496,7 +497,7 @@ class PackageInfoPopupWindow(QWidget):
         self.callInMain.connect(lambda f: f())
         self.sc = QScrollArea()
 
-        self.dgeff = QGraphicsBlurEffect()
+        self.blurBackgroundEffect = QGraphicsBlurEffect()
 
         self.store = ""
         self.setObjectName("bg")
@@ -1024,8 +1025,11 @@ class PackageInfoPopupWindow(QWidget):
         self.parent().window().blackmatt.show()
         self.move(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
         self.raise_()
-        globals.centralWindowLayout.setGraphicsEffect(self.dgeff)
-        self.dgeff.setBlurRadius(40)
+        if not self.backgroundApplied:
+            globals.centralWindowLayout.setGraphicsEffect(self.blurBackgroundEffect)
+            self.backgroundApplied = True
+        self.blurBackgroundEffect.setEnabled(True)
+        self.blurBackgroundEffect.setBlurRadius(40)
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         self.blackCover.resize(self.width(), self.centralwidget.height())
         return super().show()
@@ -1034,19 +1038,19 @@ class PackageInfoPopupWindow(QWidget):
         self.blackCover.hide()
         for label in self.imagesCarrousel:
             label.viewer.close()
-        self.dgeff.setBlurRadius(1)
         self.parent().window().blackmatt.hide()
+        self.blurBackgroundEffect.setEnabled(False)
         return super().close()
 
     def hide(self) -> None:
         self.blackCover.hide()
         try:
-            for label in self.imagesCarrousel:
-                label.viewer.close()
-            self.dgeff.setBlurRadius(0)
             self.parent().window().blackmatt.hide()
         except AttributeError:
             pass
+        for label in self.imagesCarrousel:
+            label.viewer.close()
+        self.blurBackgroundEffect.setEnabled(False)
         return super().hide()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:

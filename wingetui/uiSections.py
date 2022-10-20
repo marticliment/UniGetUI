@@ -131,7 +131,7 @@ class DiscoverSoftwareSection(QWidget):
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
             inf = QAction(_("Show info"))
-            inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
+            inf.triggered.connect(lambda: (contextMenu.close(), self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem())))
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction(_("Install"))
             ins1.setIcon(QIcon(getMedia("newversion")))
@@ -432,7 +432,6 @@ class DiscoverSoftwareSection(QWidget):
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
-        #ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         if not "scoop" in store.lower():
