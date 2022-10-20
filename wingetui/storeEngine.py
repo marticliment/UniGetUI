@@ -567,11 +567,15 @@ class PackageInfoPopupWindow(QWidget):
         self.layout.addWidget(self.homepage)
 
         self.publisher = QLinkLabel(_('Publisher:')+" "+_('Unknown'))
+        self.publisher.setOpenExternalLinks(False)
+        self.publisher.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
         self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
         self.author = QLinkLabel(_('Author:')+" "+_('Unknown'))
+        self.author.setOpenExternalLinks(False)
+        self.author.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
@@ -971,8 +975,8 @@ class PackageInfoPopupWindow(QWidget):
             self.interactiveCheckbox.setEnabled(True)
         self.title.setText(appInfo["title"])
         self.description.setText(appInfo["description"])
-        self.author.setText(f"{_('Author')}: "+appInfo["author"])
-        self.publisher.setText(f"{_('Publisher')}: "+appInfo["publisher"])
+        self.author.setText(f"{_('Author')}: <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["author"]+"</a>")
+        self.publisher.setText(f"{_('Publisher')}: <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["publisher"]+"</a>")
         self.homepage.setText(f"{_('Homepage')}: <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
         self.license.setText(f"{_('License')}: {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
         try:

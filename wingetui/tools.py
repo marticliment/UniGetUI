@@ -594,7 +594,6 @@ class QLinkLabel(QLabel):
         ApplyMenuBlur(c.winId().__int__(), c)
         c.exec(QCursor.pos())
 
-
 class QAnnouncements(QLabel):
     callInMain = Signal(object)
 
