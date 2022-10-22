@@ -46,6 +46,7 @@ Thank you! :)
 <p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br><br></p>
 
 - The first is by downloading the latest version of the installer:
+<br>
 
 <p align="center"><b><a href="https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download WingetUI</a></b></p>
 <br>
@@ -58,7 +59,7 @@ Run the following command in PowerShell or Command Prompt: `winget install winge
 
 - The third is by using [Scoop](https://scoop.sh/) — see the instructions below.
 
-<br>In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
+In case it's not already added, it's required to add the _Extras_ bucket first: `scoop bucket add extras`
 
 Then, to install WingetUI, execute the following command: `scoop install wingetui`
 
@@ -144,7 +145,7 @@ Since WingetUI is open source and safe to use, simply whitelist the app in the s
 
 **Q: Will Chocolatey be supported?**<br>
 
-A: Maybe in the future. 
+A: This is currently under study. 
 
 See more details in issue https://github.com/martinet101/WingetUI/issues/56.<br>
 
@@ -155,5 +156,13 @@ See more details in issue https://github.com/martinet101/WingetUI/issues/56.<br>
 A: This is not possible, nor is it planned for the near future. 
 
 See more details in issue https://github.com/martinet101/WingetUI/issues/87.<br>
+
+#
+
+**Q: Are Winget/Scoop packages safe?**<br>
+
+A: WingetUI, Microsoft and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
+
+To mitigate the risks of downloading malware, Microsoft has implemented a few checks for the software available on Winget. Even so, It's recommended to only download software from publishers that you trust. 
 
 <br><p align="center"><i>Check out the <a href="https://github.com/martinet101/WingetUI/wiki">Wiki</a> for more information!</i></p>
