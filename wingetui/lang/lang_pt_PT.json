@@ -64,7 +64,7 @@
   "Found packages: {0}" : "Pacotes encontrados: {0}",
   "Found packages: {0}, not finished yet..." : "Pacotes encontrados: {0}, ainda não terminou...",
   "General preferences" : "Preferências gerais",
-  "General Settings" : "Configurações Gerais",
+  "General Settings" : "Definições Gerais",
   "Hide details" : "Ocultar detalhes",
   "Homepage" : "Página Inicial",
   "Homepage URL:" : "URL da página incial:",
@@ -219,6 +219,6 @@
   "WingetUI - 1 update is available" : "WingetUI - 1 actualização está disponível",
   "WingetUI display language:" : "Idioma de exibição do WingetUI:",
   "WingetUI log" : "Log do WingetUI",
-  "WingetUI Settings" : "Configurações do WingetUI",
+  "WingetUI Settings" : "Definições do WingetUI",
   "WingetUI version {0}" : "WingetUI versão {0}"
 }
