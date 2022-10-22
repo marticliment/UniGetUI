@@ -13,7 +13,7 @@ assignees: 'martinet101'
 - [ ] **I have checked that the bug is not a duplicate or, if it is, it needs to be reopened**
 - [ ] **I have checked that I am running the latest version of WingetUI**
 - [ ] **I have tried resetting and reinstalling WingetUI and the issue persisted or happened again**
-- [ ] **I have checked the [Common Problems](https://github.com/martinet101/WingetUI/wiki#common-problems) section on the wiki for solutions**
+- [ ] **I have checked the [FAQ](https://github.com/martinet101/WingetUI#faq) section for solutions**
 
 </b>
 
