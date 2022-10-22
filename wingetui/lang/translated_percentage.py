@@ -4,6 +4,5 @@
 untranslatedPercentage = {
   "fr": "99%",
   "hi": "98%",
-  "tr": "99%",
   "zh": "95%"
 }
