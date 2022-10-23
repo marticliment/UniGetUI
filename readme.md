@@ -5,7 +5,7 @@
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
-<br>The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
+<br>The main goal of this project is to create an intuitive UI for the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
 
 With this app, you'll be able to download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
