@@ -183,7 +183,7 @@
   "uninstalling" : null,
   "Uninstall package" : null,
   "Uninstall selected package" : null,
-  "Uninstall selected packages" : null,
+  "Uninstall selected packages" : "Uninstall selected",
   "Uninstall with administrator privileges" : null,
   "Unknown" : null,
   "Update" : null,
