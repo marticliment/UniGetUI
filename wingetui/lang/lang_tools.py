@@ -11,7 +11,8 @@ languageReference = {
     "hi"    : "Hindi - हिंदी",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
-    "tr"    : "Turkish - Türkçe"
+    "tr"    : "Turkish - Türkçe",
+    "ua"    : "Ukranian - Yкраї́нська",
 }
 
 

@@ -3,5 +3,5 @@
 
 untranslatedPercentage = {
   "hi": "98%",
-  "zh": "95%"
+  "ua": "93%"
 }
