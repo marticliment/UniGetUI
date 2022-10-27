@@ -2,6 +2,6 @@
 # The following list includes ONLY non-full translated files.
 
 untranslatedPercentage = {
-  "hi": "98%",
+  "it": "0%",
   "ua": "93%"
 }
