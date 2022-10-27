@@ -28,6 +28,13 @@ class PackageInstallerWidget(QGroupBox):
         self.actionDoing = _("installing")
         self.actionName = _("installation")
         self.actionVerb = _("install")
+        self.liveOutputWindow = QPlainTextEdit(self)
+        self.liveOutputWindow.setWindowFlag(Qt.Window)
+        self.liveOutputWindow.setReadOnly(True)
+        self.liveOutputWindow.resize(500, 200)
+        self.liveOutputWindow.setWindowTitle(f"Live command-line output")
+        self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
+        ApplyMica(self.liveOutputWindow.winId(), MICAMODE.DARK)
         self.runAsAdmin = admin
         self.useId = useId
         self.adminstr = [sudoPath] if self.runAsAdmin else []
@@ -62,6 +69,13 @@ class PackageInstallerWidget(QGroupBox):
         self.finishInstallation.connect(self.finish)
         self.layout.addWidget(self.info)
         self.counterSignal.connect(self.counter)
+        self.liveOutputButton = QPushButton(QIcon(realpath+"/resources/console.png"), _(""))
+        self.liveOutputButton.clicked.connect(lambda: (self.liveOutputWindow.show(), ApplyMica(self.liveOutputWindow.winId(), isDark())))
+        self.liveOutputButton.setFixedHeight(30)
+        self.liveOutputButton.setFixedWidth(30)
+        self.liveOutputButton.setToolTip(_("Show the live output"))
+        self.liveOutputButton.setIcon(QIcon(getMedia("console")))
+        self.layout.addWidget(self.liveOutputButton)
         self.cancelButton = QPushButton(QIcon(realpath+"/resources/cancel.png"), _("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
         self.cancelButton.setFixedHeight(30)
@@ -114,6 +128,7 @@ class PackageInstallerWidget(QGroupBox):
 
     def runInstallation(self) -> None:
         self.finishedInstallation = False
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -139,6 +154,7 @@ class PackageInstallerWidget(QGroupBox):
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+
 
     def counter(self, line: int) -> None:
         if(line == 1):
@@ -237,7 +253,7 @@ class PackageInstallerWidget(QGroupBox):
         ops = [op1, op2, op3, op4]
         def updateOp(v: float):
             i = 0
-            for widget in [self.cancelButton, self.label, self.progressbar, self.info]:
+            for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
                 ops[i].setOpacity(v)
                 widget: QWidget
                 widget.setGraphicsEffect(ops[i])
@@ -267,6 +283,7 @@ class PackageInstallerWidget(QGroupBox):
     def close(self):
         globals.installersWidget.removeItem(self)
         super().close()
+        self.liveOutputWindow.close()
         super().destroy()
 
 class PackageUpdaterWidget(PackageInstallerWidget):
@@ -330,6 +347,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
     def close(self):
         globals.installersWidget.removeItem(self)
         super().destroy()
+        self.liveOutputWindow.close()
         super().close()
 
 class PackageUninstallerWidget(PackageInstallerWidget):
@@ -477,6 +495,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     
     def close(self):
         globals.installersWidget.removeItem(self)
+        self.liveOutputWindow.close()
         super().close()
         super().destroy()
 
