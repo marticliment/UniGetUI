@@ -5,10 +5,12 @@ from pathlib import Path
 languageReference = {
     "default": "System language",
     "ca"    : "Catalan - Català",
+    "de"    : "German - Deutsch",
     "zh"    : "Chinese - 中文",
     "en"    : "English - English",
     "fr"    : "French - Français",
     "hi"    : "Hindi - हिंदी",
+    "it"    : "Italian - Italiano",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
     "tr"    : "Turkish - Türkçe",
