@@ -1844,12 +1844,39 @@ class AboutSection(QScrollArea):
         self.layout.addSpacing(5)
         self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
         self.layout.addSpacing(30)
+
+        self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))        
+        self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
+        GHcontributors = "<ul>"
+        for user in ("ppvnf", "RavenMacDaddy", "vedantmgoyal2009", "Satanarious", "sitiom", "harleylara", "victorelec14", "neoOpus"):
+            GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
+        GHcontributors += "</ul>"
+        self.layout.addWidget(QLinkLabel(GHcontributors))
+        self.layout.addSpacing(15)
+
+        self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))        
+        self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
+        translators = "<ul>"
+        for user in ("Ahmet Özmetin: Turkish", "BUGP Association: Chinese", "Datacra5H: German", "Evans: French", "Operator404: Ukranian", "ppvnf: Portuguese (Portugal and Brazil)", "Satyam Singh Niranjan: Hindi", "Martí Climent: Catalan"):
+            translators += f"<li>{user}</li>"
+        translators += "</ul><br>"
+        translators += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/martinet101/WingetUI/wiki#translating-wingetui")
+        self.layout.addWidget(QLinkLabel(translators))
+        self.layout.addSpacing(15)
+        
+        self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))        
+        self.layout.addWidget(QLinkLabel(_("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
+        self.layout.addWidget(QLinkLabel(_("Check out my {0} and my {1}!").format(f"<a style=\"color:{blueColor}\" href=\"https://github.com/martinet101\">{_('GitHub profile')}</a>", f"<a style=\"color:{blueColor}\" href=\"http://www.somepythonthings.tk\">{_('homepage')}</a>")))
+        self.layout.addWidget(QLinkLabel(_("Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!").format(f"<a style=\"color:{blueColor}\" href=\"https://ko-fi.com/martinet101\">{_('buy me a coffee')}</a>")))
+
+        self.layout.addSpacing(15)
         self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"PySide6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
         self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
+        self.layout.addWidget(QLinkLabel(f"Pywin32:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://spdx.org/licenses/PSF-2.0.html\">https://spdx.org/licenses/PSF-2.0.html</a>"))
         self.layout.addWidget(QLinkLabel())
         self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
         self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;Unlicense:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
