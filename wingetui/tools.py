@@ -766,17 +766,41 @@ if getSettingsValue("PreferredLanguage") == "":
 
 def loadLangFile(file: str, bundled: bool = False) -> dict:
     try:
-        path = os.path.join(os.path.expanduser("~"), ".elevenclock/lang/"+file)
-        if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled or True:
-            #print(f"🟡 Using bundled lang file (forced={bundled})")
+        path = os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file)
+        if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled:
+            print(f"🟡 Using bundled lang file (forced={bundled})")
             path = getPath("../lang/"+file)
-        #else:
-        #    print("🟢 Using cached lang file")
+        else:
+            print("🟢 Using cached lang file")
         with open(path, "r", encoding='utf-8') as file:
             return json.load(file)
     except Exception as e:
         report(e)
         return {}
+
+
+def updateLangFile(file: str):
+    global lang
+    try:
+        try:
+            oldlang = open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file), "rb").read()
+        except FileNotFoundError:
+            oldlang = ""
+        newlang = urlopen("https://raw.githubusercontent.com/martinet101/WingetUI/main/wingetui/lang/"+file)
+        if newlang.status == 200:
+            langdata: bytes = newlang.read()
+            if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui/lang/")):
+                os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"))
+            if oldlang != langdata:
+                print("🟢 Updating outdated language file...")
+                with open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file), "wb") as f:
+                    f.write(langdata)
+                    f.close()
+                    lang = loadLangFile(file) | {"locale": lang["locale"] if "locale" in lang.keys() else "en"}
+            else:
+                print("🔵 Language file up-to-date")
+    except Exception as e:
+        report(e)
 
 t0 = time.time()
 
@@ -790,8 +814,8 @@ try:
         if (ln in languages):
             lang = loadLangFile(languages[ln]) | {"locale": ln}
             langFound = True
-            #if not getSettings("DisableLangAutoUpdater"):
-            #    Thread(target=updateLangFile, args=(languages[ln],), name=f"DAEMON: Update lang_{ln}.json").start()
+            if not getSettings("DisableLangAutoUpdater"):
+                Thread(target=updateLangFile, args=(languages[ln],), name=f"DAEMON: Update lang_{ln}.json").start()
             break
     if (langFound == False):
         raise Exception(f"Value not found for {langNames}")

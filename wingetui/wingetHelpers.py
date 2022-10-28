@@ -50,11 +50,17 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                     verElement = verElement.replace("  ", " ")
                 iOffset = 0
                 id = verElement.split(" ")[iOffset+0]
-                ver = verElement.split(" ")[iOffset+1]
+                try:
+                    ver = verElement.split(" ")[iOffset+1]
+                except IndexError:
+                    ver = "Unknown"
                 if len(id)==1:
                     iOffset + 1
                     id = verElement.split(" ")[iOffset+0]
-                    ver = verElement.split(" ")[iOffset+1]
+                    try:
+                        ver = verElement.split(" ")[iOffset+1]
+                    except IndexError:
+                        ver = "Unknown"
                 if ver.strip() in ("<", "-", ""):
                     iOffset += 1
                     ver = verElement.split(" ")[iOffset+1]
