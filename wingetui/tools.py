@@ -758,7 +758,7 @@ def themeThread(ts):
 ts = ThemeSignal()
 ts.signal.connect(lambda: globals.app.reloadWindow())
 
-Thread(target=themeThread, args=(ts,), daemon=True, name="UI Theme thread").start()
+#Thread(target=themeThread, args=(ts,), daemon=True, name="UI Theme thread").start()
 Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
 
 if getSettingsValue("PreferredLanguage") == "":

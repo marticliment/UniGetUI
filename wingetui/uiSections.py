@@ -459,7 +459,7 @@ class DiscoverSoftwareSection(QWidget):
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
     
-    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+    def destroyAnims(self) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
             anim: QVariantAnimation
             anim.pause()
@@ -467,7 +467,6 @@ class DiscoverSoftwareSection(QWidget):
             anim.valueChanged.disconnect()
             anim.finished.disconnect()
             anim.deleteLater()
-        return super().destroy(destroyWindow, destroySubWindows)
 
     def showEvent(self, event: QShowEvent) -> None:
         self.adjustWidgetsSize()
@@ -1108,15 +1107,16 @@ class UpdateSoftwareSection(QWidget):
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
 
-    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+    def destroyAnims(self) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
             anim: QVariantAnimation
+            anim.deleteLater()
+            anim.stop()
+            anim.start(anim.DeleteWhenStopped)
             anim.pause()
             anim.stop()
             anim.valueChanged.disconnect()
             anim.finished.disconnect()
-            anim.deleteLater()
-        return super().destroy(destroyWindow, destroySubWindows)
 
     def adjustWidgetsSize(self) -> None:
         if self.discoverLabelDefaultWidth == 0:
@@ -1768,7 +1768,7 @@ class UninstallSoftwareSection(QWidget):
         except Exception as e:
             report(e)
 
-    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
+    def destroyAnims(self) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
             anim: QVariantAnimation
             anim.pause()
@@ -1776,7 +1776,6 @@ class UninstallSoftwareSection(QWidget):
             anim.valueChanged.disconnect()
             anim.finished.disconnect()
             anim.deleteLater()
-        return super().destroy(destroyWindow, destroySubWindows)
 
 
 class AboutSection(QScrollArea):
@@ -2010,13 +2009,22 @@ class SettingsSection(QScrollArea):
         except Exception as e:
             report(e)
         
-        themeText.currentTextChanged.connect(lambda v: setSettingsValue("PreferredTheme", themes[v]))
+        themeText.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), themeButton.setVisible(True)))
+        themeButton = QPushButton()
+        themeButton.setFixedWidth(200)
+        themeButton.setFixedHeight(30)
+        themeButton.setVisible(False)
+        themeButton.setObjectName("AccentButton")
+        themeButton.clicked.connect(restartElevenClockByLangChange)
+        themeButton.setText(_("Restart WingetUI"))
 
         hl = QHBoxLayout()
         hl.setContentsMargins(0, 0, 0, 0)
         hl.addWidget(themeTextLabel)
         hl.addSpacing(20)
         hl.addWidget(themeText)
+        hl.addSpacing(20)
+        hl.addWidget(themeButton)
         hl.addStretch()
 
         self.layout.addLayout(hl)

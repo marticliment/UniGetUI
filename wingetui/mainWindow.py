@@ -204,10 +204,19 @@ class RootWindow(QMainWindow):
         except AttributeError:
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
         return is_admin
+
+    def deleteChildren(self) -> None:
+        try:
+            self.discover.destroyAnims()
+            self.updates.destroyAnims()
+            self.uninstall.destroyAnims()
+        except Exception as e:
+            report(e)
     
     def closeEvent(self, event):
         if(globals.themeChanged):
             globals.themeChanged = False
+            self.deleteChildren()
             event.accept()
         if(globals.pending_programs != []):
             if getSettings("DisablesystemTray"):
@@ -218,6 +227,7 @@ class RootWindow(QMainWindow):
                         globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
                         event.ignore()
                     else:
+                        self.deleteChildren()
                         event.accept()
                         globals.app.quit()
                         sys.exit(0)
@@ -241,6 +251,7 @@ class RootWindow(QMainWindow):
                 event.ignore()
             else:
                 if getSettings("DisablesystemTray"):
+                    self.deleteChildren()
                     event.accept()
                     globals.app.quit()
                     sys.exit(0)
