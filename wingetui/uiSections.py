@@ -21,6 +21,7 @@ class DiscoverSoftwareSection(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    callInMain = Signal(object)
     discoverLabelDefaultWidth: int = 0
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
@@ -35,6 +36,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageReference: dict[str, TreeWidgetItemWithQAction] = {}
 
         self.programbox = QWidget()
+        self.callInMain.connect(lambda f: f())
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(5, 5, 5, 5)
@@ -396,9 +398,12 @@ class DiscoverSoftwareSection(QWidget):
             self.packageReference[id.lower()] = item
     
     def filter(self) -> None:
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
+        Thread(target=lambda: (time.sleep(0.05), self.callInMain.emit(self.finishFiltering))).start()
+    
+    def finishFiltering(self):
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
-        print(f"🟢 Searching for string \"{self.query.text()}\"")
         found = 0
         for item in self.packageList.findItems('', Qt.MatchContains, 0):
             if not(item in resultsFound):
