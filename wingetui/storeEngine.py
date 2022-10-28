@@ -252,6 +252,7 @@ class PackageInstallerWidget(QGroupBox):
         op4=QGraphicsOpacityEffect(self)
         op5=QGraphicsOpacityEffect(self)
         ops = [op1, op2, op3, op4, op5]
+        
         def updateOp(v: float):
             i = 0
             for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
@@ -260,6 +261,7 @@ class PackageInstallerWidget(QGroupBox):
                 widget.setGraphicsEffect(ops[i])
                 widget.setAutoFillBackground(True)
                 i += 1
+
         updateOp(1)
         a = QVariantAnimation(self)
         a.setStartValue(1.0)
