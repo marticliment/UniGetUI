@@ -250,7 +250,8 @@ class PackageInstallerWidget(QGroupBox):
         op2=QGraphicsOpacityEffect(self)
         op3=QGraphicsOpacityEffect(self)
         op4=QGraphicsOpacityEffect(self)
-        ops = [op1, op2, op3, op4]
+        op5=QGraphicsOpacityEffect(self)
+        ops = [op1, op2, op3, op4, op5]
         def updateOp(v: float):
             i = 0
             for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
