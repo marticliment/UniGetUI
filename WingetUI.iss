@@ -20,6 +20,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName="{autopf}\WingetUI"
 DisableProgramGroupPage=yes     
+DisableDirPage=no
 CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
@@ -32,6 +33,7 @@ WizardStyle=classic
 WizardImageFile=Y:\WingetUI-Store\INSTALLER.BMP
 DisableWelcomePage=no
 UsePreviousTasks=yes
+ChangesEnvironment=yes
 
 
 [Languages]
@@ -74,8 +76,9 @@ begin
      ewWaitUntilTerminated, ResultCode);
 end;
 
-[Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Desktop icon"; Flags: unchecked      
+[Tasks]                  
+Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Desktop icon";      
+Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Desktop icon"; Flags: unchecked 
 Name: "disablescoop"; Description: "Do not install Scoop (recommended for most users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
 Name: "installscoop"; Description: "Enable and install Scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
@@ -94,7 +97,7 @@ Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "
 
 [Icons]
 ;Name: "{autostartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Parameters: "--daemon"
-Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startmenuicon
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
