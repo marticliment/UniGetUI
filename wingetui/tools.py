@@ -591,6 +591,9 @@ class QLinkLabel(QLabel):
         self.lineedit.setText(self.selectedText())
         self.lineedit.selectAll()
         c = QLineEdit.createStandardContextMenu(self.lineedit)
+        selAction = c.actions()[-1]
+        selAction.setEnabled(True)
+        selAction.triggered.connect(lambda: self.setSelection(0, len(self.text())))
         ApplyMenuBlur(c.winId().__int__(), c)
         c.exec(QCursor.pos())
 
