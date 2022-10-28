@@ -77,8 +77,8 @@ begin
 end;
 
 [Tasks]                  
-Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Desktop icon";      
-Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Desktop icon"; Flags: unchecked 
+Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts";      
+Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked 
 Name: "disablescoop"; Description: "Do not install Scoop (recommended for most users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
 Name: "installscoop"; Description: "Enable and install Scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
