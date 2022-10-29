@@ -514,6 +514,7 @@ class PackageInfoPopupWindow(QWidget):
     packageItem: TreeWidgetItemWithQAction = None
     finishedCount: int = 0
     backgroundApplied: bool = False
+    givenPackageId: str = ""
     
     pressed = False
     oldPos = QPoint(0, 0)
@@ -662,21 +663,27 @@ class PackageInfoPopupWindow(QWidget):
                 return super().resizeEvent(event)
 
             def showBigImage(self):
-                blackCover.show()
                 p = self.currentPixmap.scaledToWidth(self.parentwidget.width()-55)
-                self.viewer.setPixmap(p)
-                self.viewer.show()
-                self.viewer.setFixedSize(p.width()+32, p.height()+32)
-                self.viewer.move(8, 120)
-                self.viewer.raise_()
-                blackCover.stackUnder(self.viewer)
-                self.backButton.move(self.viewer.width()-40, 0)
-                self.backButton.resize(40, 40)
-                self.backButton.show()
+                if not p.isNull():
+                    blackCover.show()
+                    self.viewer.setPixmap(p)
+                    self.viewer.show()
+                    self.viewer.setFixedSize(p.width()+32, p.height()+32)
+                    self.viewer.move(8, 120)
+                    self.viewer.raise_()
+                    blackCover.stackUnder(self.viewer)
+                    self.backButton.move(self.viewer.width()-40, 0)
+                    self.backButton.resize(40, 40)
+                    self.backButton.show()
 
             def setPixmap(self, arg__1: QPixmap) -> None:
                 self.currentPixmap = arg__1
                 return super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
+
+            def showEvent(self, event: QShowEvent) -> None:
+                if self.pixmap().isNull():
+                    self.hide()
+                return super().showEvent(event)
 
         self.imagesCarrousel: list[LabelWithImageViewer] = []
         for i in range(20):
@@ -865,6 +872,7 @@ class PackageInfoPopupWindow(QWidget):
     
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.packageItem = packageItem
+        self.givenPackageId = id
         self.store = store
         self.installButton.setEnabled(False)
         self.versionCombo.setEnabled(False)
@@ -921,7 +929,10 @@ class PackageInfoPopupWindow(QWidget):
                     f.write(icondata)
             else:
                 cprint(f"🔵 Found cached image in {iconpath}")
-            self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
+            if self.givenPackageId == id:
+                self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
+            else:
+                print("Icon arrived too late!")
         except Exception as e:
             try:
                 if type(e) != KeyError:
@@ -960,12 +971,17 @@ class PackageInfoPopupWindow(QWidget):
                         cprint(f"🔵 Found cached image in {imagepath}")
                     p = QPixmap(imagepath)
                     if not p.isNull():
-                        self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p))
-                        self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
-                        self.validImageCount += 1
+                        if self.givenPackageId == id:
+                            self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p))
+                            self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
+                            self.validImageCount += 1
+                        else:
+                            print("Screenshot arrived too late!")
                     else:
                         print(f"🟠 {imagepath} is a null image")                    
                 except Exception as e:
+                    self.callInMain.emit(self.imagesCarrousel[self.validImageCount].hide)
+                    self.validImageCount += 1
                     report(e)
             if self.validImageCount == 0:
                 cprint("🟠 No valid screenshots were found")
