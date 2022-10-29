@@ -2,7 +2,7 @@
 name: Feature request (add new abilities/functions/etc.)
 about: Suggest a feature
 title: "[FEATURE REQUEST] Brief description"
-labels: enhancement
+labels: feature-request,triage
 assignees: ''
 
 ---
