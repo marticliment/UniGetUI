@@ -399,9 +399,11 @@ class DiscoverSoftwareSection(QWidget):
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
-        Thread(target=lambda: (time.sleep(0.05), self.callInMain.emit(self.finishFiltering))).start()
+        Thread(target=lambda: (time.sleep(0.25), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
     
-    def finishFiltering(self):
+    def finishFiltering(self, text: str):
+        if self.query.text() != text:
+            return
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         found = 0
