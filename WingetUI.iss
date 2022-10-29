@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.4.2"
+#define MyAppVersion "1.5.0"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -26,11 +26,13 @@ CloseApplications=no
 PrivilegesRequired=lowest
 OutputBaseFilename=WingetUI Installer
 OutputDir=.
-SetupIconFile=Y:\WinGetUI-Store\wingetui\resources\icon.ico
+SetupIconFile=wingetui\resources\icon.ico
+UninstallDisplayIcon={app}\WingetUI.exe
 Compression=lzma
 SolidCompression=yes
 WizardStyle=classic      
-WizardImageFile=Y:\WingetUI-Store\INSTALLER.BMP
+WizardImageFile=INSTALLER.BMP
+WizardSmallImageFile=wingetui\resources\icon.bmp
 DisableWelcomePage=no
 UsePreviousTasks=yes
 ChangesEnvironment=yes
@@ -60,6 +62,12 @@ Name: "Slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
 Name: "Spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "Turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+
+[InstallDelete]
+Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: TaskKill('WingetUI.exe');
+
+[UninstallDelete]  
+Type: filesandordirs; Name: "{autopf}\WingetUI\*"
 
 [Code]
 procedure InitializeWizard;

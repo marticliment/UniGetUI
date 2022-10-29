@@ -46,10 +46,17 @@ def cprint(*args) -> None:
 
 def report(exception) -> None: # Exception reporter
     import traceback
-    for line in traceback.format_exception(*sys.exc_info()):
-        print("🔴 "+line)
-        cprint("🔴 "+line)
-    print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
+    tb = traceback.format_exception(*sys.exc_info())
+    try:
+        for line in tb:
+            print("🔴 "+line)
+            cprint("🔴 "+line)
+        print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
+    except UnicodeEncodeError:
+        for line in tb:
+            print("ERROR "+line)
+            cprint("ERROR "+line)
+        print(f"ERROR Note this traceback was caught by reporter and has been added to the log ({exception})")
 
 def _(s): # Translate function
     global lang
