@@ -1804,7 +1804,7 @@ class AboutSection(QScrollArea):
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(title)
 
-        self.layout.addWidget(QLabel())
+        self.layout.addSpacing(15)
         
         table = QTableWidget()
         table.setAutoFillBackground(True)
@@ -1834,13 +1834,13 @@ class AboutSection(QScrollArea):
         table.verticalHeaderItem(2).setTextAlignment(Qt.AlignRight)
         table.setCornerWidget(QLabel(""))
         table.setCornerButtonEnabled(False)
+        table.setFixedHeight(150)
         table.cornerWidget().setStyleSheet("background: transparent;")
         self.layout.addWidget(table)
         title = QLabel(_("About WingetUI version {0}").format(versionName))
         title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
-
         self.layout.addWidget(title)
-        self.layout.addWidget(QLinkLabel())
+        self.layout.addSpacing(5)
         description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
         self.layout.addWidget(description)
         self.layout.addSpacing(5)
@@ -1931,7 +1931,6 @@ class SettingsSection(QScrollArea):
         subtitle = QLabel(_("General preferences"))
         subtitle.setStyleSheet(f"font-size: 25px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
         self.layout.addWidget(subtitle)
-        self.layout.addWidget(QLabel())
 
         selectedLanguageLabel = QLabel(_("WingetUI display language:")+" (Language)") # The non-translated (Language) string is there to let people know what the language option is if you accidentaly change the language
         selectedLanguageCombo = CustomComboBox()

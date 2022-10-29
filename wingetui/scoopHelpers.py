@@ -118,7 +118,6 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
     version = ""
     lc = getSettings("LowercaseScoopApps")
     for line in output:
-        #print(line)
         if("Description" in line):
             appInfo["description"] = line.replace("Description", "").strip()[1:].strip()
         elif("Website" in line):
