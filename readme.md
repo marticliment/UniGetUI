@@ -90,13 +90,13 @@ Last updated: Fri Oct 28 18:07:59 2022
 
 
 ## Contributions
- WingetUI wouldn't have been possible with all the help from every single contributor. From the person who fixed a typo to the person who improved half of the code, WingetUI wouldn't have been possible without you :smile:<br><br>
+ WingetUI wouldn't have been possible without the help of our dear contributors. From the person who fixed a typo to the person who improved half of the code, WingetUI wouldn't be possible without them! :smile:<br><br>
 
 ### Contributors:
  [![My dear contributors](https://contrib.rocks/image?repo=martinet101/WingetUI)](https://github.com/martinet101/WingetUI/graphs/contributors)<br><br>
  
  ### Translators
- WingetUI has not been machine translated. The following users have been in charge of the translations:
+ WingetUI has not been machine translated! The following users have been in charge of the translations:
 - Ahmet Özmetin: Turkish
 - BUGP Association: Chinese
 - Datacra5H: German
