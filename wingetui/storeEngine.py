@@ -33,7 +33,7 @@ class PackageInstallerWidget(QGroupBox):
         self.liveOutputWindow.setWindowFlag(Qt.Window)
         self.liveOutputWindow.setReadOnly(True)
         self.liveOutputWindow.resize(500, 200)
-        self.liveOutputWindow.setWindowTitle(f"Live command-line output")
+        self.liveOutputWindow.setWindowTitle(_("Live command-line output"))
         self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
         ApplyMica(self.liveOutputWindow.winId(), MICAMODE.DARK)
         self.runAsAdmin = admin

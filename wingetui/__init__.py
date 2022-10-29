@@ -995,6 +995,188 @@ try:
         margin-right: 0px;
         background-color: rgba(255, 255, 255, 10%);
     }}
+    #greyishLabel {{
+        color: #aaaaaa;
+    }}
+    #subtitleLabelHover {{
+        background-color: rgba(20, 20, 20, 0.01);
+        margin: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+        border-radius: 4px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border: 1px solid transparent;
+    }}
+    #subtitleLabelHover:hover{{
+        background-color: rgba(255, 255, 255, 3%);
+        margin: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-left: {(20)}px;
+        padding-top: 0;
+        padding-bottom: 0;
+        border: 1px solid rgba(255, 255, 255, 7%);
+        font-size: 13pt;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }}
+    #subtitleLabelHover:pressed{{
+        background-color: rgba(0, 0, 0, 12%);
+        margin: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-left: {(20)}px;
+        padding-top: 0;
+        padding-bottom: 0;
+        border: 1px solid rgba(255, 255, 255, 7%);
+        font-size: 13pt;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }}
+    #micaRegularBackground {{
+        border: 0 solid transparent;
+        margin: 1px;
+        background-color: rgba(255, 255, 255, 5%);
+        border-radius: 8px;
+    }}
+    #subtitleLabel{{
+        margin: 10px;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-left: {(20)}px;
+        padding-top: {(15)}px;
+        padding-bottom: {(15)}px;
+        border: 1px solid rgba(25, 25, 25, 50%);
+        font-size: 13pt;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }}
+    #StLbl{{
+        padding: 0;
+        background-color: rgba(71, 71, 71, 0%);
+        margin: 0;
+        border:none;
+        font-size: {(11)}px;
+    }}
+    #stBtn{{
+        background-color: rgba(255, 255, 255, 5%);
+        margin: 10px;
+        margin-bottom: 0;
+        margin-top: 0;
+        border: 1px solid rgba(25, 25, 25, 50%);
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }}
+    #lastWidget{{
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }}
+    #stChkBg{{
+        padding: {(15)}px;
+        padding-left: {(45)}px;
+        background-color: rgba(255, 255, 255, 5%);
+        margin: 10px;
+        margin-bottom: 0;
+        margin-top: 0;
+        border: 1px solid rgba(25, 25, 25, 50%);
+        border-bottom: 0;
+    }}
+    #stChk::indicator{{
+        height: {(20)}px;
+        width: {(20)}px;
+    }}
+    #stChk::indicator:unchecked {{
+        background-color: rgba(30, 30, 30, 25%);
+        border: 1px solid #444444;
+        border-radius: 6px;
+    }}
+    #stChk::indicator:disabled {{
+        background-color: rgba(71, 71, 71, 0%);
+        color: #bbbbbb;
+        border: 1px solid #444444;
+        border-radius: 6px;
+    }}
+    #stChk::indicator:unchecked:hover {{
+        background-color: #2a2a2a;
+        border: 1px solid #444444;
+        border-radius: 6px;
+    }}
+    #stChk::indicator:checked {{
+        border: 1px solid #444444;
+        background-color: rgb({colors[1]});
+        border-radius: 6px;
+        image: url("{getPath("tick_white.png")}");
+    }}
+    #stChk::indicator:checked:disabled {{
+        border: 1px solid #444444;
+        background-color: #303030;
+        color: #bbbbbb;
+        border-radius: 6px;
+        image: url("{getPath("tick_black.png")}");
+    }}
+    #stChk::indicator:checked:hover {{
+        border: 1px solid #444444;
+        background-color: rgb({colors[2]});
+        border-radius: 6px;
+        image: url("{getPath("tick_white.png")}");
+    }}
+    #stCmbbx {{
+        width: {(100)}px;
+        background-color:rgba(81, 81, 81, 25%);
+        border-radius: 8px;
+        border: 1px solidrgba(86, 86, 86, 25%);
+        height: {(25)}px;
+        padding-left: 10px;
+        border-top: 1px solidrgba(99, 99, 99, 25%);
+    }}
+    #stCmbbx:disabled {{
+        width: {(100)}px;
+        background-color: #303030;
+        color: #bbbbbb;
+        border-radius: 8px;
+        border: 0.6px solid #262626;
+        height: {(25)}px;
+        padding-left: 10px;
+    }}
+    #stCmbbx:hover {{
+        background-color:rgba(86, 86, 86, 25%);
+        border-radius: 8px;
+        border: 1px solidrgba(100, 100, 100, 25%);
+        height: {(25)}px;
+        padding-left: 10px;
+        border-top: 1px solid rgba(107, 107, 107, 25%);
+    }}
+    #stCmbbx::drop-down {{
+        subcontrol-origin: padding;
+        subcontrol-position: top right;
+        padding: 5px;
+        border-radius: 8px;
+        border: none;
+        width: 30px;
+    }}
+    #stCmbbx QAbstractItemView {{
+        border: 1px solid rgba(36, 36, 36, 50%);
+        padding: 4px;
+        outline: 0;
+        padding-right: 0;
+        background-color: #303030;
+        border-radius: 8px;
+    }}
+    #stCmbbx QAbstractItemView::item{{
+        height: 30px;
+        border: none;
+        padding-left: 10px;
+        border-radius: 4px;
+    }}
+    #stCmbbx QAbstractItemView::item:selected{{
+        background: rgba(255, 255, 255, 6%);
+        height: 30px;
+        outline: none;
+        border: none;
+        padding-left: 10px;
+        border-radius: 4px;
+    }}
     """
 
     menuDarkCSS = f"""
@@ -1534,6 +1716,173 @@ try:
         margin: 5px;
         margin-right: 0px;
         background-color: rgba(0, 0, 0, 10%);
+    }}
+    #greyishLabel {{
+        color: #888888;
+    }}
+    #subtitleLabel{{
+        background-color: white;
+        margin: 10px;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-left: {(20)}px;
+        padding-top: {(15)}px;
+        padding-bottom: {(15)}px;
+        border-radius: 8px;
+        border: 1 solid rgba(222, 222, 222, 50%);
+        font-size: 13pt;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }}
+    #subtitleLabelHover {{
+        background-color: rgba(255, 255, 255, 1%);
+        margin: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+        border-radius: 8px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border: 1px solid transparent;
+    }}
+    #subtitleLabelHover:hover{{
+        background-color: rgba(0, 0, 0, 3%);
+        margin: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-left: {(20)}px;
+        padding-top: {(15)}px;
+        padding-bottom: {(15)}px;
+        border: 1px solid rgba(196, 196, 196, 25%);
+        font-size: 13pt;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }}
+    #StLbl{{
+        padding: 0;
+        background-color: rgba(255, 255, 255, 10%);
+        margin: 0;
+        border:none;
+        font-size: {(11)}px;
+    }}
+    #stBtn{{
+        background-color: rgba(255, 255, 255, 10%);
+        margin: 10px;
+        margin-bottom: 0;
+        margin-top: 0;
+        border: 1px solid rgba(196, 196, 196, 25%);
+        border-bottom: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }}
+    #lastWidget{{
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom: 1px;
+    }}
+    #stChkBg{{
+        padding: {(15)}px;
+        padding-left: {(45)}px;
+        background-color: rgba(255, 255, 255, 10%);
+        margin: 10px;
+        margin-bottom: 0;
+        margin-top: 0;
+        border: 1px solid rgba(196, 196, 196, 25%);
+        border-bottom: 0;
+    }}
+    #stChk::indicator{{
+        height: {(20)}px;
+        width: {(20)}px;
+    }}
+    #stChk::indicator:unchecked {{
+        background-color: rgba(255, 255, 255, 10%);
+        border: 1px solid rgba(136, 136, 136, 25%);
+        border-radius: 6px;
+    }}
+    #stChk::indicator:disabled {{
+        background-color: #eeeeee;
+        color: rgba(136, 136, 136, 25%);
+        border: 1px solid rgba(136, 136, 136, 25%);
+        border-radius: 6px;
+    }}
+    #stChk::indicator:unchecked:hover {{
+        background-color: #eeeeee;
+        border: 1px solid rgba(136, 136, 136, 25%);
+        border-radius: 6px;
+    }}
+    #stChk::indicator:checked {{
+        border: 0 solid rgba(136, 136, 136, 25%);
+        background-color: rgb({colors[4]});
+        border-radius: 5px;
+        image: url("{getPath("tick_black.png")}");
+    }}
+    #stChk::indicator:checked:hover {{
+        border: 0 solid rgba(136, 136, 136, 25%);
+        background-color: rgb({colors[3]});
+        border-radius: 5px;
+        image: url("{getPath("tick_black.png")}");
+    }}
+    #stChk::indicator:checked:disabled {{
+        border: 1px solid rgba(136, 136, 136, 25%);
+        background-color: #eeeeee;
+        color: rgba(136, 136, 136, 25%);
+        border-radius: 6px;
+        image: url("{getPath("tick_white.png")}");
+    }}
+    #stCmbbx {{
+        width: {(100)}px;
+        background-color: rgba(255, 255, 255, 10%);
+        border-radius: 8px;
+        border: 1px solid rgba(196, 196, 196, 25%);
+        height: {(25)}px;
+        padding-left: 10px;
+        border-bottom: 1px solid rgba(204, 204, 204, 25%);
+    }}
+    #stCmbbx:disabled {{
+        width: {(100)}px;
+        background-color: #eeeeee;
+        border-radius: 8px;
+        border: 1px solid rgba(196, 196, 196, 25%);
+        height: {(25)}px;
+        padding-left: 10px;
+        border-top: 1px solid rgba(196, 196, 196, 25%);
+    }}
+    #stCmbbx:hover {{
+        background-color: rgba(238, 238, 238, 25%);
+        border-radius: 8px;
+        border: 1px solid rgba(196, 196, 196, 25%);
+        height: {(25)}px;
+        padding-left: 10px;
+        border-bottom: 1px solid rgba(204, 204, 204, 25%);
+    }}
+    #stCmbbx::drop-down {{
+        subcontrol-origin: padding;
+        subcontrol-position: top right;
+        padding: 5px;
+        border-radius: 8px;
+        border: none;
+        width: 30px;
+    }}
+    #stCmbbx QAbstractItemView {{
+        border: 1px solid rgba(196, 196, 196, 25%);
+        padding: 4px;
+        outline: 0;
+        background-color: rgba(255, 255, 255, 10%);
+        border-radius: 8px;
+    }}
+    #stCmbbx QAbstractItemView::item{{
+        height: 30px;
+        border: none;
+        padding-left: 10px;
+        border-radius: 4px;
+    }}
+    #stCmbbx QAbstractItemView::item:selected{{
+        background: rgba(0, 0, 0, 6%);
+        height: 30px;
+        outline: none;
+        color: black;
+        border: none;
+        padding-left: 10px;
+        border-radius: 4px;
     }}
     """
 
