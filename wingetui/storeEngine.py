@@ -678,6 +678,8 @@ class PackageInfoPopupWindow(QWidget):
 
             def setPixmap(self, arg__1: QPixmap) -> None:
                 self.currentPixmap = arg__1
+                if arg__1.isNull():
+                    self.hide()
                 return super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
 
             def showEvent(self, event: QShowEvent) -> None:
