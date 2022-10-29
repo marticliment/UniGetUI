@@ -1929,7 +1929,7 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(title)
         self.layout.addSpacing(20)
 
-        self.generalTitle = QSettingsTitle("General Preferences", getMedia("settings"), "Language, theme and other miscellaneous preferences")
+        self.generalTitle = QSettingsTitle("General preferences", getMedia("settings"), "Language, theme and other miscellaneous preferences")
         self.layout.addWidget(self.generalTitle)
 
         self.language = QSettingsComboBox(_("WingetUI display language:")+" (Language)")
