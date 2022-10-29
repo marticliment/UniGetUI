@@ -11,6 +11,7 @@ from PySide6.QtWidgets import *
 from tools import *
 from tools import _
 
+from customWidgets import *
 import globals
 
 class PackageInstallerWidget(QGroupBox):

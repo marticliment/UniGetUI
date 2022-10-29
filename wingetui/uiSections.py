@@ -9,6 +9,7 @@ from storeEngine import *
 from lang.translated_percentage import untranslatedPercentage
 
 import globals
+from customWidgets import *
 from tools import _
 
 
