@@ -229,9 +229,9 @@
   "WingetUI - {0} updates are available" : null,
   "WingetUI - 1 update is available" : null,
   "WingetUI display language:" : null,
-  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : null,
+  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI has not been machine translated! The following users have been in charge of the translations:",
   "WingetUI log" : null,
   "WingetUI Settings" : null,
   "WingetUI version {0}" : null,
-  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : null
+  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI wouldn't have been possible without the help of our dear contributors. Check out their GitHub profiles, WingetUI wouldn't be possible without them!"
 }
