@@ -2074,10 +2074,11 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(doCloseWingetUI)
         disableUpdateIndexes = QCheckBox(_("Do not update package indexes on launch"))
         disableUpdateIndexes.setChecked(getSettings("DisableUpdateIndexes"))
-        disableUpdateIndexes.clicked.connect(lambda v: setSettings("DisableUpdateIndexes", bool(v)))
         self.layout.addWidget(disableUpdateIndexes)
         enableScoopCleanup = QCheckBox(_("Enable Scoop cleanup on launch"))
+        disableUpdateIndexes.clicked.connect(lambda v: (setSettings("DisableUpdateIndexes", bool(v)), enableScoopCleanup.setEnabled(bool(v))))
         enableScoopCleanup.setChecked(getSettings("EnableScoopCleanup"))
+        enableScoopCleanup.setEnabled(disableUpdateIndexes.isChecked())
         enableScoopCleanup.clicked.connect(lambda v: setSettings("EnableScoopCleanup", bool(v)))
         self.layout.addWidget(enableScoopCleanup)
 
@@ -2088,7 +2089,6 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(subtitle)
         checkForUpdates = QCheckBox(_("Check for package updates periodically"))
         checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
-        checkForUpdates.clicked.connect(lambda v: setSettings("DisableAutoCheckforUpdates", not bool(v)))
         self.layout.addWidget(checkForUpdates)
 
         updatesFrequencyText = QLabel(_("Check for updates every:"))
@@ -2109,6 +2109,8 @@ class SettingsSection(QScrollArea):
         }
 
         updatesFrequency = CustomComboBox()
+        updatesFrequency.setEnabled(checkForUpdates.isChecked())
+        checkForUpdates.clicked.connect(lambda v: (setSettings("DisableAutoCheckforUpdates", not bool(v)), updatesFrequency.setEnabled(bool(v))))
         updatesFrequency.insertItems(0, list(times.keys()))
         currentValue = getSettingsValue("UpdatesCheckInterval")
         try:
