@@ -125,6 +125,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
             appInfo["homepage"] = w
             if "https://github.com/" in w:
                 appInfo["author"] = w.replace("https://github.com/", "").split("/")[0]
+            else:
+                for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de"):
+                    w = w.replace(e, "")
+                appInfo["author"] = w.split("/")[0].capitalize()
         elif("Version" in line):
             version = line.replace("Version", "").strip()[1:].strip()
         elif("Updated by" in line):
