@@ -3,7 +3,7 @@ name: Feature request (add new abilities/functions/etc.)
 about: Suggest a feature
 title: "[FEATURE REQUEST] Brief description"
 labels: feature-request,triage
-assignees: ''
+assignees: 'martinet101'
 
 ---
 
