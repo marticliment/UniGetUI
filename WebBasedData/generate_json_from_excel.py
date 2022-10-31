@@ -1,4 +1,5 @@
 import os, xlrd, json
+from urllib.request import urlopen
 
 os.chdir(os.path.dirname(__file__))
 
@@ -6,6 +7,14 @@ try:
     os.remove("screenshot-database.json")
 except FileNotFoundError:
     pass
+try:
+    os.remove("screenshot_database.xlsx")
+except FileNotFoundError:
+    pass
+
+with open("screenshot_database.xlsx", "wb") as f:
+    f.write(urlopen("https://docs.google.com/spreadsheets/d/1Zxgzs1BiTZipC7EiwNEb9cIchistIdr5/export?format=xlsx").read())
+
 workbook = xlrd.open_workbook('screenshot_database.xlsx')
 worksheet = workbook.sheet_by_index(0)
 
