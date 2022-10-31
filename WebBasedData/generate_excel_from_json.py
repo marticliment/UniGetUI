@@ -186,3 +186,8 @@ for id in getScoopPackages():
     counter += 1
 
 workbook.close()
+
+
+os.startfile("https://drive.google.com/drive/u/2/folders/1TOO3rupM1e793z-jlwNcQMGCqDL8fFOL")
+print()
+subprocess.Popen(r'explorer /select,"'+os.path.abspath("screenshot_database.xlsx").replace("/", "\\")+'"')
