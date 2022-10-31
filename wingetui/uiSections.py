@@ -1780,7 +1780,6 @@ class UninstallSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
 
-
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):
         super().__init__(parent = parent)
