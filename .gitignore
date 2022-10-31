@@ -18,3 +18,5 @@ wingetui_bin/
 wingetuiBin.zip
 APIKEY.txt
 *.pyc
+WebBasedData/screenshot_database.xlsx
+WebBasedData/screenshot-database.json.backup
