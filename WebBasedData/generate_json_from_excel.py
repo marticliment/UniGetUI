@@ -79,3 +79,5 @@ with open("screenshot-database.json", "w") as outfile:
     json.dump(jsoncontent, outfile)
  
 
+
+os.system("pause")
