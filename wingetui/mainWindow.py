@@ -187,6 +187,7 @@ class RootWindow(QMainWindow):
         return btn
 
     def warnAboutAdmin(self):
+            from tools import _
             self.err = ErrorMessage(self)
             errorData = {
                 "titlebarTitle": _("WingetUI"),

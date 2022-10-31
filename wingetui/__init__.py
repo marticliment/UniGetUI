@@ -360,8 +360,8 @@ try:
                     self.window.show()
                     if(self.window.isAdmin()):
                         if not getSettings("AlreadyWarnedAboutAdmin"):
-                            setSettings("AlreadyWarnedAboutAdmin", True)
                             self.window.warnAboutAdmin()
+                            setSettings("AlreadyWarnedAboutAdmin", True)
                             
             except Exception as e:
                 import webbrowser, traceback, platform

@@ -3,6 +3,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from win32mica import *
 from tools import *
+from tools import _
 import globals
 
 
@@ -189,7 +190,10 @@ class ErrorMessage(QWidget):
         self.okButton = QPushButton()
         self.okButton.setFixedHeight(30)
         self.okButton.clicked.connect(self.delete)
-        self.moreInfoButton = QPushButton(_("Show details"))
+        try:
+            self.moreInfoButton = QPushButton(_("Show details"))
+        except NameError:
+            self.moreInfoButton = QPushButton("Show details")
         self.moreInfoButton.setFixedHeight(30)
         self.moreInfoButton.clicked.connect(self.moreInfo)
         #hl.addStretch()
