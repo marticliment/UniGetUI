@@ -14,7 +14,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Download icons json file
         run: |
+          pythion -m pip install xlrd
           cd WebBasedData
+          git config user.email "excelbot@github.com"
+          git config user.name "Excel Bot"
           python generate_json_from_excel.py 
           git commit screenshot-database.json -m "Update icons and screenshots"
       - name: Create Pull Request
