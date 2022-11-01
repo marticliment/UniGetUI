@@ -110,6 +110,7 @@
   "Interactive update" : "Інтерактивне оновлення",
   "Is this package missing the icon?" : "У цьому пакеті відсутній значок?",
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "Схоже, що ви запустили WingetUI від імені адміністратора, що не рекомендується. Ви все ще можете використовувати програму, але ми наполегливо рекомендуємо не запускати WingetUI з правами адміністратора. Натисніть на кнопку \"Показати деталі\", щоб дізнатися чому.\n",
+  "Language, theme and other miscellaneous preferences" : null,
   "Latest" : "Останній",
   "Latest details..." : "Останні подробиці...",
   "Latest Version" : "Остання версія",

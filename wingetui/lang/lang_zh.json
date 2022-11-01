@@ -110,6 +110,7 @@
   "Interactive update" : "交互式更新（非自动）",
   "Is this package missing the icon?" : "这个软件包缺失图标？",
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "你似乎正在以管理员身份运行WingetUI，这是不被推荐的行为。你可以继续使用，但我们强烈建议不要以管理员身份运行。因为这样你的软件安装程序也会以管理员身份运行，有潜在安全隐患。",
+  "Language, theme and other miscellaneous preferences" : null,
   "Latest" : "最新",
   "Latest details..." : "最新细节",
   "Latest Version" : "最新版本",

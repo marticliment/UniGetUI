@@ -110,6 +110,7 @@
   "Interactive update" : "इंटरएक्टिव अपडेट",
   "Is this package missing the icon?" : "\nक्या इस पैकेज में आइकन नहीं है?",
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "ऐसा लगता है कि आपने विनगेट यू आई को प्रशासक के रूप में चलाया, जिसकी अनुशंसा नहीं की जाती है। आप अभी भी प्रोग्राम का उपयोग कर सकते हैं, लेकिन हम अत्यधिक अनुशंसा करते हैं कि विनगेट यू आई को प्रशासक विशेषाधिकारों के साथ न चलाएं। क्यों देखने के लिए \"विवरण दिखाएं\" पर क्लिक करें।",
+  "Language, theme and other miscellaneous preferences" : null,
   "Latest" : "नवीनतम",
   "Latest details..." : "\nनवीनतम विवरण...",
   "Latest Version" : "\nनवीनतम संस्करण",
