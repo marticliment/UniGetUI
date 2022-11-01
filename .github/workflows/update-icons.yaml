@@ -2,7 +2,7 @@ name: Retrieve latest icons from excel file
 
 on:
   schedule:
-    - cron: 0 0 * * *
+    - cron: @weekly
   workflow_dispatch:
 jobs:
   main:
@@ -18,7 +18,7 @@ jobs:
           git config user.name "Excel Bot"
           python generate_json_from_excel.py 
           git commit screenshot-database.json -m "Update icons and screenshots"
-          echo "Done!"
+          exit 0
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
