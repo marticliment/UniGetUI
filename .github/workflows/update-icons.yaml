@@ -7,14 +7,12 @@ on:
 jobs:
   main:
     runs-on: windows-latest
-    env:
-        TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Download icons json file
         run: |
-          pythion -m pip install xlrd
+          python -m pip install xlrd
           cd WebBasedData
           git config user.email "excelbot@github.com"
           git config user.name "Excel Bot"
