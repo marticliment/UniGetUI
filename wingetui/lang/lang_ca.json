@@ -110,6 +110,7 @@
   "Interactive update" : "Actualització interactiva",
   "Is this package missing the icon?" : "A aquest paquet li falta la icona?",
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "Sembla ser que heu executat el WingetUI amb drets d'administrador, cosa que no es recomana. Podeu usar el programa, però no recomanem executar el WingetUI com a administrador. Cliqueu \"Mostra els detalls\" per a veure el perquè.",
+  "Language, theme and other miscellaneous preferences" : "Idioma, tema i altres preferències miscel·lànies",
   "Latest" : "Darrera",
   "Latest details..." : "Darrers detalls...",
   "Latest Version" : "Darrera versió",
