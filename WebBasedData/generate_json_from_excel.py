@@ -76,7 +76,7 @@ jsoncontent["package_count"]["total"] = scoopCount+wingetCount
 jsoncontent["package_count"]["done"] = doneCount
 
 with open("screenshot-database.json", "w") as outfile:
-    json.dump(jsoncontent, outfile)
+    json.dump(jsoncontent, outfile, indent=4)
  
 
 
