@@ -5,7 +5,7 @@
 [![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
-<br>The main goal of this project is to create an intuitive UI for the most common CLI package managers for Windows, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
+<br>The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
 
 With this app, you'll be able to easily download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
@@ -15,8 +15,7 @@ Beware that neither Microsoft nor the creators of WingetUI are responsible for t
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
-![image](https://user-images.githubusercontent.com/67732686/195120018-212b6703-535c-4b17-9443-f0065550e631.png)
-
+![image](https://user-images.githubusercontent.com/73800734/199359247-c52f6b4c-8019-484c-9f25-ad809c0817f3.png)
 
 # Features
 
@@ -96,7 +95,7 @@ Last updated: Tue Nov  1 01:39:55 2022
 ### Contributors:
  [![My dear contributors](https://contrib.rocks/image?repo=martinet101/WingetUI)](https://github.com/martinet101/WingetUI/graphs/contributors)<br><br>
  
- ### Translators
+ ### Translators:
  WingetUI has not been machine translated! The following users have been in charge of the translations:
 - Ahmet Özmetin: Turkish
 - BUGP Association: Chinese
@@ -110,19 +109,17 @@ Last updated: Tue Nov  1 01:39:55 2022
 
 # Screenshots
  
-![image](https://user-images.githubusercontent.com/67732686/195112595-28c5928b-2b0a-4730-b864-04037e644b72.png)
+![image](https://user-images.githubusercontent.com/73800734/199359651-2492f9c1-fc08-4554-8f45-fd236ec5d5fa.png)
 
-![image](https://user-images.githubusercontent.com/67732686/195112809-9719d303-9b70-45f3-9d94-aff9604e52e7.png)
+![image](https://user-images.githubusercontent.com/73800734/199359788-f5003f4c-92e1-49fc-9a0b-43eb6ba6338d.png)
 
-![image](https://user-images.githubusercontent.com/67732686/195113058-655ce7aa-3a40-4621-9758-4839edd4fab5.png)
+![image](https://user-images.githubusercontent.com/73800734/199360452-294a57fa-1738-4c0f-9ee5-a92f9a0c3073.png)
 
-![image](https://user-images.githubusercontent.com/67732686/195113334-8dad53ac-80db-4894-ac91-8eebdc6bee91.png)
+![image](https://user-images.githubusercontent.com/73800734/199360606-0b18db79-7ce5-4574-b919-ae91c8b7394a.png)
 
-![image](https://user-images.githubusercontent.com/67732686/195113504-529a561a-0ccf-4969-bbc5-3625a245030b.png)
+![image](https://user-images.githubusercontent.com/73800734/199363533-6e11d026-5eca-430a-b15a-1e4e9dd73d67.png)
 
-![image](https://user-images.githubusercontent.com/67732686/195113616-8e97bfb9-d463-41a8-b071-9f2180514ff9.png)
-
-![image](https://user-images.githubusercontent.com/67732686/195113692-a4938fce-1be2-488d-bbfd-f44ab4aeb512.png)
+![image](https://user-images.githubusercontent.com/73800734/199360891-1b26dacb-f3c8-4087-aa00-8a6211340fa0.png)
 
 ![image](https://user-images.githubusercontent.com/67732686/195114107-abe537df-3ee4-4d81-8707-a189e83b7abe.png)
 
