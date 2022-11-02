@@ -123,6 +123,8 @@ Last updated: Tue Nov  1 01:39:55 2022
 
 ![image](https://user-images.githubusercontent.com/67732686/195114107-abe537df-3ee4-4d81-8707-a189e83b7abe.png)
 
+![image](https://user-images.githubusercontent.com/73800734/199553170-3d227011-1fcb-4657-b673-a0f80d964e46.png)
+
 
 # FAQ
 
