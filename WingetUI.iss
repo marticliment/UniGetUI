@@ -3,7 +3,7 @@
 
 #define MyAppName "WingetUI"
 #define MyAppVersion "1.5.0"
-#define MyAppPublisher "MartÃ­ Climent"
+#define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
 
@@ -64,10 +64,10 @@ Name: "Turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: TaskKill('WingetUI.exe');
+Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
 
 [UninstallDelete]  
-Type: filesandordirs; Name: "{autopf}\WingetUI\*"
+Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
 
 [Code]
 procedure InitializeWizard;
@@ -84,6 +84,16 @@ begin
      ewWaitUntilTerminated, ResultCode);
 end;
 
+procedure DoubleKill(FileName1: String; FileName2: String);
+var
+  ResultCode: Integer;
+begin
+    Exec('taskkill.exe', '/f /im ' + '"' + FileName1 + '"', '', SW_HIDE,
+     ewWaitUntilTerminated, ResultCode);
+    Exec('taskkill.exe', '/f /im ' + '"' + FileName2 + '"', '', SW_HIDE,
+     ewWaitUntilTerminated, ResultCode);
+end;
+
 [Tasks]                  
 Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts";      
 Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked 
@@ -94,8 +104,8 @@ Name: "installscoop"; Description: "Enable and install Scoop (for advanced users
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
 
 [Files]
-Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TaskKill('WingetUI.exe')    
-Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs; BeforeInstall: TaskKill('WingetUI.exe')
+Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe')   
+Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe')
 Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                                 
 Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                               
 Source: "Y:\WinGetUI-Store\disable_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall  
