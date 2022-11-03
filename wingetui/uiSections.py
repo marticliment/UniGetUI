@@ -988,6 +988,7 @@ class UpdateSoftwareSection(QWidget):
                 c = QCheckBox()
                 c.setChecked(True)
                 c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
+                c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
                 self.packageList.setItemWidget(item, 0, c)
                 action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
                 action.triggered.connect(lambda : self.update(name, id, store, packageItem=item))
@@ -1644,6 +1645,8 @@ class UninstallSoftwareSection(QWidget):
             c = QCheckBox()
             c.setChecked(False)
             c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
+            c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
+
             self.packageList.addTopLevelItem(item)
             self.packageList.setItemWidget(item, 0, c)
             action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
