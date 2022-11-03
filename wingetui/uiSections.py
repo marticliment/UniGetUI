@@ -997,7 +997,7 @@ class UpdateSoftwareSection(QWidget):
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
         resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 2)
-        print(f"🟢 Searching for stringg \"{self.query.text()}\"")
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
         found = 0
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not(item in resultsFound):
