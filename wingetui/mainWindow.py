@@ -19,6 +19,7 @@ class RootWindow(QMainWindow):
     oldPos = QPoint(0, 0)
     isWinDark = False
     appliedStyleSheet = False
+    closedpos: QPoint = QPoint(-1, -1)
 
     def __init__(self):
         self.oldbtn = None
@@ -215,6 +216,7 @@ class RootWindow(QMainWindow):
             report(e)
     
     def closeEvent(self, event):
+        self.closedpos = self.pos()
         if(globals.themeChanged):
             globals.themeChanged = False
             self.deleteChildren()
@@ -279,6 +281,8 @@ class RootWindow(QMainWindow):
             if not self.window().isMaximized():
                 self.window().show()
                 self.window().showNormal()
+                if self.closedpos != QPoint(-1, -1):
+                    self.window().move(self.closedpos)
             else:
                 self.window().show()
                 self.window().showMaximized()

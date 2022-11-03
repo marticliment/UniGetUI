@@ -36,7 +36,7 @@ try:
                 self.popup = DraggableWindow()
                 self.popup.setFixedSize(QSize(600, 400))
                 self.popup.setWindowFlag(Qt.FramelessWindowHint)
-                self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)
+                #self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)
                 self.popup.setLayout(QVBoxLayout())
                 self.popup.layout().addStretch()
                 titlewidget = QHBoxLayout()
