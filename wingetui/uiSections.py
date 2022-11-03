@@ -770,7 +770,7 @@ class UpdateSoftwareSection(QWidget):
 
         self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _("Update all"), self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
-        self.toolbar.addAction(self.upgradeAllAction)
+        #self.toolbar.addAction(self.upgradeAllAction)
         self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Update selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
@@ -1432,7 +1432,7 @@ class UninstallSoftwareSection(QWidget):
 
         self.exportAction = QAction(QIcon(getMedia("export")), _("Export all"), self.toolbar)
         self.exportAction.triggered.connect(lambda: self.exportSelection(all=True))
-        self.toolbar.addAction(self.exportAction)
+        #self.toolbar.addAction(self.exportAction)
 
         w = QWidget()
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
