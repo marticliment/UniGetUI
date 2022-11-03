@@ -247,32 +247,35 @@ class PackageInstallerWidget(QGroupBox):
                 self.err.showErrorMessage(errorData)
 
     def startCoolDown(self):
-        op1=QGraphicsOpacityEffect(self)
-        op2=QGraphicsOpacityEffect(self)
-        op3=QGraphicsOpacityEffect(self)
-        op4=QGraphicsOpacityEffect(self)
-        op5=QGraphicsOpacityEffect(self)
-        ops = [op1, op2, op3, op4, op5]
-        
-        def updateOp(v: float):
-            i = 0
-            for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
-                ops[i].setOpacity(v)
-                widget: QWidget
-                widget.setGraphicsEffect(ops[i])
-                widget.setAutoFillBackground(True)
-                i += 1
+        if not getSettings("MaintainSuccessfulInstalls"):
+            op1=QGraphicsOpacityEffect(self)
+            op2=QGraphicsOpacityEffect(self)
+            op3=QGraphicsOpacityEffect(self)
+            op4=QGraphicsOpacityEffect(self)
+            op5=QGraphicsOpacityEffect(self)
+            ops = [op1, op2, op3, op4, op5]
+            
+            def updateOp(v: float):
+                i = 0
+                for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
+                    ops[i].setOpacity(v)
+                    widget: QWidget
+                    widget.setGraphicsEffect(ops[i])
+                    widget.setAutoFillBackground(True)
+                    i += 1
 
-        updateOp(1)
-        a = QVariantAnimation(self)
-        a.setStartValue(1.0)
-        a.setEndValue(0.0)
-        a.setEasingCurve(QEasingCurve.Linear)
-        a.setDuration(300)
-        a.valueChanged.connect(lambda v: updateOp(v))
-        a.finished.connect(self.heightAnim)
-        f = lambda: (time.sleep(3), self.callInMain.emit(a.start))
-        Thread(target=f, daemon=True).start()
+            updateOp(1)
+            a = QVariantAnimation(self)
+            a.setStartValue(1.0)
+            a.setEndValue(0.0)
+            a.setEasingCurve(QEasingCurve.Linear)
+            a.setDuration(300)
+            a.valueChanged.connect(lambda v: updateOp(v))
+            a.finished.connect(self.heightAnim)
+            f = lambda: (time.sleep(3), self.callInMain.emit(a.start))
+            Thread(target=f, daemon=True).start()
+        else:
+            print("🟡 Autohide disabled!")
 
     def heightAnim(self):
         a = QVariantAnimation(self)

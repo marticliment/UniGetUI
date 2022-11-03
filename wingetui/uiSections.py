@@ -1988,14 +1988,6 @@ class SettingsSection(QScrollArea):
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
         updateCheckBox.stateChanged.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
         self.generalTitle.addWidget(updateCheckBox)
-        changeDefaultInstallAction = QSettingsCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
-        changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
-        changeDefaultInstallAction.stateChanged.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
-        self.generalTitle.addWidget(changeDefaultInstallAction)
-        changeDefaultUpdateAction = QSettingsCheckBox(_("Show info about the package on the Updates tab"))
-        changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
-        changeDefaultUpdateAction.stateChanged.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
-        self.generalTitle.addWidget(changeDefaultUpdateAction)
         dontUseBuiltInGsudo = QSettingsCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
         dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
         dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
@@ -2045,6 +2037,23 @@ class SettingsSection(QScrollArea):
         enableScoopCleanup.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
 
         self.startup.addWidget(enableScoopCleanup)
+        
+        self.UITitle = QSettingsTitle(_("User interface preferences"), getMedia("interactive"), _("Action when double-clicking packages, hide successful installations"))
+        self.layout.addWidget(self.UITitle)
+        changeDefaultInstallAction = QSettingsCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
+        changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
+        changeDefaultInstallAction.stateChanged.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
+        self.UITitle.addWidget(changeDefaultInstallAction)
+        changeDefaultUpdateAction = QSettingsCheckBox(_("Show info about the package on the Updates tab"))
+        changeDefaultUpdateAction.setChecked(not getSettings("DoNotUpdateOnDoubleClick"))
+        changeDefaultUpdateAction.stateChanged.connect(lambda v: setSettings("DoNotUpdateOnDoubleClick", bool(not v)))
+        self.UITitle.addWidget(changeDefaultUpdateAction)
+        dontUseBuiltInGsudo = QSettingsCheckBox(_("Remove successful installs/uninstalls/updates from the installation list"))
+        dontUseBuiltInGsudo.setChecked(not getSettings("MaintainSuccessfulInstalls"))
+        dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("MaintainSuccessfulInstalls", not bool(v)))
+        self.UITitle.addWidget(dontUseBuiltInGsudo)
+        
+
 
         self.trayIcon = QSettingsTitle(_("Notification tray options"), getMedia("systemtray"), _("WingetUI tray application preferences"))
         self.layout.addWidget(self.trayIcon)
