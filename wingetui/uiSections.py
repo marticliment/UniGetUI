@@ -387,7 +387,10 @@ class DiscoverSoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:
             item = TreeWidgetItemWithQAction()
-            item.setText(0, name)
+            if "scoop" in store.lower():
+                item.setText(0, name.replace("-", " ").capitalize())
+            else:
+                item.setText(0, name)
             item.setText(1, id)
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.IDIcon)
