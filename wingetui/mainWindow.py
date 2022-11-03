@@ -31,6 +31,13 @@ class RootWindow(QMainWindow):
         self.setObjectName("micawin")
         self.setWindowIcon(QIcon(realpath+"/resources/icon.png"))
         self.resize(QSize(1100, 700))
+        try:
+            rs = getSettingsValue("OldWindowGeometry").split(",")
+            assert (len(rs)==4), "Invalid window geometry format"
+            geometry = QRect(int(rs[0]), int(rs[1]), int(rs[2]), int(rs[3]))
+            self.setGeometry(geometry)
+        except Exception as e:
+            report(e)
         self.loadWidgets()
         self.blackmatt = QWidget(self)
         self.blackmatt.setStyleSheet("background-color: rgba(0, 0, 0, 30%);border-top-left-radius: 8px;border-top-right-radius: 8px;")
@@ -217,6 +224,7 @@ class RootWindow(QMainWindow):
     
     def closeEvent(self, event):
         self.closedpos = self.pos()
+        setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()},{self.closedpos.y()},{self.width()},{self.height()}")
         if(globals.themeChanged):
             globals.themeChanged = False
             self.deleteChildren()
@@ -274,6 +282,7 @@ class RootWindow(QMainWindow):
             self.infobox.move((self.width()-s.width())//2, (self.height()-s.height())//2)
         except AttributeError:
             pass
+        setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()},{self.width()},{self.height()}")
         return super().resizeEvent(event)
 
     def showWindow(self):
@@ -323,6 +332,10 @@ class RootWindow(QMainWindow):
     def focusOutEvent(self, event: QEvent) -> None:
         Thread(target=lambda: (time.sleep(0.3), self.loseFocusUpdate())).start()
         return super().focusOutEvent(event)
+    
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()},{self.width()},{self.height()}")
+        return super().mouseReleaseEvent(event)
 
 class DraggableWindow(QWidget):
     pressed = False
