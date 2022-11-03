@@ -2039,9 +2039,8 @@ class SettingsSection(QScrollArea):
         disableUpdateIndexes.setChecked(getSettings("DisableUpdateIndexes"))
         self.startup.addWidget(disableUpdateIndexes)
         enableScoopCleanup = QSettingsCheckBox(_("Enable Scoop cleanup on launch"))
-        disableUpdateIndexes.stateChanged.connect(lambda v: (setSettings("DisableUpdateIndexes", bool(v)), enableScoopCleanup.setEnabled(bool(v))))
+        disableUpdateIndexes.stateChanged.connect(lambda v: setSettings("DisableUpdateIndexes", bool(v)))
         enableScoopCleanup.setChecked(getSettings("EnableScoopCleanup"))
-        enableScoopCleanup.setEnabled(disableUpdateIndexes.isChecked())
         enableScoopCleanup.stateChanged.connect(lambda v: setSettings("EnableScoopCleanup", bool(v)))
         enableScoopCleanup.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
 

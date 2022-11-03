@@ -109,7 +109,7 @@ try:
 
         def loadStuffThread(self):
             try:
-                self.loadStatus = 0 # There are 6 items (preparation threads)
+                self.loadStatus = 0 # There are 8 items (preparation threads)
                 
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
@@ -123,7 +123,7 @@ try:
                 if not getSettings("DisableScoop"):
                     Thread(target=self.detectScoop, daemon=True).start()
                 else:
-                    self.loadStatus += 2
+                    self.loadStatus += 3
                     globals.componentStatus["scoopFound"] = False
                     globals.componentStatus["scoopVersion"] = "Scoop is disabled"
                 Thread(target=self.detectSudo, daemon=True).start()
@@ -132,7 +132,7 @@ try:
                 Thread(target=self.instanceThread, daemon=True).start()
                 Thread(target=self.updateIfPossible, daemon=True).start()
 
-                while self.loadStatus < 7:
+                while self.loadStatus < 8:
                     time.sleep(0.01)
             except Exception as e:
                 print(e)
@@ -212,12 +212,17 @@ try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
                     p = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
-                    if(getSettings("EnableScoopCleanup")):
-                        p2 = subprocess.Popen(f"powershell -Command scoop cleanup --all", shell=True, stdout=subprocess.PIPE)
-                        p2.wait()
+                    
                     p.wait()
             except Exception as e:
                 print(e)
+            try:
+                if(getSettings("EnableScoopCleanup")):
+                    p2 = subprocess.Popen(f"powershell -Command scoop cleanup --all", shell=True, stdout=subprocess.PIPE)
+                    p2.wait()
+            except Exception as e:
+                report(e)
+            self.loadStatus += 1
             try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Scoop sources...")))
