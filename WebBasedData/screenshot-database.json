@@ -306,7 +306,9 @@
         },
         "ATNSOFT.KeyRemapper": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/k4bvjz3q/keyremapper-remap-and-block.png"
+            ]
         },
         "ATNSOFT.TextPaster": {
             "icon": "",
@@ -996,7 +998,9 @@
         },
         "AmineMouafik.Ferdi": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/05wGYTPN/workspaces.png"
+            ]
         },
         "Anaconda.Anaconda3": {
             "icon": "https://i.imgur.com/Yfn6Mec.png",
@@ -2536,7 +2540,9 @@
         },
         "BotProductions.IconViewer": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/dtGBYzxf/iv3.png"
+            ]
         },
         "Botkind.AllwaySync": {
             "icon": "https://allwaysync.com/themes/allwaysync/img/logo.png",
@@ -3183,7 +3189,9 @@
         },
         "CodecGuide.K-LiteCodecPack.Full": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/PqVbyhCC/153171289-0dbb60af-3a7e-41a5-a559-58da2618b50b.jpg"
+            ]
         },
         "CodecGuide.K-LiteCodecPack.Mega": {
             "icon": "",
@@ -4398,7 +4406,9 @@
         },
         "EpicGames.EpicGamesLauncher": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/QtBQnP70/egs-social-home-medium-1710x942-c0e4ff4c149e.jpg"
+            ]
         },
         "Epilogue.EpilogueOperator": {
             "icon": "",
@@ -4668,7 +4678,9 @@
         },
         "Ferdium.Ferdium": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/05wGYTPN/workspaces.png"
+            ]
         },
         "Ferdium.Ferdium.Beta": {
             "icon": "",
@@ -4852,7 +4864,9 @@
         },
         "Foundry376.Mailspring": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/W1X0pj65/hero-graphic-win32-2x.png"
+            ]
         },
         "FoundryLabs.Devbook": {
             "icon": "",
@@ -5683,7 +5697,9 @@
         },
         "HandBrake.HandBrake": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/66k0F9YR/slide1-win.jpg"
+            ]
         },
         "HandyOrg.HandyWinget-GUI": {
             "icon": "",
@@ -6264,7 +6280,9 @@
         },
         "IvoSoft.ClassicShell": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/mZCMz7yz/startmenu3.png"
+            ]
         },
         "JAMSoftware.HeavyLoad": {
             "icon": "",
@@ -6782,7 +6800,9 @@
         },
         "KDE.Kate": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/sDCYwTg4/konsole.png"
+            ]
         },
         "KDE.Kdenlive": {
             "icon": "",
@@ -6806,7 +6826,9 @@
         },
         "KDE.Okular": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/XY7yzmSd/Okular-21-12-1-screenshot.png"
+            ]
         },
         "KDE.Okular.Nightly": {
             "icon": "",
@@ -7975,7 +7997,9 @@
         },
         "MediaArea.MediaInfo.GUI": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/s2x7v8Ts/814eedf-84591aa.jpg"
+            ]
         },
         "MediaHuman.LyricsFinder": {
             "icon": "",
@@ -8363,7 +8387,10 @@
         },
         "Microsoft.PowerToys": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/28YW430H/XP89-DCGQ3-K6-VLD-9bd9e1a9-22c3-4789-99c5-46a7f7a46378.png",
+                "https://i.postimg.cc/TYcDQGST/XP89-DCGQ3-K6-VLD-e95dd209-0ff1-4fa1-9621-e7d7449238d6.png"
+            ]
         },
         "Microsoft.ProjectMyScreen": {
             "icon": "",
@@ -8928,7 +8955,9 @@
         },
         "Mozilla.Firefox": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/zBRhkhmQ/Firefox-96-screenshot.png"
+            ]
         },
         "Mozilla.Firefox.Beta": {
             "icon": "",
@@ -9635,7 +9664,9 @@
         },
         "Open-Shell.Open-Shell-Menu": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/mZCMz7yz/startmenu3.png"
+            ]
         },
         "OpenDesignAlliance.ODAFileConverter": {
             "icon": "",
@@ -10473,7 +10504,9 @@
         },
         "ProtonTechnologies.ProtonVPN": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/2yQBsfSF/windows-ovpn-9-1024x616.png"
+            ]
         },
         "Prowise.ProwisePresenter": {
             "icon": "",
@@ -10553,7 +10586,9 @@
         },
         "Python.Python.3.10": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/NFqHC0Bj/Python-IDLE.png"
+            ]
         },
         "Python.Python.3.11": {
             "icon": "",
@@ -12880,7 +12915,11 @@
         },
         "TheDocumentFoundation.LibreOffice": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/fRwxhkX3/Libre-Office-Writer-4-4-2.png",
+                "https://i.postimg.cc/xTGK7LkD/Libre-Office-7-2-calc.png",
+                "https://i.postimg.cc/6qndBvYZ/Libreoffice-impress-screenshot-de-windows-7.png"
+            ]
         },
         "TheDocumentFoundation.LibreOffice.\u2026": {
             "icon": "",
@@ -13252,7 +13291,9 @@
         },
         "Ubisoft.Connect": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/y8dkPRcT/14621efe-9306-44f5-ade6-b0eebe217a5f.png"
+            ]
         },
         "UdiFuchs.UFRaw": {
             "icon": "",
@@ -13380,7 +13421,9 @@
         },
         "VMware.WorkstationPlayer": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/BZTLQ4J2/Captura-de-pantalla-28.png"
+            ]
         },
         "VMware.WorkstationPro": {
             "icon": "",
@@ -13424,7 +13467,9 @@
         },
         "Valve.Steam": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/wMp1cbQt/Steam-service.png"
+            ]
         },
         "Vector000.bilive_electron": {
             "icon": "",
@@ -14257,7 +14302,9 @@
         },
         "XnSoft.XnViewMP": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/wTF1L2yv/xnviewmp-win-01.jpg"
+            ]
         },
         "XunLei.xunlei": {
             "icon": "",
@@ -14788,7 +14835,9 @@
         },
         "clsid2.mpc-hc": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/PqVbyhCC/153171289-0dbb60af-3a7e-41a5-a559-58da2618b50b.jpg"
+            ]
         },
         "code52.Carnac": {
             "icon": "",
@@ -16048,7 +16097,9 @@
         },
         "qBittorrent.qBittorrent": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/s2bQ12B4/QBittorrent-4-3-9-screenshot.png"
+            ]
         },
         "qier222.yesplaymusic": {
             "icon": "",
@@ -16328,7 +16379,9 @@
         },
         "stnkl.EverythingToolbar": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/P5hMrSG5/IfpkHAX.png"
+            ]
         },
         "stnkl.EverythingToolbar.Beta": {
             "icon": "",
@@ -16396,7 +16449,9 @@
         },
         "t1m0thyj.WinDynamicDesktop": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/tC91swgw/select-theme.png"
+            ]
         },
         "tagspaces.tagspaces": {
             "icon": "",
@@ -16773,7 +16828,9 @@
         },
         "voidtools.Everything": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZRL3w9Q/Everything-Search-Window.png"
+            ]
         },
         "voidtools.Everything.Alpha": {
             "icon": "",
@@ -16952,7 +17009,9 @@
         },
         "yt-dlg.yt-dlg": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/T2L0kyqf/ydlg-ui.png"
+            ]
         },
         "yt-dlp.yt-dlp": {
             "icon": "",
