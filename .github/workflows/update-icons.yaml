@@ -28,4 +28,4 @@ jobs:
           reviewers: "${{ github.repository_owner }}"
           author: "Excel Bot <excel-bot@users.noreply.github.com>"
           commit-message: "Update icons and screenshots from the excel file"
-          branch: pull-request/update-translation
+          branch: pull-request/update-icons-and-screenshots
