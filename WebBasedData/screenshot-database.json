@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 317
+        "done": 357
     },
     "winget": {
         "115.115": {
@@ -5448,11 +5448,11 @@
             ]
         },
         "Google.Chrome": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/2048px-Google_Chrome_icon_%28February_2022%29.svg.png",
             "images": []
         },
         "Google.Chrome.Beta": {
-            "icon": "",
+            "icon": "https://image.winudf.com/v2/image1/Y29tLmNocm9tZS5kZXZfaWNvbl8xNTYzNDkxNzUyXzA3Ng/icon.png?w=&fakeurl=1",
             "images": []
         },
         "Google.Chrome.Canary": {
@@ -5464,7 +5464,7 @@
             "images": []
         },
         "Google.ChromeRemoteDesktop": {
-            "icon": "",
+            "icon": "https://play-lh.googleusercontent.com/I4DRWoABrUQsaAIQFVSKha98q1u2ilEdrwPJBaf9Mb8KdGZnXzs5DObrwcwUZovgOA",
             "images": []
         },
         "Google.CloudSDK": {
@@ -6463,31 +6463,31 @@
             "images": []
         },
         "JetBrains.CLion": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/clion/img/meta/clion_logo_300x300.png",
             "images": []
         },
         "JetBrains.CLion.EAP": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/clion/img/meta/clion_logo_300x300.png",
             "images": []
         },
         "JetBrains.DataGrip": {
-            "icon": "",
+            "icon": "https://iconape.com/wp-content/png_logo_vector/dotpeek-logo.png",
             "images": []
         },
         "JetBrains.DataGrip.EarlyAccess": {
-            "icon": "",
+            "icon": "https://iconape.com/wp-content/png_logo_vector/dotpeek-logo.png",
             "images": []
         },
         "JetBrains.DataSpell.EarlyPreview": {
-            "icon": "",
+            "icon": "https://seeklogo.com/images/D/dataspell-logo-06435B9CF3-seeklogo.com.png",
             "images": []
         },
         "JetBrains.FleetLauncher.EAP": {
-            "icon": "",
+            "icon": "https://www.jetbrains.com/_assets/www/fleet/inc/overview-content/img/fleet-logo.65f4a04c59fc3ba93bb5e181050891c5.png",
             "images": []
         },
         "JetBrains.FleetLauncher.Preview": {
-            "icon": "",
+            "icon": "https://www.jetbrains.com/_assets/www/fleet/inc/overview-content/img/fleet-logo.65f4a04c59fc3ba93bb5e181050891c5.png",
             "images": []
         },
         "JetBrains.Gateway": {
@@ -6495,35 +6495,35 @@
             "images": []
         },
         "JetBrains.GoLand": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/goland/img/meta/goland_logo_300x300.png",
             "images": []
         },
         "JetBrains.GoLand.EarlyAccess": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/goland/img/meta/goland_logo_300x300.png",
             "images": []
         },
         "JetBrains.Hub": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/hub/img/meta/hub_logo_300x300.png",
             "images": []
         },
         "JetBrains.IntelliJIDEA.Community": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
             "images": []
         },
         "JetBrains.IntelliJIDEA.Community.E\u2026": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
             "images": []
         },
         "JetBrains.IntelliJIDEA.Edu": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
             "images": []
         },
         "JetBrains.IntelliJIDEA.Ultimate": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
             "images": []
         },
         "JetBrains.IntelliJIDEA.Ultimate.EAP": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
             "images": []
         },
         "JetBrains.MPS": {
@@ -6535,79 +6535,79 @@
             "images": []
         },
         "JetBrains.PHPStorm": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/phpstorm/img/meta/phpstorm_logo_300x300.png",
             "images": []
         },
         "JetBrains.PHPStorm.EarlyAccess": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/phpstorm/img/meta/phpstorm_logo_300x300.png",
             "images": []
         },
         "JetBrains.PyCharm.Community": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
             "images": []
         },
         "JetBrains.PyCharm.Community.EAP": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
             "images": []
         },
         "JetBrains.PyCharm.Professional": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
             "images": []
         },
         "JetBrains.PyCharm.Professional.EAP": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
             "images": []
         },
         "JetBrains.ReSharper": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/resharper/img/meta/resharper_logo_300x300.png",
             "images": []
         },
         "JetBrains.ReSharper.EarlyAccess": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/resharper/img/meta/resharper_logo_300x300.png",
             "images": []
         },
         "JetBrains.Rider": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/rider/img/meta/rider_logo_300x300.png",
             "images": []
         },
         "JetBrains.Rider.EAP": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/rider/img/meta/rider_logo_300x300.png",
             "images": []
         },
         "JetBrains.RubyMine": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/rubymine/img/meta/rubymine_logo_300x300.png",
             "images": []
         },
         "JetBrains.RubyMine.EarlyAccess": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/rubymine/img/meta/rubymine_logo_300x300.png",
             "images": []
         },
         "JetBrains.Space": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/space/img/meta/logo.png",
             "images": []
         },
         "JetBrains.TeamCity": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/teamcity/img/meta/teamcity_logo_300x300.png",
             "images": []
         },
         "JetBrains.Toolbox": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/toolbox/img/meta/toolbox_logo_300x300.png",
             "images": []
         },
         "JetBrains.WebStorm": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/webstorm/img/meta/webstorm_logo_300x300.png",
             "images": []
         },
         "JetBrains.WebStorm.EAP": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/webstorm/img/meta/webstorm_logo_300x300.png",
             "images": []
         },
         "JetBrains.YouTrack": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/youtrack/img/meta/youtrack_logo_300x300.png",
             "images": []
         },
         "JetBrains.dotUltimate": {
-            "icon": "",
+            "icon": "https://computermalaysia.com.my/media/catalog/product/cache/1/thumbnail/500x500/9df78eab33525d08d6e5fb8d27136e95/d/o/dotultimate.png",
             "images": []
         },
         "Jidifudi.GT4T": {
@@ -6805,7 +6805,7 @@
             ]
         },
         "KDE.Kdenlive": {
-            "icon": "",
+            "icon": "https://kdenlive.org/wp-content/uploads/2022/01/kdenlive-logo-blank-500px.png",
             "images": []
         },
         "KDE.Krita": {
@@ -8318,7 +8318,7 @@
             "images": []
         },
         "Microsoft.Office": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Microsoft_Office_logo_%282019%E2%80%93present%29.svg/640px-Microsoft_Office_logo_%282019%E2%80%93present%29.svg.png",
             "images": []
         },
         "Microsoft.OfficeDeploymentTool": {
@@ -8326,7 +8326,7 @@
             "images": []
         },
         "Microsoft.OneDrive": {
-            "icon": "",
+            "icon": "https://play-lh.googleusercontent.com/6AWr-qrhGT0ohjw0koq3bM8GHEFg1gTurald4FjCDg2RulTp4y_VVsYWUtw7Fo6lsQo",
             "images": []
         },
         "Microsoft.OneDrive.Enterprise": {
