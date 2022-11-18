@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 357
+        "done": 358
     },
     "winget": {
         "115.115": {
@@ -8874,8 +8874,10 @@
             "images": []
         },
         "Mojang.MinecraftLauncher": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.minecraft.net/content/dam/games/minecraft/key-art/MC_The-Wild-Update_540x300.jpg",
+            "images": [
+                "https://pics.computerbase.de/1/0/3/7/5/9-e76e0679e4fd11ea/article-1280x720.2cad9186.jpg"
+            ]
         },
         "MolotovTV.Molotov": {
             "icon": "",
