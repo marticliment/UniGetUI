@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 358
+        "done": 363
     },
     "winget": {
         "115.115": {
@@ -3813,7 +3813,7 @@
             "images": []
         },
         "Discord.Discord": {
-            "icon": "",
+            "icon": "https://assets-global.website-files.com/6257adef93867e50d84d30e2/625e5fcef7ab80b8c1fe559e_Discord-Logo-Color.png",
             "images": []
         },
         "Discord.Discord.Canary": {
@@ -3825,7 +3825,7 @@
             "images": []
         },
         "Discord.Discord.PTB": {
-            "icon": "",
+            "icon": "https://assets-global.website-files.com/6257adef93867e50d84d30e2/625e5fcef7ab80b8c1fe559e_Discord-Logo-Color.png",
             "images": []
         },
         "DiskInternals.LinuxReader": {
@@ -5456,7 +5456,7 @@
             "images": []
         },
         "Google.Chrome.Canary": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Chrome-canary-logo.svg/512px-Chrome-canary-logo.svg.png",
             "images": []
         },
         "Google.Chrome.Dev": {
@@ -5696,9 +5696,11 @@
             "images": []
         },
         "HandBrake.HandBrake": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/d/d9/HandBrake_Icon.png",
             "images": [
-                "https://i.postimg.cc/66k0F9YR/slide1-win.jpg"
+                "https://handbrake.fr/img/slides/slide1_win.jpg",
+                "https://handbrake.fr/img/slides/slide2_win.jpg",
+                "https://handbrake.fr/img/slides/slide3_win.jpg"
             ]
         },
         "HandyOrg.HandyWinget-GUI": {
@@ -12168,7 +12170,7 @@
             "images": []
         },
         "Spotify.Spotify": {
-            "icon": "",
+            "icon": "https://cdn-icons-png.flaticon.com/512/174/174872.png",
             "images": []
         },
         "Spyder.Spyder": {
