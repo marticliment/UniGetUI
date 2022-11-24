@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 363
+        "done": 368
     },
     "winget": {
         "115.115": {
@@ -9848,7 +9848,7 @@
             "images": []
         },
         "Oracle.JavaRuntimeEnvironment": {
-            "icon": "",
+            "icon": "https://www.eclipse.org/xtend/images/java8_logo.png",
             "images": []
         },
         "Oracle.MySQL": {
@@ -10763,19 +10763,19 @@
             "images": []
         },
         "RProject.R": {
-            "icon": "",
+            "icon": "https://www.r-project.org/logo/Rlogo.png",
             "images": []
         },
         "RProject.Rtools": {
-            "icon": "",
+            "icon": "https://www.r-project.org/logo/Rlogo.pngg",
             "images": []
         },
         "RStudio.RStudio.OpenSource": {
-            "icon": "",
+            "icon": "https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png",
             "images": []
         },
         "RStudio.RStudio.Professional": {
-            "icon": "",
+            "icon": "https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.pngg",
             "images": []
         },
         "RStudio.quarto": {
