@@ -42,7 +42,7 @@ try:
                 titlewidget = QHBoxLayout()
                 titlewidget.addStretch()
                 icon = QLabel()
-                icon.setPixmap(QPixmap(realpath+"/resources/icon.png"))
+                icon.setPixmap(QPixmap(realpath+"/resources/icon.png").scaledToWidth(128, Qt.TransformationMode.SmoothTransformation))
                 text = QLabel("WingetUI")
                 text.setStyleSheet(f"font-family: \"Segoe UI Variable Display\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
                 titlewidget.addWidget(icon)
