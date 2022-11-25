@@ -528,6 +528,7 @@ class PackageInfoPopupWindow(QWidget):
     finishedCount: int = 0
     backgroundApplied: bool = False
     givenPackageId: str = ""
+    isAnUpdate = False
     
     pressed = False
     oldPos = QPoint(0, 0)
@@ -888,11 +889,17 @@ class PackageInfoPopupWindow(QWidget):
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.packageItem = packageItem
         self.givenPackageId = id
-        self.store = store
-        self.installButton.setEnabled(False)
-        self.versionCombo.setEnabled(False)
         self.isAnUpdate = update
-        self.installButton.setText(_("Please wait..."))
+        self.store = store
+        if "…" in id:
+            self.installButton.setEnabled(False)
+            self.installButton.setText(_("Please wait..."))
+        else:
+            if self.isAnUpdate:
+                self.installButton.setText(_("Update"))
+            else:
+                self.installButton.setText(_("Install"))
+        self.versionCombo.setEnabled(False)
         store = store.lower()
         self.title.setText(title)
             
