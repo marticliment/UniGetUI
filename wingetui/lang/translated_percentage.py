@@ -4,6 +4,6 @@
 untranslatedPercentage = {
   "ar": "0%",
   "hr": "0%",
-  "ja": "18%",
+  "ja": "22%",
   "sr": "25%"
 }
