@@ -203,7 +203,7 @@ class RootWindow(QMainWindow):
                 "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why."),
                 "buttonTitle": _("Ok"),
                 "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator."),
-                "icon": QIcon(getMedia("infocolor")),
+                "icon": QIcon(getMedia("icon")),
             }
             self.err.showErrorMessage(errorData, showNotification=False)
 
@@ -231,7 +231,7 @@ class RootWindow(QMainWindow):
             event.accept()
         if(globals.pending_programs != []):
             if getSettings("DisablesystemTray"):
-                if(tools.MessageBox.question(self, _("Warning"), _("There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to quit WingetUI?"), tools.MessageBox.No | tools.MessageBox.Yes, tools.MessageBox.No) == tools.MessageBox.Yes):
+                if(QMessageBox.question(self, _("Warning"), _("There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to quit WingetUI?"), QMessageBox.No | QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes):
                     if globals.updatesAvailable:
                         self.hide()
                         globals.canUpdate = True

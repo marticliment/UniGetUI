@@ -6,6 +6,8 @@ from tools import *
 from tools import _
 import globals
 
+from external.FramelessWindow import QFramelessWindow
+
 
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:
@@ -155,9 +157,11 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def treeWidget(self) -> TreeWidget:
         return super().treeWidget()
 
-class ErrorMessage(QWidget):
+class ErrorMessage(QFramelessWindow):
     showerr = Signal(dict, bool)
     fHeight = 100
+    oldpos = QPoint()
+    mousePressed = False
     callInMain = Signal(object)
     def __init__(self, parent):
         super().__init__(parent)
@@ -167,9 +171,18 @@ class ErrorMessage(QWidget):
         self.setObjectName("micawin")
         ApplyMica(self.winId().__int__(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.hide()
+        if isDark():
+            self.setStyleSheet(f"""#micawin {{
+                background-color: #222222;
+                color: white;
+                }}
+                #btnBackground {{
+                    background-color: #181818;
+                }}
+                               """)
         l = QVBoxLayout()
         self.titleLabel = QLabel()
-        self.titleLabel.setStyleSheet("font-size: 20pt;")
+        self.titleLabel.setStyleSheet("font-size: 16pt;font-family: \"Segoe UI Variable Text\";font-weight: bold;")
         l.addSpacing(10)
         l.addWidget(self.titleLabel)
         l.addSpacing(2)
@@ -182,13 +195,17 @@ class ErrorMessage(QWidget):
         self.iconLabel.setFixedSize(64, 64)
         layout = QVBoxLayout()
         hl = QHBoxLayout()
+        hl.setContentsMargins(20, 20, 20, 10)
         hl.addWidget(self.iconLabel)
         hl.addLayout(l)
         hl.addSpacing(16)
-        layout.addLayout(hl)
+        self.bgw1 = QWidget()
+        self.bgw1.setLayout(hl)
+        layout.addWidget(self.bgw1)
         hl = QHBoxLayout()
         self.okButton = QPushButton()
         self.okButton.setFixedHeight(30)
+        #self.okButton.setObjectName("AccentButton")
         self.okButton.clicked.connect(self.delete)
         try:
             self.moreInfoButton = QPushButton(_("Show details"))
@@ -199,13 +216,27 @@ class ErrorMessage(QWidget):
         #hl.addStretch()
         hl.addWidget(self.moreInfoButton)
         hl.addWidget(self.okButton)
-        layout.addLayout(hl)
+        bglayout = QVBoxLayout()
+        bglayout.addLayout(hl)
+        #layout.addLayout(hl)
         self.moreInfoTextArea = QPlainTextEdit()
         self.moreInfoTextArea.setReadOnly(True)
         self.moreInfoTextArea.setVisible(False)
         self.moreInfoTextArea.setMinimumHeight(120)
-        layout.addWidget(self.moreInfoTextArea, stretch=1)
-        self.setLayout(layout)
+        bglayout.addWidget(self.moreInfoTextArea, stretch=1)
+        
+        self.bgw2 = QWidget()
+        self.bgw2.setObjectName("btnBackground")
+        self.bgw2.setMinimumHeight(70)
+        self.bgw2.setLayout(bglayout)
+        layout.addWidget(self.bgw2)
+        bglayout.setContentsMargins(20, 20, 20, 20)
+
+        layout.setContentsMargins(0, 0, 0, 0)
+        w = QWidget()
+        w.setLayout(layout)
+        self.setCentralWidget(w)
+        w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setMinimumWidth(320)
 
     def delete(self):
@@ -218,11 +249,11 @@ class ErrorMessage(QWidget):
         if self.moreInfoTextArea.isVisible():
             # show textedit
             s = self.size()
-            s.setHeight(s.height() + self.moreInfoTextArea.height() + (self.layout().spacing() if not spacingAdded else 0))
+            #s.setHeight(s.height() + self.moreInfoTextArea.height() + (self.layout().spacing() if not spacingAdded else 0))
             spacingAdded = True
             self.resize(s)
             self.setMinimumWidth(450)
-            self.setMinimumHeight(self.minimumSizeHint().height())
+            self.setMinimumHeight(self.bgw1.sizeHint().height())
             self.setMaximumHeight(2048)
         else:
             # Hide textedit
@@ -232,10 +263,15 @@ class ErrorMessage(QWidget):
             self.resize(s)
             self.setMaximumSize(2048, 2048)
             self.setMinimumWidth(450)
-            self.fHeight = self.minimumSizeHint().height()
+            #self.fHeight = self.bgw1.sizeHint().height() + self.bgw2.sizeHint().height()
             self.setFixedHeight(self.fHeight)
             self.setMinimumHeight(self.fHeight)
             self.setMaximumHeight(self.fHeight+1)
+            
+    def paintEvent(self, event: QPaintEvent) -> None:
+        self.bgw1.setFixedHeight(self.bgw1.sizeHint().height())
+        self.setFixedHeight(self.bgw1.sizeHint().height() + 70 + ((10+self.moreInfoTextArea.height()) if self.moreInfoTextArea.isVisible() else 0))
+        return super().paintEvent(event)
 
     
     def showErrorMessage(self, data: dict, showNotification = True):
@@ -248,10 +284,10 @@ class ErrorMessage(QWidget):
             "mainText": "An error occurred",
             "buttonTitle": "Ok",
             "errorDetails": "The details say that there were no details to detail the detailed error",
-            "icon": QIcon(getMedia("cancel")),
+            "icon": QIcon(getMedia("notif_error")),
             "notifTitle": "Error notification",
             "notifText": "An error occurred",
-            "notifIcon": QIcon(getMedia("cancel")),
+            "notifIcon": QIcon(getMedia("notif_error")),
         } | data
         self.setWindowTitle(errorData["titlebarTitle"])
         self.titleLabel.setText(errorData["mainTitle"])
@@ -289,7 +325,21 @@ class ErrorMessage(QWidget):
         else:
             self.show()
             globals.app.beep()
+            
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.mousePressed = True
+        self.oldpos = QCursor.pos()
+        return super().mousePressEvent(event)
 
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if self.mousePressed:
+            self.move(self.pos()+(QCursor.pos()-self.oldpos))
+            self.oldpos = QCursor.pos()
+        return super().mouseMoveEvent(event)
+    
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        self.mousePressed = False
+        return super().mouseReleaseEvent(event)
 
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
