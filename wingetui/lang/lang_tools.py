@@ -4,12 +4,17 @@ from pathlib import Path
 
 languageReference = {
     "default": "System language",
+    "ar": "arabic",
     "ca"    : "Catalan - Català",
     "de"    : "German - Deutsch",
     "zh"    : "Chinese - 中文",
     "en"    : "English - English",
     "fr"    : "French - Français",
     "hi"    : "Hindi - हिंदी",
+    "hu":   "Hungarian - magyar",
+    "ja":   "Japanese - 日本語",
+    "ru":   "Russian - русский",
+    "sr":   "Serbian - српски",
     "it"    : "Italian - Italiano",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
