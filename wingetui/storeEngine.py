@@ -192,59 +192,63 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
     
     def finish(self, returncode: int, output: str = "") -> None:
-        self.finishedInstallation = True
-        self.cancelButton.setEnabled(True)
-        removeProgram(self.installId)
-        try: self.waitThread.kill()
-        except: pass
-        try: self.t.kill()
-        except: pass
-        try: self.p.kill()
-        except: pass
-        if not(self.canceled):
-            if(returncode == 0):
-                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
-                self.cancelButton.setText("OK")
-                self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
-                self.cancelButton.clicked.connect(self.close)
-                self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
-                self.progressbar.setValue(1000)
-                if type(self) == PackageInstallerWidget:
-                    if self.packageItem:
-                        globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
-                self.startCoolDown()
-            else:
-                globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
-                self.cancelButton.setText(_("OK"))
-                self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
-                self.cancelButton.clicked.connect(self.close)
-                self.progressbar.setValue(1000)
-                self.err = ErrorMessage(self.window())
-                if(returncode == 2):  # if the installer's hash does not coincide
-                    errorData = {
-                        "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
-                        "mainTitle": _("{0} aborted").format(self.actionName.capitalize()),
-                        "mainText": _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb),
-                        "buttonTitle": _("Close"),
-                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                        "icon": QIcon(getMedia("notif_warn")),
-                        "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                        "notifText": _("The installer has an invalid checksum"),
-                        "notifIcon": QIcon(getMedia("notif_warn")),
-                    }
-                else: # if there's a generic error
-                    errorData = {
-                        "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
-                        "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
-                        "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName),
-                        "buttonTitle": _("Close"),
-                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                        "icon": QIcon(getMedia("notif_warn")),
-                        "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                        "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
-                        "notifIcon": QIcon(getMedia("notif_warn")),
-                    }
-                self.err.showErrorMessage(errorData)
+        if returncode == 1603:
+            self.adminstr = [sudoPath]
+            self.runInstallation()
+        else:
+            self.finishedInstallation = True
+            self.cancelButton.setEnabled(True)
+            removeProgram(self.installId)
+            try: self.waitThread.kill()
+            except: pass
+            try: self.t.kill()
+            except: pass
+            try: self.p.kill()
+            except: pass
+            if not(self.canceled):
+                if(returncode == 0):
+                    self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
+                    self.cancelButton.setText("OK")
+                    self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
+                    self.cancelButton.clicked.connect(self.close)
+                    self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
+                    self.progressbar.setValue(1000)
+                    if type(self) == PackageInstallerWidget:
+                        if self.packageItem:
+                            globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
+                    self.startCoolDown()
+                else:
+                    globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
+                    self.cancelButton.setText(_("OK"))
+                    self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+                    self.cancelButton.clicked.connect(self.close)
+                    self.progressbar.setValue(1000)
+                    self.err = ErrorMessage(self.window())
+                    if(returncode == 2):  # if the installer's hash does not coincide
+                        errorData = {
+                            "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
+                            "mainTitle": _("{0} aborted").format(self.actionName.capitalize()),
+                            "mainText": _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb),
+                            "buttonTitle": _("Close"),
+                            "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                            "icon": QIcon(getMedia("notif_warn")),
+                            "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                            "notifText": _("The installer has an invalid checksum"),
+                            "notifIcon": QIcon(getMedia("notif_warn")),
+                        }
+                    else: # if there's a generic error
+                        errorData = {
+                            "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                            "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
+                            "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName),
+                            "buttonTitle": _("Close"),
+                            "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                            "icon": QIcon(getMedia("notif_warn")),
+                            "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                            "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
+                            "notifIcon": QIcon(getMedia("notif_warn")),
+                        }
+                    self.err.showErrorMessage(errorData)
 
     def startCoolDown(self):
         if not getSettings("MaintainSuccessfulInstalls"):
@@ -340,17 +344,21 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.t.start()
 
     def finish(self, returncode: int, output: str = "") -> None:
-        print(returncode)
-        if returncode == 0 and not self.canceled:
-            if self.packageItem:
-                try:
-                    self.packageItem.setHidden(True)
-                    i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
-                    del i
-                except Exception as e:
-                    report(e)
-                globals.updates.updatePackageNumber()
-        super().finish(returncode, output)
+        if returncode == 1603:
+            self.adminstr = [sudoPath]
+            self.runInstallation()
+        else:
+            print(returncode)
+            if returncode == 0 and not self.canceled:
+                if self.packageItem:
+                    try:
+                        self.packageItem.setHidden(True)
+                        i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
+                        del i
+                    except Exception as e:
+                        report(e)
+                    globals.updates.updatePackageNumber()
+            super().finish(returncode, output)
     
     def close(self):
         globals.installersWidget.removeItem(self)

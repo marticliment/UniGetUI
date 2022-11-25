@@ -188,6 +188,8 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             elif ("is already installed" in line):
                 outputCode = 0
             output += line+"\n"
+    if "requires admin rights" in output:
+        outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
    
@@ -210,6 +212,8 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             if("was uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
+    if "requires admin rights" in output:
+        outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
 
