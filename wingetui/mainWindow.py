@@ -35,7 +35,8 @@ class RootWindow(QMainWindow):
             rs = getSettingsValue("OldWindowGeometry").split(",")
             assert (len(rs)==4), "Invalid window geometry format"
             geometry = QRect(int(rs[0]), int(rs[1]), int(rs[2]), int(rs[3]))
-            self.setGeometry(geometry)
+            if QApplication.primaryScreen().availableVirtualGeometry().contains(geometry):
+                self.setGeometry(geometry)
         except Exception as e:
             report(e)
         self.loadWidgets()
