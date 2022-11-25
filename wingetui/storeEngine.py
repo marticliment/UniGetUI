@@ -1040,7 +1040,7 @@ class PackageInfoPopupWindow(QWidget):
         self.link.setText(f"{_('Installer URL')} ({_('Latest Version')}): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"{_('Installer Type')} ({_('Latest Version')}): {appInfo['installer-type']}")
         self.packageId.setText(f"{_('Package ID')}: {appInfo['id']}")
-        self.manifest.setText(f"{_('Manifest')}: <a style=\"color: {blueColor};\" href=\"file:///"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
+        self.manifest.setText(f"{_('Manifest')}: <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
         try:

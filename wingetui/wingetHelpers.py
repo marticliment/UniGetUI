@@ -223,86 +223,89 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     finishSignal.emit("winget")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
-    oldid = id
-    id = id.replace("…", "")
-    oldtitle = title
-    title = title.replace("…", "")
-    if "…" in oldid and "…" in oldtitle:
-        title, id = searchForOnlyOnePackage(oldid)
+    try:
         oldid = id
+        id = id.replace("…", "")
         oldtitle = title
-        useId = True
-    elif "…" in oldtitle:
-        title = searchForOnlyOnePackage(oldid)[0]
-        oldtitle = title
-    if useId:
-        p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        print(f"🟢 Starting get info for id {id}")
-    else:
-        p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        print(f"🟢 Starting get info for title {title}")
-    print(p.args)
-    output = []
-    appInfo = {
-        "title": oldtitle,
-        "id": oldid,
-        "publisher": "Unknown",
-        "author": "Unknown",
-        "description": "Unknown",
-        "homepage": "Unknown",
-        "license": "Unknown",
-        "license-url": "Unknown",
-        "installer-sha256": "Unknown",
-        "installer-url": "Unknown",
-        "installer-type": "Unknown",
-        "manifest": "Not Applicable",
-        "versions": [],
-    }
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            output.append(str(line, encoding='utf-8', errors="ignore"))
-    print(p.stdout)
-    for line in output:
-        if("Publisher:" in line):
-            appInfo["publisher"] = line.replace("Publisher:", "").strip()
-        elif("Description:" in line):
-            appInfo["description"] = line.replace("Description:", "").strip()
-        elif("Author:" in line):
-            appInfo["author"] = line.replace("Author:", "").strip()
-        elif("Publisher:" in line):
-            appInfo["publisher"] = line.replace("Publisher:", "").strip()
-        elif("Homepage:" in line):
-            appInfo["homepage"] = line.replace("Homepage:", "").strip()
-        elif("License:" in line):
-            appInfo["license"] = line.replace("License:", "").strip()
-        elif("License Url:" in line):
-            appInfo["license-url"] = line.replace("License Url:", "").strip()
-        elif("SHA256:" in line):
-            appInfo["installer-sha256"] = line.replace("SHA256:", "").strip()
-        elif("Download Url:" in line):
-            appInfo["installer-url"] = line.replace("Download Url:", "").strip()
-        elif("Type:" in line):
-            appInfo["installer-type"] = line.replace("Type:", "").strip()
-    print(f"🟢 Loading versions for {title}")    
-    if useId:
-        p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-    else:
-        p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-    output = []
-    counter = 0
-    print(p.args)
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            if(counter > 2):
+        title = title.replace("…", "")
+        if "…" in oldid:
+            title, id = searchForOnlyOnePackage(oldid)
+            oldid = id
+            oldtitle = title
+            useId = True
+        elif "…" in oldtitle:
+            title = searchForOnlyOnePackage(oldid)[0]
+            oldtitle = title
+        if useId:
+            p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            print(f"🟢 Starting get info for id {id}")
+        else:
+            p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            print(f"🟢 Starting get info for title {title}")
+        print(p.args)
+        output = []
+        appInfo = {
+            "title": oldtitle,
+            "id": oldid,
+            "publisher": "Unknown",
+            "author": "Unknown",
+            "description": "Unknown",
+            "homepage": "Unknown",
+            "license": "Unknown",
+            "license-url": "Unknown",
+            "installer-sha256": "Unknown",
+            "installer-url": "Unknown",
+            "installer-type": "Unknown",
+            "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
+            "versions": [],
+        }
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            if line:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
-            else:
-                counter += 1
-    appInfo["versions"] = output
-    signal.emit(appInfo)
+        print(p.stdout)
+        for line in output:
+            if("Publisher:" in line):
+                appInfo["publisher"] = line.replace("Publisher:", "").strip()
+            elif("Description:" in line):
+                appInfo["description"] = line.replace("Description:", "").strip()
+            elif("Author:" in line):
+                appInfo["author"] = line.replace("Author:", "").strip()
+            elif("Publisher:" in line):
+                appInfo["publisher"] = line.replace("Publisher:", "").strip()
+            elif("Homepage:" in line):
+                appInfo["homepage"] = line.replace("Homepage:", "").strip()
+            elif("License:" in line):
+                appInfo["license"] = line.replace("License:", "").strip()
+            elif("License Url:" in line):
+                appInfo["license-url"] = line.replace("License Url:", "").strip()
+            elif("SHA256:" in line):
+                appInfo["installer-sha256"] = line.replace("SHA256:", "").strip()
+            elif("Download Url:" in line):
+                appInfo["installer-url"] = line.replace("Download Url:", "").strip()
+            elif("Type:" in line):
+                appInfo["installer-type"] = line.replace("Type:", "").strip()
+        print(f"🟢 Loading versions for {title}")    
+        if useId:
+            p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        else:
+            p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        output = []
+        counter = 0
+        print(p.args)
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            if line:
+                if(counter > 2):
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
+                else:
+                    counter += 1
+        appInfo["versions"] = output
+        signal.emit(appInfo)
+    except Exception as e:
+        report(e)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
