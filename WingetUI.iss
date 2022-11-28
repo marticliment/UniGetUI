@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.5.0"
+#define MyAppVersion "1.5.1"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"

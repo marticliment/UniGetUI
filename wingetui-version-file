@@ -32,8 +32,8 @@ StringFileInfo(
     [
       StringStruct(u'CompanyName', u'Martí Climent'),
       StringStruct(u'FileDescription', u'WingetUI'),
-      StringStruct(u'FileVersion', u'1.5.0'),
-      StringStruct(u'ProductVersion', u'1.5.0'),
+      StringStruct(u'FileVersion', u'1.5.1'),
+      StringStruct(u'ProductVersion', u'1.5.1'),
       StringStruct(u'InternalName', u'WingetUI'),
       StringStruct(u'LegalCopyright', u'Martí Climent'),
       StringStruct(u'OriginalFilename', u'wingetui.exe'),
