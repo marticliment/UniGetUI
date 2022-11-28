@@ -57,3 +57,7 @@ canUpdate: bool = False
 packageMeta: dict = {}
 infobox: QWidget = None
 centralWindowLayout: QWidget = None
+
+textfont: str = "Segoe UI Variable Text"
+dispfont: str = "Segoe UI Variable Display"
+dispfontsemib: str = "Segoe UI Variable Display Semib"

@@ -44,14 +44,14 @@ try:
                 icon = QLabel()
                 icon.setPixmap(QPixmap(realpath+"/resources/icon.png").scaledToWidth(128, Qt.TransformationMode.SmoothTransformation))
                 text = QLabel("WingetUI")
-                text.setStyleSheet(f"font-family: \"Segoe UI Variable Display\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
+                text.setStyleSheet(f"font-family: \"{globals.dispfont}\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
                 titlewidget.addWidget(icon)
                 titlewidget.addWidget(text)
                 titlewidget.addStretch()
                 self.popup.layout().addLayout(titlewidget)
                 self.popup.layout().addStretch()
                 self.loadingText = QLabel(_("Loading WingetUI..."))
-                self.loadingText.setStyleSheet(f"font-family: \"Segoe UI Variable Text\"; color: {'white' if isDark() else 'black'};font-size: 12px;")
+                self.loadingText.setStyleSheet(f"font-family: \"{globals.textfont}\"; color: {'white' if isDark() else 'black'};font-size: 12px;")
                 self.popup.layout().addWidget(self.loadingText)
                 ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
                 
@@ -353,8 +353,8 @@ try:
                             mn.setStyleSheet(menuLightCSS)
 
                 self.setStyle("winvowsvista")
-                globals.darkCSS = darkCSS
-                globals.lightCSS = lightCSS
+                globals.darkCSS = darkCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
+                globals.lightCSS = lightCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                 self.window = RootWindow()
                 globals.mainWindow = self.window
                 self.showAction.triggered.connect(self.window.showWindow)

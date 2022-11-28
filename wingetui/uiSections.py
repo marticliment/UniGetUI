@@ -96,7 +96,7 @@ class DiscoverSoftwareSection(QWidget):
         v.setSpacing(0)
         v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel(_("Discover Packages"))
-        self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         self.titleWidget = QWidget()
@@ -488,11 +488,11 @@ class DiscoverSoftwareSection(QWidget):
         if self.discoverLabelDefaultWidth > self.titleWidget.width():
             if not self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = True
-                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         else:
             if self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = False
-                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
 
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         if self.toolbarDefaultWidth == 0:
@@ -596,7 +596,7 @@ class UpdateSoftwareSection(QWidget):
         v.setSpacing(0)
         v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel(_("Software Updates"))
-        self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         self.titleWidget = QWidget()
@@ -1143,11 +1143,11 @@ class UpdateSoftwareSection(QWidget):
         if self.discoverLabelDefaultWidth > self.titleWidget.width():
             if not self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = True
-                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         else:
             if self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = False
-                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
 
         if self.toolbarDefaultWidth == 0:
             self.toolbarDefaultWidth = self.toolbar.sizeHint().width()+10
@@ -1253,7 +1253,7 @@ class UninstallSoftwareSection(QWidget):
         v.setSpacing(0)
         v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel(_("Installed Packages"))
-        self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         self.titleWidget = QWidget()
@@ -1601,11 +1601,11 @@ class UninstallSoftwareSection(QWidget):
         if self.discoverLabelDefaultWidth > self.titleWidget.width():
             if not self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = True
-                self.discoverLabel.setStyleSheet("font-size: 15pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         else:
             if self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = False
-                self.discoverLabel.setStyleSheet("font-size: 30pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
 
         if self.toolbarDefaultWidth == 0:
             self.toolbarDefaultWidth = self.toolbar.sizeHint().width()+2
@@ -1826,7 +1826,7 @@ class AboutSection(QScrollArea):
         self.announcements = QAnnouncements()
         self.layout.addWidget(self.announcements)
         title = QLabel(_("Component Information"))
-        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         self.layout.addWidget(title)
 
         self.layout.addSpacing(15)
@@ -1863,7 +1863,7 @@ class AboutSection(QScrollArea):
         table.cornerWidget().setStyleSheet("background: transparent;")
         self.layout.addWidget(table)
         title = QLabel(_("About WingetUI version {0}").format(versionName))
-        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         self.layout.addWidget(title)
         self.layout.addSpacing(5)
         description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
@@ -1872,7 +1872,7 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WingetUI\">https://github.com/martinet101/WingetUI</a>"))
         self.layout.addSpacing(30)
 
-        self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))        
+        self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
         GHcontributors = "<ul>"
         for user in ("ppvnf", "RavenMacDaddy", "vedantmgoyal2009", "Satanarious", "sitiom", "harleylara", "victorelec14", "neoOpus"):
@@ -1881,7 +1881,7 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(GHcontributors))
         self.layout.addSpacing(15)
 
-        self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))        
+        self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
         translators = "<ul>"
         for user in ("Ahmet Özmetin: Turkish", "BUGP Association: Chinese", "Datacra5H: German", "Evans: French", "Operator404: Ukranian", "ppvnf: Portuguese (Portugal and Brazil)", "Satyam Singh Niranjan: Hindi", "Martí Climent: Catalan"):
@@ -1891,13 +1891,13 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(translators))
         self.layout.addSpacing(15)
         
-        self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))        
+        self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
         self.layout.addWidget(QLinkLabel(_("Check out my {0} and my {1}!").format(f"<a style=\"color:{blueColor}\" href=\"https://github.com/martinet101\">{_('GitHub profile')}</a>", f"<a style=\"color:{blueColor}\" href=\"http://www.somepythonthings.tk\">{_('homepage')}</a>")))
         self.layout.addWidget(QLinkLabel(_("Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!").format(f"<a style=\"color:{blueColor}\" href=\"https://ko-fi.com/martinet101\">{_('buy me a coffee')}</a>")))
 
         self.layout.addSpacing(15)
-        self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", "font-size: 22pt;font-family: \"Segoe UI Variable Display\";font-weight: bold;"))
+        self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
         self.layout.addWidget(QLabel())
         self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/martinet101/WinGetUI/blob/main/LICENSE\">https://github.com/martinet101/WinGetUI/blob/main/LICENSE</a>"))
         self.layout.addWidget(QLabel())
@@ -1949,7 +1949,7 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(self.announcements)
         title = QLabel(_("WingetUI Settings"))
 
-        title.setStyleSheet(f"font-size: 40px;font-family: \"Segoe UI Variable Display\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         self.layout.addWidget(title)
         self.layout.addSpacing(20)
 

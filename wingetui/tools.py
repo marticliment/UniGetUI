@@ -399,6 +399,11 @@ except Exception as e:
 
 langName = lang['locale']
 
+if "zh" in langName:
+    globals.textfont: str = "Microsoft JhengHei UI"
+    globals.dispfont: str = "Microsoft JhengHei UI"
+    globals.dispfontsemib: str = "Microsoft JhengHei UI"
+
 try:
     englang = loadLangFile(languages["en"], bundled=True) | {"locale": "en"}
 except Exception as e:
