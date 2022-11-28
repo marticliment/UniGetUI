@@ -276,7 +276,8 @@ class DiscoverSoftwareSection(QWidget):
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
-        self.providerIcon = QIcon(getMedia("provider"))
+        self.wingetIcon = QIcon(getMedia("winget"))
+        self.scoopIcon = QIcon(getMedia("scoop"))
 
         if not getSettings("DisableWinget"):
             Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
@@ -395,7 +396,10 @@ class DiscoverSoftwareSection(QWidget):
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.IDIcon)
             item.setIcon(2, self.versionIcon)
-            item.setIcon(3, self.providerIcon)
+            if "scoop" in store.lower():
+                item.setIcon(3, self.scoopIcon)
+            else:
+                item.setIcon(3, self.wingetIcon)
             item.setText(3, store)
             item.setText(2, version)
             self.packageList.addTopLevelItem(item)
@@ -863,7 +867,8 @@ class UpdateSoftwareSection(QWidget):
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
-        self.providerIcon = QIcon(getMedia("provider"))
+        self.wingetIcon = QIcon(getMedia("winget"))
+        self.scoopIcon = QIcon(getMedia("scoop"))
 
         self.blacklist = getSettingsValue("BlacklistedUpdates")
         if not getSettings("DisableWinget"):
@@ -983,7 +988,10 @@ class UpdateSoftwareSection(QWidget):
                 item.setText(4, newVersion)
                 item.setIcon(4, self.newVersionIcon)
                 item.setText(5, store)
-                item.setIcon(5, self.providerIcon)
+                if "scoop" in store.lower():
+                    item.setIcon(5, self.scoopIcon)
+                else:
+                    item.setIcon(5, self.wingetIcon)
                 self.packageList.addTopLevelItem(item)
                 c = QCheckBox()
                 c.setChecked(True)
@@ -1481,7 +1489,9 @@ class UninstallSoftwareSection(QWidget):
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
-        self.providerIcon = QIcon(getMedia("provider"))
+        self.wingetIcon = QIcon(getMedia("winget"))
+        self.scoopIcon = QIcon(getMedia("scoop"))
+        self.localIcon = QIcon(getMedia("localpc"))
         
     
         if not getSettings("DisableWinget"):
@@ -1640,7 +1650,12 @@ class UninstallSoftwareSection(QWidget):
             item.setIcon(2, self.IDIcon)
             item.setIcon(3, self.versionIcon)
             item.setText(3, version)
-            item.setIcon(4, self.providerIcon)
+            if "scoop" in store.lower():
+                item.setIcon(4, self.scoopIcon)
+            elif "winget" in store.lower():
+                item.setIcon(4, self.wingetIcon)
+            else:
+                item.setIcon(4, self.localIcon)
             item.setText(4, store)
             c = QCheckBox()
             c.setChecked(False)
