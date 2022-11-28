@@ -6,6 +6,7 @@ languageReference = {
     "default": "System language",
     "ar"    : "Arabic - عربي‎",
     "ca"    : "Catalan - Català",
+    "hr"    : "Croatian - Hrvatski",
     "de"    : "German - Deutsch",
     "en"    : "English - English",
     "fr"    : "French - Français",
