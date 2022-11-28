@@ -160,7 +160,15 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                     iOffset += 1
                     ver = verElement.split(" ")[iOffset+1]
                     newver = verElement.split(" ")[iOffset+2]
-                signal.emit(element[0:idSeparator].strip(), id, ver, newver, "Winget")
+                if not "  " in element[0:idSeparator].strip():
+                    signal.emit(element[0:idSeparator].strip(), id, ver, newver, "Winget")
+                else:
+                    print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
+                    print(element, verSeparator)
+                    name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                    while "##" in name:
+                        name = name.replace("##", "#")
+                    signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, newver, "Winget")
             except Exception as e:
                 try:
                     signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
@@ -211,7 +219,15 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
             if ver.strip() in ("<", "-"):
                 iOffset += 1
                 ver = verElement.split(" ")[iOffset+1]
-            signal.emit(element[0:idSeparator].strip(), id, ver, wingetName)
+            if not "  " in element[0:idSeparator].strip():
+                signal.emit(element[0:idSeparator].strip(), id, ver, wingetName)
+            else:
+                print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
+                print(element, verSeparator)
+                name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                while "##" in name:
+                    name = name.replace("##", "#")
+                signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, wingetName)
         except Exception as e:
             try:
                 report(e)
