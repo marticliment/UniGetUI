@@ -4,22 +4,23 @@ from pathlib import Path
 
 languageReference = {
     "default": "System language",
-    "ar": "arabic",
+    "ar"    : "Arabic - عربي‎",
     "ca"    : "Catalan - Català",
     "de"    : "German - Deutsch",
-    "zh"    : "Chinese - 中文",
     "en"    : "English - English",
     "fr"    : "French - Français",
     "hi"    : "Hindi - हिंदी",
-    "hu":   "Hungarian - magyar",
-    "ja":   "Japanese - 日本語",
-    "ru":   "Russian - русский",
-    "sr":   "Serbian - српски",
+    "hu"    : "Hungarian - Magyar",
+    "ja"    : "Japanese - 日本語",
+    "ru"    : "Russian - Русский",
+    "sr"    : "Serbian - Srpski",
     "it"    : "Italian - Italiano",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
     "tr"    : "Turkish - Türkçe",
     "ua"    : "Ukranian - Yкраї́нська",
+    "zh_CN" : "Simplified Chinese (China)",
+    "zh_TW" : "Traditional Chinese (Taiwan)",
 }
 
 
@@ -27,8 +28,8 @@ languageRemap = {
     "pt-PT":      "pt_PT",
     "pt-BR":      "pt_BR",
     "uk":         "ua",
-    "zh-Hant-TW": "zh_TW",
-    "zh-Hans-CN": "zh_CN",
+    "zh-Hant": "zh_TW",
+    "zh-Hans": "zh_CN",
 }
 
 
@@ -53,7 +54,7 @@ languageFlagsRemap = {
     "pt_PT": "pt",
     "si": "lk",
     "zh": "cn",
-    #"zh_CN": "cn",
+    "zh_CN": "cn",
     "zh_TW": "tw",
     "vi": "vn",
     "sr": "rs",
