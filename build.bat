@@ -30,6 +30,7 @@ rem cd tcl
 rem rmdir /Q /S tzdata
 rem cd ..
 rem cd ..
+cd PySide6
 del opengl32sw.dll
 del Qt6Quick.dll
 del Qt6Qml.dll
@@ -38,7 +39,6 @@ del Qt6QmlModels.dll
 del Qt6Network.dll
 del Qt6DataVisualization.dll
 del Qt6VirtualKeyboard.dll
-cd PySide6
 del QtDataVisualization.pyd
 del QtOpenGL.pyd
 cd ..
