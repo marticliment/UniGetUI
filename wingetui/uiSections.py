@@ -2115,9 +2115,9 @@ class SettingsSection(QScrollArea):
 
 
 
-        self.pacmanPrefs = QSettingsTitle(_("Package managers preferences"), getMedia("trolley"), _("Package manager specific preferences"))
+        self.pacmanPrefs = QSettingsTitle(_("Winget preferences"), getMedia("winget"), _("Winget package manager specific preferences"))
         self.layout.addWidget(self.pacmanPrefs)
-
+        
         parallelInstalls = QSettingsCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
         parallelInstalls.stateChanged.connect(lambda v: setSettings("AllowParallelInstalls", bool(v)))
@@ -2126,16 +2126,21 @@ class SettingsSection(QScrollArea):
         disableWinget.setChecked(getSettings("DisableWinget"))
         disableWinget.stateChanged.connect(lambda v: setSettings("DisableWinget", bool(v)))
         self.pacmanPrefs.addWidget(disableWinget)
-        disableScoop = QSettingsCheckBox(_("Disable Scoop"))
-        disableScoop.setChecked(getSettings("DisableScoop"))
-        disableScoop.stateChanged.connect(lambda v: setSettings("DisableScoop", bool(v)))
-        self.pacmanPrefs.addWidget(disableScoop)
+        button = QSettingsButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
+        button.clicked.connect(lambda: (setSettings("DisableScoop", True), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
+        self.pacmanPrefs.addWidget(button)
+        
+        self.pacmanPrefs = QSettingsTitle(_("Scoop preferences"), getMedia("scoop"), _("Scoop package manager specific preferences"))
+        self.layout.addWidget(self.pacmanPrefs)
+
         scoopPreventCaps = QSettingsCheckBox(_("Show Scoop apps as lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
         scoopPreventCaps.stateChanged.connect(lambda v: setSettings("LowercaseScoopApps", bool(v)))
         self.pacmanPrefs.addWidget(scoopPreventCaps)
-        
-
+        disableScoop = QSettingsCheckBox(_("Disable Scoop"))
+        disableScoop.setChecked(getSettings("DisableScoop"))
+        disableScoop.stateChanged.connect(lambda v: setSettings("DisableScoop", bool(v)))
+        self.pacmanPrefs.addWidget(disableScoop)
         button = QSettingsButton(_("Add a bucket to Scoop"), _("Add"))
         button.clicked.connect(lambda: self.scoopAddExtraBucket())
         button.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
@@ -2145,7 +2150,11 @@ class SettingsSection(QScrollArea):
         self.pacmanPrefs.addWidget(button)
         button.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         button = QSettingsButton(_("Install Scoop"), _("Install"))
+        button.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         button.clicked.connect(lambda: (setSettings("DisableScoop", False), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
+        self.pacmanPrefs.addWidget(button)
+        button = QSettingsButton(_("Uninstall Scoop (and its packages)"), _("Uninstall"))
+        button.clicked.connect(lambda: (setSettings("DisableScoop", True), disableScoop.setChecked(True), os.startfile(os.path.join(realpath, "resources/uninstall_scoop.cmd"))))
         self.pacmanPrefs.addWidget(button)
         self.layout.addStretch()
         
