@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 368
+        "done": 370
     },
     "winget": {
         "115.115": {
@@ -7180,8 +7180,10 @@
             "images": []
         },
         "LIGHTNINGUK.ImgBurn": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.ibb.co/XsmMybM/962a091e98eaabdcdd98e4807565fab2b290848df3391684930e210056617433-200.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/en/0/0a/ImgBurn_screenshot.png"
+            ]
         },
         "LINE.LINE": {
             "icon": "",
@@ -13470,7 +13472,7 @@
             "images": []
         },
         "Valve.Steam": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png",
             "images": [
                 "https://i.postimg.cc/wMp1cbQt/Steam-service.png"
             ]
