@@ -2142,7 +2142,7 @@ class SettingsSection(QScrollArea):
         disableWinget.stateChanged.connect(lambda v: setSettings("DisableWinget", bool(v)))
         self.pacmanPrefs.addWidget(disableWinget)
         button = QSettingsButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
-        button.clicked.connect(lambda: (setSettings("DisableScoop", True), disableScoop.setChecked(False), os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
+        button.clicked.connect(lambda: (os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
         self.pacmanPrefs.addWidget(button)
         
         self.pacmanPrefs = QSettingsTitle(_("Scoop preferences"), getMedia("scoop"), _("Scoop package manager specific preferences"))
