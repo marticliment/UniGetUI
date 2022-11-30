@@ -3,7 +3,7 @@
 
 #define MyAppName "WingetUI"
 #define MyAppVersion "1.5.1"
-#define MyAppPublisher "Martí Climent"
+#define MyAppPublisher "MartÃ­ Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
 
@@ -18,6 +18,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+VersionInfoVersion=1.5.1.0
 DefaultDirName="{autopf}\WingetUI"
 DisableProgramGroupPage=yes     
 DisableDirPage=no
