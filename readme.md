@@ -102,13 +102,26 @@ Last updated: Wed Nov 30 01:04:31 2022
  
  ### Translators:
  WingetUI has not been machine translated! The following users have been in charge of the translations:
+- Aaron liu: Chinese
 - Ahmet Özmetin: Turkish
+- Artem Moldovanenko: Ukranian
 - BUGP Association: Chinese
+- Cololi: Chinese
 - Datacra5H: German
 - Evans: French
+- GiacoBot: Italian
+- Gidano: Hungarian
+- Maicol Battistini: Italian
+- Nemanja Djurcic: Serbian, Croatian
 - Operator404: Ukranian
 - ppvnf: Portuguese (Portugal and Brazil)
+- Rosario Di Mauro: Italian
 - Satyam Singh Niranjan: Hindi
+- Sergey: Russian
+- sho9029: Japanese
+- TAKASE, Yuki: Japanese
+- yrctw: Chinese
+- Артем: Russian
 - Martí Climent: Catalan
  
 
