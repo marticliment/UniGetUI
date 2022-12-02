@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 370
+        "done": 371
     },
     "winget": {
         "115.115": {
@@ -14385,8 +14385,12 @@
             "images": []
         },
         "Ytmdesktop.Ytmdesktop": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/YigQor4.png",
+            "images": [
+                "https://i.imgur.com/BUrjOd1.png",
+                "https://i.imgur.com/lsgvfHR.png",
+                "https://i.imgur.com/yGGs3uL.png"
+            ]
         },
         "Yuanli.uTools": {
             "icon": "",
