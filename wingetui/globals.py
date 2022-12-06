@@ -41,6 +41,7 @@ current_program: str = ""
 
 updatesHeader: QAction = None
 installedHeader: QAction = None
+updatesAction: QAction = None
 
 lightCSS: str = ""
 darkCSS: str = ""

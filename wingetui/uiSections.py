@@ -1045,12 +1045,14 @@ class UpdateSoftwareSection(QWidget):
             self.packageList.label.hide()
             self.packageList.label.setText("")
             self.img.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
+            globals.updatesAction.setIcon(QIcon(getMedia("alert_laptop")))
             globals.app.uaAction.setEnabled(True)
             globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
         else:
             self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
             globals.app.uaAction.setEnabled(False)
+            globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
             globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.img.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
     

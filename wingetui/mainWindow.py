@@ -101,8 +101,8 @@ class RootWindow(QMainWindow):
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, _("WingetUI Settings"), addToMenu=True, actionIcon="settings")
         self.aboutSection = AboutSection()
         self.widgets[self.aboutSection] = self.addTab(self.aboutSection, _("About WingetUI"), addToMenu=True, actionIcon="info")
-        self.aboutSection = DebuggingSection()
-        self.widgets[self.aboutSection] = self.addTab(self.aboutSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
+        self.logSection = DebuggingSection()
+        self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
@@ -283,10 +283,10 @@ class RootWindow(QMainWindow):
             self.infobox.move((self.width()-s.width())//2, (self.height()-s.height())//2)
         except AttributeError:
             pass
-        setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()},{self.width()},{self.height()}")
+        setSettingsValue("OldWindowGeometry", f"{self.x()-16},{self.y()},{self.width()},{self.height()}")
         return super().resizeEvent(event)
 
-    def showWindow(self):
+    def showWindow(self, index = -1):
         if globals.lastFocusedWindow != self.winId():
             if not self.window().isMaximized():
                 self.window().show()
@@ -308,6 +308,21 @@ class RootWindow(QMainWindow):
         else:
             self.hide()
             globals.lastFocusedWindow = 0
+        if index>=0:
+            try:
+                match index:
+                    case 0:
+                        self.widgets[self.discover].click()
+                    case 1:
+                        self.widgets[self.updates].click()
+                    case 2:
+                        self.widgets[self.uninstall].click()
+                    case 3:
+                        self.widgets[self.settingsSection].click()
+                    case 4:
+                        self.widgets[self.aboutSection].click()
+            except Exception as e:
+                report(e)
 
     def showEvent(self, event: QShowEvent) -> None:
         if(not self.isWinDark):

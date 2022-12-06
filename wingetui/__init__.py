@@ -277,21 +277,14 @@ try:
 
                 menu = QMenu("WingetUI")
                 globals.trayMenu = menu
-                self.infoAction = QAction(_("WingetUI version {0}").format(versionName), menu)
-                self.infoAction.setIcon(QIcon(getMedia("info")))
-                self.infoAction.setEnabled(False)
-                menu.addAction(self.infoAction)
-                
-                self.showAction = QAction(_("Show WingetUI"), menu)
-                self.showAction.setIcon(QIcon(getMedia("menu_show")))
-                menu.addAction(self.showAction)
                 self.trayIcon.setContextMenu(menu)
+                self.discoverPackages = QAction(_("Discover Packages"), menu)
+                menu.addAction(self.discoverPackages)
                 menu.addSeparator()
                 
-                self.dAction = QAction(_("Available updates"), menu)
-                self.dAction.setIcon(QIcon(getMedia("menu_updates")))
-                self.dAction.setEnabled(False)
-                menu.addAction(self.dAction)
+                self.updatePackages = QAction(_("Available Updates"), menu)
+                globals.updatesAction = self.updatePackages
+                menu.addAction(self.updatePackages)
                 
                 self.updatesMenu = menu.addMenu(_("0 updates found"))
                 self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
@@ -309,10 +302,8 @@ try:
                 menu.addAction(self.uaAction)
                 menu.addSeparator()
                 
-                self.iAction = QAction(_("Installed packages"),menu)
-                self.iAction.setIcon(QIcon(getMedia("menu_uninstall")))
-                self.iAction.setEnabled(False)
-                menu.addAction(self.iAction)
+                self.uninstallPackages = QAction(_("Installed Packages"),menu)
+                menu.addAction(self.uninstallPackages)
                 
                 self.installedMenu = menu.addMenu(_("0 packages found"))
                 self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
@@ -325,12 +316,29 @@ try:
                 globals.installedHeader.setIcon(QIcon(getMedia("version")))
                 globals.installedHeader.setEnabled(False)
                 self.installedMenu.addAction(globals.installedHeader)
+                
+                self.infoAction = QAction(_("About WingetUI version {0}").format(versionName), menu)
+                self.infoAction.setIcon(QIcon(getMedia("info")))
+                menu.addAction(self.infoAction)
+                self.showAction = QAction(_("Show WingetUI"), menu)
+                self.showAction.setIcon(QIcon(getMedia("icon")))
+                menu.addAction(self.showAction)
+                menu.addSeparator()
+
+                self.settings = QAction(_("WingetUI Settings"), menu)
+                menu.addAction(self.settings)
+                
 
                 self.quitAction = QAction(menu)
                 self.quitAction.setIcon(QIcon(getMedia("menu_close")))
                 self.quitAction.setText(_("Quit"))
                 self.quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
                 menu.addAction(self.quitAction)
+                
+                self.updatePackages.setIcon(QIcon(getMedia("alert_laptop")))
+                self.discoverPackages.setIcon(QIcon(getMedia("desktop_download")))
+                self.settings.setIcon(QIcon(getMedia("settings_gear")))
+                self.uninstallPackages.setIcon(QIcon(getMedia("workstation")))
                 
                 def showWindow():
                     # This function will be defined when the mainWindow gets defined
@@ -356,6 +364,11 @@ try:
                 globals.darkCSS = darkCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                 globals.lightCSS = lightCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                 self.window = RootWindow()
+                self.discoverPackages.triggered.connect(lambda: self.window.showWindow(0))
+                self.updatePackages.triggered.connect(lambda: self.window.showWindow(1))
+                self.uninstallPackages.triggered.connect(lambda: self.window.showWindow(2))
+                self.infoAction.triggered.connect(lambda: self.window.showWindow(4))
+                self.settings.triggered.connect(lambda: self.window.showWindow(3))
                 globals.mainWindow = self.window
                 self.showAction.triggered.connect(self.window.showWindow)
                 self.uaAction.triggered.connect(self.window.updates.upgradeAllAction.trigger)
@@ -400,7 +413,6 @@ try:
         def reloadWindow(self):
             cprint("Reloading...")
             self.infoAction.setIcon(QIcon(getMedia("info")))
-            self.dAction.setIcon(QIcon(getMedia("menu_updates")))
             self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
             globals.updatesHeader.setIcon(QIcon(getMedia("version")))
             self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
