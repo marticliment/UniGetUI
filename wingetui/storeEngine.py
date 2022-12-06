@@ -954,7 +954,10 @@ class PackageInfoPopupWindow(QWidget):
         if(store.lower()=="winget"):
             Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
         elif("scoop" in store.lower()):
-            Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
+            bucket_prefix = ""
+            if len(self.store.lower().split(":"))>1:
+                bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
+            Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId), daemon=True).start()
 
     def loadPackageIcon(self, id: str, store: str) -> None:
         try:
