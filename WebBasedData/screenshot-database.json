@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 383
+        "done": 384
     },
     "winget": {
         "115.115": {
@@ -2563,7 +2563,7 @@
             "images": []
         },
         "Brave.Brave": {
-            "icon": "",
+            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
             "images": []
         },
         "Brave.Brave.Beta": {
