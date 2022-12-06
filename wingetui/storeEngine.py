@@ -701,7 +701,7 @@ class PackageInfoPopupWindow(QWidget):
                 return super().resizeEvent(event)
 
             def showBigImage(self):
-                p = self.currentPixmap.scaledToWidth(self.parentwidget.width()-55)
+                p = self.currentPixmap.scaledToWidth(self.parentwidget.width()-55, Qt.SmoothTransformation)
                 if not p.isNull():
                     blackCover.show()
                     self.viewer.setPixmap(p)
