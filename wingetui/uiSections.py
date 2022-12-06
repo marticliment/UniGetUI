@@ -1040,7 +1040,7 @@ class UpdateSoftwareSection(QWidget):
                 self.availableUpdates += 1
         self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
         globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (_("WingetUI - 1 update is available") if self.availableUpdates == 1 else _("WingetUI - {0} updates are available").format(self.availableUpdates)) )
-        globals.trayMenuUpdatesList.menuAction().setText(_("{0} updates found").format(self.availableUpdates))
+        globals.trayMenuUpdatesList.menuAction().setText(_("{0} updates were found" if self.availableUpdates>1 else "{0} update was found").format(self.availableUpdates))
         if self.availableUpdates > 0:
             self.packageList.label.hide()
             self.packageList.label.setText("")
