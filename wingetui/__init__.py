@@ -56,7 +56,7 @@ try:
                 ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
                 
                 self.loadingProgressBar = QProgressBar(self.popup)
-                self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;}}QProgressBar::chunk {{background-color: rgb({colors[2 if isDark() else 3]});border-radius: 2px;}}""")
+                self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;background-color: transparent;}}QProgressBar::chunk {{background-color: rgb({colors[2 if isDark() else 3]});border-radius: 2px;}}""")
                 self.loadingProgressBar.setRange(0, 1000)
                 self.loadingProgressBar.setValue(0)
                 self.loadingProgressBar.setGeometry(QRect(0, 396, 600, 4))
