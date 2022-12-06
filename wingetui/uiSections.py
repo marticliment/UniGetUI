@@ -443,7 +443,7 @@ class DiscoverSoftwareSection(QWidget):
         if not "scoop" in store.lower():
                 self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
         else:
-                self.addInstallation(PackageInstallerWidget(title, "scoop", useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
+                self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
         self.packageReference = {}
@@ -1080,7 +1080,7 @@ class UpdateSoftwareSection(QWidget):
             if not "scoop" in store.lower():
                     self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
             else:
-                    self.addInstallation(PackageUpdaterWidget(title, "scoop",  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+                    self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -1707,7 +1707,7 @@ class UninstallSoftwareSection(QWidget):
             if not "scoop" in store.lower():
                     self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
             else:
-                    self.addInstallation(PackageUninstallerWidget(title, "scoop" , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
+                    self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def reload(self) -> None:
         self.scoopLoaded = False
