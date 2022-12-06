@@ -347,14 +347,14 @@ try:
                 def showMenu():
                     pos = QCursor.pos()   
                     s = self.screenAt(pos)
-                    if (pos.y()+48) > (s.geometry().y() + s.geometry().height()):            
-                        menu.move(pos)
-                        menu.show()
-                        sy = s.geometry().y()+s.geometry().height()
-                        sx = s.geometry().x()+s.geometry().width()
-                        pos.setY(sy-menu.height()-54) # Show the context menu a little bit over the taskbar
-                        pos.setX(sx-menu.width()-6) # Show the context menu a little bit over the taskbar
-                        menu.move(pos)
+                    if isW11 and (pos.y()+48) > (s.geometry().y() + s.geometry().height()):
+                            menu.move(pos)
+                            menu.show()
+                            sy = s.geometry().y()+s.geometry().height()
+                            sx = s.geometry().x()+s.geometry().width()
+                            pos.setY(sy-menu.height()-54) # Show the context menu a little bit over the taskbar
+                            pos.setX(sx-menu.width()-6) # Show the context menu a little bit over the taskbar
+                            menu.move(pos)
                     else:
                         menu.exec(pos)
                 self.trayIcon.activated.connect(lambda r: (applyMenuStyle(), showMenu()) if r == QSystemTrayIcon.Context else showWindow())
