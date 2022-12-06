@@ -215,8 +215,20 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
     hwnd = int(hwnd)
     mode = isDark()
     from blurwindow import GlobalBlur
+    isW11 = False
+    try:
+        import platform
+        if int(platform.version().split('.')[2]) >= 22000:
+            isW11 = True
+    except Exception as e:
+        report(e)
     if not avoidOverrideStyleSheet:
-        window.setStyleSheet("background-color: transparent;")
+        if window.objectName() == "":
+            window.setObjectName("MenuMenuMenuMenu")
+        if not isDark():
+            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
+        else:
+            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
     if mode:
         GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
         if shadow:

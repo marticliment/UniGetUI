@@ -365,14 +365,19 @@ try:
 
                 def applyMenuStyle():
                     for mn in (menu, self.updatesMenu, self.installedMenu):
-                        if isDark():
-                            GlobalBlur(mn.winId().__int__(), Acrylic=True, hexColor="#21212140", Dark=True)
-                            ExtendFrameIntoClientArea(mn.winId().__int__())
-                            mn.setStyleSheet(menuDarkCSS)
+                        mn.setObjectName("MenuMenuMenu")
+                        if not isDark():
+                            ss = f'#{mn.objectName()}{{background-color: {"rgba(220, 220, 220, 1%)" if isW11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}'
                         else:
-                            GlobalBlur(mn.winId().__int__(), Acrylic=True, hexColor="#eeeeee40", Dark=False)
+                            ss = f'#{mn.objectName()}{{background-color: {"rgba(220, 220, 220, 1%)" if isW11 else "rgba(20, 20, 20, 25%);border-radius: 0px;"};}}'
+                        if isDark():
                             ExtendFrameIntoClientArea(mn.winId().__int__())
-                            mn.setStyleSheet(menuLightCSS)
+                            mn.setStyleSheet(menuDarkCSS+ss)
+                            GlobalBlur(mn.winId().__int__(), Acrylic=True, hexColor="#21212140", Dark=True)
+                        else:
+                            ExtendFrameIntoClientArea(mn.winId().__int__())
+                            mn.setStyleSheet(menuLightCSS+ss)
+                            GlobalBlur(mn.winId().__int__(), Acrylic=True, hexColor="#eeeeee40", Dark=False)
 
                 self.setStyle("winvowsvista")
                 globals.darkCSS = darkCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
@@ -517,6 +522,13 @@ try:
                     print("🟢 Updates not found")
 
     colors = getColors()
+    isW11 = False
+    try:
+        import platform
+        if int(platform.version().split('.')[2]) >= 22000:
+            isW11 = True
+    except Exception as e:
+        report(e)
 
     darkCSS = f"""
     * {{
@@ -533,7 +545,7 @@ try:
         padding: 2px;
         outline: 0px;
         color: white;
-        background: #262626;
+        background: transparent;
         border-radius: 8px;
     }}
     QMenu::separator {{

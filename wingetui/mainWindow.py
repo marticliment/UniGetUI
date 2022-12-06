@@ -225,7 +225,7 @@ class RootWindow(QMainWindow):
     
     def closeEvent(self, event):
         self.closedpos = self.pos()
-        setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()},{self.closedpos.y()},{self.width()},{self.height()}")
+        setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()+16},{self.closedpos.y()},{self.width()},{self.height()}")
         if(globals.themeChanged):
             globals.themeChanged = False
             self.deleteChildren()
@@ -283,7 +283,7 @@ class RootWindow(QMainWindow):
             self.infobox.move((self.width()-s.width())//2, (self.height()-s.height())//2)
         except AttributeError:
             pass
-        setSettingsValue("OldWindowGeometry", f"{self.x()-16},{self.y()},{self.width()},{self.height()}")
+        setSettingsValue("OldWindowGeometry", f"{self.x()+16},{self.y()},{self.width()},{self.height()}")
         return super().resizeEvent(event)
 
     def showWindow(self, index = -1):
@@ -350,7 +350,7 @@ class RootWindow(QMainWindow):
         return super().focusOutEvent(event)
     
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()},{self.width()},{self.height()}")
+        setSettingsValue("OldWindowGeometry", f"{self.x()+16},{self.y()},{self.width()},{self.height()}")
         return super().mouseReleaseEvent(event)
 
 class DraggableWindow(QWidget):
