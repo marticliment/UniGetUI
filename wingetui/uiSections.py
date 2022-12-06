@@ -1561,8 +1561,19 @@ class UninstallSoftwareSection(QWidget):
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
         self.infobox.show()
-        #ApplyMenuBlur(self.infobox.winId(), self.infobox, avoidOverrideStyleSheet=True, shadow=False)
 
+    def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
+        self.foundPackages = 0
+        for item in self.packageList.findItems('', Qt.MatchContains, 1):
+            self.foundPackages += 1
+        self.countLabel.setText(_("{0} packages found").format(self.foundPackages))
+        globals.trayMenuInstalledList.menuAction().setText(_("{0} packages were found" if self.foundPackages!=1 else "{0} package was found").format(self.foundPackages))
+        if self.foundPackages > 0:
+            self.packageList.label.hide()
+            self.packageList.label.setText("")
+        else:
+            self.packageList.label.setText(_("Hooray! No updates were found!"))
+            self.packageList.label.show()
 
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):

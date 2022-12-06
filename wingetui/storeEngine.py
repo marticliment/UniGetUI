@@ -225,6 +225,7 @@ class PackageInstallerWidget(QGroupBox):
                     if type(self) == PackageInstallerWidget:
                         if self.packageItem:
                             globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
+                            globals.uninstall.updatePackageNumber()
                     self.startCoolDown()
                 else:
                     globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
@@ -261,19 +262,24 @@ class PackageInstallerWidget(QGroupBox):
 
     def startCoolDown(self):
         if not getSettings("MaintainSuccessfulInstalls"):
-            op1=QGraphicsOpacityEffect(self)
-            op2=QGraphicsOpacityEffect(self)
-            op3=QGraphicsOpacityEffect(self)
-            op4=QGraphicsOpacityEffect(self)
-            op5=QGraphicsOpacityEffect(self)
-            ops = [op1, op2, op3, op4, op5]
+            self.ops = -1
+            def setUpOPS():
+                op1=QGraphicsOpacityEffect(self)
+                op2=QGraphicsOpacityEffect(self)
+                op3=QGraphicsOpacityEffect(self)
+                op4=QGraphicsOpacityEffect(self)
+                op5=QGraphicsOpacityEffect(self)
+                ops = [op1, op2, op3, op4, op5]
+                return ops
             
             def updateOp(v: float):
                 i = 0
+                if self.ops == -1:
+                    self.ops = setUpOPS()
                 for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
-                    ops[i].setOpacity(v)
+                    self.ops[i].setOpacity(v)
                     widget: QWidget
-                    widget.setGraphicsEffect(ops[i])
+                    widget.setGraphicsEffect(self.ops[i])
                     widget.setAutoFillBackground(True)
                     i += 1
 
@@ -486,6 +492,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         self.packageItem.setHidden(True)
                         i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
                         del i
+                        globals.uninstall.updatePackageNumber()
                     except Exception as e:
                         report(e)
             self.finishedInstallation = True
