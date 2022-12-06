@@ -1543,7 +1543,7 @@ try:
         outline: none;
         background-color: rgba(240, 240, 240, 90%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 80%);
+        border-bottom: 1px solid rgba(220, 220, 220, 70%);
         border-top: 1px solid rgba(220, 220, 220, 80%);
         color: rgb({colors[5]});
     }}
@@ -1554,9 +1554,9 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: rgba(255, 255, 255, 90%);
+        background-color: rgba(230, 230, 230, 90%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 80%);
+        border-bottom: 1px solid rgba(230, 230, 230, 70%);
         border-top: 1px solid rgba(220, 220, 220, 80%);
     }}
     QTreeWidget::item:first {{
