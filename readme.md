@@ -15,7 +15,7 @@ Beware that neither Microsoft nor the creators of WingetUI are responsible for t
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
-![image](https://user-images.githubusercontent.com/73800734/199359247-c52f6b4c-8019-484c-9f25-ad809c0817f3.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/main.webp)
 
 # Features
 
@@ -127,21 +127,21 @@ Last updated: Tue Dec  6 00:58:43 2022
 
 # Screenshots
  
-![image](https://user-images.githubusercontent.com/73800734/199359651-2492f9c1-fc08-4554-8f45-fd236ec5d5fa.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_1.png)
 
-![image](https://user-images.githubusercontent.com/73800734/199359788-f5003f4c-92e1-49fc-9a0b-43eb6ba6338d.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_2.png)
 
-![image](https://user-images.githubusercontent.com/73800734/199360452-294a57fa-1738-4c0f-9ee5-a92f9a0c3073.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_3.png)
 
-![image](https://user-images.githubusercontent.com/73800734/199360606-0b18db79-7ce5-4574-b919-ae91c8b7394a.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_4.png)
 
-![image](https://user-images.githubusercontent.com/73800734/199363533-6e11d026-5eca-430a-b15a-1e4e9dd73d67.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_5.png)
 
-![image](https://user-images.githubusercontent.com/73800734/199360891-1b26dacb-f3c8-4087-aa00-8a6211340fa0.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_6.png)
 
-![image](https://user-images.githubusercontent.com/67732686/195114107-abe537df-3ee4-4d81-8707-a189e83b7abe.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_7.png)
 
-![image](https://user-images.githubusercontent.com/73800734/199553170-3d227011-1fcb-4657-b673-a0f80d964e46.png)
+![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_8.png)
 
 
 # FAQ
