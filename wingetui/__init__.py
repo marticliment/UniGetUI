@@ -14,10 +14,10 @@ try:
     import globals
     from blurwindow import GlobalBlur, ExtendFrameIntoClientArea
 
-    if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
-        QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+    #if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+    #    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    #if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
+    #    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
     class MainApplication(QApplication):
         kill = Signal()
@@ -816,6 +816,7 @@ try:
         border-top-left-radius: 6px;
         border-bottom-left-radius: 6px;
         border-left: 1px solid #1f1f1f;
+        margin-left: 0px;
     }}
     QTreeWidget::item:last {{
         border-top-right-radius: 6px;
@@ -1413,7 +1414,7 @@ try:
         color: black;
         padding: 5px;
         border-radius: 6px;
-        border: 0.6px solid rgba(86, 86, 86, 25%);
+        border: 1px solid rgba(86, 86, 86, 25%);
         border-bottom: 2px solid rgb({colors[3]});
     }}
     QLineEdit:disabled {{
@@ -1423,7 +1424,7 @@ try:
         width: 300px;
         padding: 5px;
         border-radius: 6px;
-        border: 0.6px solid rgba(255, 255, 255, 55%);
+        border: 1px solid rgba(255, 255, 255, 55%);
     }}
     QScrollBar:vertical {{
         background: transparent;

@@ -177,7 +177,18 @@ class ErrorMessage(QFramelessWindow):
                 color: white;
                 }}
                 #btnBackground {{
+                    border-top: 1px solid #101010;
                     background-color: #181818;
+                }}
+                               """)
+        else:
+            self.setStyleSheet(f"""#micawin {{
+                background-color: #ffffff;
+                color: black;
+                }}
+                #btnBackground {{
+                    border-top: 1px solid #dddddd;
+                    background-color: #eeeeee;
                 }}
                                """)
         l = QVBoxLayout()

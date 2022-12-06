@@ -36,33 +36,11 @@ class QFramelessWindow(QMainWindow):
         self.hwnd = self.winId().__int__()
         #self.setObjectName("QFramelessWindow")
         window_style = win32gui.GetWindowLong(self.hwnd, GWL_STYLE)
-        win32gui.SetWindowLong(self.hwnd, GWL_STYLE, window_style | WS_POPUP | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX)
+        win32gui.SetWindowLong(self.hwnd, GWL_STYLE, window_style | WS_POPUP | WS_MAXIMIZEBOX | WS_MINIMIZEBOX)
 
         ExtendFrameIntoClientArea(self.winId().__int__())
 
         self.setAutoFillBackground(True)
-
-        # Window Widgets
-        #self.resize(800, 600)
-        #self._layout = QVBoxLayout()
-        #self._layout.setContentsMargins(0, 0, 0, 0)
-        #self._layout.setSpacing(0)
-
-
-        # main widget is here
-        #self.mainWidget = QWidget()
-        #self.mainWidgetLayout = QVBoxLayout()
-        #self.mainWidgetLayout.setContentsMargins(0, 0, 0, 0)
-        #self.mainWidget.setLayout(self.mainWidgetLayout)
-        #self.mainWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        # set background color
-        p = self.palette()
-        p.setColor(self.backgroundRole(), QColor("#272727"))
-        self.setPalette(p)
-
-        #self._layout.addWidget(self.mainWidget)
-        #self.setLayout(self._layout)
 
     def changeEvent(self, event):
         if event.type() == QWindowStateChangeEvent:
@@ -132,7 +110,7 @@ class QFramelessWindow(QMainWindow):
         return super().moveEvent(event)
 
 
-class QFramelessDialog(QFramelessWindow):
+"""class QFramelessDialog(QFramelessWindow):
     clicked = Signal(QDialogButtonBox.ButtonRole)
     def __init__(self, parent=None, closeOnClick=True, xoff = 0, yoff = 0):
         self.xoff = xoff
@@ -233,7 +211,7 @@ class QFramelessDialog(QFramelessWindow):
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
 
-
+"""
 
 
 if __name__ == "__main__":

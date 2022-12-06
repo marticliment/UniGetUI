@@ -192,7 +192,11 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
     
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 1603:
+        if returncode == 1602:
+            self.adminstr = [sudoPath]
+            self.cmdline_args.append("--global")
+            self.runInstallation()
+        elif returncode == 1603:
             self.adminstr = [sudoPath]
             self.runInstallation()
         else:
@@ -344,7 +348,11 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.t.start()
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 1603:
+        if returncode == 1602:
+            self.adminstr = [sudoPath]
+            self.cmdline_args.append("--global")
+            self.runInstallation()
+        elif returncode == 1603:
             self.adminstr = [sudoPath]
             self.runInstallation()
         else:
@@ -459,7 +467,11 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
         
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 1603:
+        if returncode == 1602:
+            self.adminstr = [sudoPath]
+            self.cmdline_args.append("--global")
+            self.runInstallation()
+        elif returncode == 1603:
             self.adminstr = [sudoPath]
             self.runInstallation()
         else:
