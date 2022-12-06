@@ -1174,6 +1174,7 @@ class UninstallSoftwareSection(QWidget):
     addProgram = Signal(str, str, str, str)
     finishLoading = Signal(str)
     clearList = Signal()
+    callInMain = Signal(object)
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
@@ -1186,6 +1187,7 @@ class UninstallSoftwareSection(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.scoopLoaded = False
+        self.callInMain.connect(lambda f: f())
         self.wingetLoaded = False
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
@@ -1549,14 +1551,21 @@ class UninstallSoftwareSection(QWidget):
                         toUninstall.append(program)
                 except AttributeError:
                     pass
-        conf = False
-        if len(toUninstall) == 1:
-            conf = MessageBox.question(self, _("Are you sure?"), _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)), MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
-        elif len(toUninstall) > 1:
-            conf = MessageBox.question(self, _("Are you sure?"), _("Do you really want to uninstall {0} packages?").format(len(toUninstall)), MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
-        if conf:
+        a = ErrorMessage(self)
+        Thread(target=self.confirmUninstallSelected, args=(toUninstall, a,)).start()
+        
+    def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: ErrorMessage):
+        questionData = {
+            "titlebarTitle": "Wait!",
+            "mainTitle": _("Are you sure?"),
+            "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
+            "acceptButtonTitle": "Yes",
+            "cancelButtonTitle": "No",
+            "icon": QIcon(),
+        }
+        if a.askQuestion(questionData):
             for program in toUninstall:
-                self.uninstall(program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True)
+                self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True))
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
@@ -1707,13 +1716,26 @@ class UninstallSoftwareSection(QWidget):
     def showQuery(self) -> None:
         self.programbox.show()
         self.infobox.hide()
+                
+    def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: ErrorMessage):
+        questionData = {
+            "titlebarTitle": "Wait!",
+            "mainTitle": _("Are you sure?"),
+            "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
+            "acceptButtonTitle": "Yes",
+            "cancelButtonTitle": "No",
+            "icon": QIcon(),
+        }
+        if a.askQuestion(questionData):
+            for program in toUninstall:
+                self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True))
+
 
     def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
-        if avoidConfirm:
-            answer = True
+        if not avoidConfirm:
+            a = ErrorMessage(self)
+            Thread(target=self.confirmUninstallSelected, args=([packageItem], a)).start()
         else:
-            answer = MessageBox.question(self, _("Are you sure?"), _("Do you really want to uninstall {0}?").format(title), MessageBox.No | MessageBox.Yes, MessageBox.Yes) == MessageBox.Yes
-        if answer:
             print("🔵 Uninstalling", id)
             if not "scoop" in store.lower():
                     self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))

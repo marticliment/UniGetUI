@@ -163,6 +163,8 @@ class ErrorMessage(QFramelessWindow):
     oldpos = QPoint()
     mousePressed = False
     callInMain = Signal(object)
+    qanswer = -1
+    isQuestion = False
     def __init__(self, parent):
         super().__init__(parent)
         self.showerr.connect(self.em)
@@ -177,7 +179,7 @@ class ErrorMessage(QFramelessWindow):
                 color: white;
                 }}
                 #btnBackground {{
-                    border-top: 1px solid #101010;
+                    border-top: 1px solid #1b1b1b;
                     background-color: #181818;
                 }}
                                """)
@@ -214,27 +216,44 @@ class ErrorMessage(QFramelessWindow):
         self.bgw1.setLayout(hl)
         layout.addWidget(self.bgw1)
         hl = QHBoxLayout()
-        self.okButton = QPushButton()
+        self.okButton = QPushButton(self)
         self.okButton.setFixedHeight(30)
-        #self.okButton.setObjectName("AccentButton")
+        
+        def returnTrue():
+            if self.isQuestion:
+                self.qanswer = 1
+                self.close()
+                
+        def returnFalse():
+            if self.isQuestion:
+                self.close()
+                self.qanswer = 0
+                
+        self.okButton.clicked.connect(returnTrue)
         self.okButton.clicked.connect(self.delete)
         try:
             self.moreInfoButton = QPushButton(_("Show details"))
         except NameError:
             self.moreInfoButton = QPushButton("Show details")
         self.moreInfoButton.setFixedHeight(30)
+        self.moreInfoButton.setObjectName("AccentButton")
         self.moreInfoButton.clicked.connect(self.moreInfo)
-        #hl.addStretch()
+        self.moreInfoButton.clicked.connect(returnFalse)
+        hl.addSpacing(10)
         hl.addWidget(self.moreInfoButton)
         hl.addWidget(self.okButton)
+        hl.addSpacing(10)
         bglayout = QVBoxLayout()
         bglayout.addLayout(hl)
-        #layout.addLayout(hl)
+        l = QHBoxLayout()
         self.moreInfoTextArea = QPlainTextEdit()
         self.moreInfoTextArea.setReadOnly(True)
         self.moreInfoTextArea.setVisible(False)
         self.moreInfoTextArea.setMinimumHeight(120)
-        bglayout.addWidget(self.moreInfoTextArea, stretch=1)
+        l.addWidget(self.moreInfoTextArea)
+        l.setContentsMargins(10, 0, 10, 0)
+        bglayout.addLayout(l, stretch=1)
+        bglayout.addSpacing(10)
         
         self.bgw2 = QWidget()
         self.bgw2.setObjectName("btnBackground")
@@ -254,30 +273,29 @@ class ErrorMessage(QFramelessWindow):
         self.hide()
 
     def moreInfo(self):
-        spacingAdded = False
-        self.moreInfoTextArea.setVisible(not self.moreInfoTextArea.isVisible())
-        self.moreInfoButton.setText(_("Hide details") if self.moreInfoTextArea.isVisible() else _("Show details"))
-        if self.moreInfoTextArea.isVisible():
-            # show textedit
-            s = self.size()
-            #s.setHeight(s.height() + self.moreInfoTextArea.height() + (self.layout().spacing() if not spacingAdded else 0))
-            spacingAdded = True
-            self.resize(s)
-            self.setMinimumWidth(450)
-            self.setMinimumHeight(self.bgw1.sizeHint().height())
-            self.setMaximumHeight(2048)
-        else:
-            # Hide textedit
-            s = self.size()
-            s.setHeight(s.height() - self.moreInfoTextArea.height() - self.layout().spacing())
-            self.setMaximumSize(s)
-            self.resize(s)
-            self.setMaximumSize(2048, 2048)
-            self.setMinimumWidth(450)
-            #self.fHeight = self.bgw1.sizeHint().height() + self.bgw2.sizeHint().height()
-            self.setFixedHeight(self.fHeight)
-            self.setMinimumHeight(self.fHeight)
-            self.setMaximumHeight(self.fHeight+1)
+        if not self.isQuestion:
+            spacingAdded = False
+            self.moreInfoTextArea.setVisible(not self.moreInfoTextArea.isVisible())
+            self.moreInfoButton.setText(_("Hide details") if self.moreInfoTextArea.isVisible() else _("Show details"))
+            if self.moreInfoTextArea.isVisible():
+                # show textedit
+                s = self.size()
+                spacingAdded = True
+                self.resize(s)
+                self.setMinimumWidth(450)
+                self.setMinimumHeight(self.bgw1.sizeHint().height())
+                self.setMaximumHeight(2048)
+            else:
+                # Hide textedit
+                s = self.size()
+                s.setHeight(s.height() - self.moreInfoTextArea.height() - self.layout().spacing())
+                self.setMaximumSize(s)
+                self.resize(s)
+                self.setMaximumSize(2048, 2048)
+                self.setMinimumWidth(450)
+                self.setFixedHeight(self.fHeight)
+                self.setMinimumHeight(self.fHeight)
+                self.setMaximumHeight(self.fHeight+1)
             
     def paintEvent(self, event: QPaintEvent) -> None:
         self.bgw1.setFixedHeight(self.bgw1.sizeHint().height())
@@ -286,9 +304,12 @@ class ErrorMessage(QFramelessWindow):
 
     
     def showErrorMessage(self, data: dict, showNotification = True):
+        self.isQuestion = False
         self.showerr.emit(data, showNotification)
 
     def em(self, data: dict, showNotification = True):
+        self.okButton.setObjectName("")
+        self.moreInfoButton.setObjectName("")
         errorData = {
             "titlebarTitle": "Window title",
             "mainTitle": "Error message",
@@ -337,6 +358,60 @@ class ErrorMessage(QFramelessWindow):
             self.show()
             globals.app.beep()
             
+    def askQuestion(self, data: dict):
+        self.isQuestion = True
+        questionData = {
+            "titlebarTitle": "Window title",
+            "mainTitle": "Error message",
+            "mainText": "An error occurred",
+            "acceptButtonTitle": "Yes",
+            "cancelButtonTitle": "No",
+            "icon": QIcon(getMedia("question")),
+        } | data
+        self.callInMain.emit(lambda: self.aq(questionData))
+        self.qanswer = -1
+        while self.qanswer == -1:
+            time.sleep(0.05)
+        return True if self.qanswer == 1 else False
+    
+    def aq(self, questionData: dict):
+        self.setWindowTitle(questionData["titlebarTitle"])
+        self.titleLabel.setText(questionData["mainTitle"])
+        self.textLabel.setText(questionData["mainText"])
+        self.okButton.setText(questionData["acceptButtonTitle"])
+        self.moreInfoButton.setText(questionData["cancelButtonTitle"])
+        if QIcon(questionData["icon"]).isNull():
+            self.iconLabel.setFixedWidth(10)
+        else:
+            self.iconLabel.setPixmap(QIcon(questionData["icon"]).pixmap(64, 64))
+        wVisible = False
+        wExists = False
+        if self.parent():
+            try:
+                if self.parent().window():
+                    wExists = True
+                    if self.parent().window().isVisible():
+                        wVisible = True
+                        g: QRect = self.parent().window().geometry()
+                        self.show()
+                        self.setMinimumWidth(320)
+                        self.resize(self.minimumSizeHint())
+                        self.move(g.x()+g.width()//2-self.width()//2, g.y()+g.height()//2-self.height()//2)
+            except AttributeError:
+                print("Parent has no window!")
+        if wExists:
+            if wVisible:
+                self.show()
+                globals.app.beep()
+            else:
+                globals.mainWindow.showWindow()
+                self.show()
+                globals.app.beep()
+        else:
+            self.show()
+            globals.app.beep()
+            
+            
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = True
         self.oldpos = QCursor.pos()
@@ -351,6 +426,7 @@ class ErrorMessage(QFramelessWindow):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = False
         return super().mouseReleaseEvent(event)
+    
 
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
