@@ -150,7 +150,7 @@ class PackageInstallerWidget(QGroupBox):
         elif("scoop" in self.store.lower()):
             cprint(self.store.lower())
             bucket_prefix = ""
-            if len(self.store.lower().split(":"))>1:
+            if len(self.store.lower().split(":"))>1 and not "/" in self.packageId:
                 bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "install", f"{bucket_prefix+self.packageId if self.packageId != '' else bucket_prefix+self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             print(self.p.args)
@@ -955,7 +955,7 @@ class PackageInfoPopupWindow(QWidget):
             Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
         elif("scoop" in store.lower()):
             bucket_prefix = ""
-            if len(self.store.lower().split(":"))>1:
+            if len(self.store.lower().split(":"))>1 and not "/" in id and not "/" in title:
                 bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId), daemon=True).start()
 

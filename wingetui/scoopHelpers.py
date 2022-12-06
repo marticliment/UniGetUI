@@ -91,11 +91,11 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
 def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = False) -> None:
     print(f"🟢 Starting get info for title {title}")
     title = title.lower()
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     unknownStr = "Unknown" if verbose else "Loading..."
     appInfo = {
-        "title": title,
+        "title": title.split("/")[-1],
         "id": id,
         "publisher": unknownStr,
         "author": unknownStr,
