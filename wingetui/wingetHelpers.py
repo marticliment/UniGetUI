@@ -272,6 +272,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
             "installer-sha256": "Unknown",
             "installer-url": "Unknown",
             "installer-type": "Unknown",
+            "updatedate": "Unknown",
             "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
             "versions": [],
         }
@@ -300,6 +301,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                 appInfo["installer-sha256"] = line.replace("SHA256:", "").strip()
             elif("Download Url:" in line):
                 appInfo["installer-url"] = line.replace("Download Url:", "").strip()
+            elif("Release Date:" in line):
+                appInfo["updatedate"] = line.replace("Release Date:", "").strip()
             elif("Type:" in line):
                 appInfo["installer-type"] = line.replace("Type:", "").strip()
         print(f"🟢 Loading versions for {title}")    

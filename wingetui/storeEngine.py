@@ -812,6 +812,9 @@ class PackageInfoPopupWindow(QWidget):
         self.type = QLinkLabel(_('Installer Type (Latest Version):')+" "+_('Unknown'))
         self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
+        self.date = QLinkLabel(_('Last updated:')+" "+_('Unknown'))
+        self.date.setWordWrap(True)
+        self.layout.addWidget(self.date)
         self.storeLabel = QLinkLabel(f"Source: {self.store}")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
@@ -938,6 +941,7 @@ class PackageInfoPopupWindow(QWidget):
         self.type.setText(f"{_('Installer Type')} ({_('Latest Version')}): {_('Loading...')}")
         self.packageId.setText(f"{_('Package ID')}: {_('Loading...')}")
         self.manifest.setText(f"{_('Manifest')}: {_('Loading...')}")
+        self.date.setText(f"{_('Last updated')}: {_('Loading...')}")
         self.storeLabel.setText(f"{_('Source')}: {self.store.capitalize()}")
         self.versionCombo.addItems([_("Loading...")])
 
@@ -1075,6 +1079,7 @@ class PackageInfoPopupWindow(QWidget):
         self.link.setText(f"{_('Installer URL')} ({_('Latest Version')}): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"{_('Installer Type')} ({_('Latest Version')}): {appInfo['installer-type']}")
         self.packageId.setText(f"{_('Package ID')}: {appInfo['id']}")
+        self.date.setText(f"{_('Last updated')}: {appInfo['updatedate']}")
         self.manifest.setText(f"{_('Manifest')}: <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
