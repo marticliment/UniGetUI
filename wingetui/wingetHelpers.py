@@ -283,6 +283,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
         print(p.stdout)
         for line in output:
+            cprint(line)
             if("Publisher:" in line):
                 appInfo["publisher"] = line.replace("Publisher:", "").strip()
             elif("Description:" in line):

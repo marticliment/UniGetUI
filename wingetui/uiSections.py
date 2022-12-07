@@ -67,7 +67,7 @@ class DiscoverSoftwareSection(QWidget):
         self.forceCheckBox.clicked.connect(lambda v: setSettings("DisableInstantSearchOnInstall", bool(not v)))
          
         self.query = CustomLineEdit()
-        self.query.setPlaceholderText(" "+_("Search for packages on Winget and Scoop"))
+        self.query.setPlaceholderText(" "+_("Search for packages"))
         self.query.returnPressed.connect(self.filter)
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
