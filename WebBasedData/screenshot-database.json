@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 384
+        "done": 388
     },
     "winget": {
         "115.115": {
@@ -12013,7 +12013,8 @@
                 "https://github.com/martinet101/WingetUI/blob/main/media/winget_4.png?raw=true",
                 "https://github.com/martinet101/WingetUI/blob/main/media/winget_5.png?raw=true",
                 "https://github.com/martinet101/WingetUI/blob/main/media/winget_6.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_7.png"
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_7.png",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_8.png"
             ]
         },
         "SomePythonThings.ZipManager": {
@@ -12636,24 +12637,36 @@
             "images": []
         },
         "TeamSpeakSystems.TeamSpeakClient": {
-            "icon": "",
-            "images": []
+            "icon": "https://img001.prntscr.com/file/img001/aG60yNoTRDq_hlSMrV4e1A.png",
+            "images": [
+                "https://discourse-forums-images.s3.dualstack.us-east-2.amazonaws.com/original/3X/0/5/05c2a7459eb5d5b5e25c09ca695d4497808cb91a.png",
+                "https://img001.prntscr.com/file/img001/aG60yNoTRDq_hlSMrV4e1A.png",
+                "https://img001.prntscr.com/file/img001/BPXQQa1DSQGtNMZOEMAR3A.png"
+            ]
         },
         "TeamViewer.TeamViewer": {
-            "icon": "",
-            "images": []
+            "icon": "https://static.teamviewer.com/resources/2019/07/TeamViewer_Logo_512x512.png",
+            "images": [
+                "https://static.teamviewer.com/resources/2018/09/BauhausHowItWorks-RemoteControl.png",
+                "https://static.teamviewer.com/resources/2021/01/online-meeting-with-teamviewer-meeting.png",
+                "https://static.teamviewer.com/resources/2018/05/android.png"
+            ]
         },
         "TeamViewer.TeamViewer.Host": {
             "icon": "",
             "images": []
         },
         "TechPowerUp.GPU-Z": {
-            "icon": "",
-            "images": []
+            "icon": "https://tpucdn.com/images/news/tpu-v1669381101081.png",
+            "images": [
+                "https://www.techpowerup.com/img/11-03-21/126a.jpg"
+            ]
         },
         "TechPowerUp.NVCleanstall": {
-            "icon": "",
-            "images": []
+            "icon": "https://tpucdn.com/download/images/133_icon-v1669381101081.png",
+            "images": [
+                "https://tpucdn.com/nvcleanstall/screen-2-v1669381101081.png"
+            ]
         },
         "TechSmith.Camtasia": {
             "icon": "",

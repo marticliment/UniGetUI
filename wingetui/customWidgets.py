@@ -414,13 +414,13 @@ class ErrorMessage(QFramelessWindow):
             
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = True
-        self.oldpos = QCursor.pos()
+        self.oldpos = QCursor.pos()-self.window().pos()
         return super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.mousePressed:
-            self.move(self.pos()+(QCursor.pos()-self.oldpos))
-            self.oldpos = QCursor.pos()
+            self.move(QCursor.pos()-self.oldpos)#(self.window().pos()+(QCursor.pos()-self.oldpos))
+            self.oldpos = self.oldpos = QCursor.pos()-self.window().pos()
         return super().mouseMoveEvent(event)
     
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
