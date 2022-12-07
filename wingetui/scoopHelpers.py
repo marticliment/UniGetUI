@@ -111,7 +111,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
         "versions": [],
     }
     while p.poll() is None:
-        line = p.stdout.readline()
+        pass
+    for line in p.stdout.readlines():
         line = line.strip()
         if line:
             output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
@@ -130,7 +131,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
                 for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de", ".kde", ".microsoft"):
                     w = w.replace(e, "")
                 appInfo["author"] = w.split("/")[0].capitalize()
-        elif("Version" in line):
+        elif("Version " in line):
             version = line.replace("Version", "").strip()[1:].strip()
         elif("Updated by" in line):
             appInfo["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
