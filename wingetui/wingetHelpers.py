@@ -1,6 +1,8 @@
 from PySide6.QtCore import *
 import subprocess, time, os, sys
 from tools import *
+from tools import _
+
 
 common_params = ["--source", "winget", "--accept-source-agreements"]
 
@@ -53,7 +55,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                 try:
                     ver = verElement.split(" ")[iOffset+1]
                 except IndexError:
-                    ver = "Unknown"
+                    ver = _("Unknown")
                 if len(id)==1:
                     iOffset + 1
                     id = verElement.split(" ")[iOffset+0]
@@ -263,20 +265,21 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                 p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 print(f"🟢 Starting get info for title {title}")
             output = []
+            unknownStr = _("Unknown")
             appInfo = {
                 "title": oldtitle,
                 "id": oldid,
-                "publisher": "Unknown",
-                "author": "Unknown",
-                "description": "Unknown",
-                "homepage": "Unknown",
-                "license": "Unknown",
-                "license-url": "Unknown",
-                "installer-sha256": "Unknown",
-                "installer-url": "Unknown",
-                "installer-type": "Unknown",
-                "updatedate": "Unknown",
-                "releasenotes": "Unknown",
+                "publisher": unknownStr,
+                "author": unknownStr,
+                "description": unknownStr,
+                "homepage": unknownStr,
+                "license": unknownStr,
+                "license-url": unknownStr,
+                "installer-sha256": unknownStr,
+                "installer-url": unknownStr,
+                "installer-type": unknownStr,
+                "updatedate": unknownStr,
+                "releasenotes": unknownStr,
                 "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
                 "versions": []
             }

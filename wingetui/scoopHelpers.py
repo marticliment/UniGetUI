@@ -2,6 +2,7 @@ from random import vonmisesvariate
 from PySide6.QtCore import *
 import subprocess, os, sys, re
 from tools import *
+from tools import _
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -93,7 +94,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
     title = title.lower()
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
-    unknownStr = "Unknown" if verbose else "Loading..."
+    unknownStr = _("Unknown") if verbose else _("Loading...")
     appInfo = {
         "title": title.split("/")[-1],
         "id": id,
@@ -105,7 +106,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
         "license-url": unknownStr,
         "installer-sha256": unknownStr,
         "installer-url": unknownStr,
-        "installer-type": "Scoop shim",
+        "installer-type": _("Scoop shim"),
         "manifest": unknownStr,
         "updatedate": unknownStr,
         "releasenotes": unknownStr,
