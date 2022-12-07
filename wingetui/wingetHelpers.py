@@ -254,7 +254,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
             oldtitle = title
         validCount = 0
         iterations = 0
-        while validCount < 2 and iterations < 15:
+        while validCount < 2 and iterations < 50:
             iterations += 1
             if useId:
                 p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
@@ -276,8 +276,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                 "installer-url": "Unknown",
                 "installer-type": "Unknown",
                 "updatedate": "Unknown",
+                "releasenotes": "Unknown",
                 "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
-                "versions": [],
+                "versions": []
             }
             while p.poll() is None:
                 line = p.stdout.readline()
@@ -317,6 +318,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                     validCount += 1
                 elif("Release Date:" in line):
                     appInfo["updatedate"] = line.replace("Release Date:", "").strip()
+                    validCount += 1
+                elif("Release Notes Url:" in line):
+                    url = line.replace("Release Notes Url:", "").strip()
+                    appInfo["releasenotes"] = f"<a href={url} style='color:%bluecolor%'>{url}</a>"
                     validCount += 1
                 elif("Type:" in line):
                     appInfo["installer-type"] = line.replace("Type:", "").strip()

@@ -108,6 +108,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
         "installer-type": "Scoop shim",
         "manifest": unknownStr,
         "updatedate": unknownStr,
+        "releasenotes": unknownStr,
         "versions": [],
     }
     while p.poll() is None:
@@ -135,6 +136,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
             version = line.replace("Version", "").strip()[1:].strip()
         elif("Updated by" in line):
             appInfo["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
+        elif("Notes" in line):
+            appInfo["releasenotes"] = line.replace("Notes", "").strip()[1:].strip()
         elif("Updated at" in line):
             appInfo["updatedate"] = line.replace("Updated at", "").strip()[1:].strip()
         elif("License" in line):
