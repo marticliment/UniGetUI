@@ -121,7 +121,7 @@ Last updated: Wed Dec  7 01:00:57 2022
 - sho9029: Japanese
 - TAKASE, Yuki: Japanese
 - yrctw: Chinese
-- Артем: Russian
+- Артем Скляров: Russian
 - Martí Climent: Catalan
  
 
