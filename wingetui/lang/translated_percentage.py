@@ -9,6 +9,5 @@ untranslatedPercentage = {
   "pl": "42%",
   "ru": "95%",
   "sr": "24%",
-  "tr": "95%",
   "ua": "95%"
 }
