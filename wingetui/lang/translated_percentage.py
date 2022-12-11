@@ -3,7 +3,7 @@
 
 untranslatedPercentage = {
   "ar": "0%",
-  "cs": "0%",
+  "cs": "7%",
   "hi": "95%",
   "hr": "0%",
   "pl": "42%",
