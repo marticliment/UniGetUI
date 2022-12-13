@@ -248,7 +248,10 @@ def getIconMode() -> str:
     return "white" if isDark() else "black"
 
 def getMedia(m: str) -> str:
-    return getPath(m+"_"+getIconMode()+".png")
+    filename = getPath(m+"_"+getIconMode()+".png")
+    if not os.path.exists(filename):
+        filename = getPath(m+".png")
+    return filename
 
 def getint(s: str, fallback: int) -> int:
     try:
