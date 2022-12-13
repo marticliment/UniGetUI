@@ -2083,7 +2083,7 @@ class SettingsSection(QScrollArea):
         doCloseWingetUI.setChecked(not getSettings("DisableAutostart"))
         doCloseWingetUI.stateChanged.connect(lambda v: setSettings("DisableAutostart", not bool(v)))
         self.startup.addWidget(doCloseWingetUI)
-        disableUpdateIndexes = QSettingsCheckBox(_("Do not update package indexes on launch"))
+        disableUpdateIndexes = QSettingsCheckBox(_("Do not update Scoop package indexes on launch"))
         disableUpdateIndexes.setChecked(getSettings("DisableUpdateIndexes"))
         self.startup.addWidget(disableUpdateIndexes)
         enableScoopCleanup = QSettingsCheckBox(_("Enable Scoop cleanup on launch"))
