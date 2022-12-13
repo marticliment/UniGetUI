@@ -2067,7 +2067,8 @@ class SettingsSection(QScrollArea):
             i = self.language.combobox.currentIndex()
             selectedLang = invertedLangDict[self.language.combobox.currentText()] # list(languageReference.keys())[i]
             cprint(invertedLangDict[self.language.combobox.currentText()])
-            setSettingsValue("PreferredLanguage", selectedLang)
+            self.language.toggleRestartButton(selectedLang != langName)
+            setSettingsValue("PreferredLanguage", selectedLang, r=False)
 
         def restartElevenClockByLangChange():
             subprocess.run(str("start /B \"\" \""+sys.executable)+"\"", shell=True)
