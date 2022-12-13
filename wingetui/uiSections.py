@@ -1910,7 +1910,19 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
         GHcontributors = "<ul>"
-        for user in ("ppvnf", "RavenMacDaddy", "MisterEvans78", "vedantmgoyal2009", "sklart", "Satanarious", "sitiom", "harleylara", "victorelec14", "neoOpus"):
+        for user in (
+            "harleylara",
+            "MisterEvans78",
+            "neoOpus",
+            "panther7",
+            "ppvnf",
+            "RavenMacDaddy",
+            "Satanarious",
+            "sitiom",
+            "sklart",
+            "vedantmgoyal2009",
+            "victorelec14",
+            ):
             GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
         GHcontributors += "</ul>"
         self.layout.addWidget(QLinkLabel(GHcontributors))
@@ -1919,7 +1931,31 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
         translators = "<ul>"
-        for user in ("Aaron liu: Chinese", "Ahmet Özmetin: Turkish", "Artem Moldovanenko: Ukranian", "BUGP Association: Chinese", "Cololi: Chinese", "Datacra5H: German", "Evans: French", "GiacoBot: Italian", "gidano: Hungarian", "Maicol Battistini: Italian", "Nemanja Djurcic: Serbian, Croatian", "Operator404: Ukranian", "ppvnf: Portuguese (Portugal and Brazil)", "Rosario Di Mauro: Italian", "Satyam Singh Niranjan: Hindi", "Sergey: Russian", "sho9029: Japanese", "TAKASE, Yuki: Japanese", "yrctw: Chinese", "Артем: Russian", "Martí Climent: Catalan"):
+        for user in (
+            "Aaron liu: Chinese",
+            "Ahmet Özmetin: Turkish",
+            "Artem Moldovanenko: Ukranian",
+            "BUGP Association: Chinese",
+            "Cololi: Chinese",
+            "Datacra5H: German",
+            "Evans: French",
+            "GiacoBot: Italian",
+            "gidano: Hungarian",
+            "Maicol Battistini: Italian",
+            "Martí Climent: Catalan",
+            "Nemanja Djurcic: Serbian, Croatian",
+            "Operator404: Ukranian",
+            "panther7: Czech",
+            "ppvnf: Portuguese (Portugal and Brazil)",
+            "regulargvy13: Polish",
+            "Rosario Di Mauro: Italian",
+            "Satyam Singh Niranjan: Hindi",
+            "Sergey: Russian",
+            "sho9029: Japanese",
+            "TAKASE, Yuki: Japanese",
+            "yrctw: Chinese",
+            "Артем: Russian",
+            ):
             translators += f"<li>{user}</li>"
         translators += "</ul><br>"
         translators += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/martinet101/WingetUI/wiki#translating-wingetui")
