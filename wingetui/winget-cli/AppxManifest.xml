@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Package IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap8 mp wincap rescap desktop com desktop6 build" xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:uap8="http://schemas.microsoft.com/appx/manifest/uap/windows10/8" xmlns:wincap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/windowscapabilities" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build">
   
-  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.18.2091.0" ProcessorArchitecture="x64"/>
+  <Identity Name="Microsoft.DesktopAppInstaller" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.18.2691.0" ProcessorArchitecture="x64"/>
   <mp:PhoneIdentity PhoneProductId="199c15cd-11cc-42bc-99de-619509297b5e" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35"/>
   <Properties>
     <DisplayName>ms-resource:appDisplayName</DisplayName>
@@ -164,11 +164,11 @@
     </Extension>
   </Extensions>
   <build:Metadata>
-    <build:Item Name="cl.exe" Version="19.32.31332.0"/>
+    <build:Item Name="cl.exe" Version="19.33.31630.0"/>
     <build:Item Name="CodeSharingProject" Value="248F659F-DAC5-46E8-AC09-60EC9FC95053"/>
     <build:Item Name="VisualStudio" Version="17.0"/>
     <build:Item Name="OperatingSystem" Version="10.0.20348.1 (WinBuild.160101.0800)"/>
-    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="17.2.32427.441"/>
+    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="17.3.32728.75"/>
     <build:Item Name="ProjectGUID" Value="{2910e195-72ee-433c-a714-8add7c86118b}"/>
     <build:Item Name="ilc.exe" Version="1.4.24211.07 built by: PROJECTNSVC2"/>
     <build:Item Name="OptimizingToolset" Value="ilc.exe"/>

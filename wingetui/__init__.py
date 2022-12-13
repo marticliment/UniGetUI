@@ -119,13 +119,13 @@ try:
                 else:
                     self.loadStatus += 2
                     globals.componentStatus["wingetFound"] = False
-                    globals.componentStatus["wingetVersion"] = "Winget is disabled"
+                    globals.componentStatus["wingetVersion"] = _("{0} is disabled").format("Winget")
                 if not getSettings("DisableScoop"):
                     Thread(target=self.detectScoop, daemon=True).start()
                 else:
                     self.loadStatus += 3
                     globals.componentStatus["scoopFound"] = False
-                    globals.componentStatus["scoopVersion"] = "Scoop is disabled"
+                    globals.componentStatus["scoopVersion"] = _("{0} is disabled").format("Scoop")
                 Thread(target=self.detectSudo, daemon=True).start()
 
                 # Daemon threads
