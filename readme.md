@@ -17,6 +17,15 @@ Beware that neither Microsoft nor the creators of WingetUI are responsible for t
 
 ![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/main.webp)
 
+# Consider supporting me :)
+
+**It really does make a big difference, and is very much appreciated.**
+
+<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
+Thank you! :)
+
+
 # Features
 
  - The ability to install packages from Scoop and Winget (the idea is to add more package managers in the future).
@@ -32,15 +41,8 @@ Beware that neither Microsoft nor the creators of WingetUI are responsible for t
  - More than 6800 packages available and counting!
  - More features are coming in the future!
 
-# Consider supporting me. 
-
-**It really does make a big difference, and is very much appreciated.**
-
-<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
-Thank you! :)
-
 # Installation
+
 
 <p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br><br></p>
 
