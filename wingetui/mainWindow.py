@@ -135,6 +135,9 @@ class RootWindow(QMainWindow):
         self.extrasMenuButton.setCheckable(True)
         self.extrasMenuButton.setFixedHeight(40)
         self.extrasMenuButton.setObjectName("Headerbutton")
+        def resetSelectionIndex():
+            self.widgets[self.mainWidget.currentWidget()].setChecked(True)
+        self.extrasMenu.aboutToHide.connect(resetSelectionIndex)
         self.buttonBox.addButton(self.extrasMenuButton)
         globals.extrasMenuButton = self.extrasMenuButton
         hl.addWidget(self.extrasMenuButton)
@@ -188,7 +191,7 @@ class RootWindow(QMainWindow):
         if addToMenu:
             btn.action.setIcon(QIcon(getMedia(actionIcon)))
             btn.action.setParent(self.extrasMenu)
-            btn.clicked.connect(self.extrasMenuButton.setChecked(True))
+            btn.clicked.connect(lambda: self.extrasMenuButton.setChecked(True))
             self.extrasMenu.addAction(btn.action)
         else:
             self.buttonLayout.addWidget(btn)

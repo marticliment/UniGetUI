@@ -14,10 +14,6 @@ try:
     import globals
     from blurwindow import GlobalBlur, ExtendFrameIntoClientArea
 
-    #if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-    #    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    #if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
-    #    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
     class MainApplication(QApplication):
         kill = Signal()
@@ -36,7 +32,6 @@ try:
                 self.popup = DraggableWindow()
                 self.popup.setFixedSize(QSize(600, 400))
                 self.popup.setWindowFlag(Qt.FramelessWindowHint)
-                #self.popup.setWindowFlag(Qt.WindowStaysOnTopHint)
                 self.popup.setLayout(QVBoxLayout())
                 self.popup.layout().addStretch()
                 titlewidget = QHBoxLayout()
