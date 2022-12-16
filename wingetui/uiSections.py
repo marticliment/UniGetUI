@@ -2068,6 +2068,9 @@ class SettingsSection(QScrollArea):
         try:
             cprint(invertedLangDict)
             self.language.combobox.insertItems(0, langListWithPercentage)
+            cprint(langListWithPercentage)
+            cprint(langName)
+            cprint(langDictWithPercentage)
             self.language.combobox.setCurrentIndex(langListWithPercentage.index(langDictWithPercentage[langName]))
         except Exception as e:
             report(e)
