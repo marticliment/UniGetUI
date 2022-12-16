@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 393
+        "done": 394
     },
     "winget": {
         "115.115": {
@@ -4795,8 +4795,16 @@
             "images": []
         },
         "Flow-Launcher.Flow-Launcher": {
-            "icon": "",
-            "images": []
+            "icon": "https://imgur.com/ofCO4cO",
+            "images": [
+                "https://imgur.com/R34RBgy",
+                "https://imgur.com/Z0MNbw5",
+                "https://imgur.com/uAr1VZf",
+                "https://imgur.com/CNPjvsg",
+                "https://imgur.com/e9qOZpy",
+                "https://imgur.com/Kuialsw",
+                "https://imgur.com/N5QrhaY"
+            ]
         },
         "FlyByWireSimulations.FlyByWireSimu\u2026": {
             "icon": "",
