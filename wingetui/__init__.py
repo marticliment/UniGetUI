@@ -199,7 +199,7 @@ try:
         def detectScoop(self):
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Scoop...")))
-                o = subprocess.run(f"powershell -Command scoop -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run(f"{scoopHelpers.scoop} -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
                 globals.componentStatus["scoopFound"] = o.returncode == 0
@@ -211,14 +211,13 @@ try:
             try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
-                    p = subprocess.Popen(f"powershell -Command scoop cache rm *", shell=True, stdout=subprocess.PIPE)
-                    
+                    p = subprocess.Popen(f"{scoopHelpers.scoop} cache rm *", shell=True, stdout=subprocess.PIPE)
                     p.wait()
             except Exception as e:
                 print(e)
             try:
                 if(getSettings("EnableScoopCleanup")):
-                    p2 = subprocess.Popen(f"powershell -Command scoop cleanup --all", shell=True, stdout=subprocess.PIPE)
+                    p2 = subprocess.Popen(f"{scoopHelpers.scoop} cleanup --all", shell=True, stdout=subprocess.PIPE)
                     p2.wait()
             except Exception as e:
                 report(e)
@@ -226,7 +225,7 @@ try:
             try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Scoop sources...")))
-                    o = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
+                    o = subprocess.run(f"{scoopHelpers.scoop} update", shell=True, stdout=subprocess.PIPE)
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Scoop sources")))
             except Exception as e:
                 print(e)

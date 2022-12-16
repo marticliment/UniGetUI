@@ -6,6 +6,8 @@ from tools import _
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
+scoop = "powershell -ExecutionPolicy ByPass -Command scoop"
+
 def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Starting scoop search...")
     p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
