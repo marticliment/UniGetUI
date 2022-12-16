@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 388
+        "done": 394
     },
     "winget": {
         "115.115": {
@@ -4405,7 +4405,7 @@
             "images": []
         },
         "EpicGames.EpicGamesLauncher": {
-            "icon": "https://i.imgur.com/E9tVcj3.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Epic_Games_logo.svg/207px-Epic_Games_logo.svg.png",
             "images": [
                 "https://i.postimg.cc/QtBQnP70/egs-social-home-medium-1710x942-c0e4ff4c149e.jpg"
             ]
@@ -4795,8 +4795,16 @@
             "images": []
         },
         "Flow-Launcher.Flow-Launcher": {
-            "icon": "",
-            "images": []
+            "icon": "https://imgur.com/ofCO4cO",
+            "images": [
+                "https://imgur.com/R34RBgy",
+                "https://imgur.com/Z0MNbw5",
+                "https://imgur.com/uAr1VZf",
+                "https://imgur.com/CNPjvsg",
+                "https://imgur.com/e9qOZpy",
+                "https://imgur.com/Kuialsw",
+                "https://imgur.com/N5QrhaY"
+            ]
         },
         "FlyByWireSimulations.FlyByWireSimu\u2026": {
             "icon": "",
@@ -6397,7 +6405,7 @@
             ]
         },
         "JanFiala.PSpad": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/d/df/Pspad_256x256.png",
             "images": []
         },
         "JanGrzegorowski.TimeSeriesAdmin": {
@@ -10282,11 +10290,11 @@
             "images": []
         },
         "Piriform.CCleaner": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/4/4a/CCleaner_logo_2013.png",
             "images": []
         },
         "Piriform.CCleaner.ProTrial": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/4/4a/CCleaner_logo_2013.png",
             "images": []
         },
         "Piriform.Defraggler": {
@@ -11755,7 +11763,7 @@
             "images": []
         },
         "SideQuestVR.SideQuest": {
-            "icon": "",
+            "icon": "https://sidequestvr.com/assets/icons/apple-icon-180x180.png",
             "images": []
         },
         "Sigil-Ebook.Sigil": {
@@ -13309,7 +13317,7 @@
             "images": []
         },
         "Ubisoft.Connect": {
-            "icon": "",
+            "icon": "https://play-lh.googleusercontent.com/f868E2XQBpfl677hykMnZ4_HlKqrOs0fUhuwy0TC9ZI_PQLn99RtBV2kQ7Z50OtQkw",
             "images": [
                 "https://i.postimg.cc/y8dkPRcT/14621efe-9306-44f5-ade6-b0eebe217a5f.png"
             ]
