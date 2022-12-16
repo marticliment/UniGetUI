@@ -329,22 +329,27 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                     validCount += 1
                 elif("Type:" in line):
                     appInfo["installer-type"] = line.replace("Type:", "").strip()
-        print(f"🟢 Loading versions for {title}")    
-        if useId:
-            p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        else:
-            p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        print(f"🟢 Loading versions for {title}")
+        retryCount = 0
         output = []
-        counter = 0
-        print(p.args)
-        while p.poll() is None:
-            line = p.stdout.readline()
-            line = line.strip()
-            if line:
-                if(counter > 2):
-                    output.append(str(line, encoding='utf-8', errors="ignore"))
-                else:
-                    counter += 1
+        while output == [] and retryCount < 20:
+            retryCount += 1
+            if useId:
+                p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            else:
+                p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            counter = 0
+            print(p.args)
+            while p.poll() is None:
+                line = p.stdout.readline()
+                line = line.strip()
+                if line:
+                    if(counter > 2):
+                        output.append(str(line, encoding='utf-8', errors="ignore"))
+                    else:
+                        counter += 1
+            cprint("Output: ")
+            cprint(output)
         appInfo["versions"] = output
         signal.emit(appInfo)
     except Exception as e:
