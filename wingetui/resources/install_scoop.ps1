@@ -1,6 +1,6 @@
 Write-Output "Installing scoop..."
 
-Invoke-Expression "& {$(Invoke-RestMethod get.scoop.sh)}"
+iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
 
 If (-Not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Output "Installing git..."
