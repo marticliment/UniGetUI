@@ -332,7 +332,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         print(f"🟢 Loading versions for {title}")
         retryCount = 0
         output = []
-        while output == [] and retryCount < 20:
+        while output == [] and retryCount < 50:
             retryCount += 1
             if useId:
                 p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
