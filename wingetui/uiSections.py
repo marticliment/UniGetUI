@@ -732,8 +732,10 @@ class UpdateSoftwareSection(QWidget):
                         pass
 
         def setAllSelected(checked: bool) -> None:
+            itemList = []
             for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+                itemList.append(self.packageList.topLevelItem(i))
+            for program in itemList:
                 if not program.isHidden():
                     self.packageList.itemWidget(program, 0).setChecked(checked)
 
@@ -1424,7 +1426,10 @@ class UninstallSoftwareSection(QWidget):
         self.toolbar.addSeparator()
 
         def setAllSelected(checked: bool) -> None:
+            itemList = []
             for i in range(self.packageList.topLevelItemCount()):
+                itemList.append(self.packageList.topLevelItem(i))
+            for program in itemList:
                 program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)                
                 if not program.isHidden():
                     self.packageList.itemWidget(program, 0).setChecked(checked)
