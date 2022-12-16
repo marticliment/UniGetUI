@@ -287,6 +287,7 @@ class DiscoverSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        self.finishLoadingIfNeeded("none")
         print("🟢 Discover tab loaded")
 
         g = self.packageList.geometry()
@@ -465,6 +466,7 @@ class DiscoverSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
@@ -881,6 +883,7 @@ class UpdateSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        self.finishLoadingIfNeeded("none")
         print("🟢 Upgrades tab loaded")
 
         g = self.packageList.geometry()
@@ -1126,6 +1129,7 @@ class UpdateSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
@@ -1511,6 +1515,7 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        self.finishLoadingIfNeeded("none")
         print("🟢 Discover tab loaded")
 
         g = self.packageList.geometry()
@@ -1766,6 +1771,7 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        self.finishLoadingIfNeeded("none")
         for action in globals.trayMenuInstalledList.actions():
             globals.trayMenuInstalledList.removeAction(action)
         globals.trayMenuInstalledList.addAction(globals.installedHeader)
