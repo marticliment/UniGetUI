@@ -409,7 +409,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.store = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
-        self.label.setText(_("{} Uninstallation").format(title))
+        self.label.setText(_("{0} Uninstallation").format(title))
         
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
