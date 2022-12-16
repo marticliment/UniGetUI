@@ -1655,7 +1655,7 @@ class UninstallSoftwareSection(QWidget):
         if not "---" in name:
             item = TreeWidgetItemWithQAction()
             if store.lower() == "winget":
-                for illegal_char in ("{", "}", "_", " "):
+                for illegal_char in ("{", "}", " "):
                     if illegal_char in id:
                         store = "Local PC"
                 if store.lower() == "winget":
@@ -1663,7 +1663,7 @@ class UninstallSoftwareSection(QWidget):
                         store = "Local PC"
                         if id.count(".") > 1:
                             for letter in id:
-                                if letter in "AABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                                if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                                     store = "Winget"
                                     break
             item.setText(1, name)
