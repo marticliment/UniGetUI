@@ -246,7 +246,7 @@ class ErrorMessage(QFramelessWindow):
         bglayout = QVBoxLayout()
         bglayout.addLayout(hl)
         l = QHBoxLayout()
-        self.moreInfoTextArea = QPlainTextEdit()
+        self.moreInfoTextArea = CustomPlainTextEdit()
         self.moreInfoTextArea.setReadOnly(True)
         self.moreInfoTextArea.setVisible(False)
         self.moreInfoTextArea.setMinimumHeight(120)
@@ -959,6 +959,13 @@ class QSettingsCheckBox(QWidget):
 
     def text(self) -> str:
         return self.checkbox.text()
+
+class CustomPlainTextEdit(QPlainTextEdit):
+    
+    def contextMenuEvent(self, e: QContextMenuEvent) -> None:
+        menu = self.createStandardContextMenu()
+        ApplyMenuBlur(menu.winId(), menu)
+        menu.exec(QCursor.pos())
 
 
 if __name__ == "__main__":
