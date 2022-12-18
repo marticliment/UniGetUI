@@ -254,7 +254,7 @@
   "WingetUI - 1 update is available" : null,
   "WingetUI autostart behaviour, application launch settings" : null,
   "WingetUI display language:" : null,
-  "wingetui exported packages" : null,
+  "wingetui exported packages" : "WingetUI exported packages",
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI has not been machine translated! The following users have been in charge of the translations:",
   "WingetUI log" : null,
   "WingetUI Settings" : null,
