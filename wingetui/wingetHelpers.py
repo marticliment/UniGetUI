@@ -158,7 +158,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                     id = verElement.split(" ")[iOffset+0]
                     newver = verElement.split(" ")[iOffset+2]
                     ver = verElement.split(" ")[iOffset+1]
-                if ver.strip() in ("<", "-"):
+                if ver.strip() in ("<", ">", "-"):
                     iOffset += 1
                     ver = verElement.split(" ")[iOffset+1]
                     newver = verElement.split(" ")[iOffset+2]
