@@ -157,7 +157,7 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def treeWidget(self) -> TreeWidget:
         return super().treeWidget()
 
-class ErrorMessage(QFramelessWindow):
+class ErrorMessage(QMainWindow):
     showerr = Signal(dict, bool)
     fHeight = 100
     oldpos = QPoint()
@@ -169,7 +169,7 @@ class ErrorMessage(QFramelessWindow):
         super().__init__(parent)
         self.showerr.connect(self.em)
         self.callInMain.connect(lambda f: f())
-        self.setWindowFlag(Qt.Window)
+        self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint)
         self.setObjectName("micawin")
         ApplyMica(self.winId().__int__(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.hide()
@@ -360,14 +360,25 @@ class ErrorMessage(QFramelessWindow):
             
     def askQuestion(self, data: dict):
         self.isQuestion = True
-        questionData = {
-            "titlebarTitle": "Window title",
-            "mainTitle": "Error message",
-            "mainText": "An error occurred",
-            "acceptButtonTitle": "Yes",
-            "cancelButtonTitle": "No",
-            "icon": QIcon(getMedia("question")),
-        } | data
+        try:
+            questionData = {
+                "titlebarTitle": "Window title",
+                "mainTitle": "Error message",
+                "mainText": "An error occurred",
+                "acceptButtonTitle": _("Yes"),
+                "cancelButtonTitle": _("No"),
+                "icon": QIcon(getMedia("question")),
+            } | data
+        except Exception as e:
+            questionData = {
+                "titlebarTitle": "Window title",
+                "mainTitle": "Error message",
+                "mainText": "An error occurred",
+                "acceptButtonTitle": _("Yes"),
+                "cancelButtonTitle": _("No"),
+                "icon": QIcon(getMedia("question")),
+            } | data
+            report(e)
         self.callInMain.emit(lambda: self.aq(questionData))
         self.qanswer = -1
         while self.qanswer == -1:

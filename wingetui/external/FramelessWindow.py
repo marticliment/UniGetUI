@@ -27,83 +27,87 @@ from external.blurwindow import ExtendFrameIntoClientArea
 
 
 class QFramelessWindow(QMainWindow):
-    BORDER_WIDTH = 10
+    BORDER_WIDTH: int = 10
+    disableModernUI: bool = False
 
     def __init__(self, parent=None):
+        self.disableModernUI = True
         self.updateSize = True
         self.settingsWidget = QWidget()
         super().__init__(parent=parent)
         self.hwnd = self.winId().__int__()
+        self.setWindowFlag(Qt.CustomizeWindowHint)
         #self.setObjectName("QFramelessWindow")
-        window_style = win32gui.GetWindowLong(self.hwnd, GWL_STYLE)
-        win32gui.SetWindowLong(self.hwnd, GWL_STYLE, window_style | WS_POPUP | WS_MAXIMIZEBOX | WS_MINIMIZEBOX)
-
-        ExtendFrameIntoClientArea(self.winId().__int__())
+        if not self.disableModernUI:
+            window_style = win32gui.GetWindowLong(self.hwnd, GWL_STYLE)
+            win32gui.SetWindowLong(self.hwnd, GWL_STYLE, window_style | WS_POPUP | WS_MAXIMIZEBOX | WS_MINIMIZEBOX)
+            ExtendFrameIntoClientArea(self.winId().__int__())
 
         self.setAutoFillBackground(True)
 
     def changeEvent(self, event):
-        if event.type() == QWindowStateChangeEvent:
-            if self.windowState() & Qt.WindowMaximized:
-                margin = abs(self.mapToGlobal(self.rect().topLeft()).y())
-                self.setContentsMargins(margin, margin, margin, margin)
-            else:
-                self.setContentsMargins(0, 0, 0, 0)
+        if not self.disableModernUI or True:
+            if event.type() == QWindowStateChangeEvent:
+                if self.windowState() & Qt.WindowMaximized:
+                    margin = abs(self.mapToGlobal(self.rect().topLeft()).y())
+                    self.setContentsMargins(margin, margin, margin, margin)
+                else:
+                    self.setContentsMargins(0, 0, 0, 0)
 
-        return super(QFramelessWindow, self).changeEvent(event)
+        return super(QMainWindow, self).changeEvent(event)
 
     def nativeEvent(self, event, message):
         return_value, result = super().nativeEvent(event, message)
+        if not self.disableModernUI or True:
+            # if you use Windows OS
+            if not event == b'windows_generic_MSG':
+                msg = ctypes.wintypes.MSG.from_address(message.__int__())
+                # Get the coordinates when the mouse moves.
+                x = win32api.LOWORD(LONG(msg.lParam).value)
+                # converted an unsigned int to int (for dual monitor issue)
+                if x & 32768: x = x | -65536
+                y = win32api.HIWORD(LONG(msg.lParam).value)
+                if y & 32768: y = y | -65536
 
-        # if you use Windows OS
-        if event == b'windows_generic_MSG':
-            msg = ctypes.wintypes.MSG.from_address(message.__int__())
-            # Get the coordinates when the mouse moves.
-            x = win32api.LOWORD(LONG(msg.lParam).value)
-            # converted an unsigned int to int (for dual monitor issue)
-            if x & 32768: x = x | -65536
-            y = win32api.HIWORD(LONG(msg.lParam).value)
-            if y & 32768: y = y | -65536
+                x -= self.frameGeometry().x()
+                y -= self.frameGeometry().y()
 
-            x -= self.frameGeometry().x()
-            y -= self.frameGeometry().y()
+                # Determine whether there are other controls(i.e. widgets etc.) at the mouse position.
+                if self.childAt(x, y) is not None and self.childAt(x, y) is not self.findChild(QWidget, "ControlWidget"):
+                    # passing
+                    if self.width() - self.BORDER_WIDTH > x > self.BORDER_WIDTH and y < self.height() - self.BORDER_WIDTH:
+                        return return_value, result
 
-            # Determine whether there are other controls(i.e. widgets etc.) at the mouse position.
-            if self.childAt(x, y) is not None and self.childAt(x, y) is not self.findChild(QWidget, "ControlWidget"):
-                # passing
-                if self.width() - self.BORDER_WIDTH > x > self.BORDER_WIDTH and y < self.height() - self.BORDER_WIDTH:
-                    return return_value, result
+                if msg.message == WM_NCCALCSIZE:
+                    # Remove system title
+                    return True, 0
 
-            if msg.message == WM_NCCALCSIZE:
-                # Remove system title
-                return True, 0
+                if msg.message == WM_NCHITTEST:
+                    w, h = self.width(), self.height()
+                    lx = x < self.BORDER_WIDTH
+                    rx = x > w - self.BORDER_WIDTH
+                    ty = y < self.BORDER_WIDTH
+                    by = y > h - self.BORDER_WIDTH
+                    if lx and ty:
+                        return True, HTTOPLEFT
+                    if rx and by:
+                        return True, HTBOTTOMRIGHT
+                    if rx and ty:
+                        return True, HTTOPRIGHT
+                    if lx and by:
+                        return True, HTBOTTOMLEFT
+                    if ty:
+                        return True, HTTOP
+                    if by:
+                        return True, HTBOTTOM
+                    if lx:
+                        return True, HTLEFT
+                    if rx:
+                        return True, HTRIGHT
+                    # Title
+                    return True, HTCAPTION
 
-            if msg.message == WM_NCHITTEST:
-                w, h = self.width(), self.height()
-                lx = x < self.BORDER_WIDTH
-                rx = x > w - self.BORDER_WIDTH
-                ty = y < self.BORDER_WIDTH
-                by = y > h - self.BORDER_WIDTH
-                if lx and ty:
-                    return True, HTTOPLEFT
-                if rx and by:
-                    return True, HTBOTTOMRIGHT
-                if rx and ty:
-                    return True, HTTOPRIGHT
-                if lx and by:
-                    return True, HTBOTTOMLEFT
-                if ty:
-                    return True, HTTOP
-                if by:
-                    return True, HTBOTTOM
-                if lx:
-                    return True, HTLEFT
-                if rx:
-                    return True, HTRIGHT
-                # Title
-                return True, HTCAPTION
-
-        return return_value, result
+            return return_value, result
 
     def moveEvent(self, event) -> None:
         self.repaint()
