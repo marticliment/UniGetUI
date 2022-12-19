@@ -1669,7 +1669,7 @@ class UninstallSoftwareSection(QWidget):
                 for illegal_char in ("{", "}", " "):
                     if illegal_char in id:
                         store = "Local PC"
-                if len(id.split("_")[-1]) == 13:
+                if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
                     store = "Microsoft Store"
                 if store.lower() == "winget":
                     if id.count(".") != 1:
