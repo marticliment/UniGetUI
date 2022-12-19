@@ -1288,7 +1288,7 @@ class UninstallSoftwareSection(QWidget):
         self.packageList.setHeaderLabels(self.headers)
         self.packageList.setColumnWidth(0, 50)
         self.packageList.setColumnHidden(3, False)
-        self.packageList.setColumnWidth(4, 120)
+        self.packageList.setColumnWidth(4, 130)
         self.packageList.setSortingEnabled(True)
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -1344,7 +1344,7 @@ class UninstallSoftwareSection(QWidget):
                 contextMenu.addSeparator()
             else:
                 contextMenu.addAction(ins5)
-            if self.packageList.currentItem().text(4).lower() != "local pc":
+            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store"):
                 contextMenu.addAction(ins4)
 
             contextMenu.exec(QCursor.pos())
@@ -1383,7 +1383,7 @@ class UninstallSoftwareSection(QWidget):
 
         def showInfo():
             item = self.packageList.currentItem()
-            if item.text(4).lower() == "local pc":
+            if item.text(4).lower() in ("local pc", "microsoft store"):
                 self.err = ErrorMessage(self.window())
                 errorData = {
                         "titlebarTitle": _("Unable to load informarion"),
@@ -1505,6 +1505,7 @@ class UninstallSoftwareSection(QWidget):
         self.wingetIcon = QIcon(getMedia("winget"))
         self.scoopIcon = QIcon(getMedia("scoop"))
         self.localIcon = QIcon(getMedia("localpc"))
+        self.MSStoreIcon = QIcon(getMedia("msstore"))
         
     
         if not getSettings("DisableWinget"):
@@ -1668,6 +1669,8 @@ class UninstallSoftwareSection(QWidget):
                 for illegal_char in ("{", "}", " "):
                     if illegal_char in id:
                         store = "Local PC"
+                if len(id.split("_")[-1]) == 13:
+                    store = "Microsoft Store"
                 if store.lower() == "winget":
                     if id.count(".") != 1:
                         store = "Local PC"
@@ -1686,8 +1689,10 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.scoopIcon)
             elif "winget" in store.lower():
                 item.setIcon(4, self.wingetIcon)
-            else:
+            elif "local pc" in store.lower():
                 item.setIcon(4, self.localIcon)
+            else:
+                item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
             c = QCheckBox()
             c.setChecked(False)
