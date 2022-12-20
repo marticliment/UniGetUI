@@ -6,7 +6,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
 from storeEngine import *
-from lang.translated_percentage import untranslatedPercentage
+from lang.translated_percentage import untranslatedPercentage, languageCredits
 
 import globals
 from customWidgets import *
@@ -1698,8 +1698,8 @@ class UninstallSoftwareSection(QWidget):
                 for illegal_char in ("{", "}", " "):
                     if illegal_char in id:
                         store = "Local PC"
-                if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
-                    store = "Microsoft Store"
+                        break
+                
                 if store.lower() == "winget":
                     if id.count(".") != 1:
                         store = "Local PC"
@@ -1708,6 +1708,13 @@ class UninstallSoftwareSection(QWidget):
                                 if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                                     store = "Winget"
                                     break
+                
+                if store.lower() == "winget":
+                    if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
+                        store = "Microsoft Store"
+                    elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
+                        store = "Microsoft Store"
+
             item.setText(1, name)
             item.setText(2, id)
             item.setIcon(1, self.installIcon)
@@ -1981,31 +1988,12 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
         translators = "<ul>"
-        for user in (
-            "Aaron liu: Chinese",
-            "Ahmet Özmetin: Turkish",
-            "Artem Moldovanenko: Ukranian",
-            "BUGP Association: Chinese",
-            "Cololi: Chinese",
-            "Datacra5H: German",
-            "Evans: French",
-            "GiacoBot: Italian",
-            "gidano: Hungarian",
-            "Maicol Battistini: Italian",
-            "Martí Climent: Catalan",
-            "Nemanja Djurcic: Serbian, Croatian",
-            "Operator404: Ukranian",
-            "panther7: Czech",
-            "ppvnf: Portuguese (Portugal and Brazil)",
-            "regulargvy13: Polish",
-            "Rosario Di Mauro: Italian",
-            "Satyam Singh Niranjan: Hindi",
-            "Sergey: Russian",
-            "sho9029: Japanese",
-            "TAKASE, Yuki: Japanese",
-            "yrctw: Chinese",
-            "Артем: Russian",
-            ):
+        translatorList = []
+        for key in list(languageCredits.keys()):
+            for singleuser in languageCredits[key].split(","):
+                if singleuser != "":
+                    translatorList.append(f"{languageReference[key]}: {singleuser.strip()}")
+        for user in translatorList:
             translators += f"<li>{user}</li>"
         translators += "</ul><br>"
         translators += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/martinet101/WingetUI/wiki#translating-wingetui")

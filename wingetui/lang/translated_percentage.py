@@ -3,10 +3,10 @@
 
 untranslatedPercentage = {
   "ar": "0%",
+  "bn": "21%",
   "cs": "98%",
   "de": "97%",
   "es": "0%",
-  "fr": "97%",
   "hi": "92%",
   "hr": "0%",
   "hu": "97%",
@@ -14,8 +14,33 @@ untranslatedPercentage = {
   "ja": "97%",
   "pl": "42%",
   "ru": "92%",
-  "sr": "23%",
+  "sr": "24%",
   "tr": "97%",
   "ua": "92%",
   "zh_TW": "97%"
+}
+
+languageCredits = {
+  "ar": "",
+  "bn": "Nilavra Bhattacharya",
+  "ca": "Mart\u00ed Climent",
+  "cs": "panther7,Petr Jane\u010dek",
+  "de": "Datacra5H",
+  "en": "",
+  "es": "",
+  "fr": "Evans Costa",
+  "hi": "Satyam Singh Niranjan",
+  "hr": "Nemanja Djurcic",
+  "hu": "gidano",
+  "it": "GiacoBot,Maicol Battistini,Rosario Di Mauro",
+  "ja": "sho9029, Yuki Takase",
+  "pl": "regulargvy13",
+  "pt_BR": "ppvnf",
+  "pt_PT": "ppvnf",
+  "ru": "Sergey,\u0410\u0440\u0442\u0435\u043c",
+  "sr": "Nemanja Djurcic",
+  "tr": "Ahmet \u00d6zmetin",
+  "ua": "Operator404,Artem Moldovanenko",
+  "zh_CN": "Aaron Liu,BUGP Association,ciaran,Cololi,",
+  "zh_TW": "yrctw,Aaron Liu,Cololi,"
 }
