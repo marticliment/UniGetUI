@@ -27,6 +27,7 @@ class DiscoverSoftwareSection(QWidget):
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
+    packages: dict[str:dict] = {}
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -403,6 +404,11 @@ class DiscoverSoftwareSection(QWidget):
                 item.setIcon(3, self.wingetIcon)
             item.setText(3, store)
             item.setText(2, version)
+            self.packages[id] = {
+                "name": name,
+                "version": version,
+                "store": store,
+            }
             self.packageList.addTopLevelItem(item)
             self.packageReference[id.lower()] = item
     
@@ -525,6 +531,7 @@ class UpdateSoftwareSection(QWidget):
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
+    packages: dict[str:dict] = {}
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -619,12 +626,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.setColumnCount(6)
         self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Source")])
-        self.packageList.setColumnWidth(0, 50)
-        self.packageList.setColumnWidth(1, 350)
-        self.packageList.setColumnWidth(2, 200)
-        self.packageList.setColumnWidth(3, 175)
-        self.packageList.setColumnWidth(4, 175)
-        self.packageList.setColumnWidth(5, 100)
+
         self.packageList.setSortingEnabled(True)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -690,7 +692,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setColumnWidth(0, 50)
         self.packageList.setColumnWidth(3, 130)
         self.packageList.setColumnWidth(4, 130)
-        self.packageList.setColumnWidth(5, 100)
+        self.packageList.setColumnWidth(5, 150)
 
         def toggleItemState():
             item = self.packageList.currentItem()
@@ -979,6 +981,14 @@ class UpdateSoftwareSection(QWidget):
     def resizeEvent(self, event: QResizeEvent):
         self.adjustWidgetsSize()
         return super().resizeEvent(event)
+    
+    def changeStore(self, item: TreeWidgetItemWithQAction, store: str, id: str):
+        time.sleep(3)
+        try:
+            store = globals.uninstall.packages[id]["store"]
+        except KeyError as e:
+            print(f"🟠 Package {id} found in the updates section but not in the installed one, happened again")
+        self.callInMain.emit(partial(item.setText, 5, store))
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
         if not "---" in name:
@@ -992,7 +1002,25 @@ class UpdateSoftwareSection(QWidget):
                 item.setIcon(3, self.versionIcon)
                 item.setText(4, newVersion)
                 item.setIcon(4, self.newVersionIcon)
-                item.setText(5, store)
+                if "scoop" in store.lower():
+                    try:
+                        if version == globals.uninstall.packages[id]["version"]:
+                            store = globals.uninstall.packages[id]["store"]
+                        item.setText(5, store)
+                    except KeyError as e:
+                        item.setText(5, _("Loading..."))
+                        print(f"🟡 Package {id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
+                        Thread(target=self.changeStore, args=(item, store, id)).start()
+                else:
+                    item.setText(5, store)
+
+                
+                self.packages[id] = {
+                    "name": name,
+                    "version": version,
+                    "newVersion": newVersion,
+                    "store": store,
+                }
                 if "scoop" in store.lower():
                     item.setIcon(5, self.scoopIcon)
                 else:
@@ -1189,6 +1217,7 @@ class UninstallSoftwareSection(QWidget):
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
+    packages: dict[str:dict] = {}
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -1694,6 +1723,11 @@ class UninstallSoftwareSection(QWidget):
             else:
                 item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
+            self.packages[id] = {
+                "name": name,
+                "version": version,
+                "store": store,
+            }
             c = QCheckBox()
             c.setChecked(False)
             c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
