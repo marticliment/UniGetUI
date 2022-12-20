@@ -1669,8 +1669,8 @@ class UninstallSoftwareSection(QWidget):
                 for illegal_char in ("{", "}", " "):
                     if illegal_char in id:
                         store = "Local PC"
-                if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
-                    store = "Microsoft Store"
+                        break
+                
                 if store.lower() == "winget":
                     if id.count(".") != 1:
                         store = "Local PC"
@@ -1679,6 +1679,13 @@ class UninstallSoftwareSection(QWidget):
                                 if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                                     store = "Winget"
                                     break
+                
+                if store.lower() == "winget":
+                    if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
+                        store = "Microsoft Store"
+                    elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
+                        store = "Microsoft Store"
+
             item.setText(1, name)
             item.setText(2, id)
             item.setIcon(1, self.installIcon)
