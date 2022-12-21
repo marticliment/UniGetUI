@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.5.1"
-#define MyAppPublisher "Martí Climent"
+#define MyAppVersion "1.5.2-beta"
+#define MyAppPublisher "Marti Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
 
@@ -19,9 +19,9 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=1.5.1.0
+VersionInfoVersion=1.5.2.0
 DefaultDirName="{autopf}\WingetUI"
-DisableProgramGroupPage=yes     
+DisableProgramGroupPage=yes
 DisableDirPage=no
 CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
@@ -32,7 +32,7 @@ SetupIconFile=wingetui\resources\icon.ico
 UninstallDisplayIcon={app}\WingetUI.exe
 Compression=lzma
 SolidCompression=yes
-WizardStyle=classic      
+WizardStyle=classic
 WizardImageFile=INSTALLER.BMP
 WizardSmallImageFile=wingetui\resources\icon.bmp
 DisableWelcomePage=no
@@ -41,7 +41,7 @@ ChangesEnvironment=yes
 
 
 [Languages]
-Name: "English"; MessagesFile: "compiler:Default.isl"    
+Name: "English"; MessagesFile: "compiler:Default.isl"
 Name: "Armenian"; MessagesFile: "compiler:Languages\Armenian.isl"
 Name: "BrazilianPortuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 Name: "Catalan"; MessagesFile: "compiler:Languages\Catalan.isl"
@@ -68,7 +68,7 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 [InstallDelete]
 Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
 
-[UninstallDelete]  
+[UninstallDelete]
 Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
 
 [Code]
@@ -96,9 +96,9 @@ begin
      ewWaitUntilTerminated, ResultCode);
 end;
 
-[Tasks]                  
-Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts";      
-Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked 
+[Tasks]
+Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts";
+Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked
 Name: "disablescoop"; Description: "Do not install Scoop (recommended for most users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive
 Name: "installscoop"; Description: "Enable and install Scoop (for advanced users)"; GroupDescription: "Scoop Package Manager"; Flags: exclusive unchecked
 
@@ -106,11 +106,11 @@ Name: "installscoop"; Description: "Enable and install Scoop (for advanced users
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
 
 [Files]
-Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe')   
+Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe')
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe')
-Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                                 
-Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall                                               
-Source: "Y:\WinGetUI-Store\disable_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall  
+Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
+Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
+Source: "Y:\WinGetUI-Store\disable_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -121,9 +121,9 @@ Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\remove-old.cmd"; Flags: runhidden   
+Filename: "{app}\remove-old.cmd"; Flags: runhidden
 Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /passive /norestart"
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall; 
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall;
 

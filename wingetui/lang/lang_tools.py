@@ -68,10 +68,10 @@ languageFlagsRemap = {
 
 
 def getMarkdownSupportLangs():
-    from translated_percentage import untranslatedPercentage
+    from translated_percentage import untranslatedPercentage, languageCredits
 
     readmeLangs = [
-        "| Language | Translated | |",
+        "| Language | Translated | Translator(s) |",
         "| :-- | :-- | --- |",
     ]
 
@@ -82,7 +82,20 @@ def getMarkdownSupportLangs():
         if (perc == "0%"): continue
         langName = languageReference[lang] if (lang in languageReference) else lang
         flag = languageFlagsRemap[lang] if (lang in languageFlagsRemap) else lang
-        readmeLangs.append(f"| {langName} | {perc} | <img src='https://flagcdn.com/{flag}.svg' width=20> |")
+        credits = languageCredits[lang] if (lang in languageCredits) else ""
+        readmeLangs.append(f"| <img src='https://flagcdn.com/{flag}.svg' width=20> &nbsp; {langName} | {perc} | {credits} |")
     readmeLangs.append("")
 
     return "\n".join(readmeLangs)
+
+
+def fixTranslatorList(names: str) -> str:
+    if names == None:
+        return ""
+    credits: list[str] = []
+    for name in names.split(","):
+        nameStriped = name.strip()
+        if (nameStriped != ""):
+            credits.append(nameStriped)
+    credits.sort(key=str.casefold)
+    return ", ".join(credits)

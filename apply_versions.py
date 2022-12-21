@@ -26,6 +26,7 @@ try:
 
     fileReplaceLinesWith("WingetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
+        "VersionInfoVersion=": f"{versionISS}\n",
     })
 
     fileReplaceLinesWith("wingetui-version-file", {

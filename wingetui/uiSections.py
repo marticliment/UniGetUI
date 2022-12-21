@@ -1992,7 +1992,8 @@ class AboutSection(QScrollArea):
         for key in list(languageCredits.keys()):
             for singleuser in languageCredits[key].split(","):
                 if singleuser != "":
-                    translatorList.append(f"{languageReference[key]}: {singleuser.strip()}")
+                    translatorList.append(f"{singleuser.strip()} ({languageReference[key]})")
+        translatorList.sort(key=str.casefold)
         for user in translatorList:
             translators += f"<li>{user}</li>"
         translators += "</ul><br>"
