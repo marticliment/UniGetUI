@@ -1463,7 +1463,6 @@ class UninstallSoftwareSection(QWidget):
             for i in range(self.packageList.topLevelItemCount()):
                 itemList.append(self.packageList.topLevelItem(i))
             for program in itemList:
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)                
                 if not program.isHidden():
                     self.packageList.itemWidget(program, 0).setChecked(checked)
 

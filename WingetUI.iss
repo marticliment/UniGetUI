@@ -3,7 +3,7 @@
 
 #define MyAppName "WingetUI"
 #define MyAppVersion "1.5.2-beta"
-#define MyAppPublisher "Marti Climent"
+#define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/martinet101/WingetUI"
 #define MyAppExeName "WingetUI.exe"
 
