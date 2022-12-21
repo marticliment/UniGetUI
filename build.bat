@@ -2,6 +2,7 @@
 
 python -m pip install -r requirements.txt
 
+python apply_versions.py
 xcopy wingetui wingetui_bin /E /H /C /I /Y
 cd wingetui_bin
 python -m compileall -b .
