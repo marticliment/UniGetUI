@@ -510,7 +510,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
                     self.cancelButton.clicked.connect(self.close)
-                    self.info.setText(f"{self.programName} was uninstalled successfully!")
+                    self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
                 else:
