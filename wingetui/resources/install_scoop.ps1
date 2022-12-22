@@ -1,3 +1,8 @@
+If (Get-Command scoop -ErrorAction SilentlyContinue) {
+    Write-Output "Scoop is already installed."
+    exit 1
+}
+
 Write-Output "Installing scoop..."
 
 iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
