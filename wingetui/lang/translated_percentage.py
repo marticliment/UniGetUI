@@ -26,7 +26,7 @@ languageCredits = {
   "ca": "Mart\u00ed Climent",
   "cs": "panther7, Petr Jane\u010dek",
   "de": "Datacra5H",
-  "en": "",
+  "en": "Mart\u00ed Climent",
   "es": "",
   "fr": "Evans Costa",
   "hi": "Satyam Singh Niranjan",
