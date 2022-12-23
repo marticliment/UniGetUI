@@ -29,7 +29,7 @@ class PackageInstallerWidget(QGroupBox):
         self.actionDoing = _("installing")
         self.actionName = _("installation")
         self.actionVerb = _("install")
-        self.liveOutputWindow = QPlainTextEdit(self)
+        self.liveOutputWindow = CustomPlainTextEdit(self)
         self.liveOutputWindow.setWindowFlag(Qt.Window)
         self.liveOutputWindow.setReadOnly(True)
         self.liveOutputWindow.resize(500, 200)
