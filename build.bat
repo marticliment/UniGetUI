@@ -3,9 +3,13 @@
 python -m pip install -r requirements.txt
 
 python apply_versions.py
+rmdir /Q /S wingetuiBin
 xcopy wingetui wingetui_bin /E /H /C /I /Y
-cd wingetui_bin
+pushd wingetui_bin
+
 python -m compileall -b .
+if %errorlevel% neq 0 goto:error
+
 del /S *.py
 copy ..\wingetui\__init__.py .\
 rmdir /Q /S __pycache__
@@ -13,25 +17,11 @@ rmdir /Q /S external\__pycache__
 rmdir /Q /S lang\__pycache__
 rmdir /Q /S build
 rmdir /Q /S dist
+
 python -m PyInstaller "Win.spec"
-cd dist
-cd ..
-cd ..
-rmdir /Q /S wingetuiBin
-cd wingetui_bin
-cd dist
-move wingetuiBin ../../
-cd ..
-rmdir /Q /S build
-rmdir /Q /S dist
-cd ..
-rmdir /Q /S wingetui_bin
-cd wingetuiBin
-rem cd tcl
-rem rmdir /Q /S tzdata
-rem cd ..
-rem cd ..
-cd PySide6
+if %errorlevel% neq 0 goto:error
+
+pushd dist\wingetuiBin\PySide6
 del opengl32sw.dll
 del Qt6Quick.dll
 del Qt6Qml.dll
@@ -42,8 +32,10 @@ del Qt6DataVisualization.dll
 del Qt6VirtualKeyboard.dll
 del QtDataVisualization.pyd
 del QtOpenGL.pyd
-cd ..
-cd ..
+popd
+move dist\wingetuiBin ..\
+popd
+rmdir /Q /S wingetui_bin
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
@@ -55,4 +47,10 @@ if exist %INSTALLATOR% (
     start /b wingetuiBin/wingetui.exe
 )
 
+goto:end
+
+:error
+echo "Error!"
+
+:end
 pause
