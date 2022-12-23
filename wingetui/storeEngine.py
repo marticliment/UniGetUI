@@ -692,16 +692,16 @@ class PackageInfoPopupWindow(QWidget):
                 return super().resizeEvent(event)
 
             def showBigImage(self):
+                cprint(self.index)
                 self.parentwidget.iv.show(self.index)
                 self.parentwidget.iv.raise_()
 
             def setPixmap(self, arg__1: QPixmap, index = 0) -> None:
+                self.index = index
                 self.currentPixmap = arg__1
                 if arg__1.isNull():
                     self.hide()
-                    return index
                 super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
-                return index+1
 
             def showEvent(self, event: QShowEvent) -> None:
                 if self.pixmap().isNull():
@@ -991,15 +991,16 @@ class PackageInfoPopupWindow(QWidget):
             count = 0
             for i in range(len(globals.packageMeta[imageprov][id]["images"])):
                 try:
-                    self.callInMain.emit(self.imagesCarrousel[i].show)   
-                    self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)))    
-                    count += 1            
+                    p = QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)
+                    if not p.isNull():
+                        self.callInMain.emit(self.imagesCarrousel[i].show)   
+                        self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, p, count))    
+                        count += 1            
                 except Exception as e:
                     report(e)
             for i in range(count+1, 20):
                 self.callInMain.emit(self.imagesCarrousel[i].hide)
             for i in range(len(globals.packageMeta[imageprov][id]["images"])):
-                imageIndex = 0
                 try:
                     imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
                     if not os.path.exists(imagepath):
@@ -1013,11 +1014,10 @@ class PackageInfoPopupWindow(QWidget):
                     p = QPixmap(imagepath)
                     if not p.isNull():
                         if self.givenPackageId == id:
-                            self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p, imageIndex))
+                            self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p, self.validImageCount))
                             self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
                             self.callInMain.emit(partial(self.iv.addImage, p))
                             self.validImageCount += 1
-                            imageIndex += 1
                         else:
                             print("Screenshot arrived too late!")
                     else:
