@@ -950,7 +950,7 @@ class PackageInfoPopupWindow(QWidget):
         self.sha.setText(f"{_('Installer SHA256')} ({_('Latest Version')}): {_('Loading...')}")
         self.link.setText(f"{_('Installer URL')} ({_('Latest Version')}): <a  style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>")
         self.type.setText(f"{_('Installer Type')} ({_('Latest Version')}): {_('Loading...')}")
-        self.packageId.setText(f"{_('Package ID')}: {_('Loading...')}")
+        self.packageId.setText(f"{_('Package ID')}: {id}")
         self.manifest.setText(f"{_('Manifest')}: {_('Loading...')}")
         self.date.setText(f"{_('Last updated')}: {_('Loading...')}")
         self.notes.setText(f"{_('Release notes')}: {_('Loading...')}")
@@ -1116,7 +1116,7 @@ class PackageInfoPopupWindow(QWidget):
         else:
             if not "scoop" in self.store.lower():
                 cmdline_args.append("--silent")
-        if(self.versionCombo.currentText()==_("Latest") or self.versionCombo.currentText() == "Latest"):
+        if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
             version = []
         else:
             version = ["--version", self.versionCombo.currentText()]
