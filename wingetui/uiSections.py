@@ -128,6 +128,9 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
 
+        sct = QShortcut(Qt.Key.Key_Return, self.packageList)
+        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
                 return
@@ -631,6 +634,9 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
+        
+        sct = QShortcut(Qt.Key.Key_Return, self.packageList)
+        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
 
         self.packageList.itemDoubleClicked.connect(lambda item, column: (self.update(item.text(1), item.text(2), item.text(5), packageItem=item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item.text(1), item.text(2), item.text(5), item)))
         
@@ -1313,6 +1319,10 @@ class UninstallSoftwareSection(QWidget):
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
         self.packageList = TreeWidget(_("Found 0 Packages"))
+        
+        sct = QShortcut(Qt.Key.Key_Return, self.packageList)
+        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        
         self.packageList.setIconSize(QSize(24, 24))
         self.headers = ["", _("Package Name"), _("Package ID"), _("Installed Version"), _("Source")] # empty header added for checkbox
 
