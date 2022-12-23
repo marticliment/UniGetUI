@@ -117,10 +117,10 @@ class DiscoverSoftwareSection(QWidget):
         self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
 
-        self.packageList: TreeWidget = TreeWidget("a")
+        self.packageList = TreeWidget("a")
         self.packageList.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
         self.packageList.setColumnCount(4)
-        self.packageList.sortByColumn(0, Qt.AscendingOrder)
+        self.packageList.sortByColumn(0, Qt.SortOrder.AscendingOrder)
         self.packageList.setSortingEnabled(True)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -631,6 +631,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Source")])
 
         self.packageList.setSortingEnabled(True)
+        self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
@@ -1332,6 +1333,7 @@ class UninstallSoftwareSection(QWidget):
         self.packageList.setColumnHidden(3, False)
         self.packageList.setColumnWidth(4, 130)
         self.packageList.setSortingEnabled(True)
+        self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.setStretchLastSection(False)
