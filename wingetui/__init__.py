@@ -12,7 +12,7 @@ try:
     from tools import _
 
     import globals
-    from blurwindow import GlobalBlur, ExtendFrameIntoClientArea
+    from external.blurwindow import GlobalBlur, ExtendFrameIntoClientArea
 
 
     class MainApplication(QApplication):

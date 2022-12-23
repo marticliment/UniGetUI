@@ -737,11 +737,14 @@ class UpdateSoftwareSection(QWidget):
 
         def setAllSelected(checked: bool) -> None:
             itemList = []
+            self.packageList.setSortingEnabled(False)
             for i in range(self.packageList.topLevelItemCount()):
                 itemList.append(self.packageList.topLevelItem(i))
             for program in itemList:
                 if not program.isHidden():
                     self.packageList.itemWidget(program, 0).setChecked(checked)
+            self.packageList.setSortingEnabled(True)
+
 
         self.toolbar = QToolBar(self.window())
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -1460,11 +1463,13 @@ class UninstallSoftwareSection(QWidget):
 
         def setAllSelected(checked: bool) -> None:
             itemList = []
+            self.packageList.setSortingEnabled(False)
             for i in range(self.packageList.topLevelItemCount()):
                 itemList.append(self.packageList.topLevelItem(i))
             for program in itemList:
                 if not program.isHidden():
                     self.packageList.itemWidget(program, 0).setChecked(checked)
+            self.packageList.setSortingEnabled(True)
 
         self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", self.toolbar)
         self.selectAllAction.triggered.connect(lambda: setAllSelected(True))

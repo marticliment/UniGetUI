@@ -11,6 +11,7 @@ from win32mica import ApplyMica, MICAMODE
 from urllib.request import urlopen
 from versions import *
 from languages import *
+from external.blurwindow import GlobalBlur
 
 import globals
 
@@ -214,7 +215,6 @@ def checkQueue():
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
     mode = isDark()
-    from blurwindow import GlobalBlur
     isW11 = False
     try:
         import platform

@@ -6,8 +6,6 @@ from tools import *
 from tools import _
 import globals
 
-from external.FramelessWindow import QFramelessWindow
-
 
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:
