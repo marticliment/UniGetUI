@@ -284,6 +284,8 @@ class RootWindow(QMainWindow):
         try:
             s = self.infobox.size()
             self.infobox.move((self.width()-s.width())//2, (self.height()-s.height())//2)
+            self.infobox.iv.resize(self.width()-100, self.height()-100)
+
         except AttributeError:
             pass
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")

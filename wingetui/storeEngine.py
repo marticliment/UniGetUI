@@ -553,17 +553,17 @@ class PackageInfoPopupWindow(QWidget):
     backgroundApplied: bool = False
     givenPackageId: str = ""
     isAnUpdate = False
+    store = ""
     
     pressed = False
     oldPos = QPoint(0, 0)
 
     def __init__(self, parent):
         super().__init__(parent = parent)
+        self.iv = ImageViewer(self.window())
         self.callInMain.connect(lambda f: f())
         self.sc = QScrollArea()
-
         self.blurBackgroundEffect = QGraphicsBlurEffect()
-
         self.store = ""
         self.setObjectName("bg")
         self.sct = QShortcut(QKeySequence("Esc"), self.sc)
@@ -581,6 +581,7 @@ class PackageInfoPopupWindow(QWidget):
             border: 1px solid #88888888;
         }}
         """)
+
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
@@ -676,23 +677,13 @@ class PackageInfoPopupWindow(QWidget):
 
         class LabelWithImageViewer(QLabel):
             currentPixmap = QPixmap()
+            index = 0
             def __init__(self, parent: QWidget):
                 super().__init__()
                 self.parentwidget: PackageInfoPopupWindow = parent
                 self.clickableButton = QPushButton(self)
                 self.setMinimumWidth(0)
-                self.viewer = QLabel(self.parentwidget)
-                self.viewer.hide()
-                self.viewer.setStyleSheet(f"QLabel{{padding: 16px; border-radius: 16px; background-color: {'#202020' if isDark() else 'white'};border: 1px solid #88888888;}}")
-                e = QGraphicsDropShadowEffect()
-                e.setColor(Qt.black)
-                e.setBlurRadius(10)
-                self.viewer.setGraphicsEffect(e)
                 self.clickableButton.clicked.connect(self.showBigImage)
-                self.backButton = QPushButton(QIcon(getMedia("close")), "", self.viewer)
-                self.backButton.setFlat(True)
-                self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:rgba(31, 31, 31, 50%);border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
-                self.backButton.clicked.connect(lambda: (self.viewer.close(), blackCover.hide()))
                 self.clickableButton.setStyleSheet(f"QPushButton{{background-color: rgba(127, 127, 127, 1%);border: 0px;border-radius: 0px;}}QPushButton:hover{{background-color: rgba({'255, 255, 255' if not isDark() else '0, 0, 0'}, 10%)}}")
 
             def resizeEvent(self, event: QResizeEvent) -> None:
@@ -701,24 +692,16 @@ class PackageInfoPopupWindow(QWidget):
                 return super().resizeEvent(event)
 
             def showBigImage(self):
-                p = self.currentPixmap.scaledToWidth(self.parentwidget.width()-55, Qt.SmoothTransformation)
-                if not p.isNull():
-                    blackCover.show()
-                    self.viewer.setPixmap(p)
-                    self.viewer.show()
-                    self.viewer.setFixedSize(p.width()+32, p.height()+32)
-                    self.viewer.move(8, 120)
-                    self.viewer.raise_()
-                    blackCover.stackUnder(self.viewer)
-                    self.backButton.move(self.viewer.width()-40, 0)
-                    self.backButton.resize(40, 40)
-                    self.backButton.show()
+                self.parentwidget.iv.show(self.index)
+                self.parentwidget.iv.raise_()
 
-            def setPixmap(self, arg__1: QPixmap) -> None:
+            def setPixmap(self, arg__1: QPixmap, index = 0) -> None:
                 self.currentPixmap = arg__1
                 if arg__1.isNull():
                     self.hide()
-                return super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
+                    return index
+                super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
+                return index+1
 
             def showEvent(self, event: QShowEvent) -> None:
                 if self.pixmap().isNull():
@@ -727,7 +710,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.imagesCarrousel: list[LabelWithImageViewer] = []
         for i in range(20):
-            l = LabelWithImageViewer(self.centralwidget)
+            l = LabelWithImageViewer(self)
             l.setStyleSheet("border-radius: 4px;margin: 0px;margin-right: 4px;")
             self.imagesCarrousel.append(l)
             self.imagesLayout.addWidget(l)
@@ -903,8 +886,6 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
 
-
-    
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
         g = self.mainGroupBox.geometry()
@@ -918,6 +899,7 @@ class PackageInfoPopupWindow(QWidget):
             return super().resizeEvent(event)
     
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
+        self.iv.resetImages()
         self.packageItem = packageItem
         self.givenPackageId = id
         self.isAnUpdate = update
@@ -959,7 +941,7 @@ class PackageInfoPopupWindow(QWidget):
 
         def resetLayoutWidget():
             for l in self.imagesCarrousel:
-                l.setPixmap(QPixmap())
+                l.setPixmap(QPixmap(), index=0)
             Thread(target=self.loadPackageScreenshots, args=(id, store)).start()
 
         self.callInMain.emit(lambda: resetLayoutWidget())
@@ -1017,6 +999,7 @@ class PackageInfoPopupWindow(QWidget):
             for i in range(count+1, 20):
                 self.callInMain.emit(self.imagesCarrousel[i].hide)
             for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+                imageIndex = 0
                 try:
                     imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
                     if not os.path.exists(imagepath):
@@ -1030,9 +1013,11 @@ class PackageInfoPopupWindow(QWidget):
                     p = QPixmap(imagepath)
                     if not p.isNull():
                         if self.givenPackageId == id:
-                            self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p))
+                            self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p, imageIndex))
                             self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
+                            self.callInMain.emit(partial(self.iv.addImage, p))
                             self.validImageCount += 1
+                            imageIndex += 1
                         else:
                             print("Screenshot arrived too late!")
                     else:
@@ -1142,12 +1127,12 @@ class PackageInfoPopupWindow(QWidget):
         self.blurBackgroundEffect.setBlurRadius(40)
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         self.blackCover.resize(self.width(), self.centralwidget.height())
-        return super().show()
+        _ = super().show()
+        return _
 
     def close(self) -> bool:
         self.blackCover.hide()
-        for label in self.imagesCarrousel:
-            label.viewer.close()
+        self.iv.close()
         self.parent().window().blackmatt.hide()
         self.blurBackgroundEffect.setEnabled(False)
         return super().close()
@@ -1158,9 +1143,8 @@ class PackageInfoPopupWindow(QWidget):
             self.parent().window().blackmatt.hide()
         except AttributeError:
             pass
-        for label in self.imagesCarrousel:
-            label.viewer.close()
         self.blurBackgroundEffect.setEnabled(False)
+        self.iv.close()
         return super().hide()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -1188,5 +1172,125 @@ class PackageInfoPopupWindow(QWidget):
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
 
+class ImageViewer(QWidget):
+    callInMain = Signal(object)
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.callInMain.connect(lambda f: f())
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        self.images = {}
+        
+        
+        self.sct = QShortcut(QKeySequence("Esc"), self)
+        self.sct.activated.connect(lambda: self.close())
+        self.setStyleSheet(f"""
+        QGroupBox {{
+            border: 0px;
+        }}
+        #backgroundWidget{{
+            border-radius: 5px;
+            padding: 5px;
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
+            border-radius: 16px;
+            border: 1px solid #88888888;
+        }}
+        QPushButton {{
+            background-color: {'rgba(20, 20, 20, 80%)' if isDark() else 'rgba(255, 255, 255, 80%)'};
+        }}
+        """)
+
+        self.stackedWidget = QStackedWidget()
+        self.stackedWidget.setObjectName("backgroundWidget")
+
+        layout.addWidget(self.stackedWidget)
+        self.setLayout(layout)
+        
+        self.closeButton = QPushButton(QIcon(getMedia("close")), "", self)
+        self.closeButton.move(self.width()-40, 0)
+        self.closeButton.resize(40, 40)
+        self.closeButton.setFlat(True)
+        self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.closeButton.clicked.connect(lambda: (self.close()))
+        self.closeButton.show()
+        
+        
+        self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
+        self.bk = QShortcut(Qt.Key.Key_Left, self)
+        self.bk.activated.connect(lambda: self.backButton.click())
+        self.backButton.move(0, self.height()//2-24)
+        self.backButton.resize(48, 48)
+        self.backButton.setFlat(False)
+        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
+        self.backButton.show()
+        
+        self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
+        self.nxt = QShortcut(Qt.Key.Key_Right, self)
+        self.nxt.activated.connect(lambda: self.nextButton.click())
+        self.nextButton.move(self.width()-48, self.height()//2-24)
+        self.nextButton.resize(48, 48)
+        self.nextButton.setFlat(False)
+        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
+        self.nextButton.show()
+        self.hide()
+        
+        
+    def resizeEvent(self, event = None):
+        self.closeButton.move(self.width()-40, 0)
+        self.backButton.move(10, self.height()//2-24)
+        self.nextButton.move(self.width()-58, self.height()//2-24)
+        for i in range(self.stackedWidget.count()):
+            l: QLabel = self.stackedWidget.widget(i)
+            l.resize(self.stackedWidget.size())
+            pixmap: QPixmap = self.images[l]
+            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        if(event):
+            return super().resizeEvent(event)
+
+    def show(self, index: int = 0) -> None:
+        g = QRect(0, 0, self.window().geometry().width(), self.window().geometry().height())
+        self.resize(g.width()-100, g.height()-100)
+        self.move(50, 50)
+        self.raise_()
+        self.stackedWidget.setCurrentIndex(index)
+        for i in range(self.stackedWidget.count()):
+            l: QLabel = self.stackedWidget.widget(i)
+            l.resize(self.stackedWidget.size())
+            pixmap: QPixmap = self.images[l]
+            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        return super().show()
+
+    def close(self) -> bool:
+        return super().close()
+
+    def hide(self) -> None:
+        return super().hide()
+    
+    def resetImages(self) -> None:
+        del self.images
+        self.images = {}
+        for i in range(self.stackedWidget.count()):
+            widget = self.stackedWidget.widget(0)
+            self.stackedWidget.removeWidget(widget)
+            widget.close()
+            widget.deleteLater()
+            del widget
+            
+    def addImage(self, pixmap: QPixmap) -> None:
+        l = QLabel()
+        l.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.stackedWidget.addWidget(l)
+        l.resize(self.stackedWidget.size())
+        l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.images[l] = pixmap
+        
+        
+
+        
+
 if(__name__=="__main__"):
     import __init__
+
