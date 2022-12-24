@@ -283,7 +283,13 @@ class RootWindow(QMainWindow):
             pass
         try:
             s = self.infobox.size()
-            self.infobox.move((self.width()-s.width())//2, (self.height()-s.height())//2)
+            if self.height()-100 >= 650:
+                self.infobox.setFixedHeight(650)     
+                self.infobox.move((self.width()-s.width())//2, (self.height()-650)//2)
+            else:
+                self.infobox.setFixedHeight(self.height()-100)
+                self.infobox.move((self.width()-s.width())//2, 50)
+                
             self.infobox.iv.resize(self.width()-100, self.height()-100)
 
         except AttributeError:
