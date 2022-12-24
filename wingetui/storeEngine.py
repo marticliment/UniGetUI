@@ -1183,7 +1183,7 @@ class ImageViewer(QWidget):
         self.images = {}
         
         
-        self.sct = QShortcut(QKeySequence("Esc"), self)
+        self.sct = QShortcut(Qt.Key.Key_Escape, self)
         self.sct.activated.connect(lambda: self.close())
         self.setStyleSheet(f"""
         QGroupBox {{
@@ -1286,6 +1286,19 @@ class ImageViewer(QWidget):
         l.resize(self.stackedWidget.size())
         l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.images[l] = pixmap
+        
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        if abs(event.angleDelta().x()) <= 30:
+            if event.angleDelta().y() < -30:
+                self.backButton.click()
+            elif event.angleDelta().y() > 30:
+                self.nextButton.click()
+        else:
+            if event.angleDelta().x() < -30:
+                self.backButton.click()
+            elif event.angleDelta().x() > 30:
+                self.nextButton.click()
+        return super().wheelEvent(event)
         
         
 
