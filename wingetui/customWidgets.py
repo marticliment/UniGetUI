@@ -568,7 +568,6 @@ class PushButtonWithAction(QPushButton):
         self.action = QAction(text, self)
         self.action.triggered.connect(self.click)
 
-
 class CustomComboBox(QComboBox):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -586,7 +585,6 @@ class TenPxSpacer(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.setFixedWidth(10)
-
 
 class CustomScrollBar(QScrollBar):
     def __init__(self):
@@ -817,7 +815,6 @@ class QSettingsTitle(QWidget):
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
         return super().showEvent(event)
 
-
 class QSettingsButton(QWidget):
     clicked = Signal()
     def __init__(self, text="", btntext="", parent=None, h = 30):
@@ -976,6 +973,7 @@ class CustomPlainTextEdit(QPlainTextEdit):
         ApplyMenuBlur(menu.winId(), menu)
         menu.exec(QCursor.pos())
 
+        
 
 if __name__ == "__main__":
     import __init__

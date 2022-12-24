@@ -231,6 +231,35 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     closeAndInform.emit(outputCode, output)
 
 
+def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
+    print("🟢 Starting scoop search...")
+    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "bucket", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    output = []
+    counter = 0
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        if line:
+            if(counter > 1 and not b"---" in line):
+                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+            else:
+                counter += 1
+    counter = 0
+    for element in output:
+        cprint(element)
+        try:
+            while "  " in element.strip():
+                element = element.strip().replace("  ", " ")
+            element: list[str] = element.split(" ")
+            packageSignal.emit(element[0].strip(), element[1].strip(), element[2].strip()+" "+element[3].strip(), element[4].strip())
+        except IndexError as e:
+            print("IndexError: "+str(e))
+    print("🟢 Scoop bucket search finished")
+    finishSignal.emit()
+    
+
+
+
 
 if(__name__=="__main__"):
     import __init__
