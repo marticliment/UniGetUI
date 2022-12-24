@@ -2455,15 +2455,31 @@ class DebuggingSection(QWidget):
 class ScoopBucketManager(QWidget):
     addBucketsignal = Signal(str, str, str, str)
     finishLoading = Signal()
+    setLoadBarValue = Signal(str)
+    startAnim = Signal(QVariantAnimation)
+    changeBarOrientation = Signal()
     
     def __init__(self):
         super().__init__()
+        self.setAttribute(Qt.WA_StyledBackground)
         self.setObjectName("stBtn")
         self.addBucketsignal.connect(self.addItem)
         layout = QVBoxLayout()
         hLayout = QHBoxLayout()
         hLayout.addWidget(QLabel("Manage scoop buckets"))
         hLayout.addStretch()
+        
+        self.loadingProgressBar = QProgressBar(self)
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.hide()
+        self.finishLoading.connect(lambda: self.loadingProgressBar.hide())
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        
         self.reloadButton = QPushButton()
         self.reloadButton.clicked.connect(self.loadBuckets)
         self.reloadButton.setFixedSize(30, 30)
@@ -2473,8 +2489,8 @@ class ScoopBucketManager(QWidget):
         self.addBucketButton.clicked.connect(self.scoopAddExtraBucket)
         hLayout.addWidget(self.addBucketButton)
         hLayout.addWidget(self.reloadButton)
-        hLayout.setContentsMargins(10, 0, 0, 0)
-        layout.setContentsMargins(60, 10, 30, 10)
+        hLayout.setContentsMargins(10, 0, 15, 0)
+        layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
         self.bucketList.label.setText(_("Loading buckets..."))
         self.bucketList.label.show()
@@ -2490,19 +2506,51 @@ class ScoopBucketManager(QWidget):
         self.bucketList.setColumnWidth(3, 80)
         self.bucketList.setColumnWidth(4, 50)
         layout.addLayout(hLayout)
+        layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.bucketList)
         self.setLayout(layout)
         self.loadBuckets()
         self.bucketIcon = QIcon(getMedia("bucket"))
-        self.sourceIcon = QIcon(getMedia("github"))
-        self.dateIcon = QIcon(getMedia("updatedat"))
-        self.countIcon = QIcon(getMedia("version"))
+        
+        self.leftSlow = QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.rightSlow = QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+        
+        self.leftFast = QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.leftSlow.start()
+        
         
     def loadBuckets(self):
         for i in range(self.bucketList.topLevelItemCount()):
             item = self.bucketList.takeTopLevelItem(0)
             del item
         Thread(target=scoopHelpers.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
+        self.loadingProgressBar.show()
+        self.bucketList.label.show()
+        self.bucketList.label.setText("Loading...")
         
     def addItem(self, name: str, source: str, updatedate: str, manifests: str):
         self.bucketList.label.hide()
@@ -2512,16 +2560,13 @@ class ScoopBucketManager(QWidget):
         item.setIcon(0, self.bucketIcon)
         item.setText(1, source)
         item.setToolTip(1, source)
-        #item.setIcon(1, self.sourceIcon)
         item.setText(2, updatedate)
         item.setToolTip(2, updatedate)
-        #item.setIcon(2, self.dateIcon)
         item.setText(3, manifests)
-        #item.setIcon(3, self.countIcon)
         item.setToolTip(3, manifests)
         self.bucketList.addTopLevelItem(item)
         btn = QPushButton()
-        btn.clicked.connect(lambda: self.scoopRemoveExtraBucket(name))
+        btn.clicked.connect(lambda: (self.scoopRemoveExtraBucket(name), self.bucketList.takeTopLevelItem(self.bucketList.indexOfTopLevelItem(item))))
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
         self.bucketList.setItemWidget(item, 4, btn)
@@ -2530,8 +2575,10 @@ class ScoopBucketManager(QWidget):
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
-
+            p = PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}")
+            globals.installersWidget.addItem(p)
+            p.finishInstallation.connect(self.loadBuckets)
+            
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
         globals.installersWidget.addItem(PackageUninstallerWidget(f"{bucket} Scoop bucket", "custom", customCommand=f"scoop bucket rm {bucket}"))
 
