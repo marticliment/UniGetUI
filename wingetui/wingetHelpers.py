@@ -110,7 +110,7 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
                         verSeparator += 1
                         i += 1
                     counter += 1
-    return id
+    return (id, id)
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
