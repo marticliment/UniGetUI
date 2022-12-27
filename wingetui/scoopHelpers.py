@@ -198,7 +198,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             elif ("is already installed" in line):
                 outputCode = 0
             output += line+"\n"
-    if "-g" in output:
+    if "-g" in output and not "successfully" in output:
         outputCode = 1602
     elif "requires admin rights" in output:
         outputCode = 1603
@@ -224,7 +224,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             if("was uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
-    if "-g" in output:
+    if "-g" in output and not "successfully" in output:
         outputCode = 1602
     elif "requires admin rights" in output:
         outputCode = 1603
@@ -253,7 +253,13 @@ def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
             element: list[str] = element.split(" ")
             packageSignal.emit(element[0].strip(), element[1].strip(), element[2].strip()+" "+element[3].strip(), element[4].strip())
         except IndexError as e:
+            try:
+                packageSignal.emit(element[0].strip(), element[1].strip(), "Unknown", "Unknown")
+            except IndexError as f:
+                cprint(e, f)
+            print(element)
             print("IndexError: "+str(e))
+
     print("🟢 Scoop bucket search finished")
     finishSignal.emit()
     
