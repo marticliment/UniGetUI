@@ -82,7 +82,7 @@ def getMarkdownSupportLangs():
         if (perc == "0%"): continue
         langName = languageReference[lang] if (lang in languageReference) else lang
         flag = languageFlagsRemap[lang] if (lang in languageFlagsRemap) else lang
-        credits = makeURLFromTranslatorList(languageCredits[lang] if (lang in languageCredits) else "")
+        credits = languageCredits[lang] if (lang in languageCredits) else ""
         readmeLangs.append(f"| <img src='https://flagcdn.com/{flag}.svg' width=20> &nbsp; {langName} | {perc} | {credits} |")
     readmeLangs.append("")
 
@@ -98,18 +98,4 @@ def fixTranslatorList(names: str) -> str:
         if (nameStriped != ""):
             credits.append(nameStriped)
     credits.sort(key=str.casefold)
-    return ", ".join(credits)
-
-
-def makeURLFromTranslatorList(names: str) -> str:
-    if names == None:
-        return ""
-    credits: list[str] = []
-    for name in names.split(","):
-        nameStriped = name.strip()
-        if (nameStriped != ""):
-            if (nameStriped[0] == "@"):
-                credits.append(f"[{nameStriped[1:]}](https://github.com/{nameStriped[1:]})")
-            else:
-                credits.append(nameStriped)
     return ", ".join(credits)
