@@ -1,3 +1,3 @@
-version = 1.519
-versionName = "1.5.2-beta"
+version = 1.52
+versionName = "1.5.2"
 versionISS= "1.5.2.0"
