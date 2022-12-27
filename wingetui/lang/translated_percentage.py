@@ -3,21 +3,25 @@
 
 untranslatedPercentage = {
   "ar": "0%",
-  "bn": "20%",
-  "de": "97%",
+  "bn": "19%",
+  "cs": "99%",
+  "de": "93%",
   "es": "0%",
-  "fr": "97%",
-  "hi": "90%",
+  "fr": "93%",
+  "hi": "86%",
   "hr": "0%",
-  "it": "94%",
-  "ja": "94%",
-  "pl": "41%",
-  "ru": "90%",
-  "sr": "23%",
-  "tr": "94%",
-  "ua": "90%",
-  "zh_CN": "99%",
-  "zh_TW": "94%"
+  "hu": "95%",
+  "it": "90%",
+  "ja": "90%",
+  "ko": "0%",
+  "pl": "39%",
+  "pt_PT": "99%",
+  "ru": "86%",
+  "sr": "22%",
+  "tr": "90%",
+  "ua": "86%",
+  "zh_CN": "95%",
+  "zh_TW": "90%"
 }
 
 languageCredits = {
@@ -34,6 +38,7 @@ languageCredits = {
   "hu": "gidano",
   "it": "GiacoBot, Maicol Battistini, Rosario Di Mauro",
   "ja": "sho9029, Yuki Takase",
+  "ko": "",
   "pl": "regulargvy13",
   "pt_BR": "ppvnf",
   "pt_PT": "ppvnf",
