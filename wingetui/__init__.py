@@ -531,6 +531,9 @@ try:
         font-family: "Segoe UI Variable Text";
         outline: none;
     }}
+    *::disabled {{
+        color: gray;
+    }}
     #micawin,QInputDialog {{
         background-color: mainbg;
         color: red;
@@ -1286,6 +1289,9 @@ try:
         color: #000000;
         font-family: "Segoe UI Variable Text";
         outline: none;
+    }}
+    *::disabled {{
+        color: gray;
     }}
     #micawin,QInputDialog {{
         background-color: mainbg;

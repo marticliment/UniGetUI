@@ -635,7 +635,7 @@ class QSettingsTitle(QWidget):
         self.setAttribute(Qt.WA_StyledBackground)
         self.compressibleWidget = QWidget(self)
         self.compressibleWidget.show()
-        self.compressibleWidget.setAutoFillBackground(True)
+        #self.compressibleWidget.setAutoFillBackground(True)
         self.compressibleWidget.setObjectName("compressibleWidget")
         self.compressibleWidget.setStyleSheet("#compressibleWidget{background-color: transparent;}")
 
