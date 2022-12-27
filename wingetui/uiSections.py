@@ -1984,7 +1984,7 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
         GHcontributors = "<ul>"
-        for user in (
+        GHcontributorsList = [
             "harleylara",
             "MisterEvans78",
             "neoOpus",
@@ -1996,7 +1996,9 @@ class AboutSection(QScrollArea):
             "sklart",
             "vedantmgoyal2009",
             "victorelec14",
-            ):
+        ]
+        GHcontributorsList.sort(key=str.casefold)
+        for user in GHcontributorsList:
             GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
         GHcontributors += "</ul>"
         self.layout.addWidget(QLinkLabel(GHcontributors))
@@ -2010,9 +2012,11 @@ class AboutSection(QScrollArea):
             for singleuser in languageCredits[key].split(","):
                 if singleuser != "":
                     user = singleuser.strip()
-                    translatorUser = user
-                    if (user[0] == "@"):
+                    userPrefixed = (user[0] == "@")
+                    if (userPrefixed):
                         user = user[1:]
+                    translatorUser = user
+                    if (userPrefixed or user in GHcontributorsList):
                         translatorUser = f"<a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a>"
                     translatorKey = f"{user}{languageReference[key]}" # for sort
                     translatorList[translatorKey] = f"{translatorUser} ({languageReference[key]})"
