@@ -2487,7 +2487,7 @@ class ScoopBucketManager(QWidget):
         self.addBucketsignal.connect(self.addItem)
         layout = QVBoxLayout()
         hLayout = QHBoxLayout()
-        hLayout.addWidget(QLabel("Manage scoop buckets"))
+        hLayout.addWidget(QLabel(_("Manage scoop buckets")))
         hLayout.addStretch()
         
         self.loadingProgressBar = QProgressBar(self)
