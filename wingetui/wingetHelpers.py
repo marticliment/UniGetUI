@@ -207,7 +207,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     for element in output:
         try:
             element = str(element, "utf-8", errors="ignore")
-            element = element.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/martinet101/WingetUI#450)
+            element = element.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
             verElement = element[idSeparator:].strip()
             verElement.replace("\t", " ")
             while "  " in verElement:

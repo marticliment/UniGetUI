@@ -1,9 +1,9 @@
 # WingetUI: A package manager UI
 
-[![Downloads@latest](https://img.shields.io/github/downloads/martinet101/WingetUI/total?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe)
-[![Release Version Badge](https://img.shields.io/github/v/release/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/releases)
-[![Issues Badge](https://img.shields.io/github/issues/martinet101/WingetUI?style=for-the-badge)](https://github.com/martinet101/WingetUI/issues)
-[![Closed Issues Badge](https://img.shields.io/github/issues-closed/martinet101/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/martinet101/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
+[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+[![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
+[![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
+[![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
 <br>The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
 
@@ -15,7 +15,7 @@ Beware that neither Microsoft nor the creators of WingetUI are responsible for t
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/main.webp)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/main.webp)
 
 # Consider supporting me :)
 
@@ -49,7 +49,7 @@ Thank you! :)
 - The first is by downloading the latest version of the installer:
 <br>
 
-<p align="center"><b><a href="https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download WingetUI</a></b></p>
+<p align="center"><b><a href="https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download WingetUI</a></b></p>
 <br>
 
 - The second is by using [Winget](https://learn.microsoft.com/en-us/windows/package-manager/):
@@ -64,11 +64,11 @@ In case it's not already added, it's required to add the _Extras_ bucket first: 
 
 Then, to install WingetUI, execute the following command: `scoop install wingetui`
 
-<br><p align="center"><i>Check out the <a href="https://github.com/martinet101/WingetUI/wiki">Wiki</a> for more information!</i></p>
+<br><p align="center"><i>Check out the <a href="https://github.com/marticliment/WingetUI/wiki">Wiki</a> for more information!</i></p>
 
 
 ## Translating WingetUI to other languages
-In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/martinet101/WingetUI/wiki#translating-wingetui) for more info.
+In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/marticliment/WingetUI/wiki#translating-wingetui) for more info.
 
 
 ### Currently Supported languages
@@ -103,26 +103,26 @@ Last updated: Tue Dec 27 00:56:55 2022
  WingetUI wouldn't have been possible without the help of our dear contributors. From the person who fixed a typo to the person who improved half of the code, WingetUI wouldn't be possible without them! :smile:<br><br>
 
 ### Contributors:
- [![My dear contributors](https://contrib.rocks/image?repo=martinet101/WingetUI)](https://github.com/martinet101/WingetUI/graphs/contributors)<br><br>
+ [![My dear contributors](https://contrib.rocks/image?repo=marticliment/WingetUI)](https://github.com/marticliment/WingetUI/graphs/contributors)<br><br>
  
 
 # Screenshots
  
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_1.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_2.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_3.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_3.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_4.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_4.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_5.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_5.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_6.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_6.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_7.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_7.png)
 
-![image](https://raw.githubusercontent.com/martinet101/WingetUI/main/media/winget_8.png)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_8.png)
 
 
 # FAQ
@@ -159,7 +159,7 @@ Since WingetUI is open source and safe to use, simply whitelist the app in the s
 
 A: This is currently under study. 
 
-See more details in issue https://github.com/martinet101/WingetUI/issues/56.<br>
+See more details in issue https://github.com/marticliment/WingetUI/issues/56.<br>
 
 #
 
@@ -167,7 +167,7 @@ See more details in issue https://github.com/martinet101/WingetUI/issues/56.<br>
 
 A: This is not possible, nor is it planned for the near future. 
 
-See more details in issue https://github.com/martinet101/WingetUI/issues/87.<br>
+See more details in issue https://github.com/marticliment/WingetUI/issues/87.<br>
 
 #
 
@@ -177,4 +177,4 @@ A: WingetUI, Microsoft and Scoop aren't responsible for the packages available f
 
 To mitigate the risks of downloading malware, Microsoft has implemented a few checks for the software available on Winget. Even so, It's recommended to only download software from publishers that you trust. 
 
-<br><p align="center"><i>Check out the <a href="https://github.com/martinet101/WingetUI/wiki">Wiki</a> for more information!</i></p>
+<br><p align="center"><i>Check out the <a href="https://github.com/marticliment/WingetUI/wiki">Wiki</a> for more information!</i></p>

@@ -374,7 +374,7 @@ def updateLangFile(file: str):
             oldlang = open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file), "rb").read()
         except FileNotFoundError:
             oldlang = ""
-        newlang = urlopen("https://raw.githubusercontent.com/martinet101/WingetUI/main/wingetui/lang/"+file)
+        newlang = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/"+file)
         if newlang.status == 200:
             langdata: bytes = newlang.read()
             if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui/lang/")):

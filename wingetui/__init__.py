@@ -241,7 +241,7 @@ try:
         def downloadPackagesMetadata(self):
             try: 
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
-                data = urlopen("https://raw.githubusercontent.com/martinet101/WingetUI/main/WebBasedData/screenshot-database.json").read()
+                data = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database.json").read()
                 try:
                     os.makedirs(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta"))
                 except FileExistsError:
@@ -488,7 +488,7 @@ try:
                     print("🟢 Updates found!")
                     updatesAvailable = True
                     if(integrityPass):
-                        url = "https://github.com/martinet101/WingetUI/releases/latest/download/WingetUI.Installer.exe"
+                        url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
                         filedata = urlopen(url)
                         datatowrite = filedata.read()
                         filename = ""
