@@ -1,4 +1,5 @@
-from __future__ import annotations # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+from __future__ import annotations
+import glob # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
@@ -2269,7 +2270,23 @@ class SettingsSection(QScrollArea):
         disableLangUpdates.setChecked(getSettings("DisableLangAutoUpdater"))
         disableLangUpdates.stateChanged.connect(lambda v: setSettings("DisableLangAutoUpdater", bool(v)))
         self.advancedOptions.addWidget(disableLangUpdates)
-        disableLangUpdates.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+        
+        def resetWingetUIStore():
+            sd = getSettings("DisableScoop")
+            wd = getSettings("DisableWinget")
+            for file in glob.glob(os.path.join(os.path.expanduser("~"), ".wingetui/*")):
+                if not "Running" in file:
+                    try:
+                        os.remove(file)
+                    except:
+                        pass
+            setSettings("DisableScoop", sd)
+            setSettings("DisableWinget", wd)
+            restartElevenClockByLangChange()
+        
+        resetWingetUI = QSettingsButton(_("Reset WingetUI and its preferences"), _("Reset"))
+        resetWingetUI.clicked.connect(lambda: resetWingetUIStore())
+        self.advancedOptions.addWidget(resetWingetUI)
 
         title = QLabel(_("Package manager preferences"))
         self.layout.addSpacing(40)
