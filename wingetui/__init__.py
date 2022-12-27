@@ -419,7 +419,7 @@ try:
                 traceback_info += str(type(e))
                 traceback_info += ": "
                 traceback_info += str(e)
-                webbrowser.open(("https://www.somepythonthings.tk/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
+                webbrowser.open(("https://www.marticliment.com/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
                 print(traceback_info)
             self.popup.hide()
 
@@ -471,14 +471,14 @@ try:
             if not getSettings("DisableAutoUpdateWingetUI"):
                 print("🔵 Starting update check")
                 integrityPass = False
-                dmname = socket.gethostbyname_ex("versions.somepythonthings.tk")[0]
+                dmname = socket.gethostbyname_ex("versions.marticliment.com")[0]
                 if(dmname == dmname): # Check provider IP to prevent exploits
                     integrityPass = True
                 try:
-                    response = urlopen("https://versions.somepythonthings.tk/versions/wingetui.ver")
+                    response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
                 except Exception as e:
                     print(e)
-                    response = urlopen("http://www.somepythonthings.tk/versions/wingetui.ver")
+                    response = urlopen("http://www.marticliment.com/versions/wingetui.ver")
                     integrityPass = True
                 print("🔵 Version URL:", response.url)
                 response = response.read().decode("utf8")
@@ -2020,5 +2020,5 @@ except Exception as e:
     traceback_info += str(type(e))
     traceback_info += ": "
     traceback_info += str(e)
-    webbrowser.open(("https://www.somepythonthings.tk/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
+    webbrowser.open(("https://www.marticliment.com/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
     print(traceback_info)

@@ -516,11 +516,11 @@ class QAnnouncements(QLabel):
 
     def loadAnnouncements(self, useHttps: bool = True):
         try:
-            response = urlopen(f"http{'s' if useHttps else ''}://www.somepythonthings.tk/resources/wingetui.announcement")
+            response = urlopen(f"http{'s' if useHttps else ''}://www.marticliment.com/resources/wingetui.announcement")
             print("🔵 Announcement URL:", response.url)
             response = response.read().decode("utf8")
             self.callInMain.emit(lambda: self.setTtext(""))
-            announcement_body = response.split("////")[0].strip().replace("http://", "ignore:").replace("https://", "ignoreSecure:").replace("linkId", "http://somepythonthings.tk/redirect/").replace("linkColor", f"rgb({getColors()[2 if isDark() else 4]})")
+            announcement_body = response.split("////")[0].strip().replace("http://", "ignore:").replace("https://", "ignoreSecure:").replace("linkId", "http://marticliment.com/redirect/").replace("linkColor", f"rgb({getColors()[2 if isDark() else 4]})")
             self.callInMain.emit(lambda: self.textLabel.setText(announcement_body))
             announcement_image_url = response.split("////")[1].strip()
             try:
