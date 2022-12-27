@@ -74,9 +74,9 @@
   "Do you really want to uninstall {0}?" : "你真的要卸载{0}吗？",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>" : "你想把WingetUI翻译成你的语言吗？了解如何贡献你想把WingetUI翻译成你的语言吗？了解如何贡献<a style=\"color:{0}\" href=\"{1}\"a>这里!</a>",
   "Enable Scoop cleanup on launch" : "打开程序时清理Scoop",
-  "Experimental settings and developer options" : null,
+  "Experimental settings and developer options" : "实验性和开发者选项",
   "Export all" : "全部导出",
-  "Export log" : null,
+  "Export log" : "导出日志文件",
   "Export log as a file" : "将日志作为文件导出",
   "Export selected packages to a file" : "将选择的软件包导出到文件",
   "Follow system color scheme" : "跟随系统颜色设置",
@@ -143,7 +143,7 @@
   "MIT License" : "MIT许可证",
   "New version" : "新版本",
   "New Version" : "新版本",
-  "No" : null,
+  "No" : "否",
   "No packages found matching the input criteria" : "没有找到任何与输入条件匹配的包",
   "Not found" : "找不到",
   "Notification tray options" : "任务栏托盘选项",
@@ -268,5 +268,5 @@
   "WingetUI tray application preferences" : "WingetUI 托盘应用程序首选项",
   "WingetUI version {0}" : "WingetUI版本 {0}",
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "\n如果没有我们亲爱的贡献者的帮助，WingetUI 是不可能诞生的！点击这里查看他们的GitHub个人资料",
-  "Yes" : null
+  "Yes" : "是"
 }
