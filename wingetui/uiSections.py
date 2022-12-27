@@ -2294,6 +2294,7 @@ class SettingsSection(QScrollArea):
         #button.clicked.connect(lambda: self.scoopRemoveExtraBucket())
         #self.scoopPreferences.addWidget(button)
         bucketManager = ScoopBucketManager()
+        bucketManager.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.scoopPreferences.addWidget(bucketManager)
         button.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         button = QSettingsButton(_("Install Scoop"), _("Install"))
@@ -2492,6 +2493,12 @@ class ScoopBucketManager(QWidget):
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
+        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        if isDark():
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; paddng: 8px; margin-right: 15px;}")
+        else:
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #ef5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; paddng: 8px; margin-right: 15px;}")
+
         self.bucketList.label.setText(_("Loading buckets..."))
         self.bucketList.label.show()
         self.bucketList.setColumnCount(4)
