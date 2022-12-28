@@ -10,7 +10,7 @@ scoop = "powershell -ExecutionPolicy ByPass -Command scoop"
 
 def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Starting scoop search...")
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(f"{scoop} search", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -35,7 +35,7 @@ str(line, encoding='utf-8', errors="ignore")))
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Starting scoop search...")
     time.sleep(2) # dumb wait, but it works
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(f"{scoop} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 1
     while p.poll() is None:
@@ -64,7 +64,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
 
 def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Starting scoop search...")
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "status"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(f"{scoop} status", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:
@@ -94,7 +94,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
 def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = False) -> None:
     print(f"🟢 Starting get info for title {title}")
     title = title.lower()
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     unknownStr = _("Unknown") if verbose else _("Loading...")
     appInfo = {
@@ -233,7 +233,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
 
 def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
     print("🟢 Starting scoop search...")
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "bucket", "list"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(f"{scoop} bucket list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:

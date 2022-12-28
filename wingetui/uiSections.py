@@ -7,7 +7,8 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
 from storeEngine import *
-from lang.translated_percentage import untranslatedPercentage, languageCredits
+from data.translations import untranslatedPercentage, languageCredits
+from data.contributors import contributorsInfo
 
 import globals
 from customWidgets import *
@@ -1985,52 +1986,35 @@ class AboutSection(QScrollArea):
 
         self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
-        GHcontributors = "<ul>"
-        GHcontributorsList = [
-            "harleylara",
-            "MisterEvans78",
-            "neoOpus",
-            "panther7",
-            "ppvnf",
-            "RavenMacDaddy",
-            "Satanarious",
-            "sitiom",
-            "sklart",
-            "vedantmgoyal2009",
-            "victorelec14",
-        ]
-        GHcontributorsList.sort(key=str.casefold)
-        for user in GHcontributorsList:
-            GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
-        GHcontributors += "</ul>"
-        self.layout.addWidget(QLinkLabel(GHcontributors))
+        contributorsHTMLList = "<ul>"
+        for contributor in contributorsInfo:
+            contributorsHTMLList += f"<li><a style=\"color:{blueColor}\" href=\"{contributor.get('link')}\">{contributor.get('name')}</a></li>"
+        contributorsHTMLList += "</ul>"
+        self.layout.addWidget(QLinkLabel(contributorsHTMLList))
         self.layout.addSpacing(15)
 
         self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
-        translators = "<ul>"
-        translatorList: dict[str, str] = {}
-        for key in list(languageCredits.keys()):
-            try:
-                for singleuser in languageCredits[key].split(","):
-                    if singleuser != "":
-                        user = singleuser.strip()
-                        userPrefixed = (user[0] == "@")
-                        if (userPrefixed):
-                            user = user[1:]
-                        translatorUser = user
-                        if (userPrefixed or user in GHcontributorsList):
-                            translatorUser = f"<a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a>"
-                        cprint(user, key, languageReference[key])
-                        translatorKey = f"{user}{languageReference[key]}" # for sort
-                        translatorList[translatorKey] = f"{translatorUser} ({languageReference[key]})"
-            except KeyError:
-                pass
-        for userLine in dict(sorted(translatorList.items())).values():
-            translators += f"<li>{userLine}</li>"
-        translators += "</ul><br>"
-        translators += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
-        self.layout.addWidget(QLinkLabel(translators))
+        translatorsHTMLList = "<ul>"
+        translatorList = []
+        translatorData: dict[str, str] = {}
+        for key, value in languageCredits.items():
+            langName = languageReference[key] if (key in languageReference) else key
+            for translator in value:
+                link = translator.get("link")
+                name = translator.get("name")
+                translatorLine = name
+                if (link):
+                    translatorLine = f"<a style=\"color:{blueColor}\" href=\"{link}\">{name}</a>"
+                translatorKey = f"{name}{langName}" # for sort
+                translatorList.append(translatorKey)
+                translatorData[translatorKey] = f"{translatorLine} ({langName})"
+        translatorList.sort(key=str.casefold)
+        for translator in translatorList:
+            translatorsHTMLList += f"<li>{translatorData[translator]}</li>"
+        translatorsHTMLList += "</ul><br>"
+        translatorsHTMLList += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
+        self.layout.addWidget(QLinkLabel(translatorsHTMLList))
         self.layout.addSpacing(15)
         
         self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
@@ -2364,13 +2348,14 @@ class SettingsSection(QScrollArea):
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
+            globals.installersWidget.addItem(PackageInstallerWidget(_("{0} Scoop bucket").format(r[0]), "custom", customCommand=f"{scoopHelpers.scoop} bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageUninstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            
+            globals.installersWidget.addItem(PackageUninstallerWidget(_("{0} Scoop bucket").format(r[0]), "custom", customCommand=f"{scoopHelpers.scoop} bucket rm {r[0]}"))
 
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()

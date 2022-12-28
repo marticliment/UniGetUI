@@ -1,5 +1,4 @@
-from os.path import exists
-from pathlib import Path
+import os
 
 
 languageReference = {
@@ -10,18 +9,19 @@ languageReference = {
     "cs"    : "Czech - Čeština",
     "de"    : "German - Deutsch",
     "en"    : "English - English",
+    "es"    : "Spanish - Castellano",
     "fr"    : "French - Français",
     "hi"    : "Hindi - हिंदी",
     "hr"    : "Croatian - Hrvatski",
     "hu"    : "Hungarian - Magyar",
     "it"    : "Italian - Italiano",
     "ja"    : "Japanese - 日本語",
+    "ko"    : "Korean - 한국어",
     "pl"    : "Polish - Polski",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
     "ru"    : "Russian - Русский",
     "sr"    : "Serbian - Srpski",
-    "es"    : "Spanish - Castellano",
     "tr"    : "Turkish - Türkçe",
     "ua"    : "Ukranian - Yкраї́нська",
     "zh_CN" : "Simplified Chinese (China)",
@@ -30,11 +30,11 @@ languageReference = {
 
 
 languageRemap = {
-    "pt-PT":      "pt_PT",
-    "pt-BR":      "pt_BR",
-    "uk":         "ua",
-    "zh-Hant": "zh_TW",
+    "pt-BR":   "pt_BR",
+    "pt-PT":   "pt_PT",
+    "uk":      "ua",
     "zh-Hans": "zh_CN",
+    "zh-Hant": "zh_TW",
 }
 
 
@@ -45,39 +45,39 @@ languageFlagsRemap = {
     "ca": "ad",
     "cs": "cz",
     "da": "dk",
-    "en": "gb",
     "el": "gr",
+    "en": "gb",
     "et": "ee",
     "fa": "ir",
     "he": "il",
-    "ja": "jp",
     "hi": "in",
+    "ja": "jp",
     "ko": "kr",
     "nb": "no",
     "nn": "no",
     "pt_BR": "br",
     "pt_PT": "pt",
     "si": "lk",
-    "zh": "cn",
-    "zh_CN": "cn",
-    "zh_TW": "tw",
-    "vi": "vn",
     "sr": "rs",
     "sv": "se",
+    "vi": "vn",
+    "zh_CN": "cn",
+    "zh_TW": "tw",
+    "zh": "cn",
 }
 
 
 def getMarkdownSupportLangs():
-    from translated_percentage import untranslatedPercentage, languageCredits
+    from data.translations import untranslatedPercentage, languageCredits
 
     readmeLangs = [
         "| Language | Translated | Translator(s) |",
         "| :-- | :-- | --- |",
     ]
 
-    dir = str(Path(__file__).parent)
+    dir = os.path.dirname(__file__)
     for lang, langName in languageReference.items():
-        if (not exists(f"{dir}/lang_{lang}.json")): continue
+        if (not os.path.exists(f"{dir}/lang_{lang}.json")): continue
         perc = untranslatedPercentage[lang] if (lang in untranslatedPercentage) else "100%"
         if (perc == "0%"): continue
         langName = languageReference[lang] if (lang in languageReference) else lang
@@ -89,27 +89,42 @@ def getMarkdownSupportLangs():
     return "\n".join(readmeLangs)
 
 
-def fixTranslatorList(names: str) -> str:
-    if names == None:
-        return ""
-    credits: list[str] = []
-    for name in names.split(","):
-        nameStriped = name.strip()
-        if (nameStriped != ""):
-            credits.append(nameStriped)
-    credits.sort(key=str.casefold)
-    return ", ".join(credits)
+def getTranslatorsFromCredits(translators: str) -> list:
+    from data.contributors import contributors
+    if translators == None:
+        return []
+    credits: list = []
+    translatorList = []
+    translatorData = {}
+    for translator in translators.split(","):
+        translatorStriped = translator.strip()
+        if (translatorStriped != ""):
+            translatorPrefixed = (translatorStriped[0] == "@")
+            if (translatorPrefixed):
+                translatorStriped = translatorStriped[1:]
+            link = ""
+            if (translatorPrefixed or translatorStriped in contributors):
+                link = f"https://github.com/{translatorStriped}"
+            translatorList.append(translatorStriped)
+            translatorData[translatorStriped] = {
+                "name": translatorStriped,
+                "link": link,
+            }
+    translatorList.sort(key=str.casefold)
+    for translator in translatorList:
+        credits.append(translatorData[translator])
+    return credits
 
 
-def makeURLFromTranslatorList(names: str) -> str:
-    if names == None:
+def makeURLFromTranslatorList(translators: list) -> str:
+    if translators == None:
         return ""
     credits: list[str] = []
-    for name in names.split(","):
-        nameStriped = name.strip()
-        if (nameStriped != ""):
-            if (nameStriped[0] == "@"):
-                credits.append(f"[{nameStriped[1:]}](https://github.com/{nameStriped[1:]})")
-            else:
-                credits.append(nameStriped)
+    for translator in translators:
+        link = translator.get("link")
+        name = translator.get("name")
+        if (link):
+            credits.append(f"[{name}]({link})")
+        else:
+            credits.append(name)
     return ", ".join(credits)
