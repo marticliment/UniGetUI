@@ -8,6 +8,7 @@ from PySide6.QtWidgets import *
 from tools import *
 from storeEngine import *
 from lang.translated_percentage import untranslatedPercentage, languageCredits
+from data.contributors import contributorsInfo
 
 import globals
 from customWidgets import *
@@ -1985,25 +1986,11 @@ class AboutSection(QScrollArea):
 
         self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
         self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
-        GHcontributors = "<ul>"
-        GHcontributorsList = [
-            "harleylara",
-            "MisterEvans78",
-            "neoOpus",
-            "panther7",
-            "ppvnf",
-            "RavenMacDaddy",
-            "Satanarious",
-            "sitiom",
-            "sklart",
-            "vedantmgoyal2009",
-            "victorelec14",
-        ]
-        GHcontributorsList.sort(key=str.casefold)
-        for user in GHcontributorsList:
-            GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
-        GHcontributors += "</ul>"
-        self.layout.addWidget(QLinkLabel(GHcontributors))
+        contributorsHTMLList = "<ul>"
+        for contributor in contributorsInfo:
+            contributorsHTMLList += f"<li><a style=\"color:{blueColor}\" href=\"{contributor.get('link')}\">{contributor.get('name')}</a></li>"
+        contributorsHTMLList += "</ul>"
+        self.layout.addWidget(QLinkLabel(contributorsHTMLList))
         self.layout.addSpacing(15)
 
         self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
