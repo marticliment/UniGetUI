@@ -1,5 +1,5 @@
 {
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "Martí Climent",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "Martí Climent, ppvnf",
   "{0} {1} failed" : null,
   "{0} apps can be updated" : null,
   "{0} failed" : null,
@@ -143,7 +143,7 @@
   "Locating Scoop..." : null,
   "Locating sudo..." : null,
   "Locating Winget..." : null,
-  "Manage scoop buckets" : null,
+  "Manage scoop buckets" : "Manage Scoop buckets",
   "Manifest" : null,
   "Manifest:" : null,
   "Manifests" : null,
