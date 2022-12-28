@@ -2009,17 +2009,21 @@ class AboutSection(QScrollArea):
         translators = "<ul>"
         translatorList: dict[str, str] = {}
         for key in list(languageCredits.keys()):
-            for singleuser in languageCredits[key].split(","):
-                if singleuser != "":
-                    user = singleuser.strip()
-                    userPrefixed = (user[0] == "@")
-                    if (userPrefixed):
-                        user = user[1:]
-                    translatorUser = user
-                    if (userPrefixed or user in GHcontributorsList):
-                        translatorUser = f"<a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a>"
-                    translatorKey = f"{user}{languageReference[key]}" # for sort
-                    translatorList[translatorKey] = f"{translatorUser} ({languageReference[key]})"
+            try:
+                for singleuser in languageCredits[key].split(","):
+                    if singleuser != "":
+                        user = singleuser.strip()
+                        userPrefixed = (user[0] == "@")
+                        if (userPrefixed):
+                            user = user[1:]
+                        translatorUser = user
+                        if (userPrefixed or user in GHcontributorsList):
+                            translatorUser = f"<a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a>"
+                        cprint(user, key, languageReference[key])
+                        translatorKey = f"{user}{languageReference[key]}" # for sort
+                        translatorList[translatorKey] = f"{translatorUser} ({languageReference[key]})"
+            except KeyError:
+                pass
         for userLine in dict(sorted(translatorList.items())).values():
             translators += f"<li>{userLine}</li>"
         translators += "</ul><br>"
