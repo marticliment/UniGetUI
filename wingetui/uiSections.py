@@ -2348,13 +2348,13 @@ class SettingsSection(QScrollArea):
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}"))
+            globals.installersWidget.addItem(PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"{scoopHelpers.scoop} bucket add {r[0]}"))
     
     def scoopRemoveExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
         if r[1]:
             print(r[0])
-            globals.installersWidget.addItem(PackageUninstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket rm {r[0]}"))
+            globals.installersWidget.addItem(PackageUninstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"{scoopHelpers.scoop} bucket rm {r[0]}"))
 
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
