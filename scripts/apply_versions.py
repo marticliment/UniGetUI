@@ -1,4 +1,7 @@
 import sys
+import os
+
+os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 
 try:
 

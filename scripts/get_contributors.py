@@ -1,6 +1,10 @@
 import os
 import json
 
+os.chdir(os.path.dirname(__file__) + "/..") # move to root project
+
+print("Getting contributors...")
+
 try:
     import requests
 except ImportError:
@@ -30,6 +34,8 @@ contributors = {json.dumps(contributors, indent=2, ensure_ascii=False)}
 contributorsInfo = {json.dumps(contributorsInfo, indent=2, ensure_ascii=False)}
 """
 
-f = open(f"{os.path.dirname(__file__)}/wingetui/data/contributors.py", "w", encoding="utf8")
+f = open("wingetui/data/contributors.py", "w", encoding="utf-8")
 f.write(output.strip())
 f.close()
+
+print("done!")
