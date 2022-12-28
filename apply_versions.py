@@ -1,4 +1,5 @@
-import sys,os
+import sys
+
 try:
 
     sys.path.append("wingetui")
@@ -6,8 +7,8 @@ try:
     from versions import *
 
 
-    def fileReplaceLinesWith(filename: str, list: dict[str, str]):
-        f = open(filename, "r+", encoding="utf-8", errors="ignore")
+    def fileReplaceLinesWith(filename: str, list: dict[str, str], encoding="utf-8"):
+        f = open(filename, "r+", encoding=encoding, errors="ignore")
         data = ""
         for line in f.readlines():
             match = False
@@ -27,12 +28,12 @@ try:
     fileReplaceLinesWith("WingetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
         "VersionInfoVersion=": f"{versionISS}\n",
-    })
+    }, encoding = "utf-8-sig")
 
     fileReplaceLinesWith("wingetui-version-file", {
         "      StringStruct(u'FileVersion'": f", u'{versionName}'),\n",
         "      StringStruct(u'ProductVersion'": f", u'{versionName}'),\n",
     })
-    print("donwe!")
+    print("done!")
 except Exception as e:
     print(e)
