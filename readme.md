@@ -79,7 +79,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/ad.svg' width=20> &nbsp; Catalan - Català | 100% | [marticliment](https://github.com/marticliment) |
 | <img src='https://flagcdn.com/cz.svg' width=20> &nbsp; Czech - Čeština | 100% | [panther7](https://github.com/panther7), Petr Janeček |
 | <img src='https://flagcdn.com/de.svg' width=20> &nbsp; German - Deutsch | 93% | Datacra5H |
-| <img src='https://flagcdn.com/gb.svg' width=20> &nbsp; English - English | 100% | [marticliment](https://github.com/marticliment), ppvnf |
+| <img src='https://flagcdn.com/gb.svg' width=20> &nbsp; English - English | 100% | [marticliment](https://github.com/marticliment), [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 93% | Evans Costa |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Hindi - हिंदी | 86% | Satyam Singh Niranjan |
 | <img src='https://flagcdn.com/hu.svg' width=20> &nbsp; Hungarian - Magyar | 100% | gidano |
@@ -87,7 +87,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 90% | sho9029, Yuki Takase |
 | <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 39% | regulargvy13 |
 | <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | [ppvnf](https://github.com/ppvnf) |
-| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | ppvnf |
+| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 86% | Sergey, Артем |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 22% | Nemanja Djurcic |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 90% | Ahmet Özmetin |
