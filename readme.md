@@ -86,7 +86,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 100% | GiacoBot, Maicol Battistini, Rosario Di Mauro |
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 90% | sho9029, Yuki Takase |
 | <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 39% | regulargvy13 |
-| <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | ppvnf |
+| <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | ppvnf |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 86% | Sergey, Артем |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 22% | Nemanja Djurcic |
