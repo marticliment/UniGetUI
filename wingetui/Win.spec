@@ -11,7 +11,7 @@ import importlib, os
 a = Analysis(['__init__.py'],
              pathex=['Y:\WingetUI-Store\wingetui_bin'],
              binaries=[('globals.pyc', '.'), ('mainWindow.pyc', '.'), ('scoopHelpers.pyc', '.'), ('storeEngine.pyc', '.'), ('tools.pyc', '.'), ('wingetHelpers.pyc', '.'), ("uiSections.pyc", "."), ("customWidgets.pyc", "."), ("languages.pyc", ".")],
-             datas=[('resources/', 'resources/'), ("winget-cli/", "winget-cli/"), ("sudo/", "sudo/"), ("lang/", "lang/")],
+             datas=[('resources/', 'resources/'), ("winget-cli/", "winget-cli/"), ("sudo/", "sudo/"), ("lang/", "lang/"), ("data/", "data/")],
              hiddenimports=['pkg_resources.py2_warn', "win32gui"],
              hookspath=[],
              runtime_hooks=[],
