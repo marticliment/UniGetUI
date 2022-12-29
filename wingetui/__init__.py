@@ -1997,7 +1997,10 @@ try:
     if "--daemon" in sys.argv:
         if getSettings("DisableAutostart"):
             sys.exit(0)
+    translator = QTranslator()
+    translator.load(f"qtbase_{langName}.qm", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
     a = MainApplication()
+    a.installTranslator(translator)
     a.exec()
     a.running = False
     sys.exit(0)
