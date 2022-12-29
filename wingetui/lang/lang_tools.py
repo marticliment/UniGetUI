@@ -4,6 +4,7 @@ import os
 languageReference = {
     "default": "System language",
     "ar"    : "Arabic - عربي‎",
+    "bg"    : "Bulgarian - български",
     "bn"    : "Bangla - বাংলা",
     "ca"    : "Catalan - Català",
     "cs"    : "Czech - Čeština",
@@ -17,6 +18,7 @@ languageReference = {
     "it"    : "Italian - Italiano",
     "ja"    : "Japanese - 日本語",
     "ko"    : "Korean - 한국어",
+    "nl"    : "Dutch - Nederlands",
     "pl"    : "Polish - Polski",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
