@@ -7,6 +7,7 @@
   "{0} is disabled" : null,
   "0 packages found" : "Aucun paquet trouvé",
   "{0} packages found" : "{0} paquets trouvés",
+  "{0} Scoop bucket" : null,
   "{0} succeeded" : "{0} réussi",
   "{0} Uninstallation" : "Désinstallation de {0}",
   "{0} update" : "{0} mises à jour",
