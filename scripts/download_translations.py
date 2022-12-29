@@ -3,6 +3,14 @@ import json
 import os
 import time
 
+try:
+    apikey = open("APIKEY.txt", "r").read()
+    print("  API key found in APIKEY.txt")
+except FileNotFoundError:
+    apikey = os.environ.get("TOLGEE_KEY", "")
+    if (apikey == ""):
+        apikey = input("Write api key and press enter: ")
+
 os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 
 sys.path.append("wingetui")
@@ -24,13 +32,6 @@ if len(sys.argv)>1:
         print("nocommit")
         print(sys.argv[1])
 
-try:
-    apikey = open("APIKEY.txt", "r").read()
-    print("  API key found in APIKEY.txt")
-except FileNotFoundError:
-    apikey = os.environ.get("TOLGEE_KEY", "")
-    if (apikey == ""):
-        apikey = input("Write api key and press enter: ")
 
 apiurl = f"https://app.tolgee.io/v2/projects/1205/export?format=JSON&splitByScope=false&splitByScopeDelimiter=~&splitByScopeDepth=0&filterState=UNTRANSLATED&filterState=TRANSLATED&filterState=REVIEWED&zip=true&ak={apikey}"
 

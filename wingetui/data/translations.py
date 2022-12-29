@@ -2,25 +2,33 @@
 
 untranslatedPercentage = {
   "ar": "0%",
+  "bg": "0%",
   "bn": "19%",
+  "cs": "99%",
   "de": "92%",
-  "es": "0%",
+  "es": "11%",
   "fr": "92%",
   "hi": "85%",
   "hr": "0%",
-  "ja": "89%",
-  "ko": "28%",
-  "pl": "39%",
+  "hu": "99%",
+  "it": "99%",
+  "ja": "93%",
+  "ko": "32%",
+  "nl": "21%",
+  "pl": "38%",
+  "pt_BR": "99%",
+  "pt_PT": "99%",
   "ru": "85%",
   "sr": "22%",
   "tr": "89%",
   "ua": "85%",
-  "zh_CN": "97%",
+  "zh_CN": "99%",
   "zh_TW": "89%"
 }
 
 languageCredits = {
   "ar": [],
+  "bg": [],
   "bn": [
     {
       "name": "Nilavra Bhattacharya",
@@ -112,6 +120,20 @@ languageCredits = {
     {
       "name": "shblue21",
       "link": "https://github.com/shblue21"
+    }
+  ],
+  "nl": [
+    {
+      "name": "marticliment",
+      "link": "https://github.com/marticliment"
+    },
+    {
+      "name": "ppvnf",
+      "link": "https://github.com/ppvnf"
+    },
+    {
+      "name": "Stephan Paternotte",
+      "link": ""
     }
   ],
   "pl": [
