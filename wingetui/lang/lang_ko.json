@@ -7,6 +7,7 @@
   "{0} is disabled" : "{0}가 비활성화 됨",
   "0 packages found" : "패키지를 찾을 수 없음",
   "{0} packages found" : "{0}개의 패키지를 찾음",
+  "{0} Scoop bucket" : null,
   "{0} succeeded" : "{0} 성공",
   "{0} Uninstallation" : "{0} 제거",
   "{0} update" : "{0} 업데이트",

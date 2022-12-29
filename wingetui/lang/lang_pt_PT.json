@@ -1,5 +1,5 @@
 {
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "ppvnf",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@ppvnf",
   "{0} {1} failed" : "A {1} de {0} falhou",
   "{0} apps can be updated" : "{0} aplicações podem ser actualizadas",
   "{0} failed" : "{0} fracassou",
@@ -7,6 +7,7 @@
   "{0} is disabled" : "O {0} está desactivado",
   "0 packages found" : "Nenhum pacote encontrado",
   "{0} packages found" : "{0} pacotes encontrados",
+  "{0} Scoop bucket" : "Bucket {0} do Scoop\n",
   "{0} succeeded" : "{0} bem-sucedida",
   "{0} Uninstallation" : "Desinstalação do {0}",
   "{0} update" : "Actualização do {0}",

@@ -7,6 +7,7 @@
   "{0} is disabled" : "{0}已取消",
   "0 packages found" : "没有找到任何软件包",
   "{0} packages found" : "找到{0}个软件包",
+  "{0} Scoop bucket" : null,
   "{0} succeeded" : "{0}成功",
   "{0} Uninstallation" : "{}卸载",
   "{0} update" : "{0} 更新",

@@ -7,6 +7,7 @@
   "{0} is disabled" : null,
   "0 packages found" : "Найдено 0 пакетов",
   "{0} packages found" : "Найдено {0} пакетов",
+  "{0} Scoop bucket" : null,
   "{0} succeeded" : "{0} выполнено успешно",
   "{0} Uninstallation" : "{} Удаление",
   "{0} update" : null,
