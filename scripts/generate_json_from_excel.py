@@ -1,7 +1,9 @@
 import os, xlrd, json
 from urllib.request import urlopen
 
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(__file__) + "/..") # move to root project
+
+os.chdir("WebBasedData")
 
 try:
     os.remove("screenshot-database.json")

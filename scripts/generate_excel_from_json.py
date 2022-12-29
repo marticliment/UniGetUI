@@ -1,12 +1,12 @@
 import xlsxwriter
 import os
 import json
-import time
 import re
 import subprocess
 
+os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 
-os.chdir(os.path.dirname(__file__))
+os.chdir("WebBasedData")
 
 contents = json.load(open("screenshot-database.json"))
 

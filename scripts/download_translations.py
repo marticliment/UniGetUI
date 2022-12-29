@@ -3,17 +3,16 @@ import json
 import os
 import time
 
-sys.path.append('../')
-from lang_tools import *
+os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 
-thisDir = os.path.dirname(__file__)
+sys.path.append("wingetui")
 
-os.chdir(thisDir)
+from lang.lang_tools import *
 
 try:
     from data.contributors import contributors
 except ImportError:
-    os.system(f"python ../../get_contributors.py")
+    os.system(f"python scripts/get_contributors.py")
 
 isAutoCommit = False
 isSomeChanges = False
@@ -42,6 +41,7 @@ except ImportError:
     import requests
 import glob, zipfile
 
+os.chdir("wingetui/lang")
 
 print()
 print("-------------------------------------------------------")
