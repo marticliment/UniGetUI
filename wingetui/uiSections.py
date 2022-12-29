@@ -1986,43 +1986,35 @@ class AboutSection(QScrollArea):
 
             self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
             self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
-            GHcontributors = "<ul>"
-            for user in (
-                "candrapersada",
-                "harleylara",
-                "MisterEvans78",
-                "neoOpus",
-                "panther7",
-                "ppvnf",
-                "RavenMacDaddy",
-                "Satanarious",
-                "sitiom",
-                "sklart",
-                "vedantmgoyal2009",
-                "victorelec14",
-                ):
-                GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
-            GHcontributors += "</ul>"
-            self.layout.addWidget(QLinkLabel(GHcontributors))
+            contributorsHTMLList = "<ul>"
+            for contributor in contributorsInfo:
+                contributorsHTMLList += f"<li><a style=\"color:{blueColor}\" href=\"{contributor.get('link')}\">{contributor.get('name')}</a></li>"
+            contributorsHTMLList += "</ul>"
+            self.layout.addWidget(QLinkLabel(contributorsHTMLList))
             self.layout.addSpacing(15)
 
             self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
             self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
-            translators = "<ul>"
+            translatorsHTMLList = "<ul>"
             translatorList = []
-            for key in list(languageCredits.keys()):
-                for singleuser in languageCredits[key]:
-                    if singleuser != []:
-                        if singleuser['link'] != "":
-                            translatorList.append(f"<a href='{singleuser['link']}' style='color:{blueColor}'>{singleuser['name']}</a> ({languageReference[key]})")
-                        else:
-                            translatorList.append(f"{singleuser['name']} ({languageReference[key]})")
+            translatorData: dict[str, str] = {}
+            for key, value in languageCredits.items():
+                langName = languageReference[key] if (key in languageReference) else key
+                for translator in value:
+                    link = translator.get("link")
+                    name = translator.get("name")
+                    translatorLine = name
+                    if (link):
+                        translatorLine = f"<a style=\"color:{blueColor}\" href=\"{link}\">{name}</a>"
+                    translatorKey = f"{name}{langName}" # for sort
+                    translatorList.append(translatorKey)
+                    translatorData[translatorKey] = f"{translatorLine} ({langName})"
             translatorList.sort(key=str.casefold)
-            for user in translatorList:
-                translators += f"<li>{user}</li>"
-            translators += "</ul><br>"
-            translators += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
-            self.layout.addWidget(QLinkLabel(translators))
+            for translator in translatorList:
+                translatorsHTMLList += f"<li>{translatorData[translator]}</li>"
+            translatorsHTMLList += "</ul><br>"
+            translatorsHTMLList += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
+            self.layout.addWidget(QLinkLabel(translatorsHTMLList))
             self.layout.addSpacing(15)
             
             self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
