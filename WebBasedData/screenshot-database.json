@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 394
+        "done": 395
     },
     "winget": {
         "115.115": {
@@ -12973,7 +12973,7 @@
             "images": []
         },
         "TheTTRTeam.ToontownRewritten": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/XJzHGLmW/Toontown-Logo-Icon.png",
             "images": []
         },
         "ThielickeITSolutions.TIPP10": {
