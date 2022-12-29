@@ -1942,110 +1942,122 @@ class AboutSection(QScrollArea):
         self.layout.addWidget(title)
 
         self.layout.addSpacing(15)
-        
-        table = QTableWidget()
-        table.setAutoFillBackground(True)
-        table.setStyleSheet("*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;padding: 0px;margin: 0px;}QTableCornerButton::section,QHeaderView,QHeaderView::section,QTableWidget,QWidget,QTableWidget::item{background-color: transparent;border: 0px solid transparent}")
-        table.setColumnCount(2)
-        table.setRowCount(3)
-        table.setEnabled(False)
-        table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        table.setShowGrid(False)
-        table.setHorizontalHeaderLabels([_("Status"), _("Version")])
-        table.setColumnWidth(1, 500)
-        table.verticalHeader().setFixedWidth(100)
-        table.setVerticalHeaderLabels(["Winget ", "Scoop ", "GSudo "])
-        table.setItem(0, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["wingetFound"] else _("Not found")))
-        table.setItem(0, 1, QTableWidgetItem(" "+str(globals.componentStatus["wingetVersion"])))
-        table.setItem(1, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["scoopFound"] else _("Not found")))
-        table.setItem(1, 1, QTableWidgetItem(" "+str(globals.componentStatus["scoopVersion"])))
-        table.setItem(2, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["sudoFound"] else _("Not found")))
-        table.setItem(2, 1, QTableWidgetItem(" "+str(globals.componentStatus["sudoVersion"])))
-        table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignLeft)
-        table.setRowHeight(0, 35)
-        table.setRowHeight(1, 35)
-        table.setRowHeight(2, 35)
-        table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignLeft)
-        table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
-        table.verticalHeaderItem(1).setTextAlignment(Qt.AlignRight)
-        table.verticalHeaderItem(2).setTextAlignment(Qt.AlignRight)
-        table.setCornerWidget(QLabel(""))
-        table.setCornerButtonEnabled(False)
-        table.setFixedHeight(150)
-        table.cornerWidget().setStyleSheet("background: transparent;")
-        self.layout.addWidget(table)
-        title = QLabel(_("About WingetUI version {0}").format(versionName))
-        title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
-        self.layout.addWidget(title)
-        self.layout.addSpacing(5)
-        description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
-        self.layout.addWidget(description)
-        self.layout.addSpacing(5)
-        self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/WingetUI\">https://github.com/marticliment/WingetUI</a>"))
-        self.layout.addSpacing(30)
+        try:
+            table = QTableWidget()
+            table.setAutoFillBackground(True)
+            table.setStyleSheet("*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;padding: 0px;margin: 0px;}QTableCornerButton::section,QHeaderView,QHeaderView::section,QTableWidget,QWidget,QTableWidget::item{background-color: transparent;border: 0px solid transparent}")
+            table.setColumnCount(2)
+            table.setRowCount(3)
+            table.setEnabled(False)
+            table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            table.setShowGrid(False)
+            table.setHorizontalHeaderLabels([_("Status"), _("Version")])
+            table.setColumnWidth(1, 500)
+            table.verticalHeader().setFixedWidth(100)
+            table.setVerticalHeaderLabels(["Winget ", "Scoop ", "GSudo "])
+            table.setItem(0, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["wingetFound"] else _("Not found")))
+            table.setItem(0, 1, QTableWidgetItem(" "+str(globals.componentStatus["wingetVersion"])))
+            table.setItem(1, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["scoopFound"] else _("Not found")))
+            table.setItem(1, 1, QTableWidgetItem(" "+str(globals.componentStatus["scoopVersion"])))
+            table.setItem(2, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["sudoFound"] else _("Not found")))
+            table.setItem(2, 1, QTableWidgetItem(" "+str(globals.componentStatus["sudoVersion"])))
+            table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignLeft)
+            table.setRowHeight(0, 35)
+            table.setRowHeight(1, 35)
+            table.setRowHeight(2, 35)
+            table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignLeft)
+            table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
+            table.verticalHeaderItem(1).setTextAlignment(Qt.AlignRight)
+            table.verticalHeaderItem(2).setTextAlignment(Qt.AlignRight)
+            table.setCornerWidget(QLabel(""))
+            table.setCornerButtonEnabled(False)
+            table.setFixedHeight(150)
+            table.cornerWidget().setStyleSheet("background: transparent;")
+            self.layout.addWidget(table)
+            title = QLabel(_("About WingetUI version {0}").format(versionName))
+            title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+            self.layout.addWidget(title)
+            self.layout.addSpacing(5)
+            description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
+            self.layout.addWidget(description)
+            self.layout.addSpacing(5)
+            self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/WingetUI\">https://github.com/marticliment/WingetUI</a>"))
+            self.layout.addSpacing(30)
 
-        self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
-        self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
-        contributorsHTMLList = "<ul>"
-        for contributor in contributorsInfo:
-            contributorsHTMLList += f"<li><a style=\"color:{blueColor}\" href=\"{contributor.get('link')}\">{contributor.get('name')}</a></li>"
-        contributorsHTMLList += "</ul>"
-        self.layout.addWidget(QLinkLabel(contributorsHTMLList))
-        self.layout.addSpacing(15)
+            self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
+            self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
+            GHcontributors = "<ul>"
+            for user in (
+                "harleylara",
+                "MisterEvans78",
+                "neoOpus",
+                "panther7",
+                "ppvnf",
+                "RavenMacDaddy",
+                "Satanarious",
+                "sitiom",
+                "sklart",
+                "vedantmgoyal2009",
+                "victorelec14",
+                ):
+                GHcontributors += f"<li><a style=\"color:{blueColor}\" href=\"https://github.com/{user}\">{user}</a></li>"
+            GHcontributors += "</ul>"
+            self.layout.addWidget(QLinkLabel(GHcontributors))
+            self.layout.addSpacing(15)
 
-        self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
-        self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
-        translatorsHTMLList = "<ul>"
-        translatorList = []
-        translatorData: dict[str, str] = {}
-        for key, value in languageCredits.items():
-            langName = languageReference[key] if (key in languageReference) else key
-            for translator in value:
-                link = translator.get("link")
-                name = translator.get("name")
-                translatorLine = name
-                if (link):
-                    translatorLine = f"<a style=\"color:{blueColor}\" href=\"{link}\">{name}</a>"
-                translatorKey = f"{name}{langName}" # for sort
-                translatorList.append(translatorKey)
-                translatorData[translatorKey] = f"{translatorLine} ({langName})"
-        translatorList.sort(key=str.casefold)
-        for translator in translatorList:
-            translatorsHTMLList += f"<li>{translatorData[translator]}</li>"
-        translatorsHTMLList += "</ul><br>"
-        translatorsHTMLList += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
-        self.layout.addWidget(QLinkLabel(translatorsHTMLList))
-        self.layout.addSpacing(15)
-        
-        self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
-        self.layout.addWidget(QLinkLabel(_("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
-        self.layout.addWidget(QLinkLabel(_("Check out my {0} and my {1}!").format(f"<a style=\"color:{blueColor}\" href=\"https://github.com/marticliment\">{_('GitHub profile')}</a>", f"<a style=\"color:{blueColor}\" href=\"http://www.marticliment.com\">{_('homepage')}</a>")))
-        self.layout.addWidget(QLinkLabel(_("Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!").format(f"<a style=\"color:{blueColor}\" href=\"https://ko-fi.com/martinet101\">{_('buy me a coffee')}</a>")))
+            self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
+            self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
+            translators = "<ul>"
+            translatorList = []
+            for key in list(languageCredits.keys()):
+                for singleuser in languageCredits[key].split(","):
+                    if singleuser != "":
+                        translatorList.append(f"{singleuser.strip()} ({languageReference[key]})")
+            translatorList.sort(key=str.casefold)
+            for user in translatorList:
+                translators += f"<li>{user}</li>"
+            translators += "</ul><br>"
+            translators += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
+            self.layout.addWidget(QLinkLabel(translators))
+            self.layout.addSpacing(15)
+            
+            self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))        
+            self.layout.addWidget(QLinkLabel(_("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
+            try:
+                self.layout.addWidget(QLinkLabel(_("Check out my {0} and my {1}!").format(f"<a style=\"color:{blueColor}\" href=\"https://github.com/marticliment\">{_('GitHub profile')}</a>", f"<a style=\"color:{blueColor}\" href=\"http://www.marticliment.com\">{_('homepage')}</a>")))
+            except Exception as e:
+                print(e)
+                print(blueColor)
+                print(_('homepage'))
+                print(_('GitHub profile'))
+            self.layout.addWidget(QLinkLabel(_("Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!").format(f"<a style=\"color:{blueColor}\" href=\"https://ko-fi.com/martinet101\">{_('buy me a coffee')}</a>")))
 
-        self.layout.addSpacing(15)
-        self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
-        self.layout.addWidget(QLabel())
-        self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/WinGetUI/blob/main/LICENSE\">https://github.com/marticliment/WinGetUI/blob/main/LICENSE</a>"))
-        self.layout.addWidget(QLabel())
-        self.layout.addWidget(QLinkLabel(f"PySide6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
-        self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
-        self.layout.addWidget(QLinkLabel(f"Pywin32:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://spdx.org/licenses/PSF-2.0.html\">https://spdx.org/licenses/PSF-2.0.html</a>"))
-        self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
-        self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('Unlicense')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
-        self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
-        self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel(f"{_('Icons')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('By Icons8')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
-        self.layout.addWidget(QLinkLabel())
-        self.layout.addWidget(QLinkLabel())
-        button = QPushButton(_("About Qt6"))
-        button.setFixedWidth(710)
-        button.setFixedHeight(25)
-        button.clicked.connect(lambda: MessageBox.aboutQt(self, _("WingetUI - About Qt6")))
-        self.layout.addWidget(button)
-        self.layout.addWidget(QLinkLabel())
-        self.layout.addStretch()
-    
+            self.layout.addSpacing(15)
+            self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+            self.layout.addWidget(QLabel())
+            self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/WinGetUI/blob/main/LICENSE\">https://github.com/marticliment/WinGetUI/blob/main/LICENSE</a>"))
+            self.layout.addWidget(QLabel())
+            self.layout.addWidget(QLinkLabel(f"PySide6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
+            self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
+            self.layout.addWidget(QLinkLabel(f"Pywin32:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://spdx.org/licenses/PSF-2.0.html\">https://spdx.org/licenses/PSF-2.0.html</a>"))
+            self.layout.addWidget(QLinkLabel())
+            self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
+            self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('Unlicense')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
+            self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
+            self.layout.addWidget(QLinkLabel())
+            self.layout.addWidget(QLinkLabel(f"{_('Icons')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('By Icons8')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
+            self.layout.addWidget(QLinkLabel())
+            self.layout.addWidget(QLinkLabel())
+            button = QPushButton(_("About Qt6"))
+            button.setFixedWidth(710)
+            button.setFixedHeight(25)
+            button.clicked.connect(lambda: MessageBox.aboutQt(self, _("WingetUI - About Qt6")))
+            self.layout.addWidget(button)
+            self.layout.addWidget(QLinkLabel())
+            self.layout.addStretch()
+        except Exception as e:
+            self.layout.addWidget(QLabel("An error occurred while loading the about section"))
+            self.layout.addWidget(QLabel(str(e)))    
         print("🟢 About tab loaded!")
         
     def showEvent(self, event: QShowEvent) -> None:
@@ -2126,7 +2138,7 @@ class SettingsSection(QScrollArea):
             selectedLang = invertedLangDict[self.language.combobox.currentText()] # list(languageReference.keys())[i]
             cprint(invertedLangDict[self.language.combobox.currentText()])
             self.language.toggleRestartButton(selectedLang != langName)
-            setSettingsValue("PreferredLanguage", selectedLang, r=False)
+            setSettingsValue("PreferredLanguage", selectedLang)
 
         def restartElevenClockByLangChange():
             subprocess.run(str("start /B \"\" \""+sys.executable)+"\"", shell=True)
