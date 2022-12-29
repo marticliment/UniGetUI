@@ -1988,6 +1988,7 @@ class AboutSection(QScrollArea):
             self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
             GHcontributors = "<ul>"
             for user in (
+                "candrapersada",
                 "harleylara",
                 "MisterEvans78",
                 "neoOpus",
@@ -2010,9 +2011,12 @@ class AboutSection(QScrollArea):
             translators = "<ul>"
             translatorList = []
             for key in list(languageCredits.keys()):
-                for singleuser in languageCredits[key].split(","):
-                    if singleuser != "":
-                        translatorList.append(f"{singleuser.strip()} ({languageReference[key]})")
+                for singleuser in languageCredits[key]:
+                    if singleuser != []:
+                        if singleuser['link'] != "":
+                            translatorList.append(f"<a href='{singleuser['link']}' style='color:{blueColor}'>{singleuser['name']}</a> ({languageReference[key]})")
+                        else:
+                            translatorList.append(f"{singleuser['name']} ({languageReference[key]})")
             translatorList.sort(key=str.casefold)
             for user in translatorList:
                 translators += f"<li>{user}</li>"
@@ -2057,7 +2061,8 @@ class AboutSection(QScrollArea):
             self.layout.addStretch()
         except Exception as e:
             self.layout.addWidget(QLabel("An error occurred while loading the about section"))
-            self.layout.addWidget(QLabel(str(e)))    
+            self.layout.addWidget(QLabel(str(e)))
+            report(e)
         print("🟢 About tab loaded!")
         
     def showEvent(self, event: QShowEvent) -> None:
