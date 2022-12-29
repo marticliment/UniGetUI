@@ -1392,7 +1392,7 @@ class UninstallSoftwareSection(QWidget):
                 contextMenu.addSeparator()
             else:
                 contextMenu.addAction(ins5)
-            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store"):
+            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store", "steam"):
                 contextMenu.addAction(ins4)
 
             contextMenu.exec(QCursor.pos())
@@ -1431,7 +1431,7 @@ class UninstallSoftwareSection(QWidget):
 
         def showInfo():
             item = self.packageList.currentItem()
-            if item.text(4).lower() in ("local pc", "microsoft store"):
+            if item.text(4).lower() in ("local pc", "microsoft store", "steam"):
                 self.err = ErrorMessage(self.window())
                 errorData = {
                         "titlebarTitle": _("Unable to load informarion"),
@@ -1555,6 +1555,7 @@ class UninstallSoftwareSection(QWidget):
         self.scoopIcon = QIcon(getMedia("scoop"))
         self.localIcon = QIcon(getMedia("localpc"))
         self.MSStoreIcon = QIcon(getMedia("msstore"))
+        self.SteamIcon = QIcon(getMedia("steam"))
         
     
         if not getSettings("DisableWinget"):
@@ -1729,6 +1730,10 @@ class UninstallSoftwareSection(QWidget):
                                     store = "Winget"
                                     break
                 
+                if store.lower() == "local pc":
+                    if id == "Steam":
+                        store = "Steam"
+                
                 if store.lower() == "winget":
                     if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
                         store = "Microsoft Store"
@@ -1747,6 +1752,8 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.wingetIcon)
             elif "local pc" in store.lower():
                 item.setIcon(4, self.localIcon)
+            elif "steam" in store.lower():
+                item.setIcon(4, self.SteamIcon)
             else:
                 item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
