@@ -276,7 +276,7 @@ try:
                 menu.addAction(self.discoverPackages)
                 menu.addSeparator()
                 
-                self.updatePackages = QAction(_("Available Updates"), menu)
+                self.updatePackages = QAction(_("Software Updates"), menu)
                 globals.updatesAction = self.updatePackages
                 menu.addAction(self.updatePackages)
                 
