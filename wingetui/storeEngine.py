@@ -427,7 +427,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
-        if(self.store == "winget" or self.store.lower() in ("local pc", "microsoft store")):
+        if(self.store == "winget" or self.store.lower() in ("local pc", "microsoft store", "steam")):
             self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
