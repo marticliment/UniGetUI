@@ -23,8 +23,11 @@ Before reading: All of the rules below are guidelines, what means that they shou
  - Please make sure to preceed titles with the `[BUG/ISSUE]` string, so they can be easily identified
 
 #### Feature requests:
+- Please use the FEATURE REQUEST template
  - Please detail how the feature should work. Please be as specific as possible.
  - Some features are difficult, and might take some time to get implemented. This project is made on the contribur's free time, so please do not post messages asking for ETAs or similar. Every feature request will be considered.
+ - Please make sure to check for duplicates as said in the FEATURE REQUEST template.
+ - Please make sure to preceed titles with the `[FEATURE REQUEST]` string, so they can be easily identified
 
 ## Pull requests:
  - Please sppecify, either in the title or in the PR body text, the changes done. 
