@@ -2,22 +2,17 @@
 
 untranslatedPercentage = {
   "ar": "0%",
-  "bg": "0%",
+  "bg": "71%",
   "bn": "19%",
-  "cs": "99%",
   "de": "92%",
   "es": "11%",
-  "fr": "92%",
   "hi": "85%",
   "hr": "0%",
   "hu": "99%",
   "it": "99%",
   "ja": "93%",
   "ko": "32%",
-  "nl": "21%",
   "pl": "38%",
-  "pt_BR": "99%",
-  "pt_PT": "99%",
   "ru": "85%",
   "sr": "22%",
   "tr": "89%",
@@ -28,7 +23,12 @@ untranslatedPercentage = {
 
 languageCredits = {
   "ar": [],
-  "bg": [],
+  "bg": [
+    {
+      "name": "Vasil Kolev",
+      "link": ""
+    }
+  ],
   "bn": [
     {
       "name": "Nilavra Bhattacharya",
@@ -124,12 +124,8 @@ languageCredits = {
   ],
   "nl": [
     {
-      "name": "marticliment",
-      "link": "https://github.com/marticliment"
-    },
-    {
-      "name": "ppvnf",
-      "link": "https://github.com/ppvnf"
+      "name": "abbydiode",
+      "link": "https://github.com/abbydiode"
     },
     {
       "name": "Stephan Paternotte",
