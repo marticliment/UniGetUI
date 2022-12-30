@@ -1392,7 +1392,7 @@ class UninstallSoftwareSection(QWidget):
                 contextMenu.addSeparator()
             else:
                 contextMenu.addAction(ins5)
-            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store", "steam"):
+            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store", "steam", "gog"):
                 contextMenu.addAction(ins4)
 
             contextMenu.exec(QCursor.pos())
@@ -1431,7 +1431,7 @@ class UninstallSoftwareSection(QWidget):
 
         def showInfo():
             item = self.packageList.currentItem()
-            if item.text(4).lower() in ("local pc", "microsoft store", "steam"):
+            if item.text(4).lower() in ("local pc", "microsoft store", "steam", "gog"):
                 self.err = ErrorMessage(self.window())
                 errorData = {
                         "titlebarTitle": _("Unable to load informarion"),
@@ -1556,6 +1556,7 @@ class UninstallSoftwareSection(QWidget):
         self.localIcon = QIcon(getMedia("localpc"))
         self.MSStoreIcon = QIcon(getMedia("msstore"))
         self.SteamIcon = QIcon(getMedia("steam"))
+        self.GOGIcon = QIcon(getMedia("gog"))
         
     
         if not getSettings("DisableWinget"):
@@ -1733,6 +1734,16 @@ class UninstallSoftwareSection(QWidget):
                 if store.lower() == "local pc":
                     if id == "Steam":
                         store = "Steam"
+                    if id.count("_is1") == 1:
+                        store = "GOG" 
+                        for letter in id:
+                            if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                                store = "Local PC"
+                                break
+                        if len(id) != 14:
+                            store = "Local PC"
+                        if id.count("GOG") == 1:
+                            store = "GOG"
                 
                 if store.lower() == "winget":
                     if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
@@ -1754,6 +1765,8 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.localIcon)
             elif "steam" in store.lower():
                 item.setIcon(4, self.SteamIcon)
+            elif "gog" in store.lower():
+                item.setIcon(4, self.GOGIcon)
             else:
                 item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
