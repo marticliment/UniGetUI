@@ -1392,7 +1392,7 @@ class UninstallSoftwareSection(QWidget):
                 contextMenu.addSeparator()
             else:
                 contextMenu.addAction(ins5)
-            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store", "steam", "gog"):
+            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store", "steam", "gog", "ubisoft connect"):
                 contextMenu.addAction(ins4)
 
             contextMenu.exec(QCursor.pos())
@@ -1431,7 +1431,7 @@ class UninstallSoftwareSection(QWidget):
 
         def showInfo():
             item = self.packageList.currentItem()
-            if item.text(4).lower() in ("local pc", "microsoft store", "steam", "gog"):
+            if item.text(4).lower() in ("local pc", "microsoft store", "steam", "gog", "ubisoft connect"):
                 self.err = ErrorMessage(self.window())
                 errorData = {
                         "titlebarTitle": _("Unable to load informarion"),
@@ -1557,6 +1557,7 @@ class UninstallSoftwareSection(QWidget):
         self.MSStoreIcon = QIcon(getMedia("msstore"))
         self.SteamIcon = QIcon(getMedia("steam"))
         self.GOGIcon = QIcon(getMedia("gog"))
+        self.UPLAYIcon = QIcon(getMedia("uplay"))
         
     
         if not getSettings("DisableWinget"):
@@ -1734,6 +1735,8 @@ class UninstallSoftwareSection(QWidget):
                 if store.lower() == "local pc":
                     if id == "Steam":
                         store = "Steam"
+                    if id == "Uplay":
+                        store = "Ubisoft Connect"
                     if id.count("_is1") == 1:
                         store = "GOG" 
                         for letter in id:
@@ -1767,6 +1770,8 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.SteamIcon)
             elif "gog" in store.lower():
                 item.setIcon(4, self.GOGIcon)
+            elif "ubisoft connect" in store.lower():
+                item.setIcon(4, self.UPLAYIcon)
             else:
                 item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
