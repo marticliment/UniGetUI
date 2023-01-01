@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 395
+        "done": 403
     },
     "winget": {
         "115.115": {
@@ -5457,19 +5457,27 @@
         },
         "Google.Chrome": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/2048px-Google_Chrome_icon_%28February_2022%29.svg.png",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+            ]
         },
         "Google.Chrome.Beta": {
             "icon": "https://image.winudf.com/v2/image1/Y29tLmNocm9tZS5kZXZfaWNvbl8xNTYzNDkxNzUyXzA3Ng/icon.png?w=&fakeurl=1",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+            ]
         },
         "Google.Chrome.Canary": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Chrome-canary-logo.svg/512px-Chrome-canary-logo.svg.png",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.pngg"
+            ]
         },
         "Google.Chrome.Dev": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+            ]
         },
         "Google.ChromeRemoteDesktop": {
             "icon": "https://play-lh.googleusercontent.com/I4DRWoABrUQsaAIQFVSKha98q1u2ilEdrwPJBaf9Mb8KdGZnXzs5DObrwcwUZovgOA",
@@ -5999,7 +6007,11 @@
         },
         "HydrusNetwork.HydrusNetwork": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://raw.githubusercontent.com/hydrusnetwork/hydrus/master/static/hydrus.png",
+                "https://hydrusnetwork.github.io/hydrus/images/screenshot_empty.png",
+                "https://hydrusnetwork.github.io/hydrus/images/screenshot_thread_watcher.png"
+            ]
         },
         "Hypermodules.Hyperamp": {
             "icon": "",
@@ -8648,12 +8660,17 @@
             "images": []
         },
         "Microsoft.VisualStudioCode": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/langfr-800px-Visual_Studio_Code_1.35_icon.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Visual_Studio_Code_0.10.1_on_Windows_7%2C_with_search.png/1024px-Visual_Studio_Code_0.10.1_on_Windows_7%2C_with_search.png",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118"
+            ]
         },
         "Microsoft.VisualStudioCode.Insiders": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118"
+            ]
         },
         "Microsoft.WebDeploy": {
             "icon": "",
@@ -8968,34 +8985,45 @@
             "images": []
         },
         "Mozilla.Firefox": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/800px-Firefox_logo%2C_2019.svg.png",
             "images": [
-                "https://i.postimg.cc/zBRhkhmQ/Firefox-96-screenshot.png"
+                "https://i.postimg.cc/zBRhkhmQ/Firefox-96-screenshot.png",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
             ]
         },
         "Mozilla.Firefox.Beta": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Firefox_beta_logo.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+            ]
         },
         "Mozilla.Firefox.DeveloperEdition": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Firefox_Developer_Edition_logo%2C_2019.svg/800px-Firefox_Developer_Edition_logo%2C_2019.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.pngg"
+            ]
         },
         "Mozilla.Firefox.ESR": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/800px-Firefox_logo%2C_2019.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+            ]
         },
         "Mozilla.Firefox.Nightly": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Firefox_Nightly_logo%2C_2019.svg/800px-Firefox_Nightly_logo%2C_2019.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+            ]
         },
         "Mozilla.SeaMonkey": {
             "icon": "",
             "images": []
         },
         "Mozilla.Thunderbird": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Thunderbird_Logo%2C_2018.svg/langfr-800px-Thunderbird_Logo%2C_2018.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Thunderbird_102_screenshot.png/1024px-Thunderbird_102_screenshot.png"
+            ]
         },
         "Mozilla.Thunderbird.Beta": {
             "icon": "",
@@ -13097,7 +13125,7 @@
             "images": []
         },
         "TorProject.TorBrowser": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Tor_Browser_icon.svg/800px-Tor_Browser_icon.svg.png",
             "images": []
         },
         "Torchsoft.RegistryWorkshop": {
@@ -13470,7 +13498,9 @@
         },
         "VSCodium.VSCodium": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118"
+            ]
         },
         "VSCodium.VSCodium.Insiders": {
             "icon": "",
