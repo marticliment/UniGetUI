@@ -1738,9 +1738,9 @@ class UninstallSoftwareSection(QWidget):
                     if id == "Uplay":
                         store = "Ubisoft Connect"
                     if id.count("_is1") == 1:
-                        store = "GOG" 
-                        for letter in id:
-                            if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                        store = "GOG"
+                        for number in id.split("_is1")[0]:
+                            if number not in "0123456789":
                                 store = "Local PC"
                                 break
                         if len(id) != 14:
