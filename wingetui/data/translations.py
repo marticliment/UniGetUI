@@ -9,10 +9,10 @@ untranslatedPercentage = {
   "hi": "85%",
   "hr": "0%",
   "hu": "99%",
-  "id": "0%",
+  "id": "9%",
   "it": "99%",
   "ja": "93%",
-  "ko": "50%",
+  "ko": "59%",
   "pl": "38%",
   "ru": "85%",
   "sr": "22%",
@@ -103,7 +103,12 @@ languageCredits = {
       "link": ""
     }
   ],
-  "id": [],
+  "id": [
+    {
+      "name": "arthackrc",
+      "link": "https://github.com/arthackrc"
+    }
+  ],
   "it": [
     {
       "name": "GiacoBot",
