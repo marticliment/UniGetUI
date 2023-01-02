@@ -47,4 +47,5 @@ Before reading: All of the rules below are guidelines, what means that they shou
 ## Commits:
  - Commits must include only changes on one feature or section of the code. Let's say, you have fixed an issue regarding localisation and added a new entry in the settings section to change update frequency, those two cyhanges must be committed separately.
  - The code in each commit should be executable. Please do not leave work unfinished across commits, or, if it is needed, let the code be executed without errors.
+ - Commit names must be clear and self-explanatory, should must refrernce, if applicable, the issue they represent.
 
