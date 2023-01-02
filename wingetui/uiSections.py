@@ -1622,8 +1622,8 @@ class UninstallSoftwareSection(QWidget):
             "titlebarTitle": "Wait!",
             "mainTitle": _("Are you sure?"),
             "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
-            "acceptButtonTitle": "Yes",
-            "cancelButtonTitle": "No",
+            "acceptButtonTitle": _("Yes"),
+            "cancelButtonTitle": _("No"),
             "icon": QIcon(),
         }
         if a.askQuestion(questionData):
@@ -1823,8 +1823,8 @@ class UninstallSoftwareSection(QWidget):
             "titlebarTitle": "Wait!",
             "mainTitle": _("Are you sure?"),
             "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
-            "acceptButtonTitle": "Yes",
-            "cancelButtonTitle": "No",
+            "acceptButtonTitle": _("Yes"),
+            "cancelButtonTitle": _("No"),
             "icon": QIcon(),
         }
         if a.askQuestion(questionData):
