@@ -815,7 +815,7 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist apps"), self.toolbar)
+        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist packages"), self.toolbar)
         self.selectAllAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.selectAllAction)
         self.selectAllAction = QAction(QIcon(getMedia("undelete")), _("Reset blacklist"), self.toolbar)
@@ -2355,7 +2355,7 @@ class SettingsSection(QScrollArea):
         disableScoop.setChecked(not getSettings("DisableScoop"))
         disableScoop.stateChanged.connect(lambda v: (setSettings("DisableScoop", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v)))
         self.scoopPreferences.addWidget(disableScoop)
-        scoopPreventCaps = QSettingsCheckBox(_("Show Scoop apps as lowercase"))
+        scoopPreventCaps = QSettingsCheckBox(_("Show Scoop packages in lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
         scoopPreventCaps.stateChanged.connect(lambda v: setSettings("LowercaseScoopApps", bool(v)))
         self.scoopPreferences.addWidget(scoopPreventCaps)
