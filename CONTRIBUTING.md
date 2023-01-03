@@ -11,7 +11,7 @@ This repository **respects** people, despite their race, gender, religion, heigh
 Before reading: All of the rules below are guidelines, what means that they should be followed when possible. Please do not take them literally.
 
 ## Discussions:
- - This is the place to post any questions/doubts regarding WingetUI. Issues and feature requests should be posted in the [issues section](https://github.com/marticliment/WingetUI/issues)
+ - This is the place to post any questions/doubts regarding WingetUI. Issues and feature requests should be posted in the [issues section](https://github.com/marticliment/WingetUI/issues).
 
 ## Issues and feature requests:
 
@@ -20,14 +20,14 @@ Before reading: All of the rules below are guidelines, what means that they shou
  - Please be clear when describing issues.
  - Please DO fill the form and DO NOT send empty issues with the information on the title.
  - Please make sure to check for duplicates as said in the BUG/ISSUE template.
- - Please make sure to preceed titles with the `[BUG/ISSUE]` string, so they can be easily identified
+ - Please make sure to preceed titles with the `[BUG/ISSUE]` string, so they can be easily identified.
 
 #### Feature requests:
 - Please use the FEATURE REQUEST template
  - Please detail how the feature should work. Please be as specific as possible.
  - Some features are difficult, and might take some time to get implemented. This project is made on the contribur's free time, so please do not post messages asking for ETAs or similar. Every feature request will be considered.
  - Please make sure to check for duplicates as said in the FEATURE REQUEST template.
- - Please make sure to preceed titles with the `[FEATURE REQUEST]` string, so they can be easily identified
+ - Please make sure to preceed titles with the `[FEATURE REQUEST]` string, so they can be easily identified.
 
 ## Pull requests:
  - Please sppecify, either in the title or in the PR body text, the changes done. 
@@ -43,9 +43,9 @@ Before reading: All of the rules below are guidelines, what means that they shou
    - Example: `SYSTEM_DEFAULT_LOCALE = "ca-ES"`
  - Please specify, when possible, variable data types and function return types. More info [here](https://python.plainenglish.io/specifying-data-types-in-python-c182fda3bf43)
  - Try to add spaces and empty newlines to make code more human readable.
- - 
+
 ## Commits:
- - Commits must include only changes on one feature or section of the code. Let's say, you have fixed an issue regarding localisation and added a new entry in the settings section to change update frequency, those two cyhanges must be committed separately.
+ - Commits must include only changes on one feature or section of the code. Let's say, you have fixed an issue regarding localisation and added a new entry in the settings section to change update frequency, those two changes must be committed separately.
  - The code in each commit should be executable. Please do not leave work unfinished across commits, or, if it is needed, let the code be executed without errors.
- - Commit names must be clear and self-explanatory, should must refrernce, if applicable, the issue they represent.
+ - Commit names must be clear and self-explanatory, and, if applicable, must reference the corresponding issue.
 
