@@ -2,16 +2,15 @@
 
 untranslatedPercentage = {
   "bn": "19%",
-  "da": "0%",
+  "da": "54%",
   "de": "92%",
-  "es": "66%",
+  "es": "67%",
   "hi": "85%",
   "hr": "0%",
-  "hu": "99%",
   "id": "9%",
   "it": "99%",
   "ja": "93%",
-  "ko": "63%",
+  "ko": "76%",
   "pl": "38%",
   "ru": "85%",
   "sr": "22%",
@@ -24,10 +23,6 @@ languageCredits = {
   "ar": [
     {
       "name": "Abdullah AS",
-      "link": ""
-    },
-    {
-      "name": "MahmoudAdel",
       "link": ""
     }
   ],
@@ -59,7 +54,12 @@ languageCredits = {
       "link": ""
     }
   ],
-  "da": [],
+  "da": [
+    {
+      "name": "mikkolukas",
+      "link": "https://github.com/mikkolukas"
+    }
+  ],
   "de": [
     {
       "name": "Datacra5H",
@@ -77,6 +77,10 @@ languageCredits = {
     }
   ],
   "es": [
+    {
+      "name": "JMoreno97",
+      "link": "https://github.com/JMoreno97"
+    },
     {
       "name": "rubnium",
       "link": "https://github.com/rubnium"
