@@ -4,13 +4,13 @@ untranslatedPercentage = {
   "bn": "19%",
   "da": "54%",
   "de": "92%",
-  "es": "67%",
+  "es": "81%",
   "hi": "85%",
   "hr": "0%",
   "id": "9%",
   "it": "99%",
   "ja": "93%",
-  "ko": "76%",
+  "ko": "78%",
   "pl": "38%",
   "ru": "85%",
   "sr": "22%",
@@ -22,7 +22,11 @@ untranslatedPercentage = {
 languageCredits = {
   "ar": [
     {
-      "name": "Abdullah AS",
+      "name": "Abdu11ahAS",
+      "link": "https://github.com/Abdu11ahAS"
+    },
+    {
+      "name": "Abdullah A.S",
       "link": ""
     }
   ],
