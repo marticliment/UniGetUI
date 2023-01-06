@@ -1392,7 +1392,7 @@ class UninstallSoftwareSection(QWidget):
                 contextMenu.addSeparator()
             else:
                 contextMenu.addAction(ins5)
-            if self.packageList.currentItem().text(4).lower() not in ("local pc", "microsoft store", "steam", "gog", "ubisoft connect"):
+            if self.packageList.currentItem().text(4) not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
                 contextMenu.addAction(ins4)
 
             contextMenu.exec(QCursor.pos())
@@ -1431,7 +1431,7 @@ class UninstallSoftwareSection(QWidget):
 
         def showInfo():
             item = self.packageList.currentItem()
-            if item.text(4).lower() in ("local pc", "microsoft store", "steam", "gog", "ubisoft connect"):
+            if item.text(4) in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
                 self.err = ErrorMessage(self.window())
                 errorData = {
                         "titlebarTitle": _("Unable to load informarion"),
@@ -1720,19 +1720,19 @@ class UninstallSoftwareSection(QWidget):
             if store.lower() == "winget":
                 for illegal_char in ("{", "}", " "):
                     if illegal_char in id:
-                        store = "Local PC"
+                        store = (_("Local PC"))
                         break
                 
                 if store.lower() == "winget":
                     if id.count(".") != 1:
-                        store = "Local PC"
+                        store = (_("Local PC"))
                         if id.count(".") > 1:
                             for letter in id:
                                 if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                                     store = "Winget"
                                     break
                 
-                if store.lower() == "local pc":
+                if store == (_("Local PC")):
                     if id == "Steam":
                         store = "Steam"
                     if id == "Uplay":
@@ -1741,10 +1741,10 @@ class UninstallSoftwareSection(QWidget):
                         store = "GOG"
                         for number in id.split("_is1")[0]:
                             if number not in "0123456789":
-                                store = "Local PC"
+                                store = (_("Local PC"))
                                 break
                         if len(id) != 14:
-                            store = "Local PC"
+                            store = (_("Local PC"))
                         if id.count("GOG") == 1:
                             store = "GOG"
                 
@@ -1764,7 +1764,7 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.scoopIcon)
             elif "winget" in store.lower():
                 item.setIcon(4, self.wingetIcon)
-            elif "local pc" in store.lower():
+            elif (_("Local PC")) in store:
                 item.setIcon(4, self.localIcon)
             elif "steam" in store.lower():
                 item.setIcon(4, self.SteamIcon)
