@@ -10,8 +10,8 @@ untranslatedPercentage = {
   "id": "9%",
   "it": "99%",
   "ja": "93%",
-  "ko": "78%",
-  "pl": "38%",
+  "ko": "80%",
+  "pl": "83%",
   "ru": "85%",
   "sr": "22%",
   "tr": "89%",
@@ -156,11 +156,15 @@ languageCredits = {
       "link": "https://github.com/abbydiode"
     },
     {
-      "name": "Stephan Paternotte",
-      "link": ""
+      "name": "Stephan-P",
+      "link": "https://github.com/Stephan-P"
     }
   ],
   "pl": [
+    {
+      "name": "KamilZielinski",
+      "link": ""
+    },
     {
       "name": "regulargvy13",
       "link": ""
