@@ -230,7 +230,7 @@
   "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them." : "Niet-installeerbare pakketten waarvan de oorsprong wordt vermeld als \"Lokale PC\" zijn niet gepubliceerd in package managers, dus er is geen informatie beschikbaar om erover te laten zien.",
   "Uninstall as administrator" : "Verwijderen als beheerder",
   "uninstallation" : "verwijdering",
-  "Uninstall canceled by the user!" : "Verwijdering geannuleerd door gebruiker",
+  "Uninstall canceled by the user!" : "Verwijdering geannuleerd door gebruiker!",
   "uninstalled" : "verwijderd",
   "uninstalling" : "verwijderen",
   "Uninstall package" : "Pakket verwijderen",
