@@ -4,18 +4,17 @@ untranslatedPercentage = {
   "bn": "19%",
   "da": "54%",
   "de": "92%",
-  "es": "81%",
   "hi": "85%",
   "hr": "0%",
   "id": "9%",
   "it": "99%",
   "ja": "93%",
   "ko": "80%",
-  "pl": "83%",
+  "pl": "99%",
   "ru": "85%",
   "sr": "22%",
   "tr": "89%",
-  "ua": "85%",
+  "ua": "89%",
   "zh_TW": "89%"
 }
 
@@ -81,6 +80,10 @@ languageCredits = {
     }
   ],
   "es": [
+    {
+      "name": "dalbitresb12",
+      "link": "https://github.com/dalbitresb12"
+    },
     {
       "name": "JMoreno97",
       "link": "https://github.com/JMoreno97"
@@ -163,7 +166,7 @@ languageCredits = {
   "pl": [
     {
       "name": "KamilZielinski",
-      "link": ""
+      "link": "https://github.com/KamilZielinski"
     },
     {
       "name": "regulargvy13",
