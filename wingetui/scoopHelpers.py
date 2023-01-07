@@ -224,7 +224,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             if("was uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
-    if "-g" in output and not "successfully" in output:
+    if "-g" in output and not "was uninstalled" in output:
         outputCode = 1602
     elif "requires admin rights" in output:
         outputCode = 1603
