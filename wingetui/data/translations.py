@@ -2,32 +2,29 @@
 
 untranslatedPercentage = {
   "bn": "19%",
-  "da": "0%",
+  "da": "54%",
   "de": "92%",
-  "es": "66%",
   "hi": "85%",
   "hr": "0%",
-  "hu": "99%",
   "id": "9%",
   "it": "99%",
   "ja": "93%",
-  "ko": "63%",
-  "pl": "38%",
+  "ko": "80%",
   "ru": "85%",
   "sr": "22%",
   "tr": "89%",
-  "ua": "85%",
+  "ua": "89%",
   "zh_TW": "89%"
 }
 
 languageCredits = {
   "ar": [
     {
-      "name": "Abdullah AS",
-      "link": ""
+      "name": "Abdu11ahAS",
+      "link": "https://github.com/Abdu11ahAS"
     },
     {
-      "name": "MahmoudAdel",
+      "name": "Abdullah A.S",
       "link": ""
     }
   ],
@@ -59,7 +56,12 @@ languageCredits = {
       "link": ""
     }
   ],
-  "da": [],
+  "da": [
+    {
+      "name": "mikkolukas",
+      "link": "https://github.com/mikkolukas"
+    }
+  ],
   "de": [
     {
       "name": "Datacra5H",
@@ -77,6 +79,14 @@ languageCredits = {
     }
   ],
   "es": [
+    {
+      "name": "dalbitresb12",
+      "link": "https://github.com/dalbitresb12"
+    },
+    {
+      "name": "JMoreno97",
+      "link": "https://github.com/JMoreno97"
+    },
     {
       "name": "rubnium",
       "link": "https://github.com/rubnium"
@@ -148,11 +158,15 @@ languageCredits = {
       "link": "https://github.com/abbydiode"
     },
     {
-      "name": "Stephan Paternotte",
-      "link": ""
+      "name": "Stephan-P",
+      "link": "https://github.com/Stephan-P"
     }
   ],
   "pl": [
+    {
+      "name": "KamilZielinski",
+      "link": "https://github.com/KamilZielinski"
+    },
     {
       "name": "regulargvy13",
       "link": ""

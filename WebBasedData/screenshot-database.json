@@ -3,7 +3,7 @@
         "winget": 3863,
         "scoop": 1093,
         "total": 4956,
-        "done": 403
+        "done": 425
     },
     "winget": {
         "115.115": {
@@ -1121,7 +1121,7 @@
             "images": []
         },
         "AnyDeskSoftwareGmbH.AnyDesk": {
-            "icon": "https://filecr.com/wp-content/uploads/2021/03/anydesk_icon.png",
+            "icon": "https://img.icons8.com/fluency/512/anydesk.png",
             "images": [
                 "https://cdn.mos.cms.futurecdn.net/rGU2S5Jz22yFy28i5shEFL.jpg",
                 "https://blog.anydesk.com/wp-content/uploads/2019/04/anydesk-software-version-5.png",
@@ -5158,15 +5158,15 @@
             "images": []
         },
         "GeoGebra.CalculatorSuite": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Geogebra.svg/240px-Geogebra.svg.png",
             "images": []
         },
         "GeoGebra.Classic": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Geogebra.svg/240px-Geogebra.svg.png",
             "images": []
         },
         "GeoGebra.Classic.5": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Geogebra.svg/240px-Geogebra.svg.png",
             "images": []
         },
         "GeoGebra.Geometry": {
@@ -6209,8 +6209,11 @@
             "images": []
         },
         "Inkscape.Inkscape": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Inkscape_Logo.svg/240px-Inkscape_Logo.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/e/e5/Inkscape_1.2_screenshot.png",
+                "https://media.inkscape.org/media/resources/render/Screenshot_Freedom_Machine_Inkscape_master_spEBt2Y.png"
+            ]
         },
         "Insecure.Nmap": {
             "icon": "",
@@ -6385,8 +6388,11 @@
             "images": []
         },
         "JackieLiu.NotepadsApp": {
-            "icon": "",
-            "images": []
+            "icon": "https://store-images.s-microsoft.com/image/apps.50935.13628411695448126.aaaa4dcd-6a65-403d-a558-9a51a7efcd04.f8723b56-2380-4980-91da-41d0bb46fa05",
+            "images": [
+                "https://static.wixstatic.com/media/0fcd80_f13c96da960d491fa8862087ad614ce4~mv2.png/v1/fill/w_972,h_745,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/1.png",
+                "https://static.wixstatic.com/media/0fcd80_282f2d7627c94d86b22f90c4e0b3448d~mv2.png/v1/fill/w_956,h_744,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/2.png"
+            ]
         },
         "Jacksta.Instigator": {
             "icon": "",
@@ -6785,8 +6791,10 @@
             "images": []
         },
         "KCSoftwares.SUMo": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.kcsoftwares.com/images/SUMo_icon.png",
+            "images": [
+                "https://www.kcsoftwares.com/images/SUMo_screen.png"
+            ]
         },
         "KCSoftwares.VideoInspector": {
             "icon": "",
@@ -6965,8 +6973,13 @@
             "images": []
         },
         "KeePassXCTeam.KeePassXC": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/KeePassXC.svg/480px-KeePassXC.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/1/1e/KeePassXC_main_men%C3%BA.png",
+                "https://keepassxc.org/images/screenshots/database_view.png",
+                "https://keepassxc.org/images/screenshots/edit_entry.png",
+                "https://keepassxc.org/images/screenshots/password_generator_advanced.png"
+            ]
         },
         "KeeWeb.KeeWeb": {
             "icon": "",
@@ -7752,12 +7765,18 @@
             "images": []
         },
         "M2Team.NanaZip": {
-            "icon": "",
-            "images": []
+            "icon": "https://github.com/M2Team/NanaZip/blob/main/Assets/NanaZip.png?raw=true",
+            "images": [
+                "https://github.com/M2Team/NanaZip/blob/main/Documents/ContextMenu.png?raw=true",
+                "https://github.com/M2Team/NanaZip/blob/main/Documents/MainWindow.png?raw=true"
+            ]
         },
         "M2Team.NanaZip.Preview": {
-            "icon": "",
-            "images": []
+            "icon": "https://store-images.s-microsoft.com/image/apps.50792.14474509061719709.17da0911-dc1c-48b2-9bcb-e41dc2e0e38e.862b41b7-470d-46f3-801f-8b701239fbab",
+            "images": [
+                "https://github.com/M2Team/NanaZip/blob/main/Documents/ContextMenu.png?raw=true",
+                "https://github.com/M2Team/NanaZip/blob/main/Documents/MainWindow.png?raw=true"
+            ]
         },
         "MAMP.MAMP": {
             "icon": "",
@@ -8350,7 +8369,7 @@
             "images": []
         },
         "Microsoft.OneDrive": {
-            "icon": "https://play-lh.googleusercontent.com/6AWr-qrhGT0ohjw0koq3bM8GHEFg1gTurald4FjCDg2RulTp4y_VVsYWUtw7Fo6lsQo",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Microsoft_Office_OneDrive_%282019%E2%80%93present%29.svg/320px-Microsoft_Office_OneDrive_%282019%E2%80%93present%29.svg.png",
             "images": []
         },
         "Microsoft.OneDrive.Enterprise": {
@@ -8496,8 +8515,10 @@
             "images": []
         },
         "Microsoft.Teams": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_(2018%E2%80%93present).svg/258px-Microsoft_Office_Teams_(2018%E2%80%93present).svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/en/f/f1/Microsoft_Teams_Desktop_Application_Screenshot.png"
+            ]
         },
         "Microsoft.Teams.ContinuousDeployme\u2026": {
             "icon": "",
@@ -8705,8 +8726,11 @@
             "images": []
         },
         "Microsoft.WindowsTerminal": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Windows_Terminal_logo.svg/320px-Windows_Terminal_logo.svg.png",
+            "images": [
+                "https://store-images.s-microsoft.com/image/apps.64156.13926773940052066.16e93a5b-b25f-4aaf-8a38-77375e237879.00013886-8351-473f-9acd-7fcce9ee7388",
+                "https://store-images.s-microsoft.com/image/apps.28865.13926773940052066.16e93a5b-b25f-4aaf-8a38-77375e237879.78e2aeac-6ede-4855-acb1-79a854b5556d"
+            ]
         },
         "Microsoft.WindowsTerminal.Preview": {
             "icon": "",
@@ -9126,8 +9150,12 @@
             "images": []
         },
         "NGWIN.PicPick": {
-            "icon": "",
-            "images": []
+            "icon": "https://picpick.app/static/logo-32ef3f284ce5058bd11263e9796a5606.png",
+            "images": [
+                "https://picpick.app/static/screenshot_6-5e1b3ae39deaa0e864db567987191881.png",
+                "https://picpick.app/static/screenshot_5-ce960495e0e30e97d983172f9e9b0e7a.png",
+                "https://picpick.app/static/screenshot_2-fa50c1e8d5b5bdcafdd5e647d467cfac.png"
+            ]
         },
         "NHNCorporation.Dooray!Drive": {
             "icon": "",
@@ -9540,11 +9568,13 @@
             "images": []
         },
         "OBSProject.OBSStudio": {
-            "icon": "https://i.imgur.com/Pfebesu.png",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/OBS_Studio_Logo.svg/512px-OBS_Studio_Logo.svg.png",
+            "images": [
+                "https://obsproject.com/assets/images/features-new/hero.png"
+            ]
         },
         "OBSProject.OBSStudio.Pre-release": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/OBS_Studio_Logo.svg/512px-OBS_Studio_Logo.svg.png",
             "images": []
         },
         "OBSProject.obs-amd-encoder": {
@@ -9601,9 +9631,11 @@
             "icon": "",
             "images": []
         },
-        "Ocenaudio.Ocenaudio": {
-            "icon": "",
-            "images": []
+        "https://www.ocenaudio.com/imgs/sc6058.win.en.png": {
+            "icon": "https://www.ocenaudio.com/imgs/ocenaudio164.png",
+            "images": [
+                "https://www.ocenaudio.com/imgs/sc6058.win.en.png"
+            ]
         },
         "OctopusDeploy.Server": {
             "icon": "",
@@ -10878,8 +10910,12 @@
             "images": []
         },
         "RandomEngy.VidCoder": {
-            "icon": "",
-            "images": []
+            "icon": "https://vidcoder.net/images/BannerLarge.png",
+            "images": [
+                "https://vidcoder.net/images/main.png",
+                "https://vidcoder.net/images/preview.png",
+                "https://vidcoder.net/images/encoding_settings.png"
+            ]
         },
         "RandomEngy.VidCoder.Beta": {
             "icon": "",
@@ -11641,7 +11677,7 @@
             "images": []
         },
         "Scribus.Scribus": {
-            "icon": "",
+            "icon": "https://wiki.scribus.net/wiki/images/thumb/f/f1/Scribusicon-blue.png/200px-Scribusicon-blue.png",
             "images": []
         },
         "ScummVM.ScummVM": {
@@ -12969,11 +13005,12 @@
             "images": []
         },
         "TheDocumentFoundation.LibreOffice": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/LibreOffice_icon_3.3.1_48_px.svg/200px-LibreOffice_icon_3.3.1_48_px.svg.png",
             "images": [
-                "https://i.postimg.cc/fRwxhkX3/Libre-Office-Writer-4-4-2.png",
-                "https://i.postimg.cc/xTGK7LkD/Libre-Office-7-2-calc.png",
-                "https://i.postimg.cc/6qndBvYZ/Libreoffice-impress-screenshot-de-windows-7.png"
+                "https://www.libreoffice.org/assets/Uploads/writer-2020.png",
+                "https://www.libreoffice.org/assets/Uploads/calc-2020.png",
+                "https://www.libreoffice.org/assets/Uploads/impress-2020.png",
+                "https://www.libreoffice.org/assets/Uploads/draw-2020.png"
             ]
         },
         "TheDocumentFoundation.LibreOffice.\u2026": {
@@ -13576,7 +13613,7 @@
             "images": []
         },
         "VideoLAN.VLC": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/VLC_Icon.svg/212px-VLC_Icon.svg.png",
             "images": []
         },
         "VideoLAN.VLC.Nightly": {
@@ -13704,7 +13741,7 @@
             "images": []
         },
         "Wacom.WacomTabletDriver": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/Wacom_Logo_WhiteType.svg/254px-Wacom_Logo_WhiteType.svg.png",
             "images": []
         },
         "Wago.Addons": {
@@ -13905,16 +13942,24 @@
             "images": []
         },
         "WinMerge.WinMerge": {
-            "icon": "",
-            "images": []
+            "icon": "https://en.wikipedia.org/wiki/WinMerge#/media/File:WinMergeLogo.png",
+            "images": [
+                "https://winmerge.org/screenshots/filecmp.png"
+            ]
         },
         "WinMerge.WinMerge.Beta": {
-            "icon": "",
-            "images": []
+            "icon": "https://en.wikipedia.org/wiki/WinMerge#/media/File:WinMergeLogo.png",
+            "images": [
+                "https://winmerge.org/screenshots/filecmp.png"
+            ]
         },
         "WinSCP.WinSCP": {
-            "icon": "",
-            "images": []
+            "icon": "https://en.wikipedia.org/wiki/WinSCP#/media/File:WinSCP_Logo.png",
+            "images": [
+                "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/commander.png?v=7006",
+                "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/explorer.png?v=7006",
+                "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/login.png?v=7006"
+            ]
         },
         "WinSCP.WinSCP.RC": {
             "icon": "",

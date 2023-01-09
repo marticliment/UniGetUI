@@ -427,7 +427,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
-        if(self.store == "winget" or self.store.lower() in ("local pc", "microsoft store", "steam", "gog", "ubisoft connect")):
+        if(self.store == "winget" or self.store in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect"))):
             self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
@@ -934,8 +934,8 @@ class PackageInfoPopupWindow(QWidget):
         self.type.setText(f"{_('Installer Type')} ({_('Latest Version')}): {_('Loading...')}")
         self.packageId.setText(f"{_('Package ID')}: {id}")
         self.manifest.setText(f"{_('Manifest')}: {_('Loading...')}")
-        self.date.setText(f"{_('Last updated')}: {_('Loading...')}")
-        self.notes.setText(f"{_('Release notes')}: {_('Loading...')}")
+        self.date.setText(f"{_('Last updated:')} {_('Loading...')}")
+        self.notes.setText(f"{_('Release notes:')} {_('Loading...')}")
         self.storeLabel.setText(f"{_('Source')}: {self.store.capitalize()}")
         self.versionCombo.addItems([_("Loading...")])
 
@@ -1076,8 +1076,8 @@ class PackageInfoPopupWindow(QWidget):
         self.link.setText(f"{_('Installer URL')} ({_('Latest Version')}): <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
         self.type.setText(f"{_('Installer Type')} ({_('Latest Version')}): {appInfo['installer-type']}")
         self.packageId.setText(f"{_('Package ID')}: {appInfo['id']}")
-        self.date.setText(f"{_('Last updated')}: {appInfo['updatedate']}")
-        self.notes.setText(f"{_('Release notes')}: {appInfo['releasenotes'].replace(r'%bluecolor%', blueColor)}")
+        self.date.setText(f"{_('Last updated:')} {appInfo['updatedate']}")
+        self.notes.setText(f"{_('Release notes:')} {appInfo['releasenotes'].replace(r'%bluecolor%', blueColor)}")
         self.manifest.setText(f"{_('Manifest')}: <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
         while self.versionCombo.count()>0:
             self.versionCombo.removeItem(0)
