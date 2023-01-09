@@ -63,7 +63,8 @@ Name: "Russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "Slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
 Name: "Spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "Turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
-Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl" 
+Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [InstallDelete]
 Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
