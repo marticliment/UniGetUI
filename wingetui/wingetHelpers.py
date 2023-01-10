@@ -4,18 +4,18 @@ from tools import *
 from tools import _
 
 
-common_params = ["--source", "winget", "--accept-source-agreements"]
+common_params = []
 
 
-if getSettings("UseSystemWinget"):
-    winget = "winget.exe"
+if getSettings("UseSystemChocolatey"):
+    choco = "choco.exe"
 else:
-    winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
+    choco = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe")
 
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen(["mode", "400,30&", winget, "search", ""] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    print(f"🟢 Starting choco search, choco on {choco}...")
+    p = subprocess.Popen([choco, "search", ""] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=False)
     output = []
     counter = 0
     idSeparator = 0
@@ -23,19 +23,11 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            if(counter > 0):
+            if(counter > 1):
+                cprint(line)
                 output.append(str(line, encoding='utf-8', errors="ignore"))
             else:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                l = l.split("\r")[-1]
-                if("Id" in l):
-                    idSeparator = len(l.split("Id")[0])
-                    verSeparator = idSeparator+2
-                    i=0
-                    while l.split("Id")[1].split(" ")[i] == "":
-                        verSeparator += 1
-                        i += 1
-                    counter += 1
+                counter += 1
     print(p.stdout)
     print(p.stderr)
     if p.returncode != 0 and not noretry:
@@ -46,50 +38,16 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         counter = 0
         for element in output:
             try:
-                verElement = element[idSeparator:].strip()
-                verElement.replace("\t", " ")
-                while "  " in verElement:
-                    verElement = verElement.replace("  ", " ")
-                iOffset = 0
-                id = verElement.split(" ")[iOffset+0]
-                try:
-                    ver = verElement.split(" ")[iOffset+1]
-                except IndexError:
-                    ver = _("Unknown")
-                if len(id)==1:
-                    iOffset + 1
-                    id = verElement.split(" ")[iOffset+0]
-                    try:
-                        ver = verElement.split(" ")[iOffset+1]
-                    except IndexError:
-                        ver = "Unknown"
-                if ver.strip() in ("<", "-", ""):
-                    iOffset += 1
-                    ver = verElement.split(" ")[iOffset+1]
-                if not "  " in element[0:idSeparator].strip():
-                    signal.emit(element[0:idSeparator].strip(), id, ver, "Winget")
-                else:
-                    print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
-                    element = bytes(element, "utf-8")
-                    print(element, verSeparator)
-                    export = (element[0:idSeparator], str(element[idSeparator:], "utf-8").strip().split(" ")[0], list(filter(None, str(element[idSeparator:], "utf-8").strip().split(" ")))[1])
-                    signal.emit(str(export[0], "utf-8").strip(), export[1], export[2], "Winget")
+                export = element.split(" ")
+                signal.emit(export[0], export[0], export[1], "Winget")
             except Exception as e:
-                try:
-                    report(e)
-                    try:
-                        element = str(element, "utf-8")
-                    except Exception as e:
-                        print(e)
-                    signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
-                except Exception as e:
-                    report(e)
+                report(e)
         print("🟢 Winget search finished")
         finishSignal.emit("winget")  # type: ignore
 
 def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
-    print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    print(f"🟢 Starting choco search, choco on {choco}...")
+    p = subprocess.Popen(["mode", "400,30&", choco, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     counter = 0
     idSeparator = 0
     while p.poll() is None:
@@ -113,8 +71,8 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
     return (id, id)
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen(["mode", "400,30&", winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    print(f"🟢 Starting choco search, choco on {choco}...")
+    p = subprocess.Popen(["mode", "400,30&", choco, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -179,11 +137,11 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                 except Exception as e:
                     report(e)
         print("🟢 Winget search finished")
-        finishSignal.emit("winget")
+        finishSignal.emit("choco")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen(["mode", "400,30&", winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    print(f"🟢 Starting choco search, choco on {choco}...")
+    p = subprocess.Popen(["mode", "400,30&", choco, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -203,7 +161,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                     counter += 1
     counter = 0
     emptyStr = ""
-    wingetName = "Winget"
+    chocoName = "Winget"
     for element in output:
         try:
             element = str(element, "utf-8", errors="ignore")
@@ -223,23 +181,23 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
                 iOffset += 1
                 ver = verElement.split(" ")[iOffset+1]
             if not "  " in element[0:idSeparator].strip():
-                signal.emit(element[0:idSeparator].strip(), id, ver, wingetName)
+                signal.emit(element[0:idSeparator].strip(), id, ver, chocoName)
             else:
                 print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
                 print(element, verSeparator)
                 name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
                 while "##" in name:
                     name = name.replace("##", "#")
-                signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, wingetName)
+                signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, chocoName)
         except Exception as e:
             try:
                 report(e)
                 element = str(element, "utf-8")
-                signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
+                signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, chocoName)
             except Exception as e:
                 report(e)
     print("🟢 Winget uninstallable packages search finished")
-    finishSignal.emit("winget")
+    finishSignal.emit("choco")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     try:
@@ -260,10 +218,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         while validCount < 2 and iterations < 50:
             iterations += 1
             if useId:
-                p = subprocess.Popen([winget, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([choco, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 print(f"🟢 Starting get info for id {id}")
             else:
-                p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([choco, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 print(f"🟢 Starting get info for title {title}")
             output = []
             unknownStr = _("Unknown")
@@ -281,7 +239,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
                 "installer-type": unknownStr,
                 "updatedate": unknownStr,
                 "releasenotes": unknownStr,
-                "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
+                "manifest": f"https://github.com/microsoft/choco-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
                 "versions": []
             }
             while p.poll() is None:
@@ -335,9 +293,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         while output == [] and retryCount < 50:
             retryCount += 1
             if useId:
-                p = subprocess.Popen([winget, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([choco, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             else:
-                p = subprocess.Popen([winget, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([choco, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             counter = 0
             print(p.args)
             while p.poll() is None:
@@ -356,7 +314,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         report(e)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"🟢 winget installer assistant thread started for process {p}")
+    print(f"🟢 choco installer assistant thread started for process {p}")
     outputCode = 0
     counter = 0
     output = ""
@@ -376,7 +334,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"🟢 winget installer assistant thread started for process {p}")
+    print(f"🟢 choco installer assistant thread started for process {p}")
     outputCode = 0
     counter = 0
     output = ""

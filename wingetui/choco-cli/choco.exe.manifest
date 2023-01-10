@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <assemblyIdentity version="1.0.0.0" name="choco.app"/>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!-- UAC Manifest Options
+            Specifying requestedExecutionLevel node (below) will disable file and 
+             registry virtualization.
+           
+            Set level to "asInvoker" when you want choco to run under the context
+             of the user invoking. This is the same as Chocolatey behavior prior 
+             to 0.10.4 and after 0.10.7.
+             
+            Set level to "requireAdministrator" to only allow administrators to 
+             run Chocolatey.
+            
+            Set level to "highestAvailable" to allow non-admins to run in 
+             non-administrative context, but require administrators to always run
+             with administrative privileges. This is the recommended and default
+             behavior of Chocolatey v0.10.4-0.10.6.1.
+            
+            NOTE: Currently you will need to make this change every time 
+             Chocolatey is re-installed or upgraded (every new version). At least
+             for now - https://github.com/chocolatey/choco/issues/1206
+            
+            The following is an unsupported use case: If you want to utilize File 
+             and Registry Virtualization for backward compatibility then delete 
+             the requestedExecutionLevel node.
+             
+            NOTE: If you do change this file, make sure that you change the
+             modification date on choco.exe that this sits next to. Windows 
+             caches manifests based on path and last modified date. So you'll 
+             need to change the modification date on choco.exe for the manifest
+             change to take effect.
+             Details: https://github.com/chocolatey/choco/issues/1292#issuecomment-304068121
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 / Windows Server 2016 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+      <!-- Windows 8.1 / Windows Server 2012 R2 -->
+      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
+      <!-- Windows 8 / Windows Server 2012 -->
+      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/>
+      <!-- Windows 7 / Windows Server 2008 R2 -->
+      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+      <!-- Windows Vista / Windows Server 2008 -->
+      <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
+    </application>
+  </compatibility>
+</asmv1:assembly>
