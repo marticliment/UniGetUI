@@ -33,7 +33,7 @@ if len(sys.argv)>1:
         print(sys.argv[1])
 
 
-apiurl = f"https://app.tolgee.io/v2/projects/1205/export?format=JSON&splitByScope=false&splitByScopeDelimiter=~&splitByScopeDepth=0&filterState=UNTRANSLATED&filterState=TRANSLATED&filterState=REVIEWED&zip=true"
+apiurl = f"https://app.tolgee.io/v2/projects/1205/export?format=JSON&structureDelimiter=&filterState=UNTRANSLATED&filterState=TRANSLATED&filterState=REVIEWED&zip=true"
 
 try:
     import requests
