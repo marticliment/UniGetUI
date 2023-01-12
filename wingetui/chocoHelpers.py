@@ -27,7 +27,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                 for line in content.split("\n"):
                     export = line.split(" ")
                     if len(export) > 1:
-                        signal.emit(export[0], export[0], export[1], "Chocolatey")
+                        signal.emit(export[0].replace("-", " ").capitalize(), export[0], export[1], "Chocolatey")
                 try:
                     lastCache = int(getSettingsValue("ChocolateyCacheDate"))
                     if int(time.time())-lastCache > 60*60*2:
@@ -56,12 +56,10 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
             line = line.strip()
             if line:
                 if(counter > 1):
-                    cprint(line)
-                    output += str(line, encoding='utf-8', errors="ignore") + "\n"
+                    if not b"packages found" in line:
+                        output += str(line, encoding='utf-8', errors="ignore") + "\n"
                 else:
                     counter += 1
-        print(p.stdout)
-        print(p.stderr)
         with open(cacheFile, "w") as f:
             f.write(output)
         print("🟢 Chocolatey search finished")
@@ -69,31 +67,6 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         setSettings("CachingChocolatey", False)
         setSettingsValue("ChocolateyCacheDate", str(int(time.time())))
 
-
-def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
-    print(f"🟢 Starting choco search, choco on {choco}...")
-    p = subprocess.Popen([choco, "info", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-    counter = 0
-    idSeparator = 0
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            if(counter > 0):
-                if not b"---" in line:
-                    return str(line[:idSeparator], "utf-8", errors="ignore").strip(), str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
-            else:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                l = l.split("\r")[-1]
-                if("Id" in l):
-                    idSeparator = len(l.split("Id")[0])
-                    verSeparator = idSeparator+2
-                    i=0
-                    while l.split("Id")[1].split(" ")[i] == "":
-                        verSeparator += 1
-                        i += 1
-                    counter += 1
-    return (id, id)
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting choco search, choco on {choco}...")
@@ -166,7 +139,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print(f"🟢 Starting choco search, choco on {choco}...")
-    p = subprocess.Popen(["mode", "400,30&", choco, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    p = subprocess.Popen([choco, "list", "--local-only"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -174,55 +147,21 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
         line = p.stdout.readline()
         line = line.strip()
         if line:
-            if(counter > 0 and not b"---" in line):
+            if(counter > 0 and not b"---" in line and not b"packages installed" in line):
                 output.append(line)
             else:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                for char in ("\r", "/", "|", "\\", "-"):
-                    l = l.split(char)[-1].strip()
-                if("Id" in l):
-                    idSeparator = len(l.split("Id")[0])
-                    verSeparator = len(l.split("Version")[0])
-                    counter += 1
+                counter += 1
     counter = 0
     emptyStr = ""
-    chocoName = "Winget"
+    chocoName = "Chocolatey"
     for element in output:
         try:
-            element = str(element, "utf-8", errors="ignore")
-            element = element.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
-            verElement = element[idSeparator:].strip()
-            verElement.replace("\t", " ")
-            while "  " in verElement:
-                verElement = verElement.replace("  ", " ")
-            iOffset = 0
-            id = verElement.split(" ")[iOffset+0]
-            ver = verElement.split(" ")[iOffset+1]
-            if len(id)==1:
-                iOffset + 1
-                id = verElement.split(" ")[iOffset+0]
-                ver = verElement.split(" ")[iOffset+1]
-            if ver.strip() in ("<", "-"):
-                iOffset += 1
-                ver = verElement.split(" ")[iOffset+1]
-            if not "  " in element[0:idSeparator].strip():
-                signal.emit(element[0:idSeparator].strip(), id, ver, chocoName)
-            else:
-                print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
-                print(element, verSeparator)
-                name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                while "##" in name:
-                    name = name.replace("##", "#")
-                signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, chocoName)
+            output = str(element, encoding="utf-8", errors="ignore").split(" ")
+            signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
         except Exception as e:
-            try:
-                report(e)
-                element = str(element, "utf-8")
-                signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, chocoName)
-            except Exception as e:
-                report(e)
+            report(e)
     print("🟢 Winget uninstallable packages search finished")
-    finishSignal.emit("choco")
+    finishSignal.emit("chocolatey")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     try:

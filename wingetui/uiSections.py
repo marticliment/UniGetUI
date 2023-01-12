@@ -423,10 +423,7 @@ class DiscoverSoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:
             item = TreeWidgetItemWithQAction()
-            if "scoop" in store.lower() or "chocolatey" in store.lower():
-                item.setText(0, name.replace("-", " ").capitalize())
-            else:
-                item.setText(0, name)
+            item.setText(0, name)
             item.setText(1, id)
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.IDIcon)
@@ -1266,12 +1263,14 @@ class UninstallSoftwareSection(QWidget):
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
     packages: dict[str:dict] = {}
+    
+    wingetLoaded = False
+    scoopLoaded =  False
+    chocoLoaded = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
-        self.scoopLoaded = False
         self.callInMain.connect(lambda f: f())
-        self.wingetLoaded = False
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
@@ -1592,6 +1591,7 @@ class UninstallSoftwareSection(QWidget):
         self.SteamIcon = QIcon(getMedia("steam"))
         self.GOGIcon = QIcon(getMedia("gog"))
         self.UPLAYIcon = QIcon(getMedia("uplay"))
+        self.chocoIcon = QIcon(getMedia("choco"))
         
     
         if not getSettings("DisableWinget"):
@@ -1602,6 +1602,11 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
+
         self.finishLoadingIfNeeded("none")
         print("🟢 Discover tab loaded")
 
@@ -1706,7 +1711,19 @@ class UninstallSoftwareSection(QWidget):
             self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded):
+        elif(store == "chocolatey"):
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
+            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
+            self.chocoLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.filter()
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
             self.filter()
             self.loadingProgressBar.hide()
             globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
@@ -1806,6 +1823,8 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.GOGIcon)
             elif "ubisoft connect" in store.lower():
                 item.setIcon(4, self.UPLAYIcon)
+            elif "chocolatey" in store.lower():
+                item.setIcon(4, self.chocoIcon)
             else:
                 item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
@@ -1896,6 +1915,10 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
         self.finishLoadingIfNeeded("none")
         for action in globals.trayMenuInstalledList.actions():
             globals.trayMenuInstalledList.removeAction(action)
