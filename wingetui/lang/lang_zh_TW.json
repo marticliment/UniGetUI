@@ -33,7 +33,13 @@
   "Administrator privileges" : "系統管理員權限",
   "Allow parallel installs (NOT RECOMMENDED)" : "允許多個應用程式同時安裝 (不建議)",
   "Application theme:" : "應用程式佈景主題：",
-  "Applying update..." : "正在套用更新...",
+  "Applying update" : {
+    "" : {
+      "" : {
+        "" : "正在套用更新..."
+      }
+    }
+  },
   "App Name" : "應用程式名稱",
   "Are these screenshots wron or blurry?" : "這些截圖是錯誤的或是模糊的嗎？",
   "Are you sure?" : "您確定嗎？",
@@ -43,7 +49,13 @@
   "Available updates" : "可用的更新",
   "Available Updates" : null,
   "Available updates: {0}" : "{0} 個可用的更新",
-  "Available updates: {0}, not finished yet..." : "已發現 {0} 個可用的更新，尚在進行中...",
+  "Available updates: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "已發現 {0} 個可用的更新，尚在進行中..."
+      }
+    }
+  },
   "Beta features and other options that shouldn't be touched" : null,
   "Blacklist apps" : "已忽略的應用程式",
   "buy me a coffee" : "贊助這個專案",
@@ -52,11 +64,35 @@
   "Can't {0} {1}" : "無法{0} {1}",
   "Check for package updates periodically" : "定期檢查套件更新",
   "Check for updates every:" : "檢查更新頻率：",
-  "Checking for other running instances..." : "正在檢查其他執行中的實例...",
-  "Checking for updates..." : "正在檢查更新...",
-  "Checking found instace(s)..." : "正在檢查發現的實例...",
+  "Checking for other running instances" : {
+    "" : {
+      "" : {
+        "" : "正在檢查其他執行中的實例..."
+      }
+    }
+  },
+  "Checking for updates" : {
+    "" : {
+      "" : {
+        "" : "正在檢查更新..."
+      }
+    }
+  },
+  "Checking found instace(s)" : {
+    "" : {
+      "" : {
+        "" : "正在檢查發現的實例..."
+      }
+    }
+  },
   "Check out my {0} and my {1}!" : "請參閱我的 {0} 與 {1}！",
-  "Clearing Scoop cache..." : "正在清除 Scoop 快取資料...",
+  "Clearing Scoop cache" : {
+    "" : {
+      "" : {
+        "" : "正在清除 Scoop 快取資料..."
+      }
+    }
+  },
   "Close" : "關閉",
   "Close WingetUI to the notification area" : "關閉並縮小至系統匣",
   "Component Information" : "元件資訊",
@@ -68,11 +104,19 @@
   "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "在瀏覽套件分頁中按兩下項目來直接安裝 (取代顯示套件資訊)",
   "Disable Scoop" : "停用 Scoop",
   "Disable Winget" : "停用 Winget",
-  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "免責聲明：微軟公司和 WingetUI 的開發者均不對您下載的應用程式負責。",
+  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS" : {
+    "" : "免責聲明：微軟公司和 WingetUI 的開發者均不對您下載的應用程式負責。"
+  },
   "Discover Packages" : "瀏覽套件",
   "Do not download new app translations from GitHub automatically" : null,
   "Do not update package indexes on launch" : "啟動時不要更新套件索引",
-  "Downloading package metadata..." : "正在下載套件的中繼資料...",
+  "Downloading package metadata" : {
+    "" : {
+      "" : {
+        "" : "正在下載套件的中繼資料..."
+      }
+    }
+  },
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!" : "您是否發現 WingetUI 對您有幫助？您是否想要支持專案開發者？您可以{0}，這對我們很有幫助！",
   "Do you really want to uninstall {0}?" : "您是否確定要解除安裝 {0}？",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>" : "您是否想要協助將 WingetUI 翻譯成您使用的語言？請點選<a style=\"color:{0}\" href=\"{1}\"a>此處</a>來參閱貢獻方式。",
@@ -88,13 +132,21 @@
   "Found" : "已偵測",
   "Found 0 Packages" : "沒有發現任何套件",
   "Found packages: {0}" : "發現套件：{0}",
-  "Found packages: {0}, not finished yet..." : "正在搜尋中，已發現 {0} 個套件...",
+  "Found packages: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "正在搜尋中，已發現 {0} 個套件..."
+      }
+    }
+  },
   "General preferences" : "一般設定",
   "General Preferences" : "一般設定",
   "General Settings" : "一般設定",
   "GitHub profile" : "GitHub 個人頁面",
   "Hide details" : "隱藏詳細資料",
-  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "您好，我的名字是 Martí，是 WingetUI 專案的<i>開發人員</i>。WingetUI 完全是利用我的閒暇時間製作的。",
+  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI" : {
+    " WingetUI has been entirely made on my free time!" : "您好，我的名字是 Martí，是 WingetUI 專案的<i>開發人員</i>。WingetUI 完全是利用我的閒暇時間製作的。"
+  },
   "homepage" : "首頁",
   "Homepage" : "首頁",
   "Homepage URL:" : "首頁網址：",
@@ -126,11 +178,23 @@
   "Interactive uninstall" : "互動式解除安裝",
   "Interactive update" : "互動式更新",
   "Is this package missing the icon?" : "這個套件是否缺少圖示？",
-  "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "看起來您已系統管理員身分執行 WingetUI，這是我們所不推薦的。您仍可以使用此應用程式，但我們非常不建議您使用系統管理員身分來執行，請點選「顯示詳細資訊」來參閱原因。",
+  "It looks like you ran WingetUI as administrator, which is not recommended" : {
+    " You can still use the program, but we highly recommend not running WingetUI with administrator privileges" : {
+      " Click on \"Show details\" to see why" : {
+        "" : "看起來您已系統管理員身分執行 WingetUI，這是我們所不推薦的。您仍可以使用此應用程式，但我們非常不建議您使用系統管理員身分來執行，請點選「顯示詳細資訊」來參閱原因。"
+      }
+    }
+  },
   "Language, theme and other miscellaneous preferences" : "語言、佈景主題與其他設定",
   "Last updated:" : null,
   "Latest" : "最新的",
-  "Latest details..." : "最新的詳細資訊",
+  "Latest details" : {
+    "" : {
+      "" : {
+        "" : "最新的詳細資訊"
+      }
+    }
+  },
   "Latest Version" : "最新版本",
   "Latest Version:" : "最新版本：",
   "License" : "授權",
@@ -138,13 +202,55 @@
   "Licenses" : "授權許可",
   "Light" : "淺色",
   "Live command-line output" : "即時命令列輸出",
-  "Loading..." : "正在載入...",
-  "Loading buckets..." : null,
-  "Loading UI components..." : "正在載入 UI 元件...",
-  "Loading WingetUI..." : "正在載入 WingetUI...",
-  "Locating Scoop..." : "正在載入 Scoop...",
-  "Locating sudo..." : "正在偵測 sudo...",
-  "Locating Winget..." : "正在偵測 Winget...",
+  "Loading" : {
+    "" : {
+      "" : {
+        "" : "正在載入..."
+      }
+    }
+  },
+  "Loading buckets" : {
+    "" : {
+      "" : {
+        "" : null
+      }
+    }
+  },
+  "Loading UI components" : {
+    "" : {
+      "" : {
+        "" : "正在載入 UI 元件..."
+      }
+    }
+  },
+  "Loading WingetUI" : {
+    "" : {
+      "" : {
+        "" : "正在載入 WingetUI..."
+      }
+    }
+  },
+  "Locating Scoop" : {
+    "" : {
+      "" : {
+        "" : "正在載入 Scoop..."
+      }
+    }
+  },
+  "Locating sudo" : {
+    "" : {
+      "" : {
+        "" : "正在偵測 sudo..."
+      }
+    }
+  },
+  "Locating Winget" : {
+    "" : {
+      "" : {
+        "" : "正在偵測 Winget..."
+      }
+    }
+  },
   "Manage scoop buckets" : null,
   "Manifest" : "證明",
   "Manifest:" : "證明：",
@@ -163,7 +269,13 @@
   "Package ID" : "套件識別碼",
   "Package manager preferences" : null,
   "Package Name" : "套件名稱",
-  "Please wait..." : "請稍候...",
+  "Please wait" : {
+    "" : {
+      "" : {
+        "" : "請稍候..."
+      }
+    }
+  },
   "Program ID:" : "程式識別碼：",
   "Project homepage" : "專案首頁",
   "PSF License" : "PSF 授權",
@@ -191,14 +303,34 @@
   "Scoop preferences" : "Scoop 設定",
   "Search for packages" : null,
   "Search for packages on Winget and Scoop" : "從 Winget 與 Scoop 中搜尋套件",
-  "Searching for installed packages..." : "正在搜尋已安裝的套件...",
-  "Searching for packages..." : "正在搜尋套件...",
+  "Searching for installed packages" : {
+    "" : {
+      "" : {
+        "" : "正在搜尋已安裝的套件..."
+      }
+    }
+  },
+  "Searching for packages" : {
+    "" : {
+      "" : {
+        "" : "正在搜尋套件..."
+      }
+    }
+  },
   "Search on available updates" : "在可用的更新中搜尋",
   "Search on your software" : "搜尋您的軟體",
   "Select all" : "全選",
   "Select none" : "取消選取",
   "Select package file" : null,
-  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "已送出連線請求，正在等待伺服器回應... ({0}%)",
+  "Sent handshake" : {
+    " Waiting for instance listener's answer" : {
+      "" : {
+        "" : {
+          " ({0}%)" : "已送出連線請求，正在等待伺服器回應... ({0}%)"
+        }
+      }
+    }
+  },
   "Show a notification when there are available updates" : "有可用更新時顯示通知",
   "Show details" : "顯示詳細資訊",
   "Show info" : "顯示資訊",
@@ -213,21 +345,45 @@
   "Skip the hash check" : "略過檢查雜湊值的步驟",
   "Software Updates" : "軟體更新",
   "Source" : "來源",
-  "Starting daemons..." : "正在開啟常駐程式...",
-  "Starting installation..." : "正在開始安裝...",
+  "Starting daemons" : {
+    "" : {
+      "" : {
+        "" : "正在開啟常駐程式..."
+      }
+    }
+  },
+  "Starting installation" : {
+    "" : {
+      "" : {
+        "" : "正在開始安裝..."
+      }
+    }
+  },
   "Startup options" : "啟動選項",
   "Status" : "狀態",
   "Sudo found: {0}" : "Sudo 已發現：{0}",
   "Text file" : null,
   "The icons and screenshots are maintained by users like you!" : "圖示與螢幕截圖由與您一樣的使用者來維護！",
-  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop." : "此專案的目標是建立一個直覺的使用者介面來管理最常見的 Windows 命令列套件管理器，例如 Winget 和 Scoop。",
-  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator." : "不推薦以管理員身份執行 WingetUI 的主要原因有兩個：其一是 Scoop 套件管理器在以管理員權限執行時可能會導致某些命令出現問題。 其二是以管理員身份執行 WingetUI 代表著您下載的任何套件都將以管理員身份執行 (這是有安全風險的)。 請記得，如果您需要以管理員身份管理特定套件，您可以隨時右鍵點選該項目 -> 以管理員身份安裝、更新或解除安裝。",
-  "This project has no connection with the official {0} project — it's completely unofficial." : "此專案與官方的 {0} 專案並沒有任何關聯 — 它完全是非官方的。",
+  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop" : {
+    "" : "此專案的目標是建立一個直覺的使用者介面來管理最常見的 Windows 命令列套件管理器，例如 Winget 和 Scoop。"
+  },
+  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights" : {
+    "\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe)" : {
+      "\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator" : {
+        "" : "不推薦以管理員身份執行 WingetUI 的主要原因有兩個：其一是 Scoop 套件管理器在以管理員權限執行時可能會導致某些命令出現問題。 其二是以管理員身份執行 WingetUI 代表著您下載的任何套件都將以管理員身份執行 (這是有安全風險的)。 請記得，如果您需要以管理員身份管理特定套件，您可以隨時右鍵點選該項目 -> 以管理員身份安裝、更新或解除安裝。"
+      }
+    }
+  },
+  "This project has no connection with the official {0} project — it's completely unofficial" : {
+    "" : "此專案與官方的 {0} 專案並沒有任何關聯 — 它完全是非官方的。"
+  },
   "Translators" : "翻譯人員",
   "Unable to load informarion" : "無法載入資訊",
   "uninstall" : "解除安裝",
   "Uninstall" : "解除安裝",
-  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them." : "來源被列為「本機」的可解除安裝套件並未在任何套件管理器上發布，因此沒有關於它們的資訊可顯示。",
+  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them" : {
+    "" : "來源被列為「本機」的可解除安裝套件並未在任何套件管理器上發布，因此沒有關於它們的資訊可顯示。"
+  },
   "Uninstall as administrator" : "以系統管理員身分解除安裝",
   "uninstallation" : "解除安裝",
   "Uninstall canceled by the user!" : "解除安裝已被使用者取消！",
@@ -256,18 +412,46 @@
   "Update WingetUI automatically" : "自動更新 WingetUI",
   "Update with administrator privileges" : "以系統管理員身分更新",
   "updating" : "正在更新",
-  "Updating Scoop sources..." : "正在更新 Scoop 來源...",
-  "Updating Winget sources..." : "正在更新 Winget 來源...",
+  "Updating Scoop sources" : {
+    "" : {
+      "" : {
+        "" : "正在更新 Scoop 來源..."
+      }
+    }
+  },
+  "Updating Winget sources" : {
+    "" : {
+      "" : {
+        "" : "正在更新 Winget 來源..."
+      }
+    }
+  },
   "Upgrade all" : "升級全部",
   "Use installed GSudo instead of the bundled one (requires app restart)" : "以安裝的 GSudo 來取代內建的版本 (需要重新啟動應用程式)",
   "User interface preferences" : "使用者介面設定",
   "Use system Winget (Needs a restart)" : null,
   "Version" : "版本",
   "Version:" : "版本：",
-  "Waiting for other installations to finish..." : "正在等待其他項目安裝完成...",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer." : "我們無法{0} {1}，請稍候重試。點選「顯示詳細資訊」來取得安裝程式的日誌。",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller." : "我們無法{0} {1}，請稍候重試。點選「顯示詳細資訊」來取得解除安裝程式的日誌。",
-  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop." : "我們無法取得此套件的詳細資訊，因為它不是從 Winget 或 Scoop 中安裝。",
+  "Waiting for other installations to finish" : {
+    "" : {
+      "" : {
+        "" : "正在等待其他項目安裝完成..."
+      }
+    }
+  },
+  "We could not {0} {1}" : {
+    " Please try again later" : {
+      " Click on \"Show details\" to get the logs from the installer" : {
+        "" : "我們無法{0} {1}，請稍候重試。點選「顯示詳細資訊」來取得安裝程式的日誌。"
+      },
+      " Click on \"Show details\" to get the logs from the uninstaller" : {
+        "" : "我們無法{0} {1}，請稍候重試。點選「顯示詳細資訊」來取得解除安裝程式的日誌。"
+      }
+    }
+  },
+  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop" : {
+    "" : "我們無法取得此套件的詳細資訊，因為它不是從 Winget 或 Scoop 中安裝。"
+  },
   "Which bucket do you want to add?" : "您想要新增哪一個 bucket？",
   "Which bucket do you want to remove?" : "您想要移除哪一個 bucket？",
   "Winget found: {0}" : "Winget 已發現：{0}",
@@ -279,11 +463,15 @@
   "WingetUI autostart behaviour, application launch settings" : "WingetUI 自動執行的行為、應用程式啟動設定",
   "WingetUI display language:" : "WingetUI 顯示語言 (display language)：",
   "wingetui exported packages" : null,
-  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI 沒有使用機器翻譯。翻譯由以下使用者貢獻：",
+  "WingetUI has not been machine translated" : {
+    " The following users have been in charge of the translations:" : "WingetUI 沒有使用機器翻譯。翻譯由以下使用者貢獻："
+  },
   "WingetUI log" : "WingetUI 日誌",
   "WingetUI Settings" : "WingetUI 設定",
   "WingetUI tray application preferences" : "WingetUI 系統匣圖示設定",
   "WingetUI version {0}" : "WingetUI 版本 {0}",
-  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI 不能沒有熱心的貢獻者參與協助。請參閱他們的 GitHub 個人頁面，沒有他們無法成就此 WingetUI 專案。",
+  "WingetUI wouldn't have been possible with the help of our dear contributors" : {
+    " Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI 不能沒有熱心的貢獻者參與協助。請參閱他們的 GitHub 個人頁面，沒有他們無法成就此 WingetUI 專案。"
+  },
   "Yes" : null
 }

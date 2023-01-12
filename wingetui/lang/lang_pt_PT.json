@@ -33,7 +33,13 @@
   "Administrator privileges" : "Privilégios de administrador",
   "Allow parallel installs (NOT RECOMMENDED)" : "Permitir instalações paralelas (NÃO RECOMENDADO)",
   "Application theme:" : "Tema da aplicação:",
-  "Applying update..." : "A aplicar atualização...",
+  "Applying update" : {
+    "" : {
+      "" : {
+        "" : "A aplicar atualização..."
+      }
+    }
+  },
   "App Name" : "Nome do APP",
   "Are these screenshots wron or blurry?" : "As capturas de ecrã estão incorrectas ou embaciadas?",
   "Are you sure?" : "Tens certeza?",
@@ -43,7 +49,13 @@
   "Available updates" : "Actualizações Disponíveis",
   "Available Updates" : "Actualizações disponíveis",
   "Available updates: {0}" : "Actualizações disponíveis: {0} ",
-  "Available updates: {0}, not finished yet..." : "Actualizações disponíveis: {0}, ainda não terminou...",
+  "Available updates: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Actualizações disponíveis: {0}, ainda não terminou..."
+      }
+    }
+  },
   "Beta features and other options that shouldn't be touched" : "Recursos beta e outras opções que não devem ser tocadas",
   "Blacklist apps" : "Ignorar apps",
   "buy me a coffee" : "comprar-me um café",
@@ -52,11 +64,35 @@
   "Can't {0} {1}" : "Não é possível {0} o {1}",
   "Check for package updates periodically" : "Verificar se há actualizações de pacotes periodicamente",
   "Check for updates every:" : "Procurar actualizações a cada:",
-  "Checking for other running instances..." : "A verificar outras instâncias em execução...",
-  "Checking for updates..." : "A verificar actualizações...",
-  "Checking found instace(s)..." : "A verificar instância(s) encontrada(s)...",
+  "Checking for other running instances" : {
+    "" : {
+      "" : {
+        "" : "A verificar outras instâncias em execução..."
+      }
+    }
+  },
+  "Checking for updates" : {
+    "" : {
+      "" : {
+        "" : "A verificar actualizações..."
+      }
+    }
+  },
+  "Checking found instace(s)" : {
+    "" : {
+      "" : {
+        "" : "A verificar instância(s) encontrada(s)..."
+      }
+    }
+  },
   "Check out my {0} and my {1}!" : "Dá uma olhada no meu {0} e no meu {1}!",
-  "Clearing Scoop cache..." : "A limpar o cache do Scoop...",
+  "Clearing Scoop cache" : {
+    "" : {
+      "" : {
+        "" : "A limpar o cache do Scoop..."
+      }
+    }
+  },
   "Close" : "Fechar",
   "Close WingetUI to the notification area" : "Fechar o WingetUI para a área de notificação",
   "Component Information" : "Informações de Componentes",
@@ -68,11 +104,19 @@
   "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Instalar directamente ao clicar duas vezes em um item no separador Descobrir Pacotes (em vez de mostrar as informações do pacote)",
   "Disable Scoop" : "Desactivar o Scoop",
   "Disable Winget" : "Desactivar o Winget",
-  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "AVISO: NEM A MICROSOFT NEM OS CRIADORES DO WINGETUI SÃO RESPONSÁVEIS PELAS APLICAÇÕES DESCARREGADAS.                                                                       ",
+  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS" : {
+    "" : "AVISO: NEM A MICROSOFT NEM OS CRIADORES DO WINGETUI SÃO RESPONSÁVEIS PELAS APLICAÇÕES DESCARREGADAS.                                                                       "
+  },
   "Discover Packages" : "Descobrir Pacotes",
   "Do not download new app translations from GitHub automatically" : "Não descarregar novas versões das traduções do GitHub automaticamente",
   "Do not update package indexes on launch" : "Não actualizar os índices de pacotes na inicialização",
-  "Downloading package metadata..." : "Descarregando metadados do pacote...",
+  "Downloading package metadata" : {
+    "" : {
+      "" : {
+        "" : "Descarregando metadados do pacote..."
+      }
+    }
+  },
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!" : "Achas o WingetUI útil? Gostarias de apoiar o desenvolvedor? Se sim, podes {0}, ajuda muito!",
   "Do you really want to uninstall {0}?" : "Realmente desejas desinstalar o {0}?",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>" : "Queres traduzir o WingetUI para o teu idioma? Vê como contribuir <a style=\"color:{0}\" href=\"{1}\"a>AQUI!</a>",
@@ -88,13 +132,21 @@
   "Found" : "Detetado",
   "Found 0 Packages" : "Nenhum pacote foi encontrado",
   "Found packages: {0}" : "Pacotes encontrados: {0}",
-  "Found packages: {0}, not finished yet..." : "Pacotes encontrados: {0}, ainda não terminou...",
+  "Found packages: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Pacotes encontrados: {0}, ainda não terminou..."
+      }
+    }
+  },
   "General preferences" : "Preferências gerais",
   "General Preferences" : "Preferências gerais",
   "General Settings" : "Definições Gerais",
   "GitHub profile" : "Perfil do GitHub",
   "Hide details" : "Ocultar detalhes",
-  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "Olá, meu nome é Martí, e sou o <i>desenvolvedor</i> do WingetUI. O WingetUI foi feito inteiramente no meu tempo livre!",
+  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI" : {
+    " WingetUI has been entirely made on my free time!" : "Olá, meu nome é Martí, e sou o <i>desenvolvedor</i> do WingetUI. O WingetUI foi feito inteiramente no meu tempo livre!"
+  },
   "homepage" : "sítio electrónico",
   "Homepage" : "Página Inicial",
   "Homepage URL:" : "URL da página incial:",
@@ -126,11 +178,23 @@
   "Interactive uninstall" : "Desinstalação interactiva",
   "Interactive update" : "Actualização interactiva",
   "Is this package missing the icon?" : "Este pacote está sem o ícone?",
-  "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "Parece que executaste o WingetUI como administrador, o que não é recomendado. Ainda podes utilizar o programa, mas recomendamos fortemente não executar o WingetUI com privilégios de administrador. Clica em \"Mostrar detalhes\" para ver o porquê.",
+  "It looks like you ran WingetUI as administrator, which is not recommended" : {
+    " You can still use the program, but we highly recommend not running WingetUI with administrator privileges" : {
+      " Click on \"Show details\" to see why" : {
+        "" : "Parece que executaste o WingetUI como administrador, o que não é recomendado. Ainda podes utilizar o programa, mas recomendamos fortemente não executar o WingetUI com privilégios de administrador. Clica em \"Mostrar detalhes\" para ver o porquê."
+      }
+    }
+  },
   "Language, theme and other miscellaneous preferences" : "Idioma, tema e outras preferências diversas",
   "Last updated:" : "Última actualização:",
   "Latest" : "Último",
-  "Latest details..." : "Últimos detalhes...",
+  "Latest details" : {
+    "" : {
+      "" : {
+        "" : "Últimos detalhes..."
+      }
+    }
+  },
   "Latest Version" : "Última Versão",
   "Latest Version:" : "Última Versão:",
   "License" : "Licença",
@@ -138,13 +202,55 @@
   "Licenses" : "Licenças",
   "Light" : "Claro",
   "Live command-line output" : "Output da linha de comandos em tempo real",
-  "Loading..." : "A carregar...",
-  "Loading buckets..." : "A carregar buckets...",
-  "Loading UI components..." : "A carregar os componentes de interface...",
-  "Loading WingetUI..." : "A carregar o WingetUI...",
-  "Locating Scoop..." : "A localizar o Scoop...",
-  "Locating sudo..." : "A localizar o sudo...",
-  "Locating Winget..." : "A localizar o Winget...",
+  "Loading" : {
+    "" : {
+      "" : {
+        "" : "A carregar..."
+      }
+    }
+  },
+  "Loading buckets" : {
+    "" : {
+      "" : {
+        "" : "A carregar buckets..."
+      }
+    }
+  },
+  "Loading UI components" : {
+    "" : {
+      "" : {
+        "" : "A carregar os componentes de interface..."
+      }
+    }
+  },
+  "Loading WingetUI" : {
+    "" : {
+      "" : {
+        "" : "A carregar o WingetUI..."
+      }
+    }
+  },
+  "Locating Scoop" : {
+    "" : {
+      "" : {
+        "" : "A localizar o Scoop..."
+      }
+    }
+  },
+  "Locating sudo" : {
+    "" : {
+      "" : {
+        "" : "A localizar o sudo..."
+      }
+    }
+  },
+  "Locating Winget" : {
+    "" : {
+      "" : {
+        "" : "A localizar o Winget..."
+      }
+    }
+  },
   "Manage scoop buckets" : "Gerir os buckets do Scoop",
   "Manifest" : "Manifesto",
   "Manifest:" : "Manifesto:",
@@ -163,7 +269,13 @@
   "Package ID" : "ID do Pacote",
   "Package manager preferences" : "Preferências do gestor de pacotes",
   "Package Name" : "Nome do Pacote",
-  "Please wait..." : "Por favor, espera...",
+  "Please wait" : {
+    "" : {
+      "" : {
+        "" : "Por favor, espera..."
+      }
+    }
+  },
   "Program ID:" : "ID do Programa:",
   "Project homepage" : "Página inicial do projecto",
   "PSF License" : "Licença PSF",
@@ -191,14 +303,34 @@
   "Scoop preferences" : "Preferências do Scoop",
   "Search for packages" : "Procurar pacotes",
   "Search for packages on Winget and Scoop" : "Pesquisar pacotes no Winget e Scoop",
-  "Searching for installed packages..." : "A procurar pacotes instalados...",
-  "Searching for packages..." : "A procurar pacotes...",
+  "Searching for installed packages" : {
+    "" : {
+      "" : {
+        "" : "A procurar pacotes instalados..."
+      }
+    }
+  },
+  "Searching for packages" : {
+    "" : {
+      "" : {
+        "" : "A procurar pacotes..."
+      }
+    }
+  },
   "Search on available updates" : "Pesquisar nas actualizações disponíveis",
   "Search on your software" : "Pesquisar nos teus programas",
   "Select all" : "Seleccionar todos",
   "Select none" : "Desmarcar todos",
   "Select package file" : "seleccionar ficheiro de pacote",
-  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "Handshake enviado. A esperar resposta da instância... ({0}%)",
+  "Sent handshake" : {
+    " Waiting for instance listener's answer" : {
+      "" : {
+        "" : {
+          " ({0}%)" : "Handshake enviado. A esperar resposta da instância... ({0}%)"
+        }
+      }
+    }
+  },
   "Show a notification when there are available updates" : "Mostrar uma notificação quando houver actualizações disponíveis",
   "Show details" : "Mostrar detalhes",
   "Show info" : "Mais informações",
@@ -213,21 +345,45 @@
   "Skip the hash check" : "Pular a verificação de hash",
   "Software Updates" : "Actualizações de Software",
   "Source" : "Origem",
-  "Starting daemons..." : "A iniciar daemons...",
-  "Starting installation..." : "A iniciar a instalação...",
+  "Starting daemons" : {
+    "" : {
+      "" : {
+        "" : "A iniciar daemons..."
+      }
+    }
+  },
+  "Starting installation" : {
+    "" : {
+      "" : {
+        "" : "A iniciar a instalação..."
+      }
+    }
+  },
   "Startup options" : "Opções de inicialização",
   "Status" : "Status",
   "Sudo found: {0}" : "Sudo encontrado: {0}",
   "Text file" : "Ficheiro de texto",
   "The icons and screenshots are maintained by users like you!" : "Os ícones e as capturas de ecrã são mantidos por utilizadores como tu!",
-  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop." : "O objectivo principal deste projecto é criar uma interface de utilizador intuitiva para os gestores de pacotes CLI mais comuns para o Windows, como o Winget e o Scoop.",
-  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator." : "Há dois motivos principais para não executar o WingetUI como administrador: O primeiro é que o gestor de pacotes Scoop pode ter problemas com alguns comandos quando executado com direitos de administrador. O segundo é que executar o WingetUI como administrador significa que qualquer pacote que descarregares será executado como administrador (e isso não é seguro). Lembra-te que se precisares instalar um pacote específico como administrador, sempre podes clicar com o botão direito do mouse no item -> Instalar/Actualizar/Desinstalar como administrador.",
-  "This project has no connection with the official {0} project — it's completely unofficial." : "Este projecto não tem conexão com o projecto oficial {0} — é completamente não-oficial.",
+  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop" : {
+    "" : "O objectivo principal deste projecto é criar uma interface de utilizador intuitiva para os gestores de pacotes CLI mais comuns para o Windows, como o Winget e o Scoop."
+  },
+  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights" : {
+    "\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe)" : {
+      "\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator" : {
+        "" : "Há dois motivos principais para não executar o WingetUI como administrador: O primeiro é que o gestor de pacotes Scoop pode ter problemas com alguns comandos quando executado com direitos de administrador. O segundo é que executar o WingetUI como administrador significa que qualquer pacote que descarregares será executado como administrador (e isso não é seguro). Lembra-te que se precisares instalar um pacote específico como administrador, sempre podes clicar com o botão direito do mouse no item -> Instalar/Actualizar/Desinstalar como administrador."
+      }
+    }
+  },
+  "This project has no connection with the official {0} project — it's completely unofficial" : {
+    "" : "Este projecto não tem conexão com o projecto oficial {0} — é completamente não-oficial."
+  },
   "Translators" : "Tradutores",
   "Unable to load informarion" : "Não foi possível carregar as informações",
   "uninstall" : "desinstalar",
   "Uninstall" : "Desinstalar",
-  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them." : "Os pacotes desinstaláveis com a origem listada como \"Local PC\" não estão publicados em nenhum gestor de pacotes; portanto, não há informações disponíveis para mostrar sobre eles.",
+  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them" : {
+    "" : "Os pacotes desinstaláveis com a origem listada como \"Local PC\" não estão publicados em nenhum gestor de pacotes; portanto, não há informações disponíveis para mostrar sobre eles."
+  },
   "Uninstall as administrator" : "Desinstalar como administrador",
   "uninstallation" : "desinstalação",
   "Uninstall canceled by the user!" : "Desinstalação cancelada pelo utilizador!",
@@ -256,18 +412,46 @@
   "Update WingetUI automatically" : "Actualizar o WingetUI automaticamente",
   "Update with administrator privileges" : "Actualizar com privilégios de administrador",
   "updating" : "a actualizar",
-  "Updating Scoop sources..." : "A actualizar as fontes do Scoop...",
-  "Updating Winget sources..." : "A actualizar as fontes do Winget...",
+  "Updating Scoop sources" : {
+    "" : {
+      "" : {
+        "" : "A actualizar as fontes do Scoop..."
+      }
+    }
+  },
+  "Updating Winget sources" : {
+    "" : {
+      "" : {
+        "" : "A actualizar as fontes do Winget..."
+      }
+    }
+  },
   "Upgrade all" : "Actualizar todos",
   "Use installed GSudo instead of the bundled one (requires app restart)" : "Utilizar o GSudo instalado em vez do incluído (requer a reinicialização da aplicação)",
   "User interface preferences" : "Preferências da interface do utilizador",
   "Use system Winget (Needs a restart)" : "Utilizar o Winget do sistema (Precisa de uma reinicialização)",
   "Version" : "Versão",
   "Version:" : "Versão:",
-  "Waiting for other installations to finish..." : "A aguardar a conclusão das outras instalações...",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer." : "Não foi possível {0} o {1}. Por favor, tenta novamente mais tarde. Clica em \"Mostrar detalhes\" para obter os logs do instalador.",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller." : "Não foi possível {0} o {1}. Por favor, tenta novamente mais tarde. Clica em \"Mostrar detalhes\" para obter os logs do desinstalador.",
-  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop." : "Não estão disponíveis Informações detalhadas sobre este pacote, porque ele não foi instalado pelo Winget nem pelo Scoop.",
+  "Waiting for other installations to finish" : {
+    "" : {
+      "" : {
+        "" : "A aguardar a conclusão das outras instalações..."
+      }
+    }
+  },
+  "We could not {0} {1}" : {
+    " Please try again later" : {
+      " Click on \"Show details\" to get the logs from the installer" : {
+        "" : "Não foi possível {0} o {1}. Por favor, tenta novamente mais tarde. Clica em \"Mostrar detalhes\" para obter os logs do instalador."
+      },
+      " Click on \"Show details\" to get the logs from the uninstaller" : {
+        "" : "Não foi possível {0} o {1}. Por favor, tenta novamente mais tarde. Clica em \"Mostrar detalhes\" para obter os logs do desinstalador."
+      }
+    }
+  },
+  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop" : {
+    "" : "Não estão disponíveis Informações detalhadas sobre este pacote, porque ele não foi instalado pelo Winget nem pelo Scoop."
+  },
   "Which bucket do you want to add?" : "Qual bucket desejas adicionar?",
   "Which bucket do you want to remove?" : "Qual bucket desejas remover?",
   "Winget found: {0}" : "Winget encontrou: {0}",
@@ -279,11 +463,15 @@
   "WingetUI autostart behaviour, application launch settings" : "Comportamento de inicialização automática do WingetUI, definições de inicialização da aplicação",
   "WingetUI display language:" : "Idioma de exibição do WingetUI:",
   "wingetui exported packages" : "Pacotes exportados do WingetUI",
-  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "O WingetUI não foi traduzido por máquina! Os seguintes utilizadores foram responsáveis pelas traduções:",
+  "WingetUI has not been machine translated" : {
+    " The following users have been in charge of the translations:" : "O WingetUI não foi traduzido por máquina! Os seguintes utilizadores foram responsáveis pelas traduções:"
+  },
   "WingetUI log" : "Log do WingetUI",
   "WingetUI Settings" : "Definições do WingetUI",
   "WingetUI tray application preferences" : "Preferências do ícone do WingetUI na bandeja do sistema",
   "WingetUI version {0}" : "WingetUI versão {0}",
-  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "O WingetUI não teria sido possível sem a ajuda de nossos queridos colaboradores. Dá uma olhada nos seus perfis no GitHub, o WingetUI não seria possível sem eles!",
+  "WingetUI wouldn't have been possible with the help of our dear contributors" : {
+    " Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "O WingetUI não teria sido possível sem a ajuda de nossos queridos colaboradores. Dá uma olhada nos seus perfis no GitHub, o WingetUI não seria possível sem eles!"
+  },
   "Yes" : "Sim"
 }

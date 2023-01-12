@@ -33,7 +33,13 @@
   "Administrator privileges" : "Yönetici ayrıcalıkları",
   "Allow parallel installs (NOT RECOMMENDED)" : "Paralel kurulumlara izin ver (ÖNERİLMEZ)",
   "Application theme:" : "Uygulama teması :",
-  "Applying update..." : "Güncelleme uygulanıyor...",
+  "Applying update" : {
+    "" : {
+      "" : {
+        "" : "Güncelleme uygulanıyor..."
+      }
+    }
+  },
   "App Name" : "Uygulama ismi",
   "Are these screenshots wron or blurry?" : "Bu ekran görüntüleri yanlış mı yoksa bulanık mı?",
   "Are you sure?" : "Emin misin?",
@@ -43,7 +49,13 @@
   "Available updates" : "Mevcut güncellemeler",
   "Available Updates" : null,
   "Available updates: {0}" : "Mevcut güncellemeler : {0}",
-  "Available updates: {0}, not finished yet..." : "Mevcut güncellemeler : {0}, henüz bitmedi...",
+  "Available updates: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Mevcut güncellemeler : {0}, henüz bitmedi..."
+      }
+    }
+  },
   "Beta features and other options that shouldn't be touched" : null,
   "Blacklist apps" : "Kara listedeki uygulamalar",
   "buy me a coffee" : "Bağış Yap",
@@ -52,11 +64,35 @@
   "Can't {0} {1}" : "{0} {1} yapılamıyor",
   "Check for package updates periodically" : "Paket güncellemelerin periyodik olarak kontrol edin",
   "Check for updates every:" : "Her seferinde güncellemeleri kontrol edin :",
-  "Checking for other running instances..." : "Çalışan diğer örnekler kontrol ediliyor...\n",
-  "Checking for updates..." : "Güncellemeler kontrol ediliyor...",
-  "Checking found instace(s)..." : "Bulunan örnekler kontrol ediliyor...",
+  "Checking for other running instances" : {
+    "" : {
+      "" : {
+        "" : "Çalışan diğer örnekler kontrol ediliyor...\n"
+      }
+    }
+  },
+  "Checking for updates" : {
+    "" : {
+      "" : {
+        "" : "Güncellemeler kontrol ediliyor..."
+      }
+    }
+  },
+  "Checking found instace(s)" : {
+    "" : {
+      "" : {
+        "" : "Bulunan örnekler kontrol ediliyor..."
+      }
+    }
+  },
   "Check out my {0} and my {1}!" : "{0} ve {1}lerine göz atın!",
-  "Clearing Scoop cache..." : "Scoop'un önbelleği temizleniyor...",
+  "Clearing Scoop cache" : {
+    "" : {
+      "" : {
+        "" : "Scoop'un önbelleği temizleniyor..."
+      }
+    }
+  },
   "Close" : "Kapat",
   "Close WingetUI to the notification area" : "Bildirim alanında WingetUI'yi kapatın",
   "Component Information" : "Bileşen Bilgileri\n",
@@ -68,11 +104,19 @@
   "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Discover Software sekmesindeki bir öğeye çift tıkladığınızda doğrudan kurun (paket bilgisini göstermek yerine)",
   "Disable Scoop" : "Scoop'u Devre Dışı Bırak",
   "Disable Winget" : "Winget'i Devre dışı bırak",
-  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "SORUMLULUK REDDİ : İNDİRİLEN UYGULAMALARDAN NE MICROSOFT NE DE WINGETUI YAPICILARI SORUMLU DEĞİLDİR.",
+  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS" : {
+    "" : "SORUMLULUK REDDİ : İNDİRİLEN UYGULAMALARDAN NE MICROSOFT NE DE WINGETUI YAPICILARI SORUMLU DEĞİLDİR."
+  },
   "Discover Packages" : "Paketleri Keşfedin",
   "Do not download new app translations from GitHub automatically" : null,
   "Do not update package indexes on launch" : "Paket dizinlerini başlangıçta güncellemeyin",
-  "Downloading package metadata..." : "Paket meta verileri indiriliyor...",
+  "Downloading package metadata" : {
+    "" : {
+      "" : {
+        "" : "Paket meta verileri indiriliyor..."
+      }
+    }
+  },
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!" : "WingetUI'yi faydalı buluyor musunuz? Geliştiriciyi desteklemek ister misiniz? Öyleyse, {0} yapabilirsiniz, çok yardımcı olur!",
   "Do you really want to uninstall {0}?" : "{0} uygulamasını gerçekten kaldırmak istiyor musunuz?",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>" : "WingetUI'yi kendi dilinize çevirmek ister misiniz? Nasıl katkıda bulunacağınızı görün <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>",
@@ -88,13 +132,21 @@
   "Found" : "Bulundu",
   "Found 0 Packages" : "Paket Bulunamadı",
   "Found packages: {0}" : "Bulunan paketler : {0}",
-  "Found packages: {0}, not finished yet..." : "Bulunan paketler : {0}, henüz bitmedi...",
+  "Found packages: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Bulunan paketler : {0}, henüz bitmedi..."
+      }
+    }
+  },
   "General preferences" : "Genel tercihler",
   "General Preferences" : "Genel tercihler",
   "General Settings" : "Genel Ayarlar",
   "GitHub profile" : "GitHub profili",
   "Hide details" : "Detayları gizle",
-  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "Merhaba benim adım Marti ve ben WingetUI'ın <i>Geliştircisiyim</i> WingetUI tamamen boş zamanlarımda yapıldı!",
+  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI" : {
+    " WingetUI has been entirely made on my free time!" : "Merhaba benim adım Marti ve ben WingetUI'ın <i>Geliştircisiyim</i> WingetUI tamamen boş zamanlarımda yapıldı!"
+  },
   "homepage" : "Ana sayfa",
   "Homepage" : "Ana Sayfa",
   "Homepage URL:" : "Ana sayfa URL'si :",
@@ -126,11 +178,23 @@
   "Interactive uninstall" : "Etkileşimli kaldırma",
   "Interactive update" : "Etkileşimli güncelleme",
   "Is this package missing the icon?" : "Bu pakette simge eksik mi?",
-  "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "WingetUI'yi yönetici olarak çalıştırdığınız anlaşılıyor, bu önerilmez. Programı kullanmaya devam edebilirsiniz, ancak WingetUI'yi yönetici ayrıcalıklarıyla çalıştırmamanızı şiddetle tavsiye ederiz. Nedenini görmek için \"Ayrıntıları göster'e\" tıklayın.",
+  "It looks like you ran WingetUI as administrator, which is not recommended" : {
+    " You can still use the program, but we highly recommend not running WingetUI with administrator privileges" : {
+      " Click on \"Show details\" to see why" : {
+        "" : "WingetUI'yi yönetici olarak çalıştırdığınız anlaşılıyor, bu önerilmez. Programı kullanmaya devam edebilirsiniz, ancak WingetUI'yi yönetici ayrıcalıklarıyla çalıştırmamanızı şiddetle tavsiye ederiz. Nedenini görmek için \"Ayrıntıları göster'e\" tıklayın."
+      }
+    }
+  },
   "Language, theme and other miscellaneous preferences" : "Dil, tema ve diğer çeşitli tercihler",
   "Last updated:" : null,
   "Latest" : "En son",
-  "Latest details..." : "Son ayrıntılar...",
+  "Latest details" : {
+    "" : {
+      "" : {
+        "" : "Son ayrıntılar..."
+      }
+    }
+  },
   "Latest Version" : "En son sürüm",
   "Latest Version:" : "En son sürüm :",
   "License" : "Lisans",
@@ -138,13 +202,55 @@
   "Licenses" : "Lisanslar",
   "Light" : "Aydınlık",
   "Live command-line output" : "Gerçek zamanlı komut satırı çıktısı",
-  "Loading..." : "Yükleniyor...",
-  "Loading buckets..." : null,
-  "Loading UI components..." : "UI bileşenleri yükleniyor...",
-  "Loading WingetUI..." : "WingetUI yükleniyor",
-  "Locating Scoop..." : "Scoop bulunuyor...",
-  "Locating sudo..." : "sudo bulunuyor...",
-  "Locating Winget..." : "Winget bulunuyor...",
+  "Loading" : {
+    "" : {
+      "" : {
+        "" : "Yükleniyor..."
+      }
+    }
+  },
+  "Loading buckets" : {
+    "" : {
+      "" : {
+        "" : null
+      }
+    }
+  },
+  "Loading UI components" : {
+    "" : {
+      "" : {
+        "" : "UI bileşenleri yükleniyor..."
+      }
+    }
+  },
+  "Loading WingetUI" : {
+    "" : {
+      "" : {
+        "" : "WingetUI yükleniyor"
+      }
+    }
+  },
+  "Locating Scoop" : {
+    "" : {
+      "" : {
+        "" : "Scoop bulunuyor..."
+      }
+    }
+  },
+  "Locating sudo" : {
+    "" : {
+      "" : {
+        "" : "sudo bulunuyor..."
+      }
+    }
+  },
+  "Locating Winget" : {
+    "" : {
+      "" : {
+        "" : "Winget bulunuyor..."
+      }
+    }
+  },
   "Manage scoop buckets" : null,
   "Manifest" : "Manifest",
   "Manifest:" : "Manifest :",
@@ -163,7 +269,13 @@
   "Package ID" : "Paket kimliği",
   "Package manager preferences" : null,
   "Package Name" : "Paket ismi",
-  "Please wait..." : "Lütfen bekleyin...",
+  "Please wait" : {
+    "" : {
+      "" : {
+        "" : "Lütfen bekleyin..."
+      }
+    }
+  },
   "Program ID:" : "Program kimliği :",
   "Project homepage" : "Proje ana sayfası",
   "PSF License" : "PSF Lisansı",
@@ -191,14 +303,34 @@
   "Scoop preferences" : "Scoop tercihleri",
   "Search for packages" : null,
   "Search for packages on Winget and Scoop" : "Winget ve Scoop'ta paketleri arayın",
-  "Searching for installed packages..." : "Kurulu paketler aranıyor...",
-  "Searching for packages..." : "Paketler aranıyor...",
+  "Searching for installed packages" : {
+    "" : {
+      "" : {
+        "" : "Kurulu paketler aranıyor..."
+      }
+    }
+  },
+  "Searching for packages" : {
+    "" : {
+      "" : {
+        "" : "Paketler aranıyor..."
+      }
+    }
+  },
   "Search on available updates" : "Mevcut güncellemeleri kontrol et",
   "Search on your software" : "Yazılımınızı bulun",
   "Select all" : "Tümünü seç",
   "Select none" : "Seçimleri kaldır",
   "Select package file" : null,
-  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "El sıkışma gönderildi. Örneğin yanıtı bekleniyor... ({0}%)",
+  "Sent handshake" : {
+    " Waiting for instance listener's answer" : {
+      "" : {
+        "" : {
+          " ({0}%)" : "El sıkışma gönderildi. Örneğin yanıtı bekleniyor... ({0}%)"
+        }
+      }
+    }
+  },
   "Show a notification when there are available updates" : "Mevcut güncellemeler olduğunda bildirim göster",
   "Show details" : "Detayları göster",
   "Show info" : "Bilgileri göster",
@@ -213,21 +345,45 @@
   "Skip the hash check" : "Hash kontrolünü yapma",
   "Software Updates" : "Yazılım güncellemeleri",
   "Source" : "Kaynak",
-  "Starting daemons..." : "Daemon'lar başlatılıyor...",
-  "Starting installation..." : "Kurulum başlatılıyor...",
+  "Starting daemons" : {
+    "" : {
+      "" : {
+        "" : "Daemon'lar başlatılıyor..."
+      }
+    }
+  },
+  "Starting installation" : {
+    "" : {
+      "" : {
+        "" : "Kurulum başlatılıyor..."
+      }
+    }
+  },
   "Startup options" : "Başlangıç seçenekleri",
   "Status" : "Durum",
   "Sudo found: {0}" : "Sudo bulundu : {0}",
   "Text file" : null,
   "The icons and screenshots are maintained by users like you!" : "Simgeler ve ekran görüntüleri sizin gibi kullanıcılar tarafından korunur!",
-  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop." : "Bu projenin ana amacı, Winget ve Scoop gibi Windows için en yaygın CLI paket yöneticilerini yönetmek için sezgisel bir kullanıcı arayüzü oluşturmaktır.",
-  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator." : "WingetUI'yi yönetici olarak çalıştırmamanın iki ana nedeni vardır: Birincisi, Scoop paket yöneticisinin yönetici haklarıyla çalıştırıldığında bazı komutlarda sorunlara neden olabilmesidir. İkincisi, WingetUI'yi yönetici olarak çalıştırmak, indirdiğiniz herhangi bir paketin yönetici olarak çalıştırılacağı anlamına gelir (ve bu güvenli değildir). Belirli bir paketi yönetici olarak yüklemeniz gerekiyorsa, öğeyi her zaman sağ tıklatabileceğinizi unutmayın -> Yönetici olarak Yükle/Güncelle/Kaldır.",
-  "This project has no connection with the official {0} project — it's completely unofficial." : "Bu projenin resmi {0} projesiyle hiçbir bağlantısı yoktur - tamamen gayri resmidir.\n",
+  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop" : {
+    "" : "Bu projenin ana amacı, Winget ve Scoop gibi Windows için en yaygın CLI paket yöneticilerini yönetmek için sezgisel bir kullanıcı arayüzü oluşturmaktır."
+  },
+  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights" : {
+    "\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe)" : {
+      "\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator" : {
+        "" : "WingetUI'yi yönetici olarak çalıştırmamanın iki ana nedeni vardır: Birincisi, Scoop paket yöneticisinin yönetici haklarıyla çalıştırıldığında bazı komutlarda sorunlara neden olabilmesidir. İkincisi, WingetUI'yi yönetici olarak çalıştırmak, indirdiğiniz herhangi bir paketin yönetici olarak çalıştırılacağı anlamına gelir (ve bu güvenli değildir). Belirli bir paketi yönetici olarak yüklemeniz gerekiyorsa, öğeyi her zaman sağ tıklatabileceğinizi unutmayın -> Yönetici olarak Yükle/Güncelle/Kaldır."
+      }
+    }
+  },
+  "This project has no connection with the official {0} project — it's completely unofficial" : {
+    "" : "Bu projenin resmi {0} projesiyle hiçbir bağlantısı yoktur - tamamen gayri resmidir.\n"
+  },
   "Translators" : "Çevirmenler",
   "Unable to load informarion" : "Bilgi yüklenemedi",
   "uninstall" : "kaldır",
   "Uninstall" : "Kaldır",
-  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them." : "Kaynağı \"Yerel PC\" olarak listelenen kaldırılabilir paketler, hiçbir paket yöneticisinde yayınlanmaz, bu nedenle onlar hakkında gösterilecek herhangi bir bilgi yoktur.",
+  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them" : {
+    "" : "Kaynağı \"Yerel PC\" olarak listelenen kaldırılabilir paketler, hiçbir paket yöneticisinde yayınlanmaz, bu nedenle onlar hakkında gösterilecek herhangi bir bilgi yoktur."
+  },
   "Uninstall as administrator" : "Yönetici olarak kaldır",
   "uninstallation" : "Kaldırma",
   "Uninstall canceled by the user!" : "Kaldırma işlemi kullanıcı tarafından iptal edildi!\n",
@@ -256,18 +412,46 @@
   "Update WingetUI automatically" : "WingetUI'yi otomatik olarak güncelle",
   "Update with administrator privileges" : "Yönetici yetkileriyle güncelleme\n",
   "updating" : "Güncelleniyor",
-  "Updating Scoop sources..." : "Scoop kaynakları güncelleniyor... ",
-  "Updating Winget sources..." : "Winget kaynakları güncelleniyor...",
+  "Updating Scoop sources" : {
+    "" : {
+      "" : {
+        "" : "Scoop kaynakları güncelleniyor... "
+      }
+    }
+  },
+  "Updating Winget sources" : {
+    "" : {
+      "" : {
+        "" : "Winget kaynakları güncelleniyor..."
+      }
+    }
+  },
   "Upgrade all" : "Tümünü güncelle",
   "Use installed GSudo instead of the bundled one (requires app restart)" : "Paketlenmiş olan yerine yüklü GSudo'yu kullanın (uygulamanın yeniden başlatılmasını gerektirir)",
   "User interface preferences" : "Kullanıcı arabirimi tercihleri",
   "Use system Winget (Needs a restart)" : null,
   "Version" : "Sürüm",
   "Version:" : "Sürüm:",
-  "Waiting for other installations to finish..." : "Diğer kurulumların tamamlanması bekleniyor...",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer." : "{0} {1} yapamadık. Lütfen daha sonra tekrar deneyiniz. Günlükleri yükleyiciden almak için \"Ayrıntıları göster'e\" tıklayın.",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller." : "{0} {1} yapamadık. Lütfen daha sonra tekrar deneyiniz. Kaldırıcıdan günlükleri almak için \"Ayrıntıları göster'e\" tıklayın.",
-  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop." : "Bu paket Winget veya Scoop ile kurulmadığı için hakkında detaylı bilgi yükleyemedik.",
+  "Waiting for other installations to finish" : {
+    "" : {
+      "" : {
+        "" : "Diğer kurulumların tamamlanması bekleniyor..."
+      }
+    }
+  },
+  "We could not {0} {1}" : {
+    " Please try again later" : {
+      " Click on \"Show details\" to get the logs from the installer" : {
+        "" : "{0} {1} yapamadık. Lütfen daha sonra tekrar deneyiniz. Günlükleri yükleyiciden almak için \"Ayrıntıları göster'e\" tıklayın."
+      },
+      " Click on \"Show details\" to get the logs from the uninstaller" : {
+        "" : "{0} {1} yapamadık. Lütfen daha sonra tekrar deneyiniz. Kaldırıcıdan günlükleri almak için \"Ayrıntıları göster'e\" tıklayın."
+      }
+    }
+  },
+  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop" : {
+    "" : "Bu paket Winget veya Scoop ile kurulmadığı için hakkında detaylı bilgi yükleyemedik."
+  },
   "Which bucket do you want to add?" : "Hangi bucket'ı eklemek istiyorsunuz?\n",
   "Which bucket do you want to remove?" : "Hangi bucket'ı kaldırmak istiyorsunuz?",
   "Winget found: {0}" : "Bulunan Winget : {0}",
@@ -279,11 +463,15 @@
   "WingetUI autostart behaviour, application launch settings" : "WingetUI otomatik başlatma seçenekleri ve uygulama başlatma ayarları",
   "WingetUI display language:" : "WingetUI görüntüleme dili :",
   "wingetui exported packages" : null,
-  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI makine çevirisi yapılmadı. Aşağıdaki kullanıcılar çevirilerden sorumlu olmuştur:",
+  "WingetUI has not been machine translated" : {
+    " The following users have been in charge of the translations:" : "WingetUI makine çevirisi yapılmadı. Aşağıdaki kullanıcılar çevirilerden sorumlu olmuştur:"
+  },
   "WingetUI log" : "WingetUI günlüğü",
   "WingetUI Settings" : "WingetUI Ayarları",
   "WingetUI tray application preferences" : "WingetUI bildirim çubuğu tercihleri",
   "WingetUI version {0}" : "WingetUI sürümü {0}",
-  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI, değerli katılımcılarımızın yardımıyla geliştirldi. GitHub profillerine göz atın, WingetUI onların yardımlarıyla geliştirildi",
+  "WingetUI wouldn't have been possible with the help of our dear contributors" : {
+    " Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI, değerli katılımcılarımızın yardımıyla geliştirldi. GitHub profillerine göz atın, WingetUI onların yardımlarıyla geliştirildi"
+  },
   "Yes" : null
 }
