@@ -33,7 +33,13 @@
   "Administrator privileges" : "Администраторски права",
   "Allow parallel installs (NOT RECOMMENDED)" : "Разрешаване на паралелни инсталации (НЕ СЕ ПРЕПОРЪЧВА)",
   "Application theme:" : "Тема на приложението:",
-  "Applying update..." : "Актуализиране...",
+  "Applying update" : {
+    "" : {
+      "" : {
+        "" : "Актуализиране..."
+      }
+    }
+  },
   "App Name" : "Име на приложението",
   "Are these screenshots wron or blurry?" : "Грешни или размазани са тези снимки?",
   "Are you sure?" : "Сигурен ли си?",
@@ -43,7 +49,13 @@
   "Available updates" : "Налични актуализации",
   "Available Updates" : "Налични Актуализации",
   "Available updates: {0}" : "Налични актуализации: {0}",
-  "Available updates: {0}, not finished yet..." : "Налични актуализации: {0}, още не сме готови...",
+  "Available updates: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Налични актуализации: {0}, още не сме готови..."
+      }
+    }
+  },
   "Beta features and other options that shouldn't be touched" : "Бета функции и други опции, които не трябва да се пипат",
   "Blacklist apps" : "Поставяне в черния списък",
   "buy me a coffee" : "купите кафе",
@@ -52,11 +64,35 @@
   "Can't {0} {1}" : "Неуспех при {0} на {1}",
   "Check for package updates periodically" : "Периодично проверяване за актуализации на пакети",
   "Check for updates every:" : "Проверяване за актуализации на всеки:",
-  "Checking for other running instances..." : "Проверява се за други работещи копия...",
-  "Checking for updates..." : "Търсене на актуализации...",
-  "Checking found instace(s)..." : "Проверяват се откритите копия...",
+  "Checking for other running instances" : {
+    "" : {
+      "" : {
+        "" : "Проверява се за други работещи копия..."
+      }
+    }
+  },
+  "Checking for updates" : {
+    "" : {
+      "" : {
+        "" : "Търсене на актуализации..."
+      }
+    }
+  },
+  "Checking found instace(s)" : {
+    "" : {
+      "" : {
+        "" : "Проверяват се откритите копия..."
+      }
+    }
+  },
   "Check out my {0} and my {1}!" : "Вижте моят {0} и {1}!",
-  "Clearing Scoop cache..." : "Чистене на Scoop кеш...",
+  "Clearing Scoop cache" : {
+    "" : {
+      "" : {
+        "" : "Чистене на Scoop кеш..."
+      }
+    }
+  },
   "Close" : "Затваряне",
   "Close WingetUI to the notification area" : "Затваряне на WingetUI към областта за уведомяване",
   "Component Information" : "Информация за компонентите",
@@ -68,11 +104,19 @@
   "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Директно инсталиране на пакет при двойно кликване в раздела за Откриване (вместо показване на информация)",
   "Disable Scoop" : "Деактивиране на Scoop",
   "Disable Winget" : "Деактивиране на Winget",
-  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "ВНИМАНИЕ: НИТО MICROSOFT, НИТО СЪЗДАТЕЛИТЕ НА WINGETUI НОСЯТ ОТГОВОРНОСТ ЗА ИЗТЕГЛЕНИТЕ ПРИЛОЖЕНИЯ.",
+  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS" : {
+    "" : "ВНИМАНИЕ: НИТО MICROSOFT, НИТО СЪЗДАТЕЛИТЕ НА WINGETUI НОСЯТ ОТГОВОРНОСТ ЗА ИЗТЕГЛЕНИТЕ ПРИЛОЖЕНИЯ."
+  },
   "Discover Packages" : "Откриване на пакети",
   "Do not download new app translations from GitHub automatically" : "Не изтегляй автоматично нови преводи на приложението от GitHub",
   "Do not update package indexes on launch" : "Не актуализирай пакетните индекси при стартиране",
-  "Downloading package metadata..." : "Изтегляне на метаданни за пакета...",
+  "Downloading package metadata" : {
+    "" : {
+      "" : {
+        "" : "Изтегляне на метаданни за пакета..."
+      }
+    }
+  },
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!" : "Смятате ли WingetUI за полезен? Искате ли да подкрепите автора? Ако е така, можете да ми {0}, много помага!",
   "Do you really want to uninstall {0}?" : "Наистина ли искате да деинсталирате {0}?",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>" : "Искате ли да преведете WingetUI на вашия език? Вижте как да допринесете <a style=\"color:{0}\" href=\"{1}\"a>ТУК!</a>",
@@ -88,13 +132,21 @@
   "Found" : "Наличен",
   "Found 0 Packages" : "Няма намерени пакети",
   "Found packages: {0}" : "Намерени са {0} пакета",
-  "Found packages: {0}, not finished yet..." : "Намерени са {0} пакета, но още не сме готови...",
+  "Found packages: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Намерени са {0} пакета, но още не сме готови..."
+      }
+    }
+  },
   "General preferences" : "Общи настройки",
   "General Preferences" : "Общи Настройки",
   "General Settings" : "Общи Настройки",
   "GitHub profile" : "профил в GitHub",
   "Hide details" : "Скриване на подробности",
-  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "Здравейте, казвам се Марти и съм <i>автора</i> на WingetUI. WingetUI е направен изцяло в свободното ми време!",
+  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI" : {
+    " WingetUI has been entirely made on my free time!" : "Здравейте, казвам се Марти и съм <i>автора</i> на WingetUI. WingetUI е направен изцяло в свободното ми време!"
+  },
   "homepage" : "уебсайт",
   "Homepage" : "Уебсайт",
   "Homepage URL:" : "Линк към уебсайта:",
@@ -126,11 +178,23 @@
   "Interactive uninstall" : "Интерактивна деинсталация",
   "Interactive update" : "Интерактивна актуализация",
   "Is this package missing the icon?" : "Липсва ли иконата на този пакет?",
-  "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "Изглежда, че сте стартирали WingetUI като администратор, което не се препоръчва. Можете да използвате програмата и така, но силно препоръчваме да не стартирате WingetUI с администраторски права. Щракнете върху „Покажи подробности“, за да видите защо.",
+  "It looks like you ran WingetUI as administrator, which is not recommended" : {
+    " You can still use the program, but we highly recommend not running WingetUI with administrator privileges" : {
+      " Click on \"Show details\" to see why" : {
+        "" : "Изглежда, че сте стартирали WingetUI като администратор, което не се препоръчва. Можете да използвате програмата и така, но силно препоръчваме да не стартирате WingetUI с администраторски права. Щракнете върху „Покажи подробности“, за да видите защо."
+      }
+    }
+  },
   "Language, theme and other miscellaneous preferences" : "Език, тема и други предпочитания",
   "Last updated:" : "Последна актуализация:",
   "Latest" : "Последна",
-  "Latest details..." : "Последни детайли...",
+  "Latest details" : {
+    "" : {
+      "" : {
+        "" : "Последни детайли..."
+      }
+    }
+  },
   "Latest Version" : "Последна Версия",
   "Latest Version:" : "Последна версия:",
   "License" : "Лиценз",
@@ -138,13 +202,55 @@
   "Licenses" : "Лицензи",
   "Light" : "Светла",
   "Live command-line output" : "Резултат в конзолата",
-  "Loading..." : "Зареждане...",
-  "Loading buckets..." : "Зареждане на кофите...",
-  "Loading UI components..." : "Зареждане на компонентите от потребителския интерфейс...",
-  "Loading WingetUI..." : "Зареждане на WingetUI...",
-  "Locating Scoop..." : "Търсене на Scoop...",
-  "Locating sudo..." : "Търсене на sudo...",
-  "Locating Winget..." : "Търсене на Winget...",
+  "Loading" : {
+    "" : {
+      "" : {
+        "" : "Зареждане..."
+      }
+    }
+  },
+  "Loading buckets" : {
+    "" : {
+      "" : {
+        "" : "Зареждане на кофите..."
+      }
+    }
+  },
+  "Loading UI components" : {
+    "" : {
+      "" : {
+        "" : "Зареждане на компонентите от потребителския интерфейс..."
+      }
+    }
+  },
+  "Loading WingetUI" : {
+    "" : {
+      "" : {
+        "" : "Зареждане на WingetUI..."
+      }
+    }
+  },
+  "Locating Scoop" : {
+    "" : {
+      "" : {
+        "" : "Търсене на Scoop..."
+      }
+    }
+  },
+  "Locating sudo" : {
+    "" : {
+      "" : {
+        "" : "Търсене на sudo..."
+      }
+    }
+  },
+  "Locating Winget" : {
+    "" : {
+      "" : {
+        "" : "Търсене на Winget..."
+      }
+    }
+  },
   "Manage scoop buckets" : "Управление на Scoop кофите",
   "Manifest" : "Манифест",
   "Manifest:" : "Манифест:",
@@ -163,7 +269,13 @@
   "Package ID" : "ID на пакета",
   "Package manager preferences" : "Настройки на мениджъра на пакети",
   "Package Name" : "Име на пакета",
-  "Please wait..." : "Моля изчакайте...",
+  "Please wait" : {
+    "" : {
+      "" : {
+        "" : "Моля изчакайте..."
+      }
+    }
+  },
   "Program ID:" : "ID на програмата:",
   "Project homepage" : "Уебсайт на проекта",
   "PSF License" : "PSF Лиценз",
@@ -191,14 +303,34 @@
   "Scoop preferences" : "Настройки на Scoop",
   "Search for packages" : "Търсене на пакети",
   "Search for packages on Winget and Scoop" : "Търсене на пакети в Winget и Scoop",
-  "Searching for installed packages..." : "Търсене на инсталирани пакети...",
-  "Searching for packages..." : "Търсене на пакети...",
+  "Searching for installed packages" : {
+    "" : {
+      "" : {
+        "" : "Търсене на инсталирани пакети..."
+      }
+    }
+  },
+  "Searching for packages" : {
+    "" : {
+      "" : {
+        "" : "Търсене на пакети..."
+      }
+    }
+  },
   "Search on available updates" : "Търсене в намерените актуализации",
   "Search on your software" : "Търсене във вашия софтуер",
   "Select all" : "Маркиране на всички",
   "Select none" : "Изчистване на маркираните",
   "Select package file" : "Избиране на пакетен файл",
-  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "Изпратен е handshake сигнал. Изчаква се отговор... ({0}%)",
+  "Sent handshake" : {
+    " Waiting for instance listener's answer" : {
+      "" : {
+        "" : {
+          " ({0}%)" : "Изпратен е handshake сигнал. Изчаква се отговор... ({0}%)"
+        }
+      }
+    }
+  },
   "Show a notification when there are available updates" : "Показване на известие при наличие на актуализации",
   "Show details" : "Показване на детайли",
   "Show info" : "Показване на информация",
@@ -213,21 +345,45 @@
   "Skip the hash check" : "Пропускане проверката на хеша",
   "Software Updates" : "Софтуерни актуализации",
   "Source" : "Източник",
-  "Starting daemons..." : "Стартиране на нишки...",
-  "Starting installation..." : "Стартиране на инсталацията...",
+  "Starting daemons" : {
+    "" : {
+      "" : {
+        "" : "Стартиране на нишки..."
+      }
+    }
+  },
+  "Starting installation" : {
+    "" : {
+      "" : {
+        "" : "Стартиране на инсталацията..."
+      }
+    }
+  },
   "Startup options" : "Настройки при стартиране",
   "Status" : "Статус",
   "Sudo found: {0}" : "Sudo намерени: {0}",
   "Text file" : "Текстов файл",
   "The icons and screenshots are maintained by users like you!" : "Иконите и снимките се поддържат от потребители като вас!",
-  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop." : "Основната цел на този проект е да създаде интуитивен потребителски интерфейс за най-разпространените конзолни мениджъри на пакети за Windows, като Winget и Scoop.",
-  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator." : "Има две основни причини да не стартирате WingetUI като администратор: Първата е, че мениджърът на пакети Scoop може да причини проблеми с някои команди, когато се изпълнява с администраторски права. Второто е, че стартирането на WingetUI като администратор означава, че всеки пакет, който изтеглите, ще се изпълнява като администратор (това не е безопасно). Не забравяйте, че ако трябва да инсталирате конкретен пакет като администратор, винаги можете да щракнете с десния бутон върху него -> Инсталиране/Актуализиране/Деинсталиране като администратор.",
-  "This project has no connection with the official {0} project — it's completely unofficial." : "Този проект няма връзка с официалния проект {0} — той е напълно неофициален.",
+  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop" : {
+    "" : "Основната цел на този проект е да създаде интуитивен потребителски интерфейс за най-разпространените конзолни мениджъри на пакети за Windows, като Winget и Scoop."
+  },
+  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights" : {
+    "\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe)" : {
+      "\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator" : {
+        "" : "Има две основни причини да не стартирате WingetUI като администратор: Първата е, че мениджърът на пакети Scoop може да причини проблеми с някои команди, когато се изпълнява с администраторски права. Второто е, че стартирането на WingetUI като администратор означава, че всеки пакет, който изтеглите, ще се изпълнява като администратор (това не е безопасно). Не забравяйте, че ако трябва да инсталирате конкретен пакет като администратор, винаги можете да щракнете с десния бутон върху него -> Инсталиране/Актуализиране/Деинсталиране като администратор."
+      }
+    }
+  },
+  "This project has no connection with the official {0} project — it's completely unofficial" : {
+    "" : "Този проект няма връзка с официалния проект {0} — той е напълно неофициален."
+  },
   "Translators" : "Преводачи",
   "Unable to load informarion" : "Не може да се зареди информация",
   "uninstall" : "деинсталиране",
   "Uninstall" : "Деинсталиране",
-  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them." : "Пакетите за деинсталиране, които показват „Локален компютър“ като техен източник, не са публикувани в нито един мениджър на пакети, така че няма налична информация за тях.",
+  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them" : {
+    "" : "Пакетите за деинсталиране, които показват „Локален компютър“ като техен източник, не са публикувани в нито един мениджър на пакети, така че няма налична информация за тях."
+  },
   "Uninstall as administrator" : "Деинсталиране като администратор",
   "uninstallation" : "деинсталация",
   "Uninstall canceled by the user!" : "Деинсталацията е отменена от потребителя!",
@@ -256,18 +412,46 @@
   "Update WingetUI automatically" : "Автоматично актуализиране на WingetUI",
   "Update with administrator privileges" : "Актуализиране с администраторски права",
   "updating" : "актуализиране",
-  "Updating Scoop sources..." : "Актуализиране на Scoop източниците...",
-  "Updating Winget sources..." : "Актуализиране на Winget източниците...",
+  "Updating Scoop sources" : {
+    "" : {
+      "" : {
+        "" : "Актуализиране на Scoop източниците..."
+      }
+    }
+  },
+  "Updating Winget sources" : {
+    "" : {
+      "" : {
+        "" : "Актуализиране на Winget източниците..."
+      }
+    }
+  },
   "Upgrade all" : "Актуализиране на всичко",
   "Use installed GSudo instead of the bundled one (requires app restart)" : "Използвай инсталирания GSudo вместо вградения (изисква рестартиране на приложението)",
   "User interface preferences" : "Настройки на потребителския интерфейс",
   "Use system Winget (Needs a restart)" : "Използване на системния Winget (изисква рестартиране)",
   "Version" : "Версия",
   "Version:" : "Версия:",
-  "Waiting for other installations to finish..." : "Изчаква се завършването на другите инсталации...",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer." : "Неуспешна {1} на {0}. Моля опитайте по-късно. Кликнете върху „Покажи подробности“, за да видите лога от инсталатора.",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller." : "Неуспешна {1} на {0}. Моля опитайте по-късно. Кликнете върху „Покажи подробности“, за да видите лога от деинсталатора.",
-  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop." : "Не можахме да заредим подробна информация за този пакет, тъй като не е инсталиран чрез Winget или Scoop.",
+  "Waiting for other installations to finish" : {
+    "" : {
+      "" : {
+        "" : "Изчаква се завършването на другите инсталации..."
+      }
+    }
+  },
+  "We could not {0} {1}" : {
+    " Please try again later" : {
+      " Click on \"Show details\" to get the logs from the installer" : {
+        "" : "Неуспешна {1} на {0}. Моля опитайте по-късно. Кликнете върху „Покажи подробности“, за да видите лога от инсталатора."
+      },
+      " Click on \"Show details\" to get the logs from the uninstaller" : {
+        "" : "Неуспешна {1} на {0}. Моля опитайте по-късно. Кликнете върху „Покажи подробности“, за да видите лога от деинсталатора."
+      }
+    }
+  },
+  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop" : {
+    "" : "Не можахме да заредим подробна информация за този пакет, тъй като не е инсталиран чрез Winget или Scoop."
+  },
   "Which bucket do you want to add?" : "Коя кофа искате да добавите?",
   "Which bucket do you want to remove?" : "Коя кофа искате да премахнете?",
   "Winget found: {0}" : "Winget намерени: {0}",
@@ -279,11 +463,15 @@
   "WingetUI autostart behaviour, application launch settings" : "Поведение при автоматично стартиране на WingetUI, настройки при стартиране на приложения",
   "WingetUI display language:" : "WingetUI език:",
   "wingetui exported packages" : "Експортирани пакети от WingetUI",
-  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI не е машинно преведен. Следните потребители са помогнали при превеждането:",
+  "WingetUI has not been machine translated" : {
+    " The following users have been in charge of the translations:" : "WingetUI не е машинно преведен. Следните потребители са помогнали при превеждането:"
+  },
   "WingetUI log" : "WingetUI лог",
   "WingetUI Settings" : "WingetUI настройки",
   "WingetUI tray application preferences" : "WingetUI настройки на областта за уведомления",
   "WingetUI version {0}" : "WingetUI версия {0}\n",
-  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI не би бил възможен без помощта на нашите скъпи сътрудници. Разгледайте техните профили в GitHub, WingetUI не би бил възможен без тях!",
+  "WingetUI wouldn't have been possible with the help of our dear contributors" : {
+    " Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI не би бил възможен без помощта на нашите скъпи сътрудници. Разгледайте техните профили в GitHub, WingetUI не би бил възможен без тях!"
+  },
   "Yes" : "Да"
 }

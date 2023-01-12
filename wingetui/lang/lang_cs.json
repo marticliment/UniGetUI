@@ -33,7 +33,13 @@
   "Administrator privileges" : "Práva správce",
   "Allow parallel installs (NOT RECOMMENDED)" : "Povolit paralelní instalování (NENÍ DOPORUČENO)",
   "Application theme:" : "Motiv aplikace:",
-  "Applying update..." : "Aktualizuji...",
+  "Applying update" : {
+    "" : {
+      "" : {
+        "" : "Aktualizuji..."
+      }
+    }
+  },
   "App Name" : "Název aplikace",
   "Are these screenshots wron or blurry?" : "Jsou tyto screenshoty špatné či rozmazané?",
   "Are you sure?" : "Jste si jistí?",
@@ -43,7 +49,13 @@
   "Available updates" : "Dostupné aktualizace",
   "Available Updates" : "Dostupné aktualizace",
   "Available updates: {0}" : "Dostupných aktualizací: {0}",
-  "Available updates: {0}, not finished yet..." : "Dostupných aktualizací: {0}, ještě nedokončeno...",
+  "Available updates: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Dostupných aktualizací: {0}, ještě nedokončeno..."
+      }
+    }
+  },
   "Beta features and other options that shouldn't be touched" : "Testovací funkce a další vlastnosti, na které byste neměli sahat",
   "Blacklist apps" : "Blacklist aplikací",
   "buy me a coffee" : "koupit kafe",
@@ -52,11 +64,35 @@
   "Can't {0} {1}" : "Nepovedlo se {0} {1}",
   "Check for package updates periodically" : "Pravidelně kontrolovat aktualizace",
   "Check for updates every:" : "Kontrolvat aktualizace každých:",
-  "Checking for other running instances..." : "Kontroluji další bežící instance...",
-  "Checking for updates..." : "Kontroluji aktualizace...",
-  "Checking found instace(s)..." : "Kontroluji nalezené instance...",
+  "Checking for other running instances" : {
+    "" : {
+      "" : {
+        "" : "Kontroluji další bežící instance..."
+      }
+    }
+  },
+  "Checking for updates" : {
+    "" : {
+      "" : {
+        "" : "Kontroluji aktualizace..."
+      }
+    }
+  },
+  "Checking found instace(s)" : {
+    "" : {
+      "" : {
+        "" : "Kontroluji nalezené instance..."
+      }
+    }
+  },
   "Check out my {0} and my {1}!" : "Koukněte na můj {0} a můj {1}!",
-  "Clearing Scoop cache..." : "Čistím cache Scoop...",
+  "Clearing Scoop cache" : {
+    "" : {
+      "" : {
+        "" : "Čistím cache Scoop..."
+      }
+    }
+  },
   "Close" : "Zavřít",
   "Close WingetUI to the notification area" : "Skrýt WingetUI do notifikační oblasti",
   "Component Information" : "Informace o komponentách",
@@ -68,11 +104,19 @@
   "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Přimá instalace po dvojkliku na položku v záložce \"Procházet balíčky\" (místo zobrazení informací o balíčku)",
   "Disable Scoop" : "Vypnout Scoop",
   "Disable Winget" : "Vypnout Winget",
-  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "ODMÍTNUTÍ ODPOVĚDNOSTI: MICROSOFT ČI TVŮRCI WINGETUI NEODPOVÍDAJÍ ZA STAŽENÉ APLIKACE.",
+  "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS" : {
+    "" : "ODMÍTNUTÍ ODPOVĚDNOSTI: MICROSOFT ČI TVŮRCI WINGETUI NEODPOVÍDAJÍ ZA STAŽENÉ APLIKACE."
+  },
   "Discover Packages" : "Procházet balíčky",
   "Do not download new app translations from GitHub automatically" : "Neaktualizovat automaticky jazykové soubory (překlady)",
   "Do not update package indexes on launch" : "Neaktualizovat indexy balíčků po spuštění",
-  "Downloading package metadata..." : "Stahuji metadata balíčku...",
+  "Downloading package metadata" : {
+    "" : {
+      "" : {
+        "" : "Stahuji metadata balíčku..."
+      }
+    }
+  },
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!" : "Přijde vám WingetUI užitečný a chtěli byste podpořit vývojáře? Pokud ano, tak mi můžete {0}, moc to pomáhá!",
   "Do you really want to uninstall {0}?" : "Opravdu chcete odinstalovat {0}?",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>" : "Chtěli byste přeložit WingetUI do vašeho jazyka? Podivejtě se jak přispět, <a style=\"color:{0}\" href=\"{1}\"a>zde!</a>",
@@ -88,13 +132,21 @@
   "Found" : "Nalezeno",
   "Found 0 Packages" : "Nalezeno 0 balíčků",
   "Found packages: {0}" : "Nalezeno balíčků: {0}",
-  "Found packages: {0}, not finished yet..." : "Nalezeno balíčků: {0}, ještě nedokončeno...",
+  "Found packages: {0}, not finished yet" : {
+    "" : {
+      "" : {
+        "" : "Nalezeno balíčků: {0}, ještě nedokončeno..."
+      }
+    }
+  },
   "General preferences" : "Obecné vlastnosti",
   "General Preferences" : "Obecné vlastnosti",
   "General Settings" : "Obecné nastavení",
   "GitHub profile" : "GitHub profil",
   "Hide details" : "Skrýt podrobnosti",
-  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "Ahoj, já jsem Martí a jsem <i>vývojář</i> WingetUI. WingetUI bylo celé vytvořeno v mém volném čase!",
+  "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI" : {
+    " WingetUI has been entirely made on my free time!" : "Ahoj, já jsem Martí a jsem <i>vývojář</i> WingetUI. WingetUI bylo celé vytvořeno v mém volném čase!"
+  },
   "homepage" : "webovou stránku",
   "Homepage" : "Domovská stránka",
   "Homepage URL:" : "URL domovské stránky",
@@ -126,11 +178,23 @@
   "Interactive uninstall" : "Interaktivní odinstalace",
   "Interactive update" : "Interaktivní aktualizace",
   "Is this package missing the icon?" : "Chybí tomuto balíčku ikonka?",
-  "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why." : "Vypadá to, že jste spustili WingetUI jako administrátor, což není nutné. Program můžete stále používat, ale vážně nedoporučujeme spouštět WingetUI s právy administrátora. Klikněte na \"Zobrazit podrobnosti\" pro další informace.",
+  "It looks like you ran WingetUI as administrator, which is not recommended" : {
+    " You can still use the program, but we highly recommend not running WingetUI with administrator privileges" : {
+      " Click on \"Show details\" to see why" : {
+        "" : "Vypadá to, že jste spustili WingetUI jako administrátor, což není nutné. Program můžete stále používat, ale vážně nedoporučujeme spouštět WingetUI s právy administrátora. Klikněte na \"Zobrazit podrobnosti\" pro další informace."
+      }
+    }
+  },
   "Language, theme and other miscellaneous preferences" : "Lokalizace, motivy a další různé vlastnosti",
   "Last updated:" : "Poslední aktualizace:",
   "Latest" : "Poslední",
-  "Latest details..." : "Poslední podrobnosti...",
+  "Latest details" : {
+    "" : {
+      "" : {
+        "" : "Poslední podrobnosti..."
+      }
+    }
+  },
   "Latest Version" : "Poslední verze",
   "Latest Version:" : "Poslední verze:",
   "License" : "Licence",
@@ -138,13 +202,55 @@
   "Licenses" : "Licence",
   "Light" : "Světlý",
   "Live command-line output" : "Podrobný výpis z konzole",
-  "Loading..." : "Načítání...",
-  "Loading buckets..." : "Načítám repozitáře...",
-  "Loading UI components..." : "Načítání UI komponent...",
-  "Loading WingetUI..." : "Načítání WingetUI...",
-  "Locating Scoop..." : "Vyhledávám Scoop...",
-  "Locating sudo..." : "Vyhledávám sudo...",
-  "Locating Winget..." : "Vyhledávám Winget...",
+  "Loading" : {
+    "" : {
+      "" : {
+        "" : "Načítání..."
+      }
+    }
+  },
+  "Loading buckets" : {
+    "" : {
+      "" : {
+        "" : "Načítám repozitáře..."
+      }
+    }
+  },
+  "Loading UI components" : {
+    "" : {
+      "" : {
+        "" : "Načítání UI komponent..."
+      }
+    }
+  },
+  "Loading WingetUI" : {
+    "" : {
+      "" : {
+        "" : "Načítání WingetUI..."
+      }
+    }
+  },
+  "Locating Scoop" : {
+    "" : {
+      "" : {
+        "" : "Vyhledávám Scoop..."
+      }
+    }
+  },
+  "Locating sudo" : {
+    "" : {
+      "" : {
+        "" : "Vyhledávám sudo..."
+      }
+    }
+  },
+  "Locating Winget" : {
+    "" : {
+      "" : {
+        "" : "Vyhledávám Winget..."
+      }
+    }
+  },
   "Manage scoop buckets" : "Správa Scoop repozitářů",
   "Manifest" : "Manifest",
   "Manifest:" : "Manifest:",
@@ -163,7 +269,13 @@
   "Package ID" : "ID balíčku",
   "Package manager preferences" : "Nastavení správce balíčků",
   "Package Name" : "Název balíčku",
-  "Please wait..." : "Prosím čekejte...",
+  "Please wait" : {
+    "" : {
+      "" : {
+        "" : "Prosím čekejte..."
+      }
+    }
+  },
   "Program ID:" : "ID programu:",
   "Project homepage" : "Domovská stránka projektu",
   "PSF License" : "PSF Licence",
@@ -191,14 +303,34 @@
   "Scoop preferences" : "Vlastnosti Scoopu",
   "Search for packages" : "Vyhledávání balíčků",
   "Search for packages on Winget and Scoop" : "Hledání balíčků",
-  "Searching for installed packages..." : "Vyhledávání nainstalovaných balíčků...",
-  "Searching for packages..." : "Vyhledávání balíčků...",
+  "Searching for installed packages" : {
+    "" : {
+      "" : {
+        "" : "Vyhledávání nainstalovaných balíčků..."
+      }
+    }
+  },
+  "Searching for packages" : {
+    "" : {
+      "" : {
+        "" : "Vyhledávání balíčků..."
+      }
+    }
+  },
   "Search on available updates" : "Hledání dostupných aktualizací",
   "Search on your software" : "Hledání v nainstalovaných",
   "Select all" : "Vybrat vše",
   "Select none" : "Zrušit výběr",
   "Select package file" : "Vybrat soubor",
-  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "Handshake odeslán. Čekám na odpověď... ({0}%)",
+  "Sent handshake" : {
+    " Waiting for instance listener's answer" : {
+      "" : {
+        "" : {
+          " ({0}%)" : "Handshake odeslán. Čekám na odpověď... ({0}%)"
+        }
+      }
+    }
+  },
   "Show a notification when there are available updates" : "Zobrazit notifikaci pokud jsou dostupné aktualizace",
   "Show details" : "Zobrazit podrobnosti",
   "Show info" : "Zobrazit informace",
@@ -213,21 +345,45 @@
   "Skip the hash check" : "Přeskočit kontrolní součet",
   "Software Updates" : "Aktualizace",
   "Source" : "Zdroj",
-  "Starting daemons..." : "Spuštím daemons...",
-  "Starting installation..." : "Spouštím instalaci...",
+  "Starting daemons" : {
+    "" : {
+      "" : {
+        "" : "Spuštím daemons..."
+      }
+    }
+  },
+  "Starting installation" : {
+    "" : {
+      "" : {
+        "" : "Spouštím instalaci..."
+      }
+    }
+  },
   "Startup options" : "Volby spouštění",
   "Status" : "Stav",
   "Sudo found: {0}" : "Sudo nalezen: {0}",
   "Text file" : "wingetui_log",
   "The icons and screenshots are maintained by users like you!" : "Ikonky a screenshoty jsou udržování uživateli jako jste vy!",
-  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop." : "Hlavním cílem toho projektu je vytvořit intuitivní UI k ovládání nejčastěji použiváných CLI správců balíčků pro Windows jako je Winget či Scoop.",
-  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator." : "Existují dva hlavní důvody, proč nespouštět WingetUI jako správce:\\n První je ten, že správce balíčků Scoop může způsobit problémy s některými příkazy, když je spouštěn s právy správce.\\n Druhým je, že spuštění WingetUI jako správce znamená, že jakýkoli balíček který stáhnete, bude spuštěn jako správce (a to není bezpečné).\\n Pamatujte, že pokud potřebujete nainstalovat konkrétní balíček jako správce, můžete vždy kliknout pravým tlačítkem na položku -> Instalovat/Aktualizovat/Odinstalovat jako správce.",
-  "This project has no connection with the official {0} project — it's completely unofficial." : "Tento projet není nijak spojen s oficiálním {0} projektem — je kompletně neoficiální.",
+  "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop" : {
+    "" : "Hlavním cílem toho projektu je vytvořit intuitivní UI k ovládání nejčastěji použiváných CLI správců balíčků pro Windows jako je Winget či Scoop."
+  },
+  "There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights" : {
+    "\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe)" : {
+      "\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator" : {
+        "" : "Existují dva hlavní důvody, proč nespouštět WingetUI jako správce:\\n První je ten, že správce balíčků Scoop může způsobit problémy s některými příkazy, když je spouštěn s právy správce.\\n Druhým je, že spuštění WingetUI jako správce znamená, že jakýkoli balíček který stáhnete, bude spuštěn jako správce (a to není bezpečné).\\n Pamatujte, že pokud potřebujete nainstalovat konkrétní balíček jako správce, můžete vždy kliknout pravým tlačítkem na položku -> Instalovat/Aktualizovat/Odinstalovat jako správce."
+      }
+    }
+  },
+  "This project has no connection with the official {0} project — it's completely unofficial" : {
+    "" : "Tento projet není nijak spojen s oficiálním {0} projektem — je kompletně neoficiální."
+  },
   "Translators" : "Překladatelé",
   "Unable to load informarion" : "Nelze načíst informace",
   "uninstall" : "odinstalovat",
   "Uninstall" : "Odinstalovat",
-  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them." : "Odinstalovatelné balíčky s původem uvedeným jako \"Local PC\" nejsou publikovány v žádném správci balíčků, takže o nich nejsou dostupné žádné informace.",
+  "Uninstallable packages with the origin listed as \"Local PC\" are not published on any package manager, so there's no information available to show about them" : {
+    "" : "Odinstalovatelné balíčky s původem uvedeným jako \"Local PC\" nejsou publikovány v žádném správci balíčků, takže o nich nejsou dostupné žádné informace."
+  },
   "Uninstall as administrator" : "Odinstalovat jako správce",
   "uninstallation" : "odinstalace",
   "Uninstall canceled by the user!" : "Odinstalace byla přerušena uživatelem!",
@@ -256,18 +412,46 @@
   "Update WingetUI automatically" : "Automaticky aktualizovat WingetUI",
   "Update with administrator privileges" : "Aktualizovat s právy správce",
   "updating" : "aktualizuji",
-  "Updating Scoop sources..." : "Aktualizuji zdroje Scoop...",
-  "Updating Winget sources..." : "Aktualizuji zdroje Winget...",
+  "Updating Scoop sources" : {
+    "" : {
+      "" : {
+        "" : "Aktualizuji zdroje Scoop..."
+      }
+    }
+  },
+  "Updating Winget sources" : {
+    "" : {
+      "" : {
+        "" : "Aktualizuji zdroje Winget..."
+      }
+    }
+  },
   "Upgrade all" : "Aktualizovat vše",
   "Use installed GSudo instead of the bundled one (requires app restart)" : "Použít nainstalované GSudo namísto přibaleného (vyžaduje restart aplikace)",
   "User interface preferences" : "Vlastnosti uživatelského rozhraní",
   "Use system Winget (Needs a restart)" : "Použít systémový Winget (vyžaduje restart aplikace)",
   "Version" : "Verze",
   "Version:" : "Verze:",
-  "Waiting for other installations to finish..." : "Čekám na dokončení ostatních instalací...",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer." : "Nemůžeme {0} {1}. Prosím, zkuste to později. Kliknutím na \"Zobrazit podrobnosti\" zobrazíte protokol instalace.",
-  "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller." : "Nemůžeme {0} {1}. Prosím, zkuste to později. Kliknutím na \"Zobrazit podrobnosti\" zobrazíte protokol odinstalace.",
-  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop." : "Nemůžeme načíst podrobné informace o tomto balíčku, protože nebyl nainstalován přes Winget ani přes Scoop.",
+  "Waiting for other installations to finish" : {
+    "" : {
+      "" : {
+        "" : "Čekám na dokončení ostatních instalací..."
+      }
+    }
+  },
+  "We could not {0} {1}" : {
+    " Please try again later" : {
+      " Click on \"Show details\" to get the logs from the installer" : {
+        "" : "Nemůžeme {0} {1}. Prosím, zkuste to později. Kliknutím na \"Zobrazit podrobnosti\" zobrazíte protokol instalace."
+      },
+      " Click on \"Show details\" to get the logs from the uninstaller" : {
+        "" : "Nemůžeme {0} {1}. Prosím, zkuste to později. Kliknutím na \"Zobrazit podrobnosti\" zobrazíte protokol odinstalace."
+      }
+    }
+  },
+  "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop" : {
+    "" : "Nemůžeme načíst podrobné informace o tomto balíčku, protože nebyl nainstalován přes Winget ani přes Scoop."
+  },
   "Which bucket do you want to add?" : "Který repozitář chcete přidat?",
   "Which bucket do you want to remove?" : "Který repozitář chcete odebrat?",
   "Winget found: {0}" : "Winget nalezen: {0}",
@@ -279,11 +463,15 @@
   "WingetUI autostart behaviour, application launch settings" : "Chování automatického spuštění WingetUI a nastavení spouštění aplikací",
   "WingetUI display language:" : "Jazyk WingetUI",
   "wingetui exported packages" : "export_winget_balicky",
-  "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI nebylo strojově přeloženo. Následující uživatelé měli na starosti překlady:",
+  "WingetUI has not been machine translated" : {
+    " The following users have been in charge of the translations:" : "WingetUI nebylo strojově přeloženo. Následující uživatelé měli na starosti překlady:"
+  },
   "WingetUI log" : "Protokol WingetUI",
   "WingetUI Settings" : "Nastavení WingetUI",
   "WingetUI tray application preferences" : "Vlastnosti WingetUI aplikace v liště",
   "WingetUI version {0}" : "WingetUI verze {0}",
-  "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI by nikdy nemohl vzniknout za podpory našich drahých přispěvovatelů. Koukněte na jejich GitHub profily, WingetUI by bez nich nikdy nevznikl!",
+  "WingetUI wouldn't have been possible with the help of our dear contributors" : {
+    " Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI by nikdy nemohl vzniknout za podpory našich drahých přispěvovatelů. Koukněte na jejich GitHub profily, WingetUI by bez nich nikdy nevznikl!"
+  },
   "Yes" : "Ano"
 }
