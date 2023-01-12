@@ -70,7 +70,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting choco search, choco on {choco}...")
-    p = subprocess.Popen(["mode", "400,30&", choco, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    p = subprocess.Popen([choco, "outdated"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
     output = []
     counter = 0
     idSeparator = 0
@@ -78,64 +78,21 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         line = p.stdout.readline()  # type: ignore
         line = line.strip()
         if line:
-            if(counter > 0):
-                if not b"upgrades available" in line:
+            if(counter > 2):
+                if not b"Chocolatey has determined" in line:
                     output.append(line)
             else:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                for char in ("\r", "/", "|", "\\", "-"):
-                    l = l.split(char)[-1].strip()
-                print(l)
-                if("Id" in l):
-                    idSeparator = len(l.split("Id")[0])
-                    verSeparator = len(l.split("Version")[0])
-                    newVerSeparator = len(l.split("Available")[0])
-                    counter += 1
-    
-    if p.returncode != 0 and not noretry:
-        time.sleep(1)
-        print(p.returncode)
-        searchForUpdates(signal, finishSignal, noretry=True)
+               counter += 1
     else:
         counter = 0
         for element in output:
             try:
-                element = str(element, "utf-8", errors="ignore")
-                verElement = element[idSeparator:].strip()
-                verElement.replace("\t", " ")
-                while "  " in verElement:
-                    verElement = verElement.replace("  ", " ")
-                iOffset = 0
-                id = verElement.split(" ")[iOffset+0]
-                ver = verElement.split(" ")[iOffset+1]
-                newver = verElement.split(" ")[iOffset+2]
-                if len(id)==1:
-                    iOffset + 1
-                    id = verElement.split(" ")[iOffset+0]
-                    newver = verElement.split(" ")[iOffset+2]
-                    ver = verElement.split(" ")[iOffset+1]
-                if ver.strip() in ("<", ">", "-"):
-                    iOffset += 1
-                    ver = verElement.split(" ")[iOffset+1]
-                    newver = verElement.split(" ")[iOffset+2]
-                if not "  " in element[0:idSeparator].strip():
-                    signal.emit(element[0:idSeparator].strip(), id, ver, newver, "Winget")
-                else:
-                    print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
-                    print(element, verSeparator)
-                    name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                    while "##" in name:
-                        name = name.replace("##", "#")
-                    signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, newver, "Winget")
+                element = str(element, "utf-8", errors="ignore").split("|")
+                signal.emit(element[0].replace("-", " ").capitalize(), element[0], element[1], element[2], "Chocolatey")
             except Exception as e:
-                try:
-                    signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
-                except Exception as e:
-                    report(e)
-                except Exception as e:
-                    report(e)
-        print("🟢 Winget search finished")
-        finishSignal.emit("choco")
+                report(e)
+        print("🟢 Chocolatey search finished")
+        finishSignal.emit("chocolatey")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print(f"🟢 Starting choco search, choco on {choco}...")
@@ -160,7 +117,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
             signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
         except Exception as e:
             report(e)
-    print("🟢 Winget uninstallable packages search finished")
+    print("🟢 Chocolatey uninstallable packages search finished")
     finishSignal.emit("chocolatey")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
