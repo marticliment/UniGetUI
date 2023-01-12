@@ -2605,6 +2605,8 @@ class ScoopBucketManager(QWidget):
         
         
     def loadBuckets(self):
+        if getSettings("DisableScoop"):
+            return
         for i in range(self.bucketList.topLevelItemCount()):
             item = self.bucketList.takeTopLevelItem(0)
             del item

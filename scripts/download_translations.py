@@ -33,7 +33,7 @@ if len(sys.argv)>1:
         print(sys.argv[1])
 
 
-apiurl = f"https://app.tolgee.io/v2/projects/1205/export?format=JSON&splitByScope=false&splitByScopeDelimiter=~&splitByScopeDepth=0&filterState=UNTRANSLATED&filterState=TRANSLATED&filterState=REVIEWED&zip=true&ak={apikey}"
+apiurl = f"https://app.tolgee.io/v2/projects/1205/export?format=JSON&structureDelimiter=&filterState=UNTRANSLATED&filterState=TRANSLATED&filterState=REVIEWED&zip=true"
 
 try:
     import requests
@@ -50,7 +50,7 @@ print()
 print("  Downloading updated translations...")
 
 
-response = requests.get(apiurl)
+response = requests.get(apiurl, headers={"X-API-Key": apikey})
 if (not response.ok):
     statusCode = response.status_code
     print(f"  Error {statusCode}: {response.text}")
