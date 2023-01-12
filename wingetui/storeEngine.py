@@ -3,7 +3,7 @@ from decimal import setcontext
 from email.mime import image
 from functools import partial
 from multiprocessing.sharedctypes import Value # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
+import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -956,6 +956,9 @@ class PackageInfoPopupWindow(QWidget):
             if len(self.store.lower().split(":"))>1 and not "/" in id and not "/" in title:
                 bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId), daemon=True).start()
+        elif store.lower() == "chocolatey":
+            Thread(target=chocoHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
+            
 
     def loadPackageIcon(self, id: str, store: str) -> None:
         try:
@@ -1099,7 +1102,7 @@ class PackageInfoPopupWindow(QWidget):
         if(self.interactiveCheckbox.isChecked()):
             cmdline_args.append("--interactive")
         else:
-            if not "scoop" in self.store.lower():
+            if "winget" in self.store.lower():
                 cmdline_args.append("--silent")
         if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
             version = []

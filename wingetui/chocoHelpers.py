@@ -226,114 +226,50 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
     try:
-        oldid = id
-        id = id.replace("…", "")
-        oldtitle = title
-        title = title.replace("…", "")
-        if "…" in oldid:
-            title, id = searchForOnlyOnePackage(oldid)
-            oldid = id
-            oldtitle = title
-            useId = True
-        elif "…" in oldtitle:
-            title = searchForOnlyOnePackage(oldid)[0]
-            oldtitle = title
-        validCount = 0
-        iterations = 0
-        while validCount < 2 and iterations < 50:
-            iterations += 1
-            if useId:
-                p = subprocess.Popen([choco, "show", "--id", f"{id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-                print(f"🟢 Starting get info for id {id}")
-            else:
-                p = subprocess.Popen([choco, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-                print(f"🟢 Starting get info for title {title}")
-            output = []
-            unknownStr = _("Unknown")
-            appInfo = {
-                "title": oldtitle,
-                "id": oldid,
-                "publisher": unknownStr,
-                "author": unknownStr,
-                "description": unknownStr,
-                "homepage": unknownStr,
-                "license": unknownStr,
-                "license-url": unknownStr,
-                "installer-sha256": unknownStr,
-                "installer-url": unknownStr,
-                "installer-type": unknownStr,
-                "updatedate": unknownStr,
-                "releasenotes": unknownStr,
-                "manifest": f"https://github.com/microsoft/choco-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
-                "versions": []
-            }
-            while p.poll() is None:
-                line = p.stdout.readline()
-                line = line.strip()
-                cprint(line)
-                if line:
-                    output.append(str(line, encoding='utf-8', errors="ignore"))
-            print(p.stdout)
-            for line in output:
-                cprint(line)
-                if("Publisher:" in line):
-                    appInfo["publisher"] = line.replace("Publisher:", "").strip()
-                    validCount += 1
-                elif("Description:" in line):
-                    appInfo["description"] = line.replace("Description:", "").strip()
-                    validCount += 1
-                elif("Author:" in line):
-                    appInfo["author"] = line.replace("Author:", "").strip()
-                    validCount += 1
-                elif("Publisher:" in line):
-                    appInfo["publisher"] = line.replace("Publisher:", "").strip()
-                    validCount += 1
-                elif("Homepage:" in line):
-                    appInfo["homepage"] = line.replace("Homepage:", "").strip()
-                    validCount += 1
-                elif("License:" in line):
-                    appInfo["license"] = line.replace("License:", "").strip()
-                    validCount += 1
-                elif("License Url:" in line):
-                    appInfo["license-url"] = line.replace("License Url:", "").strip()
-                    validCount += 1
-                elif("SHA256:" in line):
-                    appInfo["installer-sha256"] = line.replace("SHA256:", "").strip()
-                    validCount += 1
-                elif("Download Url:" in line):
-                    appInfo["installer-url"] = line.replace("Download Url:", "").strip()
-                    validCount += 1
-                elif("Release Date:" in line):
-                    appInfo["updatedate"] = line.replace("Release Date:", "").strip()
-                    validCount += 1
-                elif("Release Notes Url:" in line):
-                    url = line.replace("Release Notes Url:", "").strip()
-                    appInfo["releasenotes"] = f"<a href={url} style='color:%bluecolor%'>{url}</a>"
-                    validCount += 1
-                elif("Type:" in line):
-                    appInfo["installer-type"] = line.replace("Type:", "").strip()
-        print(f"🟢 Loading versions for {title}")
-        retryCount = 0
+        p = subprocess.Popen([choco, "info", id]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        print(f"🟢 Starting get info for id {id}")
         output = []
-        while output == [] and retryCount < 50:
-            retryCount += 1
-            if useId:
-                p = subprocess.Popen([choco, "show", "--id", f"{id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            else:
-                p = subprocess.Popen([choco, "show", "--name",  f"{title}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            counter = 0
-            print(p.args)
-            while p.poll() is None:
-                line = p.stdout.readline()
-                line = line.strip()
-                if line:
-                    if(counter > 2):
-                        output.append(str(line, encoding='utf-8', errors="ignore"))
-                    else:
-                        counter += 1
-            cprint("Output: ")
-            cprint(output)
-        appInfo["versions"] = output
+        unknownStr = _("Unknown")
+        appInfo = {
+            "title": title,
+            "id": id,
+            "publisher": unknownStr,
+            "author": unknownStr,
+            "description": unknownStr,
+            "homepage": unknownStr,
+            "license": unknownStr,
+            "license-url": unknownStr,
+            "installer-sha256": unknownStr,
+            "installer-url": unknownStr,
+            "installer-type": unknownStr,
+            "updatedate": unknownStr,
+            "releasenotes": unknownStr,
+            "manifest": f"https://community.chocolatey.org/packages/{id.lower()}",
+            "versions": []
+        }
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            cprint(line)
+            if line:
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+        print(p.stdout)
+        for line in output:
+            cprint(line)
+            if("Title:" in line):
+                appInfo["title"] = line.split("|")[0].replace("Title:", "").strip()
+                appInfo["updatedate"] = line.split("|")[1].replace("Published:", "").strip()
+            elif("Author:" in line):
+                appInfo["author"] = line.replace("Author:", "").strip()
+            elif("Software Site:" in line):
+                appInfo["homepage"] = line.replace("Software Site:", "").strip()
+            elif("Software License:" in line):
+                appInfo["license-url"] = line.replace("Software License:", "").strip()
+            elif("Package Checksum:" in line):
+                appInfo["installer-sha256"] = line.replace("Package Checksum:", "").strip()
+            elif("Description:" in line):
+                appInfo["description"] = line.replace("Description:", "").strip()
+        appInfo["versions"] = []
         signal.emit(appInfo)
     except Exception as e:
         report(e)
