@@ -79,6 +79,70 @@ class CustomLineEdit(QLineEdit):
         else:
             super().setStyleSheet(self.startStyleSheet)
 
+class CommandLineEdit(CustomLineEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setReadOnly(True)
+        self.setClearButtonEnabled(False)
+        self.copyButton = QPushButton(self)
+        self.copyButton.setIcon(QIcon(getMedia("copy")))
+        self.copyButton.setIconSize(QSize(24, 24))
+        self.setFixedHeight(50)
+        self.copyButton.setFixedSize(42, 42)
+        self.copyButton.clicked.connect(lambda: globals.app.clipboard().setText(self.text()))
+        if isDark():
+            self.setStyleSheet("""
+                QLineEdit {
+                    border: 1px solid #282828;
+                    background-color: #101010;
+                    font-family: "Consolas";
+                    padding: 15px;
+                    border-radius: 8px;
+                    padding-right: 50px;
+                }
+                QPushButton {
+                    border-radius: 6px;
+                    background-color: rgba(0, 0, 0, 1%);
+                    border: 0px;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 5%);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 10%);
+                }
+                """)
+        else:
+            self.setStyleSheet("""
+                QLineEdit {
+                    border: 1px solid #f5f5f5;
+                    background-color: #ffffff;
+                    font-family: "Consolas";
+                    padding: 15px;
+                    border-radius: 8px;
+                    padding-right: 50px;
+                }
+                QPushButton {
+                    border-radius: 6px;
+                    background-color: rgba(255, 255, 255, 100%);
+                    border: 0px;
+                }
+                QPushButton:hover {
+                    background-color: rgba(240, 240, 240, 100%);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(225, 225, 225, 100%);
+                }
+                """)
+            
+    def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
+        arg__1.ignore()
+        return False
+        
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.copyButton.move(self.width()-46, 4)
+        return super().resizeEvent(event)
+
 class ResizableWidget(QWidget):
     resized = Signal(QResizeEvent)
     def __init__(self, parent = None) -> None:

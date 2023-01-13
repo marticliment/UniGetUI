@@ -655,7 +655,7 @@ class PackageInfoPopupWindow(QWidget):
         
         self.screenshotsWidget = QScrollArea()
         self.screenshotsWidget.setWidgetResizable(True)
-        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};}}")
+        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};border: 0px solid black;}};")
         self.screenshotsWidget.setFixedHeight(150)
         self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -754,14 +754,18 @@ class PackageInfoPopupWindow(QWidget):
         self.forceCheckbox = QCheckBox()
         self.forceCheckbox.setText(_("Skip hash check"))
         self.forceCheckbox.setChecked(False)
+        self.forceCheckbox.clicked.connect(self.loadPackageCommandLine)
         
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
         self.interactiveCheckbox.setChecked(False)
+        self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
+
         
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
+        self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
 
 
         self.oLayout.addWidget(self.forceCheckbox)
@@ -777,10 +781,15 @@ class PackageInfoPopupWindow(QWidget):
         vl.addStretch()
         vl.addLayout(hLayout)
         vl.addLayout(self.oLayout)
+        
+        self.commandWindow = CommandLineEdit()
+        self.commandWindow.setReadOnly(True)
+        
         vl.addStretch()
 
         downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
+        self.layout.addWidget(self.commandWindow)
 
         self.layout.addSpacing(10)
 
@@ -897,6 +906,21 @@ class PackageInfoPopupWindow(QWidget):
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         if(event):
             return super().resizeEvent(event)
+        
+    def loadPackageCommandLine(self):
+        interactive = self.interactiveCheckbox.isChecked()
+        force = self.forceCheckbox.isChecked()
+        admin = False
+        if self.store.lower() == "winget":
+            if not "…" in self.givenPackageId:
+                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else 'install'} --id {self.givenPackageId} --exact {'--force' if force else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements".strip().replace("  ", " ").replace("  ", " "))
+            else:
+                self.commandWindow.setText(_("Loading..."))
+        elif "scoop" in self.store.lower():
+            self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else 'install'} {self.givenPackageId} {'--skip' if force else ''}".strip().replace("  ", " ").replace("  ", " "))
+        else:
+            raise NotImplementedError(f"Unknown store {self.store}")
+        self.commandWindow.setCursorPosition(0)
     
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.iv.resetImages()
@@ -915,6 +939,9 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.setEnabled(False)
         store = store.lower()
         self.title.setText(title)
+        
+        self.loadPackageCommandLine()
+        
             
         self.loadingProgressBar.show()
         self.forceCheckbox.setChecked(False)
@@ -1085,6 +1112,9 @@ class PackageInfoPopupWindow(QWidget):
             self.versionCombo.addItems(["Latest"] + appInfo["versions"])
         except KeyError:
             pass
+        if "…" in self.givenPackageId:
+            self.givenPackageId = appInfo["id"]
+            self.loadPackageCommandLine()
 
     def install(self):
         title = self.title.text()
