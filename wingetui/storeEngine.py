@@ -578,7 +578,7 @@ class PackageInfoPopupWindow(QWidget):
             padding: 5px;
             background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
             border-radius: 16px;
-            border: 1px solid #88888888;
+            border: 1px solid {"#303030" if isDark() else "#bbbbbb"};
         }}
         """)
 
