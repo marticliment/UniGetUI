@@ -1,5 +1,5 @@
 {
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "regulargvy13, @KamilZielinski",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "RegularGvy13, @KamilZielinski",
   "{0} {1} failed" : "{0} {1} nie powiodło się",
   "{0} apps can be updated" : "{0} aplikacji może być zaktualizowanych",
   "{0} failed" : "{0} nie powiodło się",
@@ -282,7 +282,7 @@
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI nie został przetłumaczony przy użyciu translatora! Tłumaczenia zostały wykonane przez tych użytkowników:",
   "WingetUI log" : "Dziennik zdarzeń WingetUI",
   "WingetUI Settings" : "Ustawienia WingetUI",
-  "WingetUI tray application preferences" : "Preferencje WingetUI w pasku powiadomień",
+  "WingetUI tray application preferences" : "Preferencje WingetUI na pasku powiadomień",
   "WingetUI version {0}" : "Wersja WingetUI {0}",
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "Stworzenie WingetUI nie byłoby możliwe bez pomocy naszych świetnych kontrybutorów. Odwiedź ich profile na GitHub. WingetUI bez nich by nie istniał!",
   "Yes" : "Tak"
