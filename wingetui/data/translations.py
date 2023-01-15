@@ -3,7 +3,6 @@
 untranslatedPercentage = {
   "bn": "19%",
   "da": "54%",
-  "de": "92%",
   "hi": "85%",
   "hr": "0%",
   "id": "17%",
@@ -158,8 +157,8 @@ languageCredits = {
       "link": "https://github.com/abbydiode"
     },
     {
-      "name": "Stephan Paternotte (@Stephan-P)",
-      "link": ""
+      "name": "Stephan-P",
+      "link": "https://github.com/Stephan-P"
     }
   ],
   "pl": [
