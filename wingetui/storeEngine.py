@@ -62,7 +62,8 @@ class PackageInstallerWidget(QGroupBox):
         self.progressbar.setFixedHeight(4)
         self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
         self.layout.addWidget(self.progressbar, stretch=1)
-        self.info = QLineEdit()
+        self.info = CustomLineEdit()
+        self.info.setClearButtonEnabled(False)
         self.info.setStyleSheet("color: grey; border-bottom: inherit;")
         self.info.setText(_("Waiting for other installations to finish..."))
         self.info.setReadOnly(True)
@@ -155,6 +156,10 @@ class PackageInstallerWidget(QGroupBox):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "install", f"{bucket_prefix+self.packageId if self.packageId != '' else bucket_prefix+self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             print(self.p.args)
             self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+        elif self.store == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "install", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
@@ -353,6 +358,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "update", f"{self.packageId if self.packageId != '' else self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+        elif self.store == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "upgrade", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
@@ -435,6 +444,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         elif("scoop" in self.store):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.packageId if self.packageId != '' else self.programName}"] + (["-p"] if self.removeData else [""])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
+        elif self.store == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "uninstall", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=chocoHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)

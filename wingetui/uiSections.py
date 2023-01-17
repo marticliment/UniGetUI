@@ -479,8 +479,10 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.show()
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        if not "scoop" in store.lower():
+        if "winget" == store.lower():
             self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
+        elif "chocolatey" == store.lower():
+            self.addInstallation(PackageInstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else ""])), packageItem=packageItem))
         else:
             self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
@@ -1177,10 +1179,12 @@ class UpdateSoftwareSection(QWidget):
                         pass
     
     def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
-            if not "scoop" in store.lower():
+            if "winget" == store.lower():
                     self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
+            elif "chocolatey" == store.lower():
+                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else ""])), packageItem=packageItem))
             else:
-                    self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+                self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -1918,10 +1922,12 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a)).start()
         else:
             print("🔵 Uninstalling", id)
-            if not "scoop" in store.lower():
-                    self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
+            if "winget" == store.lower():
+                self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
+            elif "chocolatey" == store.lower():
+                self.addInstallation(PackageUninstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, packageItem=packageItem))
             else:
-                    self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
+                self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def reload(self) -> None:
         self.scoopLoaded = False

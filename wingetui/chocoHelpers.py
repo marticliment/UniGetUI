@@ -186,8 +186,8 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             output += line+"\n"
     p.wait()
     outputCode = p.returncode
-    if outputCode == 0x8A150011:
-        outputCode = 2
+    if outputCode in (1641, 3010):
+        outputCode = 0
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
@@ -205,9 +205,10 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             counterSignal.emit(counter)
             output += line+"\n"
     p.wait()
+    cprint(output)
     outputCode = p.returncode
-    if "1603" in output:
-        outputCode = 1603
+    if outputCode in (1605, 1614, 1641, 3010):
+        outputCode = 0
     closeAndInform.emit(outputCode, output)
 
 
