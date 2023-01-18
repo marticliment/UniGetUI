@@ -135,7 +135,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                     verSeparator = len(l.split("Version")[0])
                     newVerSeparator = len(l.split("Available")[0])
                     counter += 1
-    
+
     if p.returncode != 0 and not noretry:
         time.sleep(1)
         print(p.returncode)
@@ -354,7 +354,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
         signal.emit(appInfo)
     except Exception as e:
         report(e)
-    
+
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
     outputCode = 0
@@ -374,7 +374,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     if outputCode == 0x8A150011:
         outputCode = 2
     closeAndInform.emit(outputCode, output)
- 
+
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
     outputCode = 0
