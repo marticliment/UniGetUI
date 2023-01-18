@@ -357,7 +357,6 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
 
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
-    outputCode = 0
     counter = 0
     output = ""
     while p.poll() is None:
@@ -370,14 +369,17 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             counterSignal.emit(counter)
             output += line+"\n"
     p.wait()
-    outputCode = p.returncode
-    if outputCode == 0x8A150011:
-        outputCode = 2
+    match p.returncode:
+        case 0x8A150011:
+            outputCode = 2
+        case 0x8A150109: # need restart
+            outputCode = 3
+        case _:
+            outputCode = p.returncode
     closeAndInform.emit(outputCode, output)
 
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
-    outputCode = 0
     counter = 0
     output = ""
     while p.poll() is None:
