@@ -282,7 +282,7 @@ class DiscoverSoftwareSection(QWidget):
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-        self.reloadButton.setEnabled(True)
+        self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
@@ -410,6 +410,7 @@ class DiscoverSoftwareSection(QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
+            self.reloadButton.setEnabled(True)
             self.filter()
             self.loadingProgressBar.hide()
             self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
@@ -492,7 +493,7 @@ class DiscoverSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.chocoLoaded = False
         self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(True)
+        self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
@@ -913,7 +914,7 @@ class UpdateSoftwareSection(QWidget):
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-        self.reloadButton.setEnabled(True)
+        self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
@@ -1011,6 +1012,7 @@ class UpdateSoftwareSection(QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
+            self.reloadButton.setEnabled(True)
             self.loadingProgressBar.hide()
             self.loadingProgressBar.hide()
             globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(self.packageList.topLevelItemCount())))
@@ -1210,7 +1212,7 @@ class UpdateSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.chocoLoaded = False
         self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(True)
+        self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
@@ -1608,7 +1610,7 @@ class UninstallSoftwareSection(QWidget):
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
 
-        self.reloadButton.setEnabled(True)
+        self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
@@ -1755,6 +1757,7 @@ class UninstallSoftwareSection(QWidget):
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
+            self.reloadButton.setEnabled(True)
             self.filter()
             self.loadingProgressBar.hide()
             globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
@@ -1934,7 +1937,7 @@ class UninstallSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.chocoLoaded = False
         self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(True)
+        self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
