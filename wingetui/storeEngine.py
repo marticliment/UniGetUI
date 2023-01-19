@@ -937,6 +937,8 @@ class PackageInfoPopupWindow(QWidget):
                 self.commandWindow.setText(_("Loading..."))
         elif "scoop" in self.store.lower():
             self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else 'install'} {self.givenPackageId} {'--skip' if force else ''}".strip().replace("  ", " ").replace("  ", " "))
+        elif self.store.lower() == "chocolatey":
+            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else 'install'} {self.givenPackageId} -y {'--force' if force else ''}".strip().replace("  ", " ").replace("  ", " "))
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
