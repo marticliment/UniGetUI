@@ -361,6 +361,12 @@ class DiscoverSoftwareSection(QWidget):
                         packageList.append(pkg["Name"])
                 except KeyError as e:
                     print("🟠 Invalid scoop section")
+                try:
+                    packages = contents["chocolatey"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    print("🟠 Invalid scoop section")
                 for packageId in packageList:
                     try:
                         item = self.packageReference[packageId.lower()]
