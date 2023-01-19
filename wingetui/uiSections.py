@@ -282,7 +282,7 @@ class DiscoverSoftwareSection(QWidget):
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-        self.reloadButton.setEnabled(False)
+        self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
@@ -492,7 +492,7 @@ class DiscoverSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.chocoLoaded = False
         self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
+        self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
@@ -913,7 +913,7 @@ class UpdateSoftwareSection(QWidget):
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
-        self.reloadButton.setEnabled(False)
+        self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
@@ -1210,7 +1210,7 @@ class UpdateSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.chocoLoaded = False
         self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
+        self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
@@ -1608,7 +1608,7 @@ class UninstallSoftwareSection(QWidget):
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
         
 
-        self.reloadButton.setEnabled(False)
+        self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         
@@ -1934,7 +1934,7 @@ class UninstallSoftwareSection(QWidget):
         self.wingetLoaded = False
         self.chocoLoaded = False
         self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
+        self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
         self.packageList.clear()
