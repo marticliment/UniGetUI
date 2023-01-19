@@ -39,7 +39,6 @@ class DiscoverSoftwareSection(QWidget):
         super().__init__(parent = parent)
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
-        self.packageReference: dict[str, TreeWidgetItemWithQAction] = {}
 
         self.programbox = QWidget()
         self.callInMain.connect(lambda f: f())
@@ -371,7 +370,7 @@ class DiscoverSoftwareSection(QWidget):
                     print("🟠 Invalid scoop section")
                 for packageId in packageList:
                     try:
-                        item = self.packageReference[packageId.lower()]
+                        item = self.packages[packageId]
                         self.fastinstall(item.text(0), item.text(1), item.text(3))
                     except KeyError:
                         print(f"🟠 Can't find package {packageId} in the package reference")
@@ -451,9 +450,9 @@ class DiscoverSoftwareSection(QWidget):
                 "name": name,
                 "version": version,
                 "store": store,
+                "item": item
             }
             self.packageList.addTopLevelItem(item)
-            self.packageReference[id.lower()] = item
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
@@ -498,7 +497,6 @@ class DiscoverSoftwareSection(QWidget):
             self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
-        self.packageReference = {}
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.chocoLoaded = False

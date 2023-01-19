@@ -50,7 +50,6 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         p = subprocess.Popen([choco, "search", "*"] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=False)
         output = ""
         counter = 0
-        idSeparator = 0
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
