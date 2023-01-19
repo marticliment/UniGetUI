@@ -104,7 +104,7 @@ try:
 
         def loadStuffThread(self):
             try:
-                self.loadStatus = 0 # There are 8 items (preparation threads)
+                self.loadStatus = 0 # There are 9 items (preparation threads)
                 
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
@@ -115,6 +115,12 @@ try:
                     self.loadStatus += 2
                     globals.componentStatus["wingetFound"] = False
                     globals.componentStatus["wingetVersion"] = _("{0} is disabled").format("Winget")
+                if not getSettings("DisableChocolatey"):
+                    Thread(target=self.detectChocolatey, daemon=True).start()
+                else:
+                    self.loadStatus += 1
+                    globals.componentStatus["chocoFound"] = False
+                    globals.componentStatus["chocoVersion"] = _("{0} is disabled").format("Chocolatey")
                 if not getSettings("DisableScoop"):
                     Thread(target=self.detectScoop, daemon=True).start()
                 else:
@@ -127,7 +133,7 @@ try:
                 Thread(target=self.instanceThread, daemon=True).start()
                 Thread(target=self.updateIfPossible, daemon=True).start()
 
-                while self.loadStatus < 8:
+                while self.loadStatus < 9:
                     time.sleep(0.01)
             except Exception as e:
                 print(e)
@@ -190,7 +196,20 @@ try:
             except Exception as e:
                 print(e)
             self.loadStatus += 1
-
+            
+        def detectChocolatey(self):
+            try:
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Chocolatey...")))
+                o = subprocess.run(f"{chocoHelpers.choco} -v", shell=True, stdout=subprocess.PIPE)
+                print(o.stdout)
+                print(o.stderr)
+                globals.componentStatus["chocoFound"] = o.returncode == 0
+                globals.componentStatus["chocoVersion"] = o.stdout.decode('utf-8').replace("\n", "")
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Chocolatey found: {0}").format(globals.componentStatus['chocoFound'])))
+            except Exception as e:
+                print(e)
+            self.loadStatus += 1
+            
         def detectScoop(self):
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Scoop...")))
