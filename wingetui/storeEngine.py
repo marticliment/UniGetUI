@@ -473,7 +473,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.rightFast.stop()
         self.info.setText(_("Uninstall canceled by the user!"))
         if not self.finishedInstallation:
-            subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
+            try:
+                self.p.kill()
+            except Exception as e:
+                report(e)
             self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
