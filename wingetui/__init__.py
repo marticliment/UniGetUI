@@ -105,6 +105,7 @@ try:
         def loadStuffThread(self):
             try:
                 self.loadStatus = 0 # There are 9 items (preparation threads)
+                setSettings("CachingChocolatey", False)
                 
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
