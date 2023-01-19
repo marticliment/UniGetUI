@@ -1973,18 +1973,10 @@ class UninstallSoftwareSection(QWidget):
         """
         Export all selected packages into a file.
 
-        Target format: {"winget": wingetschema, "scoop": scoopschema}
-
-        Winget implementation: In progress
-        Scoop implementation: To be done
-        
-        Winget docs
-        ---
-        JSON schema for export file: https://raw.githubusercontent.com/microsoft/winget-cli/master/schemas/JSON/packages/packages.schema.1.0.json
-
         """
         wingetPackagesList = []
         scoopPackageList = []
+        chocoPackageList = []
 
         try:
             for i in range(self.packageList.topLevelItemCount()):
@@ -1996,6 +1988,9 @@ class UninstallSoftwareSection(QWidget):
                 elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and "scoop" in item.text(4).lower()):
                     scoopPackage = {"Name": item.text(2)}
                     scoopPackageList.append(scoopPackage)
+                elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and item.text(4).lower() == "chocolatey"):
+                    chocoPackage = {"Name": item.text(2)}
+                    chocoPackageList.append(chocoPackage)
 
             wingetDetails = {
                 "Argument": "https://cdn.winget.microsoft.com/cache",
@@ -2014,9 +2009,13 @@ class UninstallSoftwareSection(QWidget):
             scoopExportSchema = {
                 "apps": scoopPackageList,
             }
+            chocoExportSchema = {
+                "apps": chocoPackageList,
+            }
             overAllSchema = {
                 "winget": wingetExportSchema,
-                "scoop": scoopExportSchema
+                "scoop": scoopExportSchema,
+                "chocolatey": chocoExportSchema
             }
 
             filename = QFileDialog.getSaveFileName(self, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
