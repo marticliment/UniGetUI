@@ -183,8 +183,11 @@ class PackageInstallerWidget(QGroupBox):
         self.rightFast.stop()
         print("🔵 Sending cancel signal...")
         if not self.finishedInstallation:
-            subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
-            self.finishedInstallation = True
+            try:
+                self.p.kill()
+            except Exception as e:
+                report(e)
+        self.finishedInstallation = True
         self.info.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
