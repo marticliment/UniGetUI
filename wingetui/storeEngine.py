@@ -3,7 +3,7 @@ from decimal import setcontext
 from email.mime import image
 from functools import partial
 from multiprocessing.sharedctypes import Value # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
+import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -62,7 +62,8 @@ class PackageInstallerWidget(QGroupBox):
         self.progressbar.setFixedHeight(4)
         self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
         self.layout.addWidget(self.progressbar, stretch=1)
-        self.info = QLineEdit()
+        self.info = CustomLineEdit()
+        self.info.setClearButtonEnabled(False)
         self.info.setStyleSheet("color: grey; border-bottom: inherit;")
         self.info.setText(_("Waiting for other installations to finish..."))
         self.info.setReadOnly(True)
@@ -156,6 +157,10 @@ class PackageInstallerWidget(QGroupBox):
             print(self.p.args)
             self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+        elif self.store == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "install", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
@@ -168,7 +173,7 @@ class PackageInstallerWidget(QGroupBox):
         if(line == 4):
             self.progressbar.setValue(500)
         elif(line == 6):
-            self.cancelButton.setEnabled(False)
+            self.cancelButton.setEnabled(True)
             self.progressbar.setValue(750)
 
     def cancel(self):
@@ -178,8 +183,11 @@ class PackageInstallerWidget(QGroupBox):
         self.rightFast.stop()
         print("🔵 Sending cancel signal...")
         if not self.finishedInstallation:
-            subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
-            self.finishedInstallation = True
+            try:
+                self.p.kill()
+            except Exception as e:
+                report(e)
+        self.finishedInstallation = True
         self.info.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
@@ -353,6 +361,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "update", f"{self.packageId if self.packageId != '' else self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+        elif self.store == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "upgrade", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
@@ -436,6 +448,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.packageId if self.packageId != '' else self.programName}"] + (["-p"] if self.removeData else [""])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
+        elif self.store == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "uninstall", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.t = KillableThread(target=chocoHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
@@ -449,7 +465,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if(line == 4):
             self.progressbar.setValue(500)
         elif(line == 6):
-            self.cancelButton.setEnabled(False)
+            self.cancelButton.setEnabled(True)
             self.progressbar.setValue(750)
 
     def cancel(self):
@@ -460,7 +476,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.rightFast.stop()
         self.info.setText(_("Uninstall canceled by the user!"))
         if not self.finishedInstallation:
-            subprocess.Popen("taskkill /im winget.exe /f", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.getcwd(), env=os.environ).wait()
+            try:
+                self.p.kill()
+            except Exception as e:
+                report(e)
             self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
@@ -983,6 +1002,9 @@ class PackageInfoPopupWindow(QWidget):
             if len(self.store.lower().split(":"))>1 and not "/" in id and not "/" in title:
                 bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
             Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId), daemon=True).start()
+        elif store.lower() == "chocolatey":
+            Thread(target=chocoHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
+            
 
     def loadPackageIcon(self, id: str, store: str) -> None:
         try:
@@ -1129,7 +1151,7 @@ class PackageInfoPopupWindow(QWidget):
         if(self.interactiveCheckbox.isChecked()):
             cmdline_args.append("--interactive")
         else:
-            if not "scoop" in self.store.lower():
+            if "winget" in self.store.lower():
                 cmdline_args.append("--silent")
         if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
             version = []

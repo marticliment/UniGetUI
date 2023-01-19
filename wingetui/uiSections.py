@@ -1,6 +1,6 @@
 from __future__ import annotations
 import glob # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import wingetHelpers, scoopHelpers, sys, subprocess, time, os, json
+import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -30,11 +30,13 @@ class DiscoverSoftwareSection(QWidget):
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
     packages: dict[str:dict] = {}
+    
+    wingetLoaded = False
+    scoopLoaded = False
+    chocoLoaded = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
-        self.scoopLoaded = False
-        self.wingetLoaded = False
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
         self.packageReference: dict[str, TreeWidgetItemWithQAction] = {}
@@ -255,7 +257,12 @@ class DiscoverSoftwareSection(QWidget):
         layout.addWidget(self.toolbar)
         layout.setContentsMargins(0, 0, 0, 0)
         v.addWidget(self.countLabel)
+        
+        self.cachingChocoLabel = QLabel("Caching Chocolayey, please hol' up!")
+        self.cachingChocoLabel.hide()
+        
         layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.cachingChocoLabel)
         hl2 = QHBoxLayout()
         hl2.addWidget(self.packageList)
         hl2.addWidget(self.packageListScrollBar)
@@ -284,6 +291,7 @@ class DiscoverSoftwareSection(QWidget):
         self.versionIcon = QIcon(getMedia("newversion"))
         self.wingetIcon = QIcon(getMedia("winget"))
         self.scoopIcon = QIcon(getMedia("scoop"))
+        self.chocolateyIcon = QIcon(getMedia("choco"))
 
         if not getSettings("DisableWinget"):
             Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
@@ -293,6 +301,10 @@ class DiscoverSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
         self.finishLoadingIfNeeded("none")
         print("🟢 Discover tab loaded")
 
@@ -349,6 +361,12 @@ class DiscoverSoftwareSection(QWidget):
                         packageList.append(pkg["Name"])
                 except KeyError as e:
                     print("🟠 Invalid scoop section")
+                try:
+                    packages = contents["chocolatey"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    print("🟠 Invalid scoop section")
                 for packageId in packageList:
                     try:
                         item = self.packageReference[packageId.lower()]
@@ -381,7 +399,24 @@ class DiscoverSoftwareSection(QWidget):
             self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded):
+        elif("chocolatey" in store):
+            msg = store.split("-")[-1]
+            if msg == "caching":
+                self.cachingChocoLabel.show()
+            else:
+                self.cachingChocoLabel.hide()
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
+            self.chocoLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.filter()
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
+            self.reloadButton.setEnabled(True)
             self.filter()
             self.loadingProgressBar.hide()
             self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
@@ -395,18 +430,17 @@ class DiscoverSoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:
             item = TreeWidgetItemWithQAction()
-            if "scoop" in store.lower():
-                item.setText(0, name.replace("-", " ").capitalize())
-            else:
-                item.setText(0, name)
+            item.setText(0, name)
             item.setText(1, id)
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.IDIcon)
             item.setIcon(2, self.versionIcon)
             if "scoop" in store.lower():
                 item.setIcon(3, self.scoopIcon)
-            else:
+            elif "winget" in store.lower():
                 item.setIcon(3, self.wingetIcon)
+            else:
+                item.setIcon(3, self.chocolateyIcon)
             item.setText(3, store)
             item.setText(2, version)
             self.packages[id] = {
@@ -452,15 +486,18 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.show()
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        if not "scoop" in store.lower():
-                self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
+        if "winget" == store.lower():
+            self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""])), packageItem=packageItem))
+        elif "chocolatey" == store.lower():
+            self.addInstallation(PackageInstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else ""])), packageItem=packageItem))
         else:
-                self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
+            self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
         self.packageReference = {}
         self.scoopLoaded = False
         self.wingetLoaded = False
+        self.chocoLoaded = False
         self.loadingProgressBar.show()
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
@@ -477,6 +514,10 @@ class DiscoverSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
         self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
@@ -537,13 +578,15 @@ class UpdateSoftwareSection(QWidget):
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
     packages: dict[str:dict] = {}
+    
+    scoopLoaded = False
+    wingetLoaded = False
+    chocoLoaded = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         
         self.callInMain.connect(lambda f: f())
-        self.scoopLoaded = False
-        self.wingetLoaded = False
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
 
@@ -887,6 +930,7 @@ class UpdateSoftwareSection(QWidget):
         self.newVersionIcon = QIcon(getMedia("newversion"))
         self.wingetIcon = QIcon(getMedia("winget"))
         self.scoopIcon = QIcon(getMedia("scoop"))
+        self.chocoIcon = QIcon(getMedia("choco"))
 
         self.blacklist = getSettingsValue("BlacklistedUpdates")
         if not getSettings("DisableWinget"):
@@ -897,6 +941,10 @@ class UpdateSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
         self.finishLoadingIfNeeded("none")
         print("🟢 Upgrades tab loaded")
 
@@ -957,7 +1005,20 @@ class UpdateSoftwareSection(QWidget):
             self.reloadButton.setEnabled(True)
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded):
+        elif(store == "chocolatey"):
+            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
+            self.chocoLoaded = True
+            self.filter()
+            self.reloadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
+            self.reloadButton.setEnabled(True)
             self.loadingProgressBar.hide()
             self.loadingProgressBar.hide()
             globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(self.packageList.topLevelItemCount())))
@@ -1035,8 +1096,10 @@ class UpdateSoftwareSection(QWidget):
                 }
                 if "scoop" in store.lower():
                     item.setIcon(5, self.scoopIcon)
-                else:
+                elif "winget" in store.lower():
                     item.setIcon(5, self.wingetIcon)
+                else:
+                    item.setIcon(5, self.chocoIcon)
                 self.packageList.addTopLevelItem(item)
                 c = QCheckBox()
                 c.setChecked(True)
@@ -1124,10 +1187,12 @@ class UpdateSoftwareSection(QWidget):
                         pass
     
     def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
-            if not "scoop" in store.lower():
+            if "winget" == store.lower():
                     self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--force" if skiphash else ""]))))
+            elif "chocolatey" == store.lower():
+                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else ""])), packageItem=packageItem))
             else:
-                    self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+                self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -1151,6 +1216,7 @@ class UpdateSoftwareSection(QWidget):
         self.availableUpdates = 0
         self.scoopLoaded = False
         self.wingetLoaded = False
+        self.chocoLoaded = False
         self.loadingProgressBar.show()
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
@@ -1171,6 +1237,10 @@ class UpdateSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
         self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
@@ -1232,12 +1302,14 @@ class UninstallSoftwareSection(QWidget):
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
     packages: dict[str:dict] = {}
+    
+    wingetLoaded = False
+    scoopLoaded =  False
+    chocoLoaded = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
-        self.scoopLoaded = False
         self.callInMain.connect(lambda f: f())
-        self.wingetLoaded = False
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
         self.infobox.onClose.connect(self.showQuery)
@@ -1558,6 +1630,7 @@ class UninstallSoftwareSection(QWidget):
         self.SteamIcon = QIcon(getMedia("steam"))
         self.GOGIcon = QIcon(getMedia("gog"))
         self.UPLAYIcon = QIcon(getMedia("uplay"))
+        self.chocoIcon = QIcon(getMedia("choco"))
         
     
         if not getSettings("DisableWinget"):
@@ -1568,6 +1641,11 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
+
         self.finishLoadingIfNeeded("none")
         print("🟢 Discover tab loaded")
 
@@ -1672,7 +1750,20 @@ class UninstallSoftwareSection(QWidget):
             self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded):
+        elif(store == "chocolatey"):
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+            if self.packageList.topLevelItemCount() == 0:
+                self.packageList.label.setText(self.countLabel.text())
+            else:
+                self.packageList.label.setText("")
+            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
+            self.chocoLoaded = True
+            self.reloadButton.setEnabled(True)
+            self.filter()
+            self.searchButton.setEnabled(True)
+            self.query.setEnabled(True)
+        if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
+            self.reloadButton.setEnabled(True)
             self.filter()
             self.loadingProgressBar.hide()
             globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
@@ -1772,6 +1863,8 @@ class UninstallSoftwareSection(QWidget):
                 item.setIcon(4, self.GOGIcon)
             elif "ubisoft connect" in store.lower():
                 item.setIcon(4, self.UPLAYIcon)
+            elif "chocolatey" in store.lower():
+                item.setIcon(4, self.chocoIcon)
             else:
                 item.setIcon(4, self.MSStoreIcon)
             item.setText(4, store)
@@ -1838,14 +1931,17 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a)).start()
         else:
             print("🔵 Uninstalling", id)
-            if not "scoop" in store.lower():
-                    self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
+            if "winget" == store.lower():
+                self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent"]))
+            elif "chocolatey" == store.lower():
+                self.addInstallation(PackageUninstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, packageItem=packageItem))
             else:
-                    self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
+                self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def reload(self) -> None:
         self.scoopLoaded = False
         self.wingetLoaded = False
+        self.chocoLoaded = False
         self.loadingProgressBar.show()
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
@@ -1862,6 +1958,10 @@ class UninstallSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
+        if not getSettings("DisableChocolatey"):
+            Thread(target=chocoHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+        else:
+            self.chocoLoaded = True
         self.finishLoadingIfNeeded("none")
         for action in globals.trayMenuInstalledList.actions():
             globals.trayMenuInstalledList.removeAction(action)
@@ -1879,18 +1979,10 @@ class UninstallSoftwareSection(QWidget):
         """
         Export all selected packages into a file.
 
-        Target format: {"winget": wingetschema, "scoop": scoopschema}
-
-        Winget implementation: In progress
-        Scoop implementation: To be done
-        
-        Winget docs
-        ---
-        JSON schema for export file: https://raw.githubusercontent.com/microsoft/winget-cli/master/schemas/JSON/packages/packages.schema.1.0.json
-
         """
         wingetPackagesList = []
         scoopPackageList = []
+        chocoPackageList = []
 
         try:
             for i in range(self.packageList.topLevelItemCount()):
@@ -1902,6 +1994,9 @@ class UninstallSoftwareSection(QWidget):
                 elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and "scoop" in item.text(4).lower()):
                     scoopPackage = {"Name": item.text(2)}
                     scoopPackageList.append(scoopPackage)
+                elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and item.text(4).lower() == "chocolatey"):
+                    chocoPackage = {"Name": item.text(2)}
+                    chocoPackageList.append(chocoPackage)
 
             wingetDetails = {
                 "Argument": "https://cdn.winget.microsoft.com/cache",
@@ -1920,9 +2015,13 @@ class UninstallSoftwareSection(QWidget):
             scoopExportSchema = {
                 "apps": scoopPackageList,
             }
+            chocoExportSchema = {
+                "apps": chocoPackageList,
+            }
             overAllSchema = {
                 "winget": wingetExportSchema,
-                "scoop": scoopExportSchema
+                "scoop": scoopExportSchema,
+                "chocolatey": chocoExportSchema
             }
 
             filename = QFileDialog.getSaveFileName(self, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
@@ -1972,31 +2071,35 @@ class AboutSection(QScrollArea):
             table.setAutoFillBackground(True)
             table.setStyleSheet("*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;padding: 0px;margin: 0px;}QTableCornerButton::section,QHeaderView,QHeaderView::section,QTableWidget,QWidget,QTableWidget::item{background-color: transparent;border: 0px solid transparent}")
             table.setColumnCount(2)
-            table.setRowCount(3)
+            table.setRowCount(4)
             table.setEnabled(False)
             table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             table.setShowGrid(False)
             table.setHorizontalHeaderLabels([_("Status"), _("Version")])
             table.setColumnWidth(1, 500)
             table.verticalHeader().setFixedWidth(100)
-            table.setVerticalHeaderLabels(["Winget ", "Scoop ", "GSudo "])
+            table.setVerticalHeaderLabels(["Winget ", "Scoop ", "Chocolatey ", " GSudo "])
             table.setItem(0, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["wingetFound"] else _("Not found")))
             table.setItem(0, 1, QTableWidgetItem(" "+str(globals.componentStatus["wingetVersion"])))
             table.setItem(1, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["scoopFound"] else _("Not found")))
             table.setItem(1, 1, QTableWidgetItem(" "+str(globals.componentStatus["scoopVersion"])))
-            table.setItem(2, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["sudoFound"] else _("Not found")))
-            table.setItem(2, 1, QTableWidgetItem(" "+str(globals.componentStatus["sudoVersion"])))
+            table.setItem(2, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["chocoFound"] else _("Not found")))
+            table.setItem(2, 1, QTableWidgetItem(" "+str(globals.componentStatus["chocoVersion"])))
+            table.setItem(3, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["sudoFound"] else _("Not found")))
+            table.setItem(3, 1, QTableWidgetItem(" "+str(globals.componentStatus["sudoVersion"])))
             table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignLeft)
             table.setRowHeight(0, 35)
             table.setRowHeight(1, 35)
             table.setRowHeight(2, 35)
+            table.setRowHeight(3, 35)
             table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignLeft)
             table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
             table.verticalHeaderItem(1).setTextAlignment(Qt.AlignRight)
             table.verticalHeaderItem(2).setTextAlignment(Qt.AlignRight)
+            table.verticalHeaderItem(3).setTextAlignment(Qt.AlignRight)
             table.setCornerWidget(QLabel(""))
             table.setCornerButtonEnabled(False)
-            table.setFixedHeight(150)
+            table.setFixedHeight(190)
             table.cornerWidget().setStyleSheet("background: transparent;")
             self.layout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
@@ -2374,7 +2477,20 @@ class SettingsSection(QScrollArea):
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
+        
+        self.chocoPreferences = QSettingsTitle(_("Chocolatey preferences"), getMedia("choco"), _("Chocolatey package manager specific preferences"))
+        self.layout.addWidget(self.chocoPreferences)
+        disableChocolatey = QSettingsCheckBox(_("Enable Choclatey"))
+        disableChocolatey.setChecked(not getSettings("DisableChocolatey"))
+        disableChocolatey.stateChanged.connect(lambda v: (setSettings("DisableChocolatey", not bool(v))))
+        self.chocoPreferences.addWidget(disableChocolatey)
+        disableChocolatey.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+
+
+        
         self.layout.addStretch()
+
+
         
         print("🟢 Settings tab loaded!")
         

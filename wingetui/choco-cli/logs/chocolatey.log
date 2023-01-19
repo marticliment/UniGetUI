@@ -1,0 +1,73 @@
+2023-01-10 15:15:05,928 3800 [DEBUG] - XmlConfiguration is now operational
+2023-01-10 15:15:06,021 3800 [DEBUG] - Adding new type 'WebPiService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:06,021 3800 [DEBUG] - Adding new type 'WindowsFeatureService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:06,021 3800 [DEBUG] - Adding new type 'CygwinService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:06,021 3800 [DEBUG] - Adding new type 'PythonService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:06,021 3800 [DEBUG] - Adding new type 'RubyGemsService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:06,037 3800 [DEBUG] - Adding new type 'SystemStateValidation' for type 'IValidation' from assembly 'choco'
+2023-01-10 15:15:06,131 3800 [DEBUG] - Registering new command 'template' in assembly 'choco'
+2023-01-10 15:15:06,131 3800 [DEBUG] - Registering new command 'upgrade' in assembly 'choco'
+2023-01-10 15:15:06,131 3800 [DEBUG] - Registering new command 'export' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'list' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'info' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'help' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'config' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'features' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'new' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'outdated' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'pack' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'pin' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'push' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'apikey' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'source' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'uninstall' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'unpackself' in assembly 'choco'
+2023-01-10 15:15:06,146 3800 [DEBUG] - Registering new command 'install' in assembly 'choco'
+2023-01-10 15:15:06,256 3800 [DEBUG] - Attempting to create directory "C:\ProgramData\chocolatey\config".
+2023-01-10 15:15:06,740 3800 [INFO ] - ============================================================
+2023-01-10 15:15:07,210 3800 [DEBUG] - Attempting to replace "C:\ProgramData\chocolatey\config\chocolatey.config"
+ with "C:\ProgramData\chocolatey\config\chocolatey.config.3800.update".
+ Backup placed at "C:\ProgramData\chocolatey\config\chocolatey.config.backup".
+2023-01-10 15:15:07,226 3800 [DEBUG] - Attempting to copy "C:\ProgramData\chocolatey\config\chocolatey.config.3800.update"
+ to "C:\ProgramData\chocolatey\config\chocolatey.config".
+2023-01-10 15:15:07,226 3800 [DEBUG] - Attempting to delete file "C:\ProgramData\chocolatey\config\chocolatey.config.3800.update".
+2023-01-10 15:15:07,226 3800 [INFO ] - 1.2.1
+2023-01-10 15:15:07,226 3800 [DEBUG] - Exiting with 0
+2023-01-10 15:15:41,030 3492 [DEBUG] - XmlConfiguration is now operational
+2023-01-10 15:15:41,124 3492 [DEBUG] - Adding new type 'WebPiService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:41,140 3492 [DEBUG] - Adding new type 'WindowsFeatureService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:41,140 3492 [DEBUG] - Adding new type 'CygwinService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:41,140 3492 [DEBUG] - Adding new type 'PythonService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:41,140 3492 [DEBUG] - Adding new type 'RubyGemsService' for type 'ISourceRunner' from assembly 'choco'
+2023-01-10 15:15:41,140 3492 [DEBUG] - Adding new type 'SystemStateValidation' for type 'IValidation' from assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'template' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'upgrade' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'export' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'list' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'info' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'help' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'config' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'features' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'new' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'outdated' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'pack' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'pin' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'push' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'apikey' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'source' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'uninstall' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'unpackself' in assembly 'choco'
+2023-01-10 15:15:41,250 3492 [DEBUG] - Registering new command 'install' in assembly 'choco'
+2023-01-10 15:15:41,849 3492 [INFO ] - ============================================================
+2023-01-10 15:15:42,349 3492 [INFO ] - Chocolatey v1.2.1
+2023-01-10 15:15:42,349 3492 [INFO ] - Please run 'choco -?' or 'choco <command> -?' for help menu.
+2023-01-10 15:15:42,349 3492 [DEBUG] - Chocolatey is running on Windows v 10.0.22621.0
+2023-01-10 15:15:42,349 3492 [DEBUG] - Attempting to delete file "C:/ProgramData/chocolatey/choco.exe.old".
+2023-01-10 15:15:42,349 3492 [DEBUG] - Attempting to delete file "C:\ProgramData\chocolatey\choco.exe.old".
+2023-01-10 15:15:42,365 3492 [DEBUG] - Command line: "C:\ProgramData\chocolatey\choco.exe"
+2023-01-10 15:15:42,365 3492 [DEBUG] - Received arguments: 
+2023-01-10 15:15:42,412 3492 [DEBUG] - RemovePendingPackagesTask is now ready and waiting for PreRunMessage.
+2023-01-10 15:15:42,427 3492 [DEBUG] - Sending message 'PreRunMessage' out if there are subscribers...
+2023-01-10 15:15:42,443 3492 [DEBUG] - [Pending] Removing all pending packages that should not be considered installed...
+2023-01-10 15:15:42,459 3492 [DEBUG] - Sending message 'PostRunMessage' out if there are subscribers...
+2023-01-10 15:15:42,475 3492 [DEBUG] - Exiting with 1

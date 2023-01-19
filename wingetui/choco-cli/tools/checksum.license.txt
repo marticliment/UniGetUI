@@ -1,0 +1,1 @@
+CheckSum is licensed as Apache v2 - https://raw.github.com/ferventcoder/checksum/master/LICENSE

@@ -1,3 +1,3 @@
-version = 1.54
-versionName = "1.5.4-beta"
-versionISS= versionName
+version = 1.599
+versionName = "1.6.0-beta"
+versionISS = versionName

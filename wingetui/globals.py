@@ -22,9 +22,11 @@ class Section(QWidget):
 componentStatus: dict = {
     "wingetFound": False,
     "scoopFound": False,
+    "chocoFound": False,
     "sudoFound": False,
     "wingetVersion": "Unknown",
-    "scoopVersion": "Unknown", 
+    "scoopVersion": "Unknown",
+    "chocoVersion": "Unknown", 
     "sudoVersion": "Unknown", 
 }
 app: QApplication = None
