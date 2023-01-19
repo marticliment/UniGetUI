@@ -173,7 +173,7 @@ class PackageInstallerWidget(QGroupBox):
         if(line == 4):
             self.progressbar.setValue(500)
         elif(line == 6):
-            self.cancelButton.setEnabled(False)
+            self.cancelButton.setEnabled(True)
             self.progressbar.setValue(750)
 
     def cancel(self):
@@ -465,7 +465,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if(line == 4):
             self.progressbar.setValue(500)
         elif(line == 6):
-            self.cancelButton.setEnabled(False)
+            self.cancelButton.setEnabled(True)
             self.progressbar.setValue(750)
 
     def cancel(self):
