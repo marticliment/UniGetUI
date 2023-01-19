@@ -301,7 +301,7 @@ class DiscoverSoftwareSection(QWidget):
             Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.scoopLoaded = True
-        if not getSettings("DisableChocolateylatey"):
+        if not getSettings("DisableChocolatey"):
             Thread(target=chocoHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
         else:
             self.chocoLoaded = True
@@ -2465,7 +2465,20 @@ class SettingsSection(QScrollArea):
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
+        
+        self.chocoPreferences = QSettingsTitle(_("Chocolatey preferences"), getMedia("choco"), _("Chocolatey package manager specific preferences"))
+        self.layout.addWidget(self.chocoPreferences)
+        disableChocolatey = QSettingsCheckBox(_("Enable Choclatey"))
+        disableChocolatey.setChecked(not getSettings("DisableChocolatey"))
+        disableChocolatey.stateChanged.connect(lambda v: (setSettings("DisableChocolatey", not bool(v))))
+        self.chocoPreferences.addWidget(disableChocolatey)
+        disableChocolatey.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+
+
+        
         self.layout.addStretch()
+
+
         
         print("🟢 Settings tab loaded!")
         
