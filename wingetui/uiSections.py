@@ -790,6 +790,7 @@ class UpdateSoftwareSection(QWidget):
                             program.setHidden(True)
                     except AttributeError:
                         pass
+            self.updatePackageNumber()
 
         def setAllSelected(checked: bool) -> None:
             itemList = []
