@@ -2,9 +2,9 @@
 
 python -m pip install -r requirements.txt
 
-python apply_versions.py
+python scripts/apply_versions.py
 
-python get_contributors.py
+python scripts/get_contributors.py
 
 rmdir /Q /S wingetuiBin
 xcopy wingetui wingetui_bin /E /H /C /I /Y
