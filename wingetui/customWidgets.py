@@ -1037,7 +1037,79 @@ class CustomPlainTextEdit(QPlainTextEdit):
         ApplyMenuBlur(menu.winId(), menu)
         menu.exec(QCursor.pos())
 
+class ClosableOpaqueMessage(QWidget):
+    def __init__(self, text: str = None) -> None:
+        super().__init__()
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        layout = QHBoxLayout()
+        self.image = QLabel()
+        self.image.setFixedSize(QSize(32, 32))
+        self.setFixedHeight(30)
+        self.text = QLabel(text)
+        self.closeButton = QPushButton(self)
+        self.closeButton.clicked.connect(self.hide)
+        self.closeButton.setIcon(QIcon(getMedia("close")))
+        self.closeButton.setIconSize(QSize(16, 16))
+        self.closeButton.setFixedSize(QSize(22, 22))
+        layout.addWidget(self.image)
+        layout.addWidget(self.text, stretch=1)
+        layout.addWidget(self.closeButton)
+        self.setObjectName("bg")
+        layout.setContentsMargins(12, 0, 4, 0)
+        self.setLayout(layout)
+        if isDark():
+            self.setStyleSheet(f"""
+                #bg {{
+                    border: 1px solid #202020;
+                    background-color: #88303030;
+                    font-family: "Consolas";
+                    padding: 4px;
+                    border-radius: 8px;
+                }}
+                QLabel {{
+                    color: rgb({getColors()[2]});
+                }}
+                QPushButton {{
+                    border-radius: 6px;
+                    background-color: rgba(0, 0, 0, 1%);
+                    border: 0px;
+                }}
+                QPushButton:hover {{
+                    background-color: rgba(255, 255, 255, 5%);
+                }}
+                QPushButton:pressed {{
+                    background-color: rgba(255, 255, 255, 10%);
+                }}
+                """)
+        else:
+            self.setStyleSheet(f"""
+                #bg {{
+                    border: 1px solid rgb({getColors()[4]});
+                    background-color: #ffffff;
+                    font-family: "Consolas";
+                    padding: 4px;
+                    border-radius: 8px;
+                }}
+                QPushButton {{
+                    border-radius: 6px;
+                    background-color: rgba(255, 255, 255, 100%);
+                    border: 0px;
+                }}
+                QPushButton:hover {{
+                    background-color: rgba(240, 240, 240, 100%);
+                }}
+                QPushButton:pressed {{
+                    background-color: rgba(225, 225, 225, 100%);
+                }}
+                """)
         
+    def setText(self, text: str) -> None:
+        self.text.setText(text)
+        
+    def setIcon(self, icon: QIcon) -> None:
+        self.image.setPixmap(icon.pixmap(QSize(self.image.size())))
+        
+    
 
 if __name__ == "__main__":
     import __init__

@@ -258,7 +258,9 @@ class DiscoverSoftwareSection(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         v.addWidget(self.countLabel)
         
-        self.cachingChocoLabel = QLabel("Caching Chocolayey, please hol' up!")
+        self.cachingChocoLabel = ClosableOpaqueMessage()
+        self.cachingChocoLabel.setText(_("Chocolatey packages are being loaded. Since this is the first time, it might take a while, and they will show here once loaded."))
+        self.cachingChocoLabel.image.hide()
         self.cachingChocoLabel.hide()
         
         layout.addWidget(self.loadingProgressBar)
@@ -404,6 +406,8 @@ class DiscoverSoftwareSection(QWidget):
             if msg == "caching":
                 self.cachingChocoLabel.show()
             else:
+                if msg == "finishedcache":
+                    self.reload()
                 self.cachingChocoLabel.hide()
             self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
