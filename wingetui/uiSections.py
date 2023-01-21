@@ -485,7 +485,6 @@ class DiscoverSoftwareSection(QWidget):
         if currentItem != None:
             if self.containsQuery(currentItem, self.query.text()):
                 self.packageList.addTopLevelItem(currentItem)
-        self.countLabel.setText(str(self.packageList.topLevelItemCount()))
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
