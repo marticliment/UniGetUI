@@ -133,9 +133,10 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
+        self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
-        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0) if self.packageList.hasFocus() else None)
 
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
@@ -181,6 +182,7 @@ class DiscoverSoftwareSection(QWidget):
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(2, QHeaderView.Fixed)
         header.setSectionResizeMode(3, QHeaderView.Fixed)
+        header.sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
         self.packageList.setColumnWidth(2, 150)
         self.packageList.setColumnWidth(3, 150)
         
@@ -383,28 +385,27 @@ class DiscoverSoftwareSection(QWidget):
         
     def finishLoadingIfNeeded(self, store: str) -> None:
         if(store == "winget"):
-            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(len(self.packageItems))))
+            if len(self.packageItems) == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
             self.wingetLoaded = True
             self.reloadButton.setEnabled(True)
-            self.filter()
+            self.finishFiltering(self.query.text())
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
             self.addItemsToTreeWidget()
         elif(store == "scoop"):
-            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(len(self.packageItems))))
+            if len(self.packageItems) == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
             self.scoopLoaded = True
             self.reloadButton.setEnabled(True)
-            self.filter()
+            self.finishFiltering(self.query.text())
             self.searchButton.setEnabled(True)
-            self.addItemsToTreeWidget()
             self.query.setEnabled(True)
         elif("chocolatey" in store):
             msg = store.split("-")[-1]
@@ -414,24 +415,23 @@ class DiscoverSoftwareSection(QWidget):
                 if msg == "finishedcache":
                     self.reload()
                 self.cachingChocoLabel.hide()
-            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
+            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(len(self.packageItems))))
+            if len(self.packageItems) == 0:
                 self.packageList.label.setText(self.countLabel.text())
             else:
                 self.packageList.label.setText("")
             self.chocoLoaded = True
             self.reloadButton.setEnabled(True)
-            self.filter()
+            self.finishFiltering(self.query.text())
             self.searchButton.setEnabled(True)
-            self.addItemsToTreeWidget()
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
             self.reloadButton.setEnabled(True)
-            self.filter()
+            self.finishFiltering(self.query.text())
             self.loadingProgressBar.hide()
-            self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
+            self.countLabel.setText(_("Found packages: {0}").format(str(len(self.packageItems))))
             self.packageList.label.setText("")
-            print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
+            print("🟢 Total packages: "+str(len(self.packageItems)))
 
     def resizeEvent(self, event: QResizeEvent):
         self.adjustWidgetsSize()
@@ -473,8 +473,7 @@ class DiscoverSoftwareSection(QWidget):
         else:
             nextItem = self.packageList.topLevelItemCount()
         addedItems = 0
-        while addedItems < 500:
-            cprint(len(self.showableItems))
+        while addedItems < 100:
             if nextItem >= len(self.showableItems):
                 break
             itemToAdd = self.showableItems[nextItem]
@@ -496,10 +495,32 @@ class DiscoverSoftwareSection(QWidget):
         return text.lower() in item.text(0).lower() or text.lower() in item.text(1).lower()
     
     def finishFiltering(self, text: str):
+        def getTitle(item: QTreeWidgetItem) -> str:
+            return item.text(0)
+        def getID(item: QTreeWidgetItem) -> str:
+            return item.text(1)
+        def getVersion(item: QTreeWidgetItem) -> str:
+            return item.text(2)
+        def getSource(item: QTreeWidgetItem) -> str:
+            return item.text(3)
+        
         if self.query.text() != text:
             return
         self.showableItems = []
         found = 0
+        
+        sortColumn = self.packageList.sortColumn()
+        descendingSort = self.packageList.header().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
+        match sortColumn:
+            case 0:
+                self.packageItems.sort(key=getTitle, reverse=descendingSort)
+            case 1:
+                self.packageItems.sort(key=getID, reverse=descendingSort)
+            case 2:
+                self.packageItems.sort(key=getVersion, reverse=descendingSort)
+            case 3:
+                self.packageItems.sort(key=getSource, reverse=descendingSort)
+        
         for item in self.packageItems:
             try:
                 if self.containsQuery(item, text):
