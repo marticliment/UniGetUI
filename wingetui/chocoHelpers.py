@@ -47,7 +47,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
     if shouldReloadCache and not getSettings("CachingChocolatey"):
         setSettings("CachingChocolatey", True)
         print(f"🟢 Starting choco search, choco on {choco}...")
-        p = subprocess.Popen([choco, "search", "*"] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=False)
+        p = subprocess.Popen([choco, "search", "*"] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
         output = ""
         counter = 0
         while p.poll() is None:
