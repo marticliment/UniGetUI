@@ -30,6 +30,8 @@ class DiscoverSoftwareSection(QWidget):
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
     packages: dict[str:dict] = {}
+    packageItems: list[TreeWidgetItemWithQAction] = []
+    showableItems: list[TreeWidgetItemWithQAction] = []
     
     wingetLoaded = False
     scoopLoaded = False
@@ -119,6 +121,7 @@ class DiscoverSoftwareSection(QWidget):
 
         self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
+        self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v==self.packageListScrollBar.maximum() else None)
 
         self.packageList = TreeWidget("a")
         self.packageList.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
@@ -180,6 +183,7 @@ class DiscoverSoftwareSection(QWidget):
         header.setSectionResizeMode(3, QHeaderView.Fixed)
         self.packageList.setColumnWidth(2, 150)
         self.packageList.setColumnWidth(3, 150)
+        
         
         self.loadingProgressBar = QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
@@ -389,6 +393,7 @@ class DiscoverSoftwareSection(QWidget):
             self.filter()
             self.searchButton.setEnabled(True)
             self.query.setEnabled(True)
+            self.addItemsToTreeWidget()
         elif(store == "scoop"):
             self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
             if self.packageList.topLevelItemCount() == 0:
@@ -399,6 +404,7 @@ class DiscoverSoftwareSection(QWidget):
             self.reloadButton.setEnabled(True)
             self.filter()
             self.searchButton.setEnabled(True)
+            self.addItemsToTreeWidget()
             self.query.setEnabled(True)
         elif("chocolatey" in store):
             msg = store.split("-")[-1]
@@ -417,6 +423,7 @@ class DiscoverSoftwareSection(QWidget):
             self.reloadButton.setEnabled(True)
             self.filter()
             self.searchButton.setEnabled(True)
+            self.addItemsToTreeWidget()
             self.query.setEnabled(True)
         if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
             self.reloadButton.setEnabled(True)
@@ -429,10 +436,10 @@ class DiscoverSoftwareSection(QWidget):
     def resizeEvent(self, event: QResizeEvent):
         self.adjustWidgetsSize()
         return super().resizeEvent(event)
-
+    
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name:
-            item = TreeWidgetItemWithQAction()
+            item = TreeWidgetItemWithQAction(self)
             item.setText(0, name)
             item.setText(1, id)
             item.setIcon(0, self.installIcon)
@@ -452,24 +459,54 @@ class DiscoverSoftwareSection(QWidget):
                 "store": store,
                 "item": item
             }
-            self.packageList.addTopLevelItem(item)
+            self.packageItems.append(item)
+            if self.containsQuery(item, self.query.text()):
+                self.showableItems.append(item)
+            
+    def addItemsToTreeWidget(self, reset: bool = False):
+        if reset:
+            for item in self.packageItems:
+                if self.packageList.indexOfTopLevelItem(item) >= 0:
+                    if not item in self.showableItems:
+                        self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
+            nextItem = 0
+        else:
+            nextItem = self.packageList.topLevelItemCount()
+        addedItems = 0
+        while addedItems < 500:
+            cprint(len(self.showableItems))
+            if nextItem >= len(self.showableItems):
+                break
+            itemToAdd = self.showableItems[nextItem]
+            itemToAdd.setHidden(False)
+            self.packageList.addTopLevelItem(itemToAdd)
+            addedItems += 1
+            nextItem += 1
+        currentItem = self.packageList.currentItem()
+        if currentItem != None:
+            if self.containsQuery(currentItem, self.query.text()):
+                self.packageList.addTopLevelItem(currentItem)
+        self.countLabel.setText(str(self.packageList.topLevelItemCount()))
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
         Thread(target=lambda: (time.sleep(0.25), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
+        
+    def containsQuery(self, item: QTreeWidgetItem, text: str) -> bool:
+        return text.lower() in item.text(0).lower() or text.lower() in item.text(1).lower()
     
     def finishFiltering(self, text: str):
         if self.query.text() != text:
             return
-        resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 0)
-        resultsFound += self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)
+        self.showableItems = []
         found = 0
-        for item in self.packageList.findItems('', Qt.MatchContains, 0):
-            if not(item in resultsFound):
-                item.setHidden(True)
-            else:
-                item.setHidden(False)
-                found += 1
+        for item in self.packageItems:
+            try:
+                if self.containsQuery(item, text):
+                    self.showableItems.append(item)
+                    found += 1
+            except RuntimeError:
+                print("nullitem")
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
@@ -478,6 +515,7 @@ class DiscoverSoftwareSection(QWidget):
             if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
+        self.addItemsToTreeWidget(reset = True)
         self.packageList.scrollToItem(self.packageList.currentItem())
     
     def showQuery(self) -> None:
@@ -497,6 +535,7 @@ class DiscoverSoftwareSection(QWidget):
             self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
+        self.packageItems = []
         self.scoopLoaded = False
         self.wingetLoaded = False
         self.chocoLoaded = False
