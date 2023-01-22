@@ -71,14 +71,14 @@ class PackageInstallerWidget(QGroupBox):
         self.finishInstallation.connect(self.finish)
         self.layout.addWidget(self.info)
         self.counterSignal.connect(self.counter)
-        self.liveOutputButton = QPushButton(QIcon(realpath+"/resources/console.png"), _(""))
+        self.liveOutputButton = QPushButton(QIcon(getMedia("console", autoIconMode = False)), "")
         self.liveOutputButton.clicked.connect(lambda: (self.liveOutputWindow.show(), ApplyMica(self.liveOutputWindow.winId(), isDark())))
         self.liveOutputButton.setFixedHeight(30)
         self.liveOutputButton.setFixedWidth(30)
         self.liveOutputButton.setToolTip(_("Show the live output"))
         self.liveOutputButton.setIcon(QIcon(getMedia("console")))
         self.layout.addWidget(self.liveOutputButton)
-        self.cancelButton = QPushButton(QIcon(realpath+"/resources/cancel.png"), _("Cancel"))
+        self.cancelButton = QPushButton(QIcon(getMedia("cancel", autoIconMode = False)), _("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
         self.cancelButton.setFixedHeight(30)
         self.info.setFixedHeight(30)
@@ -191,7 +191,7 @@ class PackageInstallerWidget(QGroupBox):
         self.info.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
-        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+        self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
         self.progressbar.setValue(1000)
@@ -230,10 +230,10 @@ class PackageInstallerWidget(QGroupBox):
         self.progressbar.setValue(1000)
         if (returncode == 0 or returncode == 3):
             if returncode == 0:
-                self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
+                self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
             if returncode == 3: # if the installer need restart computer
-                self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+                self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
                 self.info.setText(_("Restart your PC to finish installation"))
             self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
             if type(self) == PackageInstallerWidget:
@@ -243,7 +243,7 @@ class PackageInstallerWidget(QGroupBox):
             self.startCoolDown()
             return
         globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
-        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+        self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
         self.err = ErrorMessage(self.window())
         warnIcon = QIcon(getMedia("notif_warn"))
         dialogData = {
@@ -479,7 +479,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
-        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+        self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
         self.progressbar.setValue(1000)
@@ -523,7 +523,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 if(returncode == 0):
                     self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                     self.cancelButton.setText(_("OK"))
-                    self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
+                    self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
                     self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
                     self.progressbar.setValue(1000)
@@ -531,7 +531,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 else:
                     globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
                     self.cancelButton.setText(_("OK"))
-                    self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+                    self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
                     self.progressbar.setValue(1000)
                     self.err = ErrorMessage(self.window())
