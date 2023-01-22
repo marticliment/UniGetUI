@@ -178,13 +178,13 @@ try:
 
         def detectWinget(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Winget...")))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Winget")))
                 o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
                 globals.componentStatus["wingetFound"] = o.returncode == 0
                 globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Winget found: {0}").format(globals.componentStatus['wingetFound'])))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Winget", state = globals.componentStatus['wingetFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -200,26 +200,26 @@ try:
             
         def detectChocolatey(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Chocolatey...")))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Chocolatey")))
                 o = subprocess.run(f"{chocoHelpers.choco} -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
                 globals.componentStatus["chocoFound"] = o.returncode == 0
                 globals.componentStatus["chocoVersion"] = o.stdout.decode('utf-8').replace("\n", "")
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Chocolatey found: {0}").format(globals.componentStatus['chocoFound'])))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Chocolatey", state = globals.componentStatus['chocoFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
             
         def detectScoop(self):
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating Scoop...")))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Scoop")))
                 o = subprocess.run(f"{scoopHelpers.scoop} -v", shell=True, stdout=subprocess.PIPE)
                 print(o.stdout)
                 print(o.stderr)
                 globals.componentStatus["scoopFound"] = o.returncode == 0
                 globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Scoop found: {0}").format(globals.componentStatus['scoopFound'])))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Scoop", state = globals.componentStatus['scoopFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
@@ -249,11 +249,11 @@ try:
         def detectSudo(self):
             global sudoLocation
             try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating sudo...")))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "sudo")))
                 o = subprocess.run(f"{sudoPath} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["sudoFound"] = o.returncode == 0
                 globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Sudo found: {0}").format(globals.componentStatus['sudoFound'])))
+                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Sudo", state = globals.componentStatus['sudoFound'])))
             except Exception as e:
                 print(e)
             self.loadStatus += 1
