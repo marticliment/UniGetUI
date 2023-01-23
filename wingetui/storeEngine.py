@@ -232,37 +232,38 @@ class PackageInstallerWidget(QGroupBox):
             if returncode == 0:
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
+                self.startCoolDown()
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
             if returncode == 3: # if the installer need restart computer
-                self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
+                self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.info.setText(_("Restart your PC to finish installation"))
-            self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone)+" "+_("Restart your PC to finish installation"), QIcon(getMedia("notif_restart"))))
             if type(self) == PackageInstallerWidget:
                 if self.packageItem:
                     globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
                     globals.uninstall.updatePackageNumber()
-            self.startCoolDown()
-            return
-        globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
-        self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
-        self.err = ErrorMessage(self.window())
-        warnIcon = QIcon(getMedia("notif_warn"))
-        dialogData = {
-                "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
-                "buttonTitle": _("Close"),
-                "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                "icon": warnIcon,
-                "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                "notifIcon": warnIcon,
-        }
-        if returncode == 2: # if the installer's hash does not coincide
-            dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
-            dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
-            dialogData["notifText"] = _("The installer has an invalid checksum")
-        else: # if there's a generic error
-            dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
-            dialogData["mainText"] = _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName)
-            dialogData["notifText"] = _("{0} {1} failed").format(self.programName.capitalize(), self.actionName)
-        self.err.showErrorMessage(dialogData)
+        else:
+            globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
+            self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
+            self.err = ErrorMessage(self.window())
+            warnIcon = QIcon(getMedia("notif_warn"))
+            dialogData = {
+                    "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                    "buttonTitle": _("Close"),
+                    "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                    "icon": warnIcon,
+                    "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                    "notifIcon": warnIcon,
+            }
+            if returncode == 2: # if the installer's hash does not coincide
+                dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
+                dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
+                dialogData["notifText"] = _("The installer has an invalid checksum")
+            else: # if there's a generic error
+                dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
+                dialogData["mainText"] = _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName)
+                dialogData["notifText"] = _("{0} {1} failed").format(self.programName.capitalize(), self.actionName)
+            self.err.showErrorMessage(dialogData)
 
     def startCoolDown(self):
         if not getSettings("MaintainSuccessfulInstalls"):

@@ -207,8 +207,10 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     p.wait()
     cprint(output)
     outputCode = p.returncode
-    if outputCode in (1605, 1614, 1641, 3010):
+    if outputCode in (1605, 1614, 1641):
         outputCode = 0
+    elif outputCode == 3010:
+        outputCode = 3
     closeAndInform.emit(outputCode, output)
 
 

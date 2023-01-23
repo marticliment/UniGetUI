@@ -374,7 +374,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             outputCode = 2
         case 0x8A150109: # need restart
             outputCode = 3
-        case _:
+        case other:
             outputCode = p.returncode
     closeAndInform.emit(outputCode, output)
 
