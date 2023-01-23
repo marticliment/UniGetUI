@@ -87,7 +87,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         for element in output:
             try:
                 element = str(element, "utf-8", errors="ignore").split("|")
-                if len(element) > 1:
+                if len(element) > 1 and element[0] != "Output is package name":
                     signal.emit(element[0].replace("-", " ").capitalize(), element[0], element[1], element[2], "Chocolatey")
             except Exception as e:
                 report(e)
@@ -114,7 +114,9 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     for element in output:
         try:
             output = str(element, encoding="utf-8", errors="ignore").split(" ")
-            signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
+            if output[0] != "-" and len(output) > 1:
+                if output[1] != "validations":
+                    signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
         except Exception as e:
             report(e)
     print("🟢 Chocolatey uninstallable packages search finished")

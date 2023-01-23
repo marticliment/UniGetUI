@@ -74,7 +74,8 @@ class DiscoverSoftwareSection(QWidget):
          
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" "+_("Search for packages"))
-        self.query.returnPressed.connect(self.filter)
+        self.query.returnPressed.connect(lambda: (self.filter(), cprint("search")))
+        self.query.editingFinished.connect(lambda: (self.filter(), cprint("search")))
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
         self.query.setStyleSheet("margin-top: 0px;")
