@@ -2492,9 +2492,9 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(title)
         self.layout.addSpacing(20)
 
-        self.wingetPreferences = QSettingsTitle(_("Winget preferences"), getMedia("winget"), _("Winget package manager specific preferences"))
+        self.wingetPreferences = QSettingsTitle(_("{pm} preferences").format(pm = "Winget"), getMedia("winget"), _("{pm} package manager specific preferences").format(pm = "Winget"))
         self.layout.addWidget(self.wingetPreferences)
-        disableWinget = QSettingsCheckBox(_("Enable Winget"))
+        disableWinget = QSettingsCheckBox(_("Enable {pm}").format(pm = "Winget"))
         disableWinget.setChecked(not getSettings("DisableWinget"))
         disableWinget.stateChanged.connect(lambda v: (setSettings("DisableWinget", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v)))
         self.wingetPreferences.addWidget(disableWinget)
@@ -2513,10 +2513,10 @@ class SettingsSection(QScrollArea):
         enableSystemWinget.setEnabled(disableWinget.isChecked())
 
         
-        self.scoopPreferences = QSettingsTitle(_("Scoop preferences"), getMedia("scoop"), _("Scoop package manager specific preferences"))
+        self.scoopPreferences = QSettingsTitle(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
         self.layout.addWidget(self.scoopPreferences)
 
-        disableScoop = QSettingsCheckBox(_("Enable Scoop"))
+        disableScoop = QSettingsCheckBox(_("Enable {pm}").format(pm = "Scoop"))
         disableScoop.setChecked(not getSettings("DisableScoop"))
         disableScoop.stateChanged.connect(lambda v: (setSettings("DisableScoop", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v)))
         self.scoopPreferences.addWidget(disableScoop)
@@ -2540,9 +2540,9 @@ class SettingsSection(QScrollArea):
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
         
-        self.chocoPreferences = QSettingsTitle(_("Chocolatey preferences"), getMedia("choco"), _("Chocolatey package manager specific preferences"))
+        self.chocoPreferences = QSettingsTitle(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
         self.layout.addWidget(self.chocoPreferences)
-        disableChocolatey = QSettingsCheckBox(_("Enable Choclatey"))
+        disableChocolatey = QSettingsCheckBox(_("Enable {pm}").format(pm = "Chocolatey"))
         disableChocolatey.setChecked(not getSettings("DisableChocolatey"))
         disableChocolatey.stateChanged.connect(lambda v: (setSettings("DisableChocolatey", not bool(v))))
         self.chocoPreferences.addWidget(disableChocolatey)
