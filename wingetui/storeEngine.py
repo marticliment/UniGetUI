@@ -71,14 +71,14 @@ class PackageInstallerWidget(QGroupBox):
         self.finishInstallation.connect(self.finish)
         self.layout.addWidget(self.info)
         self.counterSignal.connect(self.counter)
-        self.liveOutputButton = QPushButton(QIcon(realpath+"/resources/console.png"), _(""))
+        self.liveOutputButton = QPushButton(QIcon(getMedia("console", autoIconMode = False)), "")
         self.liveOutputButton.clicked.connect(lambda: (self.liveOutputWindow.show(), ApplyMica(self.liveOutputWindow.winId(), isDark())))
         self.liveOutputButton.setFixedHeight(30)
         self.liveOutputButton.setFixedWidth(30)
         self.liveOutputButton.setToolTip(_("Show the live output"))
         self.liveOutputButton.setIcon(QIcon(getMedia("console")))
         self.layout.addWidget(self.liveOutputButton)
-        self.cancelButton = QPushButton(QIcon(realpath+"/resources/cancel.png"), _("Cancel"))
+        self.cancelButton = QPushButton(QIcon(getMedia("cancel", autoIconMode = False)), _("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
         self.cancelButton.setFixedHeight(30)
         self.info.setFixedHeight(30)
@@ -87,21 +87,21 @@ class PackageInstallerWidget(QGroupBox):
         self.canceled = False
         self.installId = str(time.time())
         queueProgram(self.installId)
-        
+
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(900)
         self.leftSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.rightSlow = QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(900)
         self.rightSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftFast = QVariantAnimation()
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -115,13 +115,13 @@ class PackageInstallerWidget(QGroupBox):
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftSlow.start()
 
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
         print(f"🟢 Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
-        
+
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
@@ -191,7 +191,7 @@ class PackageInstallerWidget(QGroupBox):
         self.info.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
-        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+        self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
         self.progressbar.setValue(1000)
@@ -203,70 +203,67 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
         try: self.p.kill()
         except: pass
-    
+
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode == 1602:
             self.adminstr = [sudoPath]
             self.cmdline_args.append("--global")
             self.runInstallation()
+            return
         elif returncode == 1603:
             self.adminstr = [sudoPath]
             self.runInstallation()
+            return
+        self.finishedInstallation = True
+        self.cancelButton.setEnabled(True)
+        removeProgram(self.installId)
+        try: self.waitThread.kill()
+        except: pass
+        try: self.t.kill()
+        except: pass
+        try: self.p.kill()
+        except: pass
+        if self.canceled:
+            return
+        self.cancelButton.setText(_("OK"))
+        self.cancelButton.clicked.connect(self.close)
+        self.progressbar.setValue(1000)
+        if (returncode == 0 or returncode == 3):
+            if returncode == 0:
+                self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
+                self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
+                self.startCoolDown()
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
+            if returncode == 3: # if the installer need restart computer
+                self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
+                self.info.setText(_("Restart your PC to finish installation"))
+                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone)+" "+_("Restart your PC to finish installation"), QIcon(getMedia("notif_restart"))))
+            if type(self) == PackageInstallerWidget:
+                if self.packageItem:
+                    globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
+                    globals.uninstall.updatePackageNumber()
         else:
-            self.finishedInstallation = True
-            self.cancelButton.setEnabled(True)
-            removeProgram(self.installId)
-            try: self.waitThread.kill()
-            except: pass
-            try: self.t.kill()
-            except: pass
-            try: self.p.kill()
-            except: pass
-            if not(self.canceled):
-                if(returncode == 0):
-                    self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
-                    self.cancelButton.setText("OK")
-                    self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
-                    self.cancelButton.clicked.connect(self.close)
-                    self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
-                    self.progressbar.setValue(1000)
-                    if type(self) == PackageInstallerWidget:
-                        if self.packageItem:
-                            globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
-                            globals.uninstall.updatePackageNumber()
-                    self.startCoolDown()
-                else:
-                    globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
-                    self.cancelButton.setText(_("OK"))
-                    self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
-                    self.cancelButton.clicked.connect(self.close)
-                    self.progressbar.setValue(1000)
-                    self.err = ErrorMessage(self.window())
-                    if(returncode == 2):  # if the installer's hash does not coincide
-                        errorData = {
-                            "titlebarTitle": f"WingetUI - {self.programName} {self.actionName}",
-                            "mainTitle": _("{0} aborted").format(self.actionName.capitalize()),
-                            "mainText": _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb),
-                            "buttonTitle": _("Close"),
-                            "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                            "icon": QIcon(getMedia("notif_warn")),
-                            "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                            "notifText": _("The installer has an invalid checksum"),
-                            "notifIcon": QIcon(getMedia("notif_warn")),
-                        }
-                    else: # if there's a generic error
-                        errorData = {
-                            "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
-                            "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
-                            "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName),
-                            "buttonTitle": _("Close"),
-                            "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
-                            "icon": QIcon(getMedia("notif_warn")),
-                            "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                            "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
-                            "notifIcon": QIcon(getMedia("notif_warn")),
-                        }
-                    self.err.showErrorMessage(errorData)
+            globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
+            self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
+            self.err = ErrorMessage(self.window())
+            warnIcon = QIcon(getMedia("notif_warn"))
+            dialogData = {
+                    "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                    "buttonTitle": _("Close"),
+                    "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                    "icon": warnIcon,
+                    "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                    "notifIcon": warnIcon,
+            }
+            if returncode == 2: # if the installer's hash does not coincide
+                dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
+                dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
+                dialogData["notifText"] = _("The installer has an invalid checksum")
+            else: # if there's a generic error
+                dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
+                dialogData["mainText"] = _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName)
+                dialogData["notifText"] = _("{0} {1} failed").format(self.programName.capitalize(), self.actionName)
+            self.err.showErrorMessage(dialogData)
 
     def startCoolDown(self):
         if not getSettings("MaintainSuccessfulInstalls"):
@@ -279,7 +276,7 @@ class PackageInstallerWidget(QGroupBox):
                 op5=QGraphicsOpacityEffect(self)
                 ops = [op1, op2, op3, op4, op5]
                 return ops
-            
+
             def updateOp(v: float):
                 i = 0
                 if self.ops == -1:
@@ -313,7 +310,7 @@ class PackageInstallerWidget(QGroupBox):
         a.valueChanged.connect(lambda v: self.setFixedHeight(v))
         a.finished.connect(self.close)
         a.start()
-        
+
     def close(self):
         globals.installersWidget.removeItem(self)
         super().close()
@@ -330,7 +327,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.actionName = _("update(noun)")
         self.actionVerb = _("update(verb)")
         self.label.setText(_("{0} update").format(title))
-    
+
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
@@ -390,7 +387,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
                         report(e)
                     globals.updates.updatePackageNumber()
             super().finish(returncode, output)
-    
+
     def close(self):
         globals.installersWidget.removeItem(self)
         super().destroy()
@@ -422,7 +419,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
         self.label.setText(_("{0} Uninstallation").format(title))
-        
+
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
@@ -458,7 +455,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.t.start()
 
 
-    
+
     def counter(self, line: int) -> None:
         if(line == 1):
             self.progressbar.setValue(250)
@@ -483,7 +480,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
-        self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+        self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
         self.cancelButton.clicked.connect(self.close)
         self.onCancel.emit()
         self.progressbar.setValue(1000)
@@ -495,7 +492,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
         try: self.p.kill()
         except: pass
-        
+
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode == 1602:
             self.adminstr = [sudoPath]
@@ -527,15 +524,15 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 if(returncode == 0):
                     self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                     self.cancelButton.setText(_("OK"))
-                    self.cancelButton.setIcon(QIcon(realpath+"/resources/tick.png"))
+                    self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
-                    self.info.setText(_("{0} was {1} successfully!").format(self.programName, self.actionDone))
+                    self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
                 else:
-                    globals.trayIcon.setIcon(QIcon(getMedia("yellowicon"))) 
+                    globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
                     self.cancelButton.setText(_("OK"))
-                    self.cancelButton.setIcon(QIcon(realpath+"/resources/warn.png"))
+                    self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
                     self.progressbar.setValue(1000)
                     self.err = ErrorMessage(self.window())
@@ -551,7 +548,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         "notifIcon": QIcon(getMedia("notif_warn")),
                         }
                     self.err.showErrorMessage(errorData)
-    
+
     def close(self):
         globals.installersWidget.removeItem(self)
         self.liveOutputWindow.close()
@@ -573,7 +570,7 @@ class PackageInfoPopupWindow(QWidget):
     givenPackageId: str = ""
     isAnUpdate = False
     store = ""
-    
+
     pressed = False
     oldPos = QPoint(0, 0)
 
@@ -609,7 +606,7 @@ class PackageInfoPopupWindow(QWidget):
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-        
+
         self.vLayout = QVBoxLayout()
         self.layout = QVBoxLayout()
         self.title = QLinkLabel()
@@ -635,7 +632,7 @@ class PackageInfoPopupWindow(QWidget):
         hl.addWidget(self.appIcon)
         hl.addSpacing(16)
         hl.addWidget(self.title)
-        
+
         self.layout.addLayout(hl)
         self.layout.addStretch()
 
@@ -671,7 +668,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.layout.addWidget(self.license)
         self.layout.addSpacing(10)
-        
+
         self.screenshotsWidget = QScrollArea()
         self.screenshotsWidget.setWidgetResizable(True)
         self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};border: 0px solid black;}};")
@@ -741,7 +738,7 @@ class PackageInfoPopupWindow(QWidget):
         self.contributeLabel.setOpenExternalLinks(True)
         self.imagesLayout.addWidget(self.contributeLabel)
         self.imagesLayout.addStretch()
-        
+
         self.imagesScrollbar = CustomScrollBar()
         self.imagesScrollbar.setOrientation(Qt.Horizontal)
         self.screenshotsWidget.setHorizontalScrollBar(self.imagesScrollbar)
@@ -754,7 +751,7 @@ class PackageInfoPopupWindow(QWidget):
         hLayout = QHBoxLayout()
         self.versionLabel = QLinkLabel(_("Version:"))
 
-        
+
         self.versionCombo = CustomComboBox()
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
@@ -774,13 +771,13 @@ class PackageInfoPopupWindow(QWidget):
         self.forceCheckbox.setText(_("Skip hash check"))
         self.forceCheckbox.setChecked(False)
         self.forceCheckbox.clicked.connect(self.loadPackageCommandLine)
-        
+
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
         self.interactiveCheckbox.setChecked(False)
         self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
 
-        
+
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
@@ -800,10 +797,10 @@ class PackageInfoPopupWindow(QWidget):
         vl.addStretch()
         vl.addLayout(hLayout)
         vl.addLayout(self.oLayout)
-        
+
         self.commandWindow = CommandLineEdit()
         self.commandWindow.setReadOnly(True)
-        
+
         vl.addStretch()
 
         downloadGroupBox.setLayout(vl)
@@ -876,21 +873,21 @@ class PackageInfoPopupWindow(QWidget):
 
         self.loadInfo.connect(self.printData)
 
-        
+
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.rightSlow = QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftFast = QVariantAnimation()
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -904,9 +901,9 @@ class PackageInfoPopupWindow(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftSlow.start()
-        
+
         self.sc.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.verticalScrollbar = CustomScrollBar()
         self.sc.setVerticalScrollBar(self.verticalScrollbar)
@@ -925,7 +922,7 @@ class PackageInfoPopupWindow(QWidget):
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         if(event):
             return super().resizeEvent(event)
-        
+
     def loadPackageCommandLine(self):
         interactive = self.interactiveCheckbox.isChecked()
         force = self.forceCheckbox.isChecked()
@@ -942,7 +939,7 @@ class PackageInfoPopupWindow(QWidget):
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
-    
+
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.iv.resetImages()
         self.packageItem = packageItem
@@ -960,10 +957,10 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.setEnabled(False)
         store = store.lower()
         self.title.setText(title)
-        
+
         self.loadPackageCommandLine()
-        
-            
+
+
         self.loadingProgressBar.show()
         self.forceCheckbox.setChecked(False)
         self.forceCheckbox.setEnabled(False)
@@ -995,7 +992,7 @@ class PackageInfoPopupWindow(QWidget):
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
         Thread(target=self.loadPackageIcon, args=(id, store)).start()
-        
+
         self.finishedCount = 0
         if(store.lower()=="winget"):
             Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId), daemon=True).start()
@@ -1044,9 +1041,9 @@ class PackageInfoPopupWindow(QWidget):
                 try:
                     p = QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)
                     if not p.isNull():
-                        self.callInMain.emit(self.imagesCarrousel[i].show)   
-                        self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, p, count))    
-                        count += 1            
+                        self.callInMain.emit(self.imagesCarrousel[i].show)
+                        self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, p, count))
+                        count += 1
                 except Exception as e:
                     report(e)
             for i in range(count+1, 20):
@@ -1072,7 +1069,7 @@ class PackageInfoPopupWindow(QWidget):
                         else:
                             print("Screenshot arrived too late!")
                     else:
-                        print(f"🟠 {imagepath} is a null image")                    
+                        print(f"🟠 {imagepath} is a null image")
                 except Exception as e:
                     self.callInMain.emit(self.imagesCarrousel[self.validImageCount].hide)
                     self.validImageCount += 1
@@ -1235,8 +1232,8 @@ class ImageViewer(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         self.images = {}
-        
-        
+
+
         self.sct = QShortcut(Qt.Key.Key_Escape, self)
         self.sct.activated.connect(lambda: self.close())
         self.setStyleSheet(f"""
@@ -1260,7 +1257,7 @@ class ImageViewer(QWidget):
 
         layout.addWidget(self.stackedWidget)
         self.setLayout(layout)
-        
+
         self.closeButton = QPushButton(QIcon(getMedia("close")), "", self)
         self.closeButton.move(self.width()-40, 0)
         self.closeButton.resize(40, 40)
@@ -1268,8 +1265,8 @@ class ImageViewer(QWidget):
         self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
         self.closeButton.clicked.connect(lambda: (self.close()))
         self.closeButton.show()
-        
-        
+
+
         self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
         self.bk = QShortcut(Qt.Key.Key_Left, self)
         self.bk.activated.connect(lambda: self.backButton.click())
@@ -1279,7 +1276,7 @@ class ImageViewer(QWidget):
         #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
         self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
         self.backButton.show()
-        
+
         self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
         self.nxt = QShortcut(Qt.Key.Key_Right, self)
         self.nxt.activated.connect(lambda: self.nextButton.click())
@@ -1290,8 +1287,8 @@ class ImageViewer(QWidget):
         self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
         self.nextButton.show()
         self.hide()
-        
-        
+
+
     def resizeEvent(self, event = None):
         self.closeButton.move(self.width()-40, 0)
         self.backButton.move(10, self.height()//2-24)
@@ -1322,7 +1319,7 @@ class ImageViewer(QWidget):
 
     def hide(self) -> None:
         return super().hide()
-    
+
     def resetImages(self) -> None:
         del self.images
         self.images = {}
@@ -1332,7 +1329,7 @@ class ImageViewer(QWidget):
             widget.close()
             widget.deleteLater()
             del widget
-            
+
     def addImage(self, pixmap: QPixmap) -> None:
         l = QLabel()
         l.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
@@ -1340,7 +1337,7 @@ class ImageViewer(QWidget):
         l.resize(self.stackedWidget.size())
         l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.images[l] = pixmap
-        
+
     def wheelEvent(self, event: QWheelEvent) -> None:
         if abs(event.angleDelta().x()) <= 30:
             if event.angleDelta().y() < -30:
@@ -1353,10 +1350,10 @@ class ImageViewer(QWidget):
             elif event.angleDelta().x() > 30:
                 self.nextButton.click()
         return super().wheelEvent(event)
-        
-        
 
-        
+
+
+
 
 if(__name__=="__main__"):
     import __init__

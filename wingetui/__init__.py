@@ -37,7 +37,7 @@ try:
                 titlewidget = QHBoxLayout()
                 titlewidget.addStretch()
                 icon = QLabel()
-                icon.setPixmap(QPixmap(realpath+"/resources/icon.png").scaledToWidth(128, Qt.TransformationMode.SmoothTransformation))
+                icon.setPixmap(QPixmap(getMedia("icon", autoIconMode = False)).scaledToWidth(128, Qt.TransformationMode.SmoothTransformation))
                 text = QLabel("WingetUI")
                 text.setStyleSheet(f"font-family: \"{globals.dispfont}\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
                 titlewidget.addWidget(icon)
@@ -285,7 +285,7 @@ try:
                 globals.trayIcon = QSystemTrayIcon()
                 self.trayIcon = globals.trayIcon
                 globals.app = self
-                self.trayIcon.setIcon(QIcon(realpath+"/resources/icon.png"))
+                self.trayIcon.setIcon(QIcon(getMedia("icon", autoIconMode = False)))
                 self.trayIcon.setToolTip("WingetUI")
                 self.trayIcon.setVisible(True)
 

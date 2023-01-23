@@ -29,7 +29,7 @@ class RootWindow(QMainWindow):
         self.setWindowTitle("WingetUI")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
-        self.setWindowIcon(QIcon(realpath+"/resources/icon.png"))
+        self.setWindowIcon(QIcon(getMedia("icon", autoIconMode = False)))
         self.resize(QSize(1100, 700))
         try:
             rs = getSettingsValue("OldWindowGeometry").split(",")

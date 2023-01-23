@@ -1,4 +1,3 @@
-from ast import Attribute
 import shutil
 import winreg
 import io
@@ -7,11 +6,11 @@ import sys, time, subprocess, os, json, locale
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from win32mica import ApplyMica, MICAMODE
 from urllib.request import urlopen
 from versions import *
 from languages import *
 from external.blurwindow import GlobalBlur
+from pathlib import Path
 
 import globals
 
@@ -241,16 +240,18 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
             #QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
 
 
-def getPath(s):
-    return os.path.join(os.path.join(realpath, "resources"), s).replace("\\", "/")
+def getPath(s: str) -> str:
+    return str(Path(f"{realpath}/resources/{s}").resolve()).replace("\\", "/")
 
 def getIconMode() -> str:
     return "white" if isDark() else "black"
 
-def getMedia(m: str) -> str:
-    filename = getPath(m+"_"+getIconMode()+".png")
-    if not os.path.exists(filename):
-        filename = getPath(m+".png")
+def getMedia(m: str, autoIconMode = True) -> str:
+    filename = ""
+    if autoIconMode == True:
+        filename = getPath(f"{m}_{getIconMode()}.png")
+    if not filename or not os.path.exists(filename):
+        filename = getPath(f"{m}.png")
     return filename
 
 def getint(s: str, fallback: int) -> int:
