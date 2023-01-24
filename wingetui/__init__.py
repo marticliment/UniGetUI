@@ -97,10 +97,72 @@ try:
                 os.chdir(os.path.expanduser("~"))
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
-                Thread(target=self.loadStuffThread, daemon=True).start()
-                self.loadingText.setText(_("Checking for other running instances..."))
+                if getSettings("AskedAbout3PackageManagers") == False:
+                    self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadStuffThread, daemon=True).start())
+                else:
+                    Thread(target=self.loadStuffThread, daemon=True).start()
+                    self.loadingText.setText(_("Checking for other running instances..."))
             except Exception as e:
                 raise e
+
+        def askAboutPackageManagers(self, onclose: object):
+            self.w = NotClosableWidget()
+            self.w.setWindowFlag(Qt.WindowType.Window)
+            self.w.setWindowTitle(_("\x20"))
+            pixmap = QPixmap(4, 4)
+            pixmap.fill(Qt.GlobalColor.transparent)
+            self.w.setWindowIcon(pixmap)
+            self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+            self.w.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
+            self.w.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
+            self.w.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
+            self.w.setWindowModality(Qt.WindowModality.WindowModal)
+            
+            self.w.setMinimumWidth(750)
+            self.w.setContentsMargins(20, 0, 20, 10)
+            mainLayout = QVBoxLayout()
+            label = (QLabel("<p style='font-size: 25pt;font-weight: bold;'>"+_("Welcome to WingetUI")+"</p><p style='font-size: 17pt;font-weight: bold;'>"+("You may now choose your weapons")+"</p>"))
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setWordWrap(True)
+            mainLayout.addWidget(label)
+            label = (QLabel(_("WingetUI is based on package managers. They are the engines used to load, install update and remove software from your computer. Please select the desired package managers and hit \"Apply\" to continue. The default ones are Winget and Chocolatey")))
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setWordWrap(True)
+            mainLayout.addWidget(label)
+
+            
+            winget = PackageManager(_("Enable {pm}").format(pm="Winget"), _("Microsoft's official package manager. It contains well known software such as browsers, PDF readers, windows add-ons and other utilities, as well as other less-known but useful software, such as Microsoft Visual C++ Redistributables. Packages from winget have been carefully validated"), getMedia("winget"))
+            winget.setChecked(True)
+            scoop = PackageManager(_("Enable {pm}").format(pm="Scoop"), _("From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of."), getMedia("scoop"))
+            scoop.setChecked(False)
+            if getSettings("ScoopAlreadySetup") and not getSettings("DisableScoop"):
+                scoop.setChecked(True)
+            choco = PackageManager(_("Enable {pm}").format(pm="Chocolatey"), _("The package manager for Windows by default. With more than {0} packages on their repositories, you will find anything you want to install. From Firefox to Sysinternals, almost every package is available to download from Chocolatey servers.").format("9500"), getMedia("choco"))
+            choco.setChecked(True)
+            
+            mainLayout.addSpacing(20)
+            mainLayout.addWidget(winget)
+            mainLayout.addWidget(scoop)
+            mainLayout.addWidget(choco)
+            mainLayout.addSpacing(20)
+            
+            mainLayout.addStretch()
+            
+            
+            blayout = QHBoxLayout()
+            mainLayout.addLayout(blayout)
+            blayout.addStretch()
+            
+            okbutton = QPushButton(_("Apply and start WingetUI"))
+            okbutton.setFixedSize(190, 30)
+            okbutton.setObjectName("AccentButton")
+            okbutton.clicked.connect(lambda: (self.w.close(), onclose(), setSettings("AskedAbout3PackageManagers", True), setSettings("DisableWinget", not winget.isChecked()), setSettings("DisableScoop", not scoop.isChecked()), setSettings("DisableChocolatey", not choco.isChecked())))
+            blayout.addWidget(okbutton)
+            
+            self.w.setLayout(mainLayout)
+            self.setStyleSheet(darkCSS if isDark() else lightCSS)
+            self.w.show()
+            ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
 
         def loadStuffThread(self):
             try:

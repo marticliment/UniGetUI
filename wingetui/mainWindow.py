@@ -174,8 +174,6 @@ class RootWindow(QMainWindow):
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
-
-
     def addTab(self, widget: QWidget, label: str, addToMenu: bool = False, actionIcon: str = "") -> QPushButton:
         i = self.mainWidget.addWidget(widget)
         btn = PushButtonWithAction(label)
