@@ -998,19 +998,21 @@ class QSettingsComboBox(QWidget):
 
 class QSettingsCheckBox(QWidget):
     stateChanged = Signal(bool)
-    def __init__(self, text="", parent=None):
+    def __init__(self, text="", parent=None, margin=70, bigfont = False):
+        self.margin = margin
         super().__init__(parent)
         self.setAttribute(Qt.WA_StyledBackground)
         self.setObjectName("stChkBg")
         self.checkbox = QCheckBox(text, self)
         if lang["locale"] == "zh_TW":
-            self.checkbox.setStyleSheet("font-size: 11pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
+            self.checkbox.setStyleSheet(f"font-size: {14 if bigfont else 11}pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: {700 if bigfont else 450};")
         elif lang["locale"] == "zh_CN":
-            self.checkbox.setStyleSheet("font-size: 11pt;background: none;font-family: \"Microsoft YaHei UI\";font-weight: 450;")
+            self.checkbox.setStyleSheet(f"font-size: {14 if bigfont else 11}pt;background: none;font-family: \"Microsoft YaHei UI\";font-weight: {700 if bigfont else 450};")
         else:
-            self.checkbox.setStyleSheet("font-size: 9pt;background: none;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
+            self.checkbox.setStyleSheet(f"font-size: {14 if bigfont else 9}pt;background: none;font-family: \"Segoe UI Variable {'Display' if bigfont else 'Text'}\";font-weight: {700 if bigfont else 450};")
         self.checkbox.setObjectName("stChk")
         self.checkbox.stateChanged.connect(self.stateChanged.emit)
+        self.setFixedHeight(50)
 
     def setChecked(self, checked: bool) -> None:
         self.checkbox.setChecked(checked)
@@ -1022,10 +1024,12 @@ class QSettingsCheckBox(QWidget):
         return round(i*self.screen().devicePixelRatio())
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.checkbox.move((70), 10)
+        if self.height() != 30:
+            self.checkbox.move((self.margin), 10)
+        else:
+            self.checkbox.move((self.margin), 0)
         self.checkbox.setFixedHeight(30)
-        self.checkbox.setFixedWidth(self.width()-(70))
-        self.setFixedHeight(50)
+        self.checkbox.setFixedWidth(self.width()-(self.margin))
         return super().resizeEvent(event)
 
     def text(self) -> str:
@@ -1110,7 +1114,57 @@ class ClosableOpaqueMessage(QWidget):
     def setIcon(self, icon: QIcon) -> None:
         self.image.setPixmap(icon.pixmap(QSize(self.image.size())))
         
-    
+class NotClosableWidget(QWidget):
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if event.spontaneous():
+            event.ignore()
+            return False
+        else:
+            event.accept()
+            return super().closeEvent(event)
+        
+class PackageManager(QWidget):
+    def __init__(self, text, description, image) -> None:
+        super().__init__()
+        mainw = QWidget(self)
+        mainw.setContentsMargins(0, 0, 0, 0)
+        mainw.setObjectName("bgwidget")
+        mainw.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.checkbox = QSettingsCheckBox(text, mainw, margin=0, bigfont=True)
+        self.checkbox.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, False)
+        self.checkbox.stateChanged.connect(lambda v: (self.description.setEnabled(v), self.image.setEnabled(v)))
+        self.checkbox.setFixedHeight(30)
+        self.description = QLabel(description)
+        self.description.setWordWrap(True)
+        self.description.setEnabled(False)
+        self.image = QLabel()
+        self.image.setPixmap(QPixmap(image).scaledToHeight(64, Qt.TransformationMode.SmoothTransformation))
+        h = QHBoxLayout()
+        v = QVBoxLayout()
+        v.addWidget(self.checkbox)
+        v.addWidget(self.description, stretch=1)
+        h.addLayout(v, stretch=1)
+        h.addWidget(self.image)
+        h.setContentsMargins(16, 16, 16, 16)
+        h2 = QHBoxLayout()
+        h.addStretch()
+        mainw.setLayout(h)
+        h2.addStretch()
+        h2.addWidget(mainw)
+        h2.setContentsMargins(0, 0, 0, 0)
+        h2.addStretch()
+        mainw.setFixedWidth(600)
+        self.setLayout(h2)
+        if isDark():
+            self.setStyleSheet("""#bgwidget{background-color: rgba(255, 255, 255, 5%); border: 1px solid #101010; padding: 16px; border-radius: 16px;}""")
+        else:
+            self.setStyleSheet("""#bgwidget{background-color: rgba(255, 255, 255, 50%); border: 1px solid #eeeeee; padding: 16px; border-radius: 16px;}""")
+        
+    def setChecked(self, v: bool) -> None:
+        self.checkbox.setChecked(v)
+        
+    def isChecked(self) -> bool:
+        return self.checkbox.isChecked()
 
 if __name__ == "__main__":
     import __init__

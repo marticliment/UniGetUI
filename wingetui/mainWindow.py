@@ -54,7 +54,6 @@ class RootWindow(QMainWindow):
             }}
             QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
-        self.askAboutPackageManagers()
 
         
         print("🟢 Main application loaded...")
@@ -174,40 +173,6 @@ class RootWindow(QMainWindow):
 
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
-
-    def askAboutPackageManagers(self):
-        self.w = QWidget(self)
-        self.w.setWindowFlag(Qt.WindowType.Window)
-        self.w.setWindowTitle(_("\x20"))
-        self.w.setWindowIcon(self.windowIcon())
-        self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.w.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
-        self.w.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
-        self.w.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
-        self.w.setWindowModality(Qt.WindowModality.WindowModal)
-        
-        mainLayout = QVBoxLayout()
-        mainLayout.addWidget(QLabel("<p style='font-size: 20pt;font-weight: bold;'>"+_("Welcome to WingetUI - You may now choose your weapons.&emsp;")+"</p>"))
-        mainLayout.addWidget(QLabel(_("WingetUI is based on package managers, that are the actual engines to load, install update and remove software from your computer.<br>Now you can choose which ones you want to use.")))
-        
-        
-        
-        mainLayout.addStretch()
-        
-        
-        blayout = QHBoxLayout()
-        mainLayout.addLayout(blayout)
-        blayout.addStretch()
-        
-        okbutton = QPushButton("Apply and start WingetUI")
-        okbutton.setFixedSize(190, 30)
-        okbutton.setObjectName("AccentButton")
-        okbutton.clicked.connect(self.w.close)
-        blayout.addWidget(okbutton)
-        
-        self.w.setLayout(mainLayout)
-        self.w.show()
-        ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
 
     def addTab(self, widget: QWidget, label: str, addToMenu: bool = False, actionIcon: str = "") -> QPushButton:
         i = self.mainWidget.addWidget(widget)
