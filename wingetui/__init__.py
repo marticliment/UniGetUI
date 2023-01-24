@@ -121,7 +121,7 @@ try:
             self.w.setMinimumWidth(750)
             self.w.setContentsMargins(20, 0, 20, 10)
             mainLayout = QVBoxLayout()
-            label = (QLabel("<p style='font-size: 25pt;font-weight: bold;'>"+_("Welcome to WingetUI")+"</p><p style='font-size: 17pt;font-weight: bold;'>"+("You may now choose your weapons.&emsp;")+"</p>"))
+            label = (QLabel("<p style='font-size: 25pt;font-weight: bold;'>"+_("Welcome to WingetUI")+"</p><p style='font-size: 17pt;font-weight: bold;'>"+("You may now choose your weapons")+"</p>"))
             label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             label.setWordWrap(True)
             mainLayout.addWidget(label)
