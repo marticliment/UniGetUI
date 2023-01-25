@@ -28,6 +28,7 @@ class PackageInstallerWidget(QGroupBox):
         self.actionVerb = _("install")
         self.liveOutputWindow = CustomPlainTextEdit(self)
         self.liveOutputWindow.setWindowFlag(Qt.Window)
+        self.liveOutputWindow.setWindowIcon(self.window().windowIcon())
         self.liveOutputWindow.setReadOnly(True)
         self.liveOutputWindow.resize(500, 200)
         self.liveOutputWindow.setWindowTitle(_("Live command-line output"))
@@ -434,7 +435,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
         if(self.store == "winget" or self.store in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect"))):
-            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
             print(self.p.args)
