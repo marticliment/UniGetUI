@@ -676,14 +676,11 @@ class QSettingsTitle(QWidget):
         self.callInMain.connect(lambda f: f())
         self.icon = icon
         self.setObjectName("subtitleLabel")
-        self.label = QLabel("\u200e"+text, self)
-        self.label.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.label.setAlignment(Qt.AlignLeft)
+        self.label = QLabel(text, self)
         self.setMaximumWidth(1000)
         self.descLabel = QLabel(descText, self)
         self.bg70 = QWidget(self)
         self.bg70.setObjectName("micaRegularBackground")
-        self.descLabel.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.descLabel.setObjectName("greyishLabel")
         if lang["locale"] == "zh_TW":
             self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft JhengHei UI\";")
