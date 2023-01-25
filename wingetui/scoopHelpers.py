@@ -91,7 +91,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Scoop search finished")
     finishSignal.emit("scoop")
 
-def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = False) -> None:
+def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verbose: bool = False) -> None:
     print(f"🟢 Starting get info for title {title}")
     title = title.lower()
     p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
@@ -173,9 +173,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
     print(f"🔵 Scoop does not support specific version installs")
     appInfo["versions"] = [version]
     appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
-    signal.emit(appInfo)
+    signal.emit(appInfo, progId)
     if not verbose:
-        getInfo(signal, title, id, useId, verbose=True)
+        getInfo(signal, title, id, useId, progId, verbose=True)
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 scoop installer assistant thread started for process {p}")

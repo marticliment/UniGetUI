@@ -241,7 +241,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Winget uninstallable packages search finished")
     finishSignal.emit("winget")
 
-def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
+def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> None:
     try:
         oldid = id
         id = id.replace("…", "")
@@ -351,7 +351,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool) -> None:
             cprint("Output: ")
             cprint(output)
         appInfo["versions"] = output
-        signal.emit(appInfo)
+        signal.emit(appInfo, progId)
     except Exception as e:
         report(e)
 
