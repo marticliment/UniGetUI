@@ -93,6 +93,10 @@ try:
                     self.leftSlow.start()
                     self.popup.show()
 
+                if not getSettings("AutoDisabledScoopCacheRemoval"):
+                    getSettings("EnableScoopCleanup", False)
+                    getSettings("AutoDisabledScoopCacheRemoval", True)
+                    
                 print("🔵 Starting main application...")
                 os.chdir(os.path.expanduser("~"))
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
@@ -286,7 +290,7 @@ try:
                 print(e)
             self.loadStatus += 1
             try:
-                if not getSettings("DisableUpdateIndexes"):
+                if not getSettings("EnableScoopCleanup"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
                     p = subprocess.Popen(f"{scoopHelpers.scoop} cache rm *", shell=True, stdout=subprocess.PIPE)
                     p.wait()

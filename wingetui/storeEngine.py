@@ -1,8 +1,5 @@
 from __future__ import annotations
-from decimal import setcontext
-from email.mime import image
 from functools import partial
-from multiprocessing.sharedctypes import Value # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
