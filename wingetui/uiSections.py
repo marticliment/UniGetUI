@@ -556,31 +556,32 @@ class DiscoverSoftwareSection(QWidget):
             self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
     def reload(self) -> None:
-        self.packageItems = []
-        self.scoopLoaded = False
-        self.wingetLoaded = False
-        self.chocoLoaded = False
-        self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
-        self.searchButton.setEnabled(False)
-        self.query.setEnabled(False)
-        self.packageList.clear()
-        self.query.setText("")
-        self.countLabel.setText(_("Searching for packages..."))
-        self.packageList.label.setText(self.countLabel.text())
-        if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        if not getSettings("DisableChocolatey"):
-            Thread(target=chocoHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.chocoLoaded = True
-        self.finishLoadingIfNeeded("none")
+        if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:
+            self.packageItems = []
+            self.scoopLoaded = False
+            self.wingetLoaded = False
+            self.chocoLoaded = False
+            self.loadingProgressBar.show()
+            self.reloadButton.setEnabled(False)
+            self.searchButton.setEnabled(False)
+            self.query.setEnabled(False)
+            self.packageList.clear()
+            self.query.setText("")
+            self.countLabel.setText(_("Searching for packages..."))
+            self.packageList.label.setText(self.countLabel.text())
+            if not getSettings("DisableWinget"):
+                Thread(target=wingetHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.wingetLoaded = True
+            if not getSettings("DisableScoop"):
+                Thread(target=scoopHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.scoopLoaded = True
+            if not getSettings("DisableChocolatey"):
+                Thread(target=chocoHelpers.searchForPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.chocoLoaded = True
+            self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
@@ -1276,35 +1277,36 @@ class UpdateSoftwareSection(QWidget):
         self.callInMain.emit(self.reload)
     
     def reload(self) -> None:
-        self.availableUpdates = 0
-        self.scoopLoaded = False
-        self.wingetLoaded = False
-        self.chocoLoaded = False
-        self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
-        self.searchButton.setEnabled(False)
-        self.query.setEnabled(False)
-        self.packageList.clear()
-        self.query.setText("")
-        for action in globals.trayMenuUpdatesList.actions():
-            globals.trayMenuUpdatesList.removeAction(action)
-        globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
-        self.countLabel.setText(_("Checking for updates..."))
-        self.packageList.label.setText(self.countLabel.text())
-        self.blacklist = getSettingsValue("BlacklistedUpdates")
-        if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        if not getSettings("DisableChocolatey"):
-            Thread(target=chocoHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.chocoLoaded = True
-        self.finishLoadingIfNeeded("none")
+        if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:
+            self.availableUpdates = 0
+            self.scoopLoaded = False
+            self.wingetLoaded = False
+            self.chocoLoaded = False
+            self.loadingProgressBar.show()
+            self.reloadButton.setEnabled(False)
+            self.searchButton.setEnabled(False)
+            self.query.setEnabled(False)
+            self.packageList.clear()
+            self.query.setText("")
+            for action in globals.trayMenuUpdatesList.actions():
+                globals.trayMenuUpdatesList.removeAction(action)
+            globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
+            self.countLabel.setText(_("Checking for updates..."))
+            self.packageList.label.setText(self.countLabel.text())
+            self.blacklist = getSettingsValue("BlacklistedUpdates")
+            if not getSettings("DisableWinget"):
+                Thread(target=wingetHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.wingetLoaded = True
+            if not getSettings("DisableScoop"):
+                Thread(target=scoopHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.scoopLoaded = True
+            if not getSettings("DisableChocolatey"):
+                Thread(target=chocoHelpers.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.chocoLoaded = True
+            self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
@@ -2002,33 +2004,34 @@ class UninstallSoftwareSection(QWidget):
                 self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def reload(self) -> None:
-        self.scoopLoaded = False
-        self.wingetLoaded = False
-        self.chocoLoaded = False
-        self.loadingProgressBar.show()
-        self.reloadButton.setEnabled(False)
-        self.searchButton.setEnabled(False)
-        self.query.setEnabled(False)
-        self.packageList.clear()
-        self.query.setText("")
-        self.countLabel.setText(_("Searching for installed packages..."))
-        self.packageList.label.setText(self.countLabel.text())
-        if not getSettings("DisableWinget"):
-            Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        if not getSettings("DisableChocolatey"):
-            Thread(target=chocoHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.chocoLoaded = True
-        self.finishLoadingIfNeeded("none")
-        for action in globals.trayMenuInstalledList.actions():
-            globals.trayMenuInstalledList.removeAction(action)
-        globals.trayMenuInstalledList.addAction(globals.installedHeader)
+        if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:
+            self.scoopLoaded = False
+            self.wingetLoaded = False
+            self.chocoLoaded = False
+            self.loadingProgressBar.show()
+            self.reloadButton.setEnabled(False)
+            self.searchButton.setEnabled(False)
+            self.query.setEnabled(False)
+            self.packageList.clear()
+            self.query.setText("")
+            self.countLabel.setText(_("Searching for installed packages..."))
+            self.packageList.label.setText(self.countLabel.text())
+            if not getSettings("DisableWinget"):
+                Thread(target=wingetHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.wingetLoaded = True
+            if not getSettings("DisableScoop"):
+                Thread(target=scoopHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.scoopLoaded = True
+            if not getSettings("DisableChocolatey"):
+                Thread(target=chocoHelpers.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+            else:
+                self.chocoLoaded = True
+            self.finishLoadingIfNeeded("none")
+            for action in globals.trayMenuInstalledList.actions():
+                globals.trayMenuInstalledList.removeAction(action)
+            globals.trayMenuInstalledList.addAction(globals.installedHeader)
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
