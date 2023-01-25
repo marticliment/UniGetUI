@@ -158,8 +158,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, verbose: bool = Fa
                 data = json.load(mfest)
                 print("ok")
                 try:
-                    appInfo["installer-url"] = data["url"]
-                    appInfo["installer-sha256"] = data["hash"]
+                    appInfo["installer-url"] = data["url"][0] if type(data["url"]) == list else data["url"]
+                    appInfo["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
                 except KeyError:
                     appInfo["installer-url"] = data["architecture"]["64bit"]["url"]
                     appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
