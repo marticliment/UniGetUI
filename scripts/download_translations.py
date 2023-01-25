@@ -17,10 +17,8 @@ sys.path.append("wingetui")
 
 from lang.lang_tools import *
 
-try:
-    from data.contributors import contributors
-except ImportError:
-    os.system(f"python scripts/get_contributors.py")
+# Update contributors
+os.system(f"python scripts/get_contributors.py")
 
 isAutoCommit = False
 isSomeChanges = False
