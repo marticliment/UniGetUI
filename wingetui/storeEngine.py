@@ -1235,9 +1235,11 @@ class ImageViewer(QWidget):
         layout.setSpacing(0)
         self.images = {}
 
-
-        self.sct = QShortcut(Qt.Key.Key_Escape, self)
-        self.sct.activated.connect(lambda: self.close())
+        try:
+            self.sct = QShortcut(Qt.Key.Key_Escape, self)
+            self.sct.activated.connect(lambda: self.close())
+        except TypeError:
+            pass
         self.setStyleSheet(f"""
         QGroupBox {{
             border: 0px;
