@@ -286,18 +286,23 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
             }
             while p.poll() is None:
                 line = p.stdout.readline()
-                line = line.strip()
                 cprint(line)
                 if line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
-            print(p.stdout)
+            weAreDescripting = False
             for line in output:
                 cprint(line)
+                if line[0] == " " and weAreDescripting:
+                    appInfo["description"] += "\n"+line
+                else:
+                    weAreDescripting = False
+                line: str = line.strip()
                 if("Publisher:" in line):
                     appInfo["publisher"] = line.replace("Publisher:", "").strip()
                     validCount += 1
                 elif("Description:" in line):
                     appInfo["description"] = line.replace("Description:", "").strip()
+                    weAreDescripting = True
                     validCount += 1
                 elif("Author:" in line):
                     appInfo["author"] = line.replace("Author:", "").strip()
