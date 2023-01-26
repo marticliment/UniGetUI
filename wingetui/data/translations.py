@@ -4,7 +4,7 @@ untranslatedPercentage = {
   "ar": "95%",
   "bg": "95%",
   "bn": "18%",
-  "cs": "98%",
+  "cs": "99%",
   "da": "51%",
   "de": "95%",
   "es": "95%",
@@ -16,9 +16,8 @@ untranslatedPercentage = {
   "it": "94%",
   "ja": "89%",
   "ko": "97%",
-  "nl": "95%",
   "pl": "95%",
-  "pt_BR": "95%",
+  "pt_BR": "98%",
   "pt_PT": "95%",
   "ru": "80%",
   "sr": "21%",
@@ -33,10 +32,6 @@ languageCredits = {
     {
       "name": "Abdu11ahAS",
       "link": "https://github.com/Abdu11ahAS"
-    },
-    {
-      "name": "Abdullah A.S",
-      "link": ""
     }
   ],
   "bg": [
@@ -187,6 +182,10 @@ languageCredits = {
     {
       "name": "ppvnf",
       "link": "https://github.com/ppvnf"
+    },
+    {
+      "name": "wanderleihuttel",
+      "link": "https://github.com/wanderleihuttel"
     }
   ],
   "pt_PT": [
