@@ -22,3 +22,4 @@ WebBasedData/screenshot_database.xlsx
 WebBasedData/screenshot-database.json.backup
 wingetui/choco-cli/logs/choco.summary.log
 wingetui/choco-cli/logs/chocolatey.log
+*.log

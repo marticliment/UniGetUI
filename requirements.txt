@@ -1,4 +1,4 @@
-PySide6
-win32mica
+PySide6>=6.4.0
+win32mica>=1.8
 PyInstaller
 pywin32
