@@ -280,7 +280,7 @@
   "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer." : "Nemůžeme {0} {1}. Prosím, zkuste to později. Kliknutím na \"Zobrazit podrobnosti\" zobrazíte protokol instalace.",
   "We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller." : "Nemůžeme {0} {1}. Prosím, zkuste to později. Kliknutím na \"Zobrazit podrobnosti\" zobrazíte protokol odinstalace.",
   "We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop." : "Nemůžeme načíst podrobné informace o tomto balíčku, protože nebyl nainstalován přes Winget ani přes Scoop.",
-  "Welcome to WingetUI" : null,
+  "Welcome to WingetUI" : "Vítejte v WingetUI",
   "Which bucket do you want to add?" : "Který repozitář chcete přidat?",
   "Which bucket do you want to remove?" : "Který repozitář chcete odebrat?",
   "Winget found: {0}" : "Winget nalezen: {0}",
@@ -300,5 +300,5 @@
   "WingetUI version {0}" : "WingetUI verze {0}",
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI by nikdy nemohl vzniknout za podpory našich drahých přispěvovatelů. Koukněte na jejich GitHub profily, WingetUI by bez nich nikdy nevznikl!",
   "Yes" : "Ano",
-  "You may now choose your weapons" : null
+  "You may now choose your weapons" : "Nyní si můžete vybrat svoje zbraně"
 }
