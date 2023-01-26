@@ -101,7 +101,7 @@ try:
                 os.chdir(os.path.expanduser("~"))
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
-                if getSettings("AskedAbout3PackageManagers") == True:
+                if getSettings("AskedAbout3PackageManagers") == False:
                     self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadStuffThread, daemon=True).start())
                 else:
                     Thread(target=self.loadStuffThread, daemon=True).start()
