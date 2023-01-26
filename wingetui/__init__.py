@@ -1399,7 +1399,10 @@ try:
     *::disabled {{
         color: gray;
     }}
-    #micawin,QInputDialog {{
+    QInputDialog {{
+        background-color: #f5f5f5;
+    }}
+    #micawin {{
         background-color: mainbg;
         color: red;
     }}

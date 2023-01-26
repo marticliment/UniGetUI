@@ -1162,6 +1162,5 @@ class PackageManager(QWidget):
         
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
-
 if __name__ == "__main__":
     import __init__
