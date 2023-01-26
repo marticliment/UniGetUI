@@ -176,7 +176,7 @@ try:
             if r != 0:
                 self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
                 self.w.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, False)
-            self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff"))
+            self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f5f5f5"))
             self.w.show()
 
         def loadStuffThread(self):
