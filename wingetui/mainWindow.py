@@ -50,7 +50,7 @@ class RootWindow(QMainWindow):
             QTreeWidget::item{{
                 height: 25px;
                 padding: 5px;
-                padding-left: 10px;
+                margin-left: 10px;
             }}
             QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)

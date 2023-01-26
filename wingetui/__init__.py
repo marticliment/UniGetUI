@@ -101,7 +101,7 @@ try:
                 os.chdir(os.path.expanduser("~"))
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
-                if getSettings("AskedAbout3PackageManagers") == False:
+                if getSettings("AskedAbout3PackageManagers") == True:
                     self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadStuffThread, daemon=True).start())
                 else:
                     Thread(target=self.loadStuffThread, daemon=True).start()
@@ -117,8 +117,8 @@ try:
             pixmap = QPixmap(4, 4)
             pixmap.fill(Qt.GlobalColor.transparent)
             self.w.setWindowIcon(pixmap)
-            self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-            self.w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+            #self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+            #self.w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
             self.w.setAutoFillBackground(True)
             self.w.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
             self.w.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
@@ -166,12 +166,17 @@ try:
             okbutton.clicked.connect(lambda: (self.w.close(), onclose(), setSettings("AskedAbout3PackageManagers", True), setSettings("DisableWinget", not winget.isChecked()), setSettings("DisableScoop", not scoop.isChecked()), setSettings("ScoopEnabledByAssistant", scoop.isChecked()), setSettings("DisableChocolatey", not choco.isChecked())))
             blayout.addWidget(okbutton)
             
-            self.w.setLayout(mainLayout)
+            w = QWidget(self.w)
+            w.setObjectName("mainbg")
+            w.setLayout(mainLayout)
+            l = QHBoxLayout()
+            l.addWidget(w)
+            self.w.setLayout(l)
             r = ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
             if r != 0:
                 self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+                self.w.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, False)
             self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff"))
-            self.w.setObjectName("mainbg")
             self.w.show()
 
         def loadStuffThread(self):
@@ -626,7 +631,10 @@ try:
     *::disabled {{
         color: gray;
     }}
-    #micawin,QInputDialog {{
+    QInputDialog {{
+        background-color: #202020;
+    }}
+    #micawin {{
         background-color: mainbg;
     }}
     QMenu {{
