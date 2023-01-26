@@ -177,7 +177,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
     if not verbose:
         getInfo(signal, title, id, useId, progId, verbose=True)
     
-def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
+def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal, alreadyGlobal: bool = False) -> None:
     print(f"🟢 scoop installer assistant thread started for process {p}")
     outputCode = 1
     output = ""
@@ -198,14 +198,14 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             elif ("is already installed" in line):
                 outputCode = 0
             output += line+"\n"
-    if "-g" in output and not "successfully" in output:
+    if "-g" in output and not "successfully" in output and not alreadyGlobal:
         outputCode = 1602
     elif "requires admin rights" in output:
         outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
    
-def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
+def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal, alreadyGlobal: bool = False) -> None:
     print(f"🟢 scoop uninstaller assistant thread started for process {p}")
     outputCode = 1
     output = ""
@@ -224,7 +224,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             if("was uninstalled" in line):
                 outputCode = 0
             output += line+"\n"
-    if "-g" in output and not "was uninstalled" in output:
+    if "-g" in output and not "was uninstalled" in output and not alreadyGlobal:
         outputCode = 1602
     elif "requires admin rights" in output:
         outputCode = 1603
