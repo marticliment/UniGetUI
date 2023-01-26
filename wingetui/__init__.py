@@ -142,7 +142,7 @@ try:
             winget.setChecked(True)
             scoop = PackageManager(_("Enable {pm}").format(pm="Scoop"), _("From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of."), getMedia("scoop"))
             scoop.setChecked(False)
-            if getSettings("ScoopAlreadySetup") and not getSettings("DisableScoop"):
+            if (getSettings("ScoopAlreadySetup") or getSettings("ScoopEnabledByAssistant")) and not getSettings("DisableScoop"):
                 scoop.setChecked(True)
             choco = PackageManager(_("Enable {pm}").format(pm="Chocolatey"), _("The package manager for Windows by default. With more than {0} packages on their repositories, you will find anything you want to install. From Firefox to Sysinternals, almost every package is available to download from Chocolatey servers").format("9500"), getMedia("choco"))
             choco.setChecked(True)
@@ -163,7 +163,7 @@ try:
             okbutton = QPushButton(_("Apply and start WingetUI"))
             okbutton.setFixedSize(190, 30)
             okbutton.setObjectName("AccentButton")
-            okbutton.clicked.connect(lambda: (self.w.close(), onclose(), setSettings("AskedAbout3PackageManagers", True), setSettings("DisableWinget", not winget.isChecked()), setSettings("DisableScoop", not scoop.isChecked()), setSettings("DisableChocolatey", not choco.isChecked())))
+            okbutton.clicked.connect(lambda: (self.w.close(), onclose(), setSettings("AskedAbout3PackageManagers", True), setSettings("DisableWinget", not winget.isChecked()), setSettings("DisableScoop", not scoop.isChecked()), setSettings("ScoopEnabledByAssistant", scoop.isChecked()), setSettings("DisableChocolatey", not choco.isChecked())))
             blayout.addWidget(okbutton)
             
             self.w.setLayout(mainLayout)
@@ -171,6 +171,7 @@ try:
             if r != 0:
                 self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
             self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff"))
+            self.w.setObjectName("mainbg")
             self.w.show()
 
         def loadStuffThread(self):

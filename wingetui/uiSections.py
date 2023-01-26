@@ -2737,7 +2737,7 @@ class ScoopBucketManager(QWidget):
         if isDark():
             self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
         else:
-            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #ef5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
 
         self.bucketList.label.setText(_("Loading buckets..."))
         self.bucketList.label.show()

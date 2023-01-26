@@ -36,7 +36,6 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                         verSeparator += 1
                         i += 1
                     counter += 1
-    print(p.stdout)
     print(p.stderr)
     if p.returncode != 0 and not noretry:
         time.sleep(1)
@@ -69,9 +68,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                 if not "  " in element[0:idSeparator].strip():
                     signal.emit(element[0:idSeparator].strip(), id, ver, "Winget")
                 else:
-                    print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
                     element = bytes(element, "utf-8")
-                    print(element, verSeparator)
                     export = (element[0:idSeparator], str(element[idSeparator:], "utf-8").strip().split(" ")[0], list(filter(None, str(element[idSeparator:], "utf-8").strip().split(" ")))[1])
                     signal.emit(str(export[0], "utf-8").strip(), export[1], export[2], "Winget")
             except Exception as e:
@@ -165,8 +162,6 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
                 if not "  " in element[0:idSeparator].strip():
                     signal.emit(element[0:idSeparator].strip(), id, ver, newver, "Winget")
                 else:
-                    print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
-                    print(element, verSeparator)
                     name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
                     while "##" in name:
                         name = name.replace("##", "#")
