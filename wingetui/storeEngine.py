@@ -1273,8 +1273,11 @@ class ImageViewer(QWidget):
 
 
         self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
-        self.bk = QShortcut(Qt.Key.Key_Left, self)
-        self.bk.activated.connect(lambda: self.backButton.click())
+        try:
+            self.bk = QShortcut(QKeySequence(Qt.Key.Key_Left), parent=self)
+            self.bk.activated.connect(lambda: self.backButton.click())
+        except TypeError:
+            pass
         self.backButton.move(0, self.height()//2-24)
         self.backButton.resize(48, 48)
         self.backButton.setFlat(False)
@@ -1283,8 +1286,11 @@ class ImageViewer(QWidget):
         self.backButton.show()
 
         self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
-        self.nxt = QShortcut(Qt.Key.Key_Right, self)
-        self.nxt.activated.connect(lambda: self.nextButton.click())
+        try:
+            self.nxt = QShortcut(Qt.Key.Key_Right, self)
+            self.nxt.activated.connect(lambda: self.nextButton.click())
+        except TypeError:
+            pass
         self.nextButton.move(self.width()-48, self.height()//2-24)
         self.nextButton.resize(48, 48)
         self.nextButton.setFlat(False)

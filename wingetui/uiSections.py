@@ -811,8 +811,8 @@ class UpdateSoftwareSection(QWidget):
 
         def toggleItemState():
             item = self.packageList.currentItem()
-            checkbox = self.packageList.itemWidget(item, 0)
-            checkbox.setChecked(not checkbox.isChecked())
+            checked = item.checkState(0) == Qt.CheckState.Checked
+            item.setCheckState(0, Qt.CheckState.Unchecked if checked else Qt.CheckState.Checked)
 
         sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
         sct.activated.connect(toggleItemState)
@@ -844,7 +844,7 @@ class UpdateSoftwareSection(QWidget):
                 program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
                 if not program.isHidden():
                     try:
-                        if self.packageList.itemWidget(program, 0).isChecked():
+                        if program.checkState(0) ==  Qt.CheckState.Checked:
                             setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+program.text(2)+",")
                             program.setHidden(True)
                     except AttributeError:
@@ -858,7 +858,7 @@ class UpdateSoftwareSection(QWidget):
                 itemList.append(self.packageList.topLevelItem(i))
             for program in itemList:
                 if not program.isHidden():
-                    self.packageList.itemWidget(program, 0).setChecked(checked)
+                    program.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
             self.packageList.setSortingEnabled(True)
 
 
@@ -1165,11 +1165,12 @@ class UpdateSoftwareSection(QWidget):
                 else:
                     item.setIcon(5, self.chocoIcon)
                 self.packageList.addTopLevelItem(item)
-                c = QCheckBox()
-                c.setChecked(True)
-                c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
-                c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
-                self.packageList.setItemWidget(item, 0, c)
+                item.setCheckState(0, Qt.CheckState.Unchecked)
+                #c = QCheckBox()
+                #c.setChecked(True)
+                #c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
+                #c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
+                #self.packageList.setItemWidget(item, 0, c)
                 action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
                 action.triggered.connect(lambda : self.update(name, id, store, packageItem=item))
                 action.setShortcut(version)
@@ -1186,7 +1187,7 @@ class UpdateSoftwareSection(QWidget):
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not(item in resultsFound):
                 item.setHidden(True)
-                item.treeWidget().itemWidget(item, 0).hide()
+                #item.treeWidget().itemWidget(item, 0).hide()
             else:
                 item.setHidden(False)
                 if item.text(3) == "Unknown":
@@ -1245,7 +1246,7 @@ class UpdateSoftwareSection(QWidget):
                 program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
                 if not program.isHidden():
                     try:
-                        if self.packageList.itemWidget(program, 0).isChecked():
+                        if program.checkState(0) ==  Qt.CheckState.Checked:
                            self.update(program.text(1), program.text(2), program.text(5), packageItem=program)
                     except AttributeError:
                         pass
@@ -1486,8 +1487,8 @@ class UninstallSoftwareSection(QWidget):
         
         def toggleItemState():
             item = self.packageList.currentItem()
-            checkbox = self.packageList.itemWidget(item, 0)
-            checkbox.setChecked(not checkbox.isChecked())
+            checked = item.checkState(0) == Qt.CheckState.Checked
+            item.setCheckState(0, Qt.CheckState.Unchecked if checked else Qt.CheckState.Checked)
 
         sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
         sct.activated.connect(toggleItemState)
@@ -1621,7 +1622,7 @@ class UninstallSoftwareSection(QWidget):
                 itemList.append(self.packageList.topLevelItem(i))
             for program in itemList:
                 if not program.isHidden():
-                    self.packageList.itemWidget(program, 0).setChecked(checked)
+                    program.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
             self.packageList.setSortingEnabled(True)
 
         self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", self.toolbar)
@@ -1753,7 +1754,7 @@ class UninstallSoftwareSection(QWidget):
             program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
             if not program.isHidden():
                 try:
-                    if self.packageList.itemWidget(program, 0).isChecked():
+                    if program.checkState(0) ==  Qt.CheckState.Checked:
                         toUninstall.append(program)
                 except AttributeError:
                     pass
@@ -1938,13 +1939,16 @@ class UninstallSoftwareSection(QWidget):
                 "version": version,
                 "store": store,
             }
-            c = QCheckBox()
-            c.setChecked(False)
-            c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
-            c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
+            #c = QCheckBox()
+            #c.setChecked(False)
+            #c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
+            #c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
+
 
             self.packageList.addTopLevelItem(item)
-            self.packageList.setItemWidget(item, 0, c)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
+            item.setCheckState(0, Qt.CheckState.Unchecked)
+            #self.packageList.setItemWidget(item, 0, c)
             action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
             action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
             action.setShortcut(version)
@@ -2039,7 +2043,7 @@ class UninstallSoftwareSection(QWidget):
     def selectAllInstalled(self) -> None:
         self.allPkgSelected = not self.allPkgSelected
         for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
-            self.packageList.itemWidget(item, 0).setChecked(self.allPkgSelected)
+            item.setCheckState(Qt.CheckState.Checked if self.allPkgSelected else Qt.CheckState.Unchecked)
     
     def exportSelection(self, all: bool = False) -> None:
         """
@@ -2053,14 +2057,14 @@ class UninstallSoftwareSection(QWidget):
         try:
             for i in range(self.packageList.topLevelItemCount()):
                 item = self.packageList.topLevelItem(i)
-                if ((self.packageList.itemWidget(item, 0).isChecked() or all) and item.text(4).lower() == "winget"):
+                if ((item.checkState(0) ==  Qt.CheckState.Checked or all) and item.text(4).lower() == "winget"):
                     id = item.text(2).strip()
                     wingetPackage = {"PackageIdentifier": id}
                     wingetPackagesList.append(wingetPackage)
-                elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and "scoop" in item.text(4).lower()):
+                elif ((item.checkState(0) ==  Qt.CheckState.Checked or all) and "scoop" in item.text(4).lower()):
                     scoopPackage = {"Name": item.text(2)}
                     scoopPackageList.append(scoopPackage)
-                elif ((self.packageList.itemWidget(item, 0).isChecked() or all) and item.text(4).lower() == "chocolatey"):
+                elif ((item.checkState(0) ==  Qt.CheckState.Checked or all) and item.text(4).lower() == "chocolatey"):
                     chocoPackage = {"Name": item.text(2)}
                     chocoPackageList.append(chocoPackage)
 

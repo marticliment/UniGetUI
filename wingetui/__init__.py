@@ -111,12 +111,15 @@ try:
 
         def askAboutPackageManagers(self, onclose: object):
             self.w = NotClosableWidget()
+            self.w.setObjectName("micawin")
             self.w.setWindowFlag(Qt.WindowType.Window)
             self.w.setWindowTitle(_("\x20"))
             pixmap = QPixmap(4, 4)
             pixmap.fill(Qt.GlobalColor.transparent)
             self.w.setWindowIcon(pixmap)
             self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+            self.w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+            self.w.setAutoFillBackground(True)
             self.w.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
             self.w.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
             self.w.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
@@ -164,9 +167,11 @@ try:
             blayout.addWidget(okbutton)
             
             self.w.setLayout(mainLayout)
-            self.setStyleSheet(darkCSS if isDark() else lightCSS)
+            r = ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+            if r != 0:
+                self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+            self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff"))
             self.w.show()
-            ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
 
         def loadStuffThread(self):
             try:
@@ -622,7 +627,6 @@ try:
     }}
     #micawin,QInputDialog {{
         background-color: mainbg;
-        color: red;
     }}
     QMenu {{
         padding: 2px;
@@ -969,35 +973,42 @@ try:
         height: 16px;
         width: 16px;
     }}
-    QCheckBox::indicator:unchecked {{
+    QTreeView::indicator{{
+        height:18px;
+        width: 18px;
+        margin: 0px;
+        margin-left: 4px;
+        margin-top: 2px;
+    }}
+    QTreeView::indicator:unchecked,QCheckBox::indicator:unchecked {{
         background-color: rgba(30, 30, 30, 25%);
         border: 1px solid #444444;
         border-radius: 4px;
     }}
-    QCheckBox::indicator:disabled {{
+    QTreeView::indicator:disabled,QCheckBox::indicator:disabled {{
         background-color: rgba(30, 30, 30, 5%);
         color: #dddddd;
         border: 1px solid rgba(255, 255, 255, 5%);
         border-radius: 4px;
     }}
-    QCheckBox::indicator:unchecked:hover {{
+    QTreeView::indicator:unchecked:hover,QCheckBox::indicator:unchecked:hover {{
         background-color: #2a2a2a;
         border: 1px solid #444444;
         border-radius: 4px;
     }}
-    QCheckBox::indicator:checked {{
+    QTreeView::indicator:checked,QCheckBox::indicator:checked {{
         border: 1px solid #444444;
         background-color: rgba({colors[1]}, 80%);
         border-radius: 4px;
         image: url("{getMedia("tick")}");
     }}
-    QCheckBox::indicator:checked:disabled {{
+    QTreeView::indicator:disabled,QCheckBox::indicator:checked:disabled {{
         border: 1px solid #444444;
         background-color: #303030;
         color: #dddddd;
-        border-radius: 4px;
+        border-radius:4px;
     }}
-    QCheckBox::indicator:checked:hover {{
+    QTreeView::indicator:checked:hover,QCheckBox::indicator:checked:hover {{
         border: 1px solid #444444;
         background-color: rgb({colors[2]});
         border-radius: 4px;
@@ -1692,40 +1703,46 @@ try:
         height: 16px;
         width: 16px;
     }}
-    QCheckBox::indicator:unchecked {{
+    QTreeView::indicator{{
+        height:18px;
+        width: 18px;
+        margin: 0px;
+        margin-left: 4px;
+        margin-top: 2px;
+    }}
+    QTreeView::indicator:unchecked,QCheckBox::indicator:unchecked {{
         background-color: rgba(255, 255, 255, 25%);
         border: 1px solid rgba(0, 0, 0, 10%);
         border-radius: 4px;
     }}
-    QCheckBox::indicator:disabled {{
+    QTreeView::indicator:disabled,QCheckBox::indicator:disabled {{
         background-color: rgba(240, 240, 240, 0%);
         color: #444444;
         border: 1px solid rgba(0, 0, 0, 5%);
         border-radius: 4px;
     }}
-    QCheckBox::indicator:unchecked:hover {{
+    QTreeView::indicator:unchecked:hover,QCheckBox::indicator:unchecked:hover {{
         background-color: rgba(0, 0, 0, 5%);
         border: 1px solid rgba(0, 0, 0, 20%);
         border-radius: 4px;
     }}
-    QCheckBox::indicator:checked {{
+    QTreeView::indicator:checked,QCheckBox::indicator:checked {{
         border: 1px solid rgb({colors[3]});
         background-color: rgb({colors[2]});
         border-radius: 4px;
         image: url("{getMedia("tick")}");
     }}
-    QCheckBox::indicator:checked:disabled {{
+    QTreeView::indicator:checked:disabled,QCheckBox::indicator:checked:disabled {{
         border: 1px solid #444444;
         background-color: #303030;
         color: #444444;
         border-radius: 4px;
     }}
-    QCheckBox::indicator:checked:hover {{
+    QTreeView::indicator:checked:hover,QCheckBox::indicator:checked:hover {{
         border: 1px solid rgb({colors[3]});
         background-color: rgb({colors[3]});
         border-radius: 4px;
     }}
-    
     QComboBox::drop-down {{
         subcontrol-origin: padding;
         subcontrol-position: top right;
