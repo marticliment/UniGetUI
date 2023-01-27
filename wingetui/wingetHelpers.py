@@ -12,7 +12,6 @@ if getSettings("UseSystemWinget"):
 else:
     winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 
-
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen(["mode", "400,30&", winget, "search", ""] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)

@@ -117,8 +117,6 @@ try:
             pixmap = QPixmap(4, 4)
             pixmap.fill(Qt.GlobalColor.transparent)
             self.w.setWindowIcon(pixmap)
-            #self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-            #self.w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
             self.w.setAutoFillBackground(True)
             self.w.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
             self.w.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
@@ -160,10 +158,23 @@ try:
             mainLayout.addLayout(blayout)
             blayout.addStretch()
             
+            def performSelectionAndContinue():
+                self.w.close()
+                setSettings("AskedAbout3PackageManagers", True)
+                setSettings("DisableWinget", not winget.isChecked())
+                setSettings("DisableScoop", not scoop.isChecked())
+                setSettings("ScoopEnabledByAssistant", scoop.isChecked())
+                setSettings("DisableChocolatey", not choco.isChecked())
+                if scoop.isChecked() and shutil.which("scoop") == None:
+                    os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))
+                else:
+                    onclose()
+                    
+            
             okbutton = QPushButton(_("Apply and start WingetUI"))
             okbutton.setFixedSize(190, 30)
             okbutton.setObjectName("AccentButton")
-            okbutton.clicked.connect(lambda: (self.w.close(), onclose(), setSettings("AskedAbout3PackageManagers", True), setSettings("DisableWinget", not winget.isChecked()), setSettings("DisableScoop", not scoop.isChecked()), setSettings("ScoopEnabledByAssistant", scoop.isChecked()), setSettings("DisableChocolatey", not choco.isChecked())))
+            okbutton.clicked.connect(performSelectionAndContinue)
             blayout.addWidget(okbutton)
             
             w = QWidget(self.w)
@@ -172,6 +183,7 @@ try:
             l = QHBoxLayout()
             l.addWidget(w)
             self.w.setLayout(l)
+            
             r = ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
             if r != 0:
                 self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)

@@ -1,4 +1,3 @@
-from random import vonmisesvariate
 from PySide6.QtCore import *
 import subprocess, os, sys, re
 from tools import *
