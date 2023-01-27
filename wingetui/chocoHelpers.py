@@ -6,11 +6,14 @@ from tools import _
 
 common_params = []
 
+print
+
 
 if getSettings("UseSystemChocolatey"):
     choco = "choco.exe"
 else:
     choco = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe")
+    os.environ["chocolateyinstall"] = os.path.dirname(choco)
 
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
@@ -190,6 +193,10 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     outputCode = p.returncode
     if outputCode in (1641, 3010):
         outputCode = 0
+    elif outputCode == 3010:
+        outputCode = 3
+    elif "Run as administrator" in output and outputCode != 0:
+        outputCode = 1603
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
@@ -213,6 +220,8 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
         outputCode = 0
     elif outputCode == 3010:
         outputCode = 3
+    elif "Run as administrator" in output:
+        outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
 

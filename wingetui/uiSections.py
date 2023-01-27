@@ -468,7 +468,10 @@ class DiscoverSoftwareSection(QWidget):
         if reset:
             for item in self.packageItems:
                 if self.packageList.indexOfTopLevelItem(item) >= 0:
-                    self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
+                    if not item in self.showableItems:
+                        self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
+                    else:
+                        item.setHidden(True)
             nextItem = 0
         else:
             nextItem = self.packageList.topLevelItemCount()
@@ -488,7 +491,8 @@ class DiscoverSoftwareSection(QWidget):
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
-        Thread(target=lambda: (time.sleep(0.25), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
+        self.finishFiltering(self.query.text())
+        #Thread(target=lambda: (time.sleep(0.25), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
         
     def containsQuery(self, item: QTreeWidgetItem, text: str) -> bool:
         return text.lower() in item.text(0).lower() or text.lower() in item.text(1).lower()
