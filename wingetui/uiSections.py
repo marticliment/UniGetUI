@@ -2479,7 +2479,11 @@ class SettingsSection(QScrollArea):
         disableLangUpdates.setChecked(getSettings("DisableLangAutoUpdater"))
         disableLangUpdates.stateChanged.connect(lambda v: setSettings("DisableLangAutoUpdater", bool(v)))
         self.advancedOptions.addWidget(disableLangUpdates)
-        
+        resetyWingetUICache = QSettingsButton(_("Reset WingetUI icon and screenshot cache"), _("Reset"))
+        resetyWingetUICache.clicked.connect(lambda: shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")))
+        resetyWingetUICache.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
+        self.advancedOptions.addWidget(resetyWingetUICache)
+
         def resetWingetUIStore():
             sd = getSettings("DisableScoop")
             wd = getSettings("DisableWinget")
@@ -2557,7 +2561,14 @@ class SettingsSection(QScrollArea):
         disableChocolatey.setChecked(not getSettings("DisableChocolatey"))
         disableChocolatey.stateChanged.connect(lambda v: (setSettings("DisableChocolatey", not bool(v))))
         self.chocoPreferences.addWidget(disableChocolatey)
-        disableChocolatey.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+        enableSystemChocolatey = QSettingsCheckBox(_("Use system Chocolatey (Needs a restart)"))
+        enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
+        enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
+        self.chocoPreferences.addWidget(enableSystemChocolatey)
+        resetChocoCache = QSettingsButton(_("Reset chocolatey cache"), _("Reset"))
+        resetChocoCache.clicked.connect(lambda: os.remove(os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")))
+        self.chocoPreferences.addWidget(resetChocoCache)
+
 
 
         
