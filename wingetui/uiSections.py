@@ -468,8 +468,7 @@ class DiscoverSoftwareSection(QWidget):
         if reset:
             for item in self.packageItems:
                 if self.packageList.indexOfTopLevelItem(item) >= 0:
-                    if not item in self.showableItems:
-                        self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
+                    self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
             nextItem = 0
         else:
             nextItem = self.packageList.topLevelItemCount()
