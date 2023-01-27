@@ -35,6 +35,11 @@ del Qt6DataVisualization.dll
 del Qt6VirtualKeyboard.dll
 del QtDataVisualization.pyd
 del QtOpenGL.pyd
+popd 
+pushd dist\wingetuiBin\choco-cli
+rmdir /Q /S .chocolatey
+rmdir /Q /S lib
+rmdir /Q /S logs
 popd
 move dist\wingetuiBin ..\
 popd

@@ -1,5 +1,227 @@
-2023-01-10 15:15:06,740 3800 [INFO ] - ============================================================
-2023-01-10 15:15:07,226 3800 [INFO ] - 1.2.1
-2023-01-10 15:15:41,849 3492 [INFO ] - ============================================================
-2023-01-10 15:15:42,349 3492 [INFO ] - Chocolatey v1.2.1
-2023-01-10 15:15:42,349 3492 [INFO ] - Please run 'choco -?' or 'choco <command> -?' for help menu.
+2023-01-27 15:50:04,458 11092 [INFO ] - ============================================================
+2023-01-27 15:50:04,538 11092 [INFO ] - 1.2.1
+2023-01-27 15:50:06,325 8028 [INFO ] - ============================================================
+2023-01-27 15:50:06,408 8028 [INFO ] - Chocolatey v1.2.1
+2023-01-27 15:50:06,468 8028 [WARN ] - Directory 'y:/WingetUI-Store/wingetui\choco-cli\lib' does not exist.
+2023-01-27 15:50:06,500 8028 [INFO ] - 2 validations performed. 2 success(es), 0 warning(s), and 0 error(s).
+2023-01-27 15:50:06,519 8028 [INFO ] - Outdated Packages
+ Output is package name | current version | available version | pinned?
+
+2023-01-27 15:50:06,581 8028 [WARN ] - 
+Chocolatey has determined 0 package(s) are outdated. 
+2023-01-27 15:50:06,627 3692 [WARN ] - 0 packages installed.
+2023-01-27 15:50:33,170 5272 [INFO ] - ============================================================
+2023-01-27 15:50:33,252 5272 [INFO ] - Chocolatey v1.2.1
+2023-01-27 15:50:33,308 5272 [WARN ] - Directory 'y:/WingetUI-Store/wingetui\choco-cli\lib' does not exist.
+2023-01-27 15:50:33,342 5272 [INFO ] - 2 validations performed. 2 success(es), 0 warning(s), and 0 error(s).
+2023-01-27 15:50:33,693 5272 [INFO ] - elevenclock 3.7.3 [Approved] Downloads cached for licensed users
+2023-01-27 15:50:33,697 5272 [INFO ] -  Title: ElevenClock | Published: 2/9/2022
+ Package approved as a trusted package on set. 03 2022 05:28:31.
+ Package testing status: Exempted on set. 02 2022 09:57:40.
+ Number of Downloads: 1116 | Downloads for this version: 185
+ Package url
+ Chocolatey Package Source: n/a
+ Package Checksum: 'oTW9aFzoHhEUklbRbEJt9WDpM+zy7yhlTX0Xk2/iVdCtub4mwpDvaov/UIr4jgHHfg0QGDpHdCIA4sh6wIu1aw==' (SHA512)
+ Tags: elevenclock time windows windows-11 windows11 clock eleven 11 taskbar tray customize customizable secondary display monitor screen seconds taslbar-clock
+ Software Site: https://github.com/martinet101/ElevenClock
+ Software License: https://raw.githubusercontent.com/martinet101/ElevenClock/main/LICENSE
+ Software Source: https://github.com/martinet101/ElevenClock/tree/main
+ Documentation: https://github.com/martinet101/ElevenClock/wiki
+ Issues: https://github.com/martinet101/ElevenClock/issues
+ Summary: ElevenClock: Have a customizable clock on your Windows 11 displays
+ Description: The whole point of ElevenClock is to have a customizable clock on your Windows 11 taskbars. When Microsoft's engineers were creating Windows 11, they forgot to add a clock on the secondary screen taskbar. So I did that. ElevenClock was an app designed to return this functionality, but it has evolved and it can now replace your system clock also in order to let you customize it, like in the good old days.
+
+2023-01-27 15:50:33,700 5272 [WARN ] - 1 packages found.
+2023-01-27 15:50:33,702 5272 [WARN ] - 
+Did you know Pro / Business automatically syncs with Programs and
+ Features? Learn more about Package Synchronizer at
+ https://chocolatey.org/compare
+2023-01-27 15:50:34,485 2256 [INFO ] - ============================================================
+2023-01-27 15:50:34,565 2256 [INFO ] - Chocolatey v1.2.1
+2023-01-27 15:50:34,615 2256 [WARN ] - Directory 'y:/WingetUI-Store/wingetui\choco-cli\lib' does not exist.
+2023-01-27 15:50:34,648 2256 [INFO ] - 2 validations performed. 2 success(es), 0 warning(s), and 0 error(s).
+2023-01-27 15:50:34,650 2256 [WARN ] - Chocolatey detected you are not running from an elevated command shell
+ (cmd/powershell).
+2023-01-27 15:50:34,650 2256 [WARN ] - 
+ You may experience errors - many functions/packages
+ require admin rights. Only advanced users should run choco w/out an
+ elevated shell. When you open the command shell, you should ensure
+ that you do so with "Run as Administrator" selected. If you are
+ attempting to use Chocolatey in a non-administrator setting, you
+ must select a different location other than the default install
+ location. See
+ https://docs.chocolatey.org/en-us/choco/setup#non-administrative-install
+ for details.
+
+2023-01-27 15:50:34,661 2256 [INFO ] - For the question below, you have 20 seconds to make a selection.
+2023-01-27 15:50:34,662 2256 [INFO ] - 
+ Do you want to continue?
+2023-01-27 15:50:34,663 2256 [INFO ] -  1) yes
+2023-01-27 15:50:34,663 2256 [INFO ] -  2) no
+2023-01-27 15:50:54,677 2256 [ERROR] - Timeout or your choice of '' is not a valid selection.
+2023-01-27 15:50:54,698 2256 [INFO ] - Installing the following packages:
+2023-01-27 15:50:54,698 2256 [INFO ] - elevenclock
+2023-01-27 15:50:54,698 2256 [INFO ] - By installing, you accept licenses for the packages.
+2023-01-27 15:50:56,112 2256 [INFO ] - [NuGet] Installing 'elevenclock 3.7.3'.
+2023-01-27 15:50:56,352 2256 [INFO ] - [NuGet] Successfully installed 'elevenclock 3.7.3'.
+2023-01-27 15:50:56,354 2256 [INFO ] - 
+elevenclock v3.7.3 [Approved]
+2023-01-27 15:50:56,366 2256 [INFO ] - elevenclock package files install completed. Performing other installation steps.
+2023-01-27 15:50:57,102 2256 [INFO ] - VERBOSE: Exporting function 'Format-FileSize'.
+2023-01-27 15:50:57,102 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChecksumValid'.
+2023-01-27 15:50:57,103 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyPath'.
+2023-01-27 15:50:57,103 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyUnzip'.
+2023-01-27 15:50:57,104 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyWebFile'.
+2023-01-27 15:50:57,104 2256 [INFO ] - VERBOSE: Exporting function 'Get-EnvironmentVariable'.
+2023-01-27 15:50:57,104 2256 [INFO ] - VERBOSE: Exporting function 'Get-EnvironmentVariableNames'.
+2023-01-27 15:50:57,105 2256 [INFO ] - VERBOSE: Exporting function 'Get-FtpFile'.
+2023-01-27 15:50:57,105 2256 [INFO ] - VERBOSE: Exporting function 'Get-OSArchitectureWidth'.
+2023-01-27 15:50:57,106 2256 [INFO ] - VERBOSE: Exporting function 'Get-PackageParameters'.
+2023-01-27 15:50:57,106 2256 [INFO ] - VERBOSE: Exporting function 'Get-PackageParametersBuiltIn'.
+2023-01-27 15:50:57,107 2256 [INFO ] - VERBOSE: Exporting function 'Get-ToolsLocation'.
+2023-01-27 15:50:57,107 2256 [INFO ] - VERBOSE: Exporting function 'Get-UACEnabled'.
+2023-01-27 15:50:57,107 2256 [INFO ] - VERBOSE: Exporting function 'Get-UninstallRegistryKey'.
+2023-01-27 15:50:57,108 2256 [INFO ] - VERBOSE: Exporting function 'Get-VirusCheckValid'.
+2023-01-27 15:50:57,108 2256 [INFO ] - VERBOSE: Exporting function 'Get-WebFile'.
+2023-01-27 15:50:57,108 2256 [INFO ] - VERBOSE: Exporting function 'Get-WebFileName'.
+2023-01-27 15:50:57,109 2256 [INFO ] - VERBOSE: Exporting function 'Get-WebHeaders'.
+2023-01-27 15:50:57,109 2256 [INFO ] - VERBOSE: Exporting function 'Install-BinFile'.
+2023-01-27 15:50:57,110 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyEnvironmentVariable'.
+2023-01-27 15:50:57,110 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyExplorerMenuItem'.
+2023-01-27 15:50:57,110 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyFileAssociation'.
+2023-01-27 15:50:57,112 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyInstallPackage'.
+2023-01-27 15:50:57,112 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPackage'.
+2023-01-27 15:50:57,112 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPath'.
+2023-01-27 15:50:57,112 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPinnedTaskBarItem'.
+2023-01-27 15:50:57,113 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPowershellCommand'.
+2023-01-27 15:50:57,113 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyShortcut'.
+2023-01-27 15:50:57,114 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyVsixPackage'.
+2023-01-27 15:50:57,114 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyZipPackage'.
+2023-01-27 15:50:57,115 2256 [INFO ] - VERBOSE: Exporting function 'Install-Vsix'.
+2023-01-27 15:50:57,115 2256 [INFO ] - VERBOSE: Exporting function 'Set-EnvironmentVariable'.
+2023-01-27 15:50:57,115 2256 [INFO ] - VERBOSE: Exporting function 'Set-PowerShellExitCode'.
+2023-01-27 15:50:57,116 2256 [INFO ] - VERBOSE: Exporting function 'Start-ChocolateyProcessAsAdmin'.
+2023-01-27 15:50:57,116 2256 [INFO ] - VERBOSE: Exporting function 'Test-ProcessAdminRights'.
+2023-01-27 15:50:57,117 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-BinFile'.
+2023-01-27 15:50:57,117 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyEnvironmentVariable'.
+2023-01-27 15:50:57,118 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyPackage'.
+2023-01-27 15:50:57,118 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyZipPackage'.
+2023-01-27 15:50:57,118 2256 [INFO ] - VERBOSE: Exporting function 'Update-SessionEnvironment'.
+2023-01-27 15:50:57,118 2256 [INFO ] - VERBOSE: Exporting function 'Write-FunctionCallLogMessage'.
+2023-01-27 15:50:57,120 2256 [INFO ] - VERBOSE: Exporting alias 'Get-ProcessorBits'.
+2023-01-27 15:50:57,121 2256 [INFO ] - VERBOSE: Exporting alias 'Get-OSBitness'.
+2023-01-27 15:50:57,121 2256 [INFO ] - VERBOSE: Exporting alias 'Get-InstallRegistryKey'.
+2023-01-27 15:50:57,121 2256 [INFO ] - VERBOSE: Exporting alias 'Generate-BinFile'.
+2023-01-27 15:50:57,121 2256 [INFO ] - VERBOSE: Exporting alias 'Add-BinFile'.
+2023-01-27 15:50:57,122 2256 [INFO ] - VERBOSE: Exporting alias 'Start-ChocolateyProcess'.
+2023-01-27 15:50:57,122 2256 [INFO ] - VERBOSE: Exporting alias 'Invoke-ChocolateyProcess'.
+2023-01-27 15:50:57,123 2256 [INFO ] - VERBOSE: Exporting alias 'Remove-BinFile'.
+2023-01-27 15:50:57,123 2256 [INFO ] - VERBOSE: Exporting alias 'refreshenv'.
+2023-01-27 15:50:57,128 2256 [INFO ] - VERBOSE: Exporting function 'Format-FileSize'.
+2023-01-27 15:50:57,128 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChecksumValid'.
+2023-01-27 15:50:57,128 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyPath'.
+2023-01-27 15:50:57,130 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyUnzip'.
+2023-01-27 15:50:57,130 2256 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyWebFile'.
+2023-01-27 15:50:57,130 2256 [INFO ] - VERBOSE: Exporting function 'Get-EnvironmentVariable'.
+2023-01-27 15:50:57,131 2256 [INFO ] - VERBOSE: Exporting function 'Get-EnvironmentVariableNames'.
+2023-01-27 15:50:57,131 2256 [INFO ] - VERBOSE: Exporting function 'Get-FtpFile'.
+2023-01-27 15:50:57,132 2256 [INFO ] - VERBOSE: Exporting function 'Get-OSArchitectureWidth'.
+2023-01-27 15:50:57,132 2256 [INFO ] - VERBOSE: Exporting function 'Get-PackageParameters'.
+2023-01-27 15:50:57,132 2256 [INFO ] - VERBOSE: Exporting function 'Get-PackageParametersBuiltIn'.
+2023-01-27 15:50:57,133 2256 [INFO ] - VERBOSE: Exporting function 'Get-ToolsLocation'.
+2023-01-27 15:50:57,133 2256 [INFO ] - VERBOSE: Exporting function 'Get-UACEnabled'.
+2023-01-27 15:50:57,133 2256 [INFO ] - VERBOSE: Exporting function 'Get-UninstallRegistryKey'.
+2023-01-27 15:50:57,134 2256 [INFO ] - VERBOSE: Exporting function 'Get-VirusCheckValid'.
+2023-01-27 15:50:57,134 2256 [INFO ] - VERBOSE: Exporting function 'Get-WebFile'.
+2023-01-27 15:50:57,135 2256 [INFO ] - VERBOSE: Exporting function 'Get-WebFileName'.
+2023-01-27 15:50:57,135 2256 [INFO ] - VERBOSE: Exporting function 'Get-WebHeaders'.
+2023-01-27 15:50:57,136 2256 [INFO ] - VERBOSE: Exporting function 'Install-BinFile'.
+2023-01-27 15:50:57,136 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyEnvironmentVariable'.
+2023-01-27 15:50:57,136 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyExplorerMenuItem'.
+2023-01-27 15:50:57,137 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyFileAssociation'.
+2023-01-27 15:50:57,137 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyInstallPackage'.
+2023-01-27 15:50:57,138 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPackage'.
+2023-01-27 15:50:57,138 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPath'.
+2023-01-27 15:50:57,138 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPinnedTaskBarItem'.
+2023-01-27 15:50:57,140 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPowershellCommand'.
+2023-01-27 15:50:57,140 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyShortcut'.
+2023-01-27 15:50:57,140 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyVsixPackage'.
+2023-01-27 15:50:57,141 2256 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyZipPackage'.
+2023-01-27 15:50:57,141 2256 [INFO ] - VERBOSE: Exporting function 'Install-Vsix'.
+2023-01-27 15:50:57,142 2256 [INFO ] - VERBOSE: Exporting function 'Set-EnvironmentVariable'.
+2023-01-27 15:50:57,142 2256 [INFO ] - VERBOSE: Exporting function 'Set-PowerShellExitCode'.
+2023-01-27 15:50:57,142 2256 [INFO ] - VERBOSE: Exporting function 'Start-ChocolateyProcessAsAdmin'.
+2023-01-27 15:50:57,142 2256 [INFO ] - VERBOSE: Exporting function 'Test-ProcessAdminRights'.
+2023-01-27 15:50:57,143 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-BinFile'.
+2023-01-27 15:50:57,143 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyEnvironmentVariable'.
+2023-01-27 15:50:57,144 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyPackage'.
+2023-01-27 15:50:57,144 2256 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyZipPackage'.
+2023-01-27 15:50:57,145 2256 [INFO ] - VERBOSE: Exporting function 'Update-SessionEnvironment'.
+2023-01-27 15:50:57,145 2256 [INFO ] - VERBOSE: Exporting function 'Write-FunctionCallLogMessage'.
+2023-01-27 15:50:57,146 2256 [INFO ] - VERBOSE: Exporting alias 'Get-ProcessorBits'.
+2023-01-27 15:50:57,146 2256 [INFO ] - VERBOSE: Exporting alias 'Get-OSBitness'.
+2023-01-27 15:50:57,146 2256 [INFO ] - VERBOSE: Exporting alias 'Get-InstallRegistryKey'.
+2023-01-27 15:50:57,147 2256 [INFO ] - VERBOSE: Exporting alias 'Generate-BinFile'.
+2023-01-27 15:50:57,147 2256 [INFO ] - VERBOSE: Exporting alias 'Add-BinFile'.
+2023-01-27 15:50:57,148 2256 [INFO ] - VERBOSE: Exporting alias 'Start-ChocolateyProcess'.
+2023-01-27 15:50:57,148 2256 [INFO ] - VERBOSE: Exporting alias 'Invoke-ChocolateyProcess'.
+2023-01-27 15:50:57,148 2256 [INFO ] - VERBOSE: Exporting alias 'Remove-BinFile'.
+2023-01-27 15:50:57,148 2256 [INFO ] - VERBOSE: Exporting alias 'refreshenv'.
+2023-01-27 15:50:57,150 2256 [INFO ] - VERBOSE: Importing function 'Format-FileSize'.
+2023-01-27 15:50:57,151 2256 [INFO ] - VERBOSE: Importing function 'Get-ChecksumValid'.
+2023-01-27 15:50:57,151 2256 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyPath'.
+2023-01-27 15:50:57,151 2256 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyUnzip'.
+2023-01-27 15:50:57,152 2256 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyWebFile'.
+2023-01-27 15:50:57,152 2256 [INFO ] - VERBOSE: Importing function 'Get-EnvironmentVariable'.
+2023-01-27 15:50:57,153 2256 [INFO ] - VERBOSE: Importing function 'Get-EnvironmentVariableNames'.
+2023-01-27 15:50:57,153 2256 [INFO ] - VERBOSE: Importing function 'Get-FtpFile'.
+2023-01-27 15:50:57,153 2256 [INFO ] - VERBOSE: Importing function 'Get-OSArchitectureWidth'.
+2023-01-27 15:50:57,154 2256 [INFO ] - VERBOSE: Importing function 'Get-PackageParameters'.
+2023-01-27 15:50:57,154 2256 [INFO ] - VERBOSE: Importing function 'Get-PackageParametersBuiltIn'.
+2023-01-27 15:50:57,155 2256 [INFO ] - VERBOSE: Importing function 'Get-ToolsLocation'.
+2023-01-27 15:50:57,155 2256 [INFO ] - VERBOSE: Importing function 'Get-UACEnabled'.
+2023-01-27 15:50:57,156 2256 [INFO ] - VERBOSE: Importing function 'Get-UninstallRegistryKey'.
+2023-01-27 15:50:57,156 2256 [INFO ] - VERBOSE: Importing function 'Get-VirusCheckValid'.
+2023-01-27 15:50:57,156 2256 [INFO ] - VERBOSE: Importing function 'Get-WebFile'.
+2023-01-27 15:50:57,157 2256 [INFO ] - VERBOSE: Importing function 'Get-WebFileName'.
+2023-01-27 15:50:57,157 2256 [INFO ] - VERBOSE: Importing function 'Get-WebHeaders'.
+2023-01-27 15:50:57,158 2256 [INFO ] - VERBOSE: Importing function 'Install-BinFile'.
+2023-01-27 15:50:57,158 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyEnvironmentVariable'.
+2023-01-27 15:50:57,158 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyExplorerMenuItem'.
+2023-01-27 15:50:57,158 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyFileAssociation'.
+2023-01-27 15:50:57,160 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyInstallPackage'.
+2023-01-27 15:50:57,160 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPackage'.
+2023-01-27 15:50:57,161 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPath'.
+2023-01-27 15:50:57,161 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPinnedTaskBarItem'.
+2023-01-27 15:50:57,162 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPowershellCommand'.
+2023-01-27 15:50:57,162 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyShortcut'.
+2023-01-27 15:50:57,162 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyVsixPackage'.
+2023-01-27 15:50:57,162 2256 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyZipPackage'.
+2023-01-27 15:50:57,163 2256 [INFO ] - VERBOSE: Importing function 'Install-Vsix'.
+2023-01-27 15:50:57,163 2256 [INFO ] - VERBOSE: Importing function 'Set-EnvironmentVariable'.
+2023-01-27 15:50:57,164 2256 [INFO ] - VERBOSE: Importing function 'Set-PowerShellExitCode'.
+2023-01-27 15:50:57,164 2256 [INFO ] - VERBOSE: Importing function 'Start-ChocolateyProcessAsAdmin'.
+2023-01-27 15:50:57,165 2256 [INFO ] - VERBOSE: Importing function 'Test-ProcessAdminRights'.
+2023-01-27 15:50:57,165 2256 [INFO ] - VERBOSE: Importing function 'Uninstall-BinFile'.
+2023-01-27 15:50:57,166 2256 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyEnvironmentVariable'.
+2023-01-27 15:50:57,166 2256 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyPackage'.
+2023-01-27 15:50:57,166 2256 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyZipPackage'.
+2023-01-27 15:50:57,171 2256 [INFO ] - VERBOSE: Importing function 'Update-SessionEnvironment'.
+2023-01-27 15:50:57,171 2256 [INFO ] - VERBOSE: Importing function 'Write-FunctionCallLogMessage'.
+2023-01-27 15:50:57,172 2256 [INFO ] - VERBOSE: Importing alias 'Add-BinFile'.
+2023-01-27 15:50:57,172 2256 [INFO ] - VERBOSE: Importing alias 'Generate-BinFile'.
+2023-01-27 15:50:57,172 2256 [INFO ] - VERBOSE: Importing alias 'Get-InstallRegistryKey'.
+2023-01-27 15:50:57,173 2256 [INFO ] - VERBOSE: Importing alias 'Get-OSBitness'.
+2023-01-27 15:50:57,173 2256 [INFO ] - VERBOSE: Importing alias 'Get-ProcessorBits'.
+2023-01-27 15:50:57,174 2256 [INFO ] - VERBOSE: Importing alias 'Invoke-ChocolateyProcess'.
+2023-01-27 15:50:57,174 2256 [INFO ] - VERBOSE: Importing alias 'refreshenv'.
+2023-01-27 15:50:57,174 2256 [INFO ] - VERBOSE: Importing alias 'Remove-BinFile'.
+2023-01-27 15:50:57,175 2256 [INFO ] - VERBOSE: Importing alias 'Start-ChocolateyProcess'.
+2023-01-27 15:50:58,762 2256 [INFO ] - File appears to be downloaded already. Verifying with package checksum to determine if it needs to be redownloaded.
+2023-01-27 15:51:01,370 2256 [INFO ] - Installing elevenclock...
+2023-01-27 15:51:05,312 2256 [INFO ] - elevenclock has been installed.
+2023-01-27 15:51:05,572 2256 [INFO ] -  The install of elevenclock was successful.
+2023-01-27 15:51:05,573 2256 [INFO ] -   Software installed as 'exe', install location is likely default.
+2023-01-27 15:51:05,587 2256 [WARN ] - 
+Chocolatey installed 1/1 packages. 
+ See the log for details (y:/WingetUI-Store/wingetui\choco-cli\logs\chocolatey.log).
