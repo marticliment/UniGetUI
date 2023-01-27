@@ -20,5 +20,5 @@ APIKEY.txt
 *.pyc
 WebBasedData/screenshot_database.xlsx
 WebBasedData/screenshot-database.json.backup
-wingetui/choco-cli/logs/*
+wingetui/choco-cli/logs
 *.log
