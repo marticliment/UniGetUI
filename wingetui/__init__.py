@@ -583,7 +583,6 @@ try:
                 provided_hash = response.split("///")[1].replace("\n", "").lower()
                 if float(new_version_number) > version:
                     print("🟢 Updates found!")
-                    updatesAvailable = True
                     if(integrityPass):
                         url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
                         filedata = urlopen(url)
@@ -596,7 +595,9 @@ try:
                             print("🔵 Hash: ", provided_hash)
                             print("🟢 Hash ok, starting update")
                             globals.updatesAvailable = True
-                            globals.canUpdate = not self.window.isVisible()
+                            while globals.mainWindow == None:
+                                time.sleep(1)
+                            globals.canUpdate = not globals.mainWindow.isVisible()
                             while not globals.canUpdate:
                                 time.sleep(0.1)
                             if not getSettings("DisableAutoUpdateWingetUI"):
