@@ -1,17 +1,17 @@
-# WingetUI: A package manager UI
+# WingetUI: A GUI for Winget, Scoop and Chocolatey
 
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
 
-<br>The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) and [Scoop](https://scoop.sh/).  
+<br>The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/) and [Chocolatey](https://chocolatey.org/).  
 
 With this app, you'll be able to easily download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
-<br>**Disclaimer:** This project has no connection with the official [Winget project](https://github.com/microsoft/winget-cli) — it's completely unofficial. 
+<br>**Disclaimer:** This project has no connection with Winget, Chocolatey or Scoop — it's completely unofficial. 
 
-Beware that neither Microsoft nor the creators of WingetUI are responsible for the downloaded apps. 
+Beware that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI are responsible for the downloaded apps. 
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
@@ -28,18 +28,19 @@ Thank you! :)
 
 # Features
 
- - The ability to install packages from Scoop and Winget (the idea is to add more package managers in the future).
- - The ability to upgrade and uninstall previously installed packages — as well as uninstall local PC apps!
- - The ability to both import and export the packages of your choice, so that you can easily install them in the future.
- - The user doesn't need to install any of the package managers. (Although the app does include the ability to install Scoop for you!)
- - Includes support for managing Scoop buckets.
- - The user can select the version that they want to install of any particular app.
+ - WingetUI has the ability to install, update and uninstall packages from Winget, Scoop and Chocolatey. WingetUI will also detect if your manually-installed apps can be updated!
+ - It can also upgrade and uninstall previously installed packages — as well as uninstall built-in Windows apps!
+ - WingetUI has the ability to both import and export the packages of your choice, so that you can easily install them in the future.
+ - WingetUI supports managing Scoop buckets with an interface.
+ - Install an older version of an app.
+ - WingetUI shows a notification when there are available updates
+ - Manage your updates and installed packages from its context menu
  - The user will be notified whether the installation/update/uninstallation of an app was completed successfully or not.
  - The ability to queue installations in order to prevent conflicts.
  - A dark theme is available to prevent you from burning your eyes. :sunglasses:
- - The ability to show package-related information (like its license, SHA256 hash, homepage, etc.) before installation.
- - More than 6800 packages available and counting!
- - More features are coming in the future!
+ - WingetUI has the ability to show package-related information (like its license, SHA256 hash, homepage, etc.) before installation.
+ - There are more than 14000 packages available (if winget, scoop and chocolatey are enabled)!
+ - More features coming in the future!
 
 # Installation
 
