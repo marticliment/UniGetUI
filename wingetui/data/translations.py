@@ -10,9 +10,7 @@ untranslatedPercentage = {
   "es": "95%",
   "hi": "80%",
   "hr": "0%",
-  "hu": "95%",
   "id": "17%",
-  "it": "94%",
   "ja": "89%",
   "ko": "97%",
   "pl": "95%",
@@ -22,7 +20,6 @@ untranslatedPercentage = {
   "sr": "21%",
   "tr": "84%",
   "ua": "84%",
-  "zh_CN": "95%",
   "zh_TW": "84%"
 }
 
@@ -133,7 +130,7 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "Maicol Battistini",
+      "name": "Maicol Battistini (@maicol07)",
       "link": ""
     },
     {
