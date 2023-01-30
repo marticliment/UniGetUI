@@ -229,7 +229,7 @@ class PackageInstallerWidget(QGroupBox):
         if (returncode == 0 or returncode == 3):
             if returncode == 0:
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
-                self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
+                self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                 self.startCoolDown()
                 self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
             if returncode == 3: # if the installer need restart computer
@@ -524,7 +524,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
-                    self.info.setText(_("{action} was successfully!").format(action = self.actionDone))
+                    self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
                 else:
