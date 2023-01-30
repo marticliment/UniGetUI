@@ -3,7 +3,7 @@
 untranslatedPercentage = {
   "ar": "95%",
   "bg": "95%",
-  "bn": "18%",
+  "bn": "23%",
   "cs": "99%",
   "da": "51%",
   "de": "95%",
@@ -37,6 +37,10 @@ languageCredits = {
     }
   ],
   "bn": [
+    {
+      "name": "fluentmoheshwar",
+      "link": "https://github.com/fluentmoheshwar"
+    },
     {
       "name": "Nilavra Bhattacharya",
       "link": ""
