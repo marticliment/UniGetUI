@@ -108,6 +108,7 @@ print("  Generating translations file...")
 langPerc = {}
 langCredits = {}
 
+countOfChanges = len(os.popen("git status -s").readlines())
 for lang in downloadedLanguages:
     f = open(f"lang_{lang}.json", "r", encoding='utf-8')
     data = json.load(f)
@@ -132,7 +133,7 @@ for lang in downloadedLanguages:
 
 if (isAutoCommit):
     os.system("git add .")
-countOfChanges = len(os.popen("git status -s").readlines())
+countOfChanges = len(os.popen("git status -s").readlines()) - countOfChanges
 isSomeChanges = True if countOfChanges > 0 else False
 
 outputString = f"""
