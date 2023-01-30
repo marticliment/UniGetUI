@@ -67,7 +67,7 @@
   "Copy log to clipboard" : "Napló másolása a vágólapra",
   "Dark" : "Sötét",
   "Description:" : "Leírás:",
-  "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Direkt telepítés, ha duplán kattint egy elemre a Szoftver felfedezése lapon (a csomagadatok megjelenítése helyett)",
+  "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Közvetlen telepítés, ha duplán kattint egy elemre a Szoftver felfedezése lapon (a csomagadatok megjelenítése helyett)",
   "Disable Scoop" : "Scoop letiltása",
   "Disable Winget" : "Winget letiltása",
   "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : "NYILATKOZAT: SEM A MICROSOFT, SEM A WINGETUI LÉTREHOZÓI NEM VÁLLALNAK FELELŐSSÉGET A LETÖLTÖTT ALKALMAZÁSOKÉRT.",
