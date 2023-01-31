@@ -939,7 +939,7 @@ class PackageInfoPopupWindow(QWidget):
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
 
-    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
+    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "") -> None:
         newProgram = id+store
         if self.currentProgram != newProgram:
             self.currentProgram = newProgram
@@ -993,7 +993,7 @@ class PackageInfoPopupWindow(QWidget):
 
             self.callInMain.emit(lambda: resetLayoutWidget())
             self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
-            Thread(target=self.loadPackageIcon, args=(id, store)).start()
+            Thread(target=self.loadPackageIcon, args=(id, store, version)).start()
 
             self.finishedCount = 0
             if(store.lower()=="winget"):
@@ -1007,12 +1007,16 @@ class PackageInfoPopupWindow(QWidget):
                 Thread(target=chocoHelpers.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
                 
 
-    def loadPackageIcon(self, id: str, store: str) -> None:
+    def loadPackageIcon(self, id: str, store: str, version: str) -> None:
         try:
             iconprov = "winget" if not "scoop" in store.lower() else "scoop"
+            iconprov = iconprov if not "chocolatey" in store.lower() else "chocolatey"
             iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconprov}.{id}.icon.png")
             if not os.path.exists(iconpath):
-                iconurl = globals.packageMeta[iconprov][id]["icon"]
+                if iconprov == "chocolatey":
+                    iconurl = f"https://community.chocolatey.org/content/packageimages/{id}.{version}.png"
+                else:
+                    iconurl = globals.packageMeta[iconprov][id]["icon"]
                 print("🔵 Found icon: ", iconurl)
                 icondata = urlopen(iconurl).read()
                 with open(iconpath, "wb") as f:

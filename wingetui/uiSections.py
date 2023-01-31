@@ -547,7 +547,7 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(2))
         self.infobox.show()
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -1264,7 +1264,7 @@ class UpdateSoftwareSection(QWidget):
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem)
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem, version=packageItem.text(4))
         self.infobox.show()
 
     def reloadSources(self):
@@ -1778,7 +1778,7 @@ class UninstallSoftwareSection(QWidget):
                 self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True))
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem)
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(3))
         self.infobox.show()
 
     def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
