@@ -2289,19 +2289,27 @@
         },
         "JetBrains.PyCharm.Community": {
             "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
-            "images": []
+            "images": [
+                "https://origin2.cdn.componentsource.com/sites/default/files/styles/image_large/public/images/product_description/jetbrains/pycharm/img_484761.png"
+            ]
         },
         "JetBrains.PyCharm.Community.EAP": {
             "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
-            "images": []
+            "images": [
+                "https://origin2.cdn.componentsource.com/sites/default/files/styles/image_large/public/images/product_description/jetbrains/pycharm/img_484761.png"
+            ]
         },
         "JetBrains.PyCharm.Professional": {
             "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
-            "images": []
+            "images": [
+                "https://origin2.cdn.componentsource.com/sites/default/files/styles/image_large/public/images/product_description/jetbrains/pycharm/img_484761.png"
+            ]
         },
         "JetBrains.PyCharm.Professional.EAP": {
             "icon": "https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png",
-            "images": []
+            "images": [
+                "https://origin2.cdn.componentsource.com/sites/default/files/styles/image_large/public/images/product_description/jetbrains/pycharm/img_484761.png"
+            ]
         },
         "JetBrains.ReSharper": {
             "icon": "https://resources.jetbrains.com/storage/products/resharper/img/meta/resharper_logo_300x300.png",
