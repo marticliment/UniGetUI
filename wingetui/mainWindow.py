@@ -1,9 +1,7 @@
-from xml.dom.minidom import Attr
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import os, ctypes, sys, tools, win32mica
-import win32gui
+import os, ctypes, sys, win32mica
 
 
 import globals
