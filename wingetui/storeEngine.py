@@ -259,7 +259,7 @@ class PackageInstallerWidget(QGroupBox):
                 dialogData["notifText"] = _("The installer has an invalid checksum")
             else: # if there's a generic error
                 dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
-                dialogData["mainText"] = _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the installer.").format(self.actionVerb, self.programName)
+                dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(self.actionVerb, self.programName, _("Show details"))
                 dialogData["notifText"] = _("{0} {1} failed").format(self.programName.capitalize(), self.actionName)
             self.err.showErrorMessage(dialogData)
 
@@ -537,7 +537,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     errorData = {
                         "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
-                        "mainText": _("We could not {0} {1}. Please try again later. Click on \"Show details\" to get the logs from the uninstaller.").format(self.actionVerb, self.programName),
+                        "mainText": _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the uninstaller.").format(self.actionVerb, self.programName, _("Show details")),
                         "buttonTitle": _("Close"),
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("notif_warn")),

@@ -1,9 +1,7 @@
-from xml.dom.minidom import Attr
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import os, ctypes, sys, tools, win32mica
-import win32gui
+import os, ctypes, sys, win32mica
 
 
 import globals
@@ -202,7 +200,7 @@ class RootWindow(QMainWindow):
             errorData = {
                 "titlebarTitle": _("WingetUI"),
                 "mainTitle": _("Administrator privileges"),
-                "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"Show details\" to see why."),
+                "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why.").format(_("Show details")),
                 "buttonTitle": _("Ok"),
                 "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator."),
                 "icon": QIcon(getMedia("icon")),
