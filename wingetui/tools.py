@@ -229,15 +229,15 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
         else:
             window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
     if mode:
-        GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
-        if shadow:
+        try:
+            GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
+        except OverflowError:
             pass
-            #QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
     else:
-        GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40", Dark=True, smallCorners=smallCorners)
-        if shadow: 
+        try:
+            GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40", Dark=True, smallCorners=smallCorners)
+        except OverflowError:
             pass
-            #QtWin.extendFrameIntoClientArea(window, -1, -1, -1, -1)
 
 
 def getPath(s: str) -> str:
