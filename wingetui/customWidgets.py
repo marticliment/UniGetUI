@@ -294,7 +294,10 @@ class ErrorMessage(QMainWindow):
                 
         self.okButton.clicked.connect(returnTrue)
         self.okButton.clicked.connect(self.delete)
-        self.moreInfoButton = QPushButton(_("Show details"))
+        try:
+            self.moreInfoButton = QPushButton(_("Show details"))
+        except NameError:
+            self.moreInfoButton = QPushButton("Show details")
         self.moreInfoButton.setFixedHeight(30)
         self.moreInfoButton.setObjectName("AccentButton")
         self.moreInfoButton.clicked.connect(self.moreInfo)
