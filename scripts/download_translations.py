@@ -20,6 +20,8 @@ from lang.lang_tools import *
 # Update contributors
 os.system(f"python scripts/get_contributors.py")
 
+countOfChanges = len(os.popen("git status -s").readlines())
+
 isAutoCommit = False
 isSomeChanges = False
 
@@ -108,7 +110,6 @@ print("  Generating translations file...")
 langPerc = {}
 langCredits = {}
 
-countOfChanges = len(os.popen("git status -s").readlines())
 for lang in downloadedLanguages:
     f = open(f"lang_{lang}.json", "r", encoding='utf-8')
     data = json.load(f)
