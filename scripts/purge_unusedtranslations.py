@@ -19,7 +19,8 @@ try:
     for key in engfile.keys():
         key = key.replace("\n", "\\n")
         if not key in contents:
-            print("Unused key 😳: "+str(key))
+            if not key.replace("\"", "\\\"") in contents:
+                print("Unused key 😳: "+str(key))
     print("Job finished succuessfully! 😎")
 except Exception as e:
     print("FAILED:", e)
