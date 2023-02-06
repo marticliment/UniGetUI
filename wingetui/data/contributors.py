@@ -8,10 +8,10 @@ contributors = [
   "MisterEvans78",
   "sklart",
   "vedantmgoyal2009",
+  "candrapersada",
   "elliot-100",
   "neoOpus",
   "Satanarious",
-  "candrapersada",
   "harleylara",
   "sitiom",
   "victorelec14"
@@ -21,7 +21,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 910
+    "contributions": 917
   },
   {
     "name": "ppvnf",
@@ -31,7 +31,7 @@ contributorsInfo = [
   {
     "name": "panther7",
     "link": "https://github.com/panther7",
-    "contributions": 45
+    "contributions": 49
   },
   {
     "name": "RavenMacDaddy",
@@ -54,6 +54,11 @@ contributorsInfo = [
     "contributions": 2
   },
   {
+    "name": "candrapersada",
+    "link": "https://github.com/candrapersada",
+    "contributions": 2
+  },
+  {
     "name": "elliot-100",
     "link": "https://github.com/elliot-100",
     "contributions": 2
@@ -66,11 +71,6 @@ contributorsInfo = [
   {
     "name": "Satanarious",
     "link": "https://github.com/Satanarious",
-    "contributions": 1
-  },
-  {
-    "name": "candrapersada",
-    "link": "https://github.com/candrapersada",
     "contributions": 1
   },
   {
