@@ -17,6 +17,7 @@ try:
             contents += f.read()
         contents += " ################################ File division #########################################"
     for key in engfile.keys():
+        key = key.replace("\n", "\\n")
         if not key in contents:
             print("Unused key 😳: "+str(key))
     print("Job finished succuessfully! 😎")
