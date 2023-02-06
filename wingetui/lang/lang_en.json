@@ -95,7 +95,7 @@
   "Found 0 Packages" : null,
   "Found packages: {0}" : null,
   "Found packages: {0}, not finished yet..." : null,
-  "From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of." : null,
+  "From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of." : "From Scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of.",
   "General preferences" : null,
   "General Preferences" : null,
   "General Settings" : null,
