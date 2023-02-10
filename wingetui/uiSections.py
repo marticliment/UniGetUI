@@ -374,10 +374,10 @@ class DiscoverSoftwareSection(QWidget):
                     for pkg in packages:
                         packageList.append(pkg["Name"])
                 except KeyError as e:
-                    print("🟠 Invalid scoop section")
+                    print("🟠 Invalid chocolatey section")
                 for packageId in packageList:
                     try:
-                        item = self.packages[packageId]
+                        item = self.packages[packageId]["item"]
                         self.fastinstall(item.text(0), item.text(1), item.text(3))
                     except KeyError:
                         print(f"🟠 Can't find package {packageId} in the package reference")
