@@ -1,5 +1,6 @@
 from __future__ import annotations
 from functools import partial
+import signal
 import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
@@ -183,7 +184,7 @@ class PackageInstallerWidget(QGroupBox):
         print("🔵 Sending cancel signal...")
         if not self.finishedInstallation:
             try:
-                self.p.kill()
+                os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except Exception as e:
                 report(e)
         self.finishedInstallation = True
@@ -200,7 +201,7 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
         try: self.t.kill()
         except: pass
-        try: self.p.kill()
+        try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
@@ -225,7 +226,7 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
         try: self.t.kill()
         except: pass
-        try: self.p.kill()
+        try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
         except: pass
         if self.canceled:
             return
@@ -478,7 +479,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.info.setText(_("Uninstall canceled by the user!"))
         if not self.finishedInstallation:
             try:
-                self.p.kill()
+                os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except Exception as e:
                 report(e)
             self.finishedInstallation = True
@@ -494,7 +495,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
         try: self.t.kill()
         except: pass
-        try: self.p.kill()
+        try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
@@ -522,7 +523,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             except: pass
             try: self.t.kill()
             except: pass
-            try: self.p.kill()
+            try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except: pass
             if not(self.canceled):
                 if(returncode == 0):
