@@ -48,6 +48,7 @@ class PackageInstallerWidget(QGroupBox):
         self.packageId = packageId
         self.version = version
         self.cmdline_args = args
+        cprint("args")
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(30, 10, 10, 10)
         self.label = QLabel(_("{0} installation").format(title))
@@ -212,6 +213,11 @@ class PackageInstallerWidget(QGroupBox):
             self.adminstr = [sudoPath]
             self.runInstallation()
             return
+        elif "winget settings --enable InstallerHashOverride" in output:
+            print("🟠 Requiring the user to enable skiphash setting!")
+            subprocess.run([sudoPath, wingetHelpers.winget, "settings", "--enable", "InstallerHashOverride"], shell=True)
+            self.runInstallation()
+            return
         self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         removeProgram(self.installId)
@@ -259,7 +265,7 @@ class PackageInstallerWidget(QGroupBox):
                 dialogData["notifText"] = _("The installer has an invalid checksum")
             else: # if there's a generic error
                 dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
-                dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(self.actionVerb, self.programName, _("Show details"))
+                dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(action=self.actionVerb, package=self.programName, showDetails=_("Show details"))
                 dialogData["notifText"] = _("{0} {1} failed").format(self.programName.capitalize(), self.actionName)
             self.err.showErrorMessage(dialogData)
 
@@ -766,10 +772,10 @@ class PackageInfoPopupWindow(QWidget):
         downloadGroupBox = QGroupBox()
         downloadGroupBox.setFlat(True)
 
-        self.forceCheckbox = QCheckBox()
-        self.forceCheckbox.setText(_("Skip hash check"))
-        self.forceCheckbox.setChecked(False)
-        self.forceCheckbox.clicked.connect(self.loadPackageCommandLine)
+        self.hashCheckBox = QCheckBox()
+        self.hashCheckBox.setText(_("Skip hash check"))
+        self.hashCheckBox.setChecked(False)
+        self.hashCheckBox.clicked.connect(self.loadPackageCommandLine)
 
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
@@ -783,7 +789,7 @@ class PackageInfoPopupWindow(QWidget):
         self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
 
 
-        self.oLayout.addWidget(self.forceCheckbox)
+        self.oLayout.addWidget(self.hashCheckBox)
         self.oLayout.addWidget(self.interactiveCheckbox)
         self.oLayout.addWidget(self.adminCheckbox)
 
@@ -924,17 +930,17 @@ class PackageInfoPopupWindow(QWidget):
 
     def loadPackageCommandLine(self):
         interactive = self.interactiveCheckbox.isChecked()
-        force = self.forceCheckbox.isChecked()
+        ignoreHash = self.hashCheckBox.isChecked()
         admin = False
         if self.store.lower() == "winget":
             if not "…" in self.givenPackageId:
-                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else 'install'} --id {self.givenPackageId} --exact {'--force' if force else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements".strip().replace("  ", " ").replace("  ", " "))
+                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else 'install'} --id {self.givenPackageId} --exact {'--ignore-security-hash' if ignoreHash else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
         elif "scoop" in self.store.lower():
-            self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else 'install'} {self.givenPackageId} {'--skip' if force else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else 'install'} {self.givenPackageId} {'--skip' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
         elif self.store.lower() == "chocolatey":
-            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else 'install'} {self.givenPackageId} -y {'--force' if force else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else 'install'} {self.givenPackageId} -y {'--force' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
@@ -964,8 +970,8 @@ class PackageInfoPopupWindow(QWidget):
 
 
             self.loadingProgressBar.show()
-            self.forceCheckbox.setChecked(False)
-            self.forceCheckbox.setEnabled(False)
+            self.hashCheckBox.setChecked(False)
+            self.hashCheckBox.setEnabled(False)
             self.interactiveCheckbox.setChecked(False)
             self.interactiveCheckbox.setEnabled(False)
             self.adminCheckbox.setChecked(False)
@@ -1110,7 +1116,7 @@ class PackageInfoPopupWindow(QWidget):
             self.installButton.setEnabled(True)
             self.versionCombo.setEnabled(True)
             self.adminCheckbox.setEnabled(True)
-            self.forceCheckbox.setEnabled(True)
+            self.hashCheckBox.setEnabled(True)
             if(self.store.lower() == "winget"):
                 self.interactiveCheckbox.setEnabled(True)
             self.title.setText(appInfo["title"])
@@ -1149,7 +1155,7 @@ class PackageInfoPopupWindow(QWidget):
         packageId = self.packageId.text().replace(_('Package ID')+":", '').strip()
         print(f"🟢 Starting installation of package {title} with id {packageId}")
         cmdline_args = []
-        if(self.forceCheckbox.isChecked()):
+        if(self.hashCheckBox.isChecked()):
             if self.store.lower() == "winget":
                 cmdline_args.append("--force")
             elif self.store.lower() == "scoop":
