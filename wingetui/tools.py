@@ -415,7 +415,12 @@ except Exception as e:
 
 langName = lang['locale']
 
-if "zh" in langName:
+if "zh_CN" in langName:
+    globals.textfont: str = "Microsoft YaHei UI"
+    globals.dispfont: str = "Microsoft YaHei UI"
+    globals.dispfontsemib: str = "Microsoft YaHei UI"
+
+if "zh_TW" in langName:
     globals.textfont: str = "Microsoft JhengHei UI"
     globals.dispfont: str = "Microsoft JhengHei UI"
     globals.dispfontsemib: str = "Microsoft JhengHei UI"
