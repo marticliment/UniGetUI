@@ -1,8 +1,8 @@
 ---
-name: Bug/Issue report (Something is not working as expected)
+name: Report related to the Winget Package Manager
 about: Create a report to let me know what is happening
-title: "[BUG/ISSUE] (Enter your description here)"
-labels: bug,triage
+title: "[WINGET] (Enter your description here)"
+labels: winget,triage
 assignees: 'marticliment'
 
 ---
@@ -11,11 +11,11 @@ assignees: 'marticliment'
 
 - [ ] **I have checked that the bug is not a duplicate or, if it is, it needs to be reopened**
 - [ ] **I have checked that I am running the latest version of WingetUI**
-- [ ] **I have tried resetting and reinstalling WingetUI and the issue persisted or happened again**
+- [ ] **I have checked that this issue is not an issue with the winget utility, but rather with its implementation on WingetUI**
 - [ ] **I have checked the [FAQ](https://github.com/martinet101/WingetUI#faq) section for solutions**
 - [ ] **I have read the [contributing guidelines](https://github.com/marticliment/WingetUI/blob/main/CONTRIBUTING.md#issues) and I agree with the [Code of Conduct](https://github.com/marticliment/WingetUI/blob/main/CODE_OF_CONDUCT.md)**
 
-## Describe the bug
+## Describe the issue
 A clear and concise description of what the bug is.
 
 ## To Reproduce
@@ -24,12 +24,6 @@ Steps to reproduce the behaviour:
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
-
-## Expected behaviour
-A clear and concise description of what you expected to happen.
-
-## Screenshots
-If applicable, add screenshots to help explain your problem.
 
 ## The Log
 
