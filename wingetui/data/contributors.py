@@ -12,6 +12,7 @@ contributors = [
   "elliot-100",
   "neoOpus",
   "Satanarious",
+  "quantumfallout",
   "harleylara",
   "sitiom",
   "victorelec14"
@@ -21,7 +22,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 926
+    "contributions": 929
   },
   {
     "name": "ppvnf",
@@ -71,6 +72,11 @@ contributorsInfo = [
   {
     "name": "Satanarious",
     "link": "https://github.com/Satanarious",
+    "contributions": 1
+  },
+  {
+    "name": "quantumfallout",
+    "link": "https://github.com/quantumfallout",
     "contributions": 1
   },
   {
