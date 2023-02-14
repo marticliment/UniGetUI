@@ -9,7 +9,7 @@ untranslatedPercentage = {
   "es": "92%",
   "hi": "80%",
   "hr": "0%",
-  "id": "16%",
+  "id": "17%",
   "it": "97%",
   "ja": "86%",
   "ko": "96%",
@@ -17,6 +17,7 @@ untranslatedPercentage = {
   "pt_PT": "92%",
   "ru": "80%",
   "sr": "21%",
+  "th": "0%",
   "tr": "83%",
   "ua": "83%",
   "zh_TW": "83%"
@@ -213,6 +214,7 @@ languageCredits = {
       "link": ""
     }
   ],
+  "th": [],
   "tr": [
     {
       "name": "Ahmet Özmetin",
