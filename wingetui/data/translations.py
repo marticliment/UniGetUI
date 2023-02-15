@@ -6,7 +6,7 @@ untranslatedPercentage = {
   "bn": "24%",
   "da": "49%",
   "de": "92%",
-  "es": "92%",
+  "es": "94%",
   "hi": "80%",
   "hr": "0%",
   "id": "17%",
@@ -17,7 +17,7 @@ untranslatedPercentage = {
   "pt_PT": "92%",
   "ru": "80%",
   "sr": "21%",
-  "th": "0%",
+  "th": "18%",
   "tr": "83%",
   "ua": "83%",
   "zh_TW": "83%"
@@ -214,7 +214,12 @@ languageCredits = {
       "link": ""
     }
   ],
-  "th": [],
+  "th": [
+    {
+      "name": "apaeisara",
+      "link": "https://github.com/apaeisara"
+    }
+  ],
   "tr": [
     {
       "name": "Ahmet Özmetin",
