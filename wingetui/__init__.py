@@ -222,7 +222,7 @@ try:
                 # Daemon threads
                 Thread(target=self.instanceThread, daemon=True).start()
                 Thread(target=self.updateIfPossible, daemon=True).start()
-
+                
                 while self.loadStatus < 9:
                     time.sleep(0.01)
             except Exception as e:

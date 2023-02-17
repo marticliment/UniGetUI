@@ -1096,11 +1096,19 @@ class UpdateSoftwareSection(QWidget):
                     count += 1
                     lastVisibleItem = self.packageList.topLevelItem(i)
             self.packageList.label.setText(str(count))
-            if not getSettings("DisableUpdatesNotifications"):
-                if count > 1:
-                    notify(_("Updates found!"), _("{0} apps can be updated").format(count))
-                elif count == 1:
-                    notify(_("Update found!"), _("{0} can be updated").format(lastVisibleItem.text(1)))
+            if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
+                self.updateAll()
+                if not getSettings("DisableUpdatesNotifications"):
+                    if count > 1:
+                        notify(_("Updates found!"), _("{0} packages are being updated").format(count))
+                    elif count == 1:
+                        notify(_("Update found!"), _("{0} is being updated").format(lastVisibleItem.text(1)))
+            else:
+                if not getSettings("DisableUpdatesNotifications"):
+                    if count > 1:
+                        notify(_("Updates found!"), _("{0} packages can be updated").format(count))
+                    elif count == 1:
+                        notify(_("Update found!"), _("{0} can be updated").format(lastVisibleItem.text(1)))
             if count > 0:
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
@@ -1117,6 +1125,7 @@ class UpdateSoftwareSection(QWidget):
                     waitTime = 3600
                 Thread(target=lambda: (time.sleep(waitTime), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
             print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
+            
 
     def resizeEvent(self, event: QResizeEvent):
         self.adjustWidgetsSize()
@@ -2466,9 +2475,13 @@ class SettingsSection(QScrollArea):
         notifyAboutUpdates = QSettingsCheckBox(_("Show a notification when there are available updates"))
         notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
         notifyAboutUpdates.stateChanged.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
-        notifyAboutUpdates.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-
         self.trayIcon.addWidget(notifyAboutUpdates)
+
+        automaticallyInstallUpdates = QSettingsCheckBox(_("Update packages automatically"))
+        automaticallyInstallUpdates.setChecked(getSettings("AutomaticallyUpdatePackages"))
+        automaticallyInstallUpdates.stateChanged.connect(lambda v: setSettings("AutomaticallyUpdatePackages", bool(v)))
+        automaticallyInstallUpdates.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+        self.trayIcon.addWidget(automaticallyInstallUpdates)
 
         self.advancedOptions = QSettingsTitle(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
         self.layout.addWidget(self.advancedOptions)
