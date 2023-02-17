@@ -2450,6 +2450,7 @@ class SettingsSection(QScrollArea):
             _("{0} hours").format(12)  : "43200",
             _("{0} hours").format(24)  : "86400",
             _("{0} hours").format(48)  :"172800",
+            _("1 week")                :"604800",
         }
         invertedTimes = {
             "600"   : _("{0} minutes").format(10),
@@ -2460,7 +2461,8 @@ class SettingsSection(QScrollArea):
             "28800" : _("{0} hours").format(8),
             "43200" : _("{0} hours").format(12),
             "86400" : _("{0} hours").format(24),
-            "172800": _("{0} hours").format(48)
+            "172800": _("{0} hours").format(48),
+            "604800": _("1 week")
         }
 
         frequencyCombo.setEnabled(checkForUpdates.isChecked())
