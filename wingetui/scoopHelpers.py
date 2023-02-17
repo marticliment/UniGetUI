@@ -96,6 +96,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
     p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     unknownStr = _("Unknown") if verbose else _("Loading...")
+    bucket = "main" if len(id.split("/")) == 1 else id.split('/')[0]
     appInfo = {
         "title": title.split("/")[-1],
         "id": id,
@@ -108,7 +109,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "installer-sha256": unknownStr,
         "installer-url": unknownStr,
         "installer-type": _("Scoop shim"),
-        "manifest": unknownStr,
+        "manifest": f"https://github.com/ScoopInstaller/{bucket}/blob/master/bucket/{id.split('/')[-1]}.json",
         "updatedate": unknownStr,
         "releasenotes": unknownStr,
         "versions": [],
@@ -149,10 +150,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
             except IndexError:
                 pass
         elif("Manifest" in line):
-            appInfo["manifest"] = line.replace("Manifest", "").strip()[1:].strip()
             try:
                 print("ok")
-                mfest = open(appInfo["manifest"])
+                mfest = line.replace("Manifest", "").strip()[1:].strip()
                 import json
                 data = json.load(mfest)
                 print("ok")
