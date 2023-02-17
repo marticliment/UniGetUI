@@ -93,7 +93,6 @@ def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verbose: bool = False) -> None:
     print(f"🟢 Starting get info for title {title}")
     title = title.lower()
-    p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     unknownStr = _("Unknown") if verbose else _("Loading...")
     bucket = "main" if len(id.split("/")) == 1 else id.split('/')[0]
@@ -114,20 +113,33 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "releasenotes": unknownStr,
         "versions": [],
     }
+    
+    rawOutput = b""
+    p = subprocess.Popen(' '.join([scoop, "cat", f"{id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     while p.poll() is None:
         pass
     for line in p.stdout.readlines():
         line = line.strip()
         if line:
-            output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+            rawOutput += line+b"\n"
     manifest = False
     version = ""
     lc = getSettings("LowercaseScoopApps")
-    for line in output:
-        if("Description" in line):
-            appInfo["description"] = line.replace("Description", "").strip()[1:].strip()
-        elif("Website" in line):
-            w: str = line.replace("Website", "").strip()[1:].strip()
+
+    with open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "wb") as f:
+        f.write(rawOutput)
+    try:
+        mfest = open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "r")
+        import json
+        data: dict = json.load(mfest)
+        if "description" in data.keys():
+            appInfo["description"] = data["description"]
+            
+        if "version" in data.keys():
+            appInfo["versions"].append(data["version"])
+
+        if "homepage" in data.keys():
+            w = data["homepage"]
             appInfo["homepage"] = w
             if "https://github.com/" in w:
                 appInfo["author"] = w.replace("https://github.com/", "").split("/")[0]
@@ -135,40 +147,44 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
                 for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de", ".kde", ".microsoft"):
                     w = w.replace(e, "")
                 appInfo["author"] = w.split("/")[0].capitalize()
-        elif("Version " in line):
-            version = line.replace("Version", "").strip()[1:].strip()
-        elif("Updated by" in line):
-            appInfo["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
-        elif("Notes" in line):
-            appInfo["releasenotes"] = line.replace("Notes", "").strip()[1:].strip()
-        elif("Updated at" in line):
-            appInfo["updatedate"] = line.replace("Updated at", "").strip()[1:].strip()
-        elif("License" in line):
-            appInfo["license"] = line.replace("License", "").strip()[1:].strip().split("(")[0].strip()
-            try:
-                appInfo["license-url"] = line.replace("License", "").strip()[1:].strip().split("(")[1].strip().replace(")", "")
-            except IndexError:
-                pass
-        elif("Manifest" in line):
-            try:
-                print("ok")
-                mfest = line.replace("Manifest", "").strip()[1:].strip()
-                import json
-                data = json.load(mfest)
-                print("ok")
-                try:
-                    appInfo["installer-url"] = data["url"][0] if type(data["url"]) == list else data["url"]
-                    appInfo["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
-                except KeyError:
-                    appInfo["installer-url"] = data["architecture"]["64bit"]["url"]
-                    appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
-                appInfo["installer-type"] = "Scoop package"
-                try:
-                    appInfo["description"] = data["description"] if data["description"] != "" else appInfo["description"]
-                except KeyError:
-                    print("🟡 No description found in the manifest")
-            except Exception as e:
-                print(type(e), e)
+                
+        if "notes" in data.keys():
+            if type(data["notes"]) == list:
+                appInfo["releasenotes"] = "\n".join(data["notes"])
+            else:
+                appInfo["releasenotes"] = data["notes"]
+        if "license" in data.keys():
+            appInfo["license"] = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
+            appInfo["license-url"] = unknownStr if type(data["license"]) != dict else data["license"]["url"]
+
+        if "url" in data.keys():
+            appInfo["installer-url"] = data["url"][0] if type(data["url"]) == list else data["url"]
+            appInfo["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
+        elif "architecture" in data.keys():
+            appInfo["installer-url"] = data["architecture"]["64bit"]["url"]
+            appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
+        
+        appInfo["installer-type"] = "Scoop package"
+        
+    except Exception as e:
+        report(e)
+        
+    if verbose:
+        p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        while p.poll() is None:
+            pass
+        for line in p.stdout.readlines():
+            line = line.strip()
+            if line:
+                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+        manifest = False
+        version = ""
+        for line in output:
+            for line in output:
+                if("Updated by" in line):
+                    appInfo["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
+                elif("Updated at" in line):
+                    appInfo["updatedate"] = line.replace("Updated at", "").strip()[1:].strip()                
     print(f"🔵 Scoop does not support specific version installs")
     appInfo["versions"] = [version]
     appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
