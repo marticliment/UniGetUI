@@ -2441,18 +2441,26 @@ class SettingsSection(QScrollArea):
         frequencyCombo = QSettingsComboBox(_("Check for updates every:"), buttonEnabled=False)
         
         times = {
-            _("30 minutes"): "1800",
-            _("1 hour"): "3600",
-            _("2 hours"): "7200",
-            _("4 hours"): "14400",
-            _("8 hours"): "28800",
+            _("{0} minutes").format(10):   "600",
+            _("{0} minutes").format(30):  "1800",
+            _("1 hour")                :  "3600",
+            _("{0} hours").format(2)   :  "7200",
+            _("{0} hours").format(4)   : "14400",
+            _("{0} hours").format(8)   : "28800",
+            _("{0} hours").format(12)  : "43200",
+            _("{0} hours").format(24)  : "86400",
+            _("{0} hours").format(48)  :"172800",
         }
         invertedTimes = {
-            "1800" : _("30 minutes"),
-            "3600" : _("1 hour"),
-            "7200" : _("2 hours"),
-            "14400": _("4 hours"),
-            "28800": _("8 hours"),
+            "600"   : _("{0} minutes").format(10),
+            "1800"  : _("{0} minutes").format(30),
+            "3600"  : _("1 hour"),
+            "7200"  : _("{0} hours").format(2),
+            "14400" : _("{0} hours").format(4),
+            "28800" : _("{0} hours").format(8),
+            "43200" : _("{0} hours").format(12),
+            "86400" : _("{0} hours").format(24),
+            "172800": _("{0} hours").format(48)
         }
 
         frequencyCombo.setEnabled(checkForUpdates.isChecked())
