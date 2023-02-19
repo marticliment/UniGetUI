@@ -101,7 +101,7 @@ try:
                 os.chdir(os.path.expanduser("~"))
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
-                if getSettings("AskedAbout3PackageManagers") == False:
+                if getSettings("AskedAbout3PackageManagers") == False or "--welcomewizard" in sys.argv:
                     self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadStuffThread, daemon=True).start())
                 else:
                     Thread(target=self.loadStuffThread, daemon=True).start()
@@ -761,6 +761,7 @@ try:
         font-size: 9pt;
         border-top: 1px solid rgba(99, 99, 99, 25%);
         margin: 0px;
+        font-family: "Segoe UI Variable Display Semib";
     }}
     #FlatButton {{
         width: 150px;
@@ -806,7 +807,8 @@ try:
     }}
     #AccentButton{{
         color: #202020;
-        font-size: 8pt;
+        font-size: 9pt;
+        font-family: "Segoe UI Variable Display Semib";
         background-color: rgb({colors[1]});
         border-color: rgb({colors[1]});
         border-bottom-color: rgb({colors[2]});
@@ -1499,6 +1501,7 @@ try:
         height: 25px;
         font-size: 9pt;
         margin: 0px;
+        font-family: "Segoe UI Variable Display Semib";
     }}
     #FlatButton {{
         width: 150px;
@@ -1518,10 +1521,11 @@ try:
     }}
     #AccentButton{{
         color: #000000;
-        font-size: 8pt;
+        font-size: 9pt;
         background-color: rgb({colors[2]});
         border-color: rgb({colors[3]});
         border-bottom-color: rgb({colors[4]});
+        font-family: "Segoe UI Variable Display Semib";
     }}
     #AccentButton:hover{{
         background-color: rgba({colors[3]}, 80%);
