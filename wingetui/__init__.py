@@ -315,16 +315,14 @@ try:
                 print(e)
             self.loadStatus += 1
             try:
-                if not getSettings("EnableScoopCleanup"):
+                if getSettings("EnableScoopCleanup"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
                     p = subprocess.Popen(f"{scoopHelpers.scoop} cache rm *", shell=True, stdout=subprocess.PIPE)
+                    p2 = subprocess.Popen(f"{scoopHelpers.scoop} cleanup --all --cache", shell=True, stdout=subprocess.PIPE)
+                    p3 = subprocess.Popen(f"{scoopHelpers.scoop} cleanup --all --global --cache", shell=True, stdout=subprocess.PIPE)
                     p.wait()
-            except Exception as e:
-                print(e)
-            try:
-                if(getSettings("EnableScoopCleanup")):
-                    p2 = subprocess.Popen(f"{scoopHelpers.scoop} cleanup --all", shell=True, stdout=subprocess.PIPE)
                     p2.wait()
+                    p3.wait()
             except Exception as e:
                 report(e)
             self.loadStatus += 1
