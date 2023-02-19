@@ -194,7 +194,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
         outputCode = 0
     elif outputCode == 3010:
         outputCode = 3
-    elif "Run as administrator" in output and outputCode != 0:
+    elif ("Run as administrator" in output or "The requested operation requires elevation" in output) and outputCode != 0:
         outputCode = 1603
     closeAndInform.emit(outputCode, output)
  
