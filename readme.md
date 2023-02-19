@@ -189,3 +189,10 @@ A: WingetUI, Microsoft and Scoop aren't responsible for the packages available f
 To mitigate the risks of downloading malware, Microsoft has implemented a few checks for the software available on Winget. Even so, It's recommended to only download software from publishers that you trust. 
 
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/WingetUI/wiki">Wiki</a> for more information!</i></p>
+
+## Command-line parameters:
+`--daemon`: Start WingetUI without spawnign a new window. WingetUI will run minimized on the system tray.<br>
+
+### From the next version and beyond:<br>
+`--welcomewizard`: Show a window to choose which package managers to use.<br>
+`--updateapps`: Enable automatic install of available updates
