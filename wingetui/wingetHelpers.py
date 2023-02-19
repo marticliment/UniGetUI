@@ -284,12 +284,17 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 if line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             weAreDescripting = False
+            weAreReleaseNoting = False
             for line in output:
                 cprint(line)
                 if line[0] == " " and weAreDescripting:
                     appInfo["description"] += "\n"+line
                 else:
                     weAreDescripting = False
+                if line[0] == " " and weAreReleaseNoting:
+                    appInfo["releasenotes"] += line + "<br>"
+                else:
+                    weAreReleaseNoting = False
                 line: str = line.strip()
                 if("Publisher:" in line):
                     appInfo["publisher"] = line.replace("Publisher:", "").strip()
@@ -322,9 +327,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 elif("Release Date:" in line):
                     appInfo["updatedate"] = line.replace("Release Date:", "").strip()
                     validCount += 1
-                elif("Release Notes Url:" in line):
-                    url = line.replace("Release Notes Url:", "").strip()
-                    appInfo["releasenotes"] = f"<a href={url} style='color:%bluecolor%'>{url}</a>"
+                elif("Release Notes:" in line):
+                    appInfo["releasenotes"] = ""
+                    weAreReleaseNoting = True
                     validCount += 1
                 elif("Type:" in line):
                     appInfo["installer-type"] = line.replace("Type:", "").strip()
