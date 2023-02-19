@@ -1144,7 +1144,7 @@ class PackageInfoPopupWindow(QWidget):
             while self.versionCombo.count()>0:
                 self.versionCombo.removeItem(0)
             try:
-                self.versionCombo.addItems(["Latest"] + appInfo["versions"])
+                self.versionCombo.addItems([_("Latest")] + appInfo["versions"])
             except KeyError:
                 pass
             if "…" in self.givenPackageId:
