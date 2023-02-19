@@ -94,7 +94,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
     print(f"🟢 Starting get info for title {title}")
     title = title.lower()
     output = []
-    unknownStr = _("Unknown") if verbose else _("Loading...")
+    unknownStr = _("Not available") if verbose else _("Loading...")
     bucket = "main" if len(id.split("/")) == 1 else id.split('/')[0]
     appInfo = {
         "title": title.split("/")[-1],

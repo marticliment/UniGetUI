@@ -260,7 +260,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 p = subprocess.Popen([winget, "show", "--name", f"{title}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 print(f"🟢 Starting get info for title {title}")
             output = []
-            unknownStr = _("Unknown")
+            unknownStr = _("Not available")
             appInfo = {
                 "title": oldtitle,
                 "id": oldid,

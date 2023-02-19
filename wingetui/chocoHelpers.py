@@ -129,7 +129,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
         p = subprocess.Popen([choco, "info", id]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for id {id}")
         output = []
-        unknownStr = _("Unknown")
+        unknownStr = _("Not available")
         appInfo = {
             "title": title,
             "id": id,
