@@ -165,6 +165,8 @@ try:
                 setSettings("DisableScoop", not scoop.isChecked())
                 setSettings("ScoopEnabledByAssistant", scoop.isChecked())
                 setSettings("DisableChocolatey", not choco.isChecked())
+                if choco.isChecked() and shutil.which("choco") != None:
+                    setSettings("UseSystemChocolatey", True)
                 if scoop.isChecked() and shutil.which("scoop") == None:
                     os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))
                 else:
