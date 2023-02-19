@@ -116,7 +116,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     for element in output:
         try:
             output = str(element, encoding="utf-8", errors="ignore").split(" ")
-            if output[0] != "-" and len(output) > 1:
+            if output[0] != "-" and len(output) > 1 and not "Did you know" in output and not "Learn more about" in output:
                 if output[1] != "validations" and output[0] != "Directory":
                     signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
         except Exception as e:
