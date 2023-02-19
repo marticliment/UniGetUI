@@ -17,7 +17,13 @@ except FileNotFoundError:
 with open("screenshot_database.xlsx", "wb") as f:
     f.write(urlopen("https://docs.google.com/spreadsheets/d/1Zxgzs1BiTZipC7EiwNEb9cIchistIdr5/export?format=xlsx").read())
 
-workbook = xlrd.open_workbook('screenshot_database.xlsx')
+try:
+    workbook = xlrd.open_workbook('screenshot_database.xlsx')
+except:
+    os.system("python -m pip install xlrd==1.2.0")
+    import xlrd
+    workbook = xlrd.open_workbook('screenshot_database.xlsx')
+    
 worksheet = workbook.sheet_by_index(0)
 
 jsoncontent = {
