@@ -1177,7 +1177,7 @@ class UpdateSoftwareSection(QWidget):
                 else:
                     item.setIcon(5, self.chocoIcon)
                 self.packageList.addTopLevelItem(item)
-                item.setCheckState(0, Qt.CheckState.Unchecked)
+                item.setCheckState(0, Qt.CheckState.Checked)
                 #c = QCheckBox()
                 #c.setChecked(True)
                 #c.setStyleSheet("margin-top: 1px; margin-left: 8px;")

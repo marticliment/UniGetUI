@@ -32,3 +32,4 @@ wingetui/choco-cli/bin/Sudo.exe
 wingetui/choco-cli/lib/Sudo/Sudo.nuspec
 wingetui/choco-cli/lib/Sudo/tools/chocolateyInstall.ps1
 wingetui/choco-cli/lib/Sudo/tools/chocolateyUninstall.ps1
+wingetui/wingettest.py
