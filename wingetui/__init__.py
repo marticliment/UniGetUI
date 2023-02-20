@@ -945,7 +945,7 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: #55303030;
+        background-color: rgba(48, 48, 48, 20%);
         height: 25px;
         border-bottom: 1px solid #1f1f1f;
         border-top: 1px solid #1f1f1f;
@@ -957,7 +957,7 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: #77303030;
+        background-color: rgba(48, 48, 48, 35%);
         height: 25px;
         border-bottom: 1px solid #303030;
         border-top: 1px solid #303030;
@@ -970,7 +970,7 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: #88343434;
+        background-color: rgba(48, 48, 48, 45%);
         height: 25px;
         border-bottom: 1px solid #303030;
         border-top: 1px solid #303030;
@@ -985,6 +985,7 @@ try:
         border-top-right-radius: 6px;
         border-bottom-right-radius: 6px;
         border-right: 1px solid #1f1f1f;
+        margin-right: 0px;
     }}
     QTreeWidget::item:first:selected {{
         border-left: 1px solid #303030;
@@ -1665,7 +1666,7 @@ try:
         height: 25px;
         margin: 1px;
         margin-left: -20px;
-        padding-left: 30px;
+        padding-left: 10px;
     }}
     QTreeWidget {{
         show-decoration-selected: 0;
@@ -1698,6 +1699,9 @@ try:
         border-bottom: 1px solid rgba(220, 220, 220, 70%);
         border-top: 1px solid rgba(220, 220, 220, 80%);
         color: rgb({colors[5]});
+    }}
+    QTreeWidget::branch {{
+        background-color: transparent;
     }}
     QTreeWidget::item:hover {{
         margin-top: 2px;

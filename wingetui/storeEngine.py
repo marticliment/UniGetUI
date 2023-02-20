@@ -1133,7 +1133,7 @@ class PackageInfoPopupWindow(QWidget):
             try:
                 self.lastver.setText(f"<b>{_('Latest Version')}:</b> {appInfo['versions'][0]}")
             except IndexError:
-                self.lastver.setText(_('Latest Version:')+"</b> "+_('Unknown'))
+                self.lastver.setText("<b>"+_('Latest Version:')+"</b> "+_('Unknown'))
             self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
             self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
             self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {appInfo['installer-type']}")

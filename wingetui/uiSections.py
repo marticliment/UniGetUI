@@ -807,7 +807,7 @@ class UpdateSoftwareSection(QWidget):
         header.setSectionResizeMode(3, QHeaderView.Fixed)
         header.setSectionResizeMode(4, QHeaderView.Fixed)
         header.setSectionResizeMode(5, QHeaderView.Fixed)
-        self.packageList.setColumnWidth(0, 50)
+        self.packageList.setColumnWidth(0, 10)
         self.packageList.setColumnWidth(3, 130)
         self.packageList.setColumnWidth(4, 130)
         self.packageList.setColumnWidth(5, 150)
@@ -1483,7 +1483,7 @@ class UninstallSoftwareSection(QWidget):
 
         self.packageList.setColumnCount(len(self.headers))
         self.packageList.setHeaderLabels(self.headers)
-        self.packageList.setColumnWidth(0, 50)
+        self.packageList.setColumnWidth(0, 10)
         self.packageList.setColumnHidden(3, False)
         self.packageList.setColumnWidth(4, 130)
         self.packageList.setSortingEnabled(True)

@@ -21,6 +21,7 @@ class TreeWidget(QTreeWidget):
         self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
         op=QGraphicsOpacityEffect(self.label)
         op.setOpacity(0.5)
+        self.setRootIsDecorated(False)
         self.label.setGraphicsEffect(op)
         self.label.setAttribute(Qt.WA_TransparentForMouseEvents)
         self.label.setAutoFillBackground(True)
