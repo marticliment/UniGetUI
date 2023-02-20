@@ -166,14 +166,6 @@ Since WingetUI is open source and safe to use, simply whitelist the app in the s
 
 #
 
-**Q: Will Chocolatey be supported?**<br>
-
-A: This is currently under study. 
-
-See more details in issue https://github.com/marticliment/WingetUI/issues/56.<br>
-
-#
-
 **Q: Can I add "msstore" as a source for Winget in the app?**<br>
 
 A: This is not possible, nor is it planned for the near future. 
