@@ -2505,7 +2505,7 @@ class SettingsSection(QScrollArea):
         disableLangUpdates.stateChanged.connect(lambda v: setSettings("DisableLangAutoUpdater", bool(v)))
         self.advancedOptions.addWidget(disableLangUpdates)
         resetyWingetUICache = QSettingsButton(_("Reset WingetUI icon and screenshot cache"), _("Reset"))
-        resetyWingetUICache.clicked.connect(lambda: shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")))
+        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")), notify("WingetUI", _("Cache was reset successfully!"))))
         resetyWingetUICache.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.advancedOptions.addWidget(resetyWingetUICache)
 
@@ -2591,7 +2591,7 @@ class SettingsSection(QScrollArea):
         enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         self.chocoPreferences.addWidget(enableSystemChocolatey)
         resetChocoCache = QSettingsButton(_("Reset chocolatey cache"), _("Reset"))
-        resetChocoCache.clicked.connect(lambda: os.remove(os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")))
+        resetChocoCache.clicked.connect(lambda: (os.remove(os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")), notify("WingetUI", _("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetChocoCache)
 
 
@@ -2633,7 +2633,7 @@ class DebuggingSection(QWidget):
 
                 a = QAction()
                 a.setText(_("Reload log"))
-                a.triggered.connect(lambda: self.setPlainText(buffer.getvalue()))
+                a.triggered.connect(lambda: (print("🔵 Reloading log..."), self.setPlainText(buffer.getvalue()), self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())))
                 menu.addAction(a)
 
                 
@@ -2671,8 +2671,8 @@ class DebuggingSection(QWidget):
         self.textEdit.setPlainText(buffer.getvalue())
 
         reloadButton = QPushButton(_("Reload log"))
-        reloadButton.setFixedWidth(200)
-        reloadButton.clicked.connect(lambda: self.textEdit.setPlainText(buffer.getvalue()))
+        reloadButton.setFixedWidth(200)        
+        reloadButton.clicked.connect(lambda: (print("🔵 Reloading log..."), self.textEdit.setPlainText(buffer.getvalue()), self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())))
 
         def saveLog():
             try:
