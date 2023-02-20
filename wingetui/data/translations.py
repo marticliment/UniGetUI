@@ -16,8 +16,7 @@ untranslatedPercentage = {
   "sr": "21%",
   "th": "54%",
   "tr": "83%",
-  "ua": "83%",
-  "zh_TW": "83%"
+  "ua": "83%"
 }
 
 languageCredits = {
@@ -261,7 +260,7 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "yrctw",
+      "name": "TGi (@yrctw)",
       "link": ""
     }
   ]
