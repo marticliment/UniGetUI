@@ -260,8 +260,8 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "TGi (@yrctw)",
-      "link": ""
+      "name": "yrctw (TGi)",
+      "link": "https://github.com/yrctw (TGi)"
     }
   ]
 }
