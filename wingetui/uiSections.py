@@ -765,7 +765,7 @@ class UpdateSoftwareSection(QWidget):
             inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction(_("Update"))
-            ins1.setIcon(QIcon(getMedia("newversion")))
+            ins1.setIcon(QIcon(getMedia("menu_updates")))
             ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
             ins2 = QAction(_("Update as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
@@ -869,7 +869,7 @@ class UpdateSoftwareSection(QWidget):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         self.toolbar.addWidget(TenPxSpacer())
-        self.upgradeSelected = QAction(QIcon(getMedia("newversion")), "", self.toolbar)
+        self.upgradeSelected = QAction(QIcon(getMedia("menu_updates")), "", self.toolbar)
         self.upgradeSelected.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
         self.toolbar.addAction(self.upgradeSelected)
         
