@@ -174,6 +174,8 @@ def getColors() -> list:
         i += 4
     return colors
 
+SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
+
 def isDark() -> bool:
     prefs = getSettingsValue("PreferredTheme")
     match prefs:
@@ -181,7 +183,7 @@ def isDark() -> bool:
             return True
         case "light":
             return False      
-    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0
+    return SYSTEM_THEME_ON_LAUNCH == 0
 
 if isDark():
     blueColor = f"rgb({getColors()[1]})"
