@@ -166,7 +166,7 @@ class DiscoverSoftwareSection(QWidget):
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
-            if self.packageList.currentItem().text(3).lower() == "winget":
+            if not "scoop" in self.packageList.currentItem().text(3).lower():
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
@@ -554,7 +554,7 @@ class DiscoverSoftwareSection(QWidget):
         if "winget" == store.lower():
             self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), packageItem=packageItem))
         elif "chocolatey" == store.lower():
-            self.addInstallation(PackageInstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else ""])), packageItem=packageItem))
+            self.addInstallation(PackageInstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem))
         else:
             self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
     
@@ -782,7 +782,7 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
-            if self.packageList.currentItem().text(5).lower() == "winget":
+            if not "scoop" in self.packageList.currentItem().text(5).lower():
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
@@ -1267,7 +1267,7 @@ class UpdateSoftwareSection(QWidget):
             if "winget" == store.lower():
                     self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"]))))
             elif "chocolatey" == store.lower():
-                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else ""])), packageItem=packageItem))
+                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem))
             else:
                 self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
      
@@ -2015,7 +2015,7 @@ class UninstallSoftwareSection(QWidget):
             if "winget" == store.lower():
                 self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent", "--force"]))
             elif "chocolatey" == store.lower():
-                self.addInstallation(PackageUninstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, packageItem=packageItem))
+                self.addInstallation(PackageUninstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, packageItem=packageItem, args=list(filter(None, ["--notsilent" if interactive else ""]))))
             else: # Scoop
                 self.addInstallation(PackageUninstallerWidget(title, store, useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 

@@ -917,6 +917,8 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.setParent(self)
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
+        
+        self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
 
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
@@ -933,16 +935,21 @@ class PackageInfoPopupWindow(QWidget):
     def loadPackageCommandLine(self):
         interactive = self.interactiveCheckbox.isChecked()
         ignoreHash = self.hashCheckBox.isChecked()
+        if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
+            version = ""
+        else:
+            version = " ".join(["--version", self.versionCombo.currentText()])
+            print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
         admin = False
         if self.store.lower() == "winget":
             if not "…" in self.givenPackageId:
-                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.givenPackageId} --exact {'--ignore-security-hash' if ignoreHash else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
+                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.givenPackageId} --exact {version} {'--ignore-security-hash' if ignoreHash else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
         elif "scoop" in self.store.lower():
             self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} {'--skip' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
         elif self.store.lower() == "chocolatey":
-            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {'--force' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {'--force  --ignore-checksums' if ignoreHash else ''} {'--notsilent' if interactive else ''}".strip().replace("  ", " ").replace("  ", " "))
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
@@ -981,6 +988,7 @@ class PackageInfoPopupWindow(QWidget):
             self.interactiveCheckbox.setEnabled(False)
             self.adminCheckbox.setChecked(False)
             self.adminCheckbox.setEnabled(False)
+            self.versionCombo.setEnabled(False)
             self.description.setText(_("Loading..."))
             self.author.setText("<b>"+_("Author")+":</b> "+_("Loading..."))
             self.publisher.setText(f"<b>{_('Publisher')}:</b> "+_("Loading..."))
@@ -1123,8 +1131,9 @@ class PackageInfoPopupWindow(QWidget):
             self.installButton.setEnabled(True)
             self.versionCombo.setEnabled(True)
             self.adminCheckbox.setEnabled(True)
-            self.hashCheckBox.setEnabled(True)
-            if(self.store.lower() == "winget"):
+            self.hashCheckBox.setEnabled(not self.isAnUninstall)
+            self.versionCombo.setEnabled(not self.isAnUninstall)
+            if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
                 self.interactiveCheckbox.setEnabled(True)
             self.title.setText(appInfo["title"])
             self.description.setText(appInfo["description"])
@@ -1165,10 +1174,13 @@ class PackageInfoPopupWindow(QWidget):
         if(self.hashCheckBox.isChecked()):
             if self.store.lower() == "winget":
                 cmdline_args.append("--force")
-            elif self.store.lower() == "scoop":
+            elif "scoop" in self.store.lower():
                 cmdline_args.append("--skip")
+            else:
+                cmdline_args.append("--force")
+                cmdline_args.append("--ignore-checksums")
         if(self.interactiveCheckbox.isChecked()):
-            cmdline_args.append("--interactive")
+            cmdline_args.append("--interactive" if self.store.lower() == "winget" else "--notsilent")
         else:
             if "winget" in self.store.lower():
                 cmdline_args.append("--silent")

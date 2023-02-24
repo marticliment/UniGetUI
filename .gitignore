@@ -33,3 +33,9 @@ wingetui/choco-cli/lib/Sudo/Sudo.nuspec
 wingetui/choco-cli/lib/Sudo/tools/chocolateyInstall.ps1
 wingetui/choco-cli/lib/Sudo/tools/chocolateyUninstall.ps1
 wingetui/wingettest.py
+wingetui/choco-cli/lib-bad/elevenclock/tools/chocolateyuninstall.ps1
+wingetui/choco-cli/lib-bad/elevenclock/elevenclock.nuspec
+*.nupkg
+wingetui/choco-cli/lib-bad/elevenclock/.chocolateyPending
+wingetui/choco-cli/lib-bad/elevenclock/tools/chocolateyinstall.ps1
+wingetui/choco-cli/.chocolatey/elevenclock.4.0.1/.files
