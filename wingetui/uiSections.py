@@ -134,6 +134,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setSortingEnabled(True)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.connectCustomScrollbar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
@@ -599,8 +600,7 @@ class DiscoverSoftwareSection(QWidget):
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
-        self.callInMain.emit(partial(self.finishFiltering, self.query.text()))
-        #Thread(target=lambda: (time.sleep(0.25), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
+        Thread(target=lambda: (time.sleep(0.1), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
         
     def containsQuery(self, item: QTreeWidgetItem, text: str) -> bool:
         return text.lower() in item.text(0).lower() or text.lower() in item.text(1).lower()
@@ -854,6 +854,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.connectCustomScrollbar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         
@@ -1393,6 +1394,8 @@ class UpdateSoftwareSection(QWidget):
             print("Updated scoop packages with result", o1.returncode)
             o2 = subprocess.run(f"{wingetHelpers.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
             print("Updated Winget packages with result", o2.returncode)
+            o2 = subprocess.run(f"{chocoHelpers.choco} source update --name winget", shell=True, stdout=subprocess.PIPE)
+
             print(o1.stdout)
             print(o2.stdout)
         except Exception as e:
@@ -1618,6 +1621,7 @@ class UninstallSoftwareSection(QWidget):
         sct.activated.connect(toggleItemState)
 
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.connectCustomScrollbar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(1), item.text(2), item.text(4), packageItem=item))

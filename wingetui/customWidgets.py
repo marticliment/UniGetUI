@@ -31,9 +31,23 @@ class TreeWidget(QTreeWidget):
         self.label.setFont(font)
         self.label.setFixedWidth(2050)
         self.label.setFixedHeight(50)
-
+        self.goTopButton = QPushButton(self)
+        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+        self.goTopButton.setFixedSize(24, 32)
+        self.connectCustomScrollbar(self.verticalScrollBar())
+        self.goTopButton.hide()
+        
+    def connectCustomScrollbar(self, scrollbar: QScrollBar):
+        try:
+            self.goTopButton.clicked.disconnect()
+        except RuntimeError:
+            cprint("Can't disconnect")
+        scrollbar.valueChanged.connect(lambda v: self.goTopButton.setVisible(v>100))
+        self.goTopButton.clicked.connect(lambda: scrollbar.setValue(0))
+        
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.label.move((self.width()-self.label.width())//2, (self.height()-self.label.height())//2,)
+        self.goTopButton.move(self.width()-24, self.height()-48)
         return super().resizeEvent(event)
 
     def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
