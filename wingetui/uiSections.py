@@ -1992,7 +1992,7 @@ class UninstallSoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
                 
-    def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: ErrorMessage):
+    def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: ErrorMessage, admin: bool = False, interactive: bool = False, removeData: bool = False):
         questionData = {
             "titlebarTitle": "Wait!",
             "mainTitle": _("Are you sure?"),
@@ -2003,21 +2003,21 @@ class UninstallSoftwareSection(QWidget):
         }
         if a.askQuestion(questionData):
             for program in toUninstall:
-                self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True))
+                self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), program, admin, interactive, removeData, avoidConfirm=True))
 
 
     def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
         if not avoidConfirm:
             a = ErrorMessage(self)
-            Thread(target=self.confirmUninstallSelected, args=([packageItem], a)).start()
+            Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
         else:
             print("🔵 Uninstalling", id)
             if "winget" == store.lower():
                 self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent", "--force"]))
             elif "chocolatey" == store.lower():
                 self.addInstallation(PackageUninstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, packageItem=packageItem))
-            else:
-                self.addInstallation(PackageUninstallerWidget(title, store , useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
+            else: # Scoop
+                self.addInstallation(PackageUninstallerWidget(title, store, useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def reload(self) -> None:
         if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:

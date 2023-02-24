@@ -441,7 +441,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
-        if(self.store == "winget" or self.store in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect"))):
+        if(self.store == "winget" or self.store in ((_("Local PC").lower(), "microsoft store", "steam", "gog", "ubisoft connect"))):
             self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
@@ -544,7 +544,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     errorData = {
                         "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
-                        "mainText": _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the uninstaller.").format(self.actionVerb, self.programName, _("Show details")),
+                        "mainText": _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the uninstaller.").format(action=self.actionVerb, package=self.programName, showDetails=_("Show details")),
                         "buttonTitle": _("Close"),
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("notif_warn")),
