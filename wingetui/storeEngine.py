@@ -574,6 +574,7 @@ class PackageInfoPopupWindow(QWidget):
     backgroundApplied: bool = False
     givenPackageId: str = ""
     isAnUpdate = False
+    isAnUninstall = False
     store = ""
 
     currentProgram = 0
@@ -935,18 +936,18 @@ class PackageInfoPopupWindow(QWidget):
         admin = False
         if self.store.lower() == "winget":
             if not "…" in self.givenPackageId:
-                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else 'install'} --id {self.givenPackageId} --exact {'--ignore-security-hash' if ignoreHash else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
+                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.givenPackageId} --exact {'--ignore-security-hash' if ignoreHash else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
         elif "scoop" in self.store.lower():
-            self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else 'install'} {self.givenPackageId} {'--skip' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} {'--skip' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
         elif self.store.lower() == "chocolatey":
-            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else 'install'} {self.givenPackageId} -y {'--force' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {'--force' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
 
-    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "") -> None:
+    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False) -> None:
         newProgram = id+store
         if self.currentProgram != newProgram:
             self.currentProgram = newProgram
@@ -954,6 +955,7 @@ class PackageInfoPopupWindow(QWidget):
             self.packageItem = packageItem
             self.givenPackageId = id
             self.isAnUpdate = update
+            self.isAnUninstall = uninstall
             self.store = store
             if "…" in id:
                 self.installButton.setEnabled(False)
@@ -961,6 +963,8 @@ class PackageInfoPopupWindow(QWidget):
             else:
                 if self.isAnUpdate:
                     self.installButton.setText(_("Update"))
+                elif self.isAnUninstall:
+                    self.installButton.setText(_("Uninstall"))
                 else:
                     self.installButton.setText(_("Install"))
             self.versionCombo.setEnabled(False)
@@ -1112,6 +1116,8 @@ class PackageInfoPopupWindow(QWidget):
                 self.loadingProgressBar.hide()
             if self.isAnUpdate:
                 self.installButton.setText(_("Update"))
+            elif self.isAnUninstall:
+                self.installButton.setText(_("Uninstall"))
             else:
                 self.installButton.setText(_("Install"))
             self.installButton.setEnabled(True)
@@ -1173,6 +1179,8 @@ class PackageInfoPopupWindow(QWidget):
             print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
             p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
+        elif self.isAnUninstall:            
+            p = PackageUninstallerWidget(title, self.store, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         else:
             p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         self.addProgram.emit(p)

@@ -1787,7 +1787,7 @@ class UninstallSoftwareSection(QWidget):
                 self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True))
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(3))
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(3), uninstall=True)
         self.infobox.show()
 
     def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
