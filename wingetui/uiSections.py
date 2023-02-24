@@ -82,6 +82,7 @@ class DiscoverSoftwareSection(QWidget):
         self.query.setMinimumWidth(100)
         self.query.setMaximumWidth(250)
         self.query.setBaseSize(250, 30)
+        
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
@@ -93,6 +94,7 @@ class DiscoverSoftwareSection(QWidget):
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
+        
 
         img = QLabel()
         img.setFixedWidth(80)
@@ -137,8 +139,8 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
-        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0) if self.packageList.hasFocus() else None)
-
+        sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
                 return
@@ -748,7 +750,7 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
-        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
 
         self.packageList.itemDoubleClicked.connect(lambda item, column: (self.update(item.text(1), item.text(2), item.text(5), packageItem=item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item.text(1), item.text(2), item.text(5), item)))
         
@@ -1476,7 +1478,7 @@ class UninstallSoftwareSection(QWidget):
         self.packageList = TreeWidget(_("Found 0 Packages"))
         
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
-        sct.activated.connect(lambda: self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
         
         self.packageList.setIconSize(QSize(24, 24))
         self.headers = ["", _("Package Name"), _("Package ID"), _("Installed Version"), _("Source")] # empty header added for checkbox
