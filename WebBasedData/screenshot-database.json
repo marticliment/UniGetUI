@@ -16415,7 +16415,9 @@
         },
         "Winamp.Winamp": {
             "icon": "https://i.imgur.com/gSQ2mle.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/WASmcBJ.png"
+            ]
         },
         "Winbee.cashcash": {
             "icon": "",
