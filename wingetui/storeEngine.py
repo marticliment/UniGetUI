@@ -954,7 +954,7 @@ class PackageInfoPopupWindow(QWidget):
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
 
-    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False) -> None:
+    def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False, installedVersion: str = "") -> None:
         newProgram = id+store
         if self.currentProgram != newProgram:
             self.currentProgram = newProgram
@@ -989,12 +989,19 @@ class PackageInfoPopupWindow(QWidget):
             self.adminCheckbox.setChecked(False)
             self.adminCheckbox.setEnabled(False)
             self.versionCombo.setEnabled(False)
+            isScoop = "scoop" in self.store.lower()
             self.description.setText(_("Loading..."))
             self.author.setText("<b>"+_("Author")+":</b> "+_("Loading..."))
             self.publisher.setText(f"<b>{_('Publisher')}:</b> "+_("Loading..."))
             self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"\">{_('Loading...')}</a>")
             self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')} (<a style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>)")
-            self.lastver.setText(f"<b>{_('Latest Version')}:</b> {_('Loading...')}")
+            if update:
+                self.lastver.setText(f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(version)})")
+            elif uninstall:
+                self.lastver.setText(f"<b>{_('Installed Version')}:</b> {version}")
+            else:
+                self.lastver.setText(f"<b>{_('Current Version' if isScoop else 'Latest Version')}:</b> {version}")
+
             self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
             self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a  style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>")
             self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
@@ -1024,7 +1031,51 @@ class PackageInfoPopupWindow(QWidget):
                 Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId, newProgram), daemon=True).start()
             elif store.lower() == "chocolatey":
                 Thread(target=chocoHelpers.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
-                
+
+    def printData(self, appInfo: dict, progId) -> None:
+        if self.currentProgram == progId:
+            self.finishedCount += 1
+            if not("scoop" in self.store.lower()) or self.finishedCount > 1:
+                self.loadingProgressBar.hide()
+            if self.isAnUpdate:
+                self.installButton.setText(_("Update"))
+            elif self.isAnUninstall:
+                self.installButton.setText(_("Uninstall"))
+            else:
+                self.installButton.setText(_("Install"))
+            self.installButton.setEnabled(True)
+            self.versionCombo.setEnabled(True)
+            self.adminCheckbox.setEnabled(True)
+            self.hashCheckBox.setEnabled(not self.isAnUninstall)
+            self.versionCombo.setEnabled(not self.isAnUninstall)
+            if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
+                self.interactiveCheckbox.setEnabled(True)
+            self.title.setText(appInfo["title"])
+            self.description.setText(appInfo["description"])
+            if self.store.lower() == "winget":
+                self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["author"]+"</a>")
+                self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["publisher"]+"</a>")
+            else:
+                self.author.setText(f"<b>{_('Author')}:</b> "+appInfo["author"])
+                self.publisher.setText(f"<b>{_('Publisher')}:</b> "+appInfo["publisher"])
+            self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
+            self.license.setText(f"<b>{_('License')}:</b> {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
+            self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
+            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
+            self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {appInfo['installer-type']}")
+            self.packageId.setText(f"<b>{_('Package ID')}:</b> {appInfo['id']}")
+            self.date.setText(f"<b>{_('Last updated:')}</b> {appInfo['updatedate']}")
+            self.notes.setText(f"<b>{_('Release notes:')}</b> {appInfo['releasenotes'].replace(r'%bluecolor%', blueColor)}")
+            self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
+            while self.versionCombo.count()>0:
+                self.versionCombo.removeItem(0)
+            try:
+                self.versionCombo.addItems([_("Latest")] + appInfo["versions"])
+            except KeyError:
+                pass
+            if "…" in self.givenPackageId:
+                self.givenPackageId = appInfo["id"]
+                self.loadPackageCommandLine()
 
     def loadPackageIcon(self, id: str, store: str, version: str) -> None:
         try:
@@ -1116,55 +1167,6 @@ class PackageInfoPopupWindow(QWidget):
             except Exception as e:
                 report(e)
 
-
-    def printData(self, appInfo: dict, progId) -> None:
-        if self.currentProgram == progId:
-            self.finishedCount += 1
-            if not("scoop" in self.store.lower()) or self.finishedCount > 1:
-                self.loadingProgressBar.hide()
-            if self.isAnUpdate:
-                self.installButton.setText(_("Update"))
-            elif self.isAnUninstall:
-                self.installButton.setText(_("Uninstall"))
-            else:
-                self.installButton.setText(_("Install"))
-            self.installButton.setEnabled(True)
-            self.versionCombo.setEnabled(True)
-            self.adminCheckbox.setEnabled(True)
-            self.hashCheckBox.setEnabled(not self.isAnUninstall)
-            self.versionCombo.setEnabled(not self.isAnUninstall)
-            if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
-                self.interactiveCheckbox.setEnabled(True)
-            self.title.setText(appInfo["title"])
-            self.description.setText(appInfo["description"])
-            if self.store.lower() == "winget":
-                self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["author"]+"</a>")
-                self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["publisher"]+"</a>")
-            else:
-                self.author.setText(f"<b>{_('Author')}:</b> "+appInfo["author"])
-                self.publisher.setText(f"<b>{_('Publisher')}:</b> "+appInfo["publisher"])
-            self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
-            self.license.setText(f"<b>{_('License')}:</b> {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
-            try:
-                self.lastver.setText(f"<b>{_('Latest Version')}:</b> {appInfo['versions'][0]}")
-            except IndexError:
-                self.lastver.setText("<b>"+_('Latest Version:')+"</b> "+_('Unknown'))
-            self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
-            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
-            self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {appInfo['installer-type']}")
-            self.packageId.setText(f"<b>{_('Package ID')}:</b> {appInfo['id']}")
-            self.date.setText(f"<b>{_('Last updated:')}</b> {appInfo['updatedate']}")
-            self.notes.setText(f"<b>{_('Release notes:')}</b> {appInfo['releasenotes'].replace(r'%bluecolor%', blueColor)}")
-            self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
-            while self.versionCombo.count()>0:
-                self.versionCombo.removeItem(0)
-            try:
-                self.versionCombo.addItems([_("Latest")] + appInfo["versions"])
-            except KeyError:
-                pass
-            if "…" in self.givenPackageId:
-                self.givenPackageId = appInfo["id"]
-                self.loadPackageCommandLine()
 
     def install(self):
         title = self.title.text()

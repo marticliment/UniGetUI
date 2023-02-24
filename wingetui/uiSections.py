@@ -1273,7 +1273,7 @@ class UpdateSoftwareSection(QWidget):
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem, version=packageItem.text(4))
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem, version=packageItem.text(4), installedVersion=packageItem.text(3))
         self.infobox.show()
 
     def reloadSources(self):
