@@ -288,6 +288,10 @@ class DiscoverSoftwareSection(QWidget):
         self.importAction.triggered.connect(lambda: self.importPackages())
         self.toolbar.addAction(self.importAction)
 
+        self.exportAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), self.toolbar)
+        self.exportAction.triggered.connect(lambda: self.exportSelection())
+        self.toolbar.addAction(self.exportAction)
+
 
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
@@ -385,6 +389,62 @@ class DiscoverSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+
+    def exportSelection(self) -> None:
+        """
+        Export all selected packages into a file.
+
+        """
+        wingetPackagesList = []
+        scoopPackageList = []
+        chocoPackageList = []
+
+        try:
+            for item in self.packageItems:
+                if ((item.checkState(0) ==  Qt.CheckState.Checked) and item.text(4).lower() == "winget"):
+                    id = item.text(2).strip()
+                    wingetPackage = {"PackageIdentifier": id}
+                    wingetPackagesList.append(wingetPackage)
+                elif ((item.checkState(0) ==  Qt.CheckState.Checked) and "scoop" in item.text(4).lower()):
+                    scoopPackage = {"Name": item.text(2)}
+                    scoopPackageList.append(scoopPackage)
+                elif ((item.checkState(0) ==  Qt.CheckState.Checked) and item.text(4).lower() == "chocolatey"):
+                    chocoPackage = {"Name": item.text(2)}
+                    chocoPackageList.append(chocoPackage)
+
+            wingetDetails = {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type" : "Microsoft.PreIndexed.Package"
+            }
+            wingetExportSchema = {
+                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
+                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
+                "Sources": [{
+                    "Packages": wingetPackagesList,
+                    "SourceDetails": wingetDetails}],
+                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
+            }
+            scoopExportSchema = {
+                "apps": scoopPackageList,
+            }
+            chocoExportSchema = {
+                "apps": chocoPackageList,
+            }
+            overAllSchema = {
+                "winget": wingetExportSchema,
+                "scoop": scoopExportSchema,
+                "chocolatey": chocoExportSchema
+            }
+
+            filename = QFileDialog.getSaveFileName(self, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
+            if filename[0] != "":
+                with open(filename[0], 'w') as f:
+                    f.write(json.dumps(overAllSchema, indent=4))
+
+        except Exception as e:
+            report(e)
 
     def installSelected(self) -> None:
             for i in range(self.packageList.topLevelItemCount()):
