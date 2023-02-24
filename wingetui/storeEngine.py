@@ -1153,7 +1153,7 @@ class PackageInfoPopupWindow(QWidget):
 
     def install(self):
         title = self.title.text()
-        packageId = self.packageId.text().replace(_('Package ID')+":", '').strip()
+        packageId = self.givenPackageId
         print(f"🟢 Starting installation of package {title} with id {packageId}")
         cmdline_args = []
         if(self.hashCheckBox.isChecked()):
