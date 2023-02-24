@@ -54,12 +54,14 @@ class DiscoverSoftwareSection(QWidget):
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.reload)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
 
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;")
         self.searchButton.clicked.connect(self.filter)
         self.searchButton.setIcon(QIcon(getMedia("search")))
+        self.searchButton.setAccessibleName(_("Search"))
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
@@ -74,8 +76,8 @@ class DiscoverSoftwareSection(QWidget):
          
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" "+_("Search for packages"))
-        self.query.returnPressed.connect(lambda: (self.filter(), cprint("search")))
-        self.query.editingFinished.connect(lambda: (self.filter(), cprint("search")))
+        self.query.returnPressed.connect(lambda: (self.filter()))
+        self.query.editingFinished.connect(lambda: (self.filter()))
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
         self.query.setStyleSheet("margin-top: 0px;")
@@ -671,12 +673,14 @@ class UpdateSoftwareSection(QWidget):
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.reload)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
 
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;")
         self.searchButton.clicked.connect(self.filter)
         self.searchButton.setIcon(QIcon(getMedia("search")))
+        self.searchButton.setAccessibleName(_("Search"))
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
@@ -1406,12 +1410,14 @@ class UninstallSoftwareSection(QWidget):
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.reload)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
 
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;")
         self.searchButton.clicked.connect(self.filter)
         self.searchButton.setIcon(QIcon(getMedia("search")))
+        self.searchButton.setAccessibleName(_("Search"))
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(25, 0, 25, 0)
@@ -2766,6 +2772,7 @@ class ScoopBucketManager(QWidget):
         self.reloadButton.clicked.connect(self.loadBuckets)
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
         self.addBucketButton = QPushButton(_("Add bucket"))
         self.addBucketButton.setFixedHeight(30)
         self.addBucketButton.clicked.connect(self.scoopAddExtraBucket)
