@@ -506,7 +506,7 @@ try:
                 self.infoAction.triggered.connect(lambda: self.window.showWindow(4))
                 self.settings.triggered.connect(lambda: self.window.showWindow(3))
                 globals.mainWindow = self.window
-                self.showAction.triggered.connect(self.window.showWindow)
+                self.showAction.triggered.connect(lambda: self.window.showWindow())
                 self.uaAction.triggered.connect(self.window.updates.upgradeAllAction.trigger)
                 showWindow = self.showAction.trigger
                 self.loadingText.setText(_("Latest details..."))

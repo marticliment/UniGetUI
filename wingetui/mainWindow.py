@@ -312,12 +312,13 @@ class RootWindow(QMainWindow):
             except Exception as e:
                 report(e)
             globals.lastFocusedWindow = self.winId()
-        else:
-            self.hide()
-            globals.lastFocusedWindow = 0
-        if index>=0:
             try:
                 match index:
+                    case -1:
+                        if globals.updatesAvailable > 0:
+                            self.widgets[self.updates].click()
+                        else:
+                            pass # Show on the default window
                     case 0:
                         self.widgets[self.discover].click()
                     case 1:
@@ -330,6 +331,10 @@ class RootWindow(QMainWindow):
                         self.widgets[self.aboutSection].click()
             except Exception as e:
                 report(e)
+        else:
+            self.hide()
+            globals.lastFocusedWindow = 0
+        
 
     def showEvent(self, event: QShowEvent) -> None:
         if(not self.isWinDark):
