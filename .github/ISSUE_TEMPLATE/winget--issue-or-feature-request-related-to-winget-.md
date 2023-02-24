@@ -2,8 +2,8 @@
 name: Report related to the Winget Package Manager
 about: Create a report to let me know what is happening
 title: "[WINGET] (Enter your description here)"
-labels: winget,triage
-assignees: 'marticliment'
+labels: winget
+assignees: marticliment
 
 ---
 

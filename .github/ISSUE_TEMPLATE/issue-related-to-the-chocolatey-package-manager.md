@@ -1,9 +1,9 @@
 ---
-name: Report related to the Winget Package Manager
+name: Issue related to the Chocolatey Package Manager
 about: Create a report to let me know what is happening
-title: "[SCOOP] (Enter your description here)"
-labels: scoop,triage
-assignees: 'marticliment'
+title: "[CHOCO] (Enter your description here)"
+labels: chocolatey
+assignees: marticliment
 
 ---
 
@@ -11,7 +11,7 @@ assignees: 'marticliment'
 
 - [ ] **I have checked that the bug is not a duplicate or, if it is, it needs to be reopened**
 - [ ] **I have checked that I am running the latest version of WingetUI**
-- [ ] **I have checked that this issue is not an issue with the scoop utility, but rather with its implementation on WingetUI**
+- [ ] **I have checked that this issue is not an issue with the chocolatey utility, but rather with its implementation on WingetUI**
 - [ ] **I have checked the [FAQ](https://github.com/martinet101/WingetUI#faq) section for solutions**
 - [ ] **I have read the [contributing guidelines](https://github.com/marticliment/WingetUI/blob/main/CONTRIBUTING.md#issues) and I agree with the [Code of Conduct](https://github.com/marticliment/WingetUI/blob/main/CODE_OF_CONDUCT.md)**
 

@@ -2,8 +2,8 @@
 name: Bug/Issue report (Something is not working as expected)
 about: Create a report to let me know what is happening
 title: "[BUG/ISSUE] (Enter your description here)"
-labels: bug,triage
-assignees: 'marticliment'
+labels: bug
+assignees: marticliment
 
 ---
 
