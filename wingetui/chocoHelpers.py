@@ -16,6 +16,8 @@ else:
     os.environ["chocolateyinstall"] = os.path.dirname(choco)
 
 
+CHOCO_BLACKLISTED_PACKAGES = ["Did", "Features?", "Validation", "-", "being", "It"]
+
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     cprint("🔵 Starting choco search")
     cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")
@@ -29,7 +31,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                 cprint("🟢 Found valid cache for chocolatey!")
                 for line in content.split("\n"):
                     export = line.split(" ")
-                    if len(export) > 1:
+                    if len(export) > 1 and not export[0] in CHOCO_BLACKLISTED_PACKAGES:
                         signal.emit(export[0].replace("-", " ").capitalize(), export[0], export[1], "Chocolatey")
                 try:
                     lastCache = int(getSettingsValue("ChocolateyCacheDate"))
@@ -90,7 +92,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         for element in output:
             try:
                 element = str(element, "utf-8", errors="ignore").split("|")
-                if len(element) > 1 and "Output is package name" not in element[0]:
+                if len(element) > 1 and "Output is package name" not in element[0] and CHOCO_BLACKLISTED_PACKAGES:
                     signal.emit(element[0].replace("-", " ").capitalize(), element[0], element[1], element[2], "Chocolatey")
             except Exception as e:
                 report(e)
@@ -116,7 +118,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     for element in output:
         try:
             output = str(element, encoding="utf-8", errors="ignore").split(" ")
-            if output[0] != "-" and len(output) > 1 and not "Did you know" in output and not "Learn more about" in output:
+            if output[0] != "-" and len(output) > 1 and not output[0] in CHOCO_BLACKLISTED_PACKAGES:
                 if output[1] != "validations" and output[0] != "Directory":
                     signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
         except Exception as e:
