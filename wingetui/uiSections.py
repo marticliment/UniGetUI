@@ -129,19 +129,27 @@ class DiscoverSoftwareSection(QWidget):
         self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v==self.packageListScrollBar.maximum() else None)
 
         self.packageList = TreeWidget("a")
-        self.packageList.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
-        self.packageList.setColumnCount(4)
-        self.packageList.sortByColumn(0, Qt.SortOrder.AscendingOrder)
+        self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Version"), _("Source")])
+        self.packageList.setColumnCount(5)
+        self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setSortingEnabled(True)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(0), item.text(1), item.text(3), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(0), item.text(1), item.text(3)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(1), item.text(2), item.text(4), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4)))
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
         sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        
+        def toggleItemState():
+            item = self.packageList.currentItem()
+            checked = item.checkState(0) == Qt.CheckState.Checked
+            item.setCheckState(0, Qt.CheckState.Unchecked if checked else Qt.CheckState.Checked)
+
+        sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
+        sct.activated.connect(toggleItemState)
         
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
@@ -153,24 +161,24 @@ class DiscoverSoftwareSection(QWidget):
             contextMenu.setStyleSheet("* {background: red;color: black}")
             ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
             inf = QAction(_("Show info"))
-            inf.triggered.connect(lambda: (contextMenu.close(), self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem())))
+            inf.triggered.connect(lambda: (contextMenu.close(), self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem())))
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction(_("Install"))
             ins1.setIcon(QIcon(getMedia("newversion")))
-            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), packageItem=self.packageList.currentItem()))
+            ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem()))
             ins2 = QAction(_("Install as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
-            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), admin=True, packageItem=self.packageList.currentItem()))
+            ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), admin=True, packageItem=self.packageList.currentItem()))
             ins3 = QAction(_("Skip hash check"))
             ins3.setIcon(QIcon(getMedia("checksum")))
-            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), skiphash=True, packageItem=self.packageList.currentItem()))
+            ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), skiphash=True, packageItem=self.packageList.currentItem()))
             ins4 = QAction(_("Interactive installation"))
             ins4.setIcon(QIcon(getMedia("interactive")))
-            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3), interactive=True, packageItem=self.packageList.currentItem()))
+            ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True, packageItem=self.packageList.currentItem()))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
-            if not "scoop" in self.packageList.currentItem().text(3).lower():
+            if not "scoop" in self.packageList.currentItem().text(4).lower():
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
             contextMenu.addSeparator()
@@ -183,13 +191,15 @@ class DiscoverSoftwareSection(QWidget):
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.setStretchLastSection(False)
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.Fixed)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QHeaderView.Fixed)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
         header.setSectionResizeMode(3, QHeaderView.Fixed)
+        header.setSectionResizeMode(4, QHeaderView.Fixed)
         header.sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
-        self.packageList.setColumnWidth(2, 150)
+        self.packageList.setColumnWidth(0, 10)
         self.packageList.setColumnWidth(3, 150)
+        self.packageList.setColumnWidth(4, 150)
         
         
         self.loadingProgressBar = QProgressBar()
@@ -218,21 +228,21 @@ class DiscoverSoftwareSection(QWidget):
 
         self.toolbar.addWidget(TenPxSpacer())
         self.upgradeSelected = QAction(QIcon(getMedia("newversion")), "", self.toolbar)
-        self.upgradeSelected.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem()))
+        self.upgradeSelected.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem()))
         self.toolbar.addAction(self.upgradeSelected)
         
         inf = QAction("", self.toolbar)# ("Show info")
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), self.packageList.currentItem()))
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), self.packageList.currentItem()))
         inf.setIcon(QIcon(getMedia("info")))
         ins2 = QAction("", self.toolbar)# ("Run as administrator")
         ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), admin=True))
+        ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), admin=True))
         ins3 = QAction("", self.toolbar)# ("Skip hash check")
         ins3.setIcon(QIcon(getMedia("checksum")))
-        ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
+        ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
         ins4 = QAction("", self.toolbar)# ("Interactive update")
         ins4.setIcon(QIcon(getMedia("interactive")))
-        ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(0), self.packageList.currentItem().text(1), self.packageList.currentItem().text(3).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+        ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), interactive=True))
 
         
         tooltips = {
@@ -248,6 +258,29 @@ class DiscoverSoftwareSection(QWidget):
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
             self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
+        self.toolbar.addSeparator()
+        
+        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Install selected"), self.toolbar)
+        self.upgradeSelectedAction.triggered.connect(lambda: self.installSelected())
+        self.toolbar.addAction(self.upgradeSelectedAction)
+        
+        self.toolbar.addSeparator()
+        
+        def setAllSelected(checked: bool) -> None:
+            itemList = []
+            self.packageList.setSortingEnabled(False)
+            for i in range(self.packageList.topLevelItemCount()):
+                itemList.append(self.packageList.topLevelItem(i))
+            for program in itemList:
+                if not program.isHidden():
+                    program.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+            self.packageList.setSortingEnabled(True)
+
+        self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", self.toolbar)
+        self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
+        self.toolbar.addAction(self.selectNoneAction)
+        self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
+        
         self.toolbar.addSeparator()
 
         self.importAction = QAction(_("Import packages from a file"), self.toolbar)
@@ -353,6 +386,16 @@ class DiscoverSoftwareSection(QWidget):
         
         self.leftSlow.start()
 
+    def installSelected(self) -> None:
+            for i in range(self.packageList.topLevelItemCount()):
+                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+                if not program.isHidden():
+                    try:
+                        if program.checkState(0) ==  Qt.CheckState.Checked:
+                           self.fastinstall(program.text(1), program.text(2), program.text(4), packageItem=program)
+                    except AttributeError:
+                        pass
+
     def importPackages(self):
         try:
             packageList = []
@@ -382,7 +425,7 @@ class DiscoverSoftwareSection(QWidget):
                 for packageId in packageList:
                     try:
                         item = self.packages[packageId]["item"]
-                        self.fastinstall(item.text(0), item.text(1), item.text(3))
+                        self.fastinstall(item.text(1), item.text(2), item.text(4))
                     except KeyError:
                         print(f"🟠 Can't find package {packageId} in the package reference")
         except Exception as e:
@@ -445,19 +488,20 @@ class DiscoverSoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, store) -> None:
         if not "---" in name and not name in ("+", "Everything", "Scoop"):
             item = TreeWidgetItemWithQAction(self)
-            item.setText(0, name)
-            item.setText(1, id)
-            item.setIcon(0, self.installIcon)
-            item.setIcon(1, self.IDIcon)
-            item.setIcon(2, self.versionIcon)
+            item.setText(1, name)
+            item.setText(2, id)
+            item.setIcon(1, self.installIcon)
+            item.setIcon(2, self.IDIcon)
+            item.setIcon(3, self.versionIcon)
             if "scoop" in store.lower():
-                item.setIcon(3, self.scoopIcon)
+                item.setIcon(4, self.scoopIcon)
             elif "winget" in store.lower():
-                item.setIcon(3, self.wingetIcon)
+                item.setIcon(4, self.wingetIcon)
             else:
-                item.setIcon(3, self.chocolateyIcon)
-            item.setText(3, store)
-            item.setText(2, version)
+                item.setIcon(4, self.chocolateyIcon)
+            item.setText(4, store)
+            item.setText(3, version)
+            item.setCheckState(0, Qt.CheckState.Unchecked)
             self.packages[id] = {
                 "name": name,
                 "version": version,
@@ -503,13 +547,13 @@ class DiscoverSoftwareSection(QWidget):
     
     def finishFiltering(self, text: str):
         def getTitle(item: QTreeWidgetItem) -> str:
-            return item.text(0)
-        def getID(item: QTreeWidgetItem) -> str:
             return item.text(1)
-        def getVersion(item: QTreeWidgetItem) -> str:
+        def getID(item: QTreeWidgetItem) -> str:
             return item.text(2)
-        def getSource(item: QTreeWidgetItem) -> str:
+        def getVersion(item: QTreeWidgetItem) -> str:
             return item.text(3)
+        def getSource(item: QTreeWidgetItem) -> str:
+            return item.text(4)
         
         if self.query.text() != text:
             return
@@ -519,13 +563,13 @@ class DiscoverSoftwareSection(QWidget):
         sortColumn = self.packageList.sortColumn()
         descendingSort = self.packageList.header().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
         match sortColumn:
-            case 0:
-                self.packageItems.sort(key=getTitle, reverse=descendingSort)
             case 1:
-                self.packageItems.sort(key=getID, reverse=descendingSort)
+                self.packageItems.sort(key=getTitle, reverse=descendingSort)
             case 2:
-                self.packageItems.sort(key=getVersion, reverse=descendingSort)
+                self.packageItems.sort(key=getID, reverse=descendingSort)
             case 3:
+                self.packageItems.sort(key=getVersion, reverse=descendingSort)
+            case 4:
                 self.packageItems.sort(key=getSource, reverse=descendingSort)
         
         for item in self.packageItems:
