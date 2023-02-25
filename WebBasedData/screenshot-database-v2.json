@@ -1,6 +1,6 @@
 {
     "package_count": {
-        "total": 6430,
+        "total": 6517,
         "done": 462
     },
     "icons_and_screenshots": {
@@ -503,8 +503,12 @@
             "images": []
         },
         "messenger": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/PZmD7cN.png",
+            "images": [
+                "https://i.imgur.com/zVq5B1X.jpg",
+                "https://i.imgur.com/9PCvI22.png",
+                "https://i.imgur.com/7mPy8kQ.png"
+            ]
         },
         "afterlife": {
             "icon": "https://github.com/ad3rito/AfterLife/blob/master/src/icon/rocket.png?raw=true",
@@ -589,8 +593,11 @@
             ]
         },
         "openjdk-11": {
-            "icon": "",
-            "images": []
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Adoptium_2021_03_08_JRR_RGB-V3C%20%281%29.png",
+            "images": [
+                "https://www.somkiat.cc/wp-content/uploads/2021/10/adoptium.jpg",
+                "https://adoptopenjdk.net/dist/assets/social-image.png"
+            ]
         },
         "openjdk-14": {
             "icon": "https://projects.eclipse.org/sites/default/files/Logo_Adoptium_2021_03_08_JRR_RGB-V3C%20%281%29.png",
@@ -607,12 +614,18 @@
             ]
         },
         "openjdk-16": {
-            "icon": "",
-            "images": []
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Adoptium_2021_03_08_JRR_RGB-V3C%20%281%29.png",
+            "images": [
+                "https://www.somkiat.cc/wp-content/uploads/2021/10/adoptium.jpg",
+                "https://adoptopenjdk.net/dist/assets/social-image.png"
+            ]
         },
         "openjdk-17": {
-            "icon": "",
-            "images": []
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Adoptium_2021_03_08_JRR_RGB-V3C%20%281%29.png",
+            "images": [
+                "https://www.somkiat.cc/wp-content/uploads/2021/10/adoptium.jpg",
+                "https://adoptopenjdk.net/dist/assets/social-image.png"
+            ]
         },
         "openjdk-8": {
             "icon": "https://projects.eclipse.org/sites/default/files/Logo_Adoptium_2021_03_08_JRR_RGB-V3C%20%281%29.png",
@@ -1010,8 +1023,13 @@
             ]
         },
         "music": {
-            "icon": "",
-            "images": []
+            "icon": "https://m.media-amazon.com/images/I/610LDzZhsUL.png",
+            "images": [
+                "https://www.windowslatest.com/wp-content/uploads/2018/02/amazon-music.png",
+                "https://www.dolby.com/siteassets/passions/music/amazonmusic_1920x1080.jpg",
+                "https://i.pcmag.com/imagery/reviews/01vJVJPhC1L36eDVDp2Mlsb-15..v1621319677.jpg",
+                "https://i.imgur.com/OeVCtFA.jpg"
+            ]
         },
         "nosqlworkbench": {
             "icon": "",
@@ -1621,11 +1639,15 @@
             "images": []
         },
         "desktopapp": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.logolynx.com/images/logolynx/38/384353c7d320c8c409fd75fd9200037d.png",
+            "images": [
+                "https://www.mgfx.co.za/wp-content/uploads/2019/09/Autodesk-Desktop-App-1.Screenshot.jpg",
+                "https://i0.wp.com/blogs.autodesk.com/autocad/wp-content/uploads/sites/35/2020/04/DesktopApp-1_zfu9dz.png?resize=800%2C388&ssl=1",
+                "https://knowledge.autodesk.com/akn-aknsite-ckeditor-image-uploads/c3f89b07-9104-4b90-81a0-99df550dd393.PNG"
+            ]
         },
         "eagle": {
-            "icon": "",
+            "icon": "https://www.logolynx.com/images/logolynx/38/384353c7d320c8c409fd75fd9200037d.png",
             "images": []
         },
         "sketchbook": {
@@ -5455,7 +5477,7 @@
             "images": []
         },
         "classic": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Geogebra.svg/240px-Geogebra.svg.png",
             "images": []
         },
         "classic-5": {
@@ -5793,7 +5815,7 @@
             "images": []
         },
         "drive": {
-            "icon": "",
+            "icon": "https://i.imgur.com/LowtJVt.png",
             "images": []
         },
         "earthpro": {
@@ -9498,8 +9520,11 @@
             "images": []
         },
         "firefox": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/800px-Firefox_logo%2C_2019.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png",
+                "https://i.postimg.cc/zBRhkhmQ/Firefox-96-screenshot.png"
+            ]
         },
         "firefox-beta": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Firefox_beta_logo.png",
