@@ -246,24 +246,15 @@ class DiscoverSoftwareSection(QWidget):
         ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), interactive=True))
 
         
-        tooltips = {
-            self.upgradeSelected: _("Install package"),
-            inf: _("Show package info"),
-            ins2: _("Run the installer with administrator privileges"),
-            ins3: _("Skip the hash check"),
-            ins4: _("Interactive installation"),
-        }
-
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
-            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
         self.toolbar.addSeparator()
         
-        self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Install selected"), self.toolbar)
-        self.upgradeSelectedAction.triggered.connect(lambda: self.installSelected())
-        self.toolbar.addAction(self.upgradeSelectedAction)
+        self.installSelectedAction = QAction(QIcon(getMedia("list")), _("Install selected"), self.toolbar)
+        self.installSelectedAction.triggered.connect(lambda: self.installSelected())
+        self.toolbar.addAction(self.installSelectedAction)
         
         self.toolbar.addSeparator()
         
@@ -294,6 +285,24 @@ class DiscoverSoftwareSection(QWidget):
         self.toolbar.addAction(self.exportAction)
 
 
+        tooltips = {
+            self.upgradeSelected: _("Install package"),
+            inf: _("Show package info"),
+            ins2: _("Run the installer with administrator privileges"),
+            ins3: _("Skip the hash check"),
+            ins4: _("Interactive installation"),
+            self.installSelectedAction: _("Install selected"),
+            self.selectNoneAction: _("Clear selection"),
+            self.importAction: _("Import packages from a file"),
+            self.exportAction: _("Export selected packages to a file")
+        }
+
+            
+        for action in tooltips.keys():
+            self.toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
+            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
+            
+            
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
 
@@ -997,26 +1006,14 @@ class UpdateSoftwareSection(QWidget):
         ins4.setIcon(QIcon(getMedia("interactive")))
         ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
 
-        
-        tooltips = {
-            self.upgradeSelected: _("Update package"),
-            inf: _("Show package info"),
-            ins2: _("Update with administrator privileges"),
-            ins3: _("Skip the hash check"),
-            ins4: _("Interactive update"),
-        }
-
         for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
-            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
-
-
+            
         self.toolbar.addSeparator()
 
-        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _("Update all"), self.toolbar)
-        self.upgradeAllAction.triggered.connect(lambda: self.updateAll())
-        #self.toolbar.addAction(self.upgradeAllAction)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _(""), self.toolbar)
+        self.upgradeAllAction.triggered.connect(lambda: self.updateAll()) # Required for the systray context menu
         self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Update selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
         self.toolbar.addAction(self.upgradeSelectedAction)
@@ -1031,17 +1028,17 @@ class UpdateSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
-        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Select none"))
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Clear selection"))
         self.toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
 
         self.toolbar.addSeparator()
 
-        self.selectAllAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist packages"), self.toolbar)
-        self.selectAllAction.triggered.connect(lambda: blacklistSelectedPackages())
-        self.toolbar.addAction(self.selectAllAction)
-        self.selectAllAction = QAction(QIcon(getMedia("undelete")), _("Reset blacklist"), self.toolbar)
-        self.selectAllAction.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", ""), self.reload()))
-        self.toolbar.addAction(self.selectAllAction)
+        self.blacklistAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist packages"), self.toolbar)
+        self.blacklistAction.triggered.connect(lambda: blacklistSelectedPackages())
+        self.toolbar.addAction(self.blacklistAction)
+        self.resetBlackList = QAction(QIcon(getMedia("undelete")), _("Reset blacklist"), self.toolbar)
+        self.resetBlackList.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", ""), self.reload()))
+        self.toolbar.addAction(self.resetBlackList)
 
         self.showUnknownSection = QCheckBox(_("Show unknown versions"))
         self.showUnknownSection.setFixedHeight(30)
@@ -1061,6 +1058,23 @@ class UpdateSoftwareSection(QWidget):
             self.updatePackageNumber()
         self.updatelist = updatelist
 
+        tooltips = {
+            self.upgradeSelected: _("Update package"),
+            inf: _("Show package info"),
+            ins2: _("Update with administrator privileges"),
+            ins3: _("Skip the hash check"),
+            ins4: _("Interactive update"),
+            self.selectAllAction: _("Select all"),
+            self.selectNoneAction: _("Clear selection"),
+            self.upgradeSelectedAction: _("Update selected"),
+            self.resetBlackList: _("Reset blacklist"),
+            self.blacklistAction: _("Blacklist packages")
+        }
+            
+        for action in tooltips.keys():
+            self.toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
+            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
+            
         w = QWidget()
         w.setMinimumWidth(1)
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -1720,20 +1734,10 @@ class UninstallSoftwareSection(QWidget):
         ins5 = QAction("", self.toolbar)# ("Interactive uninstall")
         ins5.setIcon(QIcon(getMedia("interactive")))
         ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
-        
-        
-        tooltips = {
-            self.upgradeSelected: _("Uninstall package"),
-            inf: _("Show package info"),
-            ins2: _("Uninstall with administrator privileges"),
-            ins5: _("Interactive uninstall"),
-        }
 
         for action in [self.upgradeSelected, inf, ins2, ins5]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
-            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
-
 
         self.toolbar.addSeparator()
 
@@ -1761,14 +1765,14 @@ class UninstallSoftwareSection(QWidget):
         self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
         self.toolbar.addAction(self.selectNoneAction)
         self.toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
-        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Select none"))
+        self.toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Clear selection"))
         self.toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
 
         self.toolbar.addSeparator()
 
-        self.exportAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), self.toolbar)
-        self.exportAction.triggered.connect(lambda: self.exportSelection())
-        self.toolbar.addAction(self.exportAction)
+        self.exportSelectedAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), self.toolbar)
+        self.exportSelectedAction.triggered.connect(lambda: self.exportSelection())
+        self.toolbar.addAction(self.exportSelectedAction)
 
         self.exportAction = QAction(QIcon(getMedia("export")), _("Export all"), self.toolbar)
         self.exportAction.triggered.connect(lambda: self.exportSelection(all=True))
@@ -1779,8 +1783,21 @@ class UninstallSoftwareSection(QWidget):
         self.toolbar.addWidget(w)
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
+         
+        tooltips = {
+            self.upgradeSelected: _("Uninstall package"),
+            inf: _("Show package info"),
+            ins2: _("Uninstall with administrator privileges"),
+            ins5: _("Interactive uninstall"),
+            self.upgradeSelectedAction: _("Uninstall selected packages"),
+            self.selectNoneAction: _("Clear selection"),
+            self.selectAllAction: _("Select all"),
+            self.exportSelectedAction: _("Export selected packages to a file")
+        }
 
-
+        for action in tooltips.keys():
+            self.toolbar.widgetForAction(action).setToolTip(tooltips[action])
+            self.toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
 
         self.countLabel = QLabel(_("Searching for installed packages..."))
         self.packageList.label.setText(self.countLabel.text())

@@ -33,6 +33,8 @@ class TreeWidget(QTreeWidget):
         self.label.setFixedHeight(50)
         self.goTopButton = QPushButton(self)
         self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+        self.goTopButton.setToolTip(_("Return to top"))
+        self.goTopButton.setAccessibleDescription(_("Return to top"))
         self.goTopButton.setFixedSize(24, 32)
         self.connectCustomScrollbar(self.verticalScrollBar())
         self.goTopButton.hide()
