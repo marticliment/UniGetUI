@@ -1084,6 +1084,8 @@ class PackageInfoPopupWindow(QWidget):
             iconId = id.lower()
             if store.lower() == "winget":
                 iconId = ".".join(iconId.split(".")[1:])
+            elif store.lower() == "chocolatey":
+                iconId = iconId.replace(".install", "").replace(".portable", "")
             iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
             iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconpath):
@@ -1118,6 +1120,8 @@ class PackageInfoPopupWindow(QWidget):
             iconId = id.lower()
             if store.lower() == "winget":
                 iconId = ".".join(iconId.split(".")[1:])
+            elif store.lower() == "chocolatey":
+                iconId = iconId.replace(".install", "").replace(".portable", "")
             iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
             count = 0
             for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
