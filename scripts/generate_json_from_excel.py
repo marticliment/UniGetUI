@@ -6,7 +6,7 @@ os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 os.chdir("WebBasedData")
 
 try:
-    os.remove("screenshot-database.json")
+    os.remove("screenshot-database-v2.json")
 except FileNotFoundError:
     pass
 try:
@@ -28,62 +28,52 @@ worksheet = workbook.sheet_by_index(0)
 
 jsoncontent = {
     "package_count": {
-        "winget": 0,
-        "scoop": 0,
         "total": 0,
         "done": 0
     },
-    "winget": {},
-    "scoop": {}
+    "icons_and_screenshots": {},
 }
 
-scoopCount = 0
-wingetCount = 0
+totalCount = 0
 doneCount = 0
 arrivedAtTheEnd = False
 i = 2
 while not arrivedAtTheEnd:
     try:
-        data = [worksheet.cell_value(i, 0).lower(), worksheet.cell_value(i, 1), worksheet.cell_value(i, 2), []]
-        j = 3
+        data = [worksheet.cell_value(i, 0), worksheet.cell_value(i, 1), []]
+        j = 2
         while worksheet.cell_value(i, j) != "" and worksheet.cell_value(i, j) != None:
-            data[3].append(worksheet.cell_value(i, j))
+            data[2].append(worksheet.cell_value(i, j))
             j += 1
-            if j >23:
+            if j >22:
                 break
         assert (type(data) == list)
-        assert (len(data) == 4)
+        assert (len(data) == 3)
+        assert (type(data[0]) == str)
         assert (type(data[1]) == str)
-        assert (type(data[1]) == str)
-        assert (type(data[2]) == str)
-        assert (type(data[3]) == list)
-        if data[2] != "":
+        assert (type(data[2]) == list)
+        if data[1] != "":
             doneCount += 1
-        if data[0] == "winget":
-            wingetCount += 1
-            jsoncontent["winget"][data[1]] = {
-                "icon": data[2],
-                "images": data[3]
+        
+        if not data[0] in jsoncontent["icons_and_screenshots"].keys():
+            jsoncontent["icons_and_screenshots"][data[0]] = {
+                "icon": data[1],
+                "images": data[2]
             }
-        elif data[0] == "scoop":
-            scoopCount += 1
-            jsoncontent["scoop"][data[1]] = {
-                "icon": data[2],
-                "images": data[3]
+        else:
+            jsoncontent["icons_and_screenshots"][data[0]] = {
+                "icon": data[1] if jsoncontent["icons_and_screenshots"][data[0]]["icon"] == "" else jsoncontent["icons_and_screenshots"][data[0]]["icon"],
+                "images": data[2] if jsoncontent["icons_and_screenshots"][data[0]]["images"] == [] else jsoncontent["icons_and_screenshots"][data[0]]["images"]
             }
-
+        totalCount += 1
         i += 1
-        if data[0] == "" or data[0] == None:
-            arrivedAtTheEnd = True
-    except IndexError:
+    except IndexError as e:
         arrivedAtTheEnd = True
 
-jsoncontent["package_count"]["winget"] = wingetCount
-jsoncontent["package_count"]["scoop"] = scoopCount
-jsoncontent["package_count"]["total"] = scoopCount+wingetCount
+jsoncontent["package_count"]["total"] = totalCount
 jsoncontent["package_count"]["done"] = doneCount
 
-with open("screenshot-database.json", "w") as outfile:
+with open("screenshot-database-v2.json", "w") as outfile:
     json.dump(jsoncontent, outfile, indent=4)
  
 

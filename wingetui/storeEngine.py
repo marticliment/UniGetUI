@@ -1081,12 +1081,16 @@ class PackageInfoPopupWindow(QWidget):
         try:
             iconprov = "winget" if not "scoop" in store.lower() else "scoop"
             iconprov = iconprov if not "chocolatey" in store.lower() else "chocolatey"
-            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconprov}.{id}.icon.png")
+            iconId = id.lower()
+            if store.lower() == "winget":
+                iconId = ".".join(iconId.split(".")[1:])
+            iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
+            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconpath):
                 if iconprov == "chocolatey":
                     iconurl = f"https://community.chocolatey.org/content/packageimages/{id}.{version}.png"
                 else:
-                    iconurl = globals.packageMeta[iconprov][id]["icon"]
+                    iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
                 print("🔵 Found icon: ", iconurl)
                 icondata = urlopen(iconurl).read()
                 with open(iconpath, "wb") as f:
@@ -1111,9 +1115,12 @@ class PackageInfoPopupWindow(QWidget):
         try:
             self.validImageCount = 0
             self.canContinueWithImageLoading = 0
-            imageprov = "winget" if not "scoop" in store.lower() else "scoop"
+            iconId = id.lower()
+            if store.lower() == "winget":
+                iconId = ".".join(iconId.split(".")[1:])
+            iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
             count = 0
-            for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+            for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
                     p = QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)
                     if not p.isNull():
@@ -1124,11 +1131,11 @@ class PackageInfoPopupWindow(QWidget):
                     report(e)
             for i in range(count+1, 20):
                 self.callInMain.emit(self.imagesCarrousel[i].hide)
-            for i in range(len(globals.packageMeta[imageprov][id]["images"])):
+            for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
-                    imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{imageprov}.{id}.screenshot.{i}.png")
+                    imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.screenshot.{i}.png")
                     if not os.path.exists(imagepath):
-                        iconurl = globals.packageMeta[imageprov][id]["images"][i]
+                        iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["images"][i]
                         print("🔵 Found icon: ", iconurl)
                         icondata = urlopen(iconurl).read()
                         with open(imagepath, "wb") as f:

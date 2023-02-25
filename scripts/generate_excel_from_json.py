@@ -134,20 +134,19 @@ idformat.set_bottom(2)
 idformat.set_text_wrap()
 idformat.set_bg_color("#D6BDF9")
 idformat.set_locked(True)
-worksheet.write('A1', 'Package Manager', boldformat)
-worksheet.write('B1', 'Package id', boldformat)
-worksheet.write('C1', 'Icon URL (PNG Only)', boldformat)
-worksheet.write('D1', 'Screenshot 1 URL (PNG ONLY)', boldformat)
-worksheet.write('E1', 'Screenshot 2 URL (PNG ONLY)', boldformat)
-worksheet.write('F1', 'Screenshot 3 URL (PNG ONLY)', boldformat)
-worksheet.write('G1', 'Screenshot 4 URL (PNG ONLY)', boldformat)
-worksheet.write('H1', 'Screenshot 5 URL (PNG ONLY)', boldformat)
-worksheet.write('I1', 'Screenshot 6 URL (PNG ONLY)', boldformat)
-worksheet.write('J1', 'Screenshot 7 URL (PNG ONLY)', boldformat)
-worksheet.write('K1', 'Screenshot 8 URL (PNG ONLY)', boldformat)
-worksheet.write('L1', 'Screenshot 9 URL (PNG ONLY)', boldformat)
-worksheet.write('M1', 'Even more screenshots, one URL per cell', boldformat)
-worksheet.set_column_pixels(0, 1, 120)
+worksheet.write('A1', 'Package id', boldformat)
+worksheet.write('B1', 'Icon URL (PNG Only)', boldformat)
+worksheet.write('C1', 'Screenshot 1 URL (PNG ONLY)', boldformat)
+worksheet.write('D1', 'Screenshot 2 URL (PNG ONLY)', boldformat)
+worksheet.write('E1', 'Screenshot 3 URL (PNG ONLY)', boldformat)
+worksheet.write('F1', 'Screenshot 4 URL (PNG ONLY)', boldformat)
+worksheet.write('G1', 'Screenshot 5 URL (PNG ONLY)', boldformat)
+worksheet.write('H1', 'Screenshot 6 URL (PNG ONLY)', boldformat)
+worksheet.write('I1', 'Screenshot 7 URL (PNG ONLY)', boldformat)
+worksheet.write('J1', 'Screenshot 8 URL (PNG ONLY)', boldformat)
+worksheet.write('K1', 'Screenshot 9 URL (PNG ONLY)', boldformat)
+worksheet.write('L1', 'Even more screenshots, one URL per cell', boldformat)
+worksheet.set_column_pixels(0, 1, 300)
 worksheet.set_column_pixels(1, 2, 300)
 worksheet.set_column_pixels(2, 3, 250)
 worksheet.set_column_pixels(3, 23, 260)
@@ -159,14 +158,18 @@ def getRow(n):
     elif n < 26**26:
         return alphabet[(n//26)-1]+alphabet[n%26]
 
+done = []
+
 counter = 3
 for id in getwingetPackages():
-    worksheet.write("A"+str(counter), "Winget", idformat)
-    worksheet.write("B"+str(counter), id, idformat)
+    iconId = ".".join(id.split(".")[1:])
+    iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-").lower()
+    worksheet.write("A"+str(counter), iconId, idformat)
     try:
         item = contents["winget"][id]
-        worksheet.write("C"+str(counter), str(item["icon"]), iconformat)
-        for i in range(3, len(item["images"])+3):
+        worksheet.write("B"+str(counter), str(item["icon"]), iconformat)
+        done.append(iconId)
+        for i in range(2, len(item["images"])+2):
             worksheet.write(getRow(i)+str(counter), item["images"][i-3], screenshotformat)
     except KeyError:
         pass
@@ -174,16 +177,17 @@ for id in getwingetPackages():
 
 
 for id in getScoopPackages():
-    worksheet.write("A"+str(counter), "Scoop", idformat)
-    worksheet.write("B"+str(counter), id, idformat)
-    try:
-        item = contents["winget"][id]
-        worksheet.write("C"+str(counter), str(item["icon"]), iconformat)
-        for i in range(3, len(item["images"])+3):
-            worksheet.write(getRow(i)+str(counter), item["images"][i-3], screenshotformat)
-    except KeyError:
-        pass
-    counter += 1
+    iconId = id.replace(" ", "-").replace("_", "-").replace(".", "-").lower()
+    if not iconId in done:
+        worksheet.write("A"+str(counter), iconId, idformat)
+        try:
+            item = contents["winget"][id]
+            worksheet.write("B"+str(counter), str(item["icon"]), iconformat)
+            for i in range(2, len(item["images"])+2):
+                worksheet.write(getRow(i)+str(counter), item["images"][i-3], screenshotformat)
+        except KeyError:
+            pass
+        counter += 1
 
 workbook.close()
 
