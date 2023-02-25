@@ -2,7 +2,7 @@
 
 untranslatedPercentage = {
   "bg": "92%",
-  "bn": "24%",
+  "bn": "26%",
   "da": "49%",
   "de": "92%",
   "es": "94%",
@@ -36,6 +36,10 @@ languageCredits = {
     {
       "name": "fluentmoheshwar",
       "link": "https://github.com/fluentmoheshwar"
+    },
+    {
+      "name": "Mushfiq Iqbal Rayon",
+      "link": ""
     },
     {
       "name": "Nilavra Bhattacharya",
