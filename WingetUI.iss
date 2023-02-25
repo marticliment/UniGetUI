@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.6.1-beta"
+#define MyAppVersion "1.6.1"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=1.6.0.9
+VersionInfoVersion=1.6.1.0
 DefaultDirName="{autopf}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
