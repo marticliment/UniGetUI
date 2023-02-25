@@ -7,7 +7,6 @@ untranslatedPercentage = {
   "cs": "95%",
   "da": "47%",
   "de": "88%",
-  "es": "90%",
   "fr": "95%",
   "hi": "76%",
   "hr": "0%",
@@ -102,6 +101,10 @@ languageCredits = {
     {
       "name": "JMoreno97",
       "link": "https://github.com/JMoreno97"
+    },
+    {
+      "name": "marticliment",
+      "link": "https://github.com/marticliment"
     },
     {
       "name": "rubnium",
