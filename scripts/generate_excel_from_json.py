@@ -8,7 +8,7 @@ os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 
 os.chdir("WebBasedData")
 
-contents = json.load(open("screenshot-database.json"))
+contents = json.load(open("screenshot-database-v2.json"))
 
 def getwingetPackages():
     packageList = []
@@ -166,11 +166,11 @@ for id in getwingetPackages():
     iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-").lower()
     worksheet.write("A"+str(counter), iconId, idformat)
     try:
-        item = contents["winget"][id]
+        item = contents["icons_and_screenshots"][iconId]
         worksheet.write("B"+str(counter), str(item["icon"]), iconformat)
         done.append(iconId)
         for i in range(2, len(item["images"])+2):
-            worksheet.write(getRow(i)+str(counter), item["images"][i-3], screenshotformat)
+            worksheet.write(getRow(i)+str(counter), item["images"][i-2], screenshotformat)
     except KeyError:
         pass
     counter += 1
@@ -181,10 +181,10 @@ for id in getScoopPackages():
     if not iconId in done:
         worksheet.write("A"+str(counter), iconId, idformat)
         try:
-            item = contents["winget"][id]
+            item = contents["icons_and_screenshots"][iconId]
             worksheet.write("B"+str(counter), str(item["icon"]), iconformat)
             for i in range(2, len(item["images"])+2):
-                worksheet.write(getRow(i)+str(counter), item["images"][i-3], screenshotformat)
+                worksheet.write(getRow(i)+str(counter), item["images"][i-2], screenshotformat)
         except KeyError:
             pass
         counter += 1
