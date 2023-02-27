@@ -32,7 +32,9 @@ class DiscoverSoftwareSection(QWidget):
     packages: dict[str:dict] = {}
     packageItems: list[TreeWidgetItemWithQAction] = []
     showableItems: list[TreeWidgetItemWithQAction] = []
-    
+    addedItems: list[TreeWidgetItemWithQAction] = []
+    showedItems: list[TreeWidgetItemWithQAction] = []
+        
     wingetLoaded = False
     scoopLoaded = False
     chocoLoaded = False
@@ -584,13 +586,10 @@ class DiscoverSoftwareSection(QWidget):
             
     def addItemsToTreeWidget(self, reset: bool = False):
         if reset:
-            for item in self.packageItems:
-                if self.packageList.indexOfTopLevelItem(item) >= 0:
-                    if not item in self.showableItems:
-                        self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
-                    else:
-                        item.setHidden(True)
+            for item in self.showedItems:
+                item.setHidden(True)
             nextItem = 0
+            self.showedItems = []
         else:
             nextItem = self.packageList.topLevelItemCount()
         addedItems = 0
@@ -598,14 +597,14 @@ class DiscoverSoftwareSection(QWidget):
             if nextItem >= len(self.showableItems):
                 break
             itemToAdd = self.showableItems[nextItem]
-            itemToAdd.setHidden(False)
-            self.packageList.addTopLevelItem(itemToAdd)
+            if itemToAdd not in self.addedItems:
+                self.packageList.addTopLevelItem(itemToAdd)
+                self.addedItems.append(itemToAdd)
+            else:
+                itemToAdd.setHidden(False)
+            self.showedItems.append(itemToAdd)
             addedItems += 1
             nextItem += 1
-        currentItem = self.packageList.currentItem()
-        if currentItem != None:
-            if self.containsQuery(currentItem, self.query.text()):
-                self.packageList.addTopLevelItem(currentItem)
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")

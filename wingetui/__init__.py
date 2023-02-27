@@ -1,3 +1,8 @@
+import sys
+if "--debugcrash" in sys.argv:
+    import faulthandler
+    faulthandler.enable()
+
 try:
     _globals = globals
     import sys, os, win32mica, glob, subprocess, socket, hashlib, time
