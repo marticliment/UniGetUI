@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 6431,
-        "done": 475
+        "done": 561
     },
     "icons_and_screenshots": {
         "115": {
@@ -791,8 +791,10 @@
             "images": []
         },
         "dvdstyler": {
-            "icon": "",
-            "images": []
+            "icon": "https://linuxmasterclub.com/wp-content/uploads/2020/12/DVDStyler-logo.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/b/b4/DVDStyler_Screenshot_1.png"
+            ]
         },
         "spek": {
             "icon": "",
@@ -1665,7 +1667,7 @@
             "images": []
         },
         "wordpress": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/WordPress_blue_logo.svg/1200px-WordPress_blue_logo.svg.png",
             "images": []
         },
         "metronomewallet": {
@@ -2174,7 +2176,7 @@
             "images": []
         },
         "betterbird": {
-            "icon": "",
+            "icon": "https://www.betterbird.eu/betterbird.svg",
             "images": []
         },
         "wsldiskshrinker": {
@@ -2507,11 +2509,11 @@
             "images": []
         },
         "bitdefender": {
-            "icon": "",
+            "icon": "https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/v1502904386/zlf0sbaoqxuefbyhvrkl.png",
             "images": []
         },
         "drupal": {
-            "icon": "",
+            "icon": "https://cdn.worldvectorlogo.com/logos/drupal-3.svg",
             "images": []
         },
         "joomla": {
@@ -2555,8 +2557,11 @@
             "images": []
         },
         "bleachbit": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Bleachbit_logo.svg/1200px-Bleachbit_logo.svg.png",
+            "images": [
+                "https://cdn.neowin.com/news/images/uploaded/2020/02/1580983501_bleachbit_2020.jpg",
+                "https://software.opensuse.org/package/thumbnail/bleachbit.png"
+            ]
         },
         "blender": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/293px-Blender_logo_no_text.svg.png",
@@ -2746,7 +2751,9 @@
         },
         "pci-z": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://betanews.com/wp-content/uploads/2014/01/PCI-Z.jpg"
+            ]
         },
         "collision": {
             "icon": "",
@@ -2905,43 +2912,43 @@
             "images": []
         },
         "cpu-z": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-aorus": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-asr": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-cm": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-gbt": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-msi": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-phantom": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-rog": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "cpu-z-taichi": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
             "images": []
         },
         "hwmonitor": {
-            "icon": "",
+            "icon": "https://www.cpuid.com/medias/images/softwares/hwmonitor.svg",
             "images": []
         },
         "powermax": {
@@ -2981,7 +2988,7 @@
             "images": []
         },
         "cdburnerxp": {
-            "icon": "",
+            "icon": "https://www.gezginler.net/indir/resim-grafik/cdburnerxp-1351609602.png",
             "images": []
         },
         "juju": {
@@ -2993,19 +3000,19 @@
             "images": []
         },
         "ubuntu-1604": {
-            "icon": "",
+            "icon": "https://www.clipartmax.com/png/small/180-1805592_ubuntu-logo-clipart-ubuntu-transparent.png",
             "images": []
         },
         "ubuntu-1804": {
-            "icon": "",
+            "icon": "https://www.clipartmax.com/png/small/180-1805592_ubuntu-logo-clipart-ubuntu-transparent.png",
             "images": []
         },
         "ubuntu-2004": {
-            "icon": "",
+            "icon": "https://www.clipartmax.com/png/small/180-1805592_ubuntu-logo-clipart-ubuntu-transparent.png",
             "images": []
         },
         "ubuntu-2204": {
-            "icon": "",
+            "icon": "https://www.clipartmax.com/png/small/180-1805592_ubuntu-logo-clipart-ubuntu-transparent.png",
             "images": []
         },
         "canva": {
@@ -3246,7 +3253,7 @@
             "images": []
         },
         "clamav": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/6/60/New_ClamAV_Logo.svg/1200px-New_ClamAV_Logo.svg.png",
             "images": []
         },
         "jabber": {
@@ -3278,7 +3285,7 @@
             "images": []
         },
         "clementine": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Clementine_logo.svg/1200px-Clementine_logo.svg.png",
             "images": []
         },
         "clickup": {
@@ -3366,7 +3373,7 @@
             "images": []
         },
         "teracopy": {
-            "icon": "",
+            "icon": "https://download.cnet.com/a/img/resize/2a859d39093fb0d05024fa6e99b20f56fcc13d39/catalog/2017/11/29/2df1a898-d42c-4d4c-8cf2-db61f65270a5/imgingest-8533529314180200053.png?auto=webp&fit=crop&width=64",
             "images": []
         },
         "codeblocks": {
@@ -3587,27 +3594,27 @@
             "images": []
         },
         "newsleecher": {
-            "icon": "",
+            "icon": "https://media.itpro.co.uk/image/upload/s--X-WVjvBW--/f_auto,t_content-image-full-desktop@1/v1656493135/ITPP%20to%20ITP%20migration/Usenet/Newsleecher_logo.jpg",
             "images": []
         },
         "crystaldiskinfo": {
-            "icon": "",
+            "icon": "https://img.utdstc.com/icon/217/fdb/217fdbc48ae682e8519f8e95ba735c4aad4ce2345a7267669b9f792004f0a168:200",
             "images": []
         },
         "crystaldiskinfo-ku\u2026": {
-            "icon": "",
+            "icon": "https://img.utdstc.com/icon/217/fdb/217fdbc48ae682e8519f8e95ba735c4aad4ce2345a7267669b9f792004f0a168:200",
             "images": []
         },
         "crystaldiskinfo-sh\u2026": {
-            "icon": "",
+            "icon": "https://img.utdstc.com/icon/217/fdb/217fdbc48ae682e8519f8e95ba735c4aad4ce2345a7267669b9f792004f0a168:200",
             "images": []
         },
         "crystaldiskmark": {
-            "icon": "",
+            "icon": "https://cdn.neowin.com/news/images/uploaded/2017/08/1501622590_crystaldiskmark_story.jpg",
             "images": []
         },
         "crystaldiskmark-sh\u2026": {
-            "icon": "",
+            "icon": "https://cdn.neowin.com/news/images/uploaded/2017/08/1501622590_crystaldiskmark_story.jpg",
             "images": []
         },
         "anytoiso": {
@@ -3818,7 +3825,7 @@
             "images": []
         },
         "dashlane": {
-            "icon": "",
+            "icon": "https://d38muu3h4xeqr1.cloudfront.net/website/static/DG-8114/images/icon_og_400x400.png",
             "images": []
         },
         "hammerpdf": {
@@ -3926,7 +3933,7 @@
             "images": []
         },
         "displaymanager": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Deluge-Logo.svg/1200px-Deluge-Logo.svg.png",
             "images": []
         },
         "deluge": {
@@ -3998,11 +4005,11 @@
             "images": []
         },
         "dopamine-2": {
-            "icon": "",
+            "icon": "https://cdn.neowin.com/news/images/uploaded/2016/12/1483030869_dopamine_story.jpg",
             "images": []
         },
         "dopamine-3": {
-            "icon": "",
+            "icon": "https://cdn.neowin.com/news/images/uploaded/2016/12/1483030869_dopamine_story.jpg",
             "images": []
         },
         "knowte": {
@@ -4098,8 +4105,10 @@
             "images": []
         },
         "ditto": {
-            "icon": "",
-            "images": []
+            "icon": "https://store-images.s-microsoft.com/image/apps.21473.13510798887950305.d9b285e1-1829-480b-a018-980604fa17cc.df6c59c8-9b0e-4195-a06e-84b9bc76ccc0",
+            "images": [
+                "https://store-images.s-microsoft.com/image/apps.56934.13510798887950305.b0cc4771-9cd2-41d2-b700-51139aed9a69.5c34cd8a-7747-4299-92b6-bc9204e92bf7"
+            ]
         },
         "dixa": {
             "icon": "",
@@ -4166,7 +4175,7 @@
             "images": []
         },
         "keepass": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/KeePass_icon.svg/2048px-KeePass_icon.svg.png",
             "images": []
         },
         "findandrunrobot": {
@@ -4928,7 +4937,7 @@
             "images": []
         },
         "windows95": {
-            "icon": "",
+            "icon": "https://betanews.com/wp-content/uploads/media/52/5251.png",
             "images": []
         },
         "focusnote": {
@@ -4978,7 +4987,7 @@
             "images": []
         },
         "eartrumpet": {
-            "icon": "",
+            "icon": "https://d4.alternativeto.net/tH4hl8zvvnkASZ8UIJYALlE3s-1-A6cPBiHta10oRgM/rs:fill:280:280:0/g:ce:0:0/YWJzOi8vZGlzdC9pY29ucy9lYXJ0cnVtcGV0XzE5NjAxMy5wbmc.png",
             "images": []
         },
         "filevoyager": {
@@ -5030,11 +5039,11 @@
             "images": []
         },
         "mailwasher-free": {
-            "icon": "",
+            "icon": "https://davescomputertips.com/wp-content/uploads/2020/08/MailWasher-Logo.png",
             "images": []
         },
         "mailwasher-pro": {
-            "icon": "",
+            "icon": "https://davescomputertips.com/wp-content/uploads/2020/08/MailWasher-Logo.png",
             "images": []
         },
         "polypane": {
@@ -5046,7 +5055,7 @@
             "images": []
         },
         "flameshot": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Flameshot_logo.svg/1024px-Flameshot_logo.svg.png",
             "images": []
         },
         "flawlesswidescr\u2026": {
@@ -5130,7 +5139,7 @@
             "images": []
         },
         "picaso": {
-            "icon": "",
+            "icon": "https://1000logos.net/wp-content/uploads/2020/08/Picasa-Logo.jpg",
             "images": []
         },
         "biliup-app": {
@@ -5168,7 +5177,7 @@
             "images": []
         },
         "foxitreader": {
-            "icon": "",
+            "icon": "https://img.utdstc.com/icon/aab/566/aab566ff80c739e8a4d06f1fee8f87fb93c845c92d05751d2e372bde3eb26480:200",
             "images": []
         },
         "phantompdf": {
@@ -5192,11 +5201,11 @@
             "images": []
         },
         "freecad": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/FreeCAD-logo.svg/1200px-FreeCAD-logo.svg.png",
             "images": []
         },
         "freeciv": {
-            "icon": "",
+            "icon": "https://play-lh.googleusercontent.com/pk9708v9vyijJWO__sDAfBkqH-m0jbVo6doXWTQsCoKE9IGb15dT0BgDHyRNwc2oKlI=w480-h960",
             "images": []
         },
         "freefem": {
@@ -5289,7 +5298,7 @@
             ]
         },
         "gimp": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/The_GIMP_icon_-_gnome.svg/1024px-The_GIMP_icon_-_gnome.svg.png",
             "images": []
         },
         "gimp-nightly": {
@@ -5313,7 +5322,7 @@
             "images": []
         },
         "midnightcommander": {
-            "icon": "",
+            "icon": "https://developer.asustor.com/uploadIcons/0020_999_1596445716_Midnight-Commander_256.png",
             "images": []
         },
         "nano": {
@@ -5341,7 +5350,7 @@
             "images": []
         },
         "gomplayer": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/uk/a/a0/GOM_Player_Logo.png",
             "images": []
         },
         "saoutils-2": {
@@ -5353,7 +5362,7 @@
             "images": []
         },
         "directoryopus": {
-            "icon": "",
+            "icon": "https://s3-ap-southeast-2.amazonaws.com/images.imagescience.com.au/_201904_imager-transforms/s3images/Knowledge-Base/Miscellaneous/Directory-Opus/310128/Opus-Logo_8a39ff8a6b9c4355b296f93fc26068cc.png",
             "images": []
         },
         "gsmartcontrol": {
@@ -5445,7 +5454,7 @@
             "images": []
         },
         "threema": {
-            "icon": "",
+            "icon": "https://threema.ch/images/logo-big.png",
             "images": []
         },
         "geekuninstaller": {
@@ -5515,8 +5524,10 @@
             "images": []
         },
         "totalcommander": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.iconarchive.com/download/i50248/ncrow/mega-pack-1/Total-Commander.256.png",
+            "images": [
+                "https://www.ghisler.com/screenshots/en/02.html"
+            ]
         },
         "gsview": {
             "icon": "",
@@ -5539,7 +5550,7 @@
             "images": []
         },
         "peazip": {
-            "icon": "",
+            "icon": "https://www.iconarchive.com/download/i106134/papirus-team/papirus-apps/peazip.512.png",
             "images": []
         },
         "git": {
@@ -5611,11 +5622,14 @@
             "images": []
         },
         "glaryutilities": {
-            "icon": "",
-            "images": []
+            "icon": "https://play-lh.googleusercontent.com/7Z96kB9vZyjDxlPJNAvN5JYuEK0ZlEy7j9or6R1rEFVx5tIXgCA7R5tqrZ4wGn41-Q6e=w480-h960",
+            "images": [
+                "https://www.glarysoft.com/images/screenshots/glary-utilities/galry-utilities3.png",
+                "https://www.glarysoft.com/images/screenshots/glary-utilities/galry-utilities2.png"
+            ]
         },
         "glasswire": {
-            "icon": "",
+            "icon": "https://www.megaleechers.com/storage/GlassWire-Icon.png",
             "images": []
         },
         "glasswire-lite": {
@@ -11122,7 +11136,7 @@
             ]
         },
         "poweriso": {
-            "icon": "",
+            "icon": "https://www.gezginler.net/indir/resim-grafik/poweriso-1383913611.png",
             "images": []
         },
         "proxinject": {
@@ -11190,8 +11204,10 @@
             "images": []
         },
         "privateinter\u2026": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.droidviews.com/wp-content/uploads/2021/05/Private-Internet-Access.png",
+            "images": [
+                "https://i.pcmag.com/imagery/reviews/01gzf2i73u7uAk08rsioA8v-43.fit_lim.size_1050x.jpg"
+            ]
         },
         "b2bclient": {
             "icon": "",
@@ -11256,8 +11272,10 @@
             "images": []
         },
         "putty": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/PuTTY_Icon_upstream.svg/1200px-PuTTY_Icon_upstream.svg.png",
+            "images": [
+                "https://docs.digitalocean.com/screenshots/droplets/putty/connect-config.399589842237e1bd21e24efe4d8052b5a5a77440462e3ab2f51a4c5019b74f19.png"
+            ]
         },
         "puloversmacro\u2026": {
             "icon": "",
@@ -13106,11 +13124,11 @@
             "images": []
         },
         "startallback": {
-            "icon": "",
+            "icon": "https://www.megaleechers.com/storage/StartIsBack-Icon.png",
             "images": []
         },
         "startisback": {
-            "icon": "",
+            "icon": "https://www.megaleechers.com/storage/StartIsBack-Icon.png",
             "images": []
         },
         "firework": {
@@ -13166,7 +13184,7 @@
             "images": []
         },
         "stellarium": {
-            "icon": "",
+            "icon": "https://img.icons8.com/color/480/stellarium-logo.png",
             "images": []
         },
         "stepmania": {
@@ -13578,23 +13596,23 @@
             ]
         },
         "camtasia": {
-            "icon": "",
+            "icon": "https://cdn.neowin.com/news/images/uploaded/2017/09/1506235786_camtasia_studio_story.jpg",
             "images": []
         },
         "snagit-2020": {
-            "icon": "",
+            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
             "images": []
         },
         "snagit-2021": {
-            "icon": "",
+            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
             "images": []
         },
         "snagit-2022": {
-            "icon": "",
+            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
             "images": []
         },
         "snagit-2023": {
-            "icon": "",
+            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
             "images": []
         },
         "negativeencoder": {
@@ -13871,7 +13889,7 @@
             ]
         },
         "libreoffice-\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/LibreOffice_icon_3.3.1_48_px.svg/200px-LibreOffice_icon_3.3.1_48_px.svg.png",
             "images": []
         },
         "hamsket": {
@@ -14107,7 +14125,7 @@
             "images": []
         },
         "transmission": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Transmission_Icon.svg/1200px-Transmission_Icon.svg.png",
             "images": []
         },
         "tdagent": {
@@ -14119,7 +14137,7 @@
             "images": []
         },
         "tribler": {
-            "icon": "",
+            "icon": "https://www.techforpc.com/wp-content/uploads/2015/11/tribler-for-pc-windows-7810mac-free-download.png",
             "images": []
         },
         "systemmonitor": {
@@ -14289,12 +14307,16 @@
             "images": []
         },
         "ultradefrag": {
-            "icon": "",
-            "images": []
+            "icon": "https://static.techspot.com/images2/downloads/topdownload/2014/10/UltraDefrag.png",
+            "images": [
+                "https://www.intowindows.com/wp-content/uploads/2012/01/UltraDefrag-for-Windows-10-64-bit.png"
+            ]
         },
         "unchecky": {
-            "icon": "",
-            "images": []
+            "icon": "http://unchecky.com/assets/img/fb-unchecky-logo.png",
+            "images": [
+                "https://rammichael.com/wp-content/uploads/2014/01/unchecky_0_2.png"
+            ]
         },
         "unikey": {
             "icon": "",
@@ -14381,7 +14403,7 @@
             "images": []
         },
         "usbdlm": {
-            "icon": "",
+            "icon": "https://static.techspot.com/images2/downloads/topdownload/2016/05/pendrive.png",
             "images": []
         },
         "scanscan": {
@@ -14592,11 +14614,11 @@
             "images": []
         },
         "vivaldi": {
-            "icon": "",
+            "icon": "https://vivaldi.com/wp-content/uploads/cropped-viv_icon-500px.png",
             "images": []
         },
         "vivaldi-snapsh\u2026": {
-            "icon": "",
+            "icon": "https://vivaldi.com/wp-content/uploads/cropped-viv_icon-500px.png",
             "images": []
         },
         "vivi": {
@@ -14692,11 +14714,11 @@
             "images": []
         },
         "waterfox": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Waterfox_logo_2019.png",
             "images": []
         },
         "waterfox-classic": {
-            "icon": "",
+            "icon": "https://temosoft.com/wp-content/uploads/2018/09/waterfox-logo.png",
             "images": []
         },
         "powersession": {
@@ -14911,8 +14933,10 @@
             "images": []
         },
         "wireshark": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Wireshark_icon.svg/1200px-Wireshark_icon.svg.png",
+            "images": [
+                "https://www.wireshark.org/docs/wsug_html_chunked/images/ws-main.png"
+            ]
         },
         "mathtype7": {
             "icon": "",
@@ -15340,15 +15364,17 @@
             "images": []
         },
         "xnconvert": {
-            "icon": "",
+            "icon": "https://www.xnview.com/img/app-xnconvert-512.png",
             "images": []
         },
         "xnview-classic": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.xnview.com/img/app-xnview-512.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/e/ee/XnView_CAT1.png"
+            ]
         },
         "xnviewmp": {
-            "icon": "",
+            "icon": "https://www.xnview.com/img/app-xnviewmp-512.png",
             "images": [
                 "https://i.postimg.cc/wTF1L2yv/xnviewmp-win-01.jpg"
             ]
@@ -15641,7 +15667,7 @@
             ]
         },
         "doublecommander": {
-            "icon": "",
+            "icon": "https://w7.pngwing.com/pngs/493/1012/png-transparent-double-commander-file-manager-computer-icons-manager-miscellaneous-rectangle-orange.png",
             "images": []
         },
         "addcurrentpath": {
@@ -15967,7 +15993,7 @@
             "images": []
         },
         "mpc-hc": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/Media_Player_Classic_logo.png",
             "images": [
                 "https://user-images.githubusercontent.com/73800734/200967040-8c06e7be-4937-4e98-b5b6-cc9960d8d12c.png"
             ]
@@ -16029,7 +16055,7 @@
             "images": []
         },
         "dbeaver": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/DBeaver_logo.svg/2048px-DBeaver_logo.svg.png",
             "images": []
         },
         "flexasio": {
@@ -16117,8 +16143,10 @@
             "images": []
         },
         "paintdotnet": {
-            "icon": "",
-            "images": []
+            "icon": "https://s5.postimg.cc/v55fm921z/pdnlogorevisited2.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Paint.NET_3.35_screenshot.png/800px-Paint.NET_3.35_screenshot.png"
+            ]
         },
         "clipboard-manager-electr\u2026": {
             "icon": "",
