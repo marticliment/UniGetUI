@@ -24,6 +24,8 @@ rmdir /Q /S dist
 python -m PyInstaller "Win.spec"
 if %errorlevel% neq 0 goto:error
 
+timeout 2
+
 pushd dist\wingetuiBin\PySide6
 del opengl32sw.dll
 del Qt6Quick.dll
