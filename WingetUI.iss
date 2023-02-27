@@ -125,7 +125,7 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Filename: "{app}\remove-old.cmd"; Flags: runhidden
 ;Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 ;Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
-Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /passive /norestart"
+Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /q"
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall;
 
 [UninstallRun]
