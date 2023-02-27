@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "1.6.1"
+#define MyAppVersion "1.6.2"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=1.6.1.0
+VersionInfoVersion=1.6.2.0
 DefaultDirName="{autopf}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -38,6 +38,7 @@ WizardSmallImageFile=wingetui\resources\icon.bmp
 DisableWelcomePage=no
 UsePreviousTasks=yes
 ChangesEnvironment=yes
+RestartIfNeededByRun=no
 
 
 [Languages]
@@ -88,7 +89,7 @@ begin
      ewWaitUntilTerminated, ResultCode);
 end;
 
-procedure TripleKill(FileName1: String; FileName2: String, FileName3: String);
+procedure TripleKill(FileName1: String; FileName2: String; FileName3: String);
 var
   ResultCode: Integer;
 begin
@@ -128,7 +129,7 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Filename: "{app}\remove-old.cmd"; Flags: runhidden
 ;Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 ;Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
-Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /q"
+Filename: "{app}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /q"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall;
 
 [UninstallRun]
