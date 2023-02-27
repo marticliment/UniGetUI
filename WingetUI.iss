@@ -67,10 +67,11 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
+Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{autopf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe'); 
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe');
+Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 
 [Code]
 procedure InitializeWizard;
@@ -87,13 +88,15 @@ begin
      ewWaitUntilTerminated, ResultCode);
 end;
 
-procedure DoubleKill(FileName1: String; FileName2: String);
+procedure TripleKill(FileName1: String; FileName2: String, FileName3: String);
 var
   ResultCode: Integer;
 begin
     Exec('taskkill.exe', '/f /im ' + '"' + FileName1 + '"', '', SW_HIDE,
      ewWaitUntilTerminated, ResultCode);
     Exec('taskkill.exe', '/f /im ' + '"' + FileName2 + '"', '', SW_HIDE,
+     ewWaitUntilTerminated, ResultCode);     
+    Exec('taskkill.exe', '/f /im ' + '"' + FileName3 + '"', '', SW_HIDE,
      ewWaitUntilTerminated, ResultCode);
 end;
 
@@ -107,7 +110,7 @@ Name: "desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescr
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
 
 [Files]
-Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: DoubleKill('WingetUI.exe', 'winget.exe')
+Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
 Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
