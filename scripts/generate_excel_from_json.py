@@ -92,13 +92,37 @@ def getScoopPackages():
     print("🟢 Scoop search finished")
     return sorted(pkgs)
 
+def getChocolateyPackages() -> None:
+    pkgs = []
+    versions = {}
+    CHOCO_BLACKLISTED_PACKAGES = ["Did", "Features?", "Validation", "-", "being", "It"]
+    print("🔵 Starting choco search")
+    cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")
+    cachePath = os.path.dirname(cacheFile)
+    if not os.path.exists(cachePath):
+        os.makedirs(cachePath)
+    if os.path.exists(cacheFile):
+        with open(cacheFile, "r") as f:
+            content = f.read()
+            if content != "":
+                print("🟢 Found valid cache for chocolatey!")
+                for line in content.split("\n"):
+                    export = line.split(" ")
+                    if len(export) > 1 and not export[0] in CHOCO_BLACKLISTED_PACKAGES:
+                        pkgs.append(export[0])
+                        versions[export[0]] = export[1]
+    return pkgs, versions
 
-packages = getwingetPackages()
 
 try:
     os.remove("screenshot_database.xlsx")
 except FileNotFoundError:
     pass
+except PermissionError:
+    input("PermissionError while deleting the old exe file.")
+    import sys
+    sys.exit(1)
+    
 workbook = xlsxwriter.Workbook('screenshot_database.xlsx', {'strings_to_urls': False})
  
 worksheet = workbook.add_worksheet()
@@ -160,37 +184,86 @@ def getRow(n):
 
 done = []
 
+print("Generating Winget packages...")
+
+wingetCount = 0
+wingetTotal = 0
+
 counter = 3
 for id in getwingetPackages():
     iconId = ".".join(id.split(".")[1:])
     iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-").lower()
     worksheet.write("A"+str(counter), iconId, idformat)
+    wingetCount += 1
+    wingetTotal += 1
     try:
         item = contents["icons_and_screenshots"][iconId]
         worksheet.write("B"+str(counter), str(item["icon"]), iconformat)
-        done.append(iconId)
+        if str(item["icon"]).strip() != "":
+            done.append(iconId)
         for i in range(2, len(item["images"])+2):
             worksheet.write(getRow(i)+str(counter), item["images"][i-2], screenshotformat)
     except KeyError:
         pass
     counter += 1
+    
+print("Generating Scoop packages...")
 
+scoopCount = 0
+scoopTotal = 0
 
 for id in getScoopPackages():
     iconId = id.replace(" ", "-").replace("_", "-").replace(".", "-").lower()
+    scoopTotal += 1
     if not iconId in done:
+        scoopCount += 1
         worksheet.write("A"+str(counter), iconId, idformat)
         try:
             item = contents["icons_and_screenshots"][iconId]
             worksheet.write("B"+str(counter), str(item["icon"]), iconformat)
+            if str(item["icon"]).strip() != "":
+                done.append(iconId)
             for i in range(2, len(item["images"])+2):
                 worksheet.write(getRow(i)+str(counter), item["images"][i-2], screenshotformat)
         except KeyError:
             pass
         counter += 1
 
+print("Generating Chocolatey packages...")        
+
+chocoCount = 0
+chocoTotal = 0
+
+a = getChocolateyPackages()
+chocopkgs = a[0]
+chocoversions = a[1]
+for id in chocopkgs:
+    iconId = id.replace(".install", "").replace(".portable", "").replace(" ", "-").replace("_", "-").replace(".", "-").lower()
+    chocoTotal += 1
+    if not iconId in done:
+        chocoCount += 1
+        worksheet.write("A"+str(counter), iconId, idformat)
+        try:
+            item = contents["icons_and_screenshots"][iconId]
+            worksheet.write("B"+str(counter), str(item["icon"] if item["icon"] not in ("", None) else f"https://community.chocolatey.org/content/packageimages/{id}.{chocoversions[id]}.png"), iconformat)
+            done.append(iconId)
+            for i in range(2, len(item["images"])+2):
+                worksheet.write(getRow(i)+str(counter), item["images"][i-2], screenshotformat)
+        except KeyError:
+            worksheet.write("B"+str(counter), str(f"https://community.chocolatey.org/content/packageimages/{id}.{chocoversions[id]}.png"), iconformat)
+        counter += 1
+    else:
+        print("Skipped", id, iconId)
+
 workbook.close()
 
+print()
+print("Winget total packages:", wingetTotal)
+print("Winget added packages:", wingetCount)
+print("Scoop total packages:", scoopTotal)
+print("Scoop added packages:", scoopCount)
+print("Chocolatey total packages:", chocoTotal)
+print("Chocolatey added packages:", chocoCount)
 
 os.startfile("https://drive.google.com/drive/u/2/folders/1TOO3rupM1e793z-jlwNcQMGCqDL8fFOL")
 print()
