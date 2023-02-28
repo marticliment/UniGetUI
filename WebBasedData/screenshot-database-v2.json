@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 6431,
-        "done": 561
+        "done": 588
     },
     "icons_and_screenshots": {
         "115": {
@@ -381,8 +381,11 @@
             ]
         },
         "abilityoffice-10-professio\u2026": {
-            "icon": "",
-            "images": []
+            "icon": "https://allpcworld.com/wp-content/uploads/2021/11/Ability-Office-Professional-11-for-Free-Download.png",
+            "images": [
+                "https://allpcworld.com/wp-content/uploads/2021/11/Ability-Office-Professional-11-for-Free-Download-1024x770.jpg",
+                "https://allpcworld.com/wp-content/uploads/2021/11/Ability-Office-Professional-11-Free-Download-1024x786.jpg"
+            ]
         },
         "abilityoffice-10-standard": {
             "icon": "https://i.imgur.com/M2EY1us.png",
@@ -478,7 +481,7 @@
             ]
         },
         "adguard": {
-            "icon": "https://cdn.adtidy.org/website/adguard.com/favicons/favicon.svg",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/4/48/AdGuard_Logo.png",
             "images": [
                 "https://adguard.com/img/social/og-main.png",
                 "https://cdn.adguard.com/public/Adguard/Common/adguard_home.gif",
@@ -487,8 +490,10 @@
             ]
         },
         "adguardhome": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/4/48/AdGuard_Logo.png",
+            "images": [
+                "https://cdn.adtidy.org/public/Adguard/Blog/AGHome/dashboard.jpg"
+            ]
         },
         "adguardvpn": {
             "icon": "https://i.imgur.com/tvlrfxJ.png",
@@ -574,7 +579,7 @@
             ]
         },
         "brackets": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Brackets_Icon.svg/2048px-Brackets_Icon.svg.png",
             "images": []
         },
         "cryptr": {
@@ -681,11 +686,11 @@
             ]
         },
         "1password-beta": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5b/1Password_icon.png",
             "images": []
         },
         "1password-cli": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5b/1Password_icon.png",
             "images": []
         },
         "labadvisor": {
@@ -1034,8 +1039,10 @@
             ]
         },
         "nosqlworkbench": {
-            "icon": "",
-            "images": []
+            "icon": "data:image/png;base64,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",
+            "images": [
+                "https://miro.medium.com/max/1400/1*rDjQMV1_Qa8CZr2lP2nkIw.png"
+            ]
         },
         "opensearch-odbc": {
             "icon": "",
@@ -1301,23 +1308,25 @@
             "images": []
         },
         "openoffice": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004673270.png",
+            "images": [
+                "https://tweakers.net/ext/i/1394718028.png"
+            ]
         },
         "xampp-7-4": {
-            "icon": "",
+            "icon": "https://assets.stickpng.com/images/58482973cef1014c0b5e49fd.png",
             "images": []
         },
         "xampp-8-0": {
-            "icon": "",
+            "icon": "https://assets.stickpng.com/images/58482973cef1014c0b5e49fd.png",
             "images": []
         },
         "xampp-8-1": {
-            "icon": "",
+            "icon": "https://assets.stickpng.com/images/58482973cef1014c0b5e49fd.png",
             "images": []
         },
         "xampp-8-2": {
-            "icon": "",
+            "icon": "https://assets.stickpng.com/images/58482973cef1014c0b5e49fd.png",
             "images": []
         },
         "apifox": {
@@ -1480,7 +1489,7 @@
             ]
         },
         "ghostscript": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Ghostscript_logo.svg/853px-Ghostscript_logo.svg.png",
             "images": []
         },
         "nicepage": {
@@ -1554,7 +1563,7 @@
             "images": []
         },
         "virtualdj": {
-            "icon": "",
+            "icon": "https://seeklogo.com/images/V/virtual-dj-logo-D732C6E2D4-seeklogo.com.png",
             "images": []
         },
         "atrixlauncher": {
@@ -1667,8 +1676,10 @@
             "images": []
         },
         "wordpress": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/WordPress_blue_logo.svg/1200px-WordPress_blue_logo.svg.png",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004779290.png",
+            "images": [
+                "https://tweakers.net/ext/i/2002139227.png"
+            ]
         },
         "metronomewallet": {
             "icon": "",
@@ -2024,8 +2035,10 @@
             ]
         },
         "honeyview": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2000553432.jpeg",
+            "images": [
+                "https://tweakers.net/ext/i/2001549423.jpeg"
+            ]
         },
         "mirrorop": {
             "icon": "",
@@ -2216,8 +2229,10 @@
             "images": []
         },
         "displayfusion": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004839352.png",
+            "images": [
+                "https://tweakers.net/ext/i/1403165975.jpeg"
+            ]
         },
         "fileseek": {
             "icon": "",
@@ -2343,7 +2358,7 @@
             ]
         },
         "batchimageconverter": {
-            "icon": "",
+            "icon": "http://i2.wp.com/filecr.com/wp-content/uploads/2022/04/batch-image-converter-logo.png",
             "images": []
         },
         "batchimageenhancer": {
@@ -2517,8 +2532,10 @@
             "images": []
         },
         "joomla": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004739054.png",
+            "images": [
+                "https://tweakers.net/ext/i/1294820259.png"
+            ]
         },
         "prestashop": {
             "icon": "",
@@ -2545,8 +2562,10 @@
             "images": []
         },
         "bitwarden": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004761386.png",
+            "images": [
+                "https://tweakers.net/ext/i/2003879068.png"
+            ]
         },
         "biyi": {
             "icon": "",
@@ -2722,15 +2741,15 @@
             "images": []
         },
         "brave-beta": {
-            "icon": "",
+            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
             "images": []
         },
         "brave-dev": {
-            "icon": "",
+            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
             "images": []
         },
         "brave-nightly": {
-            "icon": "",
+            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
             "images": []
         },
         "sizer": {
@@ -2912,43 +2931,43 @@
             "images": []
         },
         "cpu-z": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-aorus": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-asr": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-cm": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-gbt": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-msi": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-phantom": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-rog": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "cpu-z-taichi": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/cpu-z.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "hwmonitor": {
-            "icon": "https://www.cpuid.com/medias/images/softwares/hwmonitor.svg",
+            "icon": "https://tweakers.net/ext/i/2000563509.png",
             "images": []
         },
         "powermax": {
@@ -3373,7 +3392,7 @@
             "images": []
         },
         "teracopy": {
-            "icon": "https://download.cnet.com/a/img/resize/2a859d39093fb0d05024fa6e99b20f56fcc13d39/catalog/2017/11/29/2df1a898-d42c-4d4c-8cf2-db61f65270a5/imgingest-8533529314180200053.png?auto=webp&fit=crop&width=64",
+            "icon": "https://tweakers.net/ext/i/2004859552.jpeg",
             "images": []
         },
         "codeblocks": {
@@ -3458,7 +3477,7 @@
             "images": []
         },
         "powerarchiver-2022": {
-            "icon": "",
+            "icon": "https://tweakers.net/ext/i/1302267349.jpeg",
             "images": []
         },
         "cdogssdl": {
@@ -3598,23 +3617,25 @@
             "images": []
         },
         "crystaldiskinfo": {
-            "icon": "https://img.utdstc.com/icon/217/fdb/217fdbc48ae682e8519f8e95ba735c4aad4ce2345a7267669b9f792004f0a168:200",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004637378.png",
+            "images": [
+                "https://tweakers.net/ext/i/2004681610.png"
+            ]
         },
         "crystaldiskinfo-ku\u2026": {
-            "icon": "https://img.utdstc.com/icon/217/fdb/217fdbc48ae682e8519f8e95ba735c4aad4ce2345a7267669b9f792004f0a168:200",
+            "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
         "crystaldiskinfo-sh\u2026": {
-            "icon": "https://img.utdstc.com/icon/217/fdb/217fdbc48ae682e8519f8e95ba735c4aad4ce2345a7267669b9f792004f0a168:200",
+            "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
         "crystaldiskmark": {
-            "icon": "https://cdn.neowin.com/news/images/uploaded/2017/08/1501622590_crystaldiskmark_story.jpg",
+            "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
         "crystaldiskmark-sh\u2026": {
-            "icon": "https://cdn.neowin.com/news/images/uploaded/2017/08/1501622590_crystaldiskmark_story.jpg",
+            "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
         "anytoiso": {
@@ -3865,8 +3886,10 @@
             "images": []
         },
         "potplayer": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004649714.png",
+            "images": [
+                "https://tweakers.net/ext/i/2000615049.jpeg"
+            ]
         },
         "davegnukem": {
             "icon": "",
@@ -3934,7 +3957,9 @@
         },
         "displaymanager": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Deluge-Logo.svg/1200px-Deluge-Logo.svg.png",
-            "images": []
+            "images": [
+                "https://tweakers.net/ext/i/1391463333.png"
+            ]
         },
         "deluge": {
             "icon": "",
@@ -5454,7 +5479,7 @@
             "images": []
         },
         "threema": {
-            "icon": "https://threema.ch/images/logo-big.png",
+            "icon": "https://tweakers.net/ext/i/2005024022.png",
             "images": []
         },
         "geekuninstaller": {
@@ -5524,9 +5549,9 @@
             "images": []
         },
         "totalcommander": {
-            "icon": "https://www.iconarchive.com/download/i50248/ncrow/mega-pack-1/Total-Commander.256.png",
+            "icon": "https://tweakers.net/ext/i/2005046262.png",
             "images": [
-                "https://www.ghisler.com/screenshots/en/02.html"
+                "https://iforum-sg.c.huawei.com/dddd/images/2021/5/13/e8aa6d53-9e98-414e-a8cb-fe5d5e55bdb4.png"
             ]
         },
         "gsview": {
@@ -5622,7 +5647,7 @@
             "images": []
         },
         "glaryutilities": {
-            "icon": "https://play-lh.googleusercontent.com/7Z96kB9vZyjDxlPJNAvN5JYuEK0ZlEy7j9or6R1rEFVx5tIXgCA7R5tqrZ4wGn41-Q6e=w480-h960",
+            "icon": "https://tweakers.net/ext/i/2004642056.jpeg",
             "images": [
                 "https://www.glarysoft.com/images/screenshots/glary-utilities/galry-utilities3.png",
                 "https://www.glarysoft.com/images/screenshots/glary-utilities/galry-utilities2.png"
@@ -5637,7 +5662,7 @@
             "images": []
         },
         "tightvnc": {
-            "icon": "",
+            "icon": "https://tweakers.net/ext/i/1278099200.png",
             "images": []
         },
         "soundboard": {
@@ -5669,8 +5694,10 @@
             "images": []
         },
         "gnucash": {
-            "icon": "",
-            "images": []
+            "icon": "https://tweakers.net/ext/i/2004646972.png",
+            "images": [
+                "https://tweakers.net/ext/i/2005189022.jpeg"
+            ]
         },
         "gnupg": {
             "icon": "https://www.tech-faq.com/wp-content/uploads/gnupg-shell.png",
