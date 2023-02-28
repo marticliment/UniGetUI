@@ -1011,7 +1011,7 @@ class UpdateSoftwareSection(QWidget):
             
         self.toolbar.addSeparator()
 
-        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _(""), self.toolbar)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "", self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll()) # Required for the systray context menu
         self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Update selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
