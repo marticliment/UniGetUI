@@ -4,7 +4,6 @@ untranslatedPercentage = {
   "ar": "95%",
   "bg": "88%",
   "bn": "25%",
-  "cs": "95%",
   "da": "47%",
   "de": "88%",
   "hi": "76%",
@@ -12,10 +11,7 @@ untranslatedPercentage = {
   "id": "22%",
   "ja": "82%",
   "ko": "92%",
-  "nl": "95%",
   "pl": "95%",
-  "pt_BR": "95%",
-  "pt_PT": "95%",
   "ru": "76%",
   "sr": "20%",
   "th": "51%",
@@ -62,10 +58,6 @@ languageCredits = {
     {
       "name": "panther7",
       "link": "https://github.com/panther7"
-    },
-    {
-      "name": "Petr Janeček",
-      "link": ""
     }
   ],
   "da": [
