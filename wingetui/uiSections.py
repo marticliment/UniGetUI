@@ -2580,8 +2580,8 @@ class SettingsSection(QScrollArea):
             _("{0} hours").format(4)   : "14400",
             _("{0} hours").format(8)   : "28800",
             _("{0} hours").format(12)  : "43200",
-            _("{0} hours").format(24)  : "86400",
-            _("{0} hours").format(48)  :"172800",
+            _("1 day")                 : "86400",
+            _("{0} days").format(2)    :"172800",
             _("1 week")                :"604800",
         }
         invertedTimes = {
@@ -2592,7 +2592,7 @@ class SettingsSection(QScrollArea):
             "14400" : _("{0} hours").format(4),
             "28800" : _("{0} hours").format(8),
             "43200" : _("{0} hours").format(12),
-            "86400" : _("{0} day").format(1),
+            "86400" : _("1 day"),
             "172800": _("{0} days").format(2),
             "604800": _("1 week")
         }
