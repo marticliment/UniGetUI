@@ -11,14 +11,11 @@ untranslatedPercentage = {
   "id": "22%",
   "ja": "82%",
   "ko": "92%",
-  "pl": "95%",
   "ru": "76%",
   "sr": "20%",
   "th": "51%",
   "tr": "79%",
-  "ua": "79%",
-  "zh_CN": "95%",
-  "zh_TW": "95%"
+  "ua": "79%"
 }
 
 languageCredits = {
@@ -266,8 +263,8 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "yrctw (TGi)",
-      "link": "https://github.com/yrctw (TGi)"
+      "name": "yrctw",
+      "link": "https://github.com/yrctw"
     }
   ]
 }
