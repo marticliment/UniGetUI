@@ -2592,8 +2592,8 @@ class SettingsSection(QScrollArea):
             "14400" : _("{0} hours").format(4),
             "28800" : _("{0} hours").format(8),
             "43200" : _("{0} hours").format(12),
-            "86400" : _("{0} hours").format(24),
-            "172800": _("{0} hours").format(48),
+            "86400" : _("{0} day").format(1),
+            "172800": _("{0} days").format(2),
             "604800": _("1 week")
         }
 
