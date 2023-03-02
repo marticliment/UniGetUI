@@ -15,7 +15,7 @@ Beware that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI ar
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/main.webp)
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/banner.png)
 
 # Consider supporting me :)
 
