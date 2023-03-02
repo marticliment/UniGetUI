@@ -11548,7 +11548,9 @@
         },
         "hwinfo": {
             "icon": "https://community.chocolatey.org/content/packageimages/hwinfo.portable.7.40.png",
-            "images": []
+            "images": [
+                "https://www.hwinfo.com/wp-content/uploads/2018/10/hwinfo-screen-1024x728.png"
+            ]
         },
         "uranossoftphone": {
             "icon": "",
