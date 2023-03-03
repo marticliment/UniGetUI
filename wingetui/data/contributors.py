@@ -5,6 +5,7 @@ contributors = [
   "ppvnf",
   "panther7",
   "RavenMacDaddy",
+  "adripo",
   "MisterEvans78",
   "sklart",
   "vedantmgoyal2009",
@@ -22,7 +23,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1017
+    "contributions": 1025
   },
   {
     "name": "ppvnf",
@@ -38,6 +39,11 @@ contributorsInfo = [
     "name": "RavenMacDaddy",
     "link": "https://github.com/RavenMacDaddy",
     "contributions": 21
+  },
+  {
+    "name": "adripo",
+    "link": "https://github.com/adripo",
+    "contributions": 6
   },
   {
     "name": "MisterEvans78",
