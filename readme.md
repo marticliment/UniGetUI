@@ -1,4 +1,4 @@
-# [Project homepage HERE](https://www.marticliment.com/wingetui/)
+# [WingetUI has a new homepage!](https://www.marticliment.com/wingetui/)
 
 # WingetUI: A GUI for Winget, Scoop and Chocolatey
 
