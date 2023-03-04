@@ -15,7 +15,9 @@ With this app, you'll be able to easily download, install, update and uninstall 
 
 Beware that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI are responsible for the downloaded apps. 
 
-[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
+<!--[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()-->
+[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Temporarily%20Paused-yellow?style=for-the-badge)]()
+
 
 ![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/banner.png)
 
