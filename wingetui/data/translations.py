@@ -5,7 +5,6 @@ untranslatedPercentage = {
   "bg": "87%",
   "bn": "25%",
   "da": "47%",
-  "de": "87%",
   "es": "99%",
   "hi": "75%",
   "hr": "0%",
@@ -73,7 +72,7 @@ languageCredits = {
   "de": [
     {
       "name": "Datacra5H",
-      "link": ""
+      "link": "https://github.com/Datacra5H"
     }
   ],
   "en": [
