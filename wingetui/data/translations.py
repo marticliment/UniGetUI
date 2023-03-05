@@ -213,6 +213,12 @@ languageCredits = {
       "link": ""
     }
   ],
+  "sl": [
+    {
+      "name": "rumplin",
+      "link": "https://github.com/rumplin"
+    }
+  ],
   "sr": [
     {
       "name": "Nemanja Djurcic",
