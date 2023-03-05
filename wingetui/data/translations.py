@@ -73,6 +73,10 @@ languageCredits = {
     {
       "name": "Datacra5H",
       "link": "https://github.com/Datacra5H"
+    },
+    {
+      "name": "ebnater",
+      "link": "https://github.com/ebnater"
     }
   ],
   "en": [

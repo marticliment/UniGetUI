@@ -1,5 +1,5 @@
 {
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@Datacra5H",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@Datacra5H, @ebnater",
   "{0} {1} failed" : "{0} {1} fehlgeschlagen",
   "{0} apps can be updated" : "{0} Anwendungen können aktualisiert werden",
   "{0} can be updated" : "{0} kann aktualisiert werden",
@@ -34,7 +34,7 @@
   "Add bucket" : "Bucket hinzufügen",
   "Administrator privileges" : "Administratorrechte",
   "Allow parallel installs (NOT RECOMMENDED)" : "Erlaube parallele Installationen (NICHT EMPFOHLEN)",
-  "Application theme:" : "Thema der Anwendung:",
+  "Application theme:" : "App-Design:",
   "Apply and start WingetUI" : "Anwenden und WingetUI starten",
   "Applying update..." : "Aktualisierung anwenden...",
   "App Name" : "Anwendungsname",
