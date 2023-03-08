@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14016,
-        "done": 7545
+        "done": 7547
     },
     "icons_and_screenshots": {
         "115": {
@@ -4172,8 +4172,10 @@
             "images": []
         },
         "dockerdesktop": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
+            "images": [
+                "https://www.docker.com/company/newsroom/media-resources/"
+            ]
         },
         "dockerdesktopedge": {
             "icon": "",
@@ -20167,8 +20169,10 @@
             "images": []
         },
         "docker": {
-            "icon": "https://community.chocolatey.org/content/packageimages/docker.99.0.0.png",
-            "images": []
+            "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
+            "images": [
+                "https://www.docker.com/company/newsroom/media-resources/"
+            ]
         },
         "docker-compose": {
             "icon": "https://community.chocolatey.org/content/packageimages/docker-compose.1.29.2.png",
