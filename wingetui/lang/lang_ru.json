@@ -8,7 +8,7 @@
   "{0} hours" : "{0} {0, plural, one {час} few {часа} other {часов}}",
   "{0} installation" : "установка {0}",
   "{0} is disabled" : "{0} отключено",
-  "{0} minutes" : "{0} {0, plural, one {минута} few {минуты} other {минут}} ",
+  "{0} minutes" : "{0} минуты",
   "{0} packages found" : "{0, plural, one {Найден {0} пакет} few {Найдено {0} пакета} other {Найдено {0} пакетов}}",
   "0 packages found" : "Найдено 0 пакетов",
   "{0} Scoop bucket" : "{0} Scoop бакет",
