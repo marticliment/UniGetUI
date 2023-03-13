@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14016,
-        "done": 7547
+        "done": 7552
     },
     "icons_and_screenshots": {
         "115": {
@@ -1045,7 +1045,7 @@
             ]
         },
         "opensearch-odbc": {
-            "icon": "",
+            "icon": "https://opensearch.org/assets/brand/PNG/Mark/opensearch_mark_default.png",
             "images": []
         },
         "sam-cli": {
@@ -3936,8 +3936,10 @@
             "images": []
         },
         "debian": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.debian.org/logos/openlogo-nd-100.png",
+            "images": [
+                "https://devblogs.microsoft.com/wp-content/uploads/sites/33/2019/02/debian2-600x334.png"
+            ]
         },
         "deepl": {
             "icon": "https://community.chocolatey.org/content/packageimages/deepl.4.0.6052.png",
@@ -4098,7 +4100,7 @@
             ]
         },
         "discord-development": {
-            "icon": "",
+            "icon": "https://i.ibb.co/bX00g4q/development.png",
             "images": [
                 "https://i.ibb.co/5M0bd2N/discord-1.png",
                 "https://i.ibb.co/hcBnn6x/discord-2.png",
@@ -4174,7 +4176,8 @@
         "dockerdesktop": {
             "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
             "images": [
-                "https://www.docker.com/company/newsroom/media-resources/"
+                "https://www.docker.com/wp-content/uploads/2021/10/List-plus-running-compose.png",
+                "https://www.docker.com/wp-content/uploads/2021/10/Image-access-mngt_0.png"
             ]
         },
         "dockerdesktopedge": {
@@ -10088,11 +10091,11 @@
             "images": []
         },
         "nordpass": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nordpass.4.38.7.png",
+            "icon": "https://i.postimg.cc/L5mb7DVN/nordpass-logo.png",
             "images": []
         },
         "nordvpn": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nordvpn.6.40.5.png",
+            "icon": "https://s1.nordcdn.com/nordvpn/media/1.88.0/images/meta/nordvpn-default.png",
             "images": []
         },
         "gyazo": {

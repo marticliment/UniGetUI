@@ -13,8 +13,7 @@ untranslatedPercentage = {
   "it": "99%",
   "ja": "81%",
   "ko": "94%",
-  "nl": "99%",
-  "ru": "75%",
+  "ru": "99%",
   "sr": "20%",
   "th": "51%",
   "tr": "78%",
@@ -206,6 +205,10 @@ languageCredits = {
     }
   ],
   "ru": [
+    {
+      "name": "flatron4eg",
+      "link": "https://github.com/flatron4eg"
+    },
     {
       "name": "Sergey",
       "link": ""
