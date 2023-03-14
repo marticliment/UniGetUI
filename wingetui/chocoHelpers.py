@@ -49,7 +49,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         shouldReloadCache = True
         finishSignal.emit("chocolatey-caching")
     
-    if shouldReloadCache and not getSettings("CachingChocolatey"):
+    if shouldReloadCache and not getSettings("CachingChocolatey") or True:
         setSettings("CachingChocolatey", True)
         print(f"🟢 Starting choco search, choco on {choco}...")
         p = subprocess.Popen([choco, "search", "*"] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
@@ -64,6 +64,13 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                         output += str(line, encoding='utf-8', errors="ignore") + "\n"
                 else:
                     counter += 1
+        oldcontents = ""
+        with open(cacheFile, "r") as f:
+            oldcontents = f.read()
+            f.close()
+        for line in oldcontents.split("\n"):
+            if line.split(" ")[0] not in output:
+                output += line + "\n"
         with open(cacheFile, "w") as f:
             f.write(output)
         print("🟢 Chocolatey search finished")
