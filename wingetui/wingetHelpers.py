@@ -318,11 +318,11 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 elif("License Url:" in line):
                     appInfo["license-url"] = line.replace("License Url:", "").strip()
                     validCount += 1
-                elif("SHA256:" in line):
-                    appInfo["installer-sha256"] = line.replace("SHA256:", "").strip()
+                elif("Installer SHA256:" in line):
+                    appInfo["installer-sha256"] = line.replace("Installer SHA256:", "").strip()
                     validCount += 1
-                elif("Download Url:" in line):
-                    appInfo["installer-url"] = line.replace("Download Url:", "").strip()
+                elif("Installer Url:" in line):
+                    appInfo["installer-url"] = line.replace("Installer Url:", "").strip()
                     validCount += 1
                 elif("Release Date:" in line):
                     appInfo["updatedate"] = line.replace("Release Date:", "").strip()
@@ -331,8 +331,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                     appInfo["releasenotes"] = ""
                     weAreReleaseNoting = True
                     validCount += 1
-                elif("Type:" in line):
-                    appInfo["installer-type"] = line.replace("Type:", "").strip()
+                elif("Installer Type:" in line):
+                    appInfo["installer-type"] = line.replace("Installer Type:", "").strip()
         print(f"🟢 Loading versions for {title}")
         retryCount = 0
         output = []
