@@ -245,8 +245,9 @@ class PackageInstallerWidget(QGroupBox):
                 self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone)+" "+_("Restart your PC to finish installation"), QIcon(getMedia("notif_restart"))))
             if type(self) == PackageInstallerWidget:
                 if self.packageItem:
-                    globals.uninstall.addItem(self.packageItem.text(0), self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3)) # Add the package on the uninstaller
-                    globals.uninstall.updatePackageNumber()
+                    if not self.packageItem.text(2) in globals.uninstall.packages.keys():
+                        globals.uninstall.addItem(self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3), self.packageItem.text(4)) # Add the package on the uninstaller
+                        globals.uninstall.updatePackageNumber()
         else:
             globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
