@@ -619,7 +619,8 @@ try:
                         filedata = urlopen(url)
                         datatowrite = filedata.read()
                         filename = ""
-                        with open(os.path.join(os.path.expanduser("~"), "WingetUI-Updater.exe"), 'wb') as f:
+                        downloadPath = os.environ["temp"] if "temp" in os.environ.keys() else os.path.expanduser("~")
+                        with open(os.path.join(downloadPath, "wingetui-updater.exe"), 'wb') as f:
                             f.write(datatowrite)
                             filename = f.name
                         if(hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash):
