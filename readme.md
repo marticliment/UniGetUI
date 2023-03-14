@@ -105,7 +105,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 99% | [flatron4eg](https://github.com/flatron4eg), Sergey, Артем |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 20% | Nemanja Djurcic |
-| <img src='https://flagcdn.com/sl.svg' width=20> &nbsp; Slovene - Slovenščina | 100% | [rumplin](https://github.com/rumplin) |
+| <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 100% | [rumplin](https://github.com/rumplin) |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 78% | Ahmet Özmetin |
 | <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukranian - Yкраї́нська | 78% | Artem Moldovanenko, Operator404 |
 | <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, BUGP Association, ciaran, Cololi |
