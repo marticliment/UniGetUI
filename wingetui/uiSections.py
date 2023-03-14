@@ -19,7 +19,6 @@ class DiscoverSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
     finishLoading = Signal(str)
-    clearList = Signal()
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
@@ -335,7 +334,6 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
-        self.clearList.connect(self.packageList.clear)
 
         self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
@@ -677,6 +675,9 @@ class DiscoverSoftwareSection(QWidget):
     def reload(self) -> None:
         if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:
             self.packageItems = []
+            self.packages = {}
+            self.showedItems = []
+            self.addedItems = []
             self.scoopLoaded = False
             self.wingetLoaded = False
             self.chocoLoaded = False
@@ -748,7 +749,6 @@ class UpdateSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str, str)
     finishLoading = Signal(str)
-    clearList = Signal()
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
@@ -1103,7 +1103,6 @@ class UpdateSoftwareSection(QWidget):
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
-        self.clearList.connect(self.packageList.clear)
 
         self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
@@ -1495,7 +1494,6 @@ class UninstallSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
     finishLoading = Signal(str)
-    clearList = Signal()
     callInMain = Signal(object)
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
@@ -1817,7 +1815,6 @@ class UninstallSoftwareSection(QWidget):
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
-        self.clearList.connect(self.packageList.clear)
 
         self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
