@@ -15,6 +15,7 @@ try:
     from mainWindow import *
     from tools import *
     from tools import _
+    from api_backend import runBackendApi
 
     import globals
     from external.blurwindow import GlobalBlur, ExtendFrameIntoClientArea
@@ -26,6 +27,7 @@ try:
         setLoadBarValue = Signal(str)
         startAnim = Signal(QVariantAnimation)
         changeBarOrientation = Signal()
+        showProgram = Signal(str)
         updatesMenu: QMenu = None
         installedMenu: QMenu = None
         running = True
@@ -220,6 +222,8 @@ try:
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
                 Thread(target=self.downloadPackagesMetadata, daemon=True).start()
+                self.showProgram.connect(lambda v: cprint(v))
+                Thread(target=runBackendApi, args=(self.showProgram,), daemon=True).start()
                 if not getSettings("DisableWinget"):
                     Thread(target=self.detectWinget, daemon=True).start()
                 else:
@@ -505,6 +509,7 @@ try:
                 globals.darkCSS = darkCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                 globals.lightCSS = lightCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                 self.window = RootWindow()
+                self.showProgram.connect(lambda id: (self.discoverPackages.trigger(), globals.discover.loadShared(id)))
                 self.discoverPackages.triggered.connect(lambda: self.window.showWindow(0))
                 self.updatePackages.triggered.connect(lambda: self.window.showWindow(1))
                 self.uninstallPackages.triggered.connect(lambda: self.window.showWindow(2))

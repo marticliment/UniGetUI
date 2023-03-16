@@ -400,6 +400,14 @@ class DiscoverSoftwareSection(QWidget):
         
         self.leftSlow.start()
 
+    def loadShared(self, id):
+        if id in self.packages:
+            package = self.packages[id]
+            self.infobox.loadProgram(package["name"], id, useId=not("…" in id), store=package["store"], packageItem=package["item"], version=package["store"])
+            self.infobox.show()
+        else:
+            raise ValueError("Invalid id provided")
+
     def exportSelection(self) -> None:
         """
         Export all selected packages into a file.
