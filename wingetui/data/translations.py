@@ -15,14 +15,12 @@ untranslatedPercentage = {
   "it": "98%",
   "ja": "80%",
   "ko": "93%",
-  "nl": "99%",
   "ru": "98%",
   "sr": "18%",
   "th": "50%",
   "tr": "77%",
   "ua": "77%",
-  "zh_CN": "99%",
-  "zh_TW": "98%"
+  "zh_CN": "99%"
 }
 
 languageCredits = {
