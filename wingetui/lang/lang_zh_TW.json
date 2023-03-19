@@ -43,7 +43,7 @@
   "Available updates: {0}" : "{0} 個可用的更新",
   "Available updates: {0}, not finished yet..." : "已發現 {0} 個可用的更新，仍在繼續進行中...",
   "Beta features and other options that shouldn't be touched" : "不建議觸及的測試版功能和其他選項",
-  "Blacklist packages" : "套件忽略清單",
+  "Blacklist packages" : "加入忽略清單",
   "buy me a coffee" : "贊助這個專案",
   "By Icons8" : "由 Icons8 提供",
   "Cancel" : "取消",
