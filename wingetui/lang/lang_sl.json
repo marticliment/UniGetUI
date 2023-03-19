@@ -218,7 +218,7 @@
   "Starting installation..." : "Zaganjam namestitev...",
   "Startup options" : "Možnosti zagona",
   "Status" : "Stanje",
-  "Stuck here? Skip initialization" : "Ste obtičali tukaj? Preskoči inicializacijo",
+  "Stuck here? Skip initialization" : "Ste obtičali? Preskočite inicializacijo",
   "Text file" : "Tekstovna datoteka",
   "The icons and screenshots are maintained by users like you!" : "Ikone in posnetke zaslona vzdržujejo uporabniki, kot ste vi!",
   "The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop." : "Glavni cilj tega projekta je ustvariti intuitiven uporabniški vmesnik za najpogostejše upravitelje paketov CLI za Windows, kot sta Winget in Scoop.",

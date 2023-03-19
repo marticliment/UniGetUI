@@ -19,8 +19,7 @@ untranslatedPercentage = {
   "sr": "18%",
   "th": "50%",
   "tr": "77%",
-  "ua": "77%",
-  "zh_CN": "99%"
+  "ua": "77%"
 }
 
 languageCredits = {
