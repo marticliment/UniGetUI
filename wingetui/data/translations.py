@@ -6,7 +6,6 @@ untranslatedPercentage = {
   "bn": "23%",
   "cs": "99%",
   "da": "45%",
-  "de": "99%",
   "es": "99%",
   "hi": "74%",
   "hr": "0%",
@@ -14,6 +13,7 @@ untranslatedPercentage = {
   "it": "98%",
   "ja": "80%",
   "ko": "93%",
+  "nb": "38%",
   "ru": "98%",
   "sr": "18%",
   "th": "50%",
@@ -164,6 +164,7 @@ languageCredits = {
       "link": "https://github.com/shblue21"
     }
   ],
+  "nb": [],
   "nl": [
     {
       "name": "abbydiode",
