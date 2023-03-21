@@ -12,6 +12,7 @@ contributors = [
   "candrapersada",
   "elliot-100",
   "neoOpus",
+  "rumplin",
   "Satanarious",
   "quantumfallout",
   "harleylara",
@@ -23,7 +24,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1055
+    "contributions": 1068
   },
   {
     "name": "ppvnf",
@@ -33,7 +34,7 @@ contributorsInfo = [
   {
     "name": "panther7",
     "link": "https://github.com/panther7",
-    "contributions": 49
+    "contributions": 50
   },
   {
     "name": "RavenMacDaddy",
@@ -73,6 +74,11 @@ contributorsInfo = [
   {
     "name": "neoOpus",
     "link": "https://github.com/neoOpus",
+    "contributions": 1
+  },
+  {
+    "name": "rumplin",
+    "link": "https://github.com/rumplin",
     "contributions": 1
   },
   {
