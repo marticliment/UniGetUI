@@ -20,6 +20,7 @@ languageReference = {
     "id"    : "Indonesian - Bahasa Indonesia",
     "ja"    : "Japanese - 日本語",
     "ko"    : "Korean - 한국어",
+    "nb"    : "Norwegian (bokmål)",
     "nl"    : "Dutch - Nederlands",
     "pl"    : "Polish - Polski",
     "pt_BR" : "Portuguese (Brazil)",
