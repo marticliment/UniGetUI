@@ -12,22 +12,19 @@ untranslatedPercentage = {
   "hi": "72%",
   "hr": "0%",
   "hu": "98%",
-  "id": "20%",
+  "id": "38%",
   "it": "96%",
-  "ja": "78%",
+  "ja": "95%",
   "ko": "91%",
   "nb": "99%",
   "pl": "98%",
-  "pt_BR": "98%",
-  "pt_PT": "98%",
   "ru": "96%",
-  "sl": "98%",
   "sr": "18%",
   "th": "49%",
   "tr": "75%",
   "ua": "76%",
-  "zh_CN": "98%",
-  "zh_TW": "98%"
+  "zh_CN": "99%",
+  "zh_TW": "99%"
 }
 
 languageCredits = {
@@ -159,6 +156,10 @@ languageCredits = {
   ],
   "ja": [
     {
+      "name": "nob-swik",
+      "link": "https://github.com/nob-swik"
+    },
+    {
       "name": "sho9029",
       "link": ""
     },
@@ -281,6 +282,10 @@ languageCredits = {
       "link": ""
     },
     {
+      "name": "CnYeSheng",
+      "link": ""
+    },
+    {
       "name": "Cololi",
       "link": ""
     }
@@ -288,6 +293,10 @@ languageCredits = {
   "zh_TW": [
     {
       "name": "Aaron Liu",
+      "link": ""
+    },
+    {
+      "name": "CnYeSheng",
       "link": ""
     },
     {
