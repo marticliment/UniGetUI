@@ -8,6 +8,7 @@ untranslatedPercentage = {
   "da": "44%",
   "de": "98%",
   "es": "99%",
+  "fa": "90%",
   "fr": "98%",
   "hi": "72%",
   "hr": "0%",
@@ -15,7 +16,7 @@ untranslatedPercentage = {
   "id": "70%",
   "it": "96%",
   "ko": "91%",
-  "pl": "98%",
+  "pl": "99%",
   "ru": "96%",
   "sr": "18%",
   "th": "49%",
@@ -104,6 +105,12 @@ languageCredits = {
     {
       "name": "rubnium",
       "link": "https://github.com/rubnium"
+    }
+  ],
+  "fa": [
+    {
+      "name": "SMSi2001",
+      "link": ""
     }
   ],
   "fr": [
