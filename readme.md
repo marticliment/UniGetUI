@@ -85,7 +85,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | :-- | :-- | --- |
 | <img src='https://flagcdn.com/sa.svg' width=20> &nbsp; Arabic - عربي‎ | 91% | [Abdu11ahAS](https://github.com/Abdu11ahAS) |
 | <img src='https://flagcdn.com/bg.svg' width=20> &nbsp; Bulgarian - български | 84% | Vasil Kolev |
-| <img src='https://flagcdn.com/bn.svg' width=20> &nbsp; Bangla - বাংলা | 23% | [fluentmoheshwar](https://github.com/fluentmoheshwar), Mushfiq Iqbal Rayon, Nilavra Bhattacharya |
+| <img src='https://flagcdn.com/bd.svg' width=20> &nbsp; Bangla - বাংলা | 23% | [fluentmoheshwar](https://github.com/fluentmoheshwar), Mushfiq Iqbal Rayon, Nilavra Bhattacharya |
 | <img src='https://flagcdn.com/ad.svg' width=20> &nbsp; Catalan - Català | 100% | [marticliment](https://github.com/marticliment) |
 | <img src='https://flagcdn.com/cz.svg' width=20> &nbsp; Czech - Čeština | 99% | [panther7](https://github.com/panther7) |
 | <img src='https://flagcdn.com/dk.svg' width=20> &nbsp; Danish - Dansk | 44% | [mikkolukas](https://github.com/mikkolukas) |
