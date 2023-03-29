@@ -28,7 +28,7 @@ With this app, you'll be able to easily download, install, update and uninstall 
  - [Screenshots](#screenshots)
  - [Frequently Asked Questions](#frequently-asked-questions)
 
-
+ 
 ## Installation
 <p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br</p>
 
