@@ -8,8 +8,7 @@ untranslatedPercentage = {
   "da": "44%",
   "de": "98%",
   "es": "99%",
-  "fa": "90%",
-  "fr": "98%",
+  "fa": "96%",
   "hi": "72%",
   "hr": "0%",
   "hu": "98%",
@@ -109,13 +108,17 @@ languageCredits = {
   ],
   "fa": [
     {
-      "name": "SMSi2001",
-      "link": ""
+      "name": "smsi2001",
+      "link": "https://github.com/smsi2001"
     }
   ],
   "fr": [
     {
       "name": "Evans Costa",
+      "link": ""
+    },
+    {
+      "name": "Rémi Guerrero",
       "link": ""
     }
   ],
