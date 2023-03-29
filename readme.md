@@ -1,25 +1,22 @@
-# [WingetUI has a new homepage!](https://www.marticliment.com/wingetui/)
+# <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/resources/icon.png" height="40">WingetUI
 
-# WingetUI: A GUI for Winget, Scoop and Chocolatey
-
-[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/1.6.0/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
-[![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)
+[![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
 
-<br>The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/) and [Chocolatey](https://chocolatey.org/).  
-
+The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/) and [Chocolatey](https://chocolatey.org/).  
 With this app, you'll be able to easily download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
-<br>**Disclaimer:** This project has no connection with Winget, Chocolatey or Scoop — it's completely unofficial. 
+**Disclaimer:** This project has no connection with Winget, Chocolatey or Scoop — it's completely unofficial. Be aware of the fact that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI are responsible for the downloaded apps.
 
-Beware that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI are responsible for the downloaded apps. 
+**This is WingetUI's official repository. If you are searching for WingetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 <!--[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Temporarily%20Paused-yellow?style=for-the-badge)]()-->
 
-
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/banner.png)
+<!--
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/banner.png)-->
 
 # Consider supporting me :)
 
