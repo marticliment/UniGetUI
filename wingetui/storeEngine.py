@@ -515,6 +515,13 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
                         del i
                         globals.uninstall.updatePackageNumber()
+                        if self.packageId in globals.updates.packages:
+                            packageItem = globals.updates.packages[self.packageId]["item"]
+                            packageItem.setHidden(True)
+                            i = packageItem.treeWidget().takeTopLevelItem(packageItem.treeWidget().indexOfTopLevelItem(packageItem))
+                            del i
+                            globals.updates.updatePackageNumber()
+
                     except Exception as e:
                         report(e)
             self.finishedInstallation = True
