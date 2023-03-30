@@ -294,7 +294,7 @@ class RootWindow(QMainWindow):
         return super().resizeEvent(event)
 
     def showWindow(self, index = -1):
-        if globals.lastFocusedWindow != self.winId():
+        if globals.lastFocusedWindow != self.winId() or index >= 0:
             if not self.window().isMaximized():
                 self.window().show()
                 self.window().showNormal()
