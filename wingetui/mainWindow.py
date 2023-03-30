@@ -348,6 +348,10 @@ class RootWindow(QMainWindow):
             if not self.appliedStyleSheet and globals.darkCSS != "":
                 self.appliedStyleSheet = True
                 self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
+        try:
+            globals.uninstall.reload()
+        except Exception as e:
+            report(e)
         return super().showEvent(event)
 
     def enterEvent(self, event: QEnterEvent) -> None:
