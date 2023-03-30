@@ -905,7 +905,7 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.addSeparator()
             ins6 = QAction(_("Ignore updates for this package"))
             ins6.setIcon(QIcon(getMedia("blacklist")))
-            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True)))
+            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True), self.updatePackageNumber()))
             contextMenu.addAction(ins6)
             contextMenu.addAction(ins5)
             contextMenu.addSeparator()
