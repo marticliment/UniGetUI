@@ -12,6 +12,7 @@ languageReference = {
     "de"    : "German - Deutsch",
     "en"    : "English - English",
     "es"    : "Spanish - Castellano",
+    "fa"    : "Persian - فارسی‎",
     "fr"    : "French - Français",
     "hi"    : "Hindi - हिंदी",
     "hr"    : "Croatian - Hrvatski",
