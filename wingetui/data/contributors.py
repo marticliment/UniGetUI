@@ -24,12 +24,12 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1082
+    "contributions": 1091
   },
   {
     "name": "ppvnf",
     "link": "https://github.com/ppvnf",
-    "contributions": 82
+    "contributions": 83
   },
   {
     "name": "panther7",
