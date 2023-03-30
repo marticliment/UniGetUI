@@ -65,9 +65,12 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                 else:
                     counter += 1
         oldcontents = ""
-        with open(cacheFile, "r") as f:
-            oldcontents = f.read()
-            f.close()
+        try:
+            with open(cacheFile, "r") as f:
+                oldcontents = f.read()
+                f.close()
+        except Exception as e:
+            report(e)
         for line in oldcontents.split("\n"):
             if line.split(" ")[0] not in output:
                 output += line + "\n"
