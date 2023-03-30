@@ -124,6 +124,19 @@ begin
     ExtractTemporaryFile('vcredist.exe');
   end;
 end;
+function CmdLineParamExists(const Value: string): Boolean;
+var
+  I: Integer;  
+begin
+  Result := False;
+  for I := 1 to ParamCount do
+    if CompareText(ParamStr(I), Value) = 0 then
+    begin
+      Result := True;
+      Exit;
+    end;
+end;
+
 
 [Tasks]
 Name: "startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts";
@@ -155,7 +168,8 @@ Filename: "{app}\remove-old.cmd"; Flags: runhidden
 ;Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 ;Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall;
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart')
+
 
 [UninstallRun]
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
