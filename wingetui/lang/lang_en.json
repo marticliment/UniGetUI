@@ -68,7 +68,7 @@
   "Current Version" : null,
   "Dark" : null,
   "Description:" : null,
-  "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : null,
+  "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Directly install when double-clicking an item on the Discover Packages tab (instead of showing the package info)",
   "DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS." : null,
   "Discover Packages" : null,
   "Do not download new app translations from GitHub automatically" : null,
