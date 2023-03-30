@@ -394,7 +394,7 @@ try:
                 self.trayIcon = globals.trayIcon
                 globals.app = self
                 self.trayIcon.setIcon(QIcon(getMedia("icon", autoIconMode = False)))
-                self.trayIcon.setToolTip("WingetUI")
+                self.trayIcon.setToolTip(_("Initializing WingetUI..."))
                 self.trayIcon.setVisible(True)
 
                 menu = QMenu("WingetUI")
