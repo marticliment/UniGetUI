@@ -4,31 +4,22 @@ untranslatedPercentage = {
   "ar": "91%",
   "bg": "84%",
   "bn": "23%",
-  "cs": "97%",
+  "cs": "99%",
   "da": "44%",
   "de": "98%",
   "es": "99%",
-  "fr": "98%",
   "hi": "72%",
   "hr": "0%",
   "hu": "98%",
-  "id": "20%",
+  "id": "70%",
   "it": "96%",
-  "ja": "78%",
   "ko": "91%",
-  "nb": "44%",
-  "nl": "98%",
-  "pl": "98%",
-  "pt_BR": "98%",
-  "pt_PT": "98%",
+  "pl": "99%",
   "ru": "96%",
-  "sl": "98%",
   "sr": "18%",
   "th": "49%",
   "tr": "75%",
-  "ua": "76%",
-  "zh_CN": "98%",
-  "zh_TW": "98%"
+  "ua": "76%"
 }
 
 languageCredits = {
@@ -114,9 +105,19 @@ languageCredits = {
       "link": "https://github.com/rubnium"
     }
   ],
+  "fa": [
+    {
+      "name": "smsi2001",
+      "link": "https://github.com/smsi2001"
+    }
+  ],
   "fr": [
     {
       "name": "Evans Costa",
+      "link": ""
+    },
+    {
+      "name": "Rémi Guerrero",
       "link": ""
     }
   ],
@@ -160,6 +161,10 @@ languageCredits = {
   ],
   "ja": [
     {
+      "name": "nob-swik",
+      "link": "https://github.com/nob-swik"
+    },
+    {
       "name": "sho9029",
       "link": ""
     },
@@ -174,7 +179,12 @@ languageCredits = {
       "link": "https://github.com/shblue21"
     }
   ],
-  "nb": [],
+  "nb": [
+    {
+      "name": "jomaskm",
+      "link": "https://github.com/jomaskm"
+    }
+  ],
   "nl": [
     {
       "name": "abbydiode",
@@ -277,6 +287,10 @@ languageCredits = {
       "link": ""
     },
     {
+      "name": "CnYeSheng",
+      "link": ""
+    },
+    {
       "name": "Cololi",
       "link": ""
     }
@@ -284,6 +298,10 @@ languageCredits = {
   "zh_TW": [
     {
       "name": "Aaron Liu",
+      "link": ""
+    },
+    {
+      "name": "CnYeSheng",
       "link": ""
     },
     {
