@@ -295,7 +295,7 @@ class ErrorMessage(QMainWindow):
         self.bgw1 = QWidget()
         self.bgw1.setLayout(hl)
         layout.addWidget(self.bgw1)
-        hl = QHBoxLayout()
+        self.buttonLayout = QHBoxLayout()
         self.okButton = QPushButton(self)
         self.okButton.setFixedHeight(30)
         
@@ -319,12 +319,12 @@ class ErrorMessage(QMainWindow):
         self.moreInfoButton.setObjectName("AccentButton")
         self.moreInfoButton.clicked.connect(self.moreInfo)
         self.moreInfoButton.clicked.connect(returnFalse)
-        hl.addSpacing(10)
-        hl.addWidget(self.moreInfoButton)
-        hl.addWidget(self.okButton)
-        hl.addSpacing(10)
+        self.buttonLayout.addSpacing(10)
+        self.buttonLayout.addWidget(self.moreInfoButton)
+        self.buttonLayout.addWidget(self.okButton)
+        self.buttonLayout.addSpacing(10)
         bglayout = QVBoxLayout()
-        bglayout.addLayout(hl)
+        bglayout.addLayout(self.buttonLayout)
         l = QHBoxLayout()
         self.moreInfoTextArea = CustomPlainTextEdit()
         self.moreInfoTextArea.setReadOnly(True)
@@ -388,6 +388,7 @@ class ErrorMessage(QMainWindow):
         self.showerr.emit(data, showNotification)
 
     def em(self, data: dict, showNotification = True):
+        self.buttonLayout.setDirection(QBoxLayout.Direction.LeftToRight)
         self.okButton.setObjectName("")
         self.moreInfoButton.setObjectName("")
         errorData = {
@@ -439,6 +440,7 @@ class ErrorMessage(QMainWindow):
             globals.app.beep()
             
     def askQuestion(self, data: dict):
+        self.buttonLayout.setDirection(QBoxLayout.Direction.RightToLeft)
         self.isQuestion = True
         try:
             questionData = {
