@@ -14,7 +14,6 @@ import globals
 from customWidgets import *
 from tools import _
 
-
 class DiscoverSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
@@ -245,9 +244,12 @@ class DiscoverSoftwareSection(QWidget):
         ins4 = QAction("", self.toolbar)# ("Interactive update")
         ins4.setIcon(QIcon(getMedia("interactive")))
         ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+        ins5 = QAction("", self.toolbar)
+        ins5.setIcon(QIcon(getMedia("share")))
+        ins5.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
         
-        for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
+        for action in [self.upgradeSelected, inf, ins2, ins3, ins4, ins5]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
 
@@ -292,6 +294,7 @@ class DiscoverSoftwareSection(QWidget):
             ins2: _("Run the installer with administrator privileges"),
             ins3: _("Skip the hash check"),
             ins4: _("Interactive installation"),
+            ins5: _("Share"),
             self.installSelectedAction: _("Install selected"),
             self.selectNoneAction: _("Clear selection"),
             self.importAction: _("Import packages from a file"),
@@ -399,14 +402,27 @@ class DiscoverSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+        
+    def sharePackage(self, package):
+        self.shareUI = ShareUI(self, id=package.text(2), name=package.text(1))
 
     def loadShared(self, id):
         if id in self.packages:
             package = self.packages[id]
             self.infobox.loadProgram(package["name"], id, useId=not("…" in id), store=package["store"], packageItem=package["item"], version=package["store"])
             self.infobox.show()
+            cprint("shown")
         else:
-            raise ValueError("Invalid id provided")
+            self.err = ErrorMessage(self.window())
+            errorData = {
+                    "titlebarTitle": _("Unable to find package"),
+                    "mainTitle": _("Unable to find package"),
+                    "mainText": _("We could not load detailed information about this package, because it was found in any of your package sources"),
+                    "buttonTitle": _("Ok"),
+                    "errorDetails": _("This is probably due to the fact that the package you were sent was removed, or published on a package manager that you don't have enabled. The received ID is {0}").format(id),
+                    "icon": QIcon(getMedia("notif_warn")),
+                }
+            self.err.showErrorMessage(errorData, showNotification=False)
 
     def exportSelection(self) -> None:
         """
@@ -1010,8 +1026,13 @@ class UpdateSoftwareSection(QWidget):
         ins4 = QAction("", self.toolbar)# ("Interactive update")
         ins4.setIcon(QIcon(getMedia("interactive")))
         ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+        ins5 = QAction("", self.toolbar)
+        ins5.setIcon(QIcon(getMedia("share")))
+        ins5.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
-        for action in [self.upgradeSelected, inf, ins2, ins3, ins4]:
+
+
+        for action in [self.upgradeSelected, inf, ins2, ins3, ins4, ins5]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
             
@@ -1069,6 +1090,7 @@ class UpdateSoftwareSection(QWidget):
             ins2: _("Update with administrator privileges"),
             ins3: _("Skip the hash check"),
             ins4: _("Interactive update"),
+            ins5: _("Share"),
             self.selectAllAction: _("Select all"),
             self.selectNoneAction: _("Clear selection"),
             self.upgradeSelectedAction: _("Update selected"),
@@ -1497,6 +1519,10 @@ class UpdateSoftwareSection(QWidget):
         self.adjustWidgetsSize()
         return super().showEvent(event)
 
+    def sharePackage(self, package):
+        self.shareUI = ShareUI(self, id=package.text(2), name=package.text(1))
+
+
 class UninstallSoftwareSection(QWidget):
 
     addProgram = Signal(str, str, str, str)
@@ -1738,8 +1764,12 @@ class UninstallSoftwareSection(QWidget):
         ins5 = QAction("", self.toolbar)# ("Interactive uninstall")
         ins5.setIcon(QIcon(getMedia("interactive")))
         ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
+        ins6 = QAction("", self.toolbar)
+        ins6.setIcon(QIcon(getMedia("share")))
+        ins6.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
-        for action in [self.upgradeSelected, inf, ins2, ins5]:
+
+        for action in [self.upgradeSelected, inf, ins2, ins5, ins6]:
             self.toolbar.addAction(action)
             self.toolbar.widgetForAction(action).setFixedSize(40, 45)
 
@@ -1793,6 +1823,7 @@ class UninstallSoftwareSection(QWidget):
             inf: _("Show package info"),
             ins2: _("Uninstall with administrator privileges"),
             ins5: _("Interactive uninstall"),
+            ins6: _("Share"),
             self.upgradeSelectedAction: _("Uninstall selected packages"),
             self.selectNoneAction: _("Clear selection"),
             self.selectAllAction: _("Select all"),
@@ -2259,6 +2290,10 @@ class UninstallSoftwareSection(QWidget):
             anim.valueChanged.disconnect()
             anim.finished.disconnect()
             anim.deleteLater()
+            
+    def sharePackage(self, package):
+        self.shareUI = ShareUI(self, id=package.text(2), name=package.text(1))
+
 
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):

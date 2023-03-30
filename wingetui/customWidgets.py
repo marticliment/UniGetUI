@@ -5,6 +5,7 @@ from win32mica import *
 from tools import *
 from tools import _
 import globals
+import urllib.parse
 
 
 class MessageBox(QMessageBox):
@@ -1128,6 +1129,53 @@ class ClosableOpaqueMessage(QWidget):
         
     def setIcon(self, icon: QIcon) -> None:
         self.image.setPixmap(icon.pixmap(QSize(self.image.size())))
+        
+class ShareUI(QWidget):
+    def __init__(self, parent, id, name):
+        super().__init__(parent=parent)
+        self.setWindowFlag(Qt.Window)
+        self.setWindowFlag(Qt.FramelessWindowHint)
+        l = QVBoxLayout()
+        l.setContentsMargins(40, 40, 40, 40)
+        self.setWindowTitle(_("Sharing {package}").format(package=name))
+
+        self.commandWindow = CommandLineEdit(self)
+        self.commandWindow.setReadOnly(True)
+        self.setFixedSize(QSize(600, 240))
+        
+        self.commandWindow.setText(f"https://marticliment.com/wingetui/share/?pname={urllib.parse.quote(name)}&pid={urllib.parse.quote(id)}")
+        self.commandWindow.setCursorPosition(0)
+        
+        label = QLabel(_("Sharing {package}").format(package=name), self)
+        label.setStyleSheet("font-size: 20pt;")
+
+        l.addStretch()
+        l.addWidget(label)
+        l.addSpacing(10)
+        l.addWidget(self.commandWindow)
+        l.addSpacing(10)
+            
+        h = QHBoxLayout()
+        h.addWidget(QLabel(_("Copy this link and share it with your friends!")))
+        btn = QPushButton(_("Close"))
+        btn.clicked.connect(self.close)
+        h.addWidget(btn)
+        l.addLayout(h)
+        l.addStretch()
+
+        self.setLayout(l)
+
+        self.show()
+        self.setWindowIcon(parent.window().windowIcon())
+        self.show()
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        ApplyMenuBlur(self.winId(), self, smallCorners=False)
+        return super().showEvent(event)
+    
+    def focusOutEvent(self, event: QFocusEvent) -> None:
+        self.close()
+        return super().leaveEvent(event)
         
 class NotClosableWidget(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:

@@ -17,7 +17,6 @@ def show_package():
             globalsignal.emit(result)
         except AttributeError:
             pass
-        print("signal emitted")
         return response
     except ValueError:
         return response
@@ -26,9 +25,7 @@ def show_package():
         
 def runBackendApi(signal: Signal):
     global globalsignal
-    signal.emit("test")
     globalsignal = signal
-    globalsignal.emit("test")
 
     app.run(host="localhost", port=7058)
     

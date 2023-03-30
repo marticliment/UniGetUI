@@ -222,7 +222,6 @@ try:
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
                 Thread(target=self.downloadPackagesMetadata, daemon=True).start()
-                self.showProgram.connect(lambda v: cprint(v))
                 Thread(target=runBackendApi, args=(self.showProgram,), daemon=True).start()
                 if not getSettings("DisableWinget"):
                     Thread(target=self.detectWinget, daemon=True).start()
