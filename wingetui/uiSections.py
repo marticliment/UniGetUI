@@ -2667,6 +2667,10 @@ class SettingsSection(QScrollArea):
 
         self.advancedOptions = QSettingsTitle(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
         self.layout.addWidget(self.advancedOptions)
+        disableShareApi = QSettingsCheckBox(_("Disable new share API (port 7058)"))
+        disableShareApi.setChecked(getSettings("DisableApi"))
+        disableShareApi.stateChanged.connect(lambda v: setSettings("DisableApi", bool(v)))
+        self.advancedOptions.addWidget(disableShareApi)
 
         enableSystemWinget = QSettingsCheckBox(_("Use system Winget (Needs a restart)"))
         enableSystemWinget.setChecked(getSettings("UseSystemWinget"))
