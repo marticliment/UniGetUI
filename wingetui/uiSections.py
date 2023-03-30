@@ -897,7 +897,7 @@ class UpdateSoftwareSection(QWidget):
             ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
             ins5 = QAction(_("Uninstall package"))
             ins5.setIcon(QIcon(getMedia("menu_uninstall")))
-            ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=self.packageList.currentItem()))
+            ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=globals.uninstall.packages[self.packageList.currentItem().text(2)]["item"]))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -1292,6 +1292,7 @@ class UpdateSoftwareSection(QWidget):
                     "version": version,
                     "newVersion": newVersion,
                     "store": store,
+                    "item": item,
                 }
                 if "scoop" in store.lower():
                     item.setIcon(5, self.scoopIcon)
@@ -2079,6 +2080,7 @@ class UninstallSoftwareSection(QWidget):
                 "name": name,
                 "version": version,
                 "store": store,
+                "item": item,
             }
             #c = QCheckBox()
             #c.setChecked(False)
