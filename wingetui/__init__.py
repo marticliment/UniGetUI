@@ -398,7 +398,7 @@ try:
                 self.trayIcon = globals.trayIcon
                 globals.app = self
                 self.trayIcon.setIcon(QIcon(getMedia("icon", autoIconMode = False)))
-                self.trayIcon.setToolTip("WingetUI")
+                self.trayIcon.setToolTip(_("Initializing WingetUI..."))
                 self.trayIcon.setVisible(True)
 
                 menu = QMenu("WingetUI")
@@ -768,8 +768,8 @@ try:
     }}
     QComboBox::down-arrow:disabled {{
         image: url("{getMedia(f"collapse")}");
-        height: 2px;
-        width: 2px;
+        height: 8px;
+        width: 8px;
     }}
     QMessageBox{{
         background-color: #202020;
@@ -1104,8 +1104,8 @@ try:
     }}
     QComboBox::down-arrow:disabled {{
         image: url("{getMedia("drop-down")}");
-        height: 2px;
-        width: 2px;
+        height: 8px;
+        width: 8px;
     }}
     QComboBox QAbstractItemView {{
         border: 1px solid rgba(36, 36, 36, 50%);

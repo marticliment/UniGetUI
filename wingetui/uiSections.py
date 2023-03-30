@@ -139,7 +139,7 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(1), item.text(2), item.text(4), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(1), item.text(2), item.text(4), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4), packageItem=item))
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
@@ -465,12 +465,10 @@ class DiscoverSoftwareSection(QWidget):
             report(e)
 
     def installSelected(self) -> None:
-            for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
-                if not program.isHidden():
+            for package in self.packageItems:
                     try:
-                        if program.checkState(0) ==  Qt.CheckState.Checked:
-                           self.fastinstall(program.text(1), program.text(2), program.text(4), packageItem=program)
+                        if package.checkState(0) ==  Qt.CheckState.Checked:
+                           self.fastinstall(package.text(1), package.text(2), package.text(4), packageItem=package)
                     except AttributeError:
                         pass
 
@@ -564,7 +562,7 @@ class DiscoverSoftwareSection(QWidget):
         return super().resizeEvent(event)
     
     def addItem(self, name: str, id: str, version: str, store) -> None:
-        if not "---" in name and not name in ("+", "Everything", "Scoop"):
+        if not "---" in name and not name in ("+", "Everything", "Scoop", "At", "The", "But") and not version in ("the", "is"):
             item = TreeWidgetItemWithQAction(self)
             item.setText(1, name)
             item.setText(2, id)
@@ -669,7 +667,7 @@ class DiscoverSoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(2))
+        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(3))
         self.infobox.show()
 
     def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -905,7 +903,7 @@ class UpdateSoftwareSection(QWidget):
             ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
             ins5 = QAction(_("Uninstall package"))
             ins5.setIcon(QIcon(getMedia("menu_uninstall")))
-            ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=self.packageList.currentItem()))
+            ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=globals.uninstall.packages[self.packageList.currentItem().text(2)]["item"]))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -915,7 +913,7 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.addSeparator()
             ins6 = QAction(_("Ignore updates for this package"))
             ins6.setIcon(QIcon(getMedia("blacklist")))
-            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True)))
+            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True), self.updatePackageNumber()))
             contextMenu.addAction(ins6)
             contextMenu.addAction(ins5)
             contextMenu.addSeparator()
@@ -1019,7 +1017,7 @@ class UpdateSoftwareSection(QWidget):
             
         self.toolbar.addSeparator()
 
-        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), _(""), self.toolbar)
+        self.upgradeAllAction = QAction(QIcon(getMedia("installall")), "", self.toolbar)
         self.upgradeAllAction.triggered.connect(lambda: self.updateAll()) # Required for the systray context menu
         self.upgradeSelectedAction = QAction(QIcon(getMedia("list")), _("Update selected"), self.toolbar)
         self.upgradeSelectedAction.triggered.connect(lambda: self.updateSelected())
@@ -1271,7 +1269,7 @@ class UpdateSoftwareSection(QWidget):
         self.callInMain.emit(partial(item.setText, 5, store))
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
-        if not "---" in name and not name in ("+", "Everything", "Scoop"):
+        if not "---" in name and not name in ("+", "Everything", "Scoop", "At", "The", "But") and not version in ("the", "is"):
             if not id in self.blacklist:
                 item = TreeWidgetItemWithQAction()
                 item.setText(1, name)
@@ -1300,6 +1298,7 @@ class UpdateSoftwareSection(QWidget):
                     "version": version,
                     "newVersion": newVersion,
                     "store": store,
+                    "item": item,
                 }
                 if "scoop" in store.lower():
                     item.setIcon(5, self.scoopIcon)
@@ -1355,7 +1354,7 @@ class UpdateSoftwareSection(QWidget):
             if not item.isHidden():
                 self.availableUpdates += 1
         self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
-        globals.trayIcon.setToolTip("WingetUI" if self.availableUpdates == 0 else (_("WingetUI - 1 update is available") if self.availableUpdates == 1 else _("WingetUI - {0} updates are available").format(self.availableUpdates)) )
+        globals.trayIcon.setToolTip(_("WingetUI - Everything is up to date") if self.availableUpdates == 0 else (_("WingetUI - 1 update is available") if self.availableUpdates == 1 else _("WingetUI - {0} updates are available").format(self.availableUpdates)) )
         globals.trayMenuUpdatesList.menuAction().setText(_("No updates are available" if self.availableUpdates == 0 else "Available updates: {0}").format(self.availableUpdates))
         if self.availableUpdates > 0:
             self.packageList.label.hide()
@@ -2021,7 +2020,7 @@ class UninstallSoftwareSection(QWidget):
 
 
     def addItem(self, name: str, id: str, version: str, store: str) -> None:
-        if not "---" in name and not name in ("+", "Everything", "Scoop"):
+        if not "---" in name and not name in ("+", "Everything", "Scoop", "At", "The", "But") and not version in ("the", "is"):
             item = TreeWidgetItemWithQAction()
             if store.lower() == "winget":
                 for illegal_char in ("{", "}", " "):
@@ -2087,6 +2086,7 @@ class UninstallSoftwareSection(QWidget):
                 "name": name,
                 "version": version,
                 "store": store,
+                "item": item,
             }
             #c = QCheckBox()
             #c.setChecked(False)
@@ -2294,8 +2294,9 @@ class AboutSection(QScrollArea):
             table.setEnabled(False)
             table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             table.setShowGrid(False)
-            table.setHorizontalHeaderLabels([_("Status"), _("Version")])
+            table.setHorizontalHeaderLabels([("" if isDark() else "   ")+_("Status"), _("Version")])
             table.setColumnWidth(1, 500)
+            table.setColumnWidth(0, 150)
             table.verticalHeader().setFixedWidth(100)
             table.setVerticalHeaderLabels(["Winget ", "Scoop ", "Chocolatey ", " GSudo "])
             table.setItem(0, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus["wingetFound"] else _("Not found")))
@@ -2469,11 +2470,7 @@ class SettingsSection(QScrollArea):
                 langDictWithPercentage[key] = value
                 langListWithPercentage.append(value)
         try:
-            cprint(invertedLangDict)
             self.language.combobox.insertItems(0, langListWithPercentage)
-            cprint(langListWithPercentage)
-            cprint(langName)
-            cprint(langDictWithPercentage)
             self.language.combobox.setCurrentIndex(langListWithPercentage.index(langDictWithPercentage[langName]))
         except Exception as e:
             report(e)

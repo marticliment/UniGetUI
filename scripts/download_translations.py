@@ -4,11 +4,14 @@ import os
 import time
 
 try:
-    apikey = open("APIKEY.txt", "r").read()
-    print("  API key found in APIKEY.txt")
+    with open("APIKEY.txt", "r") as f:
+        apikey = f.read().strip()
+        if not apikey:
+            raise ValueError("APIKEY.txt is empty")
+        print("API key found in APIKEY.txt")
 except FileNotFoundError:
     apikey = os.environ.get("TOLGEE_KEY", "")
-    if (apikey == ""):
+    if not apikey:
         apikey = input("Write api key and press enter: ")
 
 os.chdir(os.path.dirname(__file__) + "/..") # move to root project
@@ -127,7 +130,10 @@ for lang in downloadedLanguages:
         print(e)
         print("Can't get translator list!")
     langCredits[lang] = credits
-    perc = "{:.0%}".format(a / c)
+    percNum = a / c
+    perc = "{:.0%}".format(percNum)
+    if (perc == "100%" and percNum < 1):
+        perc = "99%"
     if (perc == "100%" or lang == "en"):
         continue
     langPerc[lang] = perc
