@@ -43,14 +43,16 @@ winget install wingetui
 **Install WingetUI through Scoop:**
 ```cmd
 scoop bucket add extras
+```
+```cmd
 scoop install extras/wingetui
 ```
 
-_Available soon on chocolatey_
+_Available soon on Chocolatey._
 
 ## Update WingetUI
 
-WingetUI has a built-in autoupdater. However, it can also be updated like any other package within WingetUI (since WingetUI is available through winget and scoop).
+WingetUI has a built-in autoupdater. However, it can also be updated like any other package within WingetUI (since WingetUI is available through Winget and Scoop).
 
 
 ## Support the developer
@@ -194,4 +196,4 @@ To mitigate the risks of downloading malware, Microsoft has implemented a few ch
 
 ### From the next version and beyond:<br>
 `--welcomewizard`: Show a window to choose which package managers to use.<br>
-`--updateapps`: Enable automatic install of available updates
+`--updateapps`: Enable automatic install of available updates.
