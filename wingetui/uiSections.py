@@ -457,12 +457,10 @@ class DiscoverSoftwareSection(QWidget):
             report(e)
 
     def installSelected(self) -> None:
-            for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
-                if not program.isHidden():
+            for package in self.packageItems:
                     try:
-                        if program.checkState(0) ==  Qt.CheckState.Checked:
-                           self.fastinstall(program.text(1), program.text(2), program.text(4), packageItem=program)
+                        if package.checkState(0) ==  Qt.CheckState.Checked:
+                           self.fastinstall(package.text(1), package.text(2), package.text(4), packageItem=package)
                     except AttributeError:
                         pass
 
