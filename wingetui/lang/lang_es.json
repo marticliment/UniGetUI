@@ -2,7 +2,7 @@
   "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@rubnium, @JMoreno97, @dalbitresb12, @marticliment",
   "{0} {1} failed" : "La {1} de {0} ha fallado.",
   "{0} can be updated" : "{0} puede actualizarse.",
-  "{0} days" : null,
+  "{0} days" : "{0} dias",
   "{0} failed" : "{0} ha fallado.",
   "{0} hours" : "{0} horas",
   "{0} installation" : "Instalación de {0}",
