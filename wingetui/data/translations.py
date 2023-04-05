@@ -8,21 +8,17 @@ untranslatedPercentage = {
   "da": "43%",
   "de": "95%",
   "es": "99%",
-  "fa": "97%",
+  "fa": "99%",
   "fr": "97%",
   "hi": "70%",
   "hr": "0%",
-  "hu": "95%",
   "id": "68%",
   "it": "93%",
   "ja": "97%",
-  "ko": "91%",
-  "nb": "97%",
   "pl": "99%",
   "ru": "93%",
   "sr": "17%",
   "th": "47%",
-  "tr": "73%",
   "ua": "73%",
   "zh_TW": "97%"
 }
@@ -180,6 +176,10 @@ languageCredits = {
   ],
   "ko": [
     {
+      "name": "minbert",
+      "link": "https://github.com/minbert"
+    },
+    {
       "name": "shblue21",
       "link": "https://github.com/shblue21"
     }
@@ -264,8 +264,8 @@ languageCredits = {
   ],
   "tr": [
     {
-      "name": "Ahmet Özmetin",
-      "link": ""
+      "name": "ahmetozmtn",
+      "link": "https://github.com/ahmetozmtn"
     }
   ],
   "ua": [
