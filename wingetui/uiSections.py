@@ -1746,7 +1746,7 @@ class UninstallSoftwareSection(QWidget):
                 errorData = {
                         "titlebarTitle": _("Unable to load informarion"),
                         "mainTitle": _("Unable to load informarion"),
-                        "mainText": _("We could not load detailed information about this package, because it was not installed neither from Winget nor Scoop."),
+                        "mainText": _("We could not load detailed information about this package, because it was not installed from an available package manager."),
                         "buttonTitle": _("Ok"),
                         "errorDetails": _("Uninstallable packages with the origin listed as \"{0}\" are not published on any package manager, so there's no information available to show about them.").format(item.text(4)),
                         "icon": QIcon(getMedia("notif_warn")),
