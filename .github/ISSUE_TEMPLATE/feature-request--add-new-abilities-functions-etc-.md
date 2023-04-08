@@ -11,7 +11,7 @@ assignees: marticliment
 
 - [ ] **I have checked that the requested feature is not a duplicate or, if it is, it needs to be reopened**
 - [ ] **I have checked that I am running the latest version of WingetUI**
-- [ ] **I have checked the [FAQ](https://github.com/martinet101/WingetUI#faq) section**
+- [ ] **I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section**
 - [ ] **I have read the [contributing guidelines](https://github.com/marticliment/WingetUI/blob/main/CONTRIBUTING.md#feature-requests) and I agree with the [Code of Conduct](https://github.com/marticliment/WingetUI/blob/main/CODE_OF_CONDUCT.md)**
 
 ## Is your feature request related to a problem? Please describe.

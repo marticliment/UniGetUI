@@ -12,7 +12,7 @@ assignees: marticliment
 - [ ] **I have checked that the bug is not a duplicate or, if it is, it needs to be reopened**
 - [ ] **I have checked that I am running the latest version of WingetUI**
 - [ ] **I have tried resetting and reinstalling WingetUI and the issue persisted or happened again**
-- [ ] **I have checked the [FAQ](https://github.com/martinet101/WingetUI#faq) section for solutions**
+- [ ] **I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions**
 - [ ] **I have read the [contributing guidelines](https://github.com/marticliment/WingetUI/blob/main/CONTRIBUTING.md#issues) and I agree with the [Code of Conduct](https://github.com/marticliment/WingetUI/blob/main/CODE_OF_CONDUCT.md)**
 
 ## Describe the bug
