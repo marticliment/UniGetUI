@@ -417,7 +417,7 @@ class DiscoverSoftwareSection(QWidget):
             errorData = {
                     "titlebarTitle": _("Unable to find package"),
                     "mainTitle": _("Unable to find package"),
-                    "mainText": _("We could not load detailed information about this package, because it was found in any of your package sources"),
+                    "mainText": _("We could not load detailed information about this package, because it was not found in any of your package sources"),
                     "buttonTitle": _("Ok"),
                     "errorDetails": _("This is probably due to the fact that the package you were sent was removed, or published on a package manager that you don't have enabled. The received ID is {0}").format(id),
                     "icon": QIcon(getMedia("notif_warn")),
