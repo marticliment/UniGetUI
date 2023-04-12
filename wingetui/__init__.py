@@ -134,7 +134,7 @@ try:
             self.w = NotClosableWidget()
             self.w.setObjectName("micawin")
             self.w.setWindowFlag(Qt.WindowType.Window)
-            self.w.setWindowTitle(_("\x20"))
+            self.w.setWindowTitle("\x20")
             pixmap = QPixmap(4, 4)
             pixmap.fill(Qt.GlobalColor.transparent)
             self.w.setWindowIcon(pixmap)

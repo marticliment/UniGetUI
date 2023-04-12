@@ -1002,12 +1002,17 @@ class PackageInfoPopupWindow(QWidget):
             self.publisher.setText(f"<b>{_('Publisher')}:</b> "+_("Loading..."))
             self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"\">{_('Loading...')}</a>")
             self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')} (<a style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>)")
+            lastVerString = ""
             if update:
-                self.lastver.setText(f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(version)})")
+                lastVerString = f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(version)})"
             elif uninstall:
-                self.lastver.setText(f"<b>{_('Installed Version')}:</b> {version}")
+                lastVerString = f"<b>{_('Installed Version')}:</b> {version}"
             else:
-                self.lastver.setText(f"<b>{_('Current Version' if isScoop else 'Latest Version')}:</b> {version}")
+                if isScoop:
+                    lastVerString = f"<b>{_('Current Version')}:</b> {version}"
+                else:
+                    lastVerString = f"<b>{_('Latest Version')}:</b> {version}"
+            self.lastver.setText(lastVerString)
 
             self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
             self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a  style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>")
