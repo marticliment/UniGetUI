@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : null,
   "Reset WingetUI icon and screenshot cache" : null,
   "Restart WingetUI" : null,
+  "Restart your PC to finish installation" : null,
   "Return to top" : null,
   "Run as admin" : null,
   "Run as administrator" : null,

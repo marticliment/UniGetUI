@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "إعاجة ضبط WingetUI و تفضيلاته",
   "Reset WingetUI icon and screenshot cache" : "إعادة ضبط الذاكرة المؤقتة لأيقونات و لقطات شاشة WingetUI",
   "Restart WingetUI" : "إعادة تشغيل WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "عودة للأعلى",
   "Run as admin" : "تشغيل كمسؤوول",
   "Run as administrator" : "تشغيل كمسؤوول",

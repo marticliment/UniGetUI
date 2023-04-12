@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "WingetUI とその設定をリセットする",
   "Reset WingetUI icon and screenshot cache" : "WingetUI のアイコンとスクリーンショットのキャッシュをリセットする",
   "Restart WingetUI" : "WingetUIの再起動",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "トップに戻る",
   "Run as admin" : "管理者として実行",
   "Run as administrator" : "管理者として実行",

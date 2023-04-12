@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "Nulstil WingetUI og indstillinger",
   "Reset WingetUI icon and screenshot cache" : null,
   "Restart WingetUI" : "Genstart WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : null,
   "Run as admin" : "Kør som admin",
   "Run as administrator" : "Kør som administrator",

@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "Setel ulang WingetUI berserta preferensinya",
   "Reset WingetUI icon and screenshot cache" : "Setel ulang ikon WingetUI serta cache tangkapan layar ",
   "Restart WingetUI" : "Mulai ulang WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "Kembali ke atas",
   "Run as admin" : "Jalankan sebagai admin",
   "Run as administrator" : "Jalankan sebagai adminstrator",
