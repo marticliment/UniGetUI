@@ -15,6 +15,9 @@ jobs:
       - name: Download Tolgee translations
         run: |
           python scripts/download_translations.py --autocommit
+      - name: Check translations
+        run: |
+          python scripts/export_translation_strings.py
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -25,3 +28,4 @@ jobs:
           author: "Tolgee Bot <tolgee-bot@users.noreply.github.com>"
           commit-message: "Update translations from Tolgee"
           branch: pull-request/update-translation
+#          body-path: 
