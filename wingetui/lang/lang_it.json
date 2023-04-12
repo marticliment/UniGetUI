@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "Reimposta WingetUI e le sue preferenze",
   "Reset WingetUI icon and screenshot cache" : "Reimposta la cache delle icone e delle schermate di WingetUI",
   "Restart WingetUI" : "Riavvia WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "Torna in alto",
   "Run as admin" : "Esegui come amministratore",
   "Run as administrator" : "Esegui come amministratore",

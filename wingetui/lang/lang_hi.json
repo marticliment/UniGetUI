@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : null,
   "Reset WingetUI icon and screenshot cache" : null,
   "Restart WingetUI" : "\nविनगेट यू आई को पुनरारंभ करें",
+  "Restart your PC to finish installation" : null,
   "Return to top" : null,
   "Run as admin" : "\nप्रशासक के रूप में चलाएँ",
   "Run as administrator" : "प्रशासक के रूप में चलाएँ",

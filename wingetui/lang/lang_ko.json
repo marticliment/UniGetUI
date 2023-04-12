@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "WingetUI 및 설정 초기화",
   "Reset WingetUI icon and screenshot cache" : "WingetUI 아이콘 및 스크린샷 캐시 초기화",
   "Restart WingetUI" : "WingetUI 재시작",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "맨 위로 돌아가기",
   "Run as admin" : "관리자 권한으로 실행",
   "Run as administrator" : "관리자 권한으로 실행",

@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "Сбросить WingetUI и его настройки",
   "Reset WingetUI icon and screenshot cache" : "Сбросить значок WingetUI и кэш снимков экрана",
   "Restart WingetUI" : "Перезапуск WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "Вернуться наверх",
   "Run as admin" : "Запуск от имени администратора",
   "Run as administrator" : "Запуск от имени администратора",

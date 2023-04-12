@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "A WingetUI és beállításai alaphelyzetbe állítása",
   "Reset WingetUI icon and screenshot cache" : "Ürítse ki a WingetUI ikon és képernyőkép gyorsítótárát",
   "Restart WingetUI" : "Indítsa újra a WingetUI-t",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "Vissza felülre",
   "Run as admin" : "Futtatás rendszergazdaként",
   "Run as administrator" : "Futtatás rendszergazdaként",

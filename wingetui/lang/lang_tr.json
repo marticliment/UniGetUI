@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "WingetUI'yi ve tercihlerini sıfırlayın",
   "Reset WingetUI icon and screenshot cache" : "WingetUI simgesini ve ekran görüntüsü önbelleğini sıfırlayın",
   "Restart WingetUI" : "WingetUI'yı yeniden başlatın",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "Başa dön",
   "Run as admin" : "Yönetici olarak çalıştır",
   "Run as administrator" : "Yönetici olarak çalıştır",

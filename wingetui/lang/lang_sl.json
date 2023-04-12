@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "Ponastavite WingetUI in njegove nastavitve",
   "Reset WingetUI icon and screenshot cache" : "Ponastavite ikono WingetUI in predpomnilnik posnetkov zaslona",
   "Restart WingetUI" : "Ponovno zaženi WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "Nazaj na vrh",
   "Run as admin" : "Zaženi kot skrbnik",
   "Run as administrator" : "Zaženi kot skrbnik",

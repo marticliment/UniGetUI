@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "重置 WingetUI 及其软件设置",
   "Reset WingetUI icon and screenshot cache" : "重置 WingetUI 的图标和屏幕截图缓存",
   "Restart WingetUI" : "重新启动WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "回到顶部",
   "Run as admin" : "以管理员身份运行",
   "Run as administrator" : "以管理员身份运行（administrator）",

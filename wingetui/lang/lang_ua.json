@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : null,
   "Reset WingetUI icon and screenshot cache" : null,
   "Restart WingetUI" : "Перезапуск WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : null,
   "Run as admin" : "Запуск від імені адміністратора",
   "Run as administrator" : "Запустити від імені адміністратора",

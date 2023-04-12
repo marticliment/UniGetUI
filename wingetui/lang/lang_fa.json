@@ -188,6 +188,7 @@
   "Reset WingetUI and its preferences" : "بازنشانی WingetUI و اولویت های آن",
   "Reset WingetUI icon and screenshot cache" : "بازنشانی حافظه موقتی ایکون و اسکرین شات WingetUi  ",
   "Restart WingetUI" : "بازنشانی WingetUI",
+  "Restart your PC to finish installation" : null,
   "Return to top" : "برگشت به بالای صفحه ",
   "Run as admin" : "اجرا به عنوان سرپرست ",
   "Run as administrator" : "اجرا به عنوان سرپرست",
