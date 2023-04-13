@@ -630,8 +630,8 @@ class DiscoverSoftwareSection(QWidget):
         print(f"🟢 Searching for string \"{self.query.text()}\"")
         Thread(target=lambda: (time.sleep(0.1), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
         
-    def containsQuery(self, item: QTreeWidgetItem, text: str) -> bool:
-        return text.lower() in item.text(1).lower() or text.lower() in item.text(2).lower()
+    def containsQuery(self, item: QTreeWidgetItem, querytext: str) -> bool:
+        return querytext in item.text(1).lower().replace("-", "").replace(" ", "") or querytext in item.text(2).lower().replace("-", "").replace(" ", "")
     
     def finishFiltering(self, text: str):
         def getTitle(item: QTreeWidgetItem) -> str:
@@ -662,7 +662,7 @@ class DiscoverSoftwareSection(QWidget):
         
         for item in self.packageItems:
             try:
-                if self.containsQuery(item, text):
+                if self.containsQuery(item, text.replace("-", "").replace(" ", "").lower()):
                     self.showableItems.append(item)
                     found += 1
             except RuntimeError:
