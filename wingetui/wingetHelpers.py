@@ -382,7 +382,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     closeAndInform.emit(outputCode, output)
 
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"🟢 winget installer assistant thread started for process {p}")
+    print(f"🟢 winget uninstaller assistant thread started for process {p}")
     counter = 0
     output = ""
     while p.poll() is None:
@@ -396,7 +396,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             output += line+"\n"
     p.wait()
     outputCode = p.returncode
-    if "1603" in output:
+    if "1603" in output or "0x80070005" in output or "Access is denied" in output:
         outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
