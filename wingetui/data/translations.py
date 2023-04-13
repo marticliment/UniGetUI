@@ -4,23 +4,16 @@ untranslatedPercentage = {
   "ar": "99%",
   "bg": "81%",
   "bn": "22%",
-  "cs": "99%",
   "da": "43%",
-  "de": "94%",
   "es": "99%",
   "fa": "98%",
   "hi": "70%",
   "hr": "0%",
-  "hu": "99%",
   "id": "67%",
-  "it": "92%",
   "ja": "96%",
-  "ko": "99%",
   "nb": "99%",
   "nl": "99%",
   "pl": "99%",
-  "pt_BR": "99%",
-  "pt_PT": "99%",
   "ru": "98%",
   "sl": "99%",
   "sr": "17%",
@@ -88,6 +81,10 @@ languageCredits = {
     {
       "name": "ebnater",
       "link": "https://github.com/ebnater"
+    },
+    {
+      "name": "Seeloewen",
+      "link": "https://github.com/Seeloewen"
     }
   ],
   "en": [

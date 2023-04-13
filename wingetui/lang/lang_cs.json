@@ -188,7 +188,7 @@
   "Reset WingetUI and its preferences" : "Obnovit WingetUI do původního nastavení",
   "Reset WingetUI icon and screenshot cache" : "Vyčistit mezipaměť WingetUI ikonek a screenshotů",
   "Restart WingetUI" : "Restartovat WingetUI",
-  "Restart your PC to finish installation" : null,
+  "Restart your PC to finish installation" : "Restartujte počítač k dokončení instalace",
   "Return to top" : "Vrátit se nahoru",
   "Run as admin" : "Spustit jako admin",
   "Run as administrator" : "Spustit jako správce",
