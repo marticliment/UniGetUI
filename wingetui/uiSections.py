@@ -578,7 +578,7 @@ class DiscoverSoftwareSection(QWidget):
         return super().resizeEvent(event)
     
     def addItem(self, name: str, id: str, version: str, store) -> None:
-        if not "---" in name and not name in ("+", "Everything", "Scoop", "At", "The", "But") and not version in ("the", "is"):
+        if not "---" in name and not name in ("+", "Scoop", "At", "The", "But") and not version in ("the", "is"):
             item = TreeWidgetItemWithQAction(self)
             item.setText(1, name)
             item.setText(2, id)
@@ -1291,7 +1291,7 @@ class UpdateSoftwareSection(QWidget):
         self.callInMain.emit(partial(item.setText, 5, store))
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
-        if not "---" in name and not "The following packages" in name and not "Name  " in name and not name in ("+", "Everything", "Scoop", "At", "The", "But") and not version in ("the", "is"):
+        if not "---" in name and not "The following packages" in name and not "Name  " in name and not name in ("+", "Scoop", "At", "The", "But") and not version in ("the", "is"):
             if not id in self.blacklist:
                 item = TreeWidgetItemWithQAction()
                 item.setText(1, name)
@@ -2051,7 +2051,7 @@ class UninstallSoftwareSection(QWidget):
 
 
     def addItem(self, name: str, id: str, version: str, store: str) -> None:
-        if not "---" in name and not name in ("+", "Everything", "Scoop", "At", "The", "But") and not version in ("the", "is"):
+        if not "---" in name and not name in ("+", "Scoop", "At", "The", "But") and not version in ("the", "is"):
             item = TreeWidgetItemWithQAction()
             if store.lower() == "winget":
                 for illegal_char in ("{", "}", " "):
