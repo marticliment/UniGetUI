@@ -102,7 +102,7 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         for element in output:
             try:
                 element = str(element, "utf-8", errors="ignore").split("|")
-                if len(element) > 1 and "Output is package name" not in element[0] and CHOCO_BLACKLISTED_PACKAGES:
+                if len(element) > 1 and "Output is package name" not in element[0] and CHOCO_BLACKLISTED_PACKAGES and element[2] != element[1]:
                     signal.emit(element[0].replace("-", " ").capitalize(), element[0], element[1], element[2], "Chocolatey")
             except Exception as e:
                 report(e)
