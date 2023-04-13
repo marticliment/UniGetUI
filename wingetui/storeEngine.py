@@ -383,7 +383,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.runInstallation()
         else:
             print(returncode)
-            if returncode == 0 and not self.canceled:
+            if returncode == 0 or returncode == 3 and not self.canceled:
                 if self.packageItem:
                     try:
                         self.packageItem.setHidden(True)
