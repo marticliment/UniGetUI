@@ -13,8 +13,7 @@ from external.blurwindow import GlobalBlur
 from pathlib import Path
 
 import globals
-
-
+from outputcodes import *
 
 old_stdout = sys.stdout
 old_stderr = sys.stderr

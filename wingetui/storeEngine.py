@@ -205,12 +205,12 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 1602:
+        if returncode == OC_NEEDS_SCOOP_ELEVATION:
             self.adminstr = [sudoPath]
             self.cmdline_args.append("--global")
             self.runInstallation()
             return
-        elif returncode == 1603:
+        elif returncode == OC_NEEDS_ELEVATION:
             self.adminstr = [sudoPath]
             self.runInstallation()
             return
@@ -233,13 +233,13 @@ class PackageInstallerWidget(QGroupBox):
         self.cancelButton.setText(_("OK"))
         self.cancelButton.clicked.connect(self.close)
         self.progressbar.setValue(1000)
-        if (returncode == 0 or returncode == 3):
-            if returncode == 0:
+        if returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART):
+            if returncode == OC_OPERATION_SUCCEEDED:
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                 self.startCoolDown()
                 self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
-            if returncode == 3: # if the installer need restart computer
+            if returncode == OC_NEEDS_RESTART: # if the installer need restart computer
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.info.setText(_("Restart your PC to finish installation"))
                 self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone)+" "+_("Restart your PC to finish installation"), QIcon(getMedia("notif_restart"))))
@@ -261,7 +261,7 @@ class PackageInstallerWidget(QGroupBox):
                     "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
                     "notifIcon": warnIcon,
             }
-            if returncode == 2: # if the installer's hash does not coincide
+            if returncode == OC_INCORRECT_HASH: # if the installer's hash does not coincide
                 dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
                 dialogData["notifText"] = _("The installer has an invalid checksum")
@@ -374,16 +374,15 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.t.start()
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 1602:
+        if returncode == OC_NEEDS_SCOOP_ELEVATION:
             self.adminstr = [sudoPath]
             self.cmdline_args.append("--global")
             self.runInstallation()
-        elif returncode == 1603:
+        elif returncode == OC_NEEDS_ELEVATION:
             self.adminstr = [sudoPath]
             self.runInstallation()
         else:
-            print(returncode)
-            if returncode == 0 or returncode == 3 and not self.canceled:
+            if returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
                 if self.packageItem:
                     try:
                         self.packageItem.setHidden(True)
@@ -500,15 +499,15 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == 1602:
+        if returncode == OC_NEEDS_SCOOP_ELEVATION:
             self.adminstr = [sudoPath]
             self.cmdline_args.append("--global")
             self.runInstallation()
-        elif returncode == 1603:
+        elif returncode == OC_NEEDS_ELEVATION:
             self.adminstr = [sudoPath]
             self.runInstallation()
         else:
-            if returncode == 0 and not self.canceled:
+            if (returncode in OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
                 if self.packageItem:
                     try:
                         self.packageItem.setHidden(True)
@@ -534,7 +533,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except: pass
             if not(self.canceled):
-                if(returncode == 0):
+                if(returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART)):
                     self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))

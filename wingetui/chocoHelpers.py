@@ -187,7 +187,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 choco installer assistant thread started for process {p}")
-    outputCode = 0
+    outputCode = OC_OPERATION_SUCCEEDED
     counter = 0
     output = ""
     while p.poll() is None:
@@ -202,16 +202,16 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     p.wait()
     outputCode = p.returncode
     if outputCode in (1641, 3010):
-        outputCode = 0
+        outputCode = OC_OPERATION_SUCCEEDED
     elif outputCode == 3010:
-        outputCode = 3
+        outputCode = OC_NEEDS_RESTART
     elif ("Run as administrator" in output or "The requested operation requires elevation" in output) and outputCode != 0:
-        outputCode = 1603
+        outputCode = OC_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 choco installer assistant thread started for process {p}")
-    outputCode = 0
+    outputCode = OC_OPERATION_SUCCEEDED
     counter = 0
     output = ""
     while p.poll() is None:
@@ -227,11 +227,11 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     cprint(output)
     outputCode = p.returncode
     if outputCode in (1605, 1614, 1641):
-        outputCode = 0
+        outputCode = OC_OPERATION_SUCCEEDED
     elif outputCode == 3010:
-        outputCode = 3
+        outputCode = OC_NEEDS_RESTART
     elif "Run as administrator" in output or "The requested operation requires elevation" in output:
-        outputCode = 1603
+        outputCode = OC_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
 
 

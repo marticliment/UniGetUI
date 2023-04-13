@@ -360,7 +360,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
 
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
-    counter = 0
+    counter = OC_OPERATION_SUCCEEDED
     output = ""
     while p.poll() is None:
         line = p.stdout.readline()
@@ -374,16 +374,16 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     p.wait()
     match p.returncode:
         case 0x8A150011:
-            outputCode = 2
+            outputCode = OC_INCORRECT_HASH
         case 0x8A150109: # need restart
-            outputCode = 3
+            outputCode = OC_NEEDS_RESTART
         case other:
             outputCode = p.returncode
     closeAndInform.emit(outputCode, output)
 
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget uninstaller assistant thread started for process {p}")
-    counter = 0
+    counter = OC_OPERATION_SUCCEEDED
     output = ""
     while p.poll() is None:
         line = p.stdout.readline()
@@ -397,7 +397,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     p.wait()
     outputCode = p.returncode
     if "1603" in output or "0x80070005" in output or "Access is denied" in output:
-        outputCode = 1603
+        outputCode = OC_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
 
 

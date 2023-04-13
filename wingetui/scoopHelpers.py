@@ -216,7 +216,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     if "-g" in output and not "successfully" in output and not alreadyGlobal:
         outputCode = 1602
     elif "requires admin rights" in output:
-        outputCode = 1603
+        outputCode = OC_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
 
    
@@ -240,9 +240,9 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
                 outputCode = 0
             output += line+"\n"
     if "-g" in output and not "was uninstalled" in output and not alreadyGlobal:
-        outputCode = 1602
+        outputCode = OC_NEEDS_SCOOP_ELEVATION
     elif "requires admin rights" in output:
-        outputCode = 1603
+        outputCode = OC_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
 
 
