@@ -231,7 +231,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
         outputCode = 0
     elif outputCode == 3010:
         outputCode = 3
-    elif "Run as administrator" in output:
+    elif "Run as administrator" in output or "The requested operation requires elevation" in output:
         outputCode = 1603
     closeAndInform.emit(outputCode, output)
 
