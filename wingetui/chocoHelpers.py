@@ -16,7 +16,7 @@ else:
     os.environ["chocolateyinstall"] = os.path.dirname(choco)
 
 
-CHOCO_BLACKLISTED_PACKAGES = ["Did", "Features?", "Validation", "-", "being", "It"]
+CHOCO_BLACKLISTED_PACKAGES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This"]
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     cprint("🔵 Starting choco search")
