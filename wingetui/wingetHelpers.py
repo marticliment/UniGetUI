@@ -6,7 +6,6 @@ from tools import _
 
 common_params = ["--source", "winget", "--accept-source-agreements"]
 
-
 if getSettings("UseSystemWinget"):
     winget = "winget.exe"
 else:
