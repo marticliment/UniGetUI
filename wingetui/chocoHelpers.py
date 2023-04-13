@@ -101,9 +101,9 @@ def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False
         counter = 0
         for element in output:
             try:
-                element = str(element, "utf-8", errors="ignore").split("|")
-                if len(element) > 1 and "Output is package name" not in element[0] and element[0] not in CHOCO_BLACKLISTED_PACKAGES and element[2] != element[1]:
-                    signal.emit(element[0].replace("-", " ").capitalize(), element[0], element[1], element[2], "Chocolatey")
+                export = str(element, "utf-8", errors="ignore").split("|")
+                if len(export) > 1 and "Output is package name" not in export[0] and export[0] not in CHOCO_BLACKLISTED_PACKAGES and export[2] != export[1]:
+                    signal.emit(export[0].replace("-", " ").capitalize(), export[0], export[1], export[2], "Chocolatey")
             except Exception as e:
                 report(e)
         print("🟢 Chocolatey search finished")
@@ -127,10 +127,10 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     chocoName = "Chocolatey"
     for element in output:
         try:
-            output = str(element, encoding="utf-8", errors="ignore").split(" ")
-            if output[0] != "-" and len(output) > 1 and not output[0] in CHOCO_BLACKLISTED_PACKAGES:
-                if output[1] != "validations" and output[0] != "Directory":
-                    signal.emit(output[0].replace("-", " ").capitalize(), output[0], output[1], chocoName)
+            export = str(element, encoding="utf-8", errors="ignore").split(" ")
+            if export[0] != "-" and len(export) > 1 and not export[0] in CHOCO_BLACKLISTED_PACKAGES:
+                if export[1] != "validations" and export[0] != "Directory":
+                    signal.emit(export[0].replace("-", " ").capitalize(), export[0], export[1], chocoName)
         except Exception as e:
             report(e)
     print("🟢 Chocolatey uninstallable packages search finished")
