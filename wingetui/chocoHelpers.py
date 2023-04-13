@@ -128,9 +128,8 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     for element in output:
         try:
             export = str(element, encoding="utf-8", errors="ignore").split(" ")
-            if export[0] != "-" and len(export) > 1 and not export[0] in CHOCO_BLACKLISTED_PACKAGES:
-                if export[1] != "validations" and export[0] != "Directory":
-                    signal.emit(export[0].replace("-", " ").capitalize(), export[0], export[1], chocoName)
+            if export[0] != "-" and len(export) > 1 and not export[0] in CHOCO_BLACKLISTED_PACKAGES and export[1] != "validations" and export[0] != "Directory":
+                signal.emit(export[0].replace("-", " ").capitalize(), export[0], export[1], chocoName)
         except Exception as e:
             report(e)
     print("🟢 Chocolatey uninstallable packages search finished")
