@@ -1763,7 +1763,7 @@ class UninstallSoftwareSection(QWidget):
         ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
         ins5 = QAction("", self.toolbar)# ("Interactive uninstall")
         ins5.setIcon(QIcon(getMedia("interactive")))
-        ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True))
+        ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), interactive=True))
         ins6 = QAction("", self.toolbar)
         ins6.setIcon(QIcon(getMedia("share")))
         ins6.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
