@@ -1376,9 +1376,14 @@ class UpdateSoftwareSection(QWidget):
             if not item.isHidden():
                 self.availableUpdates += 1
         self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
-        globals.trayIcon.setToolTip(_("WingetUI - Everything is up to date") if self.availableUpdates == 0 else (_("WingetUI - 1 update is available") if self.availableUpdates == 1 else _("WingetUI - {0} updates are available").format(self.availableUpdates)) )
-        globals.trayMenuUpdatesList.menuAction().setText(_("No updates are available" if self.availableUpdates == 0 else "Available updates: {0}").format(self.availableUpdates))
+        trayIconToolTip = ""
+        trayMenuText = ""
         if self.availableUpdates > 0:
+            if self.availableUpdates == 1:
+                trayIconToolTip = _("WingetUI - 1 update is available")
+            else:
+                trayIconToolTip = _("WingetUI - {0} updates are available").format(self.availableUpdates)
+            trayMenuText = _("Available updates: {0}").format(self.availableUpdates)
             self.packageList.label.hide()
             self.packageList.label.setText("")
             self.img.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
@@ -1387,6 +1392,8 @@ class UpdateSoftwareSection(QWidget):
             globals.trayMenuUpdatesList.menuAction().setEnabled(True)
             globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
         else:
+            trayIconToolTip = _("WingetUI - Everything is up to date")
+            trayMenuText = _("No updates are available")
             self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
             globals.app.uaAction.setEnabled(False)
@@ -1394,6 +1401,8 @@ class UpdateSoftwareSection(QWidget):
             globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
             globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.img.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
+        globals.trayIcon.setToolTip(trayIconToolTip)
+        globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)
     
     def showQuery(self) -> None:
         self.programbox.show()
@@ -1962,7 +1971,11 @@ class UninstallSoftwareSection(QWidget):
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             self.foundPackages += 1
         self.countLabel.setText(_("{0} packages found").format(self.foundPackages))
-        globals.trayMenuInstalledList.menuAction().setText(_("{0} packages were found" if self.foundPackages!=1 else "{0} package was found").format(self.foundPackages))
+        if self.foundPackages == 1:
+            trayMenuText = _("{0} package was found").format(self.foundPackages)
+        else:
+            trayMenuText = _("{0} packages were found").format(self.foundPackages)
+        globals.trayMenuInstalledList.menuAction().setText(trayMenuText)
         if self.foundPackages > 0:
             self.packageList.label.hide()
             self.packageList.label.setText("")
@@ -2433,7 +2446,7 @@ class AboutSection(QScrollArea):
             button = QPushButton(_("About Qt6"))
             button.setFixedWidth(710)
             button.setFixedHeight(25)
-            button.clicked.connect(lambda: MessageBox.aboutQt(self, _("WingetUI - About Qt6")))
+            button.clicked.connect(lambda: MessageBox.aboutQt(self, f"WingetUI - {_('About Qt6')}"))
             self.layout.addWidget(button)
             self.layout.addWidget(QLinkLabel())
             self.layout.addStretch()
