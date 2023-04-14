@@ -111,6 +111,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "license-url": unknownStr,
         "installer-sha256": unknownStr,
         "installer-url": unknownStr,
+        "installer-size": "",
         "installer-type": _("Scoop shim"),
         "manifest": f"{bucketRoot}/blob/master/bucket/{id.split('/')[-1]}.json",
         "updatedate": unknownStr,
@@ -163,11 +164,21 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
             appInfo["license-url"] = unknownStr if type(data["license"]) != dict else data["license"]["url"]
 
         if "url" in data.keys():
-            appInfo["installer-url"] = data["url"][0] if type(data["url"]) == list else data["url"]
             appInfo["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
+            url = data["url"][0] if type(data["url"]) == list else data["url"]
+            appInfo["installer-url"] = url
+            try:
+                appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
+            except Exception as e:
+                print("🟠 Can't get installer size:", type(e), str(e))
         elif "architecture" in data.keys():
-            appInfo["installer-url"] = data["architecture"]["64bit"]["url"]
             appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
+            url = data["architecture"]["64bit"]["url"]
+            appInfo["installer-url"] = url
+            try:
+                appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
+            except Exception as e:
+                print("🟠 Can't get installer size:", type(e), str(e))
         
         appInfo["installer-type"] = "Scoop package"
         

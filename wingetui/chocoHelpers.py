@@ -152,6 +152,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
             "license-url": unknownStr,
             "installer-sha256": unknownStr,
             "installer-url": unknownStr,
+            "installer-size": "",
             "installer-type": unknownStr,
             "updatedate": unknownStr,
             "releasenotes": unknownStr,

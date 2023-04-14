@@ -271,6 +271,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 "license-url": unknownStr,
                 "installer-sha256": unknownStr,
                 "installer-url": unknownStr,
+                "installer-size": "",
                 "installer-type": unknownStr,
                 "updatedate": unknownStr,
                 "releasenotes": unknownStr,
@@ -322,7 +323,12 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                     appInfo["installer-sha256"] = line.replace("Installer SHA256:", "").strip()
                     validCount += 1
                 elif("Installer Url:" in line):
-                    appInfo["installer-url"] = line.replace("Installer Url:", "").strip()
+                    url = line.replace("Installer Url:", "").strip()
+                    appInfo["installer-url"] = url
+                    try:
+                        appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
+                    except Exception as e:
+                        print("🟠 Can't get installer size:", type(e), str(e))
                     validCount += 1
                 elif("Release Date:" in line):
                     appInfo["updatedate"] = line.replace("Release Date:", "").strip()

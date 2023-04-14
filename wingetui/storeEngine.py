@@ -1077,7 +1077,7 @@ class PackageInfoPopupWindow(QWidget):
             self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
             self.license.setText(f"<b>{_('License')}:</b> {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
             self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
-            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a>")
+            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a> {appInfo['installer-size']}")
             self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {appInfo['installer-type']}")
             self.packageId.setText(f"<b>{_('Package ID')}:</b> {appInfo['id']}")
             self.date.setText(f"<b>{_('Last updated:')}</b> {appInfo['updatedate']}")
