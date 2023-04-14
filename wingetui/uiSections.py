@@ -2733,7 +2733,6 @@ class SettingsSection(QScrollArea):
         alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
         self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
 
-
         self.advancedOptions = QSettingsTitle(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
         self.layout.addWidget(self.advancedOptions)
         disableShareApi = QSettingsCheckBox(_("Disable new share API (port 7058)"))

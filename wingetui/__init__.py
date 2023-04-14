@@ -41,6 +41,7 @@ try:
                 self.popup.setWindowFlag(Qt.FramelessWindowHint)
                 self.popup.setLayout(QVBoxLayout())
                 self.popup.layout().addStretch()
+                self.popup.setWindowTitle("WingetUI")
                 titlewidget = QHBoxLayout()
                 titlewidget.addStretch()
                 icon = QLabel()

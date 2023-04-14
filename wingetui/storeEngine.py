@@ -82,6 +82,13 @@ class PackageInstallerWidget(QGroupBox):
         self.progressbar.setFixedHeight(4)
         self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
         self.layout.addWidget(self.progressbar, stretch=1)
+        self.adminBadge = QPushButton()
+        self.adminBadge.setFixedSize(QSize(30, 30))
+        self.adminBadge.setIcon(QIcon(getMedia("runasadmin")))
+        self.adminBadge.setEnabled(False)
+        self.adminBadge.setToolTip(_("This process is running with administrator privileges"))
+        self.layout.addWidget(self.adminBadge)
+        self.adminBadge.setVisible(self.runAsAdmin)
         self.info = CustomLineEdit()
         self.info.setClearButtonEnabled(False)
         self.info.setStyleSheet("color: grey; border-bottom: inherit;")
@@ -227,11 +234,15 @@ class PackageInstallerWidget(QGroupBox):
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode == OC_NEEDS_SCOOP_ELEVATION:
             self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+            self.adminBadge.setVisible(self.runAsAdmin)
             self.cmdline_args.append("--global")
             self.runInstallation()
             return
         elif returncode == OC_NEEDS_ELEVATION:
             self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+            self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
             return
         elif "winget settings --enable InstallerHashOverride" in output:
@@ -300,14 +311,15 @@ class PackageInstallerWidget(QGroupBox):
                 op3=QGraphicsOpacityEffect(self)
                 op4=QGraphicsOpacityEffect(self)
                 op5=QGraphicsOpacityEffect(self)
-                ops = [op1, op2, op3, op4, op5]
+                op6=QGraphicsOpacityEffect(self)
+                ops = [op1, op2, op3, op4, op5, op6]
                 return ops
 
             def updateOp(v: float):
                 i = 0
                 if self.ops == -1:
                     self.ops = setUpOPS()
-                for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton]:
+                for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton, self.adminBadge]:
                     self.ops[i].setOpacity(v)
                     widget: QWidget
                     widget.setGraphicsEffect(self.ops[i])
@@ -397,9 +409,13 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         if returncode == OC_NEEDS_SCOOP_ELEVATION:
             self.adminstr = [sudoPath]
             self.cmdline_args.append("--global")
+            self.runAsAdmin = True
+            self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
         elif returncode == OC_NEEDS_ELEVATION:
             self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+            self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
         else:
             if returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
@@ -521,9 +537,13 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if returncode == OC_NEEDS_SCOOP_ELEVATION:
             self.adminstr = [sudoPath]
             self.cmdline_args.append("--global")
+            self.runAsAdmin = True
+            self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
         elif returncode == OC_NEEDS_ELEVATION:
             self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+            self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
         else:
             if returncode in(OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
