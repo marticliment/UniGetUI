@@ -198,7 +198,7 @@ class RootWindow(QMainWindow):
             from tools import _
             self.err = ErrorMessage(self)
             errorData = {
-                "titlebarTitle": _("WingetUI"),
+                "titlebarTitle": "WingetUI",
                 "mainTitle": _("Administrator privileges"),
                 "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why.").format(showDetails=_("Show details")),
                 "buttonTitle": _("Ok"),
