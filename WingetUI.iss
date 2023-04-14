@@ -168,7 +168,7 @@ Filename: "{app}\remove-old.cmd"; Flags: runhidden
 ;Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 ;Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart')
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
 
 
 [UninstallRun]
