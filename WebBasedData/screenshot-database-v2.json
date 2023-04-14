@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14016,
-        "done": 7552
+        "done": 7553
     },
     "icons_and_screenshots": {
         "115": {
@@ -26846,8 +26846,17 @@
             "images": []
         },
         "wingetui": {
-            "icon": "",
-            "images": []
+            "icon": "https://github.com/martinet101/WingetUI/blob/main/wingetui/resources/icon.png?raw=true",
+            "images": [
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_1.png?raw=true",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_2.png?raw=true",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_3.png?raw=true",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_4.png?raw=true",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_5.png?raw=true",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_6.png?raw=true",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_7.png",
+                "https://github.com/martinet101/WingetUI/blob/main/media/winget_8.png"
+            ]
         },
         "winmerge2011": {
             "icon": "https://community.chocolatey.org/content/packageimages/winmerge2011.portable.0.2011.007.44401.png",
