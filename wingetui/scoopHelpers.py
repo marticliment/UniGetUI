@@ -115,6 +115,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "manifest": f"{bucketRoot}/blob/master/bucket/{id.split('/')[-1]}.json",
         "updatedate": unknownStr,
         "releasenotes": unknownStr,
+        "releasenotesurl": unknownStr,
         "versions": [],
     }
     

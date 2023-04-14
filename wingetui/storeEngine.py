@@ -847,6 +847,9 @@ class PackageInfoPopupWindow(QWidget):
         self.notes = QLinkLabel("<b>"+_('Release notes:')+"</b> "+_('Unknown'))
         self.notes.setWordWrap(True)
         self.layout.addWidget(self.notes)
+        self.notesurl = QLinkLabel("<b>"+_('Release notes URL:')+"</b> "+_('Unknown'))
+        self.notesurl.setWordWrap(True)
+        self.layout.addWidget(self.notesurl)
 
         self.storeLabel = QLinkLabel("<b>"+_("Source:")+"</b> " + self.store)
         self.storeLabel.setWordWrap(True)
@@ -1021,6 +1024,7 @@ class PackageInfoPopupWindow(QWidget):
             self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
             self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
             self.notes.setText(f"<b>{_('Release notes:')}</b> {_('Loading...')}")
+            self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
             self.storeLabel.setText(f"<b>{_('Source')}:</b> {self.store.capitalize()}")
             self.versionCombo.addItems([_("Loading...")])
 
@@ -1078,6 +1082,7 @@ class PackageInfoPopupWindow(QWidget):
             self.packageId.setText(f"<b>{_('Package ID')}:</b> {appInfo['id']}")
             self.date.setText(f"<b>{_('Last updated:')}</b> {appInfo['updatedate']}")
             self.notes.setText(f"<b>{_('Release notes:')}</b> {appInfo['releasenotes'].replace(r'%bluecolor%', blueColor)}")
+            self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {appInfo['releasenotesurl'].replace(r'%bluecolor%', blueColor)}")
             self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
             while self.versionCombo.count()>0:
                 self.versionCombo.removeItem(0)

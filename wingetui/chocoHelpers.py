@@ -137,7 +137,7 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> None:
     try:
-        p = subprocess.Popen([choco, "info", id]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        p = subprocess.Popen([choco, "info", id] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for id {id}")
         output = []
         unknownStr = _("Not available")
@@ -155,6 +155,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
             "installer-type": unknownStr,
             "updatedate": unknownStr,
             "releasenotes": unknownStr,
+            "releasenotesurl": unknownStr,
             "manifest": f"https://community.chocolatey.org/packages/{id.lower()}",
             "versions": []
         }
@@ -180,6 +181,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
                 appInfo["installer-sha256"] = line.replace("Package Checksum:", "").strip()
             elif("Description:" in line):
                 appInfo["description"] = line.replace("Description:", "").strip()
+            elif("Release Notes" in line):
+                url = line.replace("Release Notes:", "").strip()
+                appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
         appInfo["versions"] = []
         signal.emit(appInfo, progId)
     except Exception as e:

@@ -274,6 +274,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 "installer-type": unknownStr,
                 "updatedate": unknownStr,
                 "releasenotes": unknownStr,
+                "releasenotesurl": unknownStr,
                 "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
                 "versions": []
             }
@@ -325,6 +326,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                     validCount += 1
                 elif("Release Date:" in line):
                     appInfo["updatedate"] = line.replace("Release Date:", "").strip()
+                    validCount += 1
+                elif("Release Notes Url:" in line):
+                    url = line.replace("Release Notes Url:", "").strip()
+                    appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
                     validCount += 1
                 elif("Release Notes:" in line):
                     appInfo["releasenotes"] = ""
