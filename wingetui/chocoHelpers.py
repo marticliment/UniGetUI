@@ -190,6 +190,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     outputCode = OC_OPERATION_SUCCEEDED
     counter = 0
     output = ""
+    p.stdin = b"\r\n"
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
@@ -214,6 +215,7 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     outputCode = OC_OPERATION_SUCCEEDED
     counter = 0
     output = ""
+    p.stdin = b"\r\n"
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()

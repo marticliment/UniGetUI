@@ -39,3 +39,9 @@ wingetui/choco-cli/lib-bad/elevenclock/elevenclock.nuspec
 wingetui/choco-cli/lib-bad/elevenclock/.chocolateyPending
 wingetui/choco-cli/lib-bad/elevenclock/tools/chocolateyinstall.ps1
 wingetui/choco-cli/.chocolatey/elevenclock.4.0.1/.files
+wingetui/choco-cli/lib/elevenclock/tools/chocolateyuninstall.ps1
+wingetui/choco-cli/lib/elevenclock/tools/chocolateyinstall.ps1
+wingetui/choco-cli/lib/elevenclock/elevenclock.nuspec
+wingetui/choco-cli/.chocolatey/elevenclock.4.0.1/.silentUninstaller
+wingetui/choco-cli/.chocolatey/elevenclock.4.0.1/.registry
+wingetui/choco-cli/.chocolatey/elevenclock.4.0.1/.arguments
