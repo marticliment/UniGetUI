@@ -140,6 +140,14 @@ class DiscoverSoftwareSection(QWidget):
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(1), item.text(2), item.text(4), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4), packageItem=item))
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
+        
+        def updateItemState(item: TreeWidgetItemWithQAction, column: int):
+            if column == 0:
+                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
+                if item.checkState(0) == Qt.CheckState.Checked:
+                    self.packageList.setCurrentItem(item)
+            
+        self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
 
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
         sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
@@ -634,6 +642,8 @@ class DiscoverSoftwareSection(QWidget):
         return querytext in item.text(1).lower().replace("-", "").replace(" ", "") or querytext in item.text(2).lower().replace("-", "").replace(" ", "")
     
     def finishFiltering(self, text: str):
+        def getChecked(item: QTreeWidgetItem) -> str:
+            return " " if item.checkState(0) == Qt.CheckState.Checked else ""
         def getTitle(item: QTreeWidgetItem) -> str:
             return item.text(1)
         def getID(item: QTreeWidgetItem) -> str:
@@ -651,6 +661,8 @@ class DiscoverSoftwareSection(QWidget):
         sortColumn = self.packageList.sortColumn()
         descendingSort = self.packageList.header().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
         match sortColumn:
+            case 0:
+                self.packageItems.sort(key=getChecked, reverse=descendingSort)
             case 1:
                 self.packageItems.sort(key=getTitle, reverse=descendingSort)
             case 2:
@@ -888,6 +900,14 @@ class UpdateSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         
+        def updateItemState(item: TreeWidgetItemWithQAction, column: int):
+            if column == 0:
+                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
+                if item.checkState(0) == Qt.CheckState.Checked:
+                    self.packageList.setCurrentItem(item)
+            
+        self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
+
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
         sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
 
@@ -1678,6 +1698,15 @@ class UninstallSoftwareSection(QWidget):
         self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(1), item.text(2), item.text(4), packageItem=item))
+        
+        def updateItemState(item: TreeWidgetItemWithQAction, column: int):
+            if column == 0:
+                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
+                if item.checkState(0) == Qt.CheckState.Checked:
+                    self.packageList.setCurrentItem(item)
+            
+        self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
+
         
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
