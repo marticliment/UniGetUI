@@ -949,7 +949,7 @@ class UpdateSoftwareSection(QWidget):
             contextMenu.addSeparator()
             ins6 = QAction(_("Ignore updates for this package"))
             ins6.setIcon(QIcon(getMedia("blacklist")))
-            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True), self.updatePackageNumber()))
+            ins6.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+self.packageList.currentItem().text(2)+","), self.packageList.currentItem().setHidden(True), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
             contextMenu.addAction(ins6)
             contextMenu.addAction(ins5)
             contextMenu.addSeparator()
@@ -1011,6 +1011,7 @@ class UpdateSoftwareSection(QWidget):
                         if program.checkState(0) ==  Qt.CheckState.Checked:
                             setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+program.text(2)+",")
                             program.setHidden(True)
+                            self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(program))
                     except AttributeError:
                         pass
             self.updatePackageNumber()
