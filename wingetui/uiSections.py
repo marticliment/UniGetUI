@@ -3029,6 +3029,7 @@ class ScoopBucketManager(QWidget):
         self.loadingProgressBar.show()
         self.bucketList.label.show()
         self.bucketList.label.setText("Loading...")
+        globals.scoopBuckets = {}
         
     def addItem(self, name: str, source: str, updatedate: str, manifests: str):
         self.bucketList.label.hide()
@@ -3048,6 +3049,7 @@ class ScoopBucketManager(QWidget):
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
         self.bucketList.setItemWidget(item, 4, btn)
+        globals.scoopBuckets[name] = source
         
     def scoopAddExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)

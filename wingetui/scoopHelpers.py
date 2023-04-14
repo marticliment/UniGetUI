@@ -96,6 +96,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
     output = []
     unknownStr = _("Not available") if verbose else _("Loading...")
     bucket = "main" if len(id.split("/")) == 1 else id.split('/')[0]
+    if bucket in globals.scoopBuckets:
+        bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
+    else:
+        bucketRoot = f"https://github.com/ScoopInstaller/{bucket}"
     appInfo = {
         "title": title.split("/")[-1],
         "id": id,
@@ -108,7 +112,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "installer-sha256": unknownStr,
         "installer-url": unknownStr,
         "installer-type": _("Scoop shim"),
-        "manifest": f"https://github.com/ScoopInstaller/{bucket}/blob/master/bucket/{id.split('/')[-1]}.json",
+        "manifest": f"{bucketRoot}/blob/master/bucket/{id.split('/')[-1]}.json",
         "updatedate": unknownStr,
         "releasenotes": unknownStr,
         "versions": [],

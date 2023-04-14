@@ -29,6 +29,7 @@ componentStatus: dict = {
     "chocoVersion": "Unknown", 
     "sudoVersion": "Unknown", 
 }
+
 app: QApplication = None
 installersWidget: DynamicScrollAreaType = None
 trayIcon: QSystemTrayIcon = None
@@ -60,6 +61,8 @@ canUpdate: bool = False
 packageMeta: dict = {}
 infobox: QWidget = None
 centralWindowLayout: QWidget = None
+
+scoopBuckets: dict = {}
 
 textfont: str = "Segoe UI Variable Text"
 dispfont: str = "Segoe UI Variable Display"
