@@ -36,8 +36,28 @@ class PackageInstallerWidget(QGroupBox):
         self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
         ApplyMica(self.liveOutputWindow.winId(), MICAMODE.DARK)
         self.runAsAdmin = admin
-        self.useId = useId
+        self.useId = useId  
         self.adminstr = [sudoPath] if self.runAsAdmin else []
+        
+        if store.lower() == "winget" and getSettings("AlwaysElevateWinget"):
+            print("🟡 Winget installation automatically elevated!")
+            self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+        elif store.lower() == "chocolatey" and getSettings("AlwaysElevateChocolatey"):
+            print("🟡 Chocolatey installation automatically elevated!")
+            self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+        elif "scoop" in store.lower() and getSettings("AlwaysElevateScoop"):
+            print("🟡 Chocolatey installation automatically elevated!")
+            self.adminstr = [sudoPath]
+            self.runAsAdmin = True
+        if getSettings("DoCacheAdminRights"):
+            if self.runAsAdmin and not globals.adminRightsGranted:
+                cprint(" ".join([sudoPath, "cache", "on", "--pid", f"{os.getpid()}", "-d" , "-1"]))
+                asksudo = subprocess.Popen([sudoPath, "cache", "on", "--pid", f"{os.getpid()}", "-d" , "-1"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+                asksudo.wait()
+                globals.adminRightsGranted = True
+
         self.finishedInstallation = True
         self.callInMain.connect(lambda f: f())
         self.setMinimumHeight(500)
@@ -419,7 +439,6 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.actionVerb = _("uninstall")
         self.finishedInstallation = True
         self.runAsAdmin = admin
-        self.adminstr = [sudoPath] if self.runAsAdmin else []
         self.store = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
@@ -507,7 +526,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.adminstr = [sudoPath]
             self.runInstallation()
         else:
-            if (returncode in OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
+            if returncode in(OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
                 if self.packageItem:
                     try:
                         self.packageItem.setHidden(True)

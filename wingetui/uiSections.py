@@ -2707,6 +2707,32 @@ class SettingsSection(QScrollArea):
         automaticallyInstallUpdates.stateChanged.connect(lambda v: setSettings("AutomaticallyUpdatePackages", bool(v)))
         automaticallyInstallUpdates.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.trayIcon.addWidget(automaticallyInstallUpdates)
+        
+        self.advancedOptions = QSettingsTitle(_("Administrator privileges preferences"), getMedia("runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))
+        self.layout.addWidget(self.advancedOptions)
+        doCacheAdminPrivileges = QSettingsCheckBox(_("Ask only once for administrator privileges (not recommended)"))
+        doCacheAdminPrivileges.setChecked(getSettings("DoCacheAdminRights"))
+        
+        def resetAdminRightsCache():
+            resetsudo = subprocess.Popen([sudoPath, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            resetsudo.wait()
+            globals.adminRightsGranted = False
+        
+        doCacheAdminPrivileges.stateChanged.connect(lambda v: (setSettings("DoCacheAdminRights", bool(v)), resetAdminRightsCache()))
+        self.advancedOptions.addWidget(doCacheAdminPrivileges)
+        alwaysRunWingetAsAdmin = QSettingsCheckBox(_("Always elevate {pm} installations by default").format(pm="Winget"))
+        alwaysRunWingetAsAdmin.setChecked(getSettings("AlwaysElevateWinget"))
+        alwaysRunWingetAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateWinget", bool(v)))
+        self.advancedOptions.addWidget(alwaysRunWingetAsAdmin)
+        alwaysRunScoopAsAdmin = QSettingsCheckBox(_("Always elevate {pm} installations by default").format(pm="Scoop"))
+        alwaysRunScoopAsAdmin.setChecked(getSettings("AlwaysElevateScoop"))
+        alwaysRunScoopAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateScoop", bool(v)))
+        self.advancedOptions.addWidget(alwaysRunScoopAsAdmin)
+        alwaysRunChocolateyAsAdmin = QSettingsCheckBox(_("Always elevate {pm} installations by default").format(pm="Chocolatey"))
+        alwaysRunChocolateyAsAdmin.setChecked(getSettings("AlwaysElevateChocolatey"))
+        alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
+        self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
+
 
         self.advancedOptions = QSettingsTitle(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
         self.layout.addWidget(self.advancedOptions)
