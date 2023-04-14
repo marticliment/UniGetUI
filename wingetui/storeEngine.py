@@ -185,7 +185,7 @@ class PackageInstallerWidget(QGroupBox):
             self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
             self.t.start()
         elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "install", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "install", self.packageId, "-y"] + self.version + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
@@ -1242,7 +1242,7 @@ class PackageInfoPopupWindow(QWidget):
         cmdline_args = []
         if(self.hashCheckBox.isChecked()):
             if self.store.lower() == "winget":
-                cmdline_args.append("--force")
+                cmdline_args.append("--ignore-security-hash")
             elif "scoop" in self.store.lower():
                 cmdline_args.append("--skip")
             else:
@@ -1256,7 +1256,14 @@ class PackageInfoPopupWindow(QWidget):
         if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
             version = []
         else:
-            version = ["--version", self.versionCombo.currentText()]
+            if "winget" in self.store.lower():
+                version = ["--version", self.versionCombo.currentText()]
+                cmdline_args.append("--force")
+            elif "chocolatey" in self.store.lower():
+                version = ["--version="+self.versionCombo.currentText()]
+                cmdline_args += ["--allow-downgrade", "--force"]
+            else:
+                print("🟠 Store", self.store, "does not support custom version installations")
             print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
         if self.isAnUpdate:
             p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))

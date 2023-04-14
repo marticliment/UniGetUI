@@ -89,3 +89,11 @@ wingetui/choco-cli/.chocolatey/chocolatey-core.extension.1.4.0/.files
 wingetui/choco-cli/.chocolatey/chocolatey-core.extension.1.4.0/.arguments
 wingetui/choco-cli/.chocolatey/chocolatey-compatibility.extension.1.0.0/.files
 wingetui/choco-cli/.chocolatey/chocolatey-compatibility.extension.1.0.0/.arguments
+wingetui/choco-cli/lib-bkp/elevenclock/tools/chocolateyuninstall.ps1
+wingetui/choco-cli/lib-bkp/elevenclock/tools/chocolateyinstall.ps1
+wingetui/choco-cli/lib-bkp/elevenclock/elevenclock.nuspec
+wingetui/choco-cli/.chocolatey/elevenclock.4.0.1/.registry.backup
+wingetui/choco-cli/.chocolatey/elevenclock.3.6.0/.silentUninstaller
+wingetui/choco-cli/.chocolatey/elevenclock.3.6.0/.registry
+wingetui/choco-cli/.chocolatey/elevenclock.3.6.0/.files
+wingetui/choco-cli/.chocolatey/elevenclock.3.6.0/.arguments

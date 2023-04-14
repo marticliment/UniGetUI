@@ -186,6 +186,17 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
                 url = line.replace("Release Notes:", "").strip()
                 appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
         appInfo["versions"] = []
+        p = subprocess.Popen([choco, "find", "-e", id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        print(f"🟢 Starting get info for id {id}")
+        output = []
+        while p.poll() is None:
+            line = p.stdout.readline().strip()
+            if line:
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+        for line in output:
+            cprint(line)
+            if "[Approved]" in line:
+                appInfo["versions"].append(line.split(" ")[1])
         signal.emit(appInfo, progId)
     except Exception as e:
         report(e)
