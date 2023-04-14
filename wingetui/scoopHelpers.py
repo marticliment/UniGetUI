@@ -214,7 +214,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
                 outputCode = 0
             output += line+"\n"
     if "-g" in output and not "successfully" in output and not alreadyGlobal:
-        outputCode = 1602
+        outputCode = OC_NEEDS_SCOOP_ELEVATION
     elif "requires admin rights" in output or "requires administrator rights" in output:
         outputCode = OC_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
