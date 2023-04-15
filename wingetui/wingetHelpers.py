@@ -206,8 +206,8 @@ def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
             while "  " in verElement:
                 verElement = verElement.replace("  ", " ")
             iOffset = 0
-            id = verElement.split(" ")[iOffset+0]
-            ver = verElement.split(" ")[iOffset+1]
+            id = " ".join(verElement.split(" ")[iOffset:-1])
+            ver = verElement.split(" ")[-1]
             if len(id)==1:
                 iOffset + 1
                 id = verElement.split(" ")[iOffset+0]
