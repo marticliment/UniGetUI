@@ -2847,18 +2847,18 @@ class SettingsSection(QScrollArea):
         
         print("🟢 Settings tab loaded!")
         
-    def scoopAddExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
-        if r[1]:
-            print(r[0])
-            globals.installersWidget.addItem(PackageInstallerWidget(_("{0} Scoop bucket").format(r[0]), "custom", customCommand=f"{scoopHelpers.scoop} bucket add {r[0]}"))
+    #def scoopAddExtraBucket(self) -> None:
+    #    r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", "My bucket is not here (add a custom bucket)"], 1, editable=False)
+    #    if r[1]:
+    #        print(r[0])
+    #        globals.installersWidget.addItem(PackageInstallerWidget(_("{0} Scoop bucket").format(r[0]), "custom", customCommand=f"{scoopHelpers.scoop} bucket add {r[0]}"))
     
-    def scoopRemoveExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
-        if r[1]:
-            print(r[0])
+    #def scoopRemoveExtraBucket(self) -> None:
+    #    r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to remove?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+    #    if r[1]:
+    #        print(r[0])
             
-            globals.installersWidget.addItem(PackageUninstallerWidget(_("{0} Scoop bucket").format(r[0]), "custom", customCommand=f"{scoopHelpers.scoop} bucket rm {r[0]}"))
+    #        globals.installersWidget.addItem(PackageUninstallerWidget(_("{0} Scoop bucket").format(r[0]), "custom", customCommand=f"{scoopHelpers.scoop} bucket rm {r[0]}"))
 
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
@@ -3107,12 +3107,20 @@ class ScoopBucketManager(QWidget):
         globals.scoopBuckets[name] = source
         
     def scoopAddExtraBucket(self) -> None:
-        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?"), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games"], 1, editable=False)
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another bucket")), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", _("Another bucket")], 1, editable=False)
         if r[1]:
-            print(r[0])
-            p = PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}")
-            globals.installersWidget.addItem(p)
-            p.finishInstallation.connect(self.loadBuckets)
+            if r[0] == _("Another bucket"):
+                r2 = QInputDialog.getText(self, _("Scoop bucket manager"), _("Type here the name and the URL of the bucket you want to add, separated by a space."), text="extras https://github.com/ScoopInstaller/Extras")
+                if r2[1]:
+                    bName = r2[0].split(" ")[0]
+                    p = PackageInstallerWidget(f"{bName} Scoop bucket", "custom", customCommand=f"scoop bucket add {r2[0]}")
+                    globals.installersWidget.addItem(p)
+                    p.finishInstallation.connect(self.loadBuckets)
+
+            else:
+                p = PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}")
+                globals.installersWidget.addItem(p)
+                p.finishInstallation.connect(self.loadBuckets)
             
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
         globals.installersWidget.addItem(PackageUninstallerWidget(f"{bucket} Scoop bucket", "custom", customCommand=f"scoop bucket rm {bucket}"))
