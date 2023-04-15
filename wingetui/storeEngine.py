@@ -987,8 +987,10 @@ class PackageInfoPopupWindow(QWidget):
         if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
             version = ""
         else:
-            version = " ".join(["--version", self.versionCombo.currentText()])
-            print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
+            if self.store.lower() == "winget":
+                version = " ".join(["--version", self.versionCombo.currentText()])  
+            elif "chocolatey" in self.store.lower():
+                version = " ".join(["--version="+self.versionCombo.currentText(), "--allow-downgrade", "--force"])
         admin = False
         if self.store.lower() == "winget":
             if not "…" in self.givenPackageId:
@@ -998,7 +1000,7 @@ class PackageInfoPopupWindow(QWidget):
         elif "scoop" in self.store.lower():
             self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} {'--skip' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
         elif self.store.lower() == "chocolatey":
-            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {'--force  --ignore-checksums' if ignoreHash else ''} {'--notsilent' if interactive else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {version} {'--force  --ignore-checksums' if ignoreHash else ''} {'--notsilent' if interactive else ''}".strip().replace("  ", " ").replace("  ", " "))
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
