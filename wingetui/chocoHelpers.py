@@ -178,8 +178,9 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
                 appInfo["homepage"] = line.replace("Software Site:", "").strip()
             elif("Software License:" in line):
                 appInfo["license-url"] = line.replace("Software License:", "").strip()
+                appInfo["license"] = ""
             elif("Package Checksum:" in line):
-                appInfo["installer-sha256"] = line.replace("Package Checksum:", "").strip()
+                appInfo["installer-sha256"] = line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", "")
             elif("Description:" in line):
                 appInfo["description"] = line.replace("Description:", "").strip()
             elif("Release Notes" in line):

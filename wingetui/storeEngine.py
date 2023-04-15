@@ -1058,7 +1058,7 @@ class PackageInfoPopupWindow(QWidget):
                     lastVerString = f"<b>{_('Latest Version')}:</b> {version}"
             self.lastver.setText(lastVerString)
 
-            self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+            self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
             self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a  style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>")
             self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
             self.packageId.setText(f"<b>{_('Package ID')}:</b> {id}")
@@ -1117,7 +1117,7 @@ class PackageInfoPopupWindow(QWidget):
                 self.publisher.setText(f"<b>{_('Publisher')}:</b> "+appInfo["publisher"])
             self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
             self.license.setText(f"<b>{_('License')}:</b> {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
-            self.sha.setText(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
+            self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
             self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a> {appInfo['installer-size']}")
             self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {appInfo['installer-type']}")
             self.packageId.setText(f"<b>{_('Package ID')}:</b> {appInfo['id']}")
