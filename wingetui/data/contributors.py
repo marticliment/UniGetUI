@@ -15,6 +15,7 @@ contributors = [
   "rumplin",
   "Satanarious",
   "quantumfallout",
+  "flatron4eg",
   "harleylara",
   "sitiom",
   "victorelec14"
@@ -24,7 +25,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1169
+    "contributions": 1177
   },
   {
     "name": "ppvnf",
@@ -89,6 +90,11 @@ contributorsInfo = [
   {
     "name": "quantumfallout",
     "link": "https://github.com/quantumfallout",
+    "contributions": 1
+  },
+  {
+    "name": "flatron4eg",
+    "link": "https://github.com/flatron4eg",
     "contributions": 1
   },
   {
