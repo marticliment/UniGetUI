@@ -84,8 +84,9 @@ wingetui/choco-cli/extensions/chocolatey-compatibility/helpers/Install-Chocolate
 wingetui/choco-cli/extensions/chocolatey-compatibility/helpers/Get-UninstallRegistryKey.ps1
 wingetui/choco-cli/extensions/chocolatey-compatibility/helpers/Get-PackageParameters.ps1
 wingetui/choco-cli/extensions/chocolatey-compatibility/chocolatey-compatibility.psm1
-wingetui/choco-cli/lib-bkp/*
-wingetui/choco-cli/.chocolatey/*
+wingetui/choco-cli/lib-bkp
+wingetui/choco-cli/.chocolatey
 WingetUIShareComponent-Source/.vs
-WingetUIShareComponent-Source/WingetUIShareComponent
-WingetUIShareComponent-Source/bin/Debug/*
+WingetUIShareComponent-Source/WingetUIShareComponent/bin/Debug
+WingetUIShareComponent-Source/WingetUIShareComponent/obj
+WingetUIShareComponent-Source/packages
