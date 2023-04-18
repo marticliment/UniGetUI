@@ -221,7 +221,7 @@ class RootWindow(QMainWindow):
             self.uninstall.destroyAnims()
         except Exception as e:
             report(e)
-    
+                
     def closeEvent(self, event):
         self.closedpos = self.pos()
         setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()},{self.closedpos.y()+30},{self.width()},{self.height()}")
@@ -356,6 +356,8 @@ class RootWindow(QMainWindow):
 
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.lastFocusedWindow = self.winId()
+        if globals.shareProcessHandler:
+            globals.shareProcessHandler.kill()
         return super().enterEvent(event)
 
     def loseFocusUpdate(self):

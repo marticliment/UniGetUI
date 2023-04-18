@@ -22,7 +22,6 @@ namespace WingetUIShareComponent
         public Form1()
         {
             InitializeComponent();
-
             string[] args = Environment.GetCommandLineArgs();
 
             // args[0]: executable file (default argument)
@@ -36,7 +35,7 @@ namespace WingetUIShareComponent
             }
 
             name = args[1];
-            link = args[2];
+            link = args[2].Replace("^&", "&");
 
             try
             {
@@ -68,8 +67,7 @@ namespace WingetUIShareComponent
 
             Height = height-1;
             Width = width-1; // +-1 offsets to prevent the window from being detected as a fullscreen window
-            Left = x+1;
-            Top = y+1;
+            this.Location = new Point(x, y);
             Text = "Sharing " + this.name;
 
             Debug.WriteLine(this.Size);
@@ -79,26 +77,28 @@ namespace WingetUIShareComponent
             IntPtr hwnd = this.Handle;
             var dtm = DataTransferManagerHelper.GetForWindow(hwnd);
             dtm.DataRequested += OnDataRequested;
-            dtm.TargetApplicationChosen += (DataTransferManager sender, TargetApplicationChosenEventArgs arg) => { this.Close(); };
             DataTransferManagerHelper.ShowShareUIForWindow(hwnd);
-            dtm.ShareProvidersRequested += (DataTransferManager sender, ShareProvidersRequestedEventArgs arg) =>
-            {
-                LostFocus += (self, arg2) => { Close(); };
-                GotFocus += (self, arg2) => { Close(); }; // When the shareUI is loaded, detech window state changes and close root window
-            };
+            
         }
 
-        private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args) {             
-            DataPackage dataPackage = new DataPackage();
-            dataPackage.SetWebLink(new System.Uri(this.link));
-            dataPackage.Properties.Title = "Sharing "+this.name;
-            dataPackage.Properties.Description = "View and install "+this.name+" from WingetUI";
-            args.Request.Data = dataPackage;
+        private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args) {
+            DataRequest dataPackage = args.Request;
+
+            dataPackage.Data.SetWebLink(new Uri(this.link));
+            dataPackage.Data.Properties.Title = "Sharing "+this.name;
+            dataPackage.Data.Properties.ApplicationName = "WingetUI";
+            dataPackage.Data.Properties.ContentSourceWebLink = new Uri(this.link);
+            dataPackage.Data.Properties.Description = "Share "+this.name+" with your friends";
+            dataPackage.Data.Properties.PackageFamilyName = "WingetUI";
+
+            dataPackage.Data.ShareCanceled += (a1, a2) => { CloseFromThread(); };
+            dataPackage.Data.ShareCompleted += (a1, a2) => { CloseFromThread(); };
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void CloseFromThread()
         {
-
+            this.Invoke(new Action(() => Close()));
+            return;
         }
     }
 

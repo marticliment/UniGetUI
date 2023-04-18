@@ -1,6 +1,7 @@
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
+from subprocess import Popen
 
 class DynamicScrollAreaType(QWidget):
     def __init__(self, parent = None) -> None:
@@ -64,6 +65,8 @@ infobox: QWidget = None
 centralWindowLayout: QWidget = None
 
 scoopBuckets: dict = {}
+
+shareProcessHandler: Popen = None
 
 textfont: str = "Segoe UI Variable Text"
 dispfont: str = "Segoe UI Variable Display"

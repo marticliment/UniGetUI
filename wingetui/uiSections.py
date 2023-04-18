@@ -409,8 +409,9 @@ class DiscoverSoftwareSection(QWidget):
         
         self.leftSlow.start()
         
-    def sharePackage(self, package):
-        self.shareUI = ShareUI(self, id=package.text(2), name=package.text(1))
+    def sharePackage(self, package: QTreeWidgetItem):
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
+        nativeWindowsShare(package.text(2), url, self.window())
 
     def loadShared(self, id):
         if id in self.packages:
@@ -1550,8 +1551,9 @@ class UpdateSoftwareSection(QWidget):
         self.adjustWidgetsSize()
         return super().showEvent(event)
 
-    def sharePackage(self, package):
-        self.shareUI = ShareUI(self, id=package.text(2), name=package.text(1))
+    def sharePackage(self, package: QTreeWidgetItem):
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
+        nativeWindowsShare(package.text(2), url, self.window())
 
 
 class UninstallSoftwareSection(QWidget):
@@ -1736,7 +1738,7 @@ class UninstallSoftwareSection(QWidget):
             ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
             ins6 = QAction(_("Share this package"))
             ins6.setIcon(QIcon(getMedia("share")))
-            ins6.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
+            ins6.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
             contextMenu.addAction(ins1)
             contextMenu.addSeparator()
             contextMenu.addAction(ins2)
@@ -2335,9 +2337,9 @@ class UninstallSoftwareSection(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
             
-    def sharePackage(self, package):
-        self.shareUI = ShareUI(self, id=package.text(2), name=package.text(1))
-
+    def sharePackage(self, package: QTreeWidgetItem):
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
+        nativeWindowsShare(package.text(2), url, self.window())
 
 class AboutSection(QScrollArea):
     def __init__(self, parent = None):
