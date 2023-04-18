@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import tolgee_requests
 
 
 os.chdir(os.path.dirname(__file__) + "/..") # move to root project
@@ -42,10 +43,19 @@ def get_all_translations(lang = "en"):
     return lang_strings
 
 
-def compare_strings():
+def get_all_translations_online(lang = "en") -> dict[str, str]:
+    response = tolgee_requests.export(zip=False, langs=["en"])
+    return json.loads(response.text)
+
+
+def compare_strings(online = False):
     not_used: list[str] = []
     translation_obj: dict[str, str] = {}
-    lang_strings = get_all_translations()
+    lang_strings: dict[str, str] = {}
+    if (online):
+        lang_strings = get_all_translations_online()
+    else:
+        lang_strings = get_all_translations()
     for key in get_all_strings():
         translation_obj[key] = ""
     for key in lang_strings.keys():

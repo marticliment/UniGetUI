@@ -6,8 +6,10 @@ from time import sleep
 
 
 __parser = argparse.ArgumentParser()
-__parser.add_argument("--print-all", help="Print not used and not translated strings", action="store_true")
-__parser.add_argument("-p", "--print", help="Print not translated strings", action="store_true")
+__group = __parser.add_mutually_exclusive_group(required=True)
+__group.add_argument("--print-all", help="Print not used and not translated strings", action="store_true")
+__group.add_argument("-p", "--print", help="Print not translated strings", action="store_true")
+__parser.add_argument("--online", help="Compare with Tolgee translations via API", action="store_true")
 __args = __parser.parse_args()
 
 
@@ -42,12 +44,12 @@ def __print(strs: list[str]):
 
 
 def __print_all():
-    output = json.dumps(translation_utils.compare_strings(), ensure_ascii=False, indent="  ")
+    output = json.dumps(translation_utils.compare_strings(online=__args.online), ensure_ascii=False, indent="  ")
     print(output)
 
 
 def __init__():
-    strs = translation_utils.compare_strings()
+    strs = translation_utils.compare_strings(online=__args.online)
     key_name = "not_translated"
     if key_name in strs:
         stringsFound = len(strs[key_name])
@@ -65,5 +67,6 @@ def __init__():
 if (__args.print_all):
     __print_all()
     exit()
+
 
 __init__()
