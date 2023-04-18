@@ -2,17 +2,7 @@ import sys
 import json
 import os
 import time
-
-try:
-    with open("APIKEY.txt", "r") as f:
-        apikey = f.read().strip()
-        if not apikey:
-            raise ValueError("APIKEY.txt is empty")
-        print("API key found in APIKEY.txt")
-except FileNotFoundError:
-    apikey = os.environ.get("TOLGEE_KEY", "")
-    if not apikey:
-        apikey = input("Write api key and press enter: ")
+import tolgee_requests
 
 os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 
@@ -36,13 +26,6 @@ if len(sys.argv)>1:
         print(sys.argv[1])
 
 
-apiurl = f"https://app.tolgee.io/v2/projects/1205/export?format=JSON&structureDelimiter=&filterState=UNTRANSLATED&filterState=TRANSLATED&filterState=REVIEWED&zip=true"
-
-try:
-    import requests
-except ImportError:
-    os.system("pip install requests")
-    import requests
 import glob, zipfile
 
 os.chdir("wingetui/lang")
@@ -53,7 +36,7 @@ print()
 print("  Downloading updated translations...")
 
 
-response = requests.get(apiurl, headers={"X-API-Key": apikey})
+response = tolgee_requests.export()
 if (not response.ok):
     statusCode = response.status_code
     print(f"  Error {statusCode}: {response.text}")
