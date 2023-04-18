@@ -88,5 +88,10 @@ wingetui/choco-cli/lib-bkp
 wingetui/choco-cli/.chocolatey
 WingetUIShareComponent-Source/.vs
 WingetUIShareComponent-Source/WingetUIShareComponent/bin/Debug
+WingetUIShareComponent-Source/WingetUIShareComponent/bin/Release/System*.*
+WingetUIShareComponent-Source/WingetUIShareComponent/bin/Release/Uno*.*
+WingetUIShareComponent-Source/WingetUIShareComponent/bin/Release/Windows.winmd
+WingetUIShareComponent-Source/WingetUIShareComponent/bin/Release/*.pdb
+WingetUIShareComponent-Source/WingetUIShareComponent/bin/Release/*.config
 WingetUIShareComponent-Source/WingetUIShareComponent/obj
 WingetUIShareComponent-Source/packages

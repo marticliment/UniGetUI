@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Media.Capture;
 
 namespace WingetUIShareComponent
 {
@@ -19,6 +13,11 @@ namespace WingetUIShareComponent
 
         string name = "PackageName";
         string link = "https://marticliment.com/wingetui/share?pname=WingetUI&pid=SomePythonThings.WingetUIStore";
+        string receivedGeometry = "";
+        int x = 0;
+        int y = 0;
+        int width = 800;
+        int height = 600;
 
         public Form1()
         {
@@ -26,12 +25,12 @@ namespace WingetUIShareComponent
 
             string[] args = Environment.GetCommandLineArgs();
 
-            // args[0]: executable file
+            // args[0]: executable file (default argument)
             // args[1]: Application share title
             // args[2]: Share link
             // args[3]: Desired geometry
 
-            if (args.Length < 4)
+            if (args.Length < 3)
             {
                 System.Environment.Exit(2);
             }
@@ -39,13 +38,54 @@ namespace WingetUIShareComponent
             name = args[1];
             link = args[2];
 
+            try
+            {
+                receivedGeometry = args[3];
+                string[] geometryElements = receivedGeometry.Split(',');
+                if (geometryElements.Length != 4)
+                {
+                    throw new ArgumentException("The geomery string must be given in the following scheme: {left},{top},{width},{height}");
+                }
+                width = int.Parse(geometryElements[2]);
+                height = int.Parse(geometryElements[3]);
+                x = int.Parse(geometryElements[0]);
+                y = int.Parse(geometryElements[1]);
+                if (width < 100 || height < 100)
+                {
+                    throw new ArgumentException("Width and Height values must not be smaller than 100px each");
+                }
+            } catch (Exception ex)
+            {
+                Screen screen = Screen.PrimaryScreen;
+                Rectangle rect = screen.Bounds;
+                width = rect.Width;
+                height = rect.Height;
+                x = rect.Left;
+                y = rect.Top;
+                Debug.WriteLine(rect.ToString());  
+                Debug.WriteLine(ex.ToString());
+            }
+
+            Height = height-1;
+            Width = width-1; // +-1 offsets to prevent the window from being detected as a fullscreen window
+            Left = x+1;
+            Top = y+1;
+            Text = "Sharing " + this.name;
+
+            Debug.WriteLine(this.Size);
+
+            Activate();
 
             IntPtr hwnd = this.Handle;
             var dtm = DataTransferManagerHelper.GetForWindow(hwnd);
             dtm.DataRequested += OnDataRequested;
             dtm.TargetApplicationChosen += (DataTransferManager sender, TargetApplicationChosenEventArgs arg) => { this.Close(); };
             DataTransferManagerHelper.ShowShareUIForWindow(hwnd);
-
+            dtm.ShareProvidersRequested += (DataTransferManager sender, ShareProvidersRequestedEventArgs arg) =>
+            {
+                LostFocus += (self, arg2) => { Close(); };
+                GotFocus += (self, arg2) => { Close(); }; // When the shareUI is loaded, detech window state changes and close root window
+            };
         }
 
         private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args) {             
@@ -54,6 +94,10 @@ namespace WingetUIShareComponent
             dataPackage.Properties.Title = "Sharing "+this.name;
             dataPackage.Properties.Description = "View and install "+this.name+" from WingetUI";
             args.Request.Data = dataPackage;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
         }
     }
