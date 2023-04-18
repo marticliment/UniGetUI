@@ -86,7 +86,12 @@ wingetui/choco-cli/extensions/chocolatey-compatibility/helpers/Get-PackageParame
 wingetui/choco-cli/extensions/chocolatey-compatibility/chocolatey-compatibility.psm1
 wingetui/choco-cli/lib-bkp
 wingetui/choco-cli/.chocolatey
-WingetUIShareComponent-Source/.vs
-WingetUIShareComponent-Source/WingetUIShareComponent/bin/Debug
-WingetUIShareComponent-Source/WingetUIShareComponent/obj
-WingetUIShareComponent-Source/packages
+share-component-source/.vs
+share-component-source/WingetUIShareComponent/bin/Debug/*
+share-component-source/Release/System*.*
+share-component-source/Release/Uno*.*
+share-component-source/Release/Windows.winmd
+share-component-source/Release/*.pdb
+share-component-source/Release/*.config
+share-component-source/WingetUIShareComponent/obj/*
+share-component-source/packages/*

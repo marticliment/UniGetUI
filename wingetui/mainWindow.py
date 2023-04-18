@@ -221,7 +221,7 @@ class RootWindow(QMainWindow):
             self.uninstall.destroyAnims()
         except Exception as e:
             report(e)
-    
+                
     def closeEvent(self, event):
         self.closedpos = self.pos()
         setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()},{self.closedpos.y()+30},{self.width()},{self.height()}")

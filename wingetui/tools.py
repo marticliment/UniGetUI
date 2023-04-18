@@ -131,7 +131,7 @@ def setSettingsValue(s: str, v: str):
     except Exception as e:
         print(e)
 
-sudoPath = os.path.join(os.path.join(realpath, "sudo"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
+sudoPath = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
 try:
     sudoLocation = os.path.dirname(sudoPath)
 except TypeError as e:
@@ -139,6 +139,15 @@ except TypeError as e:
     sudoLocation = os.path.expanduser("~")
 print(sudoPath)
 print(sudoLocation)
+
+shareComponent = os.path.join(os.path.join(realpath, "components"), "share.exe")
+
+def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
+    coordinates = ""
+    if window:
+        coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
+    globals.shareProcessHandler = subprocess.Popen([shareComponent, text, url, coordinates], shell=True)
+    cprint(globals.shareProcessHandler.args)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
