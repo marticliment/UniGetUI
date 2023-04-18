@@ -61,7 +61,7 @@ def compare_strings(online = False):
     for key in lang_strings.keys():
         if (key in translation_obj):
             del translation_obj[key]
-        else:
+        elif key != "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)":
             not_used.append(key)
     return {
         "not_used": not_used,
