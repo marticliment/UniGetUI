@@ -356,8 +356,6 @@ class RootWindow(QMainWindow):
 
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.lastFocusedWindow = self.winId()
-        if globals.shareProcessHandler:
-            globals.shareProcessHandler.kill()
         return super().enterEvent(event)
 
     def loseFocusUpdate(self):

@@ -146,8 +146,6 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    if globals.shareProcessHandler:
-        globals.shareProcessHandler.kill()
     globals.shareProcessHandler = subprocess.Popen([shareComponent, text, url, coordinates], shell=True)
     cprint(globals.shareProcessHandler.args)
 

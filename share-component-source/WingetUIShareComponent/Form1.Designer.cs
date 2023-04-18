@@ -46,6 +46,7 @@
             this.Opacity = 0D;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "WingetUI Share Component";
+            this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.White;
             this.ResumeLayout(false);
 
