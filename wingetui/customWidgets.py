@@ -679,12 +679,13 @@ class CustomScrollBar(QScrollBar):
     def showHideIfNeeded(self, min: int, max: int):
         self.setVisible(min != max)
 
-class QSettingsTitle(QWidget):
+class CollapsableSection(QWidget):
     oldScrollValue = 0
     showing = False
     searchMode = False
     childrenw = []
     callInMain = Signal(object)
+    baseHeight: int = 70
     def __init__(self, text: str, icon: str, descText: str = "No description provided"):
         if isDark():
             self.iconMode = "white"
@@ -763,18 +764,18 @@ class QSettingsTitle(QWidget):
 
         self.newShowAnim = QVariantAnimation(self)
         self.newShowAnim.setEasingCurve(QEasingCurve.OutQuart)
-        self.newShowAnim.setStartValue(50)
-        self.newShowAnim.setEndValue(70)
+        self.newShowAnim.setStartValue(self.baseHeight-20)
+        self.newShowAnim.setEndValue(self.baseHeight)
         self.newShowAnim.setDuration(200)
-        self.newShowAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-50)/20)))
+        self.newShowAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-(self.baseHeight-20))/20)))
 
         self.newHideAnim = QVariantAnimation(self)
         self.newHideAnim.setEasingCurve(QEasingCurve.InQuart)
-        self.newHideAnim.setStartValue(70)
-        self.newHideAnim.setEndValue(50)
+        self.newHideAnim.setStartValue(self.baseHeight)
+        self.newHideAnim.setEndValue(self.baseHeight-20)
         self.newHideAnim.setDuration(200)
-        self.newHideAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-50)/20)))
-        self.newHideAnim.finished.connect(lambda: (self.compressibleWidget.hide(),self.setChildFixedHeight(70)))
+        self.newHideAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-(self.baseHeight-20))/20)))
+        self.newHideAnim.finished.connect(lambda: (self.compressibleWidget.hide(),self.setChildFixedHeight(self.baseHeight)))
 
         self.childrenOpacity = QGraphicsOpacityEffect(self.compressibleWidget)
         self.childrenOpacity.setOpacity(0)
@@ -792,17 +793,17 @@ class QSettingsTitle(QWidget):
         self.callInMain.emit(self.newHideAnim.start)
         time.sleep(0.2)
         self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
-        self.callInMain.emit(lambda: self.setChildFixedHeight(70))
+        self.callInMain.emit(lambda: self.setChildFixedHeight(self.baseHeight))
 
     def showChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (50)))
+        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (self.baseHeight-20)))
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
         self.callInMain.emit(lambda: self.compressibleWidget.show())
         self.callInMain.emit(self.newShowAnim.start)
 
     def setChildFixedHeight(self, h: int) -> None:
         self.compressibleWidget.setFixedHeight(h)
-        self.setFixedHeight(h+(70))
+        self.setFixedHeight(h+self.baseHeight)
 
     def invertNotAnimated(self):
         self.NotAnimated = not self.NotAnimated
@@ -895,6 +896,130 @@ class QSettingsTitle(QWidget):
         else:
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
         return super().showEvent(event)
+
+
+class SmallCollapsableSection(CollapsableSection):
+    oldScrollValue = 0
+    showing = False
+    childrenw = []
+    callInMain = Signal(object)
+    def __init__(self, text: str, icon: str):
+        self.baseHeight = 40
+        super().__init__(text, icon, descText="")
+        self.setFixedHeight(40)
+        
+    def showHideChildren(self):
+        self.hideChildren()
+        self.showChildren()
+
+    def hideChildren(self) -> None:
+        self.callInMain.emit(lambda: self.compressibleWidget.show())
+        self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
+        self.callInMain.emit(self.newHideAnim.start)
+        time.sleep(0.2)
+        self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
+        self.callInMain.emit(lambda: self.setChildFixedHeight(40))
+
+    def showChildren(self) -> None:
+        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (20)))
+        self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
+        self.callInMain.emit(lambda: self.compressibleWidget.show())
+        self.callInMain.emit(self.newShowAnim.start)
+
+    def setChildFixedHeight(self, h: int) -> None:
+        self.compressibleWidget.setFixedHeight(h)
+        self.setFixedHeight(h+(40))
+
+    def invertNotAnimated(self):
+        self.NotAnimated = not self.NotAnimated
+
+    def toggleChilds(self):
+        if self.childsVisible:
+            self.childsVisible = False
+            self.invertNotAnimated()
+            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
+            Thread(target=lambda: (time.sleep(0.2),self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"),self.bg70.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
+            Thread(target=self.hideChildren).start()
+        else:
+            self.showHideButton.setIcon(QIcon(getMedia("expand")))
+            self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+            self.bg70.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+            self.invertNotAnimated()
+            self.childsVisible = True
+            Thread(target=self.showChildren).start()
+
+    def get6px(self, i: int) -> int:
+        return round(i*self.screen().devicePixelRatio())
+
+    def setIcon(self, icon: str) -> None:
+        self.image.setPixmap(QIcon(icon).pixmap(QSize((24), (24))))
+
+    def resizeEvent(self, event: QResizeEvent = None) -> None:
+            self.image.show()
+            self.showHideButton.show()
+            self.button.show()
+            self.label.show()
+            self.button.move(0, 0)
+            self.button.resize(self.width(), (40))
+            self.showHideButton.setIconSize(QSize((12), (12)))
+            self.showHideButton.setFixedSize(30, 30)
+            self.showHideButton.move(self.width()-(45), (5))
+
+            self.label.move((50), (10))
+            self.label.setFixedHeight(20)
+
+            self.image.move((10), (8))
+            self.image.setFixedHeight(24)
+            if self.childsVisible and self.NotAnimated:
+                self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(40))
+                self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
+            elif self.NotAnimated:
+                self.setFixedHeight(40)
+            self.compressibleWidget.move(0, (40))
+            self.compressibleWidget.setFixedWidth(self.width())
+            self.label.setFixedWidth(self.width()-(140))
+            self.image.setFixedWidth(30)
+            self.bg70.show()
+            self.bg70.move(0, 0)
+            self.bg70.resize(self.width()-(0), (40))
+
+    def addWidget(self, widget: QWidget) -> None:
+        self.compressibleWidget.layout().addWidget(widget)
+        self.childrenw.append(widget)
+
+    def getChildren(self) -> list:
+        return self.childrenw
+
+    def showEvent(self, event) -> None:
+        if isDark():
+            self.setIcon(self.icon.replace("black", "white"))
+        else:
+            self.setIcon(self.icon.replace("white", "black"))
+        if self.childsVisible:
+            self.showHideButton.setIcon(QIcon(getMedia("expand")))
+        else:
+            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
+        return super().showEvent(event)
+
+class HorizontalWidgetForSection(QWidget):
+    def __init__(self, lastOne: bool = False):
+        super().__init__()
+        if not lastOne:
+            self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setAutoFillBackground(True)
+        self.setLayout(QHBoxLayout())
+        self.setObjectName("stBtn")
+        self.setFixedHeight(40)
+        self.setContentsMargins(40, 0, 0, 0)
+        
+    def addWidget(self, w: QWidget):
+        self.layout().addWidget(w)
+        if w.sizeHint().height()+20 > self.height():
+            self.setFixedHeight(w.sizeHint().height()+20)
+            
+    def addStretch(self):
+        self.layout().addStretch()
 
 class QSettingsButton(QWidget):
     clicked = Signal()

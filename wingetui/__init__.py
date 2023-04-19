@@ -15,6 +15,7 @@ try:
     from mainWindow import *
     from tools import *
     from tools import _
+    from customWidgets import *
     from api_backend import runBackendApi
 
     import globals

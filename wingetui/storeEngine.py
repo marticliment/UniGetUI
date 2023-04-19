@@ -802,23 +802,11 @@ class PackageInfoPopupWindow(QWidget):
         self.layout.addWidget(self.imagesScrollbar)
 
         hLayout = QHBoxLayout()
-        self.versionLabel = QLinkLabel(_("Version:"))
-
-
-        self.versionCombo = CustomComboBox()
-        self.versionCombo.setFixedWidth(150)
-        self.versionCombo.setIconSize(QSize(24, 24))
-        self.versionCombo.setFixedHeight(35)
-        self.installButton = QPushButton()
-        self.installButton.setText(_("Install"))
-        self.installButton.setObjectName("AccentButton")
-        self.installButton.setIconSize(QSize(24, 24))
-        self.installButton.clicked.connect(self.install)
-        self.installButton.setFixedWidth(150)
-        self.installButton.setFixedHeight(30)
 
         downloadGroupBox = QGroupBox()
         downloadGroupBox.setFlat(True)
+        
+        optionsSection = SmallCollapsableSection("Installation parameters", getMedia("tools"))
 
         self.hashCheckBox = QCheckBox()
         self.hashCheckBox.setText(_("Skip hash check"))
@@ -827,7 +815,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
-        self.interactiveCheckbox.setChecked(False)
+        self.interactiveCheckbox.setChecked(False) 
         self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
 
 
@@ -836,29 +824,61 @@ class PackageInfoPopupWindow(QWidget):
         self.adminCheckbox.setChecked(False)
         self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
 
+        firstRow = HorizontalWidgetForSection()
+        firstRow.addWidget(self.hashCheckBox)
+        firstRow.addWidget(self.interactiveCheckbox)
+        firstRow.addWidget(self.adminCheckbox)
+        
+        optionsSection.addWidget(firstRow)
 
-        self.oLayout.addWidget(self.hashCheckBox)
-        self.oLayout.addWidget(self.interactiveCheckbox)
-        self.oLayout.addWidget(self.adminCheckbox)
-
-        hLayout.addWidget(self.versionLabel)
-        hLayout.addWidget(self.versionCombo)
-        hLayout.addWidget(QWidget(), stretch=1)
+        self.commandWindow = CommandLineEdit()
+        self.commandWindow.setReadOnly(True)
+        
+        commandWidget = HorizontalWidgetForSection(lastOne = True)
+        commandWidget.addWidget(self.commandWindow)
+        
+        
+        self.versionLabel = QLinkLabel(_("Version to install: "))
+        self.versionCombo = CustomComboBox()
+        self.versionCombo.setFixedWidth(150)
+        self.versionCombo.setIconSize(QSize(24, 24))
+        self.versionCombo.setFixedHeight(30)
+        versionWidget = HorizontalWidgetForSection()
+        versionWidget.addWidget(self.versionLabel)
+        versionWidget.addWidget(self.versionCombo)
+        versionWidget.addStretch()
+        
+        optionsSection.addWidget(versionWidget)
+        optionsSection.addWidget(commandWidget)
+        
+        self.shareButton = QPushButton(_("Share this package"))
+        self.shareButton.setIcon(QIcon(getMedia("share")))
+        self.shareButton.setFixedWidth(200)
+        self.shareButton.setStyleSheet("border-radius: 8px;")
+        self.shareButton.setFixedHeight(35)
+        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.givenPackageId}^&pname={self.givenPackageId}"))
+        self.installButton = QPushButton()
+        self.installButton.setText(_("Install"))
+        self.installButton.setObjectName("AccentButton")
+        self.installButton.setStyleSheet("border-radius: 8px;")
+        self.installButton.setIconSize(QSize(24, 24))
+        self.installButton.clicked.connect(self.install)
+        self.installButton.setFixedWidth(200)
+        self.installButton.setFixedHeight(35)
+        
+        hLayout.addWidget(self.shareButton)
+        hLayout.addStretch()
         hLayout.addWidget(self.installButton)
 
         vl = QVBoxLayout()
         vl.addStretch()
         vl.addLayout(hLayout)
-        vl.addLayout(self.oLayout)
-
-        self.commandWindow = CommandLineEdit()
-        self.commandWindow.setReadOnly(True)
 
         vl.addStretch()
 
         downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
-        self.layout.addWidget(self.commandWindow)
+        self.layout.addWidget(optionsSection)
 
         self.layout.addSpacing(10)
 

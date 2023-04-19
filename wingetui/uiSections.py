@@ -377,7 +377,6 @@ class DiscoverSoftwareSection(QWidget):
         print("🟢 Discover tab loaded")
 
         g = self.packageList.geometry()
-            
         
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
@@ -2520,7 +2519,7 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(title)
         self.layout.addSpacing(20)
 
-        self.generalTitle = QSettingsTitle(_("General preferences"), getMedia("settings"), _("Language, theme and other miscellaneous preferences"))
+        self.generalTitle = CollapsableSection(_("General preferences"), getMedia("settings"), _("Language, theme and other miscellaneous preferences"))
         self.layout.addWidget(self.generalTitle)
 
         self.language = QSettingsComboBox(_("WingetUI display language:")+" (Language)")
@@ -2609,7 +2608,7 @@ class SettingsSection(QScrollArea):
         self.theme.combobox.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), self.theme.restartButton.setVisible(True)))
         self.theme.restartButton.clicked.connect(restartElevenClockByLangChange)
 
-        self.startup = QSettingsTitle(_("Startup options"), getMedia("launch"), _("WingetUI autostart behaviour, application launch settings"))    
+        self.startup = CollapsableSection(_("Startup options"), getMedia("launch"), _("WingetUI autostart behaviour, application launch settings"))    
         self.layout.addWidget(self.startup)
         doCloseWingetUI = QSettingsCheckBox(_("Autostart WingetUI in the notifications area"))
         doCloseWingetUI.setChecked(not getSettings("DisableAutostart"))
@@ -2626,7 +2625,7 @@ class SettingsSection(QScrollArea):
 
         self.startup.addWidget(enableScoopCleanup)
         
-        self.UITitle = QSettingsTitle(_("User interface preferences"), getMedia("interactive"), _("Action when double-clicking packages, hide successful installations"))
+        self.UITitle = CollapsableSection(_("User interface preferences"), getMedia("interactive"), _("Action when double-clicking packages, hide successful installations"))
         self.layout.addWidget(self.UITitle)
         changeDefaultInstallAction = QSettingsCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
         changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
@@ -2643,7 +2642,7 @@ class SettingsSection(QScrollArea):
         
 
 
-        self.trayIcon = QSettingsTitle(_("Notification tray options"), getMedia("systemtray"), _("WingetUI tray application preferences"))
+        self.trayIcon = CollapsableSection(_("Notification tray options"), getMedia("systemtray"), _("WingetUI tray application preferences"))
         self.layout.addWidget(self.trayIcon)
 
         doCloseWingetUI = QSettingsCheckBox(_("Close WingetUI to the notification area"))
@@ -2711,7 +2710,7 @@ class SettingsSection(QScrollArea):
         automaticallyInstallUpdates.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.trayIcon.addWidget(automaticallyInstallUpdates)
         
-        self.advancedOptions = QSettingsTitle(_("Administrator privileges preferences"), getMedia("runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))
+        self.advancedOptions = CollapsableSection(_("Administrator privileges preferences"), getMedia("runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))
         self.layout.addWidget(self.advancedOptions)
         doCacheAdminPrivileges = QSettingsCheckBox(_("Ask only once for administrator privileges (not recommended)"))
         doCacheAdminPrivileges.setChecked(getSettings("DoCacheAdminRights"))
@@ -2736,7 +2735,7 @@ class SettingsSection(QScrollArea):
         alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
         self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
 
-        self.advancedOptions = QSettingsTitle(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
+        self.advancedOptions = CollapsableSection(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
         self.layout.addWidget(self.advancedOptions)
         disableShareApi = QSettingsCheckBox(_("Disable new share API (port 7058)"))
         disableShareApi.setChecked(getSettings("DisableApi"))
@@ -2779,7 +2778,7 @@ class SettingsSection(QScrollArea):
         self.layout.addWidget(title)
         self.layout.addSpacing(20)
 
-        self.wingetPreferences = QSettingsTitle(_("{pm} preferences").format(pm = "Winget"), getMedia("winget"), _("{pm} package manager specific preferences").format(pm = "Winget"))
+        self.wingetPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Winget"), getMedia("winget"), _("{pm} package manager specific preferences").format(pm = "Winget"))
         self.layout.addWidget(self.wingetPreferences)
         disableWinget = QSettingsCheckBox(_("Enable {pm}").format(pm = "Winget"))
         disableWinget.setChecked(not getSettings("DisableWinget"))
@@ -2800,7 +2799,7 @@ class SettingsSection(QScrollArea):
         enableSystemWinget.setEnabled(disableWinget.isChecked())
 
         
-        self.scoopPreferences = QSettingsTitle(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
+        self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
         self.layout.addWidget(self.scoopPreferences)
 
         disableScoop = QSettingsCheckBox(_("Enable {pm}").format(pm = "Scoop"))
@@ -2827,7 +2826,7 @@ class SettingsSection(QScrollArea):
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
         
-        self.chocoPreferences = QSettingsTitle(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
+        self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
         self.layout.addWidget(self.chocoPreferences)
         disableChocolatey = QSettingsCheckBox(_("Enable {pm}").format(pm = "Chocolatey"))
         disableChocolatey.setChecked(not getSettings("DisableChocolatey"))
