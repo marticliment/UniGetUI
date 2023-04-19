@@ -843,12 +843,25 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
         self.versionCombo.setFixedHeight(30)
-        versionWidget = HorizontalWidgetForSection()
-        versionWidget.addWidget(self.versionLabel)
-        versionWidget.addWidget(self.versionCombo)
-        versionWidget.addStretch()
+        versionSection = HorizontalWidgetForSection()
+        versionSection.addWidget(self.versionLabel)
+        versionSection.addWidget(self.versionCombo)
+        versionSection.addStretch()
+        versionSection.setFixedHeight(50)
         
-        optionsSection.addWidget(versionWidget)
+        
+        customArgumentsSection = HorizontalWidgetForSection()
+        customArgumentsLabel = QLabel(_("Custom command-line arguments: "))
+        self.customArgumentsLineEdit = CustomLineEdit()
+        self.customArgumentsLineEdit.textChanged.connect(self.loadPackageCommandLine)
+        self.customArgumentsLineEdit.setFixedHeight(30)
+        customArgumentsSection.addWidget(customArgumentsLabel)
+        customArgumentsSection.addWidget(self.customArgumentsLineEdit)
+        customArgumentsSection.setFixedHeight(50)
+        
+        
+        optionsSection.addWidget(versionSection)
+        optionsSection.addWidget(customArgumentsSection)
         optionsSection.addWidget(commandWidget)
         
         self.shareButton = QPushButton(_("Share this package"))
@@ -1000,27 +1013,66 @@ class PackageInfoPopupWindow(QWidget):
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         if(event):
             return super().resizeEvent(event)
+        
+    def getCommandLineParameters(self) -> list[str]:
+        cmdline_args = []
+        WINGET = "winget" in self.store.lower()
+        SCOOP = "scoop" in self.store.lower()
+        CHOCO = "chocolatey" in self.store.lower()
+        
+        if(self.hashCheckBox.isChecked()):
+            if WINGET:
+                cmdline_args.append("--ignore-security-hash")
+            elif SCOOP:
+                cmdline_args.append("--skip")
+            elif CHOCO:
+                cmdline_args.append("--ignore-checksums")
+                if not "--force" in cmdline_args:
+                    cmdline_args.append("--force")
+            else:
+                print(f"🟠 Unknown store {self.store}")
+                
+        if(self.interactiveCheckbox.isChecked()):
+            if WINGET:
+                cmdline_args.append("--interactive")
+            elif CHOCO:
+                cmdline_args.append("--notsilent")
+            else:
+                print("🟡 Interactive installation not supported by store")
+        else:
+            if WINGET:
+                cmdline_args.append("--silent")
+
+        if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading...")):
+            if WINGET:
+                cmdline_args.append("--version")
+                cmdline_args.append(self.versionCombo.currentText())
+                if not "--force" in cmdline_args:
+                    cmdline_args.append("--force")
+            elif CHOCO:
+                cmdline_args.append("--version="+self.versionCombo.currentText())
+                cmdline_args.append("--allow-downgrade")
+                if not "--force" in cmdline_args:
+                    cmdline_args.append("--force")
+            else:
+                print("🟡 Custom version not supported by store")
+            print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
+
+        cmdline_args += [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
+    
+        return cmdline_args
 
     def loadPackageCommandLine(self):
-        interactive = self.interactiveCheckbox.isChecked()
-        ignoreHash = self.hashCheckBox.isChecked()
-        if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
-            version = ""
-        else:
-            if self.store.lower() == "winget":
-                version = " ".join(["--version", self.versionCombo.currentText()])  
-            elif "chocolatey" in self.store.lower():
-                version = " ".join(["--version="+self.versionCombo.currentText(), "--allow-downgrade", "--force"])
-        admin = False
+        parameters = " ".join(self.getCommandLineParameters())
         if self.store.lower() == "winget":
             if not "…" in self.givenPackageId:
-                self.commandWindow.setText(f"{'sudo' if admin else ''} winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.givenPackageId} --exact {version} {'--ignore-security-hash' if ignoreHash else ''} {'--interactive' if interactive else ''} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
+                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.givenPackageId} --exact {parameters} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
         elif "scoop" in self.store.lower():
-            self.commandWindow.setText(f"{'sudo' if admin else ''} scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} {'--skip' if ignoreHash else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.store.lower() == "chocolatey":
-            self.commandWindow.setText(f"{'sudo' if admin else ''} choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {version} {'--force  --ignore-checksums' if ignoreHash else ''} {'--notsilent' if interactive else ''}".strip().replace("  ", " ").replace("  ", " "))
+            self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
             raise NotImplementedError(f"Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
@@ -1261,38 +1313,16 @@ class PackageInfoPopupWindow(QWidget):
         title = self.title.text()
         packageId = self.givenPackageId
         print(f"🟢 Starting installation of package {title} with id {packageId}")
-        cmdline_args = []
-        if(self.hashCheckBox.isChecked()):
-            if self.store.lower() == "winget":
-                cmdline_args.append("--ignore-security-hash")
-            elif "scoop" in self.store.lower():
-                cmdline_args.append("--skip")
-            else:
-                cmdline_args.append("--force")
-                cmdline_args.append("--ignore-checksums")
-        if(self.interactiveCheckbox.isChecked()):
-            cmdline_args.append("--interactive" if self.store.lower() == "winget" else "--notsilent")
-        else:
-            if "winget" in self.store.lower():
-                cmdline_args.append("--silent")
-        if(self.versionCombo.currentText() in (_("Latest"), "Latest", "Loading...", _("Loading..."))):
-            version = []
-        else:
-            if "winget" in self.store.lower():
-                version = ["--version", self.versionCombo.currentText()]
-                cmdline_args.append("--force")
-            elif "chocolatey" in self.store.lower():
-                version = ["--version="+self.versionCombo.currentText()]
-                cmdline_args += ["--allow-downgrade", "--force"]
-            else:
-                print("🟠 Store", self.store, "does not support custom version installations")
-            print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
+        cmdline_args = self.getCommandLineParameters()
+
+        print("🔵 The issued command arguments are", cmdline_args)
+
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
+            p = PackageUpdaterWidget(title, self.store, version=[], args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         elif self.isAnUninstall:            
             p = PackageUninstallerWidget(title, self.store, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         else:
-            p = PackageInstallerWidget(title, self.store, version, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
+            p = PackageInstallerWidget(title, self.store, version=[], args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
         self.addProgram.emit(p)
         self.close()
 
