@@ -668,7 +668,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.appIcon = QLabel()
         self.appIcon.setFixedSize(QSize(96, 96))
-        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'#303030' if isDark() else 'white'};")
+        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'white'};")
         self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
 
         fortyWidget = QWidget()
@@ -724,7 +724,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.screenshotsWidget = QScrollArea()
         self.screenshotsWidget.setWidgetResizable(True)
-        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'#303030' if isDark() else 'white'};border: 0px solid black;}};")
+        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'white'};border: 0px solid black;}};")
         self.screenshotsWidget.setFixedHeight(150)
         self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

@@ -112,7 +112,7 @@ class CommandLineEdit(CustomLineEdit):
             self.setStyleSheet("""
                 QLineEdit {
                     border: 1px solid #282828;
-                    background-color: #101010;
+                    background-color: #191919;
                     font-family: "Consolas";
                     padding: 15px;
                     border-radius: 8px;
