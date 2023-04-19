@@ -459,7 +459,7 @@ try:
                 self.quitAction = QAction(menu)
                 self.quitAction.setIcon(QIcon(getMedia("menu_close")))
                 self.quitAction.setText(_("Quit"))
-                self.quitAction.triggered.connect(lambda: (self.quit(), sys.exit(0)))
+                self.quitAction.triggered.connect(lambda: self.quit())
                 menu.addAction(self.quitAction)
                 
                 self.updatePackages.setIcon(QIcon(getMedia("alert_laptop")))

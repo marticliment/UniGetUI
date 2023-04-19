@@ -442,7 +442,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = [], customCommand: list = []):
+    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = [], customCommand = ""):
         self.packageItem = packageItem
         self.programName = title
         self.packageId = packageId
