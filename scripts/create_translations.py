@@ -51,6 +51,7 @@ def __print_all():
 def __init__():
     strs = translation_utils.compare_strings(online=__args.online)
     key_name = "not_translated"
+    print("Online mode:", __args.online)
     if key_name in strs:
         stringsFound = len(strs[key_name])
         print("Found not translated strings: {count}".format(count=stringsFound))
