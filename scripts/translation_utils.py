@@ -8,6 +8,11 @@ os.chdir(os.path.dirname(__file__) + "/..") # move to root project
 os.chdir("wingetui")
 
 
+__blacklist_strings = [
+    "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)",
+]
+
+
 # Function to remove special characters from a string
 def remove_special_chars(string):
     # Regular expression for special characters (excluding letters and digits)
@@ -59,9 +64,11 @@ def compare_strings(online = False):
     for key in get_all_strings():
         translation_obj[key] = ""
     for key in lang_strings.keys():
+        if (key in __blacklist_strings):
+            continue
         if (key in translation_obj):
             del translation_obj[key]
-        elif key != "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)":
+        else:
             not_used.append(key)
     return {
         "not_used": not_used,
