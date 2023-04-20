@@ -1799,7 +1799,7 @@ class UninstallSoftwareSection(QWidget):
                     }
                 self.err.showErrorMessage(errorData, showNotification=False)
             else:
-                self.openInfo(item.text(1), item.text(2), item.text(5).lower(), item)
+                self.openInfo(item.text(1), item.text(2), item.text(4).lower(), item)
 
         inf = QAction("", self.toolbar)# ("Show info")
         inf.triggered.connect(showInfo)

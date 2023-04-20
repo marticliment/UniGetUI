@@ -850,6 +850,17 @@ class PackageInfoPopupWindow(QWidget):
         versionSection.addStretch()
         versionSection.setFixedHeight(50)
         
+        self.architectureCombo = CustomComboBox()
+        self.architectureLabel = QLinkLabel(_("Architecture to install: "))
+        self.architectureCombo.setFixedWidth(150)
+        self.architectureCombo.setIconSize(QSize(24, 24))
+        self.architectureCombo.setFixedHeight(30)
+        architectureSection = HorizontalWidgetForSection()
+        architectureSection.addWidget(self.architectureLabel)
+        architectureSection.addWidget(self.architectureCombo)
+        architectureSection.addStretch()
+        architectureSection.setFixedHeight(50)
+        
         
         customArgumentsSection = HorizontalWidgetForSection()
         customArgumentsLabel = QLabel(_("Custom command-line arguments: "))
@@ -862,6 +873,7 @@ class PackageInfoPopupWindow(QWidget):
         
         
         optionsSection.addWidget(versionSection)
+        optionsSection.addWidget(architectureSection)
         optionsSection.addWidget(customArgumentsSection)
         optionsSection.addWidget(commandWidget)
         
@@ -1003,6 +1015,7 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.setFixedWidth(12)
         
         self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
+        self.architectureCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
 
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
@@ -1058,7 +1071,17 @@ class PackageInfoPopupWindow(QWidget):
                     cmdline_args.append("--force")
             else:
                 print("🟡 Custom version not supported by store")
-            print(f"🟡 Issuing specific version {self.versionCombo.currentText()}")
+            
+        if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading...")):
+            if SCOOP:
+                cmdline_args.append("--arch")
+                cmdline_args.append(self.architectureCombo.currentText())
+            elif WINGET:
+                cmdline_args.append("--architecture")
+                cmdline_args.append(self.architectureCombo.currentText())
+            else:
+                print("🟡 Custom architecture not supported by store")
+
 
         cmdline_args += [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
     
@@ -1076,7 +1099,7 @@ class PackageInfoPopupWindow(QWidget):
         elif self.store.lower() == "chocolatey":
             self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
-            raise NotImplementedError(f"Unknown store {self.store}")
+            print(f"🟠 Unknown store {self.store}")
         self.commandWindow.setCursorPosition(0)
 
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False, installedVersion: str = "") -> None:
@@ -1142,6 +1165,7 @@ class PackageInfoPopupWindow(QWidget):
             self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
             self.storeLabel.setText(f"<b>{_('Source')}:</b> {self.store.capitalize()}")
             self.versionCombo.addItems([_("Loading...")])
+            self.architectureCombo.addItems([_("Loading...")])
 
             def resetLayoutWidget():
                 for l in self.imagesCarrousel:
@@ -1175,10 +1199,11 @@ class PackageInfoPopupWindow(QWidget):
             else:
                 self.installButton.setText(_("Install"))
             self.installButton.setEnabled(True)
-            self.versionCombo.setEnabled(True)
             self.adminCheckbox.setEnabled(True)
             self.hashCheckBox.setEnabled(not self.isAnUninstall)
             self.versionCombo.setEnabled(not self.isAnUninstall)
+            self.architectureCombo.setEnabled(not self.isAnUninstall and not self.store.lower() == "chocolatey")
+            
             if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
                 self.interactiveCheckbox.setEnabled(True)
             self.title.setText(appInfo["title"])
@@ -1201,10 +1226,10 @@ class PackageInfoPopupWindow(QWidget):
             self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
             while self.versionCombo.count()>0:
                 self.versionCombo.removeItem(0)
-            try:
-                self.versionCombo.addItems([_("Latest")] + appInfo["versions"])
-            except KeyError:
-                pass
+            self.versionCombo.addItems([_("Latest")] + appInfo["versions"])
+            while self.architectureCombo.count()>0:
+                self.architectureCombo.removeItem(0)
+            self.architectureCombo.addItems([_("Default")] + appInfo["architectures"])
             if "…" in self.givenPackageId:
                 self.givenPackageId = appInfo["id"]
                 self.loadPackageCommandLine()

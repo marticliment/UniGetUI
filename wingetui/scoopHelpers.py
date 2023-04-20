@@ -118,6 +118,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "releasenotes": unknownStr,
         "releasenotesurl": unknownStr,
         "versions": [],
+        "architectures": [],
     }
     
     rawOutput = b""
@@ -179,6 +180,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
                 appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
             except Exception as e:
                 print("🟠 Can't get installer size:", type(e), str(e))
+            if type(data["architecture"]) == dict:
+                appInfo["architectures"] = list(data["architecture"].keys())
         
         appInfo["installer-type"] = "Scoop package"
         

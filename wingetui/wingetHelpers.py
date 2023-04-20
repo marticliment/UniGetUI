@@ -277,7 +277,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 "releasenotes": unknownStr,
                 "releasenotesurl": unknownStr,
                 "manifest": f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}",
-                "versions": []
+                "versions": [],
+                "architectures": ["x64", "x86", "arm64"],
             }
             while p.poll() is None:
                 line = p.stdout.readline()
