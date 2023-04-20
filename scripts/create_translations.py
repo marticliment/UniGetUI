@@ -9,8 +9,24 @@ __parser = argparse.ArgumentParser()
 __group = __parser.add_mutually_exclusive_group(required=True)
 __group.add_argument("--print-all", help="Print not used and not translated strings", action="store_true")
 __group.add_argument("-p", "--print", help="Print not translated strings", action="store_true")
+__group.add_argument("-m", "--manual", help="Confirm all request to Tolgee API", action="store_true")
 __parser.add_argument("--online", help="Compare with Tolgee translations via API", action="store_true")
 __args = __parser.parse_args()
+
+
+def __confirm(message: str, choices: list[str], defaultValue = ""):
+    def createChoices():
+        _choices: list[str] = []
+        for key in choices:
+            if key == defaultValue:
+                key = key.upper()
+            _choices.append(key)
+        return '/'.join(_choices)
+
+    try:
+        return (input(f"{message} [{createChoices()}]: ") or defaultValue).lower()
+    except KeyboardInterrupt:
+        exit(1)
 
 
 def encode_str(str: str, strip = 0):
@@ -20,12 +36,15 @@ def encode_str(str: str, strip = 0):
     return new_str.encode("utf-8")
 
 
-def upload(strs: list[str]):
+def create(strs: list[str]):
     count = len(strs)
     i = 1
     for key in strs:
-        print("[{num}/{count}] Uploading key... ".format(num=i, count=count))
-        print(encode_str(key, strip=100), "... ", end="")
+        print("[{num}/{count}] Key: {key}".format(num=i, count=count, key=encode_str(key, strip=100)))
+        i += 1
+        if __args.manual and __confirm("Create?", ["y", "n"], "y") != "y":
+            continue
+        print("Creating key... ", end="")
         response = tolgee_requests.create_key(key)
         if (not response.ok):
             print("Failed")
@@ -34,7 +53,6 @@ def upload(strs: list[str]):
         else:
             print("Ok")
         sleep(0.150)
-        i += 1
     print("Done")
 
 
@@ -52,6 +70,7 @@ def __init__():
     strs = translation_utils.compare_strings(online=__args.online)
     key_name = "not_translated"
     print("Online mode:", __args.online)
+    print("Manual mode:", __args.manual)    
     if key_name in strs:
         stringsFound = len(strs[key_name])
         print("Found not translated strings: {count}".format(count=stringsFound))
@@ -60,7 +79,7 @@ def __init__():
                 __print(strs[key_name])
             else:
                 sleep(1)
-                upload(strs[key_name])
+                create(strs[key_name])
     else:
         print(f"Key '{key_name}' missing")
 
