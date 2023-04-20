@@ -39,11 +39,10 @@ class SmoothScrollArea(QScrollArea):
         self.smoothScrollAnimation.setCurrentTime(0)
         self.smoothScrollAnimation.start()
         e.ignore()
-        #super().wheelEvent(e)
-
 
 class TreeWidget(QTreeWidget):
     missingScroll: int = 0
+    buttonVisible: bool = False
     def __init__(self, emptystr: str = "") -> None:
         super().__init__()
         self.smoothScrollAnimation = QVariantAnimation(self)
@@ -64,13 +63,19 @@ class TreeWidget(QTreeWidget):
         self.label.setFont(font)
         self.label.setFixedWidth(2050)
         self.label.setFixedHeight(50)
+        self.buttonOpacity = QGraphicsOpacityEffect()
         self.goTopButton = QPushButton(self)
         self.goTopButton.setIcon(QIcon(getMedia("gotop")))
         self.goTopButton.setToolTip(_("Return to top"))
         self.goTopButton.setAccessibleDescription(_("Return to top"))
         self.goTopButton.setFixedSize(24, 32)
         self.connectCustomScrollbar(self.verticalScrollBar())
-        self.goTopButton.hide()
+        self.goTopButton.setGraphicsEffect(self.buttonOpacity)
+        self.buttonOpacity.setOpacity(0)
+        self.buttonAnimation = QVariantAnimation(self)
+        self.buttonAnimation.setDuration(100)
+        #self.buttonAnimation.setEasingCurve(QEasingCurve.InOutQuad)
+        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
         
     def wheelEvent(self, e: QWheelEvent) -> None:
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
@@ -94,7 +99,7 @@ class TreeWidget(QTreeWidget):
             self.goTopButton.clicked.disconnect()
         except RuntimeError:
             cprint("Can't disconnect")
-        scrollbar.valueChanged.connect(lambda v: self.goTopButton.setVisible(v>100))
+        scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v>100 else self.hideTopButton())
         self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
         
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -105,7 +110,21 @@ class TreeWidget(QTreeWidget):
     def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
         self.label.setText("")
         return super().addTopLevelItem(item)
-
+    
+    def showTopButton(self):
+        if not self.buttonVisible:
+            self.buttonVisible = True
+            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
+            self.buttonAnimation.setEndValue(100)
+            self.buttonAnimation.start()
+        
+    def hideTopButton(self):
+        if self.buttonVisible:
+            self.buttonVisible = False
+            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
+            self.buttonAnimation.setEndValue(0)
+            self.buttonAnimation.start()
+        
     def clear(self) -> None:
         self.label.show()
         return super().clear()
