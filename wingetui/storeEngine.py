@@ -631,14 +631,14 @@ class PackageInfoPopupWindow(QWidget):
         super().__init__(parent = parent)
         self.iv = ImageViewer(self.window())
         self.callInMain.connect(lambda f: f())
-        self.sc = QScrollArea()
+        self.baseScrollArea = QScrollArea()
         self.blurBackgroundEffect = QGraphicsBlurEffect()
         self.store = ""
         self.setObjectName("bg")
-        self.sct = QShortcut(QKeySequence("Esc"), self.sc)
+        self.sct = QShortcut(QKeySequence("Esc"), self.baseScrollArea)
         self.sct.activated.connect(lambda: self.close())
-        self.sc.setWidgetResizable(True)
-        self.sc.setStyleSheet(f"""
+        self.baseScrollArea.setWidgetResizable(True)
+        self.baseScrollArea.setStyleSheet(f"""
         QGroupBox {{
             border: 0px;
         }}
@@ -942,11 +942,11 @@ class PackageInfoPopupWindow(QWidget):
         self.centralwidget.setLayout(self.hLayout)
         if(isDark()):
             print("🔵 Is Dark")
-        self.sc.setWidget(self.centralwidget)
+        self.baseScrollArea.setWidget(self.centralwidget)
 
         l = QHBoxLayout()
         l.setContentsMargins(0,0, 0, 0)
-        l.addWidget(self.sc)
+        l.addWidget(self.baseScrollArea)
         self.setLayout(l)
 
 
@@ -994,9 +994,10 @@ class PackageInfoPopupWindow(QWidget):
 
         self.leftSlow.start()
 
-        self.sc.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.baseScrollArea.horizontalScrollBar().setEnabled(False)
+        self.baseScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.verticalScrollbar = CustomScrollBar()
-        self.sc.setVerticalScrollBar(self.verticalScrollbar)
+        self.baseScrollArea.setVerticalScrollBar(self.verticalScrollbar)
         self.verticalScrollbar.setParent(self)
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
