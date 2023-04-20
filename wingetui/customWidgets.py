@@ -1294,10 +1294,8 @@ class NotClosableWidget(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
         if event.spontaneous():
             event.ignore()
-            return False
-        else:
-            event.accept()
-            return super().closeEvent(event)
+            return
+        return super().closeEvent(event)
         
 class PackageManager(QWidget):
     def __init__(self, text, description, image) -> None:
