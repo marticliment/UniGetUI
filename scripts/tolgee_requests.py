@@ -1,4 +1,5 @@
 import os
+import json
 try:
     import requests
 except ImportError:
@@ -10,6 +11,8 @@ __project_id = 1205 # wingetui
 __api_url = f"https://app.tolgee.io/v2/projects/{__project_id}"
 __api_key = ""
 __headers: dict[str, str] = {}
+__all_keys: dict = None
+
 
 try:
     with open("APIKEY.txt", "r") as f:
@@ -25,6 +28,7 @@ __headers["X-API-Key"] = __api_key
 
 
 def export(format = "JSON", zip = True, langs: list[str] = []):
+    url = f"{__api_url}/export"
     params = {
         "format": format,
         "languages": langs,
@@ -36,7 +40,7 @@ def export(format = "JSON", zip = True, langs: list[str] = []):
         ],
         "zip": zip,
     }
-    response = requests.get(f"{__api_url}/export", headers=__headers, params=params)
+    response = requests.get(url, headers=__headers, params=params)
     return response
 
 
@@ -46,4 +50,37 @@ def create_key(key):
         "name": key
     }
     response = requests.post(url, headers=__headers, json=json)
+    return response
+
+
+def get_keys():
+    global __all_keys
+    if __all_keys:
+        return __all_keys
+    url = f"{__api_url}/keys"
+    params = {
+        "size": 1000, # TODO: paging...
+    }
+    response = requests.get(url, headers=__headers, params=params)
+    if not response.ok:
+        return False
+    data = json.loads(response.text)
+    retValue = {}
+    for value in data["_embedded"]["keys"]:
+        retValue[value["name"]] = value
+    __all_keys = retValue
+    return retValue
+
+
+def delete_key(key):
+    all_keys = get_keys()
+    key_data = all_keys.get(key)
+    if not key_data:
+        return False
+    id = key_data.get("id")
+    url = f"{__api_url}/keys"
+    json: dict[str, str] = {
+        "ids": [id],
+    }
+    response = requests.delete(url, headers=__headers, json=json)
     return response
