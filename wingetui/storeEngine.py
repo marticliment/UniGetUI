@@ -631,7 +631,7 @@ class PackageInfoPopupWindow(QWidget):
         super().__init__(parent = parent)
         self.iv = ImageViewer(self.window())
         self.callInMain.connect(lambda f: f())
-        self.baseScrollArea = QScrollArea()
+        self.baseScrollArea = SmoothScrollArea()
         self.blurBackgroundEffect = QGraphicsBlurEffect()
         self.store = ""
         self.setObjectName("bg")

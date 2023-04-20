@@ -2340,7 +2340,7 @@ class UninstallSoftwareSection(QWidget):
         url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
         nativeWindowsShare(package.text(2), url, self.window())
 
-class AboutSection(QScrollArea):
+class AboutSection(SmoothScrollArea):
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.setFrameShape(QFrame.NoFrame)
@@ -2492,7 +2492,7 @@ class AboutSection(QScrollArea):
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
 
-class SettingsSection(QScrollArea):
+class SettingsSection(SmoothScrollArea):
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.setFrameShape(QFrame.NoFrame)

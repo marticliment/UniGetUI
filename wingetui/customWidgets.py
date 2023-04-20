@@ -4,8 +4,6 @@ from PySide6.QtWidgets import *
 from win32mica import *
 from tools import *
 from tools import _
-import globals
-import urllib.parse
 
 
 class MessageBox(QMessageBox):
@@ -14,10 +12,36 @@ class MessageBox(QMessageBox):
         ApplyMica(self.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
         
+class SmoothScrollArea(QScrollArea):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        self.setAutoFillBackground(True)
+        self.smoothScrollAnimation = QVariantAnimation(self)
+        self.smoothScrollAnimation.setDuration(100)
+        self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutCubic)
+        self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
+        
+    def wheelEvent(self, e: QWheelEvent) -> None:
+        if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
+            self.smoothScrollAnimation.stop()
+            #if self.smoothScrollAnimation.currentTime()*3 >= self.smoothScrollAnimation.duration():
+            #    self.verticalScrollBar().setValue(self.smoothScrollAnimation.endValue())
+        currentPos = self.verticalScrollBar().value()
+        finalPos = currentPos - e.angleDelta().y()
+        self.smoothScrollAnimation.setStartValue(currentPos)
+        self.smoothScrollAnimation.setEndValue(finalPos)
+        self.smoothScrollAnimation.start()
+        e.angleDelta().setY(0)
+        super().wheelEvent(e)
+
 
 class TreeWidget(QTreeWidget):
     def __init__(self, emptystr: str = "") -> None:
         super().__init__()
+        self.smoothScrollAnimation = QVariantAnimation(self)
+        self.smoothScrollAnimation.setDuration(200)
+        self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutCubic)
+        self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
         self.label = QLabel(emptystr, self)
         self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
         op=QGraphicsOpacityEffect(self.label)
@@ -39,6 +63,17 @@ class TreeWidget(QTreeWidget):
         self.goTopButton.setFixedSize(24, 32)
         self.connectCustomScrollbar(self.verticalScrollBar())
         self.goTopButton.hide()
+        
+    def wheelEvent(self, e: QWheelEvent) -> None:
+        if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
+            self.smoothScrollAnimation.stop()
+            self.verticalScrollBar().setValue(self.smoothScrollAnimation.endValue())
+        currentPos = self.verticalScrollBar().value()
+        finalPos = currentPos - e.angleDelta().y()
+        self.smoothScrollAnimation.setStartValue(currentPos)
+        self.smoothScrollAnimation.setEndValue(finalPos)
+        self.smoothScrollAnimation.start()
+        e.ignore()
         
     def connectCustomScrollbar(self, scrollbar: QScrollBar):
         try:
@@ -178,7 +213,7 @@ class DynamicScrollArea(QWidget):
         l = QVBoxLayout()
         self.showHideArrow = showHideArrow
         l.setContentsMargins(5, 5, 5, 5)
-        self.scrollArea = QScrollArea()
+        self.scrollArea = SmoothScrollArea()
         self.coushinWidget = QWidget()
         l.addWidget(self.coushinWidget)
         l.addWidget(self.scrollArea)
@@ -554,7 +589,7 @@ class QAnnouncements(QLabel):
 
     def __init__(self):
         super().__init__()
-        self.area = QScrollArea()
+        self.area = SmoothScrollArea()
         self.setMaximumWidth(self.getPx(1000))
         self.callInMain.connect(lambda f: f())
         self.setFixedHeight(self.getPx(110))

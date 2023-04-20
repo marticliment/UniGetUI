@@ -840,7 +840,7 @@ try:
         background: transparent;
         border: 1px solid #1f1f1f;
         margin: 3px;
-        width: 12px;
+        width: 18px;
         border: none;
         border-radius: 4px;
     }}
@@ -1570,7 +1570,7 @@ try:
         background: transparent;
         border: 1px solid rgba(240, 240, 240, 55%);
         margin: 3px;
-        width: 12px;
+        width: 18px;
         border: none;
         border-radius: 4px;
     }}
