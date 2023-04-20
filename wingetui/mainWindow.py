@@ -58,6 +58,9 @@ class RootWindow(QMainWindow):
 
     def loadWidgets(self) -> None:
 
+        globals.centralTextureImage = QLabel(self)
+        globals.centralTextureImage.hide()
+        
         self.infobox = PackageInfoPopupWindow(self)
         globals.infobox = self.infobox
 
@@ -160,7 +163,7 @@ class RootWindow(QMainWindow):
         vl.addWidget(self.installationsWidget)
         vl.setSpacing(0)
         vl.setContentsMargins(0, 0, 0, 0)
-        w = QWidget()
+        w = QWidget(self)
         w.setContentsMargins(0, 0, 0, 0)
         self.setContentsMargins(0, 0, 0, 0)
         w.setLayout(vl)
@@ -274,7 +277,7 @@ class RootWindow(QMainWindow):
     def resizeEvent(self, event: QResizeEvent) -> None:
         try:
             self.blackmatt.move(0, 0)
-            self.blackmatt.resize(self.size())
+            self.blackmatt.resize(event.size())
         except AttributeError:
             pass
         try:
@@ -287,6 +290,9 @@ class RootWindow(QMainWindow):
                 self.infobox.move((self.width()-s.width())//2, 50)
                 
             self.infobox.iv.resize(self.width()-100, self.height()-100)
+        
+            globals.centralTextureImage.move(0, 0)
+            globals.centralTextureImage.resize(event.size())
 
         except AttributeError:
             pass

@@ -1338,8 +1338,14 @@ class PackageInfoPopupWindow(QWidget):
             self.backgroundApplied = True
         self.blurBackgroundEffect.setEnabled(True)
         self.blurBackgroundEffect.setBlurRadius(40)
+        backgroundImage = globals.centralWindowLayout.grab(QRect(QPoint(0, 0), globals.centralWindowLayout.size()))
+        self.blurBackgroundEffect.setEnabled(False)
         self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
         self.blackCover.resize(self.width(), self.centralwidget.height())
+        if globals.centralWindowLayout:
+            globals.centralTextureImage.setPixmap(backgroundImage)
+            globals.centralTextureImage.show()
+            globals.centralWindowLayout.hide()
         _ = super().show()
         return _
 
@@ -1348,6 +1354,9 @@ class PackageInfoPopupWindow(QWidget):
         self.iv.close()
         self.parent().window().blackmatt.hide()
         self.blurBackgroundEffect.setEnabled(False)
+        if globals.centralWindowLayout:
+            globals.centralTextureImage.hide()
+            globals.centralWindowLayout.show()
         return super().close()
 
     def hide(self) -> None:
@@ -1358,6 +1367,9 @@ class PackageInfoPopupWindow(QWidget):
             pass
         self.blurBackgroundEffect.setEnabled(False)
         self.iv.close()
+        if globals.centralWindowLayout:
+            globals.centralTextureImage.hide()
+            globals.centralWindowLayout.show()
         return super().hide()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:

@@ -63,6 +63,7 @@ adminRightsGranted: bool = False
 packageMeta: dict = {}
 infobox: QWidget = None
 centralWindowLayout: QWidget = None
+centralTextureImage: QLabel = None
 
 scoopBuckets: dict = {}
 
