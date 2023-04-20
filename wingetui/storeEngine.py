@@ -838,7 +838,7 @@ class PackageInfoPopupWindow(QWidget):
         commandWidget.addWidget(self.commandWindow)
         
         
-        self.versionLabel = QLabel(_("Version to install: "))
+        self.versionLabel = QLabel(_("Version to install:"))
         self.versionCombo = CustomComboBox()
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
@@ -855,7 +855,7 @@ class PackageInfoPopupWindow(QWidget):
         ignoreUpdatesSection = HorizontalWidgetForSection()
         ignoreUpdatesSection.addWidget(self.ignoreFutureUpdates)
         
-        self.architectureLabel = QLabel(_("Architecture to install: "))
+        self.architectureLabel = QLabel(_("Architecture to install:"))
         self.architectureCombo = CustomComboBox()
         self.architectureCombo.setFixedWidth(150)
         self.architectureCombo.setIconSize(QSize(24, 24))
@@ -865,7 +865,7 @@ class PackageInfoPopupWindow(QWidget):
         architectureSection.addWidget(self.architectureCombo)
         architectureSection.setFixedHeight(50)
         
-        self.scopeLabel = QLabel(_("Installation scope: "))
+        self.scopeLabel = QLabel(_("Installation scope:"))
         self.scopeCombo = CustomComboBox()
         self.scopeCombo.setFixedWidth(150)
         self.scopeCombo.setIconSize(QSize(24, 24))
@@ -876,7 +876,7 @@ class PackageInfoPopupWindow(QWidget):
         scopeSection.setFixedHeight(50)
         
         customArgumentsSection = HorizontalWidgetForSection()
-        customArgumentsLabel = QLabel(_("Custom command-line arguments: "))
+        customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
         self.customArgumentsLineEdit = CustomLineEdit()
         self.customArgumentsLineEdit.textChanged.connect(self.loadPackageCommandLine)
         self.customArgumentsLineEdit.setFixedHeight(30)
@@ -1240,7 +1240,7 @@ class PackageInfoPopupWindow(QWidget):
             self.installButton.setEnabled(True)
             self.adminCheckbox.setEnabled(True)
             self.hashCheckBox.setEnabled(not self.isAnUninstall)
-            self.versionCombo.setEnabled(not self.isAnUninstall)
+            self.versionCombo.setEnabled(not self.isAnUninstall and not self.isAnUpdate)
             self.architectureCombo.setEnabled(not self.isAnUninstall)
             self.scopeCombo.setEnabled(not self.isAnUninstall)
             
