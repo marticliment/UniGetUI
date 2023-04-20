@@ -670,6 +670,7 @@ class PackageInfoPopupWindow(QWidget):
         self.appIcon.setFixedSize(QSize(96, 96))
         self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'white'};")
         self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
+        self.appIcon.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignHCenter)
 
         fortyWidget = QWidget()
         fortyWidget.setFixedWidth(120)
