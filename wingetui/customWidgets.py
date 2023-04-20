@@ -18,8 +18,8 @@ class SmoothScrollArea(QScrollArea):
         super().__init__(parent)
         self.setAutoFillBackground(True)
         self.smoothScrollAnimation = QVariantAnimation(self)
-        self.smoothScrollAnimation.setDuration(200)
-        self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutCubic)
+        self.smoothScrollAnimation.setDuration(300)
+        self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutQuart)
         self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
         
     def wheelEvent(self, e: QWheelEvent) -> None:
@@ -43,11 +43,12 @@ class SmoothScrollArea(QScrollArea):
 
 
 class TreeWidget(QTreeWidget):
+    missingScroll: int = 0
     def __init__(self, emptystr: str = "") -> None:
         super().__init__()
         self.smoothScrollAnimation = QVariantAnimation(self)
-        self.smoothScrollAnimation.setDuration(200)
-        self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutCubic)
+        self.smoothScrollAnimation.setDuration(300)
+        self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutQuart)
         self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
         self.label = QLabel(emptystr, self)
         self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
@@ -74,9 +75,15 @@ class TreeWidget(QTreeWidget):
     def wheelEvent(self, e: QWheelEvent) -> None:
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
             self.smoothScrollAnimation.stop()
-            self.verticalScrollBar().setValue(self.smoothScrollAnimation.endValue())
+            self.missingScroll = self.smoothScrollAnimation.endValue() - self.smoothScrollAnimation.currentValue()
+        else:
+            self.missingScroll = 0
         currentPos = self.verticalScrollBar().value()
-        finalPos = currentPos - e.angleDelta().y()
+        finalPos = currentPos - e.angleDelta().y() + self.missingScroll
+        if finalPos < 0:
+            finalPos = 0
+        elif finalPos > self.verticalScrollBar().maximum():
+            finalPos = self.verticalScrollBar().maximum()
         self.smoothScrollAnimation.setStartValue(currentPos)
         self.smoothScrollAnimation.setEndValue(finalPos)
         self.smoothScrollAnimation.start()
@@ -88,7 +95,7 @@ class TreeWidget(QTreeWidget):
         except RuntimeError:
             cprint("Can't disconnect")
         scrollbar.valueChanged.connect(lambda v: self.goTopButton.setVisible(v>100))
-        self.goTopButton.clicked.connect(lambda: scrollbar.setValue(0))
+        self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
         
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.label.move((self.width()-self.label.width())//2, (self.height()-self.label.height())//2,)
