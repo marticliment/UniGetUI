@@ -819,7 +819,6 @@ class PackageInfoPopupWindow(QWidget):
         self.interactiveCheckbox.setChecked(False) 
         self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
 
-
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
@@ -848,6 +847,13 @@ class PackageInfoPopupWindow(QWidget):
         versionSection.addWidget(self.versionLabel)
         versionSection.addWidget(self.versionCombo)
         versionSection.setFixedHeight(50)
+        
+        self.ignoreFutureUpdates = QCheckBox()
+        self.ignoreFutureUpdates.setText(_("Ignore future updates for this package"))
+        self.ignoreFutureUpdates.setChecked(False)
+        
+        ignoreUpdatesSection = HorizontalWidgetForSection()
+        ignoreUpdatesSection.addWidget(self.ignoreFutureUpdates)
         
         self.architectureLabel = QLabel(_("Architecture to install: "))
         self.architectureCombo = CustomComboBox()
@@ -880,6 +886,7 @@ class PackageInfoPopupWindow(QWidget):
         
         
         optionsSection.addWidget(versionSection)
+        optionsSection.addWidget(ignoreUpdatesSection)
         optionsSection.addWidget(architectureSection)
         optionsSection.addWidget(scopeSection)
         optionsSection.addWidget(customArgumentsSection)
@@ -1377,8 +1384,11 @@ class PackageInfoPopupWindow(QWidget):
         packageId = self.givenPackageId
         print(f"🟢 Starting installation of package {title} with id {packageId}")
         cmdline_args = self.getCommandLineParameters()
-
         print("🔵 The issued command arguments are", cmdline_args)
+        
+        if self.ignoreFutureUpdates.isChecked():
+            blacklistUpdatesForPackage(packageId)
+            print(f"🟡 Blacklising package {packageId}")
 
         if self.isAnUpdate:
             p = PackageUpdaterWidget(title, self.store, version=[], args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))

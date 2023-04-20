@@ -271,7 +271,8 @@ def getint(s: str, fallback: int) -> int:
         print("can't parse", s)
         return fallback
 
-
+def blacklistUpdatesForPackage(id: str):
+    setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+id+",")
 
 Thread(target=checkQueue, daemon=True).start()
 

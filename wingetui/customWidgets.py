@@ -965,7 +965,7 @@ class SmallCollapsableSection(CollapsableSection):
             self.showHideButton.setFixedSize(30, 30)
             self.showHideButton.move(self.width()-(45), (5))
 
-            self.label.move((50), (10))
+            self.label.move((45), (10))
             self.label.setFixedHeight(20)
 
             self.image.move((10), (8))
