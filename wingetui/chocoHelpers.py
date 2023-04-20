@@ -159,7 +159,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
             "releasenotesurl": unknownStr,
             "manifest": f"https://community.chocolatey.org/packages/{id.lower()}",
             "versions": [],
-            "architectures": [],
+            "architectures": ["x86"],
+            "scopes": []
         }
         while p.poll() is None:
             line = p.stdout.readline()

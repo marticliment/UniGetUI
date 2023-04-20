@@ -1031,15 +1031,6 @@ try:
         border: 1px solid rgba(86, 86, 86, 25%);
         margin: 0px;
     }}
-    QComboBox:disabled {{
-        width: 100px;
-        background-color: #303030;
-        color: #bbbbbb;
-        border-radius: 6px;
-        border: 0.6px solid #262626;
-        height: 30px;
-        padding-left: 10px;
-    }}
     QComboBox:hover {{
         background-color: rgba(86, 86, 86, 25%);
         border-radius: 6px;

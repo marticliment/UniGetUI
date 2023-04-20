@@ -839,7 +839,7 @@ class PackageInfoPopupWindow(QWidget):
         commandWidget.addWidget(self.commandWindow)
         
         
-        self.versionLabel = QLinkLabel(_("Version to install: "))
+        self.versionLabel = QLabel(_("Version to install: "))
         self.versionCombo = CustomComboBox()
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
@@ -847,20 +847,27 @@ class PackageInfoPopupWindow(QWidget):
         versionSection = HorizontalWidgetForSection()
         versionSection.addWidget(self.versionLabel)
         versionSection.addWidget(self.versionCombo)
-        versionSection.addStretch()
         versionSection.setFixedHeight(50)
         
+        self.architectureLabel = QLabel(_("Architecture to install: "))
         self.architectureCombo = CustomComboBox()
-        self.architectureLabel = QLinkLabel(_("Architecture to install: "))
         self.architectureCombo.setFixedWidth(150)
         self.architectureCombo.setIconSize(QSize(24, 24))
         self.architectureCombo.setFixedHeight(30)
         architectureSection = HorizontalWidgetForSection()
         architectureSection.addWidget(self.architectureLabel)
         architectureSection.addWidget(self.architectureCombo)
-        architectureSection.addStretch()
         architectureSection.setFixedHeight(50)
         
+        self.scopeLabel = QLabel(_("Installation scope: "))
+        self.scopeCombo = CustomComboBox()
+        self.scopeCombo.setFixedWidth(150)
+        self.scopeCombo.setIconSize(QSize(24, 24))
+        self.scopeCombo.setFixedHeight(30)
+        scopeSection = HorizontalWidgetForSection()
+        scopeSection.addWidget(self.scopeLabel)
+        scopeSection.addWidget(self.scopeCombo)
+        scopeSection.setFixedHeight(50)
         
         customArgumentsSection = HorizontalWidgetForSection()
         customArgumentsLabel = QLabel(_("Custom command-line arguments: "))
@@ -874,6 +881,7 @@ class PackageInfoPopupWindow(QWidget):
         
         optionsSection.addWidget(versionSection)
         optionsSection.addWidget(architectureSection)
+        optionsSection.addWidget(scopeSection)
         optionsSection.addWidget(customArgumentsSection)
         optionsSection.addWidget(commandWidget)
         
@@ -1016,6 +1024,7 @@ class PackageInfoPopupWindow(QWidget):
         
         self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
         self.architectureCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
+        self.scopeCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
 
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
@@ -1079,12 +1088,35 @@ class PackageInfoPopupWindow(QWidget):
             elif WINGET:
                 cmdline_args.append("--architecture")
                 cmdline_args.append(self.architectureCombo.currentText())
+            elif CHOCO:
+                if self.architectureCombo.currentText() == "x86":
+                    cmdline_args.append("--forcex86")
             else:
                 print("🟡 Custom architecture not supported by store")
-
+                
+        if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading...")):
+            if SCOOP:
+                chosenScope = self.scopeCombo.currentText()
+                if chosenScope in (_("Local"), "Local"):
+                        pass # Scoop installs locally by default
+                elif chosenScope in (_("Global"), "Global"):
+                        cmdline_args.append("--global")
+                else:
+                    print(f"🟠 Scope {chosenScope} not supported by Scoop")
+            elif WINGET:
+                chosenScope = self.scopeCombo.currentText()
+                if chosenScope in (_("Current user"), "Current user"):
+                        cmdline_args.append("--scope")
+                        cmdline_args.append("user")
+                elif chosenScope in (_("Local machine"), "Local machine"):
+                        cmdline_args.append("--scope")
+                        cmdline_args.append("machine")
+                else:
+                    print(f"🟠 Scope {chosenScope} not supported by Winget")
+            else:
+                print("🟡 Custom scope not supported by store")
 
         cmdline_args += [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
-    
         return cmdline_args
 
     def loadPackageCommandLine(self):
@@ -1122,12 +1154,10 @@ class PackageInfoPopupWindow(QWidget):
                     self.installButton.setText(_("Uninstall"))
                 else:
                     self.installButton.setText(_("Install"))
-            self.versionCombo.setEnabled(False)
             store = store.lower()
             self.title.setText(title)
 
             self.loadPackageCommandLine()
-
 
             self.loadingProgressBar.show()
             self.hashCheckBox.setChecked(False)
@@ -1135,7 +1165,8 @@ class PackageInfoPopupWindow(QWidget):
             self.interactiveCheckbox.setChecked(False)
             self.interactiveCheckbox.setEnabled(False)
             self.adminCheckbox.setChecked(False)
-            self.adminCheckbox.setEnabled(False)
+            self.architectureCombo.setEnabled(False)
+            self.scopeCombo.setEnabled(False)
             self.versionCombo.setEnabled(False)
             isScoop = "scoop" in self.store.lower()
             self.description.setText(_("Loading..."))
@@ -1166,6 +1197,7 @@ class PackageInfoPopupWindow(QWidget):
             self.storeLabel.setText(f"<b>{_('Source')}:</b> {self.store.capitalize()}")
             self.versionCombo.addItems([_("Loading...")])
             self.architectureCombo.addItems([_("Loading...")])
+            self.scopeCombo.addItems([_("Loading...")])
 
             def resetLayoutWidget():
                 for l in self.imagesCarrousel:
@@ -1202,7 +1234,8 @@ class PackageInfoPopupWindow(QWidget):
             self.adminCheckbox.setEnabled(True)
             self.hashCheckBox.setEnabled(not self.isAnUninstall)
             self.versionCombo.setEnabled(not self.isAnUninstall)
-            self.architectureCombo.setEnabled(not self.isAnUninstall and not self.store.lower() == "chocolatey")
+            self.architectureCombo.setEnabled(not self.isAnUninstall)
+            self.scopeCombo.setEnabled(not self.isAnUninstall)
             
             if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
                 self.interactiveCheckbox.setEnabled(True)
@@ -1230,6 +1263,9 @@ class PackageInfoPopupWindow(QWidget):
             while self.architectureCombo.count()>0:
                 self.architectureCombo.removeItem(0)
             self.architectureCombo.addItems([_("Default")] + appInfo["architectures"])
+            while self.scopeCombo.count()>0:
+                self.scopeCombo.removeItem(0)
+            self.scopeCombo.addItems([_("Default")] + appInfo["scopes"])
             if "…" in self.givenPackageId:
                 self.givenPackageId = appInfo["id"]
                 self.loadPackageCommandLine()

@@ -119,6 +119,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "releasenotesurl": unknownStr,
         "versions": [],
         "architectures": [],
+        "scopes": [_("Local"), _("Global")]
     }
     
     rawOutput = b""
@@ -296,7 +297,7 @@ def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
 
     print("🟢 Scoop bucket search finished")
     finishSignal.emit()
-    
+
 
 
 
