@@ -13,26 +13,33 @@ class MessageBox(QMessageBox):
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
         
 class SmoothScrollArea(QScrollArea):
+    missingScroll = 0
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setAutoFillBackground(True)
         self.smoothScrollAnimation = QVariantAnimation(self)
-        self.smoothScrollAnimation.setDuration(100)
+        self.smoothScrollAnimation.setDuration(200)
         self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutCubic)
         self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
         
     def wheelEvent(self, e: QWheelEvent) -> None:
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
             self.smoothScrollAnimation.stop()
-            #if self.smoothScrollAnimation.currentTime()*3 >= self.smoothScrollAnimation.duration():
-            #    self.verticalScrollBar().setValue(self.smoothScrollAnimation.endValue())
+            self.missingScroll = self.smoothScrollAnimation.endValue() - self.smoothScrollAnimation.currentValue()
+        else:
+            self.missingScroll = 0
         currentPos = self.verticalScrollBar().value()
-        finalPos = currentPos - e.angleDelta().y()
+        finalPos = currentPos - e.angleDelta().y() + self.missingScroll
+        if finalPos < 0:
+            finalPos = 0
+        elif finalPos > self.verticalScrollBar().maximum():
+            finalPos = self.verticalScrollBar().maximum()
         self.smoothScrollAnimation.setStartValue(currentPos)
         self.smoothScrollAnimation.setEndValue(finalPos)
+        self.smoothScrollAnimation.setCurrentTime(0)
         self.smoothScrollAnimation.start()
-        e.angleDelta().setY(0)
-        super().wheelEvent(e)
+        e.ignore()
+        #super().wheelEvent(e)
 
 
 class TreeWidget(QTreeWidget):
