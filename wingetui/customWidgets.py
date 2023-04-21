@@ -49,6 +49,8 @@ class TreeWidget(QTreeWidget):
         self.smoothScrollAnimation.setDuration(300)
         self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutQuart)
         self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
+        self.setIconSize(QSize(24, 24))
+        self.setVerticalScrollMode(QTreeView.ScrollMode.ScrollPerPixel)
         self.label = QLabel(emptystr, self)
         self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
         op=QGraphicsOpacityEffect(self.label)
@@ -99,7 +101,7 @@ class TreeWidget(QTreeWidget):
             self.goTopButton.clicked.disconnect()
         except RuntimeError:
             cprint("Can't disconnect")
-        scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v>100 else self.hideTopButton())
+        scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v>20 else self.hideTopButton())
         self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
         
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -114,6 +116,7 @@ class TreeWidget(QTreeWidget):
     def showTopButton(self):
         if not self.buttonVisible:
             self.buttonVisible = True
+            self.goTopButton.raise_()
             self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
             self.buttonAnimation.setEndValue(100)
             self.buttonAnimation.start()
@@ -1372,5 +1375,93 @@ class PackageManager(QWidget):
         
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
+
+
+class IgnoredUpdatesManager(QWidget):
+    def __init__(self, parent: QWidget | None = ...) -> None:
+        super().__init__(parent)
+        self.setLayout(QVBoxLayout())
+        title = QLabel(_("Ignored updates"))
+        title.setContentsMargins(10, 0, 0, 0)
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        self.layout().addWidget(title)
+        desc = QLabel(_("The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates."))
+        desc.setWordWrap(True)
+        self.layout().addWidget(desc)
+        desc.setContentsMargins(10, 0, 0, 0)
+        self.setWindowTitle("\x20")
+        self.setWindowFlag(Qt.WindowType.Window, True)
+        self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
+        self.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
+        self.setMinimumSize(QSize(650, 400))
+        self.treewidget = TreeWidget(_("No packages found"))
+        self.layout().addWidget(self.treewidget)
+        self.treewidget.setColumnCount(4)
+        self.treewidget.header().setStretchLastSection(False)
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.treewidget.setColumnWidth(1, 150)
+        self.treewidget.setColumnWidth(2, 150)
+        self.treewidget.setColumnWidth(3, 0)
+        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source"), ""])
+        self.treewidget.itemDoubleClicked.connect(lambda: self.treewidget.itemWidget(self.treewidget.currentItem(), 3).click())
+
+        self.installIcon = QIcon(getMedia("install"))
+        self.versionIcon = QIcon(getMedia("newversion"))
+        self.wingetIcon = QIcon(getMedia("winget"))
+        self.scoopIcon = QIcon(getMedia("scoop"))
+        self.chocolateyIcon = QIcon(getMedia("choco"))
+        self.localIcon = QIcon(getMedia("localpc"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+
+        self.loadItems()
+        
+    def loadItems(self):
+        for id in getSettingsValue("BlacklistedUpdates").split(","):
+            if id:
+                self.addItem(id, _("All versions"), _("Unknown"), BlacklistMethod.Legacy)
+        
+    def addItem(self, id: str, version: str, store: str, blacklistMethod: BlacklistMethod):
+        item = QTreeWidgetItem()
+        item.setText(0, id)
+        item.setText(1, version)
+        item.setText(2, store)
+        item.setIcon(0, self.installIcon)
+        item.setIcon(1, self.versionIcon)
+        if "scoop" in store.lower():
+            item.setIcon(2, self.scoopIcon)
+        elif "winget" in store.lower():
+            item.setIcon(2, self.wingetIcon)
+        elif "choco" in store.lower():
+            item.setIcon(2, self.chocolateyIcon)
+        else:
+            item.setIcon(2, self.localIcon)
+        self.treewidget.addTopLevelItem(item)
+        removeButton = QPushButton()
+        removeButton.setIcon(self.removeIcon)
+        removeButton.setFixedSize(QSize(24, 24))
+        match blacklistMethod:
+            case BlacklistMethod.Legacy:
+                removeButton.clicked.connect(lambda: self.unBlackistLegacy(id, item))
+                
+            case BlacklistMethod.SpecificVersion:
+                removeButton.clicked.connect(lambda: print(id, version, store, item))
+                
+            case BlacklistMethod.AllVersions:
+                removeButton.clicked.connect(lambda: print(id, store, item))
+                
+        self.treewidget.setItemWidget(item, 3, removeButton)
+        
+    def unBlackistLegacy(self, id: str, item: QTreeWidgetItem):
+        setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
+        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
+        del i
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        return super().showEvent(event)
+    
 if __name__ == "__main__":
     import __init__

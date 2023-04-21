@@ -804,6 +804,8 @@ class UpdateSoftwareSection(QWidget):
         self.callInMain.connect(lambda f: f())
         self.infobox = globals.infobox
         self.setStyleSheet("margin: 0px;")
+        
+        self.blacklistManager = IgnoredUpdatesManager(self.window())
 
         self.programbox = QWidget()
         self.setContentsMargins(0, 0, 0, 0)
@@ -1085,8 +1087,8 @@ class UpdateSoftwareSection(QWidget):
         self.blacklistAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist packages"), self.toolbar)
         self.blacklistAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.blacklistAction)
-        self.resetBlackList = QAction(QIcon(getMedia("undelete")), _("Reset blacklist"), self.toolbar)
-        self.resetBlackList.triggered.connect(lambda: (setSettingsValue("BlacklistedUpdates", ""), self.reload()))
+        self.resetBlackList = QAction(QIcon(getMedia("undelete")), _("Manage ignored updates"), self.toolbar)
+        self.resetBlackList.triggered.connect(lambda: (self.blacklistManager.show()))
         self.toolbar.addAction(self.resetBlackList)
 
         self.showUnknownSection = QCheckBox(_("Show unknown versions"))
@@ -1675,8 +1677,6 @@ class UninstallSoftwareSection(QWidget):
         self.packageList.setColumnCount(len(self.headers))
         self.packageList.setHeaderLabels(self.headers)
         self.packageList.setColumnWidth(0, 10)
-        self.packageList.setColumnHidden(3, False)
-        self.packageList.setColumnWidth(4, 130)
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         header = self.packageList.header()
@@ -1685,7 +1685,10 @@ class UninstallSoftwareSection(QWidget):
         header.setSectionResizeMode(0, QHeaderView.Fixed)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(2, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Fixed)
         header.setSectionResizeMode(4, QHeaderView.Fixed)
+        self.packageList.setColumnWidth(3, 150)
+        self.packageList.setColumnWidth(4, 150)
         self.packageList.sortByColumn(1, Qt.AscendingOrder)
         
         def toggleItemState():

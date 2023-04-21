@@ -276,6 +276,11 @@ def blacklistUpdatesForPackage(id: str):
 
 Thread(target=checkQueue, daemon=True).start()
 
+class BlacklistMethod():
+    Legacy = 0
+    SpecificVersion = 1
+    AllVersions = 2
+
 class KillableThread(Thread):
     def __init__(self, *args, **keywords): 
         super(KillableThread, self).__init__(*args, **keywords) 
