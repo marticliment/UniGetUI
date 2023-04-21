@@ -559,7 +559,6 @@ class IgnoredUpdatesManager(QWidget):
         self.localIcon = QIcon(getMedia("localpc"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
 
-        self.loadItems()
         
     def loadItems(self):
         for id in getSettingsValue("BlacklistedUpdates").split(","):
@@ -604,6 +603,7 @@ class IgnoredUpdatesManager(QWidget):
         
     def showEvent(self, event: QShowEvent) -> None:
         ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.loadItems()
         return super().showEvent(event)
     
 if __name__ == "__main__":
