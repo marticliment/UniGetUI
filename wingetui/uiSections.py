@@ -642,7 +642,7 @@ class DiscoverSoftwareSection(QWidget):
     
     def finishFiltering(self, text: str):
         def getChecked(item: QTreeWidgetItem) -> str:
-            return " " if item.checkState(0) == Qt.CheckState.Checked else ""
+            return "" if item.checkState(0) == Qt.CheckState.Checked else " "
         def getTitle(item: QTreeWidgetItem) -> str:
             return item.text(1)
         def getID(item: QTreeWidgetItem) -> str:
@@ -901,7 +901,7 @@ class UpdateSoftwareSection(QWidget):
         
         def updateItemState(item: TreeWidgetItemWithQAction, column: int):
             if column == 0:
-                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
+                item.setText(0, "" if item.checkState(0) == Qt.CheckState.Checked else " ")
                 if item.checkState(0) == Qt.CheckState.Checked:
                     self.packageList.setCurrentItem(item)
             
@@ -1704,7 +1704,7 @@ class UninstallSoftwareSection(QWidget):
         
         def updateItemState(item: TreeWidgetItemWithQAction, column: int):
             if column == 0:
-                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
+                item.setText(0, "" if item.checkState(0) == Qt.CheckState.Checked else " ")
                 if item.checkState(0) == Qt.CheckState.Checked:
                     self.packageList.setCurrentItem(item)
             
