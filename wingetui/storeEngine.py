@@ -1393,7 +1393,7 @@ class PackageInfoPopupWindow(QWidget):
         print("🔵 The issued command arguments are", cmdline_args)
         
         if self.ignoreFutureUpdates.isChecked():
-            blacklistUpdatesForPackage(packageId)
+            IgnorePackageUpdates_Permanent(packageId, self.store)
             print(f"🟡 Blacklising package {packageId}")
 
         if self.isAnUpdate:

@@ -584,7 +584,7 @@ class DiscoverSoftwareSection(QWidget):
         self.adjustWidgetsSize()
         return super().resizeEvent(event)
     
-    def addItem(self, name: str, id: str, version: str, store) -> None:
+    def addItem(self, name: str, id: str, version: str, store: str) -> None:
         if not "---" in name and not name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
             item = TreeWidgetItemWithQAction(self)
             item.setText(1, name)
@@ -941,6 +941,13 @@ class UpdateSoftwareSection(QWidget):
             ins5 = QAction(_("Uninstall package"))
             ins5.setIcon(QIcon(getMedia("menu_uninstall")))
             ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=globals.uninstall.packages[self.packageList.currentItem().text(2)]["item"]))
+            ins6 = QAction(_("Ignore updates for this package"))
+            ins6.setIcon(QIcon(getMedia("pin")))
+            ins6.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
+            ins8 = QAction(_("Skip this version"))
+            ins8.setIcon(QIcon(getMedia("skip")))
+            ins8.triggered.connect(lambda: (IgnorePackageUpdates_SpecificVersion(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
+
             ins7 = QAction(_("Share this package"))
             ins7.setIcon(QIcon(getMedia("share")))
             ins7.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
@@ -951,12 +958,10 @@ class UpdateSoftwareSection(QWidget):
             if not "scoop" in self.packageList.currentItem().text(5).lower():
                 contextMenu.addAction(ins4)
             contextMenu.addAction(ins3)
-            contextMenu.addSeparator()
-            ins6 = QAction(_("Ignore updates for this package"))
-            ins6.setIcon(QIcon(getMedia("blacklist")))
-            ins6.triggered.connect(lambda: (blacklistUpdatesForPackage(self.packageList.currentItem().text(2)), self.packageList.currentItem().setHidden(True), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
-            contextMenu.addAction(ins6)
             contextMenu.addAction(ins5)
+            contextMenu.addSeparator()
+            contextMenu.addAction(ins6)
+            contextMenu.addAction(ins8)
             contextMenu.addSeparator()
             contextMenu.addAction(ins7)
             contextMenu.addAction(inf)
@@ -1010,12 +1015,14 @@ class UpdateSoftwareSection(QWidget):
         self.bodyWidget.setLayout(l)
 
         def blacklistSelectedPackages():
+            progList: list[TreeWidgetItemWithQAction] = []
             for i in range(self.packageList.topLevelItemCount()):
-                program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
+                progList.append(self.packageList.topLevelItem(i))
+            for program in progList:
                 if not program.isHidden():
                     try:
                         if program.checkState(0) ==  Qt.CheckState.Checked:
-                            blacklistUpdatesForPackage(program.text(2))
+                            IgnorePackageUpdates_Permanent(program.text(2), program.text(5))
                             program.setHidden(True)
                             self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(program))
                     except AttributeError:
@@ -1084,10 +1091,10 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.blacklistAction = QAction(QIcon(getMedia("blacklist")), _("Blacklist packages"), self.toolbar)
+        self.blacklistAction = QAction(QIcon(getMedia("pin")), _("Ignore selected updates"), self.toolbar)
         self.blacklistAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.blacklistAction)
-        self.resetBlackList = QAction(QIcon(getMedia("undelete")), _("Manage ignored updates"), self.toolbar)
+        self.resetBlackList = QAction(QIcon(getMedia("blacklist")), _("Manage ignored updates"), self.toolbar)
         self.resetBlackList.triggered.connect(lambda: (self.blacklistManager.show()))
         self.toolbar.addAction(self.resetBlackList)
 
@@ -1316,56 +1323,56 @@ class UpdateSoftwareSection(QWidget):
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
         if not "---" in name and not "The following packages" in name and not "Name  " in name and not name in ("+", "Scoop", "At", "The", "But", "Au") and not version.lower() in ("the", "is", "install") and not newVersion in ("Manifest", version):
-            if not id in self.blacklist:
-                item = TreeWidgetItemWithQAction()
-                item.setText(1, name)
-                item.setIcon(1, self.installIcon)
-                item.setText(2, id)
-                item.setIcon(2, self.IDIcon)
-                item.setText(3, version)
-                item.setIcon(3, self.versionIcon)
-                item.setText(4, newVersion)
-                item.setIcon(4, self.newVersionIcon)
-                if "scoop" in store.lower():
-                    try:
-                        if version == globals.uninstall.packages[id]["version"]:
-                            store = globals.uninstall.packages[id]["store"]
-                        item.setText(5, store)
-                    except KeyError as e:
-                        item.setText(5, _("Loading..."))
-                        print(f"🟡 Package {id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
-                        Thread(target=self.changeStore, args=(item, store, id)).start()
-                else:
+            if [id.lower(), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
+                print(f"🟡 Package {id} is ignored")
+                return
+            if [id.lower(), newVersion.lower().replace(",", "."), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
+                print(f"🟡 Package {id} version {version} is ignored")
+                return
+            if id in self.blacklist:
+                print(f"🟠 Package {id} is legacy blacklisted")
+                return
+            item = TreeWidgetItemWithQAction()
+            item.setText(1, name)
+            item.setIcon(1, self.installIcon)
+            item.setText(2, id)
+            item.setIcon(2, self.IDIcon)
+            item.setText(3, version)
+            item.setIcon(3, self.versionIcon)
+            item.setText(4, newVersion)
+            item.setIcon(4, self.newVersionIcon)
+            if "scoop" in store.lower():
+                try:
+                    if version == globals.uninstall.packages[id]["version"]:
+                        store = globals.uninstall.packages[id]["store"]
                     item.setText(5, store)
-
-                
-                self.packages[id] = {
-                    "name": name,
-                    "version": version,
-                    "newVersion": newVersion,
-                    "store": store,
-                    "item": item,
-                }
-                if "scoop" in store.lower():
-                    item.setIcon(5, self.scoopIcon)
-                elif "winget" in store.lower():
-                    item.setIcon(5, self.wingetIcon)
-                else:
-                    item.setIcon(5, self.chocoIcon)
-                self.packageList.addTopLevelItem(item)
-                item.setCheckState(0, Qt.CheckState.Checked)
-                #c = QCheckBox()
-                #c.setChecked(True)
-                #c.setStyleSheet("margin-top: 1px; margin-left: 8px;")
-                #c.stateChanged.connect(lambda: item.setText(0, str(" " if c.isChecked() else "")))
-                #self.packageList.setItemWidget(item, 0, c)
-                action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
-                action.triggered.connect(lambda : self.update(name, id, store, packageItem=item))
-                action.setShortcut(version)
-                item.setAction(action)
-                globals.trayMenuUpdatesList.addAction(action)
+                except KeyError as e:
+                    item.setText(5, _("Loading..."))
+                    print(f"🟡 Package {id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
+                    Thread(target=self.changeStore, args=(item, store, id)).start()
             else:
-                print(id,"was blackisted")
+                item.setText(5, store)
+
+            self.packages[id] = {
+                "name": name,
+                "version": version,
+                "newVersion": newVersion,
+                "store": store,
+                "item": item,
+            }
+            if "scoop" in store.lower():
+                item.setIcon(5, self.scoopIcon)
+            elif "winget" in store.lower():
+                item.setIcon(5, self.wingetIcon)
+            else:
+                item.setIcon(5, self.chocoIcon)
+            self.packageList.addTopLevelItem(item)
+            item.setCheckState(0, Qt.CheckState.Checked)
+            action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
+            action.triggered.connect(lambda : self.update(name, id, store, packageItem=item))
+            action.setShortcut(version)
+            item.setAction(action)
+            globals.trayMenuUpdatesList.addAction(action)
     
     def filter(self) -> None:
         resultsFound = self.packageList.findItems(self.query.text(), Qt.MatchContains, 1)

@@ -77,7 +77,10 @@ def eng_(s): # English translate function
             print(s)
         return s
 
-def getSettings(s: str, cache = True):
+def getSettings(s: str, cache = True) -> bool:
+    """
+    Returns a boolean value representing if the given setting is enabled or not.
+    """
     global settingsCache
     try:
         try:
@@ -92,7 +95,10 @@ def getSettings(s: str, cache = True):
         print(e)
         return False
 
-def setSettings(s: str, v: bool):
+def setSettings(s: str, v: bool) -> None:
+    """
+    Sets a boolean value for the given setting
+    """
     global settingsCache
     try:
         settingsCache = {}
@@ -106,14 +112,17 @@ def setSettings(s: str, v: bool):
     except Exception as e:
         print(e)
 
-def getSettingsValue(s: str):
+def getSettingsValue(s: str) -> str:
+    """
+    Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned 
+    """
     global settingsCache
     try:
         try:
-            return settingsCache[s+"Value"]
+            return str(settingsCache[s+"Value"])
         except KeyError:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r") as sf:
-                v = sf.read()
+                v: str = sf.read()
                 settingsCache[s+"Value"] = v
                 return v
     except FileNotFoundError:
@@ -122,7 +131,10 @@ def getSettingsValue(s: str):
         print(e)
         return ""
 
-def setSettingsValue(s: str, v: str):
+def setSettingsValue(s: str, v: str) -> None:
+    """
+    Sets the stored value for the given setting. A string value is required. 
+    """
     global settingsCache
     try:
         settingsCache = {}
@@ -272,7 +284,49 @@ def getint(s: str, fallback: int) -> int:
         return fallback
 
 def blacklistUpdatesForPackage(id: str):
+    """
+    THIS FUNCTION IS DEPRECATED. USE IgnorePackageUpdates_Permanent INSTEAD
+    """
     setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+id+",")
+    try:
+        raise Exception("This function has been deprecated, and shouldn't have been called")
+    except Exception as e:
+        report(e)
+        
+def IgnorePackageUpdates_Permanent(id: str, store: str):
+    """
+    With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
+    """
+    baseList = [v for v in getSettingsValue("PermanentlyIgnoredPackageUpdates").split(";") if v]
+    packageString = f"{id.lower()},{store.lower().split(':')[0]}"
+    if not packageString in baseList:
+        baseList.append(f"{id.lower()},{store.lower().split(':')[0]}")
+    setSettingsValue("PermanentlyIgnoredPackageUpdates", ";".join(baseList))
+    
+def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
+    """
+    Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
+    """
+    baseList = [v for v in getSettingsValue("PermanentlyIgnoredPackageUpdates").split(";") if v]
+    return  [v.split(",") for v in baseList if len(v.split(",")) == 2]
+
+def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
+    """
+    With the given PACKAGE_ID, SKIPPED_VERSION and PACKAGE_STORE parameters, add the versions of the packages to the blacklist
+    """
+    baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
+    packageString = f"{id.lower()},{version.lower().replace(',', '.')},{store.lower().split(':')[0]}"
+    if not packageString in baseList:
+        baseList.append(packageString)
+    setSettingsValue("SingleVersionIgnoredPackageUpdates", ";".join(baseList))
+    
+def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
+    """
+    Returns a list in the following format [[packageId, skippedVersion, store], [packageId, skippedVersion, store], etc.] representing the packages that have a version skipped.
+    """
+    baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
+    return  [v.split(",") for v in baseList if len(v.split(",")) == 3]
+
 
 Thread(target=checkQueue, daemon=True).start()
 

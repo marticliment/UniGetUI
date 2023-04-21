@@ -28,7 +28,7 @@ class RootWindow(QMainWindow):
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
         self.setWindowIcon(QIcon(getMedia("icon", autoIconMode = False)))
-        self.resize(QSize(1100, 700))
+        self.resize(QSize(1200, 700))
         try:
             rs = getSettingsValue("OldWindowGeometry").split(",")
             assert (len(rs)==4), "Invalid window geometry format"

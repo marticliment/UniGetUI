@@ -51,6 +51,7 @@ class TreeWidget(QTreeWidget):
         self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
         self.setIconSize(QSize(24, 24))
         self.setVerticalScrollMode(QTreeView.ScrollMode.ScrollPerPixel)
+        self.setSortingEnabled(True)
         self.label = QLabel(emptystr, self)
         self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
         op=QGraphicsOpacityEffect(self.label)
@@ -76,7 +77,6 @@ class TreeWidget(QTreeWidget):
         self.buttonOpacity.setOpacity(0)
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
-        #self.buttonAnimation.setEasingCurve(QEasingCurve.InOutQuad)
         self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
         
     def wheelEvent(self, e: QWheelEvent) -> None:
@@ -857,3 +857,6 @@ class SectionCheckBox(QWidget):
 
     def text(self) -> str:
         return self.checkbox.text()
+
+if __name__ == "__main__":
+    import __init__
