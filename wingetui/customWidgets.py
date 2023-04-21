@@ -523,7 +523,10 @@ class WelcomeWizardPackageManager(QWidget):
 class IgnoredUpdatesManager(QWidget):
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
+        self.setAutoFillBackground(True)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.setLayout(QVBoxLayout())
+        self.setObjectName("background")
         title = QLabel(_("Ignored updates"))
         title.setContentsMargins(10, 0, 0, 0)
         title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
@@ -626,10 +629,14 @@ class IgnoredUpdatesManager(QWidget):
             IgnorePackageUpdates_SpecificVersion(ignoredPackage[0], ignoredPackage[1], ignoredPackage[2])
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
         del i
+        
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        return super().resizeEvent(event)
 
         
     def showEvent(self, event: QShowEvent) -> None:
-        ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         self.loadItems()
         return super().showEvent(event)
     
