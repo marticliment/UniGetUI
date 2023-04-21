@@ -41,6 +41,8 @@ popd
 pushd dist\wingetuiBin\choco-cli
 rmdir /Q /S .chocolatey
 rmdir /Q /S lib
+rmdir /Q /S lib-bad
+rmdir /Q /S lib-bkp
 rmdir /Q /S logs
 popd
 move dist\wingetuiBin ..\
