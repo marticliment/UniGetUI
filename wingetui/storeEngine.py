@@ -482,7 +482,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.t.start()
             print(self.p.args)
         elif("scoop" in self.store):
-            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.packageId if self.packageId != '' else self.programName}"] + (["-p"] if self.removeData else [""])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.packageId if self.packageId != '' else self.programName}"] + (["-p"] if self.removeData else [""]) + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
             self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
             self.t.start()
         elif self.store == "chocolatey":
