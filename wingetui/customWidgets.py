@@ -477,7 +477,7 @@ class QAnnouncements(QLabel):
     def setText(self, a: str) -> None:
         raise Exception("This member should not be used under any circumstances")
 
-class PackageManager(QWidget):
+class WelcomeWizardPackageManager(QWidget):
     def __init__(self, text, description, image) -> None:
         super().__init__()
         mainw = QWidget(self)

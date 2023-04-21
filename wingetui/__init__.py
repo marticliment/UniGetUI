@@ -159,13 +159,13 @@ try:
             mainLayout.addWidget(label)
 
             
-            winget = PackageManager(_("Enable {pm}").format(pm="Winget"), _("Microsoft's official package manager. It contains well known software such as browsers, PDF readers, windows add-ons and other utilities, as well as other less-known but useful software, such as Microsoft Visual C++ Redistributables. Packages from Winget have been carefully validated"), getMedia("winget"))
+            winget = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Winget"), _("Microsoft's official package manager. It contains well known software such as browsers, PDF readers, windows add-ons and other utilities, as well as other less-known but useful software, such as Microsoft Visual C++ Redistributables. Packages from Winget have been carefully validated"), getMedia("winget"))
             winget.setChecked(True)
-            scoop = PackageManager(_("Enable {pm}").format(pm="Scoop"), _("From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of."), getMedia("scoop"))
+            scoop = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Scoop"), _("From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of."), getMedia("scoop"))
             scoop.setChecked(False)
             if (getSettings("ScoopAlreadySetup") or getSettings("ScoopEnabledByAssistant")) and not getSettings("DisableScoop"):
                 scoop.setChecked(True)
-            choco = PackageManager(_("Enable {pm}").format(pm="Chocolatey"), _("The package manager for Windows by default. With more than {0} packages on their repositories, you will find anything you want to install. From Firefox to Sysinternals, almost every package is available to download from Chocolatey servers").format("9500"), getMedia("choco"))
+            choco = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Chocolatey"), _("The package manager for Windows by default. With more than {0} packages on their repositories, you will find anything you want to install. From Firefox to Sysinternals, almost every package is available to download from Chocolatey servers").format("9500"), getMedia("choco"))
             choco.setChecked(True)
             
             mainLayout.addSpacing(20)
