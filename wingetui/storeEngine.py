@@ -27,6 +27,8 @@ class PackageInstallerWidget(QGroupBox):
         self.actionDoing = _("installing")
         self.actionName = _("installation")
         self.actionVerb = _("install")
+        self.setAutoFillBackground(True)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.liveOutputWindow = CustomPlainTextEdit(self)
         self.liveOutputWindow.setWindowFlag(Qt.Window)
         self.liveOutputWindow.setWindowIcon(self.window().windowIcon())
@@ -325,13 +327,15 @@ class PackageInstallerWidget(QGroupBox):
                     widget.setGraphicsEffect(self.ops[i])
                     widget.setAutoFillBackground(True)
                     i += 1
+                    if v == 0:
+                        widget.hide()
 
-            updateOp(1)
+            #updateOp(1)
             a = QVariantAnimation(self)
             a.setStartValue(1.0)
             a.setEndValue(0.0)
-            a.setEasingCurve(QEasingCurve.Linear)
-            a.setDuration(300)
+            a.setEasingCurve(QEasingCurve.InOutQuad)
+            a.setDuration(200)
             a.valueChanged.connect(lambda v: updateOp(v))
             a.finished.connect(self.heightAnim)
             f = lambda: (time.sleep(3), self.callInMain.emit(a.start))
@@ -340,12 +344,14 @@ class PackageInstallerWidget(QGroupBox):
             print("🟡 Autohide disabled!")
 
     def heightAnim(self):
+        op=QGraphicsOpacityEffect(self)
+        self.setGraphicsEffect(op)
         a = QVariantAnimation(self)
-        a.setStartValue(self.height())
+        a.setStartValue(100)
         a.setEndValue(0)
-        a.setEasingCurve(QEasingCurve.InOutCubic)
-        a.setDuration(300)
-        a.valueChanged.connect(lambda v: self.setFixedHeight(v))
+        a.setEasingCurve(QEasingCurve.InOutQuad)
+        a.setDuration(100)
+        a.valueChanged.connect(lambda v: op.setOpacity(v/100))
         a.finished.connect(self.close)
         a.start()
 
