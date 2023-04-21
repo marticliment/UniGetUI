@@ -284,7 +284,7 @@ class PackageInstallerWidget(QGroupBox):
         else:
             globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
-            self.err = ErrorMessage(self.window())
+            self.err = CustomMessageBox(self.window())
             warnIcon = QIcon(getMedia("notif_warn"))
             dialogData = {
                     "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
@@ -592,7 +592,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
                     self.progressbar.setValue(1000)
-                    self.err = ErrorMessage(self.window())
+                    self.err = CustomMessageBox(self.window())
                     errorData = {
                         "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
@@ -830,7 +830,7 @@ class PackageInfoPopupWindow(QWidget):
         self.adminCheckbox.setChecked(False)
         self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
 
-        firstRow = HorizontalWidgetForSection()
+        firstRow = SectionHWidget()
         firstRow.addWidget(self.hashCheckBox)
         firstRow.addWidget(self.interactiveCheckbox)
         firstRow.addWidget(self.adminCheckbox)
@@ -840,7 +840,7 @@ class PackageInfoPopupWindow(QWidget):
         self.commandWindow = CommandLineEdit()
         self.commandWindow.setReadOnly(True)
         
-        commandWidget = HorizontalWidgetForSection(lastOne = True)
+        commandWidget = SectionHWidget(lastOne = True)
         commandWidget.addWidget(self.commandWindow)
         
         
@@ -849,7 +849,7 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.setFixedWidth(150)
         self.versionCombo.setIconSize(QSize(24, 24))
         self.versionCombo.setFixedHeight(30)
-        versionSection = HorizontalWidgetForSection()
+        versionSection = SectionHWidget()
         versionSection.addWidget(self.versionLabel)
         versionSection.addWidget(self.versionCombo)
         versionSection.setFixedHeight(50)
@@ -858,7 +858,7 @@ class PackageInfoPopupWindow(QWidget):
         self.ignoreFutureUpdates.setText(_("Ignore future updates for this package"))
         self.ignoreFutureUpdates.setChecked(False)
         
-        ignoreUpdatesSection = HorizontalWidgetForSection()
+        ignoreUpdatesSection = SectionHWidget()
         ignoreUpdatesSection.addWidget(self.ignoreFutureUpdates)
         
         self.architectureLabel = QLabel(_("Architecture to install:"))
@@ -866,7 +866,7 @@ class PackageInfoPopupWindow(QWidget):
         self.architectureCombo.setFixedWidth(150)
         self.architectureCombo.setIconSize(QSize(24, 24))
         self.architectureCombo.setFixedHeight(30)
-        architectureSection = HorizontalWidgetForSection()
+        architectureSection = SectionHWidget()
         architectureSection.addWidget(self.architectureLabel)
         architectureSection.addWidget(self.architectureCombo)
         architectureSection.setFixedHeight(50)
@@ -876,12 +876,12 @@ class PackageInfoPopupWindow(QWidget):
         self.scopeCombo.setFixedWidth(150)
         self.scopeCombo.setIconSize(QSize(24, 24))
         self.scopeCombo.setFixedHeight(30)
-        scopeSection = HorizontalWidgetForSection()
+        scopeSection = SectionHWidget()
         scopeSection.addWidget(self.scopeLabel)
         scopeSection.addWidget(self.scopeCombo)
         scopeSection.setFixedHeight(50)
         
-        customArgumentsSection = HorizontalWidgetForSection()
+        customArgumentsSection = SectionHWidget()
         customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
         self.customArgumentsLineEdit = CustomLineEdit()
         self.customArgumentsLineEdit.textChanged.connect(self.loadPackageCommandLine)

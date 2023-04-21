@@ -199,7 +199,7 @@ class RootWindow(QMainWindow):
 
     def warnAboutAdmin(self):
             from tools import _
-            self.err = ErrorMessage(self)
+            self.err = CustomMessageBox(self)
             errorData = {
                 "titlebarTitle": "WingetUI",
                 "mainTitle": _("Administrator privileges"),
