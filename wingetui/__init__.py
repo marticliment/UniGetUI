@@ -1610,8 +1610,8 @@ try:
         height: 25px;
         border: 1px solid rgba(220, 220, 220, 55%);
         margin-bottom: 5px;
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
     }}
     QHeaderView::section {{
         background-color: transparent;
@@ -1824,12 +1824,6 @@ try:
         border-radius: 6px;
         height: 30px;
     }}
-    QComboBox:disabled{{
-        color: #000000;
-        background-color: rgba(200,200,200, 80%);
-        border-color: rgb(200, 200, 200);
-        border-bottom-color: rgb(200, 200, 200);
-    }}
     #package {{
         margin: 0px;
         padding: 0px;
@@ -1920,7 +1914,7 @@ try:
         font-size: {(11)}px;
     }}
     #stBtn{{
-        background-color: rgba(255, 255, 255, 10%);
+        background-color: rgba(255, 255, 255, 5%);
         margin: 10px;
         margin-bottom: 0;
         margin-top: 0;
