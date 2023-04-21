@@ -880,8 +880,8 @@ try:
         height: 25px;
         border: 1px solid #1f1f1f;
         margin-bottom: 5px;
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
     }}
     QHeaderView::section {{
         background-color: transparent;
@@ -902,7 +902,7 @@ try:
     QTreeWidget {{
         show-decoration-selected: 0;
         background-color: transparent;
-        padding: 5px;
+        padding: 0px;
         margin: 0px;
         outline: none;
         border-radius: 6px;
@@ -1632,7 +1632,7 @@ try:
     QTreeWidget {{
         show-decoration-selected: 0;
         background-color: transparent;
-        padding: 5px;
+        padding: 0px;
         outline: none;
         border-radius: 6px;
         border: 0px solid rgba(240, 240, 240, 55%);
