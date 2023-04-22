@@ -896,8 +896,8 @@ try:
         padding: 4px;
         height: 25px;
         margin: 1px;
-        margin-left: -20px;
-        padding-left: 30px;
+        margin-left: 0px;
+        padding-left: 10px;
     }}
     QTreeWidget {{
         show-decoration-selected: 0;
@@ -1626,7 +1626,7 @@ try:
         padding: 4px;
         height: 25px;
         margin: 1px;
-        margin-left: -20px;
+        margin-left: 0px;
         padding-left: 10px;
     }}
     QTreeWidget {{

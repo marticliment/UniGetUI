@@ -90,7 +90,8 @@ class PackageInstallerWidget(QGroupBox):
         self.adminBadge.setEnabled(False)
         self.adminBadge.setToolTip(_("This process is running with administrator privileges"))
         self.layout.addWidget(self.adminBadge)
-        self.adminBadge.setVisible(self.runAsAdmin)
+        if not self.runAsAdmin:
+            self.adminBadge.setVisible(False)
         self.info = CustomLineEdit()
         self.info.setClearButtonEnabled(False)
         self.info.setStyleSheet("color: grey; border-bottom: inherit;")
