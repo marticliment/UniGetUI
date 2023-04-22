@@ -1742,6 +1742,9 @@ class UninstallSoftwareSection(QWidget):
             ins5 = QAction(_("Interactive uninstall"))
             ins5.setIcon(QIcon(getMedia("interactive")))
             ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), interactive=True))
+            ins7 = QAction(_("Ignore updates for this package"))
+            ins7.setIcon(QIcon(getMedia("pin")))
+            ins7.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4))))
             ins4 = QAction(_("Package details"))
             ins4.setIcon(QIcon(getMedia("info")))
             ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
@@ -1757,6 +1760,8 @@ class UninstallSoftwareSection(QWidget):
             else:
                 contextMenu.addAction(ins5)
             if self.packageList.currentItem().text(4) not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
+                contextMenu.addSeparator()
+                contextMenu.addAction(ins7)
                 contextMenu.addSeparator()
                 contextMenu.addAction(ins6)
                 contextMenu.addAction(ins4)
