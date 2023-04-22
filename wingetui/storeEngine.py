@@ -652,7 +652,7 @@ class PackageInfoPopupWindow(QWidget):
         QScrollArea{{
             border-radius: 5px;
             padding: 5px;
-            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 50%)'};
             border-radius: 16px;
             border: 1px solid {"#303030" if isDark() else "#bbbbbb"};
         }}
@@ -675,7 +675,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.appIcon = QLabel()
         self.appIcon.setFixedSize(QSize(96, 96))
-        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'white'};")
+        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};")
         self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
         self.appIcon.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignHCenter)
 
@@ -732,7 +732,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.screenshotsWidget = QScrollArea()
         self.screenshotsWidget.setWidgetResizable(True)
-        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'white'};border: 0px solid black;}};")
+        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};border: 0px solid black;}};")
         self.screenshotsWidget.setFixedHeight(150)
         self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

@@ -1470,7 +1470,7 @@ try:
     }}
     QPushButton,#FocusLabel {{
         width: 150px;
-        background-color:rgba(255, 255, 255, 55%);
+        background-color:rgba(255, 255, 255, 45%);
         border: 1px solid rgba(220, 220, 220, 55%);
         border-top: 1px solid rgba(220, 220, 220, 75%);
         border-radius: 6px;
@@ -1644,9 +1644,9 @@ try:
         padding-bottom: 3px;
         outline: none;
         height: 25px;
-        background-color:rgba(255, 255, 255, 55%);
-        border-top: 1px solid rgba(220, 220, 220, 55%);
-        border-bottom: 1px solid rgba(220, 220, 220, 55%);
+        background-color:rgba(255, 255, 255, 20%);
+        border-top: 1px solid rgba(220, 220, 220, 35%);
+        border-bottom: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:selected {{
         margin-top: 2px;
@@ -1655,11 +1655,11 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: rgba(240, 240, 240, 90%);
+        background-color: rgba(255, 255, 255, 90%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 70%);
+        border-bottom: 1px solid rgba(220, 220, 220, 80%);
         border-top: 1px solid rgba(220, 220, 220, 80%);
-        color: rgb({colors[5]});
+        color: rgb({colors[3]});
     }}
     QTreeWidget::branch {{
         background-color: transparent;
@@ -1671,20 +1671,20 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: rgba(230, 230, 230, 90%);
+        background-color: rgba(255, 255, 255, 70%);
         height: 25px;
-        border-bottom: 1px solid rgba(230, 230, 230, 70%);
+        border-bottom: 1px solid rgba(220, 220, 220, 80%);
         border-top: 1px solid rgba(220, 220, 220, 80%);
     }}
     QTreeWidget::item:first {{
         border-top-left-radius: 6px;
         border-bottom-left-radius: 6px;
-        border-left: 1px solid rgba(220, 220, 220, 55%);
+        border-left: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:last {{
         border-top-right-radius: 6px;
         border-bottom-right-radius: 6px;
-        border-right: 1px solid rgba(220, 220, 220, 55%);
+        border-right: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:first:selected {{
         border-left: 1px solid rgba(220, 220, 220, 80%);
@@ -1771,6 +1771,7 @@ try:
         height: 2px;
         width: 2px;
     }}
+    
     QComboBox QAbstractItemView {{
         padding: 0px;
         margin: 0px;
@@ -1808,7 +1809,7 @@ try:
     }}
     QComboBox {{
         width: 150px;
-        background-color:rgba(255, 255, 255, 55%);
+        background-color:rgba(255, 255, 255, 45%);
         border: 1px solid rgba(220, 220, 220, 55%);
         border-top: 1px solid rgba(220, 220, 220, 75%);
         border-radius: 6px;
@@ -1870,7 +1871,7 @@ try:
         color: #888888;
     }}
     #subtitleLabel{{
-        background-color: white;
+        background-color: rgba(255, 255, 255, 60%);
         margin: 10px;
         margin-bottom: 0;
         margin-top: 0;
