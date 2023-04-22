@@ -1116,7 +1116,7 @@ try:
         margin: 5px;
         margin-right: 0px;
         font-size: 9pt;
-        font-family: "Segoe UI Variable Display Semib";
+        font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         padding: 4px;
     }}
@@ -1498,21 +1498,21 @@ try:
     #AccentButton{{
         color: #000000;
         font-size: 9pt;
-        background-color: rgb({colors[2]});
-        border-color: rgb({colors[3]});
-        border-bottom-color: rgb({colors[4]});
+        background-color: rgb({colors[1]});
+        border-color: rgba({colors[2]}, 50%);
+        border-bottom-color: rgba({colors[2]}, 50%);
         font-family: "Segoe UI Variable Display Semib";
     }}
     #AccentButton:hover{{
-        background-color: rgba({colors[3]}, 80%);
-        border-color: rgb({colors[4]});
-        border-bottom-color: rgb({colors[5]});
+        background-color: rgba({colors[2]}, 80%);
+        border-color: rgba({colors[3]}, 50%);
+        border-bottom-color: rgba({colors[3]}, 50%);
     }}
     #AccentButton:pressed{{
         color: #000000;
-        background-color: rgba({colors[4]}, 80%);
-        border-color: rgb({colors[5]});
-        border-bottom-color: rgb({colors[5]});
+        background-color: rgba({colors[3]}, 80%);
+        border-color: rgba({colors[4]}, 50%);
+        border-bottom-color: rgba({colors[4]}, 50%);
     }}
     #AccentButton:disabled{{
         color: #000000;
@@ -1850,7 +1850,7 @@ try:
         margin: 5px;
         margin-right: 0px;
         font-size: 9pt;
-        font-family: "Segoe UI Variable Display Semib";
+        font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         padding: 4px;
     }}

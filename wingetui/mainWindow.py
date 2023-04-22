@@ -321,7 +321,7 @@ class RootWindow(QMainWindow):
             print(r)
             if not self.appliedStyleSheet and globals.lightCSS != "":
                 self.appliedStyleSheet = True
-                self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#ffffff")) 
+                self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f6f6f6")) 
         else:
             r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.DARK)
             if not self.appliedStyleSheet and globals.darkCSS != "":

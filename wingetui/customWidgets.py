@@ -125,12 +125,12 @@ class CustomMessageBox(QMainWindow):
                                """)
         else:
             self.setStyleSheet(f"""#micawin {{
-                background-color: #ffffff;
+                background-color: #f6f6f6;
                 color: black;
                 }}
                 #btnBackground {{
-                    border-top: 1px solid #dddddd;
-                    background-color: #eeeeee;
+                    border-top: 1px solid #d5d5d5;
+                    background-color: #e5e5e5;
                 }}
                                """)
         l = QVBoxLayout()
