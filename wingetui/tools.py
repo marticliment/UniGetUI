@@ -363,8 +363,7 @@ class KillableThread(Thread):
 
 
 def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
-    globals.trayIcon.showMessage(title, text, QIcon(iconpath))
-
+    globals.trayIcon.showMessage(title, text, QIcon())
 
 def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")

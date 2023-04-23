@@ -237,6 +237,8 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
         outputCode = OC_NEEDS_SCOOP_ELEVATION
     elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
         outputCode = OC_NEEDS_ELEVATION
+    if "Latest versions for all apps are installed" in output:
+        outputCode = OC_NO_APPLICABLE_UPDATE_FOUND
     closeAndInform.emit(outputCode, output)
 
    

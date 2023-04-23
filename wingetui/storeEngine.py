@@ -268,15 +268,24 @@ class PackageInstallerWidget(QGroupBox):
         self.cancelButton.clicked.connect(self.close)
         self.progressbar.setValue(1000)
         if returncode in (LIST_OC_OPERATION_SUCCEEDED):
+            t = ToastNotification(self, self.callInMain.emit)                    
+            t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
             if returncode in (OC_OPERATION_SUCCEEDED, OC_NO_APPLICABLE_UPDATE_FOUND):
+                t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
+                t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", "."))
+                t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                 self.startCoolDown()
-                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
             if returncode == OC_NEEDS_RESTART: # if the installer need restart computer
+                t.setTitle(_("Restart required"))
+                t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", ".")+" "+_("Restart your computer to finish the installation"))
+                t.setSmallText(_("You may restart your computer later if you wish"))
+                t.addAction(_("Restart now"), globals.mainWindow.askRestart) #TODO: add restart pc
+                t.addAction(_("Restart later"), t.close) 
+                t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.info.setText(_("Restart your PC to finish installation"))
-                self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone)+" "+_("Restart your PC to finish installation"), QIcon(getMedia("notif_restart"))))
             if type(self) == PackageInstallerWidget:
                 if self.packageItem:
                     if not self.packageItem.text(2) in globals.uninstall.packages.keys():
@@ -287,6 +296,9 @@ class PackageInstallerWidget(QGroupBox):
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
             self.err = CustomMessageBox(self.window())
             warnIcon = QIcon(getMedia("notif_warn"))
+            t = ToastNotification(self, self.callInMain.emit)                    
+            t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
+            t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))           
             dialogData = {
                     "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                     "buttonTitle": _("Close"),
@@ -296,14 +308,19 @@ class PackageInstallerWidget(QGroupBox):
                     "notifIcon": warnIcon,
             }
             if returncode == OC_INCORRECT_HASH: # if the installer's hash does not coincide
+                t.setDescription(_("The installer has an invalid checksum"))
+                t.addAction(_("More details"), lambda: (globals.mainWindow.showWindow(-1)))
                 dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
-                dialogData["notifText"] = _("The installer has an invalid checksum")
             else: # if there's a generic error
+                t.setDescription(_("{0} {1} failed").format(self.programName.capitalize(), self.actionName))
+                t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
+                t.addAction(_("More details"), lambda: (globals.mainWindow.showWindow(-1)))
                 dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(action=self.actionVerb, package=self.programName, showDetails=_("Show details"))
-                dialogData["notifText"] = _("{0} {1} failed").format(self.programName.capitalize(), self.actionName)
-            self.err.showErrorMessage(dialogData)
+            self.err.showErrorMessage(dialogData, showNotification=False)
+            t.show()
+
 
     def startCoolDown(self):
         if not getSettings("MaintainSuccessfulInstalls"):
@@ -586,13 +603,17 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             except: pass
             if not(self.canceled):
                 if(returncode in (LIST_OC_OPERATION_SUCCEEDED)):
-                    self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
                     self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
+                    t = ToastNotification(self, self.callInMain.emit)                    
+                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
+                    t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
+                    t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", "."))
+                    t.show()
                 else:
                     globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
                     self.cancelButton.setText(_("OK"))
@@ -600,6 +621,12 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.clicked.connect(self.close)
                     self.progressbar.setValue(1000)
                     self.err = CustomMessageBox(self.window())
+                    t = ToastNotification(self, self.callInMain.emit)                    
+                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
+                    t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))           
+                    t.setDescription(_("{0} {1} failed").format(self.programName.capitalize(), self.actionName))
+                    t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
+                    t.addAction(_("More details"), lambda: (globals.mainWindow.showWindow(-1)))
                     errorData = {
                         "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
@@ -607,11 +634,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         "buttonTitle": _("Close"),
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("notif_warn")),
-                        "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
-                        "notifText": _("{0} {1} failed").format(self.programName.capitalize(), self.actionName),
-                        "notifIcon": QIcon(getMedia("notif_warn")),
                         }
-                    self.err.showErrorMessage(errorData)
+                    t.show()
+                    self.err.showErrorMessage(errorData, showNotification=False)
 
     def close(self):
         globals.installersWidget.removeItem(self)

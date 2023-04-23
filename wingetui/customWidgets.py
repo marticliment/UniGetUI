@@ -1,3 +1,4 @@
+from functools import partial
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -639,6 +640,8 @@ class IgnoredUpdatesManager(QWidget):
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         self.loadItems()
         return super().showEvent(event)
-    
+
+
+
 if __name__ == "__main__":
     import __init__

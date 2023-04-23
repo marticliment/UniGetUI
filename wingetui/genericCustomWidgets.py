@@ -4,7 +4,7 @@ from PySide6.QtWidgets import *
 from win32mica import *
 from tools import *
 from tools import _
-
+import zroya
 
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:
@@ -857,6 +857,135 @@ class SectionCheckBox(QWidget):
 
     def text(self) -> str:
         return self.checkbox.text()
+
+zroya.init("WingetUI", "MartiCliment", "WingetUI", "WingetUI", versionName)
+
+class ToastNotification(QObject):
+    notificationId: int = 0
+    title: str = ""
+    description: str = ""
+    smallText: str = ""
+    showTime: int = 3000
+    callableActions: dict[int:object] = {}
+    actionsReference: dict[object:str] = {}
+    signalCaller: object = None
+    onClickFun: object
+    onDismissFun: object
+    addedActions: list = []
+
+    def __init__(self, parent = None, signalCaller: object = None):
+        super().__init__(parent=parent)
+        self.signalCaller = signalCaller
+        self.onClickFun = self.nullFunction
+        self.onDismissFun = self.nullFunctionWithParams
+        self.addedActions = []
+        self.actionsReference = {}
+        self.callableActions = {}
+        
+    def nullFunction(self):
+        """
+        Internal private method, should never be called externally 
+        """
+        pass
+    
+    def nullFunctionWithParams(self, null1):
+        """
+        Internal private method, should never be called externally 
+        """
+        pass
+        
+    def setTitle(self, title: str):
+        """
+        Sets title of the notification
+        """
+        self.title = title
+        
+    def setDescription(self, description: str):
+        """
+        Sets description text of the notification
+        """
+        self.description = description
+        
+    def setDuration(self, msecs: int):
+        """
+        Sets the duration, in millseconds, of the notification
+        """
+        self.showTime = msecs
+
+    def setSmallText(self, text: str):
+        """
+        Sets the smaller text shown on the bottom part of the notification
+        """
+        self.smallText = text
+
+    def addAction(self, text: str, callback: object):
+        self.showTime = 8000
+        """
+        Add a button to the notification, by giving the text and the callback function of the button
+        """
+        self.actionsReference[callback] = text
+        
+    def addOnClickCallback(self, function: object):
+        """
+        Set the function to be called when the notification is clicked
+        """
+        self.onClickFun = function
+     
+    def addOnDismissCallback(self, function: object):
+        """
+        Set the function to be called when the notification gets dismissed
+        """
+        self.onDismissFun = function
+        
+    def show(self):
+        """
+        Shows a toast notification with the given information
+        """
+        if self.description:
+            template = zroya.Template(zroya.TemplateType.Text2)
+        else:
+            template = zroya.Template(zroya.TemplateType.Text1)
+        template.setFirstLine(self.title)
+        if self.description:
+            template.setSecondLine(self.description)
+        if self.smallText:
+            template.setAttribution(self.smallText)
+        template.setExpiration(self.showTime)
+        for action in self.actionsReference.keys():
+            actionText = self.actionsReference[action]
+            if not actionText in self.addedActions:
+                actionId = str(template.addAction(actionText))
+                self.callableActions[actionId] = action
+                self.addedActions.append(actionText)
+        self.notificationId = zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun, on_fail=self.reportException)
+        
+    def reportException(self, id):
+        """
+        Internal private method, should never be called externally 
+        """
+        print(f"🔴 Notification {id} could not be shown")
+
+    def hide(self) -> None:
+        """
+        Instantly closes the notification
+        """
+        self.close()
+        
+    def close(self) -> None:
+        """
+        Instantly closes the notification
+        """
+        zroya.hide(self.notificationId)
+        
+    def onAction(self, nid, action_id):
+        """
+        Internal private method, should never be called externally 
+        """
+        if self.signalCaller:
+            self.signalCaller(self.callableActions[str(action_id)])
+        else:
+            self.callableActions[str(action_id)]()
+
 
 if __name__ == "__main__":
     import __init__
