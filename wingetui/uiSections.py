@@ -1263,10 +1263,23 @@ class UpdateSoftwareSection(QWidget):
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
                 self.updateAll()
                 if not getSettings("DisableUpdatesNotifications"):
+                    
+                    t = ToastNotification(self, self.callInMain.emit)
+                    
                     if count > 1:
-                        notify(_("Updates found!"), _("{0} packages are being updated").format(count))
+                        t.setTitle(_("Updates found!"))
+                        t.setDescription(_("{0} packages are being updated").format(count))
+                        packageList = ""
+                        for i in range(self.packageList.topLevelItemCount()):
+                            packageList += self.packageList.topLevelItem(i).text(1)+", "
+                        t.setSmallText(packageList[:-2])
                     elif count == 1:
-                        notify(_("Update found!"), _("{0} is being updated").format(lastVisibleItem.text(1)))
+                        t.setTitle(_("Update found!"))
+                        t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
+                    
+                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    t.show()
+                    
             else:
                 if not getSettings("DisableUpdatesNotifications"):
         
