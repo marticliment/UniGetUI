@@ -912,7 +912,7 @@ class UpdateSoftwareSection(QWidget):
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
         sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
 
-        self.packageList.itemDoubleClicked.connect(lambda item, column: (self.update(item.text(1), item.text(2), item.text(5), packageItem=item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item.text(1), item.text(2), item.text(5), item)))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: (self.update(item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item.text(1), item.text(2), item.text(5), item)))
         
         def showMenu(pos: QPoint):
             if not self.packageList.currentItem():
@@ -928,16 +928,16 @@ class UpdateSoftwareSection(QWidget):
             inf.setIcon(QIcon(getMedia("info")))
             ins1 = QAction(_("Update"))
             ins1.setIcon(QIcon(getMedia("menu_updates")))
-            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem()))
+            ins1.triggered.connect(lambda: self.update(self.packageList.currentItem()))
             ins2 = QAction(_("Update as administrator"))
             ins2.setIcon(QIcon(getMedia("runasadmin")))
-            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
+            ins2.triggered.connect(lambda: self.update(self.packageList.currentItem(), admin=True))
             ins3 = QAction(_("Skip hash check"))
             ins3.setIcon(QIcon(getMedia("checksum")))
-            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
+            ins3.triggered.connect(lambda: self.update(self.packageList.currentItem(), skiphash=True))
             ins4 = QAction(_("Interactive update"))
             ins4.setIcon(QIcon(getMedia("interactive")))
-            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+            ins4.triggered.connect(lambda: self.update(self.packageList.currentItem(), interactive=True))
             ins5 = QAction(_("Uninstall package"))
             ins5.setIcon(QIcon(getMedia("menu_uninstall")))
             ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=globals.uninstall.packages[self.packageList.currentItem().text(2)]["item"]))
@@ -1049,18 +1049,18 @@ class UpdateSoftwareSection(QWidget):
         self.toolbar.addAction(self.upgradeSelected)
         self.toolbar.addSeparator()
         
-        inf = QAction("", self.toolbar)# ("Show info")
+        inf = QAction("", self.toolbar)
         inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
         inf.setIcon(QIcon(getMedia("info")))
-        ins2 = QAction("", self.toolbar)# ("Run as administrator")
+        ins2 = QAction("", self.toolbar)
         ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), admin=True))
-        ins3 = QAction("", self.toolbar)# ("Skip hash check")
+        ins2.triggered.connect(lambda: self.update(self.packageList.currentItem(), admin=True))
+        ins3 = QAction("", self.toolbar)
         ins3.setIcon(QIcon(getMedia("checksum")))
-        ins3.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
-        ins4 = QAction("", self.toolbar)# ("Interactive update")
+        ins3.triggered.connect(lambda: self.update(self.packageList.currentItem(), skiphash=True))
+        ins4 = QAction("", self.toolbar)
         ins4.setIcon(QIcon(getMedia("interactive")))
-        ins4.triggered.connect(lambda: self.update(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), packageItem=self.packageList.currentItem(), interactive=True))
+        ins4.triggered.connect(lambda: self.update(self.packageList.currentItem(), interactive=True))
         ins5 = QAction("", self.toolbar)
         ins5.setIcon(QIcon(getMedia("share")))
         ins5.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
@@ -1098,23 +1098,6 @@ class UpdateSoftwareSection(QWidget):
         self.resetBlackList.triggered.connect(lambda: (self.blacklistManager.show()))
         self.toolbar.addAction(self.resetBlackList)
 
-        self.showUnknownSection = QCheckBox(_("Show unknown versions"))
-        self.showUnknownSection.setFixedHeight(30)
-        self.showUnknownSection.setLayoutDirection(Qt.RightToLeft)
-        self.showUnknownSection.setFixedWidth(190)
-        self.showUnknownSection.setStyleSheet("margin-top: 0px;")
-        self.showUnknownSection.setChecked(getSettings("ShowUnknownResults"))
-        self.showUnknownSection.clicked.connect(lambda v: (setSettings("ShowUnknownResults", bool(v)), updatelist()))
-        def updatelist(selff = None):
-            if not selff:
-                nonlocal self
-            else:
-                self = selff
-            for item in [self.packageList.topLevelItem(i) for i in range(self.packageList.topLevelItemCount())]:
-                if item.text(3) == "Unknown":
-                    item.setHidden(not self.showUnknownSection.isChecked())
-            self.updatePackageNumber()
-        self.updatelist = updatelist
 
         tooltips = {
             self.upgradeSelected: _("Update selected packages"),
@@ -1137,7 +1120,6 @@ class UpdateSoftwareSection(QWidget):
         w.setMinimumWidth(1)
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolbar.addWidget(w)
-        self.toolbar.addWidget(self.showUnknownSection)
         self.toolbar.addWidget(TenPxSpacer())
         self.toolbar.addWidget(TenPxSpacer())
 
@@ -1298,7 +1280,6 @@ class UpdateSoftwareSection(QWidget):
             self.updatePackageNumber()
             self.packageList.label.setText("")
             self.filter()
-            self.updatelist()
             if not getSettings("DisableAutoCheckforUpdates"):
                 try:
                     waitTime = int(getSettingsValue("UpdatesCheckInterval"))
@@ -1337,7 +1318,7 @@ class UpdateSoftwareSection(QWidget):
             item.setIcon(1, self.installIcon)
             item.setText(2, id)
             item.setIcon(2, self.IDIcon)
-            item.setText(3, version)
+            item.setText(3, version if version != "Unknown" else _("Unknown"))
             item.setIcon(3, self.versionIcon)
             item.setText(4, newVersion)
             item.setIcon(4, self.newVersionIcon)
@@ -1369,7 +1350,7 @@ class UpdateSoftwareSection(QWidget):
             self.packageList.addTopLevelItem(item)
             item.setCheckState(0, Qt.CheckState.Checked)
             action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
-            action.triggered.connect(lambda : self.update(name, id, store, packageItem=item))
+            action.triggered.connect(lambda : self.update(item))
             action.setShortcut(version)
             item.setAction(action)
             globals.trayMenuUpdatesList.addAction(action)
@@ -1382,15 +1363,10 @@ class UpdateSoftwareSection(QWidget):
         for item in self.packageList.findItems('', Qt.MatchContains, 1):
             if not(item in resultsFound):
                 item.setHidden(True)
-                #item.treeWidget().itemWidget(item, 0).hide()
             else:
                 item.setHidden(False)
-                if item.text(3) == "Unknown":
-                    item.setHidden(not self.showUnknownSection.isChecked())
-                    if self.showUnknownSection.isChecked():
-                        found += 1
-                else:
-                    found += 1
+
+                found += 1
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
@@ -1443,7 +1419,7 @@ class UpdateSoftwareSection(QWidget):
         for i in range(self.packageList.topLevelItemCount()):
             program: TreeWidgetItemWithQAction = self.packageList.topLevelItem(i)
             if not program.isHidden():
-                self.update(program.text(1), program.text(2), program.text(5), packageItem=program)
+                self.update(program)
 
     def updateSelected(self) -> None:
         for i in range(self.packageList.topLevelItemCount()):
@@ -1451,17 +1427,22 @@ class UpdateSoftwareSection(QWidget):
             if not program.isHidden():
                 try:
                     if program.checkState(0) ==  Qt.CheckState.Checked:
-                        self.update(program.text(1), program.text(2), program.text(5), packageItem=program)
+                        self.update(program)
                 except AttributeError:
                     pass
     
-    def update(self, title: str, id: str, store: str, all: bool = False, selected: bool = False, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+    def update(self, packageItem: TreeWidgetItemWithQAction, all: bool = False, selected: bool = False, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+            title = packageItem.text(1)
+            id = packageItem.text(2)
+            currentVersion = packageItem.text(3)
+            newVersion = packageItem.text(4)
+            store = packageItem.text(5)
             if "winget" == store.lower():
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"]))))
+                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), currentVersion=currentVersion, newVersion=newVersion))
             elif "chocolatey" == store.lower():
-                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem))
+                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem, currentVersion=currentVersion, newVersion=newVersion))
             else:
-                self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""]))
+                self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""], currentVersion=currentVersion, newVersion=newVersion))
      
 
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
@@ -1552,7 +1533,7 @@ class UpdateSoftwareSection(QWidget):
                 self.isToolbarSmall = False
                 self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
-        self.showUnknownSection.setFixedWidth(self.showUnknownSection.sizeHint().width()+10)
+        #self.showUnknownSection.setFixedWidth(self.showUnknownSection.sizeHint().width()+10)
 
 
     def showEvent(self, event: QShowEvent) -> None:

@@ -267,8 +267,8 @@ class PackageInstallerWidget(QGroupBox):
         self.cancelButton.setText(_("OK"))
         self.cancelButton.clicked.connect(self.close)
         self.progressbar.setValue(1000)
-        if returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART):
-            if returncode == OC_OPERATION_SUCCEEDED:
+        if returncode in (LIST_OC_OPERATION_SUCCEEDED):
+            if returncode in (OC_OPERATION_SUCCEEDED, OC_NO_APPLICABLE_UPDATE_FOUND):
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                 self.startCoolDown()
@@ -364,7 +364,9 @@ class PackageInstallerWidget(QGroupBox):
 
 class PackageUpdaterWidget(PackageInstallerWidget):
 
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, useId: bool = False):
+    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, useId: bool = False, currentVersion: str = "", newVersion: str = ""):
+        self.currentVersion = currentVersion
+        self.newVersion = newVersion
         super().__init__(title, store, version, parent, customCommand, args, packageId, admin, useId)
         self.packageItem = packageItem
         self.actionDone = _("updated")
@@ -425,7 +427,11 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
         else:
-            if returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
+            if self.currentVersion in (_("Unknown"), "Unknown"):
+                IgnorePackageUpdates_SpecificVersion(self.packageId, self.newVersion, self.store)
+            if returncode == OC_NO_APPLICABLE_UPDATE_FOUND and not self.canceled:
+                IgnorePackageUpdates_SpecificVersion(self.packageId, self.newVersion, self.store)
+            if returncode in (LIST_OC_OPERATION_SUCCEEDED) and not self.canceled:
                 if self.packageItem:
                     try:
                         self.packageItem.setHidden(True)
@@ -553,7 +559,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.adminBadge.setVisible(self.runAsAdmin)
             self.runInstallation()
         else:
-            if returncode in(OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART) and not self.canceled:
+            if returncode in (LIST_OC_OPERATION_SUCCEEDED) and not self.canceled:
                 if self.packageItem:
                     try:
                         self.packageItem.setHidden(True)
@@ -579,7 +585,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except: pass
             if not(self.canceled):
-                if(returncode in (OC_OPERATION_SUCCEEDED, OC_NEEDS_RESTART)):
+                if(returncode in (LIST_OC_OPERATION_SUCCEEDED)):
                     self.callInMain.emit(lambda: globals.trayIcon.showMessage(_("{0} succeeded").format(self.actionName.capitalize()), _("{0} was {1} successfully!").format(self.programName, self.actionDone), QIcon(getMedia("notif_info"))))
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))

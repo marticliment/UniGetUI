@@ -392,6 +392,8 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             outputCode = OC_NEEDS_RESTART
         case other:
             outputCode = p.returncode
+    if "No applicable upgrade found" in output:
+        outputCode = OC_NO_APPLICABLE_UPDATE_FOUND
     closeAndInform.emit(outputCode, output)
 
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
