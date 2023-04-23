@@ -1269,10 +1269,26 @@ class UpdateSoftwareSection(QWidget):
                         notify(_("Update found!"), _("{0} is being updated").format(lastVisibleItem.text(1)))
             else:
                 if not getSettings("DisableUpdatesNotifications"):
+        
+                    t = ToastNotification(self, self.callInMain.emit)
+                    
                     if count > 1:
-                        notify(_("Updates found!"), _("{0} packages can be updated").format(count))
+                        t.setTitle(_("Updates found!"))
+                        t.setDescription(_("{0} packages can be updated").format(count))
+                        t.addAction(_("Update all"), self.updateAll)
+                        packageList = ""
+                        for i in range(self.packageList.topLevelItemCount()):
+                            packageList += self.packageList.topLevelItem(i).text(1)+", "
+                        t.setSmallText(packageList[:-2])
                     elif count == 1:
-                        notify(_("Update found!"), _("{0} can be updated").format(lastVisibleItem.text(1)))
+                        t.setTitle(_("Update found!"))
+                        t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
+                        t.addAction(_("Update"), self.updateAll)
+                    
+                    t.addAction("Show WingetUI", lambda: (globals.mainWindow.showWindow(1)))
+                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    t.show()
+                    
             if count > 0:
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:

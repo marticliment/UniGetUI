@@ -1,3 +1,4 @@
+from functools import partial
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -5,6 +6,7 @@ from win32mica import *
 from tools import *
 from tools import _
 from genericCustomWidgets import *
+import zroya
 
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
@@ -639,6 +641,106 @@ class IgnoredUpdatesManager(QWidget):
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         self.loadItems()
         return super().showEvent(event)
+
+
+zroya.init("WingetUI", "MartiCliment", "WingetUI", "WingetUI", versionName)
+
+class ToastNotification(QObject):
+    notificationId: int = 0
+    title: str = ""
+    description: str = ""
+    smallText: str = ""
+    showTime: int = 5000
+    callableActions: dict[int:object] = {}
+    actionsReference: dict[object:str] = {}
+    signalCaller: object = None
+    onClickFun: object
+    onDismissFun: object
+    addedActions: list = []
+
+    def __init__(self, parent = None, signalCaller: object = None):
+        super().__init__(parent=parent)
+        self.signalCaller = signalCaller
+        self.onClickFun = self.nullFunction
+        self.onDismissFun = self.nullFunctionWithParams
+        
+    def nullFunction(self):
+        pass
     
+    def nullFunctionWithParams(self):
+        pass
+        
+    def setTitle(self, title: str):
+        """
+        Sets title of the notification
+        """
+        self.title = title
+        
+    def setDescription(self, description: str):
+        """
+        Sets description text of the notification
+        """
+        self.description = description
+        
+    def setDuration(self, msecs: int):
+        """
+        Sets the duration, in millseconds, of the notification
+        """
+        self.showTime = msecs
+
+    def setSmallText(self, text: str):
+        self.smallText = text
+
+    def addAction(self, text: str, callback: object):
+        self.actionsReference[callback] = text
+        
+    def addOnClickCallback(self, function: object):
+        self.onClickFun = function
+     
+    def addOnDismissCallback(self, function: object):
+        self.onDismissFun = function
+        
+    def show(self):
+        """
+        Shows a toast notification with the given information
+        """
+        if self.description:
+            template = zroya.Template(zroya.TemplateType.Text2)
+        else:
+            template = zroya.Template(zroya.TemplateType.Text1)
+        template.setFirstLine(self.title)
+        if self.description:
+            template.setSecondLine(self.description)
+        if self.smallText:
+            template.setAttribution(self.smallText)
+        template.setExpiration(self.showTime)
+        for action in self.actionsReference.keys():
+            if not str(template.addAction(self.actionsReference[action])) in self.addedActions:
+                self.callableActions[str(template.addAction(self.actionsReference[action]))] = action
+                self.addedActions.append(str(template.addAction(self.actionsReference[action])))
+        self.notificationId = zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun)
+
+    def hide(self) -> None:
+        """
+        Instantly closes the notification
+        """
+        self.close()
+        
+    def close(self) -> None:
+        """
+        Instantly closes the notification
+        """
+        zroya.hide(self.notificationId)
+        
+    def onAction(self, nid, action_id):
+        if self.signalCaller:
+            self.signalCaller(self.callableActions[str(action_id)])
+        else:
+            self.callableActions[str(action_id)]()
+
+        
+
+
+
 if __name__ == "__main__":
     import __init__
