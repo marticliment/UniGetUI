@@ -879,11 +879,20 @@ class ToastNotification(QObject):
         self.signalCaller = signalCaller
         self.onClickFun = self.nullFunction
         self.onDismissFun = self.nullFunctionWithParams
+        self.addedActions = []
+        self.actionsReference = {}
+        self.callableActions = {}
         
     def nullFunction(self):
+        """
+        Internal private method, should never be called externally 
+        """
         pass
     
-    def nullFunctionWithParams(self):
+    def nullFunctionWithParams(self, null1):
+        """
+        Internal private method, should never be called externally 
+        """
         pass
         
     def setTitle(self, title: str):
@@ -905,15 +914,27 @@ class ToastNotification(QObject):
         self.showTime = msecs
 
     def setSmallText(self, text: str):
+        """
+        Sets the smaller text shown on the bottom part of the notification
+        """
         self.smallText = text
 
     def addAction(self, text: str, callback: object):
+        """
+        Add a button to the notification, by giving the text and the callback function of the button
+        """
         self.actionsReference[callback] = text
         
     def addOnClickCallback(self, function: object):
+        """
+        Set the function to be called when the notification is clicked
+        """
         self.onClickFun = function
      
     def addOnDismissCallback(self, function: object):
+        """
+        Set the function to be called when the notification gets dismissed
+        """
         self.onDismissFun = function
         
     def show(self):
@@ -931,10 +952,18 @@ class ToastNotification(QObject):
             template.setAttribution(self.smallText)
         template.setExpiration(self.showTime)
         for action in self.actionsReference.keys():
-            if not str(template.addAction(self.actionsReference[action])) in self.addedActions:
-                self.callableActions[str(template.addAction(self.actionsReference[action]))] = action
-                self.addedActions.append(str(template.addAction(self.actionsReference[action])))
-        self.notificationId = zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun)
+            actionText = self.actionsReference[action]
+            if not actionText in self.addedActions:
+                actionId = str(template.addAction(actionText))
+                self.callableActions[actionId] = action
+                self.addedActions.append(actionText)
+        self.notificationId = zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun, on_fail=self.reportException)
+        
+    def reportException(self, id):
+        """
+        Internal private method, should never be called externally 
+        """
+        print(f"🔴 Notification {id} could not be shown")
 
     def hide(self) -> None:
         """
@@ -949,6 +978,9 @@ class ToastNotification(QObject):
         zroya.hide(self.notificationId)
         
     def onAction(self, nid, action_id):
+        """
+        Internal private method, should never be called externally 
+        """
         if self.signalCaller:
             self.signalCaller(self.callableActions[str(action_id)])
         else:
