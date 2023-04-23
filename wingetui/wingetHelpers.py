@@ -394,7 +394,7 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
             outputCode = p.returncode
     if "No applicable upgrade found" in output:
         outputCode = OC_NO_APPLICABLE_UPDATE_FOUND
-    closeAndInform.emit(outputCode, output)
+    closeAndInform.emit(OC_NEEDS_RESTART, output)
 
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget uninstaller assistant thread started for process {p}")

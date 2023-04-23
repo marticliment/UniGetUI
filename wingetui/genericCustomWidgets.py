@@ -858,7 +858,6 @@ class SectionCheckBox(QWidget):
     def text(self) -> str:
         return self.checkbox.text()
 
-
 zroya.init("WingetUI", "MartiCliment", "WingetUI", "WingetUI", versionName)
 
 class ToastNotification(QObject):
@@ -866,7 +865,7 @@ class ToastNotification(QObject):
     title: str = ""
     description: str = ""
     smallText: str = ""
-    showTime: int = 5000
+    showTime: int = 3000
     callableActions: dict[int:object] = {}
     actionsReference: dict[object:str] = {}
     signalCaller: object = None
@@ -920,6 +919,7 @@ class ToastNotification(QObject):
         self.smallText = text
 
     def addAction(self, text: str, callback: object):
+        self.showTime = 8000
         """
         Add a button to the notification, by giving the text and the callback function of the button
         """

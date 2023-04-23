@@ -246,6 +246,22 @@ class RootWindow(QMainWindow):
                 event.accept()
                 globals.app.quit()
                 sys.exit(0)
+                
+    def askRestart(self):
+        e = CustomMessageBox(self)
+        Thread(target=self.askRestart_threaded, args=(e,)).start()
+        
+    def askRestart_threaded(self, e: CustomMessageBox):
+        questionData = {
+                "titlebarTitle": _("Restart required"),
+                "mainTitle": _("A restart is required"),
+                "mainText": _("Do you want to restart your computer now?"),
+                "acceptButtonTitle": _("Yes"),
+                "cancelButtonTitle": _("No"),
+                "icon": QIcon(getMedia("notif_restart")),
+        }
+        if e.askQuestion(questionData):
+            subprocess.run("shutdown /g /t 0 /d P:04:02", shell=True)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         try:
@@ -272,8 +288,8 @@ class RootWindow(QMainWindow):
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
         return super().resizeEvent(event)
 
-    def showWindow(self, index = -1):
-        if globals.lastFocusedWindow != self.winId() or index >= 0:
+    def showWindow(self, index = -2):
+        if globals.lastFocusedWindow != self.winId() or index >= -1:
             if not self.window().isMaximized():
                 self.window().show()
                 self.window().showNormal()
