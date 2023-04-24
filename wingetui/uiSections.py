@@ -2661,9 +2661,8 @@ class SettingsSection(SmoothScrollArea):
         dontUseBuiltInGsudo = SectionCheckBox(_("Remove successful installs/uninstalls/updates from the installation list"))
         dontUseBuiltInGsudo.setChecked(not getSettings("MaintainSuccessfulInstalls"))
         dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("MaintainSuccessfulInstalls", not bool(v)))
+        dontUseBuiltInGsudo.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.UITitle.addWidget(dontUseBuiltInGsudo)
-        
-
 
         self.trayIcon = CollapsableSection(_("Notification tray options"), getMedia("systemtray"), _("WingetUI tray application preferences"))
         self.layout.addWidget(self.trayIcon)
@@ -2756,6 +2755,7 @@ class SettingsSection(SmoothScrollArea):
         alwaysRunChocolateyAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Chocolatey"))
         alwaysRunChocolateyAsAdmin.setChecked(getSettings("AlwaysElevateChocolatey"))
         alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
+        alwaysRunChocolateyAsAdmin.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
 
         self.advancedOptions = CollapsableSection(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
@@ -3047,7 +3047,6 @@ class ScoopBucketManager(QWidget):
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.bucketList)
         self.setLayout(layout)
-        self.loadBuckets()
         self.bucketIcon = QIcon(getMedia("bucket"))
         
         self.leftSlow = QVariantAnimation()
@@ -3080,6 +3079,9 @@ class ScoopBucketManager(QWidget):
         
         self.leftSlow.start()
         
+    def showEvent(self, event: QShowEvent) -> None:
+        self.loadBuckets()
+        return super().showEvent(event)
         
     def loadBuckets(self):
         if getSettings("DisableScoop"):
