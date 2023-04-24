@@ -298,9 +298,9 @@ def IgnorePackageUpdates_Permanent(id: str, store: str):
     With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
     """
     baseList = [v for v in getSettingsValue("PermanentlyIgnoredPackageUpdates").split(";") if v]
-    packageString = f"{id.lower()},{store.lower().split(':')[0]}"
+    packageString = f"{id},{store.lower().split(':')[0]}"
     if not packageString in baseList:
-        baseList.append(f"{id.lower()},{store.lower().split(':')[0]}")
+        baseList.append(packageString)
     setSettingsValue("PermanentlyIgnoredPackageUpdates", ";".join(baseList))
     
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
@@ -315,7 +315,7 @@ def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
     With the given PACKAGE_ID, SKIPPED_VERSION and PACKAGE_STORE parameters, add the versions of the packages to the blacklist
     """
     baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
-    packageString = f"{id.lower()},{version.lower().replace(',', '.')},{store.lower().split(':')[0]}"
+    packageString = f"{id},{version.lower().replace(',', '.')},{store.lower().split(':')[0]}"
     if not packageString in baseList:
         baseList.append(packageString)
     setSettingsValue("SingleVersionIgnoredPackageUpdates", ";".join(baseList))

@@ -1331,10 +1331,10 @@ class UpdateSoftwareSection(QWidget):
 
     def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
         if not "---" in name and not "The following packages" in name and not "Name  " in name and not name in ("+", "Scoop", "At", "The", "But", "Au") and not version.lower() in ("the", "is", "install") and not newVersion in ("Manifest", version):
-            if [id.lower(), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
+            if [id, store.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
                 print(f"🟡 Package {id} is ignored")
                 return
-            if [id.lower(), newVersion.lower().replace(",", "."), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
+            if [id, newVersion.lower().replace(",", "."), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
                 print(f"🟡 Package {id} version {version} is ignored")
                 return
             if id in self.blacklist:

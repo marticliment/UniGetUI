@@ -565,15 +565,16 @@ class IgnoredUpdatesManager(QWidget):
 
         
     def loadItems(self):
+        self.treewidget.clear()
         for id in getSettingsValue("BlacklistedUpdates").split(","):
             if id:
                 self.addItem(id, _("All versions"), _("Unknown"), BlacklistMethod.Legacy)
         for id, store in GetIgnoredPackageUpdates_Permanent():
             if id and store:
-                self.addItem(id.capitalize(), _("All versions"), store.capitalize(), BlacklistMethod.AllVersions)
+                self.addItem(id, _("All versions"), store.capitalize(), BlacklistMethod.AllVersions)
         for id, version, store in GetIgnoredPackageUpdates_SpecificVersion():
             if id and store:
-                self.addItem(id.capitalize(), version, store.capitalize(), BlacklistMethod.SpecificVersion)
+                self.addItem(id, version, store.capitalize(), BlacklistMethod.SpecificVersion)
         
     def addItem(self, id: str, version: str, store: str, blacklistMethod: BlacklistMethod):
         item = QTreeWidgetItem()
@@ -615,7 +616,7 @@ class IgnoredUpdatesManager(QWidget):
         originalList: list[list[str]] = GetIgnoredPackageUpdates_Permanent()
         setSettingsValue("PermanentlyIgnoredPackageUpdates", "")
         for ignoredPackage in originalList:
-            if [id.lower(), store.lower()] == ignoredPackage:
+            if [id, store.lower()] == ignoredPackage:
                 continue
             IgnorePackageUpdates_Permanent(ignoredPackage[0], ignoredPackage[1])
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
@@ -625,7 +626,7 @@ class IgnoredUpdatesManager(QWidget):
         originalList: list[list[str]] = GetIgnoredPackageUpdates_SpecificVersion()
         setSettingsValue("SingleVersionIgnoredPackageUpdates", "")
         for ignoredPackage in originalList:
-            if [id.lower(), version, store.lower()] == ignoredPackage:
+            if [id, version, store.lower()] == ignoredPackage:
                 continue
             IgnorePackageUpdates_SpecificVersion(ignoredPackage[0], ignoredPackage[1], ignoredPackage[2])
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
@@ -633,7 +634,6 @@ class IgnoredUpdatesManager(QWidget):
         
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
-
         
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
