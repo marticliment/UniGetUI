@@ -126,7 +126,7 @@ class DiscoverSoftwareSection(QWidget):
 
         self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
-        self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v==self.packageListScrollBar.maximum() else None)
+        self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v>=(self.packageListScrollBar.maximum()-20) else None)
 
         self.packageList = TreeWidget("a")
         self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Version"), _("Source")])
