@@ -184,6 +184,11 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
             if type(data["architecture"]) == dict:
                 appInfo["architectures"] = list(data["architecture"].keys())
         
+        if "checkver" in data.keys():
+            if "url" in data["checkver"].keys():
+                url = data["checkver"]["url"]
+                appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+        
         appInfo["installer-type"] = "Scoop package"
         
     except Exception as e:
