@@ -935,7 +935,7 @@ class PackageInfoPopupWindow(QWidget):
         self.shareButton.setFixedWidth(200)
         self.shareButton.setStyleSheet("border-radius: 8px;")
         self.shareButton.setFixedHeight(35)
-        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.givenPackageId}^&pname={self.givenPackageId}"))
+        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.givenPackageId}^&pname={self.givenPackageId}", self.window()))
         self.installButton = QPushButton()
         self.installButton.setText(_("Install"))
         self.installButton.setObjectName("AccentButton")
