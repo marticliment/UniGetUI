@@ -48,6 +48,8 @@ try:
                 icon = QLabel()
                 icon.setPixmap(QPixmap(getMedia("icon", autoIconMode = False)).scaledToWidth(128, Qt.TransformationMode.SmoothTransformation))
                 text = QLabel("WingetUI")
+                text.setFixedWidth(0)
+                text.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
                 text.setStyleSheet(f"font-family: \"{globals.dispfont}\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
                 titlewidget.addWidget(icon)
                 titlewidget.addWidget(text)
@@ -72,8 +74,29 @@ try:
                 skipButton.clicked.connect(forceContinue)
                 Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show))).start()
                 
+                self.textEnterAnim = QVariantAnimation(self)
+                self.textEnterAnim.setStartValue(0)
+                self.textEnterAnim.setEndValue(300)
+                self.textEnterAnim.setEasingCurve(QEasingCurve.Type.OutQuart)
+                self.textEnterAnim.valueChanged.connect(lambda v: text.setFixedWidth(v))
+                self.textEnterAnim.setDuration(600)
+                
+                op1 = QGraphicsOpacityEffect()
+                op1.setOpacity(0)
+                self.loadingText.setGraphicsEffect(op1)
+                op2 = QGraphicsOpacityEffect()
+                op2.setOpacity(0)
+                
+                descriptionEnter = QVariantAnimation(self)
+                descriptionEnter.setStartValue(0)
+                descriptionEnter.setEndValue(100)
+                descriptionEnter.setEasingCurve(QEasingCurve.Type.InOutQuad)
+                descriptionEnter.valueChanged.connect(lambda v: (op1.setOpacity(v/100), op2.setOpacity(v/100)))
+                descriptionEnter.setDuration(100)
+                self.textEnterAnim.finished.connect(descriptionEnter.start)
                 
                 self.loadingProgressBar = QProgressBar(self.popup)
+                self.loadingProgressBar.setGraphicsEffect(op2)
                 self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;background-color: transparent;}}QProgressBar::chunk {{background-color: rgb({colors[2 if isDark() else 3]});border-radius: 2px;}}""")
                 self.loadingProgressBar.setRange(0, 1000)
                 self.loadingProgressBar.setValue(0)
@@ -84,36 +107,33 @@ try:
                 self.startAnim.connect(lambda anim: anim.start())
                 self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
             
-                self.leftSlow = QVariantAnimation()
+                self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
                 self.leftSlow.setStartValue(0)
                 self.leftSlow.setEndValue(1000)
                 self.leftSlow.setDuration(700)
-                self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
                 self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+                descriptionEnter.finished.connect(self.leftSlow.start)
                 
-                self.rightSlow = QVariantAnimation()
+                self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
                 self.rightSlow.setStartValue(1000)
                 self.rightSlow.setEndValue(0)
                 self.rightSlow.setDuration(700)
-                self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
                 self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
                 
-                self.leftFast = QVariantAnimation()
+                self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
                 self.leftFast.setStartValue(0)
                 self.leftFast.setEndValue(1000)
                 self.leftFast.setDuration(300)
-                self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
                 self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
 
-                self.rightFast = QVariantAnimation()
+                self.rightFast = QPropertyAnimation(self.loadingProgressBar, b"value")
                 self.rightFast.setStartValue(1000)
                 self.rightFast.setEndValue(0)
                 self.rightFast.setDuration(300)
-                self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
                 self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
                 
                 if not self.isDaemon:
-                    self.leftSlow.start()
+                    self.textEnterAnim.start()
                     self.popup.show()
 
                 if not getSettings("AutoDisabledScoopCacheRemoval"):
@@ -121,13 +141,13 @@ try:
                     getSettings("AutoDisabledScoopCacheRemoval", True)
                     
                 print("🔵 Starting main application...")
-                os.chdir(os.path.expanduser("~"))
+                os.chdir(os.path.expanduser("~"))                    
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
                 if getSettings("AskedAbout3PackageManagers") == False or "--welcomewizard" in sys.argv:
-                    self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadStuffThread, daemon=True).start())
+                    self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadPreUIComponents, daemon=True).start())
                 else:
-                    Thread(target=self.loadStuffThread, daemon=True).start()
+                    Thread(target=self.loadPreUIComponents, daemon=True).start()
                     self.loadingText.setText(_("Checking for other running instances..."))
             except Exception as e:
                 raise e
@@ -195,7 +215,6 @@ try:
                 else:
                     onclose()
                     
-            
             okbutton = QPushButton(_("Apply and start WingetUI"))
             okbutton.setFixedSize(190, 30)
             okbutton.setObjectName("AccentButton")
@@ -216,7 +235,7 @@ try:
             self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f5f5f5"))
             self.w.show()
 
-        def loadStuffThread(self):
+        def loadPreUIComponents(self):
             try:
                 self.loadStatus = 0 # There are 9 items (preparation threads)
                 setSettings("CachingChocolatey", False)
@@ -281,6 +300,8 @@ try:
                                     print(f"Instance {tst} responded, quitting...")
                                     self.callInMain.emit(lambda: self.loadingText.setText(_("Instance {0} responded, quitting...").format(tst)))
                                     setSettings(self.lockFileName, False)
+                                    while self.textEnterAnim.state() == QAbstractAnimation.State.Running:
+                                        time.sleep(0.1)
                                     self.kill.emit()
                                     sys.exit(0)
                         self.callInMain.emit(lambda: self.loadingText.setText(_("Starting daemons...")))
