@@ -1,6 +1,6 @@
 from __future__ import annotations
 import glob # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import sys, subprocess, time, os, json
+import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
