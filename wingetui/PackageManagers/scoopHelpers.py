@@ -8,28 +8,54 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 scoop = "powershell -ExecutionPolicy ByPass -Command scoop"
 
 def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
-    print("🟢 Starting scoop search...")
+    cprint("🔵 Starting scoop search")
+    cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/scooppackages")
+    cachePath = os.path.dirname(cacheFile)
+    correctCache = False
+    if not os.path.exists(cachePath):
+        os.makedirs(cachePath)
+    if os.path.exists(cacheFile):
+        with open(cacheFile, "r") as f:
+            content = f.read()
+            if content != "":
+                cprint("🟢 Found valid cache for scoop!")
+                for line in content.split("\n"):
+                    export = list(filter(None, line.split(" ")))
+                    if len(export) >= 3:
+                        signal.emit(export[0].replace("-", " ").capitalize(), f"{export[0].strip()}", export[1].strip(), f"Scoop: {export[2].strip()}")
+                finishSignal.emit("scoop")
+                correctCache = True
+        
+    print("🔵 Starting scoop file update...")
     p = subprocess.Popen(f"{scoop} search", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-    output = []
+    output = ""
+    oldcontents = ""
     counter = 0
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
         if line:
             if(counter > 1 and not b"---" in line):
-                output.append(ansi_escape.sub('',                 #print(line, ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
-str(line, encoding='utf-8', errors="ignore")))
+                output += ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")) +"\n"
+                if not correctCache:
+                    export = list(filter(None, str(line, encoding='utf-8', errors="ignore").split(" ")))
+                    if len(export) >= 3:
+                        signal.emit(export[0].replace("-", " ").capitalize(), f"{export[0].strip()}", export[1].strip(), f"Scoop: {export[2].strip()}")
             else:
                 counter += 1
-    counter = 0
-    lc = getSettings("LowercaseScoopApps")
-    for element in output:
-        try:
-            signal.emit(element.split(" ")[0].replace("-", " ").capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
-        except IndexError as e:
-            print("IndexError: "+str(e))
-    print("🟢 Scoop search finished")
-    finishSignal.emit("scoop")
+    try:
+        with open(cacheFile, "r") as f:
+            oldcontents = f.read()
+            f.close()
+    except Exception as e:
+        report(e)
+    for line in oldcontents.split("\n"):
+        if line.split(" ")[0] not in output:
+            output += line + "\n"
+    with open(cacheFile, "w") as f:
+        f.write(output)
+    finishSignal.emit("scoop")  
+    print("🟢 Scoop cache rebuilt")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print("🟢 Starting scoop search...")
@@ -317,4 +343,4 @@ def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
 
 
 if(__name__=="__main__"):
-    import __init__
+    import wingetui.__init__
