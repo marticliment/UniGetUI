@@ -1292,7 +1292,7 @@ class UpdateSoftwareSection(QWidget):
                         t.setTitle(_("Update found!"))
                         t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
                         t.addAction(_("Update"), self.updateAll)
-                    t.addAction("Show WingetUI", lambda: (globals.mainWindow.showWindow(1)))
+                    t.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
                     t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
                     if ENABLE_UPDATES_NOTIFICATIONS:
                         t.show()
