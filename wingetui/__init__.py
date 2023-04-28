@@ -96,7 +96,7 @@ try:
                 
                 self.loadingProgressBar = QProgressBar(self.popup)
                 self.loadingProgressBar.setGraphicsEffect(op2)
-                self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;background-color: transparent;}}QProgressBar::chunk {{background-color: rgb({colors[2 if isDark() else 3]});border-radius: 2px;}}""")
+                self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;background-color: transparent;}}QProgressBar::chunk {{background-color: rgb({'18, 164, 199' if isDark() else '11, 100, 122'});border-radius: 2px;}}""")
                 self.loadingProgressBar.setRange(0, 1000)
                 self.loadingProgressBar.setValue(0)
                 self.loadingProgressBar.setGeometry(QRect(0, 396, 600, 4))
@@ -274,7 +274,9 @@ try:
                 print(e)
             finally:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Loading UI components...")))
+                self.callInMain.emit(lambda: self.loadingProgressBar.setValue(1000))
                 self.callInMain.emit(lambda: self.loadingText.repaint())
+                self.callInMain.emit(lambda: self.loadingProgressBar.repaint())
                 self.callInMain.emit(self.loadMainUI)
                 print(globals.componentStatus)
 
