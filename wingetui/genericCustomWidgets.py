@@ -80,13 +80,18 @@ class TreeWidget(QTreeWidget):
         self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
         
     def wheelEvent(self, e: QWheelEvent) -> None:
+        currentPos = self.verticalScrollBar().value()
+        finalPos = currentPos - e.angleDelta().y()
+        self.doSmoothScroll(currentPos, finalPos)
+        e.ignore()
+        
+    def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
             self.smoothScrollAnimation.stop()
             self.missingScroll = self.smoothScrollAnimation.endValue() - self.smoothScrollAnimation.currentValue()
         else:
             self.missingScroll = 0
-        currentPos = self.verticalScrollBar().value()
-        finalPos = currentPos - e.angleDelta().y() + self.missingScroll
+        finalPos += self.missingScroll
         if finalPos < 0:
             finalPos = 0
         elif finalPos > self.verticalScrollBar().maximum():
@@ -94,7 +99,6 @@ class TreeWidget(QTreeWidget):
         self.smoothScrollAnimation.setStartValue(currentPos)
         self.smoothScrollAnimation.setEndValue(finalPos)
         self.smoothScrollAnimation.start()
-        e.ignore()
         
     def connectCustomScrollbar(self, scrollbar: QScrollBar):
         try:
@@ -131,6 +135,34 @@ class TreeWidget(QTreeWidget):
     def clear(self) -> None:
         self.label.show()
         return super().clear()
+    
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        match event.key():
+            case Qt.Key.Key_PageDown:
+                currentPos = self.verticalScrollBar().value()
+                finalPos = self.verticalScrollBar().value() + self.height()
+                self.doSmoothScroll(currentPos, finalPos)
+                event.ignore()
+                return
+            case Qt.Key.Key_PageUp:
+                currentPos = self.verticalScrollBar().value()
+                finalPos = self.verticalScrollBar().value() - self.height()
+                self.doSmoothScroll(currentPos, finalPos)
+                event.ignore()
+                return
+            case Qt.Key.Key_End:
+                currentPos = self.verticalScrollBar().value()
+                finalPos = self.verticalScrollBar().maximum()
+                self.doSmoothScroll(currentPos, finalPos)
+                event.ignore()
+                return
+            case Qt.Key.Key_Home:
+                currentPos = self.verticalScrollBar().value()
+                finalPos = 0
+                self.doSmoothScroll(currentPos, finalPos)
+                event.ignore()
+                return
+        return super().keyPressEvent(event)
 
 class ScrollWidget(QWidget):
     def __init__(self, scroller: QWidget) -> None:
