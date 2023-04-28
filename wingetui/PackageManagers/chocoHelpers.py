@@ -19,7 +19,7 @@ else:
 CHOCO_BLACKLISTED_PACKAGES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This"]
 
 def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    cprint("🔵 Starting choco search")
+    print("🔵 Starting choco search")
     cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")
     cachePath = os.path.dirname(cacheFile)
     if not os.path.exists(cachePath):
@@ -28,7 +28,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
         with open(cacheFile, "r") as f:
             content = f.read()
             if content != "":
-                cprint("🟢 Found valid cache for chocolatey!")
+                print("🟢 Found valid cache for chocolatey!")
                 for line in content.split("\n"):
                     export = line.split(" ")
                     if len(export) > 1 and not export[0] in CHOCO_BLACKLISTED_PACKAGES:
@@ -165,12 +165,10 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
-            cprint(line)
             if line:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
         print(p.stdout)
         for line in output:
-            cprint(line)
             if("Title:" in line):
                 packageDetails["title"] = line.split("|")[0].replace("Title:", "").strip()
                 packageDetails["updatedate"] = line.split("|")[1].replace("Published:", "").strip()
@@ -197,7 +195,6 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
             if line:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
         for line in output:
-            cprint(line)
             if "[Approved]" in line:
                 packageDetails["versions"].append(line.split(" ")[1])
         signal.emit(packageDetails, progId)
@@ -245,7 +242,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
             counterSignal.emit(counter)
             output += line+"\n"
     p.wait()
-    cprint(output)
     outputCode = p.returncode
     if outputCode in (1605, 1614, 1641):
         outputCode = RETURNCODE_OPERATION_SUCCEEDED

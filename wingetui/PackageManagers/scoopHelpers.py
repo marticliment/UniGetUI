@@ -8,7 +8,7 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 scoop = "powershell -ExecutionPolicy ByPass -Command scoop"
 
 def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
-    cprint("🔵 Starting scoop search")
+    print("🔵 Starting scoop search")
     cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/scooppackages")
     cachePath = os.path.dirname(cacheFile)
     correctCache = False
@@ -18,7 +18,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
         with open(cacheFile, "r") as f:
             content = f.read()
             if content != "":
-                cprint("🟢 Found valid cache for scoop!")
+                print("🟢 Found valid cache for scoop!")
                 for line in content.split("\n"):
                     export = list(filter(None, line.split(" ")))
                     if len(export) >= 3:
@@ -321,7 +321,6 @@ def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
                 counter += 1
     counter = 0
     for element in output:
-        cprint(element)
         try:
             while "  " in element.strip():
                 element = element.strip().replace("  ", " ")
@@ -331,8 +330,7 @@ def loadBuckets(packageSignal: Signal, finishSignal: Signal) -> None:
             try:
                 packageSignal.emit(element[0].strip(), element[1].strip(), "Unknown", "Unknown")
             except IndexError as f:
-                cprint(e, f)
-            print(element)
+                print(e, f)
             print("IndexError: "+str(e))
 
     print("🟢 Scoop bucket search finished")
