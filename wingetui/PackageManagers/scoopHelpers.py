@@ -194,6 +194,13 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
     except Exception as e:
         report(e)
         
+    if packageDetails["releasenotesurl"] == unknownStr and "github.com" in packageDetails["installer-url"]:
+        try:
+            url = "/".join(packageDetails["installer-url"].replace("/download/", "/tag/").split("/")[:-1])
+            packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+        except Exception as e:
+            report(e)
+        
     if verbose:
         p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         while p.poll() is None:
