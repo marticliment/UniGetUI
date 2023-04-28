@@ -1269,7 +1269,7 @@ class PackageInfoPopupWindow(QWidget):
             elif store.lower() == "chocolatey":
                 Thread(target=chocoHelpers.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
 
-    def printData(self, appInfo: dict, progId) -> None:
+    def printData(self, packageDetails: dict, progId) -> None:
         if self.currentProgram == progId:
             self.finishedCount += 1
             if not("scoop" in self.store.lower()) or self.finishedCount > 1:
@@ -1289,35 +1289,35 @@ class PackageInfoPopupWindow(QWidget):
             
             if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
                 self.interactiveCheckbox.setEnabled(True)
-            self.title.setText(appInfo["title"])
-            self.description.setText(appInfo["description"])
+            self.title.setText(packageDetails["title"])
+            self.description.setText(packageDetails["description"])
             if self.store.lower() == "winget":
-                self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["author"]+"</a>")
-                self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{appInfo['id'].split('.')[0]}'>"+appInfo["publisher"]+"</a>")
+                self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{packageDetails['id'].split('.')[0]}'>"+packageDetails["author"]+"</a>")
+                self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{packageDetails['id'].split('.')[0]}'>"+packageDetails["publisher"]+"</a>")
             else:
-                self.author.setText(f"<b>{_('Author')}:</b> "+appInfo["author"])
-                self.publisher.setText(f"<b>{_('Publisher')}:</b> "+appInfo["publisher"])
-            self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{appInfo['homepage']}\">{appInfo['homepage']}</a>")
-            self.license.setText(f"<b>{_('License')}:</b> {appInfo['license']} (<a style=\"color: {blueColor};\" href=\"{appInfo['license-url']}\">{appInfo['license-url']}</a>)")
-            self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {appInfo['installer-sha256']}")
-            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{appInfo['installer-url']}\">{appInfo['installer-url']}</a> {appInfo['installer-size']}")
-            self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {appInfo['installer-type']}")
-            self.packageId.setText(f"<b>{_('Package ID')}:</b> {appInfo['id']}")
-            self.date.setText(f"<b>{_('Last updated:')}</b> {appInfo['updatedate']}")
-            self.notes.setText(f"<b>{_('Release notes:')}</b> {appInfo['releasenotes'].replace(r'%bluecolor%', blueColor)}")
-            self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {appInfo['releasenotesurl'].replace(r'%bluecolor%', blueColor)}")
-            self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in appInfo['manifest'] else ''}"+appInfo['manifest'].replace('\\', '/')+f"\">{appInfo['manifest']}</a>")
+                self.author.setText(f"<b>{_('Author')}:</b> "+packageDetails["author"])
+                self.publisher.setText(f"<b>{_('Publisher')}:</b> "+packageDetails["publisher"])
+            self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{packageDetails['homepage']}\">{packageDetails['homepage']}</a>")
+            self.license.setText(f"<b>{_('License')}:</b> {packageDetails['license']} (<a style=\"color: {blueColor};\" href=\"{packageDetails['license-url']}\">{packageDetails['license-url']}</a>)")
+            self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {packageDetails['installer-sha256']}")
+            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{packageDetails['installer-url']}\">{packageDetails['installer-url']}</a> {packageDetails['installer-size']}")
+            self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {packageDetails['installer-type']}")
+            self.packageId.setText(f"<b>{_('Package ID')}:</b> {packageDetails['id']}")
+            self.date.setText(f"<b>{_('Last updated:')}</b> {packageDetails['updatedate']}")
+            self.notes.setText(f"<b>{_('Release notes:')}</b> {packageDetails['releasenotes'].replace(r'%bluecolor%', blueColor)}")
+            self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {packageDetails['releasenotesurl'].replace(r'%bluecolor%', blueColor)}")
+            self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in packageDetails['manifest'] else ''}"+packageDetails['manifest'].replace('\\', '/')+f"\">{packageDetails['manifest']}</a>")
             while self.versionCombo.count()>0:
                 self.versionCombo.removeItem(0)
-            self.versionCombo.addItems([_("Latest")] + appInfo["versions"])
+            self.versionCombo.addItems([_("Latest")] + packageDetails["versions"])
             while self.architectureCombo.count()>0:
                 self.architectureCombo.removeItem(0)
-            self.architectureCombo.addItems([_("Default")] + appInfo["architectures"])
+            self.architectureCombo.addItems([_("Default")] + packageDetails["architectures"])
             while self.scopeCombo.count()>0:
                 self.scopeCombo.removeItem(0)
-            self.scopeCombo.addItems([_("Default")] + appInfo["scopes"])
+            self.scopeCombo.addItems([_("Default")] + packageDetails["scopes"])
             if "…" in self.givenPackageId:
-                self.givenPackageId = appInfo["id"]
+                self.givenPackageId = packageDetails["id"]
                 self.loadPackageCommandLine()
 
     def loadPackageIcon(self, id: str, store: str, version: str) -> None:

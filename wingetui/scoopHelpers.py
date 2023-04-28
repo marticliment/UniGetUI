@@ -100,7 +100,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
     else:
         bucketRoot = f"https://github.com/ScoopInstaller/{bucket}"
-    appInfo = {
+    packageDetails = {
         "title": title.split("/")[-1],
         "id": id,
         "publisher": unknownStr,
@@ -141,55 +141,55 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         import json
         data: dict = json.load(mfest)
         if "description" in data.keys():
-            appInfo["description"] = data["description"]
+            packageDetails["description"] = data["description"]
             
         if "version" in data.keys():
-            appInfo["versions"].append(data["version"])
+            packageDetails["versions"].append(data["version"])
 
         if "homepage" in data.keys():
             w = data["homepage"]
-            appInfo["homepage"] = w
+            packageDetails["homepage"] = w
             if "https://github.com/" in w:
-                appInfo["author"] = w.replace("https://github.com/", "").split("/")[0]
+                packageDetails["author"] = w.replace("https://github.com/", "").split("/")[0]
             else:
                 for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de", ".kde", ".microsoft"):
                     w = w.replace(e, "")
-                appInfo["author"] = w.split("/")[0].capitalize()
+                packageDetails["author"] = w.split("/")[0].capitalize()
                 
         if "notes" in data.keys():
             if type(data["notes"]) == list:
-                appInfo["releasenotes"] = "\n".join(data["notes"])
+                packageDetails["releasenotes"] = "\n".join(data["notes"])
             else:
-                appInfo["releasenotes"] = data["notes"]
+                packageDetails["releasenotes"] = data["notes"]
         if "license" in data.keys():
-            appInfo["license"] = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
-            appInfo["license-url"] = unknownStr if type(data["license"]) != dict else data["license"]["url"]
+            packageDetails["license"] = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
+            packageDetails["license-url"] = unknownStr if type(data["license"]) != dict else data["license"]["url"]
 
         if "url" in data.keys():
-            appInfo["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
+            packageDetails["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
             url = data["url"][0] if type(data["url"]) == list else data["url"]
-            appInfo["installer-url"] = url
+            packageDetails["installer-url"] = url
             try:
-                appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
+                packageDetails["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
             except Exception as e:
                 print("🟠 Can't get installer size:", type(e), str(e))
         elif "architecture" in data.keys():
-            appInfo["installer-sha256"] = data["architecture"]["64bit"]["hash"]
+            packageDetails["installer-sha256"] = data["architecture"]["64bit"]["hash"]
             url = data["architecture"]["64bit"]["url"]
-            appInfo["installer-url"] = url
+            packageDetails["installer-url"] = url
             try:
-                appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
+                packageDetails["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
             except Exception as e:
                 print("🟠 Can't get installer size:", type(e), str(e))
             if type(data["architecture"]) == dict:
-                appInfo["architectures"] = list(data["architecture"].keys())
+                packageDetails["architectures"] = list(data["architecture"].keys())
         
         if "checkver" in data.keys():
             if "url" in data["checkver"].keys():
                 url = data["checkver"]["url"]
-                appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+                packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
         
-        appInfo["installer-type"] = "Scoop package"
+        packageDetails["installer-type"] = "Scoop package"
         
     except Exception as e:
         report(e)
@@ -207,13 +207,13 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         for line in output:
             for line in output:
                 if("Updated by" in line):
-                    appInfo["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
+                    packageDetails["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
                 elif("Updated at" in line):
-                    appInfo["updatedate"] = line.replace("Updated at", "").strip()[1:].strip()                
+                    packageDetails["updatedate"] = line.replace("Updated at", "").strip()[1:].strip()                
     print(f"🔵 Scoop does not support specific version installs")
-    appInfo["versions"] = [version]
-    appInfo["title"] = appInfo["title"] if lc else appInfo["title"].capitalize()
-    signal.emit(appInfo, progId)
+    packageDetails["versions"] = [version]
+    packageDetails["title"] = packageDetails["title"] if lc else packageDetails["title"].capitalize()
+    signal.emit(packageDetails, progId)
     if not verbose:
         getInfo(signal, title, id, useId, progId, verbose=True)
     

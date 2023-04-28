@@ -141,7 +141,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
         print(f"🟢 Starting get info for id {id}")
         output = []
         unknownStr = _("Not available")
-        appInfo = {
+        packageDetails = {
             "title": title,
             "id": id,
             "publisher": unknownStr,
@@ -172,23 +172,23 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
         for line in output:
             cprint(line)
             if("Title:" in line):
-                appInfo["title"] = line.split("|")[0].replace("Title:", "").strip()
-                appInfo["updatedate"] = line.split("|")[1].replace("Published:", "").strip()
+                packageDetails["title"] = line.split("|")[0].replace("Title:", "").strip()
+                packageDetails["updatedate"] = line.split("|")[1].replace("Published:", "").strip()
             elif("Author:" in line):
-                appInfo["author"] = line.replace("Author:", "").strip()
+                packageDetails["author"] = line.replace("Author:", "").strip()
             elif("Software Site:" in line):
-                appInfo["homepage"] = line.replace("Software Site:", "").strip()
+                packageDetails["homepage"] = line.replace("Software Site:", "").strip()
             elif("Software License:" in line):
-                appInfo["license-url"] = line.replace("Software License:", "").strip()
-                appInfo["license"] = ""
+                packageDetails["license-url"] = line.replace("Software License:", "").strip()
+                packageDetails["license"] = ""
             elif("Package Checksum:" in line):
-                appInfo["installer-sha256"] = "\n"+line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", "")
+                packageDetails["installer-sha256"] = "<br>"+(line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", ""))
             elif("Description:" in line):
-                appInfo["description"] = line.replace("Description:", "").strip()
+                packageDetails["description"] = line.replace("Description:", "").strip()
             elif("Release Notes" in line):
                 url = line.replace("Release Notes:", "").strip()
-                appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
-        appInfo["versions"] = []
+                packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+        packageDetails["versions"] = []
         p = subprocess.Popen([choco, "find", "-e", id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         print(f"🟢 Starting get info for id {id}")
         output = []
@@ -199,8 +199,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
         for line in output:
             cprint(line)
             if "[Approved]" in line:
-                appInfo["versions"].append(line.split(" ")[1])
-        signal.emit(appInfo, progId)
+                packageDetails["versions"].append(line.split(" ")[1])
+        signal.emit(packageDetails, progId)
     except Exception as e:
         report(e)
     

@@ -260,7 +260,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                 print(f"🟢 Starting get info for title {title}")
             output = []
             unknownStr = _("Not available")
-            appInfo = {
+            packageDetails = {
                 "title": oldtitle,
                 "id": oldid,
                 "publisher": unknownStr,
@@ -291,60 +291,60 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
             for line in output:
                 cprint(line)
                 if line[0] == " " and weAreDescripting:
-                    appInfo["description"] += "\n"+line
+                    packageDetails["description"] += "\n"+line
                 else:
                     weAreDescripting = False
                 if line[0] == " " and weAreReleaseNoting:
-                    appInfo["releasenotes"] += line + "<br>"
+                    packageDetails["releasenotes"] += line + "<br>"
                 else:
                     weAreReleaseNoting = False
                 line: str = line.strip()
                 if("Publisher:" in line):
-                    appInfo["publisher"] = line.replace("Publisher:", "").strip()
+                    packageDetails["publisher"] = line.replace("Publisher:", "").strip()
                     validCount += 1
                 elif("Description:" in line):
-                    appInfo["description"] = line.replace("Description:", "").strip()
+                    packageDetails["description"] = line.replace("Description:", "").strip()
                     weAreDescripting = True
                     validCount += 1
                 elif("Author:" in line):
-                    appInfo["author"] = line.replace("Author:", "").strip()
+                    packageDetails["author"] = line.replace("Author:", "").strip()
                     validCount += 1
                 elif("Publisher:" in line):
-                    appInfo["publisher"] = line.replace("Publisher:", "").strip()
+                    packageDetails["publisher"] = line.replace("Publisher:", "").strip()
                     validCount += 1
                 elif("Homepage:" in line):
-                    appInfo["homepage"] = line.replace("Homepage:", "").strip()
+                    packageDetails["homepage"] = line.replace("Homepage:", "").strip()
                     validCount += 1
                 elif("License:" in line):
-                    appInfo["license"] = line.replace("License:", "").strip()
+                    packageDetails["license"] = line.replace("License:", "").strip()
                     validCount += 1
                 elif("License Url:" in line):
-                    appInfo["license-url"] = line.replace("License Url:", "").strip()
+                    packageDetails["license-url"] = line.replace("License Url:", "").strip()
                     validCount += 1
                 elif("Installer SHA256:" in line):
-                    appInfo["installer-sha256"] = line.replace("Installer SHA256:", "").strip()
+                    packageDetails["installer-sha256"] = line.replace("Installer SHA256:", "").strip()
                     validCount += 1
                 elif("Installer Url:" in line):
                     url = line.replace("Installer Url:", "").strip()
-                    appInfo["installer-url"] = url
+                    packageDetails["installer-url"] = url
                     try:
-                        appInfo["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
+                        packageDetails["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
                     except Exception as e:
                         print("🟠 Can't get installer size:", type(e), str(e))
                     validCount += 1
                 elif("Release Date:" in line):
-                    appInfo["updatedate"] = line.replace("Release Date:", "").strip()
+                    packageDetails["updatedate"] = line.replace("Release Date:", "").strip()
                     validCount += 1
                 elif("Release Notes Url:" in line):
                     url = line.replace("Release Notes Url:", "").strip()
-                    appInfo["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+                    packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
                     validCount += 1
                 elif("Release Notes:" in line):
-                    appInfo["releasenotes"] = ""
+                    packageDetails["releasenotes"] = ""
                     weAreReleaseNoting = True
                     validCount += 1
                 elif("Installer Type:" in line):
-                    appInfo["installer-type"] = line.replace("Installer Type:", "").strip()
+                    packageDetails["installer-type"] = line.replace("Installer Type:", "").strip()
         print(f"🟢 Loading versions for {title}")
         retryCount = 0
         output = []
@@ -366,8 +366,8 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> No
                         counter += 1
             cprint("Output: ")
             cprint(output)
-        appInfo["versions"] = output
-        signal.emit(appInfo, progId)
+        packageDetails["versions"] = output
+        signal.emit(packageDetails, progId)
     except Exception as e:
         report(e)
 
