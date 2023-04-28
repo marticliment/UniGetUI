@@ -1000,7 +1000,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.layout.addSpacing(10)
         self.layout.addStretch()
-        self.advert = QLinkLabel("<b>"+_("DISCLAIMER: NEITHER MICROSOFT NOR THE CREATORS OF WINGETUI ARE RESPONSIBLE FOR THE DOWNLOADED APPS."))
+        self.advert = QLinkLabel("<b>"+_("DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE."))
         self.advert.setWordWrap(True)
         self.layout.addWidget(self.advert)
 
