@@ -206,7 +206,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
     
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 choco installer assistant thread started for process {p}")
-    outputCode = OC_OPERATION_SUCCEEDED
+    outputCode = RETURNCODE_OPERATION_SUCCEEDED
     counter = 0
     output = ""
     p.stdin = b"\r\n"
@@ -222,16 +222,16 @@ def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Si
     p.wait()
     outputCode = p.returncode
     if outputCode in (1641, 3010):
-        outputCode = OC_OPERATION_SUCCEEDED
+        outputCode = RETURNCODE_OPERATION_SUCCEEDED
     elif outputCode == 3010:
-        outputCode = OC_NEEDS_RESTART
+        outputCode = RETURNCODE_NEEDS_RESTART
     elif ("Run as administrator" in output or "The requested operation requires elevation" in output) and outputCode != 0:
-        outputCode = OC_NEEDS_ELEVATION
+        outputCode = RETURNCODE_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
  
 def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 choco installer assistant thread started for process {p}")
-    outputCode = OC_OPERATION_SUCCEEDED
+    outputCode = RETURNCODE_OPERATION_SUCCEEDED
     counter = 0
     output = ""
     p.stdin = b"\r\n"
@@ -248,11 +248,11 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     cprint(output)
     outputCode = p.returncode
     if outputCode in (1605, 1614, 1641):
-        outputCode = OC_OPERATION_SUCCEEDED
+        outputCode = RETURNCODE_OPERATION_SUCCEEDED
     elif outputCode == 3010:
-        outputCode = OC_NEEDS_RESTART
+        outputCode = RETURNCODE_NEEDS_RESTART
     elif "Run as administrator" in output or "The requested operation requires elevation" in output:
-        outputCode = OC_NEEDS_ELEVATION
+        outputCode = RETURNCODE_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
 
 

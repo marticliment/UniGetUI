@@ -361,10 +361,10 @@ try:
             self.loadStatus += 1
 
         def detectSudo(self):
-            global sudoLocation
+            global GSUDO_EXE_LOCATION
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "sudo")))
-                o = subprocess.run(f"{sudoPath} -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run(f"{GSUDO_EXE_PATH} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["sudoFound"] = o.returncode == 0
                 globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Sudo", state = _("Yes") if globals.componentStatus['sudoFound'] else _("No"))))

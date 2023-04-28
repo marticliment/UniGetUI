@@ -13,35 +13,18 @@ from external.blurwindow import GlobalBlur
 from pathlib import Path
 
 import globals
-from outputcodes import *
+from constantDeclarations import *
 
-old_stdout = sys.stdout
-old_stderr = sys.stderr
-buffer = io.StringIO()
-errbuffer = io.StringIO()
-settingsCache = {}
-installersWidget = None
-updatesAvailable = False
-
-missingTranslationList = []
-
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    sys.stdout = buffer = io.StringIO()
-    sys.stderr = errbuffer = io.StringIO()
-
-if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
-else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
-
-if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
-    try:
-        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
-    except:
-        pass
+OLD_STDOUT = sys.stdout
+OLD_STDERR = sys.stderr
+stdout_buffer = io.StringIO()
+stderr_buffçer = io.StringIO()
+MissingTranslationList = []
+SYSTEM_THEME_ON_LAUNCH = 0
+realpath = 0
 
 def cprint(*args) -> None:
-    print(*args, file=old_stdout)
+    print(*args, file=OLD_STDOUT)
 
 def report(exception) -> None: # Exception reporter
     import traceback
@@ -64,8 +47,8 @@ def _(s): # Translate function
         return ("🟢"+t+"🟢" if debugLang else t) if t else f"🟡{s}🟡" if debugLang else eng_(s)
     except KeyError:
         if debugLang: print(s)
-        if not s in missingTranslationList:
-            missingTranslationList.append(s)
+        if not s in MissingTranslationList:
+            MissingTranslationList.append(s)
         return f"🔴{eng_(s)}🔴" if debugLang else eng_(s)
 
 def eng_(s): # English translate function
@@ -81,15 +64,15 @@ def getSettings(s: str, cache = True) -> bool:
     """
     Returns a boolean value representing if the given setting is enabled or not.
     """
-    global settingsCache
+    globals.settingsCache
     try:
         try:
             if not cache:
                 raise KeyError("Cache disabled")
-            return settingsCache[s]
+            return globals.settingsCache[s]
         except KeyError:
             v = os.path.exists(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s))
-            settingsCache[s] = v
+            globals.settingsCache[s] = v
             return v
     except Exception as e:
         print(e)
@@ -99,9 +82,9 @@ def setSettings(s: str, v: bool) -> None:
     """
     Sets a boolean value for the given setting
     """
-    global settingsCache
+    globals.settingsCache
     try:
-        settingsCache = {}
+        globals.settingsCache = {}
         if(v):
             open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w").close()
         else:
@@ -116,14 +99,14 @@ def getSettingsValue(s: str) -> str:
     """
     Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned 
     """
-    global settingsCache
+    globals.settingsCache
     try:
         try:
-            return str(settingsCache[s+"Value"])
+            return str(globals.settingsCache[s+"Value"])
         except KeyError:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r") as sf:
                 v: str = sf.read()
-                settingsCache[s+"Value"] = v
+                globals.settingsCache[s+"Value"] = v
                 return v
     except FileNotFoundError:
         return ""
@@ -135,30 +118,19 @@ def setSettingsValue(s: str, v: str) -> None:
     """
     Sets the stored value for the given setting. A string value is required. 
     """
-    global settingsCache
+    globals.settingsCache
     try:
-        settingsCache = {}
+        globals.settingsCache = {}
         with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w") as sf:
             sf.write(v)
     except Exception as e:
         print(e)
 
-sudoPath = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
-try:
-    sudoLocation = os.path.dirname(sudoPath)
-except TypeError as e:
-    report(e)
-    sudoLocation = os.path.expanduser("~")
-print(sudoPath)
-print(sudoLocation)
-
-shareComponent = os.path.join(os.path.join(realpath, "components"), "share.exe")
-
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    globals.shareProcessHandler = subprocess.Popen([shareComponent, text, url, coordinates], shell=True)
+    globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
     cprint(globals.shareProcessHandler.args)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
@@ -193,9 +165,7 @@ def getColors() -> list:
         j += 1
         i += 4
     return colors
-
-SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
-
+ 
 def isDark() -> bool:
     prefs = getSettingsValue("PreferredTheme")
     match prefs:
@@ -205,10 +175,6 @@ def isDark() -> bool:
             return False      
     return SYSTEM_THEME_ON_LAUNCH == 0
 
-if isDark():
-    blueColor = f"rgb({getColors()[1]})"
-else:
-    blueColor = f"rgb({getColors()[4]})"
 
 def queueProgram(id: str):
     globals.pending_programs.append(id)
@@ -231,7 +197,6 @@ def checkQueue():
             except IndexError:
                 pass
         time.sleep(0.2)
-
 
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
@@ -260,7 +225,6 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
             GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40", Dark=True, smallCorners=smallCorners)
         except OverflowError:
             pass
-
 
 def getPath(s: str) -> str:
     return str(Path(f"{realpath}/resources/{s}").resolve()).replace("\\", "/")
@@ -327,14 +291,6 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
     return  [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
-
-Thread(target=checkQueue, daemon=True).start()
-
-class BlacklistMethod():
-    Legacy = 0
-    SpecificVersion = 1
-    AllVersions = 2
-
 class KillableThread(Thread):
     def __init__(self, *args, **keywords): 
         super(KillableThread, self).__init__(*args, **keywords) 
@@ -358,12 +314,11 @@ class KillableThread(Thread):
     def localtrace(self, frame, event, arg): 
         if not(self.shouldBeRuning) and event == 'line': 
             raise SystemExit()
-            print("Killed")
         return self.localtrace 
 
-
 def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
-    globals.trayIcon.showMessage(title, text, QIcon())
+    if ENABLE_WINGETUI_NOTIFICATIONS:
+        globals.trayIcon.showMessage(title, text, QIcon())
 
 def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 winget installer assistant thread started for process {p}")
@@ -380,8 +335,6 @@ def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSig
     print(p.returncode)
     closeAndInform.emit(p.returncode, output)
 
-
-
 def foregroundWindowThread():
     """
     This thread will periodically get the window focused by the user every 10 secs, so the tray icon can monitor wether the app should be shown or not.
@@ -393,34 +346,6 @@ def foregroundWindowThread():
         globals.lastFocusedWindow = fw
         time.sleep(8)
 
-
-
-class ThemeSignal(QObject):
-    signal = Signal()
-
-    def __init__(self):
-        super().__init__()
-
-def themeThread(ts):
-    oldResult = isDark()
-    while True:
-        if oldResult != isDark():
-            oldResult = isDark()            
-            while globals.mainWindow.isVisible():
-                cprint("🟡 MainWindow is visible, can't reload!")
-                time.sleep(1)
-            ts.signal.emit()
-        time.sleep(1)
-
-
-ts = ThemeSignal()
-ts.signal.connect(lambda: globals.app.reloadWindow())
-
-#Thread(target=themeThread, args=(ts,), daemon=True, name="UI Theme thread").start()
-Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
-
-if getSettingsValue("PreferredLanguage") == "":
-    setSettingsValue("PreferredLanguage", "default")
 
 def loadLangFile(file: str, bundled: bool = False) -> dict:
     try:
@@ -435,7 +360,6 @@ def loadLangFile(file: str, bundled: bool = False) -> dict:
     except Exception as e:
         report(e)
         return {}
-
 
 def updateLangFile(file: str):
     global lang
@@ -460,7 +384,46 @@ def updateLangFile(file: str):
     except Exception as e:
         report(e)
 
+ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
+ENABLE_SUCCESS_NOTIFICATIONS = getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+ENABLE_ERROR_NOTIFICATIONS = getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+ENABLE_UPDATES_NOTIFICATIONS = getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    sys.stdout = stdout_buffer = io.StringIO()
+    sys.stderr = stderr_buffer = io.StringIO()
+
+if hasattr(sys, 'frozen'):
+    realpath = sys._MEIPASS
+else:
+    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
+if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
+    try:
+        os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
+    except:
+        pass
+
+GSUDO_EXE_PATH = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
+
+try:
+    GSUDO_EXE_LOCATION = os.path.dirname(GSUDO_EXE_PATH)
+except TypeError as e:
+    report(e)
+    GSUDO_EXE_LOCATION = os.path.expanduser("~")
+SHARE_EXE_PATH = os.path.join(os.path.join(realpath, "components"), "share.exe")
+
+SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
+if isDark():
+    blueColor = f"rgb({getColors()[1]})"
+else:
+    blueColor = f"rgb({getColors()[4]})"
+    
 t0 = time.time()
+
+if getSettingsValue("PreferredLanguage") == "":
+    setSettingsValue("PreferredLanguage", "default")
 
 langName = getSettingsValue("PreferredLanguage")
 try:
@@ -501,7 +464,12 @@ except Exception as e:
     englang = {"locale": "en"}
 
 print(f"It took {time.time()-t0} to load all language files")
-            
+
+
+
+Thread(target=checkQueue, daemon=True).start()
+Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
+
 
 if __name__ == "__main__":
     import __init__

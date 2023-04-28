@@ -1279,7 +1279,8 @@ class UpdateSoftwareSection(QWidget):
                             t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
                         
                         t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                        t.show() 
+                        if ENABLE_UPDATES_NOTIFICATIONS:
+                            t.show() 
                 else:
                     if not getSettings("DisableUpdatesNotifications"):
             
@@ -1300,7 +1301,8 @@ class UpdateSoftwareSection(QWidget):
                         
                         t.addAction("Show WingetUI", lambda: (globals.mainWindow.showWindow(1)))
                         t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                        t.show()
+                        if ENABLE_UPDATES_NOTIFICATIONS:
+                            t.show()
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
@@ -2738,7 +2740,7 @@ class SettingsSection(SmoothScrollArea):
         doCacheAdminPrivileges.setChecked(getSettings("DoCacheAdminRights"))
         
         def resetAdminRightsCache():
-            resetsudo = subprocess.Popen([sudoPath, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=sudoLocation, env=os.environ)
+            resetsudo = subprocess.Popen([GSUDO_EXE_PATH, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             resetsudo.wait()
             globals.adminRightsGranted = False
         
@@ -2884,13 +2886,13 @@ class DebuggingSection(QWidget):
 
                 a = QAction()
                 a.setText(_("Reload log"))
-                a.triggered.connect(lambda: (print("🔵 Reloading log..."), self.setPlainText(buffer.getvalue()), self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())))
+                a.triggered.connect(lambda: (print("🔵 Reloading log..."), self.setPlainText(stdout_buffer.getvalue()), self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())))
                 menu.addAction(a)
 
                 
                 a4 = QAction()
                 a4.setText(_("Show missing translation strings"))
-                a4.triggered.connect(lambda: self.setPlainText('\n'.join(missingTranslationList)))#buffer.getvalue()))
+                a4.triggered.connect(lambda: self.setPlainText('\n'.join(MissingTranslationList)))#buffer.getvalue()))
                 menu.addAction(a4)
 
 
@@ -2919,11 +2921,11 @@ class DebuggingSection(QWidget):
         else:
             self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #dddddd;}}")
 
-        self.textEdit.setPlainText(buffer.getvalue())
+        self.textEdit.setPlainText(stdout_buffer.getvalue())
 
         reloadButton = QPushButton(_("Reload log"))
         reloadButton.setFixedWidth(200)        
-        reloadButton.clicked.connect(lambda: (print("🔵 Reloading log..."), self.textEdit.setPlainText(buffer.getvalue()), self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())))
+        reloadButton.clicked.connect(lambda: (print("🔵 Reloading log..."), self.textEdit.setPlainText(stdout_buffer.getvalue()), self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())))
 
         def saveLog():
             try:
@@ -2934,17 +2936,17 @@ class DebuggingSection(QWidget):
                     if not ".txt" in fpath.lower():
                         fpath += ".txt"
                     with open(fpath, "wb") as fobj:
-                        fobj.write(buffer.getvalue().encode("utf-8"))
+                        fobj.write(stdout_buffer.getvalue().encode("utf-8"))
                         fobj.close()
                     os.startfile(fpath)
                     print("🟢 log saved successfully")
-                    self.textEdit.setPlainText(buffer.getvalue())
+                    self.textEdit.setPlainText(stdout_buffer.getvalue())
                 else:
                     print("🟡 log save cancelled!")
-                    self.textEdit.setPlainText(buffer.getvalue())
+                    self.textEdit.setPlainText(stdout_buffer.getvalue())
             except Exception as e:
                 report(e)
-                self.textEdit.setPlainText(buffer.getvalue())
+                self.textEdit.setPlainText(stdout_buffer.getvalue())
 
         exportButtom = QPushButton(_("Export log as a file"))
         exportButtom.setFixedWidth(200)
@@ -2953,12 +2955,12 @@ class DebuggingSection(QWidget):
         def copyLog():
             try:
                 print("🔵 Copying log to the clipboard...")
-                globals.app.clipboard().setText(buffer.getvalue())
+                globals.app.clipboard().setText(stdout_buffer.getvalue())
                 print("🟢 Log copied to the clipboard successfully!")
-                self.textEdit.setPlainText(buffer.getvalue())
+                self.textEdit.setPlainText(stdout_buffer.getvalue())
             except Exception as e:
                 report(e)
-                self.textEdit.setPlainText(buffer.getvalue())
+                self.textEdit.setPlainText(stdout_buffer.getvalue())
 
         copyButton = QPushButton(_("Copy log to clipboard"))
         copyButton.setFixedWidth(200)
@@ -2980,7 +2982,7 @@ class DebuggingSection(QWidget):
         self.setAutoFillBackground(True)
 
     def showEvent(self, event: QShowEvent) -> None:
-        self.textEdit.setPlainText(buffer.getvalue())
+        self.textEdit.setPlainText(stdout_buffer.getvalue())
         return super().showEvent(event)
 
 class ScoopBucketManager(QWidget):

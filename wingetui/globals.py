@@ -72,3 +72,5 @@ shareProcessHandler: Popen = None
 textfont: str = "Segoe UI Variable Text"
 dispfont: str = "Segoe UI Variable Display"
 dispfontsemib: str = "Segoe UI Variable Display Semib"
+
+settingsCache = {}
