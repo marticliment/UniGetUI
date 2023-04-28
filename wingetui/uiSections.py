@@ -1,6 +1,6 @@
 from __future__ import annotations
 import glob # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
+import sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -13,6 +13,7 @@ from data.contributors import contributorsInfo
 import globals
 from customWidgets import *
 from tools import _
+from PackageManagers import wingetHelpers, scoopHelpers, chocoHelpers
 
 class DiscoverSoftwareSection(QWidget):
 
