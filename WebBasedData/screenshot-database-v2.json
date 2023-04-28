@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14016,
-        "done": 7553
+        "done": 7554
     },
     "icons_and_screenshots": {
         "115": {
@@ -25126,8 +25126,11 @@
             "images": []
         },
         "scrcpy": {
-            "icon": "https://community.chocolatey.org/content/packageimages/scrcpy.1.24.png",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Scrcpy_logo.svg/1200px-Scrcpy_logo.svg.png",
+            "images": [
+                "https://images.airdroid.com/2022/02/scrcpy.png",
+                "https://2.bp.blogspot.com/-2dg32r9hSj0/XIk7727kPcI/AAAAAAAACi8/92xT85-g1M0bpdVFZXrw6lpCXEGvsKqgQCLcBGAs/s1600/scrcpy-linux-ubuntu.png"
+            ]
         },
         "screen-saver-control": {
             "icon": "",
@@ -47528,6 +47531,10 @@
         },
         "opensans": {
             "icon": "https://community.chocolatey.org/content/packageimages/OpenSans.2.010.png",
+            "images": []
+        },
+        "scrcpy2": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Scrcpy_logo.svg/1200px-Scrcpy_logo.svg.png",
             "images": []
         },
         "skypeforbusiness": {

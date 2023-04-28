@@ -92,7 +92,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/ad.svg' width=20> &nbsp; Catalan - Català | 100% | [marticliment](https://github.com/marticliment) |
 | <img src='https://flagcdn.com/cz.svg' width=20> &nbsp; Czech - Čeština | 91% | [panther7](https://github.com/panther7) |
 | <img src='https://flagcdn.com/dk.svg' width=20> &nbsp; Danish - Dansk | 42% | [mikkolukas](https://github.com/mikkolukas) |
-| <img src='https://flagcdn.com/de.svg' width=20> &nbsp; German - Deutsch | 84% | [Datacra5H](https://github.com/Datacra5H), [ebnater](https://github.com/ebnater), [Seeloewen](https://github.com/Seeloewen) |
+| <img src='https://flagcdn.com/de.svg' width=20> &nbsp; German - Deutsch | 88% | [Datacra5H](https://github.com/Datacra5H), [ebnater](https://github.com/ebnater), [Seeloewen](https://github.com/Seeloewen) |
 | <img src='https://flagcdn.com/gb.svg' width=20> &nbsp; English - English | 100% | [marticliment](https://github.com/marticliment), [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/es.svg' width=20> &nbsp; Spanish - Castellano | 83% | [dalbitresb12](https://github.com/dalbitresb12), [JMoreno97](https://github.com/JMoreno97), [marticliment](https://github.com/marticliment), [rubnium](https://github.com/rubnium) |
 | <img src='https://flagcdn.com/ir.svg' width=20> &nbsp; Persian - فارسی‎ | 82% | [smsi2001](https://github.com/smsi2001) |
@@ -102,22 +102,22 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 84% | GiacoBot, Maicol Battistini (@maicol07), Rosario Di Mauro |
 | <img src='https://flagcdn.com/id.svg' width=20> &nbsp; Indonesian - Bahasa Indonesia | 57% | [arthackrc](https://github.com/arthackrc) |
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 82% | [nob-swik](https://github.com/nob-swik), sho9029, Yuki Takase |
-| <img src='https://flagcdn.com/kr.svg' width=20> &nbsp; Korean - 한국어 | 94% | [minbert](https://github.com/minbert), [shblue21](https://github.com/shblue21) |
-| <img src='https://flagcdn.com/no.svg' width=20> &nbsp; Norwegian (bokmål) | 91% | [jomaskm](https://github.com/jomaskm) |
-| <img src='https://flagcdn.com/nl.svg' width=20> &nbsp; Dutch - Nederlands | 94% | [abbydiode](https://github.com/abbydiode), [Stephan-P](https://github.com/Stephan-P) |
+| <img src='https://flagcdn.com/kr.svg' width=20> &nbsp; Korean - 한국어 | 97% | [minbert](https://github.com/minbert), [shblue21](https://github.com/shblue21) |
+| <img src='https://flagcdn.com/no.svg' width=20> &nbsp; Norwegian (bokmål) | 97% | [jomaskm](https://github.com/jomaskm) |
+| <img src='https://flagcdn.com/nl.svg' width=20> &nbsp; Dutch - Nederlands | 100% | [abbydiode](https://github.com/abbydiode), [Stephan-P](https://github.com/Stephan-P) |
 | <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 91% | [KamilZielinski](https://github.com/KamilZielinski), [kwiateusz](https://github.com/kwiateusz), RegularGvy13 |
-| <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 94% | [ppvnf](https://github.com/ppvnf), [wanderleihuttel](https://github.com/wanderleihuttel) |
-| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 94% | [ppvnf](https://github.com/ppvnf) |
-| <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 87% | [flatron4eg](https://github.com/flatron4eg), Sergey, Артем |
+| <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | [ppvnf](https://github.com/ppvnf), [wanderleihuttel](https://github.com/wanderleihuttel) |
+| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | [ppvnf](https://github.com/ppvnf) |
+| <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 99% | [flatron4eg](https://github.com/flatron4eg), Sergey, Артем |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 15% | Nemanja Djurcic |
 | <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 94% | [rumplin](https://github.com/rumplin) |
 | <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 40% | [apaeisara](https://github.com/apaeisara) |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 83% | [ahmetozmtn](https://github.com/ahmetozmtn) |
 | <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukranian - Yкраї́нська | 61% | Artem Moldovanenko, Operator404 |
-| <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 94% | Aaron Liu, BUGP Association, ciaran, CnYeSheng, Cololi |
+| <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, BUGP Association, ciaran, CnYeSheng, Cololi |
 | <img src='https://flagcdn.com/tw.svg' width=20> &nbsp; Traditional Chinese (Taiwan) | 82% | Aaron Liu, CnYeSheng, Cololi, [yrctw](https://github.com/yrctw) |
 
-Last updated: Mon Apr 24 19:42:50 2023
+Last updated: Fri Apr 28 00:56:34 2023
 <!-- END Autogenerated translations -->
 
 
