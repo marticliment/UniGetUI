@@ -1092,7 +1092,7 @@ class UpdateSoftwareSection(QWidget):
 
         self.toolbar.addSeparator()
 
-        self.blacklistAction = QAction(QIcon(getMedia("pin")), _("Ignore selected updates"), self.toolbar)
+        self.blacklistAction = QAction(QIcon(getMedia("pin")), _("Ignore selected packages"), self.toolbar)
         self.blacklistAction.triggered.connect(lambda: blacklistSelectedPackages())
         self.toolbar.addAction(self.blacklistAction)
         self.resetBlackList = QAction(QIcon(getMedia("blacklist")), _("Manage ignored updates"), self.toolbar)
