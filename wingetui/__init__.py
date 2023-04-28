@@ -414,7 +414,7 @@ try:
             self.loadStatus += 1
 
         def loadMainUI(self):
-            print("Reached main ui load milestone")
+            print("🔵 Reached main ui load milestone")
             try:
                 globals.trayIcon = QSystemTrayIcon()
                 self.trayIcon = globals.trayIcon
@@ -2137,6 +2137,8 @@ try:
     sys.exit(0)
 except Exception as e:
     import webbrowser, traceback, platform
+    if not "langName" in _globals() and not "langName" in locals():
+        langName = "Unknown"
     try:
         from tools import version as appversion
     except Exception as e2:
