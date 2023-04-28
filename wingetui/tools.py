@@ -452,7 +452,7 @@ except Exception as e:
     lang = loadLangFile(languages["en"]) | {"locale": "en"}
     print("🔴 Unknown language")
 
-langName = lang['locale']
+langName: str = lang['locale']
 
 if "zh_CN" in langName:
     globals.textfont: str = "Microsoft YaHei UI"

@@ -561,6 +561,7 @@ try:
                     f"                   Version: {platform.win32_ver()}\n"+\
                     f"           OS Architecture: {platform.machine()}\n"+\
                     f"          APP Architecture: {platform.architecture()[0]}\n"+\
+                    f"                  Language: {langName}\n"+\
                     f"               APP Version: {appversion}\n"+\
                     f"                   Program: WingetUI\n"+\
                     f"           Program section: UI Loading"+\
@@ -2121,11 +2122,15 @@ try:
         border-radius: 4px;
     }}           
     """
+    
     if "--daemon" in sys.argv:
         if getSettings("DisableAutostart"):
             sys.exit(0)
-    translator = QTranslator()
-    translator.load(f"qtbase_{langName}.qm", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+    try:
+        translator = QTranslator()
+        translator.load(f"qtbase_{langName}.qm", QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath))
+    except Exception as e:
+        report(e)
     a = MainApplication()
     a.installTranslator(translator)
     a.exec()
@@ -2142,6 +2147,7 @@ except Exception as e:
         f"                   Version: {platform.win32_ver()}\n"+\
         f"           OS Architecture: {platform.machine()}\n"+\
         f"          APP Architecture: {platform.architecture()[0]}\n"+\
+        f"                  Language: {langName}\n"+\
         f"               APP Version: {appversion}\n"+\
         f"                   Program: WingetUI\n"+\
         f"           Program section: Main script"+\
