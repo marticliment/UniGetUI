@@ -94,6 +94,13 @@ def setSettings(s: str, v: bool) -> None:
                 pass
     except Exception as e:
         print(e)
+    if "Notifications" in s:
+        global ENABLE_WINGETUI_NOTIFICATIONS, ENABLE_SUCCESS_NOTIFICATIONS, ENABLE_ERROR_NOTIFICATIONS, ENABLE_UPDATES_NOTIFICATIONS
+        ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
+        ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+        ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+        ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+        
 
 def getSettingsValue(s: str) -> str:
     """
@@ -385,9 +392,9 @@ def updateLangFile(file: str):
         report(e)
 
 ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
-ENABLE_SUCCESS_NOTIFICATIONS = getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
-ENABLE_ERROR_NOTIFICATIONS = getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
-ENABLE_UPDATES_NOTIFICATIONS = getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):

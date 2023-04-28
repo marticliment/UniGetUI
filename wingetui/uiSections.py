@@ -1263,46 +1263,40 @@ class UpdateSoftwareSection(QWidget):
             if count > 0:
                 if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
                     self.updateAll()
-                    if not getSettings("DisableUpdatesNotifications"):
+                    t = ToastNotification(self, self.callInMain.emit)
+                    if count > 1:
+                        t.setTitle(_("Updates found!"))
+                        t.setDescription(_("{0} packages are being updated").format(count))
+                        packageList = ""
+                        for i in range(self.packageList.topLevelItemCount()):
+                            packageList += self.packageList.topLevelItem(i).text(1)+", "
+                        t.setSmallText(packageList[:-2])
+                    elif count == 1:
+                        t.setTitle(_("Update found!"))
+                        t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
+                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    if ENABLE_UPDATES_NOTIFICATIONS:
+                        t.show() 
                         
-                        t = ToastNotification(self, self.callInMain.emit)
+                else:            
+                    t = ToastNotification(self, self.callInMain.emit)
+                    if count > 1:
+                        t.setTitle(_("Updates found!"))
+                        t.setDescription(_("{0} packages can be updated").format(count)+":")
+                        t.addAction(_("Update all"), self.updateAll)
+                        packageList = ""
+                        for i in range(self.packageList.topLevelItemCount()):
+                            packageList += self.packageList.topLevelItem(i).text(1)+", "
+                        t.setSmallText(packageList[:-2])
+                    elif count == 1:
+                        t.setTitle(_("Update found!"))
+                        t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
+                        t.addAction(_("Update"), self.updateAll)
+                    t.addAction("Show WingetUI", lambda: (globals.mainWindow.showWindow(1)))
+                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    if ENABLE_UPDATES_NOTIFICATIONS:
+                        t.show()
                         
-                        if count > 1:
-                            t.setTitle(_("Updates found!"))
-                            t.setDescription(_("{0} packages are being updated").format(count))
-                            packageList = ""
-                            for i in range(self.packageList.topLevelItemCount()):
-                                packageList += self.packageList.topLevelItem(i).text(1)+", "
-                            t.setSmallText(packageList[:-2])
-                        elif count == 1:
-                            t.setTitle(_("Update found!"))
-                            t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
-                        
-                        t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                        if ENABLE_UPDATES_NOTIFICATIONS:
-                            t.show() 
-                else:
-                    if not getSettings("DisableUpdatesNotifications"):
-            
-                        t = ToastNotification(self, self.callInMain.emit)
-                        
-                        if count > 1:
-                            t.setTitle(_("Updates found!"))
-                            t.setDescription(_("{0} packages can be updated").format(count)+":")
-                            t.addAction(_("Update all"), self.updateAll)
-                            packageList = ""
-                            for i in range(self.packageList.topLevelItemCount()):
-                                packageList += self.packageList.topLevelItem(i).text(1)+", "
-                            t.setSmallText(packageList[:-2])
-                        elif count == 1:
-                            t.setTitle(_("Update found!"))
-                            t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
-                            t.addAction(_("Update"), self.updateAll)
-                        
-                        t.addAction("Show WingetUI", lambda: (globals.mainWindow.showWindow(1)))
-                        t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                        if ENABLE_UPDATES_NOTIFICATIONS:
-                            t.show()
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
@@ -2600,10 +2594,62 @@ class SettingsSection(SmoothScrollArea):
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
         updateCheckBox.stateChanged.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
         self.generalTitle.addWidget(updateCheckBox)
-        dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
-        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
-        dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
-        self.generalTitle.addWidget(dontUseBuiltInGsudo)
+        
+        
+        checkForUpdates = SectionCheckBox(_("Check for package updates periodically"))
+        checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
+        self.generalTitle.addWidget(checkForUpdates)
+        frequencyCombo = SectionComboBox(_("Check for updates every:"), buttonEnabled=False)
+        
+        times = {
+            _("{0} minutes").format(10):   "600",
+            _("{0} minutes").format(30):  "1800",
+            _("1 hour")                :  "3600",
+            _("{0} hours").format(2)   :  "7200",
+            _("{0} hours").format(4)   : "14400",
+            _("{0} hours").format(8)   : "28800",
+            _("{0} hours").format(12)  : "43200",
+            _("1 day")                 : "86400",
+            _("{0} days").format(2)    :"172800",
+            _("{0} days").format(3)    :"259200",
+            _("1 week")                :"604800",
+        }
+        invertedTimes = {
+            "600"   : _("{0} minutes").format(10),
+            "1800"  : _("{0} minutes").format(30),
+            "3600"  : _("1 hour"),
+            "7200"  : _("{0} hours").format(2),
+            "14400" : _("{0} hours").format(4),
+            "28800" : _("{0} hours").format(8),
+            "43200" : _("{0} hours").format(12),
+            "86400" : _("1 day"),
+            "172800": _("{0} days").format(2),
+            "259200": _("{0} days").format(3),
+            "604800": _("1 week")
+        }
+
+        frequencyCombo.setEnabled(checkForUpdates.isChecked())
+        checkForUpdates.stateChanged.connect(lambda v: (setSettings("DisableAutoCheckforUpdates", not bool(v)), frequencyCombo.setEnabled(bool(v))))
+        frequencyCombo.combobox.insertItems(0, list(times.keys()))
+        currentValue = getSettingsValue("UpdatesCheckInterval")
+        try:
+            frequencyCombo.combobox.setCurrentText(invertedTimes[currentValue])
+        except KeyError:
+            frequencyCombo.combobox.setCurrentText(_("1 hour"))
+        except Exception as e:
+            report(e)
+        
+        frequencyCombo.combobox.currentTextChanged.connect(lambda v: setSettingsValue("UpdatesCheckInterval", times[v]))
+
+        self.generalTitle.addWidget(frequencyCombo)
+        frequencyCombo.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius:0 ;border-bottom: 0px;}")
+
+
+        automaticallyInstallUpdates = SectionCheckBox(_("Update packages automatically"))
+        automaticallyInstallUpdates.setChecked(getSettings("AutomaticallyUpdatePackages"))
+        automaticallyInstallUpdates.stateChanged.connect(lambda v: setSettings("AutomaticallyUpdatePackages", bool(v)))
+        self.generalTitle.addWidget(automaticallyInstallUpdates)
+        
         
 
         self.theme = SectionComboBox(_("Application theme:"))
@@ -2666,73 +2712,32 @@ class SettingsSection(SmoothScrollArea):
         dontUseBuiltInGsudo.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.UITitle.addWidget(dontUseBuiltInGsudo)
 
-        self.trayIcon = CollapsableSection(_("Notification tray options"), getMedia("systemtray"), _("WingetUI tray application preferences"))
-        self.layout.addWidget(self.trayIcon)
+        self.trayTitle = CollapsableSection(_("Notification tray options"), getMedia("systemtray"), _("WingetUI tray application preferences"))
+        self.layout.addWidget(self.trayTitle)
 
         doCloseWingetUI = SectionCheckBox(_("Close WingetUI to the notification area"))
         doCloseWingetUI.setChecked(not getSettings("DisablesystemTray"))
         doCloseWingetUI.stateChanged.connect(lambda v: setSettings("DisablesystemTray", not bool(v)))
-        self.trayIcon.addWidget(doCloseWingetUI)
-        checkForUpdates = SectionCheckBox(_("Check for package updates periodically"))
-        checkForUpdates.setChecked(not getSettings("DisableAutoCheckforUpdates"))
-        self.trayIcon.addWidget(checkForUpdates)
-
-        frequencyCombo = SectionComboBox(_("Check for updates every:"), buttonEnabled=False)
-        
-        times = {
-            _("{0} minutes").format(10):   "600",
-            _("{0} minutes").format(30):  "1800",
-            _("1 hour")                :  "3600",
-            _("{0} hours").format(2)   :  "7200",
-            _("{0} hours").format(4)   : "14400",
-            _("{0} hours").format(8)   : "28800",
-            _("{0} hours").format(12)  : "43200",
-            _("1 day")                 : "86400",
-            _("{0} days").format(2)    :"172800",
-            _("{0} days").format(3)    :"259200",
-            _("1 week")                :"604800",
-        }
-        invertedTimes = {
-            "600"   : _("{0} minutes").format(10),
-            "1800"  : _("{0} minutes").format(30),
-            "3600"  : _("1 hour"),
-            "7200"  : _("{0} hours").format(2),
-            "14400" : _("{0} hours").format(4),
-            "28800" : _("{0} hours").format(8),
-            "43200" : _("{0} hours").format(12),
-            "86400" : _("1 day"),
-            "172800": _("{0} days").format(2),
-            "259200": _("{0} days").format(3),
-            "604800": _("1 week")
-        }
-
-        frequencyCombo.setEnabled(checkForUpdates.isChecked())
-        checkForUpdates.stateChanged.connect(lambda v: (setSettings("DisableAutoCheckforUpdates", not bool(v)), frequencyCombo.setEnabled(bool(v))))
-        frequencyCombo.combobox.insertItems(0, list(times.keys()))
-        currentValue = getSettingsValue("UpdatesCheckInterval")
-        try:
-            frequencyCombo.combobox.setCurrentText(invertedTimes[currentValue])
-        except KeyError:
-            frequencyCombo.combobox.setCurrentText(_("1 hour"))
-        except Exception as e:
-            report(e)
-        
-        frequencyCombo.combobox.currentTextChanged.connect(lambda v: setSettingsValue("UpdatesCheckInterval", times[v]))
-
-        self.trayIcon.addWidget(frequencyCombo)
-        frequencyCombo.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius:0 ;border-bottom: 0px;}")
+        self.trayTitle.addWidget(doCloseWingetUI)
+        generalNotifications = SectionCheckBox(_("Enable WingetUI notifications"))
+        generalNotifications.setChecked(not getSettings("DisableNotifications"))
+        generalNotifications.stateChanged.connect(lambda v: setSettings("DisableNotifications", not bool(v)))
+        self.trayTitle.addWidget(generalNotifications)
+        updatesNotifications = SectionCheckBox(_("Show a notification when there are available updates"))
+        updatesNotifications.setChecked(not getSettings("DisableUpdatesNotifications"))
+        updatesNotifications.stateChanged.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
+        self.trayTitle.addWidget(updatesNotifications)
+        errorNotifications = SectionCheckBox(_("Show a notification when an installation fails"))
+        errorNotifications.setChecked(not getSettings("DisableErrorNotifications"))
+        errorNotifications.stateChanged.connect(lambda v: setSettings("DisableErrorNotifications", not bool(v)))
+        self.trayTitle.addWidget(errorNotifications)
+        successNotifications = SectionCheckBox(_("Show a notification when an installation finishes successfully"))
+        successNotifications.setChecked(not getSettings("DisableSuccessNotifications"))
+        successNotifications.stateChanged.connect(lambda v: setSettings("DisableSuccessNotifications", not bool(v)))
+        self.trayTitle.addWidget(successNotifications)
+        successNotifications.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
 
 
-        notifyAboutUpdates = SectionCheckBox(_("Show a notification when there are available updates"))
-        notifyAboutUpdates.setChecked(not getSettings("DisableUpdatesNotifications"))
-        notifyAboutUpdates.stateChanged.connect(lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
-        self.trayIcon.addWidget(notifyAboutUpdates)
-
-        automaticallyInstallUpdates = SectionCheckBox(_("Update packages automatically"))
-        automaticallyInstallUpdates.setChecked(getSettings("AutomaticallyUpdatePackages"))
-        automaticallyInstallUpdates.stateChanged.connect(lambda v: setSettings("AutomaticallyUpdatePackages", bool(v)))
-        automaticallyInstallUpdates.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-        self.trayIcon.addWidget(automaticallyInstallUpdates)
         
         self.advancedOptions = CollapsableSection(_("Administrator privileges preferences"), getMedia("runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))
         self.layout.addWidget(self.advancedOptions)
@@ -2759,6 +2764,10 @@ class SettingsSection(SmoothScrollArea):
         alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
         alwaysRunChocolateyAsAdmin.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
+        dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
+        dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
+        dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        self.advancedOptions.addWidget(dontUseBuiltInGsudo)
 
         self.advancedOptions = CollapsableSection(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
         self.layout.addWidget(self.advancedOptions)
