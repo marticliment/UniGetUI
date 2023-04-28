@@ -4,7 +4,7 @@ from PySide6.QtWidgets import *
 from win32mica import *
 from tools import *
 from tools import _
-import zroya
+import external.zroya
 
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:
@@ -890,7 +890,7 @@ class SectionCheckBox(QWidget):
     def text(self) -> str:
         return self.checkbox.text()
 
-zroya.init("WingetUI", "MartiCliment", "WingetUI", "WingetUI", versionName)
+external.zroya.init("WingetUI", "MartiCliment", "WingetUI", "WingetUI", versionName)
 
 class ToastNotification(QObject):
     notificationId: int = 0
@@ -974,9 +974,9 @@ class ToastNotification(QObject):
         Shows a toast notification with the given information
         """
         if self.description:
-            template = zroya.Template(zroya.TemplateType.Text2)
+            template = external.zroya.Template(external.zroya.TemplateType.Text2)
         else:
-            template = zroya.Template(zroya.TemplateType.Text1)
+            template = external.zroya.Template(external.zroya.TemplateType.Text1)
         template.setFirstLine(self.title)
         if self.description:
             template.setSecondLine(self.description)
@@ -989,7 +989,7 @@ class ToastNotification(QObject):
                 actionId = str(template.addAction(actionText))
                 self.callableActions[actionId] = action
                 self.addedActions.append(actionText)
-        self.notificationId = zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun, on_fail=self.reportException)
+        self.notificationId = external.zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun, on_fail=self.reportException)
         
     def reportException(self, id):
         """
@@ -1007,7 +1007,7 @@ class ToastNotification(QObject):
         """
         Instantly closes the notification
         """
-        zroya.hide(self.notificationId)
+        external.zroya.hide(self.notificationId)
         
     def onAction(self, nid, action_id):
         """

@@ -1,13 +1,15 @@
 from __future__ import annotations
 from functools import partial
 import signal
-import wingetHelpers, scoopHelpers, chocoHelpers, sys, subprocess, time, os, json
+import sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from tools import *
 from tools import _
+
+from PackageManagers import chocoHelpers, scoopHelpers, wingetHelpers
 
 from customWidgets import *
 import globals

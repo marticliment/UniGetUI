@@ -4,4 +4,3 @@ PyInstaller
 pywin32
 Flask
 flask-cors
-zroya

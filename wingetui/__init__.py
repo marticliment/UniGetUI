@@ -5,13 +5,12 @@ if "--debugcrash" in sys.argv:
 
 try:
     _globals = globals
-    import sys, os, win32mica, glob, subprocess, socket, hashlib, time
+    import sys, os, glob, subprocess, socket, hashlib, time
     from threading import Thread
     from urllib.request import urlopen
     from PySide6.QtGui import *
     from PySide6.QtCore import *
     from PySide6.QtWidgets import *
-    import wingetHelpers, scoopHelpers
     from mainWindow import *
     from tools import *
     from tools import _
