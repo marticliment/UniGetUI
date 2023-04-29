@@ -143,6 +143,7 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
         "updatedate": unknownStr,
         "releasenotes": unknownStr,
         "releasenotesurl": unknownStr,
+        "suggestions": unknownStr,
         "versions": [],
         "architectures": [],
         "scopes": [_("Local"), _("Global")]
@@ -187,6 +188,11 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verb
                 packageDetails["releasenotes"] = "\n".join(data["notes"])
             else:
                 packageDetails["releasenotes"] = data["notes"]
+                
+        if "suggest" in data.keys():
+            y = str(data["suggest"])
+            appInfo["suggestions"] = y
+                
         if "license" in data.keys():
             packageDetails["license"] = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
             packageDetails["license-url"] = unknownStr if type(data["license"]) != dict else data["license"]["url"]
