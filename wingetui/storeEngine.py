@@ -994,6 +994,9 @@ class PackageInfoPopupWindow(QWidget):
         self.notesurl = QLinkLabel("<b>"+_('Release notes URL:')+"</b> "+_('Unknown'))
         self.notesurl.setWordWrap(True)
         self.layout.addWidget(self.notesurl)
+        self.suggestions = QLinkLabel("<b>"+_('Suggestions')+"</b> "+_('Unknown'))
+        self.suggestions.setWordWrap(True)
+        self.layout.addWidget(self.suggestions)
 
         self.storeLabel = QLinkLabel("<b>"+_("Source:")+"</b> " + self.store)
         self.storeLabel.setWordWrap(True)
@@ -1245,6 +1248,11 @@ class PackageInfoPopupWindow(QWidget):
             self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
             self.notes.setText(f"<b>{_('Notes:') if 'scoop' in self.store.lower() else _('Release notes:')}</b> {_('Loading...')}")
             self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
+            if 'scoop' in self.store.lower():
+                self.suggestions.show()
+                self.suggestions.setText(f"<b>{_('Suggestions:')}</b> {_('Loading...')}")
+            else:
+                self.suggestions.hide()
             self.storeLabel.setText(f"<b>{_('Source')}:</b> {self.store.capitalize()}")
             self.versionCombo.addItems([_("Loading...")])
             self.architectureCombo.addItems([_("Loading...")])
@@ -1307,6 +1315,12 @@ class PackageInfoPopupWindow(QWidget):
             self.date.setText(f"<b>{_('Last updated:')}</b> {packageDetails['updatedate']}")
             self.notes.setText(f"<b>{_('Notes:') if 'scoop' in self.store.lower() else _('Release notes:')}</b> {packageDetails['releasenotes'].replace(r'%bluecolor%', blueColor)}")
             self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {packageDetails['releasenotesurl'].replace(r'%bluecolor%', blueColor)}")
+            if 'scoop' in self.store.lower():
+                self.suggestions.show()
+                Replaced = "'"
+                self.suggestions.setText(f"<b>{_('Suggestions:')}</b> {appInfo['suggestions'].replace('{', '').replace('}', '').replace(Replaced, '').replace('[', '').replace(']', '')}")
+            else:
+                self.suggestions.hide()
             self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in packageDetails['manifest'] else ''}"+packageDetails['manifest'].replace('\\', '/')+f"\">{packageDetails['manifest']}</a>")
             while self.versionCombo.count()>0:
                 self.versionCombo.removeItem(0)
