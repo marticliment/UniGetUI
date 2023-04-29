@@ -94,6 +94,13 @@ try:
                 descriptionEnter.setDuration(100)
                 self.textEnterAnim.finished.connect(descriptionEnter.start)
                 
+                
+                self.showAnimation = QPropertyAnimation(self.popup, b"windowOpacity")
+                self.showAnimation.setEasingCurve(QEasingCurve.Type.OutCubic)
+                self.showAnimation.setStartValue(0)
+                self.showAnimation.setEndValue(1)
+                self.showAnimation.setDuration(250)
+                
                 self.loadingProgressBar = QProgressBar(self.popup)
                 self.loadingProgressBar.setGraphicsEffect(op2)
                 self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;background-color: transparent;}}QProgressBar::chunk {{background-color: rgb({'18, 164, 199' if isDark() else '11, 100, 122'});border-radius: 2px;}}""")
@@ -133,6 +140,7 @@ try:
                 
                 if not self.isDaemon:
                     self.textEnterAnim.start()
+                    self.showAnimation.start()
                     self.popup.show()
 
                 if not getSettings("AutoDisabledScoopCacheRemoval"):
@@ -177,7 +185,6 @@ try:
             label.setWordWrap(True)
             mainLayout.addWidget(label)
 
-            
             winget = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Winget"), _("Microsoft's official package manager. It contains well known software such as browsers, PDF readers, windows add-ons and other utilities, as well as other less-known but useful software, such as Microsoft Visual C++ Redistributables. Packages from Winget have been carefully validated"), getMedia("winget"))
             winget.setChecked(True)
             scoop = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Scoop"), _("From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of."), getMedia("scoop"))
@@ -546,6 +553,7 @@ try:
                 self.loadingText.setText(_("Latest details..."))
                 if not self.isDaemon:
                     self.window.show()
+                    self.popup.close()
                     if(self.window.isAdmin()):
                         if not getSettings("AlreadyWarnedAboutAdmin"):
                             self.window.warnAboutAdmin()
@@ -579,7 +587,7 @@ try:
                 traceback_info += str(e)
                 webbrowser.open(("https://www.marticliment.com/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
                 print(traceback_info)
-            self.popup.hide()
+                self.popup.hide()
 
         def reloadWindow(self):
             cprint("Reloading...")
