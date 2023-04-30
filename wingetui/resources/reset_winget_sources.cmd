@@ -1,6 +1,6 @@
 @echo off
-SET wingetpath=%~dp0..\winget-cli\winget.exe
-SET sudopath=%~dp0..\sudo\gsudo.exe
+SET wingetpath="%~dp0..\winget-cli\winget.exe"
+SET sudopath="%~dp0..\sudo\gsudo.exe"
 echo This script will reset winget sources.
 echo You might be asked for administrator rights up to three times during this process.
 echo|set/p="Press <ENTER> to continue or CLOSE THIS WINDOW to abort this process"&runas/u: "">NUL
