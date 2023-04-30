@@ -1,18 +1,26 @@
-env/Scripts/Activate.bat
+set "py=%cd%\env\Scripts\python.exe"
+
+IF EXIST %py% (
+    echo "Using VENV Python"
+) ELSE (
+    set "py=python"
+    echo "Using system Python"
+)
+
 
 @echo on
 
-python -m pip install -r requirements.txt
+%py% -m pip install -r requirements.txt
 
-python scripts/apply_versions.py
+%py% scripts/apply_versions.py
 
-python scripts/get_contributors.py
+%py% scripts/get_contributors.py
 
 rmdir /Q /S wingetuiBin
 xcopy wingetui wingetui_bin /E /H /C /I /Y
 pushd wingetui_bin
 
-python -m compileall -b .
+%py% -m compileall -b .
 if %errorlevel% neq 0 goto:error
 
 del /S *.py
@@ -23,7 +31,7 @@ rmdir /Q /S lang\__pycache__
 rmdir /Q /S build
 rmdir /Q /S dist
 
-python -m PyInstaller "Win.spec"
+%py% -m PyInstaller "Win.spec"
 if %errorlevel% neq 0 goto:error
 
 timeout 2
