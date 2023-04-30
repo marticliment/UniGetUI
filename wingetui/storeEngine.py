@@ -848,7 +848,7 @@ class PackageInfoPopupWindow(QWidget):
         downloadGroupBox = QGroupBox()
         downloadGroupBox.setFlat(True)
         
-        optionsSection = SmallCollapsableSection("Installation options", getMedia("options"))
+        optionsSection = SmallCollapsableSection(_("Installation options"), getMedia("options"))
 
         self.hashCheckBox = QCheckBox()
         self.hashCheckBox.setText(_("Skip hash check"))
