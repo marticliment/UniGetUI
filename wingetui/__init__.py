@@ -34,7 +34,7 @@ try:
         
         def __init__(self):
             try:
-                super().__init__(sys.argv + ["-platform", f"windows:darkmode=0"])
+                super().__init__(sys.argv)
                 self.isDaemon: bool = "--daemon" in sys.argv
                 self.popup = DraggableWindow()
                 self.popup.setFixedSize(QSize(600, 400))

@@ -2960,7 +2960,7 @@ class DebuggingSection(QWidget):
 
         exportButtom = QPushButton(_("Export log as a file"))
         exportButtom.setFixedWidth(200)
-        exportButtom.clicked.connect(lambda: saveLog())
+        exportButtom.clicked.connect(saveLog)
 
         def copyLog():
             try:

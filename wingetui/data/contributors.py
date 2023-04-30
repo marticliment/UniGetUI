@@ -15,6 +15,7 @@ contributors = [
   "rumplin",
   "Satanarious",
   "quantumfallout",
+  "derula",
   "flatron4eg",
   "harleylara",
   "sitiom",
@@ -25,7 +26,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1285
+    "contributions": 1290
   },
   {
     "name": "ppvnf",
@@ -35,7 +36,7 @@ contributorsInfo = [
   {
     "name": "panther7",
     "link": "https://github.com/panther7",
-    "contributions": 58
+    "contributions": 60
   },
   {
     "name": "RavenMacDaddy",
@@ -90,6 +91,11 @@ contributorsInfo = [
   {
     "name": "quantumfallout",
     "link": "https://github.com/quantumfallout",
+    "contributions": 1
+  },
+  {
+    "name": "derula",
+    "link": "https://github.com/derula",
     "contributions": 1
   },
   {
