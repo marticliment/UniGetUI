@@ -268,9 +268,9 @@ class PackageInstallerWidget(QGroupBox):
         self.cancelButton.setText(_("OK"))
         self.cancelButton.clicked.connect(self.close)
         self.progressbar.setValue(1000)
+        t = ToastNotification(self, self.callInMain.emit)
+        t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
         if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
-            t = ToastNotification(self, self.callInMain.emit)                    
-            t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
             if returncode in (RETURNCODE_OPERATION_SUCCEEDED, RETURNCODE_NO_APPLICABLE_UPDATE_FOUND):
                 t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
                 t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", "."))
@@ -299,9 +299,8 @@ class PackageInstallerWidget(QGroupBox):
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
             self.err = CustomMessageBox(self.window())
             warnIcon = QIcon(getMedia("notif_warn"))
-            t = ToastNotification(self, self.callInMain.emit)                    
-            t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
-            t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))           
+            t.addAction(_("Show details"), lambda: (globals.mainWindow.showWindow(-1)))
+            t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))
             dialogData = {
                     "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                     "buttonTitle": _("Close"),
@@ -312,13 +311,11 @@ class PackageInstallerWidget(QGroupBox):
             }
             if returncode == RETURNCODE_INCORRECT_HASH: # if the installer's hash does not coincide
                 t.setDescription(_("The installer has an invalid checksum"))
-                t.addAction(_("More details"), lambda: (globals.mainWindow.showWindow(-1)))
                 dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
             else: # if there's a generic error
                 t.setDescription(_("{0} {1} failed").format(self.programName.capitalize(), self.actionName))
                 t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
-                t.addAction(_("More details"), lambda: (globals.mainWindow.showWindow(-1)))
                 dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(action=self.actionVerb, package=self.programName, showDetails=_("Show details"))
             self.err.showErrorMessage(dialogData, showNotification=False)
@@ -631,7 +628,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))           
                     t.setDescription(_("{0} {1} failed").format(self.programName.capitalize(), self.actionName))
                     t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
-                    t.addAction(_("More details"), lambda: (globals.mainWindow.showWindow(-1)))
+                    t.addAction(_("Show details"), lambda: (globals.mainWindow.showWindow(-1)))
                     errorData = {
                         "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
