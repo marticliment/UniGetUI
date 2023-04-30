@@ -1,3 +1,5 @@
+env/Scripts/Activate.bat
+
 @echo on
 
 python -m pip install -r requirements.txt

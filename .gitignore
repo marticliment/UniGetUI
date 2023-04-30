@@ -97,3 +97,4 @@ share-component-source/WingetUIShareComponent/obj/*
 share-component-source/packages/*
 wui-1.7.0-console.zip
 wui1.7.0-debug2.zip
+env/
