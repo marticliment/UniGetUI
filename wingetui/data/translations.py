@@ -4,7 +4,7 @@ untranslatedPercentage = {
   "ar": "82%",
   "bg": "67%",
   "bn": "18%",
-  "cs": "90%",
+  "cs": "95%",
   "da": "41%",
   "de": "87%",
   "es": "82%",
@@ -17,17 +17,14 @@ untranslatedPercentage = {
   "it": "83%",
   "ja": "80%",
   "ko": "99%",
-  "nb": "96%",
-  "nl": "99%",
+  "nb": "99%",
   "pl": "99%",
   "ru": "98%",
   "sl": "92%",
   "sr": "14%",
   "th": "39%",
-  "tr": "82%",
   "ua": "60%",
-  "zh_CN": "99%",
-  "zh_TW": "80%"
+  "zh_CN": "99%"
 }
 
 languageCredits = {
@@ -281,6 +278,10 @@ languageCredits = {
     {
       "name": "ahmetozmtn",
       "link": "https://github.com/ahmetozmtn"
+    },
+    {
+      "name": "gokberkgs",
+      "link": "https://github.com/gokberkgs"
     }
   ],
   "ua": [
