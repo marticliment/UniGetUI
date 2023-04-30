@@ -4,7 +4,7 @@ from PySide6.QtWidgets import *
 from win32mica import *
 from tools import *
 from tools import _
-import zroya
+import windows_toasts
 
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:
@@ -955,10 +955,8 @@ class SectionCheckBox(QWidget):
     def text(self) -> str:
         return self.checkbox.text()
 
-zroya.init("WingetUI", "MartiCliment", "WingetUI", "WingetUI", versionName)
-
 class ToastNotification(QObject):
-    notificationId: int = 0
+    toast: int = 0
     title: str = ""
     description: str = ""
     smallText: str = ""
@@ -1039,22 +1037,25 @@ class ToastNotification(QObject):
         Shows a toast notification with the given information
         """
         if self.description:
-            template = zroya.Template(zroya.TemplateType.Text2)
+            template = windows_toasts.toast_types.ToastText4()
         else:
-            template = zroya.Template(zroya.TemplateType.Text1)
-        template.setFirstLine(self.title)
+            template = windows_toasts.toast_types.ToastText2()
+        template.SetFirstLine(self.title)
         if self.description:
-            template.setSecondLine(self.description)
-        if self.smallText:
-            template.setAttribution(self.smallText)
-        template.setExpiration(self.showTime)
+            template.SetSecondLine(self.description)
+        #template.SetDuration(self.showTime)
         for action in self.actionsReference.keys():
             actionText = self.actionsReference[action]
             if not actionText in self.addedActions:
-                actionId = str(template.addAction(actionText))
+                actionId = actionText.lower().replace(" ", "_")
+                template.AddAction(windows_toasts.ToastButton(actionText, arguments=f"{actionId}"))
                 self.callableActions[actionId] = action
                 self.addedActions.append(actionText)
-        self.notificationId = zroya.show(template, on_action=self.onAction, on_click=self.onClickFun, on_dismiss=self.onDismissFun, on_fail=self.reportException)
+        template.on_activated=self.onAction
+        template.on_dismissed=self.onDismissFun,
+        template.on_failed=self.reportException
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=f"MartiCliment.WingetUI.WingetUI.{versionName}")
+        self.toast.show_toast(template)
         
     def reportException(self, id):
         """
@@ -1072,16 +1073,25 @@ class ToastNotification(QObject):
         """
         Instantly closes the notification
         """
-        zroya.hide(self.notificationId)
+        self.toast.clear_toasts()
         
-    def onAction(self, nid, action_id):
+    def onAction(self, arguments: windows_toasts.ToastActivatedEventArgs = None, inputs: dict | None = None):
         """
         Internal private method, should never be called externally 
         """
-        if self.signalCaller:
-            self.signalCaller(self.callableActions[str(action_id)])
+        argument = arguments.arguments
+        if argument in self.callableActions:
+            if arguments:
+                if self.signalCaller:
+                    self.signalCaller(self.callableActions[str(argument)])
+                else:
+                    self.callableActions[str(argument)]()
         else:
-            self.callableActions[str(action_id)]()
+            if self.signalCaller:
+                self.signalCaller(self.onClickFun)
+            else:
+                self.onClickFun()
+        
 
 
 if __name__ == "__main__":

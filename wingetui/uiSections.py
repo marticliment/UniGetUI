@@ -479,7 +479,7 @@ class DiscoverSoftwareSection(QWidget):
                 "chocolatey": chocoExportSchema
             }
 
-            filename = QFileDialog.getSaveFileName(self, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
+            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
             if filename[0] != "":
                 with open(filename[0], 'w') as f:
                     f.write(json.dumps(overAllSchema, indent=4))
@@ -499,7 +499,7 @@ class DiscoverSoftwareSection(QWidget):
     def importPackages(self):
         try:
             packageList = []
-            file = QFileDialog.getOpenFileName(self, _("Select package file"), filter="JSON (*.json)")[0]
+            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
                 contents = json.load(f)
@@ -2339,7 +2339,7 @@ class UninstallSoftwareSection(QWidget):
                 "chocolatey": chocoExportSchema
             }
 
-            filename = QFileDialog.getSaveFileName(self, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
+            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
             if filename[0] != "":
                 with open(filename[0], 'w') as f:
                     f.write(json.dumps(overAllSchema, indent=4))
@@ -2940,7 +2940,7 @@ class DebuggingSection(QWidget):
         def saveLog():
             try:
                 print("🔵 Saving log...")
-                f = QFileDialog.getSaveFileName(self, _("Export log"), os.path.expanduser("~"), f"{_('Text file')} (.txt)")
+                f = QFileDialog.getSaveFileName(None, _("Export log"), os.path.expanduser("~"), f"{_('Text file')} (*.txt)")
                 if f[0]:
                     fpath = f[0]
                     if not ".txt" in fpath.lower():
