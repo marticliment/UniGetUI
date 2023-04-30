@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14016,
-        "done": 7554
+        "done": 7555
     },
     "icons_and_screenshots": {
         "115": {
@@ -22638,8 +22638,12 @@
             "images": []
         },
         "lively": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lively.2.0.6.1.png",
-            "images": []
+            "icon": "https://store-images.s-microsoft.com/image/apps.4720.14416131676512756.84314783-1c86-4403-b991-2e1da8525703.bf78340f-7059-4641-8d3f-8a7f740be8c0?w=120",
+            "images": [
+                "https://store-images.s-microsoft.com/image/apps.21268.14416131676512756.d5cc43b8-16cc-4bdc-9f26-072d160ee792.51d0b915-43ec-4085-90a3-8cb687b4c488?h=768",
+                "https://store-images.s-microsoft.com/image/apps.21640.14416131676512756.8f975657-3f20-4265-8782-90e4e981cac8.157bc225-7b38-424a-8a73-84cec651d367?h=768",
+                "https://store-images.s-microsoft.com/image/apps.22016.14416131676512756.8f975657-3f20-4265-8782-90e4e981cac8.87797727-2732-4a94-8405-c7f4d9492e1b?h=768"
+            ]
         },
         "local-browser": {
             "icon": "",
