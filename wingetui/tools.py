@@ -18,7 +18,7 @@ from constantDeclarations import *
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr
 stdout_buffer = io.StringIO()
-stderr_buffçer = io.StringIO()
+stderr_buffer = io.StringIO()
 MissingTranslationList = []
 SYSTEM_THEME_ON_LAUNCH = 0
 realpath = 0
@@ -397,7 +397,7 @@ ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and EN
 ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
 
 
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stdout = stdout_buffer = io.StringIO()
     sys.stderr = stderr_buffer = io.StringIO()
 
