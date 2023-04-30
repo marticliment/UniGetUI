@@ -9,7 +9,7 @@ common_params = ["--source", "winget", "--accept-source-agreements"]
 if getSettings("UseSystemWinget"):
     winget = "winget.exe"
 else:
-    winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
+    winget = os.path.join(os.path.join(realpath, "PackageManagers/winget-cli"), "winget.exe")
 
 def processElement(element: str, idSeparator: int, verSeparator: int) -> tuple[str]:
     """
