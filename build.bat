@@ -27,6 +27,8 @@ del /S *.py
 copy ..\wingetui\__init__.py .\
 rmdir /Q /S __pycache__
 rmdir /Q /S external\__pycache__
+rmdir /Q /S data\__pycache__
+rmdir /Q /S PackageManagers\__pycache__
 rmdir /Q /S lang\__pycache__
 rmdir /Q /S build
 rmdir /Q /S dist
