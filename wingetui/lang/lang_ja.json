@@ -128,6 +128,7 @@
   "Install as administrator" : "管理者としてインストール",
   "installation" : "インストール",
   "Installation canceled by the user!" : "ユーザーによってインストールがキャンセルされました！",
+  "Installation options" : null,
   "Installation scope:" : null,
   "installed" : "インストール",
   "Installed Packages" : "インストールされているパッケージ",

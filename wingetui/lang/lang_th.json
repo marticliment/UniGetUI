@@ -128,6 +128,7 @@
   "Install as administrator" : "ติดตั้งในฐานะผู้ดูแลระบบ",
   "installation" : "การติดตั้ง",
   "Installation canceled by the user!" : "การติดตั้งถูกยกเลิก",
+  "Installation options" : null,
   "Installation scope:" : null,
   "installed" : "ติดตั้งสำเร็จ",
   "Installed Packages" : null,

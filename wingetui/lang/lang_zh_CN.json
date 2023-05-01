@@ -128,6 +128,7 @@
   "Install as administrator" : "以管理员身份安装",
   "installation" : "安装",
   "Installation canceled by the user!" : "安装已经被用户取消！",
+  "Installation options" : null,
   "Installation scope:" : "安装范围：",
   "installed" : "已安装",
   "Installed Packages" : "已安装的软件包",

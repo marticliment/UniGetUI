@@ -4,4 +4,4 @@ PyInstaller
 pywin32
 Flask
 flask-cors
-zroya
+windows_toasts
