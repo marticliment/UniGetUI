@@ -1048,7 +1048,7 @@ class ToastNotification(QObject):
         template.on_activated=self.onAction
         template.on_dismissed=lambda _1: self.onDismissFun()
         template.on_failed=lambda _1: self.reportException()
-        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=f"MartiCliment.WingetUI.WingetUI.{versionName}")
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable))
         self.toast.show_toast(template)
         
     def reportException(self, id):
