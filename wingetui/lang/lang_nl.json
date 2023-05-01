@@ -209,7 +209,7 @@
   "Remove" : "Verwijderen",
   "Remove permanent data" : "Permanente gegevens verwijderen",
   "Remove successful installs/uninstalls/updates from the installation list" : "Succesvolle installaties/verwijderingen/updates van de installatielijst wissen",
-  "Repository" : "Depot",
+  "Repository" : "Repository",
   "Reset" : "Opnieuw instellen",
   "Reset blacklist" : "Zwarte lijst leegmaken",
   "Reset chocolatey cache" : "Chocolatey-cache wissen",
