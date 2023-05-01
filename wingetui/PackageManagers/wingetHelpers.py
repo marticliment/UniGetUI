@@ -81,7 +81,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                                 NeedToCacheIdSeparator = False
                         else:
                             r = processElement(line, idSeparator, verSeparator)
-                            if r[0]:
+                            if r[0] and r[1]:
                                 signal.emit(r[0], r[1], r[2], r[3])
                             correctCache = True
                     if correctCache:
@@ -111,7 +111,7 @@ def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False
                             NeedToCacheIdSeparator = False
                     else:
                         r = processElement(l, idSeparator, verSeparator)
-                        if r[0]:
+                        if r[0] and r[1]:
                             signal.emit(r[0], r[1], r[2], r[3])
 
         try:
