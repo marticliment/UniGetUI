@@ -128,6 +128,7 @@
   "Install as administrator" : "Установить от имени администратора",
   "installation" : "установка",
   "Installation canceled by the user!" : "Установка отменена пользователем!",
+  "Installation options" : null,
   "Installation scope:" : "Область установки:",
   "installed" : "установлен",
   "Installed Packages" : "Установленные пакеты",

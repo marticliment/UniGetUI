@@ -128,6 +128,7 @@
   "Install as administrator" : "Yönetici olarak yükle",
   "installation" : "Kurulum",
   "Installation canceled by the user!" : "Kurulum kullanıcı tarafından iptal edildi!",
+  "Installation options" : null,
   "Installation scope:" : "Scope yüklemesi:",
   "installed" : "yüklü",
   "Installed Packages" : "Yüklü Paketler",

@@ -128,6 +128,7 @@
   "Install as administrator" : "관리자 권한으로 설치",
   "installation" : "설치",
   "Installation canceled by the user!" : "사용자가 설치 작업을 취소했습니다!",
+  "Installation options" : null,
   "Installation scope:" : "설치 범위:",
   "installed" : "설치됨",
   "Installed Packages" : "설치된 패키지",

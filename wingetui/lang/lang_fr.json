@@ -128,6 +128,7 @@
   "Install as administrator" : "Installer en tant qu'administrateur",
   "installation" : "installation",
   "Installation canceled by the user!" : "Installation annulée par l'utilisateur !",
+  "Installation options" : null,
   "Installation scope:" : "Portée de l'installation",
   "installed" : "installé",
   "Installed Packages" : "Paquets installés",
