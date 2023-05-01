@@ -972,7 +972,7 @@ class ToastNotification(QObject):
         super().__init__(parent=parent)
         self.signalCaller = signalCaller
         self.onClickFun = self.nullFunction
-        self.onDismissFun = self.nullFunctionWithParams
+        self.onDismissFun = self.nullFunction
         self.addedActions = []
         self.actionsReference = {}
         self.callableActions = {}
@@ -982,13 +982,7 @@ class ToastNotification(QObject):
         Internal private method, should never be called externally 
         """
         pass
-    
-    def nullFunctionWithParams(self, null1):
-        """
-        Internal private method, should never be called externally 
-        """
-        pass
-        
+            
     def setTitle(self, title: str):
         """
         Sets title of the notification
@@ -1052,8 +1046,8 @@ class ToastNotification(QObject):
                 self.callableActions[actionId] = action
                 self.addedActions.append(actionText)
         template.on_activated=self.onAction
-        template.on_dismissed=self.onDismissFun,
-        template.on_failed=self.reportException
+        template.on_dismissed=lambda _1: self.onDismissFun()
+        template.on_failed=lambda _1: self.reportException()
         self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=f"MartiCliment.WingetUI.WingetUI.{versionName}")
         self.toast.show_toast(template)
         
