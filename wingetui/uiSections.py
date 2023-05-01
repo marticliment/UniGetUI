@@ -1260,7 +1260,6 @@ class UpdateSoftwareSection(QWidget):
                 if not self.packageList.topLevelItem(i).isHidden():
                     count += 1
                     lastVisibleItem = self.packageList.topLevelItem(i)
-            self.packageList.label.setText(str(count))
             if count > 0:
                 if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
                     self.updateAll()
@@ -1299,10 +1298,10 @@ class UpdateSoftwareSection(QWidget):
                         t.show()
                         
                 globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
+                self.packageList.label.setText("")
             else:
                 globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.updatePackageNumber()
-            self.packageList.label.setText("")
             self.filter()
             if not getSettings("DisableAutoCheckforUpdates"):
                 try:
