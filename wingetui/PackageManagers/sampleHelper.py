@@ -3,7 +3,7 @@ import subprocess, time, os, sys
 from tools import *
 from tools import _
 
-from PackageClasses import *
+from .PackageClasses import *
 
 EXECUTABLE = "pacman.exe"
 PACKAGE_MANAGER_NAME = "PackageManager"
