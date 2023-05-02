@@ -393,7 +393,7 @@ def updateLangFile(file: str):
         
 def formatPackageIdAsName(id: str):
     """
-    Returns a more beautiful name
+    Returns a more beautiful name for the given ID
     """
     return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")])
 
