@@ -38,5 +38,7 @@ try:
         "      StringStruct(u'ProductVersion'": f", u'{versionName}'),\n",
     })
     print("done!")
+except FileNotFoundError as e:
+    print(f"Error: {e.strerror}: {e.filename}")
 except Exception as e:
     print(f"Error: {str(e)}")
