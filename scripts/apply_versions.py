@@ -1,7 +1,7 @@
 import sys
 import os
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
+os.chdir(os.path.join(os.path.dirname(__file__), "..")) # move to root project
 
 try:
 
@@ -38,5 +38,7 @@ try:
         "      StringStruct(u'ProductVersion'": f", u'{versionName}'),\n",
     })
     print("done!")
+except FileNotFoundError as e:
+    print(f"Error: {e.strerror}: {e.filename}")
 except Exception as e:
-    print(e)
+    print(f"Error: {str(e)}")
