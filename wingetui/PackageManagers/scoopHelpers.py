@@ -7,113 +7,177 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 scoop = "powershell -ExecutionPolicy ByPass -Command scoop"
 
-def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
-    print("🔵 Starting scoop search")
-    cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/scooppackages")
-    cachePath = os.path.dirname(cacheFile)
-    correctCache = False
-    if not os.path.exists(cachePath):
-        os.makedirs(cachePath)
-    if os.path.exists(cacheFile):
-        with open(cacheFile, "r") as f:
-            content = f.read()
-            if content != "":
-                print("🟢 Found valid cache for scoop!")
-                for line in content.split("\n"):
-                    export = list(filter(None, line.split(" ")))
-                    if len(export) >= 3:
-                        signal.emit(export[0].replace("-", " ").capitalize(), f"{export[0].strip()}", export[1].strip(), f"Scoop: {export[2].strip()}")
-                finishSignal.emit("scoop")
-                correctCache = True
-        
-    print("🔵 Starting scoop file update...")
-    p = subprocess.Popen(f"{scoop} search", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-    output = ""
-    oldcontents = ""
-    counter = 0
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            if(counter > 1 and not b"---" in line):
-                output += ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")) +"\n"
-                if not correctCache:
-                    export = list(filter(None, str(line, encoding='utf-8', errors="ignore").split(" ")))
-                    if len(export) >= 3:
-                        signal.emit(export[0].replace("-", " ").capitalize(), f"{export[0].strip()}", export[1].strip(), f"Scoop: {export[2].strip()}")
-            else:
-                counter += 1
+
+from .PackageClasses import *
+
+EXECUTABLE = scoop
+PACKAGE_MANAGER_NAME = "Scoop"
+CAHCE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{PACKAGE_MANAGER_NAME}CachedPackages")
+CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
+
+BLACKLISTED_PACKAGE_NAMES = []
+BLACKLISTED_PACKAGE_IDS = []
+BLACKLISTED_PACKAGE_VERSIONS = []
+
+
+if not os.path.exists(CAHCE_FILE_PATH):
+    os.makedirs(CAHCE_FILE_PATH)
+
+def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
+    f"""
+    Will retieve the cached packages for the package manager {PACKAGE_MANAGER_NAME} in the format of a list[Package] object.
+    If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
+    Finally, it will start a background cacher thread.
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for available packages")
     try:
-        with open(cacheFile, "r") as f:
-            oldcontents = f.read()
+        packages: list[Package] = []
+        if os.path.exists(CAHCE_FILE):
+            f = open(CAHCE_FILE, "r", encoding="utf-8", errors="ignore")
+            content = f.read()
             f.close()
+            if content != "":
+                print(f"🟢 Found valid, non-empty cache file for {PACKAGE_MANAGER_NAME}!")
+                for line in content.split("\n"):
+                    package = line.split(",")
+                    if len(package) >= 4 and not package[0] in BLACKLISTED_PACKAGE_NAMES and not package[1] in BLACKLISTED_PACKAGE_IDS and not package[2] in BLACKLISTED_PACKAGE_VERSIONS:
+                        packages.append(Package(package[0], package[1], package[2], package[3]))
+                Thread(target=cacheAvailablePackages_v2, daemon=True, name=f"{PACKAGE_MANAGER_NAME} package cacher thread").start()
+                print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
+                return packages
+            else:
+                print(f"🟠 {PACKAGE_MANAGER_NAME} cache file exists but is empty!")
+                if second_attempt:
+                    print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                    return []
+                cacheAvailablePackages_v2()
+                return getAvailablePackages_v2(second_attempt = True)
+        else:
+            print(f"🟡 {PACKAGE_MANAGER_NAME} cache file does not exist, creating cache forcefully and returning new package list")
+            if second_attempt:
+                print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                return []
+            cacheAvailablePackages_v2()
+            return getAvailablePackages_v2(second_attempt = True)
     except Exception as e:
         report(e)
-    for line in oldcontents.split("\n"):
-        if line.split(" ")[0] not in output:
-            output += line + "\n"
-    with open(cacheFile, "w") as f:
-        f.write(output)
+        return []
+    
+def cacheAvailablePackages_v2() -> None:
+    """
+    INTERNAL METHOD
+    Will load the available packages and write them into the cache file
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} package caching")
+    try:
+        p = subprocess.Popen(f"{PACKAGE_MANAGER_NAME} search", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        ContentsToCache = ""
+        DashesPassed = False
+        while p.poll() is None:
+            line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+            if line:
+                if not DashesPassed:
+                    if "----" in line:
+                        DashesPassed = True
+                else:
+                    package = list(filter(None, line.split(" ")))
+                    name = formatPackageIdAsName(package[0])
+                    id = package[0]
+                    version = package[1]
+                    source = f"Scoop: {package[2].strip()}"
+                    if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                        ContentsToCache += f"{name},{id},{version},{source}\n"
+        AlreadyCachedPackages = ""
+        try:
+            with open(CAHCE_FILE, "r") as f:
+                AlreadyCachedPackages = f.read()
+                f.close()
+        except Exception as e:
+            report(e)
+        for line in AlreadyCachedPackages.split("\n"):
+            if line.split(" ")[0] not in ContentsToCache:
+                ContentsToCache += line + "\n"
+        with open(CAHCE_FILE, "w") as f:
+            f.write(ContentsToCache)
+        print(f"🟢 {PACKAGE_MANAGER_NAME} packages cached successfuly")
+    except Exception as e:
+        report(e)
+        
+def getAvailableUpdates_v2() -> list[UpgradablePackage]:
+    f"""
+    Will retieve the upgradable packages by {PACKAGE_MANAGER_NAME} in the format of a list[UpgradablePackage] object.
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for updates")
+    try:
+        packages: list[UpgradablePackage] = []
+        p = subprocess.Popen(f"{EXECUTABLE} status", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        DashesPassed = False
+        while p.poll() is None:
+            line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+            if line:
+                if not DashesPassed:
+                    if "----" in line:
+                        DashesPassed = True
+                else:
+                    package = list(filter(None, line.split(" ")))
+                    name = formatPackageIdAsName(package[0])
+                    id = package[0]
+                    version = package[1]
+                    newVersion = package[2]
+                    source = PACKAGE_MANAGER_NAME
+                    if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS and not newVersion in BLACKLISTED_PACKAGE_VERSIONS:
+                        packages.append(UpgradablePackage(name, id, version, newVersion, source))
+        print(f"🟢 {PACKAGE_MANAGER_NAME} search for updates finished with {len(packages)} result(s)")
+        return packages
+    except Exception as e:
+        report(e)
+        return []
+
+def getInstalledPackages_v2() -> list[Package]:
+    f"""
+    Will retieve the intalled packages by {PACKAGE_MANAGER_NAME} in the format of a list[Package] object.
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for installed packages")
+    time.sleep(2)
+    try:
+        packages: list[Package] = []
+        p = subprocess.Popen(f"{EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        DashesPassed = False
+        while p.poll() is None:
+            line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+            if line:
+                if not DashesPassed:
+                    if "----" in line:
+                        DashesPassed = True
+                else:
+                    package = list(filter(None, line.split(" ")))
+                    if len(package) >= 3:
+                        name = formatPackageIdAsName(package[0])
+                        id = package[0]
+                        version = package[1]
+                        source = f"Scoop: {package[2].strip()}"
+                        if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(Package(name, id, version, source))
+        print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
+        return packages
+    except Exception as e:
+        report(e)
+        return []
+
+
+def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
+    for r in getAvailablePackages_v2():
+        signal.emit(r.Name, r.Id, r.Version, r.Source)
     finishSignal.emit("scoop")  
-    print("🟢 Scoop cache rebuilt")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    print("🟢 Starting scoop search...")
-    time.sleep(2) # dumb wait, but it works
-    p = subprocess.Popen(f"{scoop} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-    output = []
-    counter = 1
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            if(counter > 1 and not b"---" in line):
-                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore").strip()))
-            else:
-                counter += 1
-    counter = 0
-    lc = getSettings("LowercaseScoopApps")
-    for element in output:
-        try:
-            if "Name" in element:
-                continue
-            items = list(filter(None, element.split(" ")))
-            if(len(items)>=2):
-                signal.emit(items[0].replace("-", " ").capitalize(), f"{items[0]}", items[1], f"Scoop: {list(filter(None, element.split(' ')))[2].strip()}")
-        except IndexError as e:
-            print("IndexError: "+str(e))
-        except Exception as e:
-            print(e)
-    print("🟢 Scoop search finished")
+    for package in getInstalledPackages_v2():
+        signal.emit(package.Name, package.Id, package.Version, package.Source)
     finishSignal.emit("scoop")
 
 def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
-    print("🟢 Starting scoop search...")
-    p = subprocess.Popen(f"{scoop} status", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-    output = []
-    counter = 0
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            if(counter > 1 and not b"---" in line):
-                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore").strip()))
-            else:
-                counter += 1
-    counter = 0
-    lc = getSettings("LowercaseScoopApps")
-    for element in output:
-        if "WARN" in element:
-            continue
-        if "fatal" in element:
-            continue
-        if "Name" in element:
-            continue
-        try:
-            signal.emit(element.split(" ")[0].replace("-", " ").capitalize(), f"{element.split(' ')[0].strip()}", list(filter(None, element.split(" ")))[1].strip(), list(filter(None, element.split(" ")))[2].strip(), f"Scoop")
-        except Exception as e:
-            report(e)
-    print("🟢 Scoop search finished")
+    for package in getAvailableUpdates_v2():
+        signal.emit(package.Name, package.Id, package.Version, package.NewVersion, package.Source)
     finishSignal.emit("scoop")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verbose: bool = False) -> None:
