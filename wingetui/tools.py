@@ -395,7 +395,7 @@ def formatPackageIdAsName(id: str):
     """
     Returns a more beautiful name
     """
-    return "".join([piece.capitalize() for piece in id.replace("-", " ").replace(".", " ").replace("_", " ").split(" ")])
+    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")])
 
 ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
 ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS

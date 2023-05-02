@@ -30,6 +30,7 @@ def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
         if os.path.exists(CAHCE_FILE):
             f = open(CAHCE_FILE, "r", encoding="utf-8", errors="ignore")
             content = f.read()
+            f.close()
             if content != "":
                 print(f"🟢 Found valid, non-empty cache file for {PACKAGE_MANAGER_NAME}!")
                 for line in content.split("\n"):
@@ -40,8 +41,12 @@ def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
                 print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
                 return packages
             else:
-                print(f" {PACKAGE_MANAGER_NAME} cache file exists but is empty!")
-            f.close()
+                print(f"🟠 {PACKAGE_MANAGER_NAME} cache file exists but is empty!")
+                if second_attempt:
+                    print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                    return []
+                cacheAvailablePackages_v2()
+                return getAvailablePackages_v2(second_attempt = True)
         else:
             print(f"🟡 {PACKAGE_MANAGER_NAME} cache file does not exist, creating cache forcefully and returning new package list")
             if second_attempt:
@@ -75,7 +80,7 @@ def cacheAvailablePackages_v2() -> None:
                 else:
                     continue
                 
-                if not name not in BLACKLISTED_PACKAGE_NAMES and not id not in BLACKLISTED_PACKAGE_VERSIONS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
                     ContentsToCache += f"{name},{id},{version},{source}\n"
 
         AlreadyCachedPackages = ""
@@ -116,7 +121,7 @@ def getAvailableUpdates_v2() -> list[UpgradablePackage]:
                 else:
                     continue
                 
-                if not name not in BLACKLISTED_PACKAGE_NAMES and not id not in BLACKLISTED_PACKAGE_VERSIONS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
                     packages.append(UpgradablePackage(name, id, version, newVersion, source))
         print(f"🟢 {PACKAGE_MANAGER_NAME} search for updates finished with {len(packages)} result(s)")
         return packages
@@ -145,7 +150,7 @@ def getInstalledPackages_v2() -> list[Package]:
                 else:
                     continue
                 
-                if not name not in BLACKLISTED_PACKAGE_NAMES and not id not in BLACKLISTED_PACKAGE_VERSIONS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
                     packages.append(Package(name, id, version, source))
         print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
         return packages

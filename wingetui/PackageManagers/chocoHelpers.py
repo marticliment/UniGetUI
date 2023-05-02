@@ -6,7 +6,6 @@ from tools import _
 
 common_params = []
 
-print
 
 
 if getSettings("UseSystemChocolatey"):
@@ -167,7 +166,6 @@ def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> N
             line = line.strip()
             if line:
                 output.append(str(line, encoding='utf-8', errors="ignore"))
-        print(p.stdout)
         for line in output:
             if("Title:" in line):
                 packageDetails["title"] = line.split("|")[0].replace("Title:", "").strip()

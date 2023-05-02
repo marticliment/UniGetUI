@@ -38,6 +38,7 @@ def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
         if os.path.exists(CAHCE_FILE):
             f = open(CAHCE_FILE, "r", encoding="utf-8", errors="ignore")
             content = f.read()
+            f.close()
             if content != "":
                 print(f"🟢 Found valid, non-empty cache file for {PACKAGE_MANAGER_NAME}!")
                 for line in content.split("\n"):
@@ -306,17 +307,13 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
     return (id, id)
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    print(f"🟢 Starting winget search, winget on {winget}...")
     for package in getAvailableUpdates_v2():
         signal.emit(package.Name, package.Id, package.Version, package.NewVersion, package.Source)
     finishSignal.emit("winget")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    print(f"🟢 Starting winget search, winget on {winget}...")
     for package in getInstalledPackages_v2():
         signal.emit(package.Name, package.Id, package.Version, package.Source)
-    finishSignal.emit("winget")
-
     finishSignal.emit("winget")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> None:
