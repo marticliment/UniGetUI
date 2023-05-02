@@ -1,7 +1,7 @@
 import sys
 import os
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
+os.chdir(os.path.join(os.path.dirname(__file__), "..")) # move to root project
 
 try:
 
@@ -39,4 +39,4 @@ try:
     })
     print("done!")
 except Exception as e:
-    print(e)
+    print(f"Error: {str(e)}")
