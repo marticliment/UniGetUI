@@ -325,8 +325,6 @@ try:
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Winget")))
                 o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
-                print(o.stdout)
-                print(o.stderr)
                 globals.componentStatus["wingetFound"] = o.returncode == 0
                 globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Winget", state = _("Yes") if globals.componentStatus['wingetFound'] else _("No"))))
@@ -347,8 +345,6 @@ try:
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Chocolatey")))
                 o = subprocess.run(f"{chocoHelpers.choco} -v", shell=True, stdout=subprocess.PIPE)
-                print(o.stdout)
-                print(o.stderr)
                 globals.componentStatus["chocoFound"] = o.returncode == 0
                 globals.componentStatus["chocoVersion"] = o.stdout.decode('utf-8').replace("\n", "")
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Chocolatey", state = _("Yes") if globals.componentStatus['chocoFound'] else _("No"))))
@@ -360,8 +356,6 @@ try:
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Scoop")))
                 o = subprocess.run(f"{scoopHelpers.scoop} -v", shell=True, stdout=subprocess.PIPE)
-                print(o.stdout)
-                print(o.stderr)
                 globals.componentStatus["scoopFound"] = o.returncode == 0
                 globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Scoop", state = _("Yes") if globals.componentStatus['scoopFound'] else _("No"))))

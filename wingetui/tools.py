@@ -390,6 +390,12 @@ def updateLangFile(file: str):
                 print("🔵 Language file up-to-date")
     except Exception as e:
         report(e)
+        
+def formatPackageIdAsName(id: str):
+    """
+    Returns a more beautiful name
+    """
+    return "".join([piece.capitalize() for piece in id.replace("-", " ").replace(".", " ").replace("_", " ").split(" ")])
 
 ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
 ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
