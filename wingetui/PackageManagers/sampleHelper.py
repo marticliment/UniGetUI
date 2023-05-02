@@ -35,7 +35,7 @@ def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
                 print(f"🟢 Found valid, non-empty cache file for {PACKAGE_MANAGER_NAME}!")
                 for line in content.split("\n"):
                     package = line.split(",")
-                    if len(package) >= 3 and not package[0] not in BLACKLISTED_PACKAGE_NAMES and not package[1] not in BLACKLISTED_PACKAGE_IDS and not package[2] not in BLACKLISTED_PACKAGE_VERSIONS:
+                    if len(package) >= 3 and not package[0] in BLACKLISTED_PACKAGE_NAMES and not package[1] in BLACKLISTED_PACKAGE_IDS and not package[2] in BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(Package(formatPackageIdAsName(package[0]), package[1], package[2], PACKAGE_MANAGER_NAME))
                 Thread(target=cacheAvailablePackages_v2, daemon=True, name=f"{PACKAGE_MANAGER_NAME} package cacher thread").start()
                 print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")

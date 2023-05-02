@@ -89,7 +89,8 @@ def cacheAvailablePackages_v2() -> None:
                         ContentsToCache += f"{name},{id},{version},{source}\n"
         AlreadyCachedPackages = ""
         try:
-            with open(CAHCE_FILE, "r") as f:
+            if os.path.exists(CAHCE_FILE):
+                f = open(CAHCE_FILE, "r")
                 AlreadyCachedPackages = f.read()
                 f.close()
         except Exception as e:
