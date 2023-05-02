@@ -3,133 +3,282 @@ import subprocess, time, os, sys
 from tools import *
 from tools import _
 
+from .PackageClasses import *
 
 common_params = ["--source", "winget", "--accept-source-agreements"]
 
 if getSettings("UseSystemWinget"):
-    winget = "winget.exe"
+    EXECUTABLE = "winget.exe"
 else:
-    winget = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
+    EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 
-def processElement(element: str, idSeparator: int, verSeparator: int) -> tuple[str]:
+winget = EXECUTABLE
+
+PACKAGE_MANAGER_NAME = "Winget"
+CAHCE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{PACKAGE_MANAGER_NAME}CachedPackages")
+CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
+
+BLACKLISTED_PACKAGE_NAMES = [""]
+BLACKLISTED_PACKAGE_IDS = [""]
+BLACKLISTED_PACKAGE_VERSIONS = []
+
+
+if not os.path.exists(CAHCE_FILE_PATH):
+    os.makedirs(CAHCE_FILE_PATH)
+
+def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
+    f"""
+    Will retieve the cached packages for the package manager {PACKAGE_MANAGER_NAME} in the format of a list[Package] object.
+    If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
+    Finally, it will start a background cacher thread.
     """
-    Will return a tuple made out of 4 strings.
-    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for available packages")
     try:
-        verElement = element[idSeparator:].strip()
-        verElement.replace("\t", " ")
-        while "  " in verElement:
-            verElement = verElement.replace("  ", " ")
-        iOffset = 0
-        id = verElement.split(" ")[iOffset+0]
-        try:
-            ver = verElement.split(" ")[iOffset+1]
-        except IndexError:
-            ver = _("Unknown")
-        if len(id)==1:
-            iOffset + 1
-            id = verElement.split(" ")[iOffset+0]
-            try:
-                ver = verElement.split(" ")[iOffset+1]
-            except IndexError:
-                ver = "Unknown"
-        if ver.strip() in ("<", "-", ""):
-            iOffset += 1
-            ver = verElement.split(" ")[iOffset+1]
-        if not "  " in element[0:idSeparator].strip():
-            return (element[0:idSeparator].strip(), id, ver, "Winget")
+        packages: list[Package] = []
+        if os.path.exists(CAHCE_FILE):
+            f = open(CAHCE_FILE, "r", encoding="utf-8", errors="ignore")
+            content = f.read()
+            if content != "":
+                print(f"🟢 Found valid, non-empty cache file for {PACKAGE_MANAGER_NAME}!")
+                for line in content.split("\n"):
+                    package = line.split(",")
+                    if len(package) >= 2:
+                        packages.append(Package(package[0], package[1], package[2], PACKAGE_MANAGER_NAME))
+                Thread(target=cacheAvailablePackages_v2, daemon=True, name=f"{PACKAGE_MANAGER_NAME} package cacher thread").start()
+                print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
+                return packages
+            else:
+                print(f"🟠 {PACKAGE_MANAGER_NAME} cache file exists but is empty!")
+                f.close()
+                if second_attempt:
+                    print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                    return []
+                cacheAvailablePackages_v2()
+                return getAvailablePackages_v2(second_attempt = True)
         else:
-            element = bytes(element, "utf-8")
-            export = (element[0:idSeparator], str(element[idSeparator:], "utf-8").strip().split(" ")[0], list(filter(None, str(element[idSeparator:], "utf-8").strip().split(" ")))[1])
-            return (str(export[0], "utf-8").strip(), export[1], export[2], "Winget")
+            print(f"🟡 {PACKAGE_MANAGER_NAME} cache file does not exist, creating cache forcefully and returning new package list")
+            if second_attempt:
+                print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                return []
+            cacheAvailablePackages_v2()
+            return getAvailablePackages_v2(second_attempt = True)
     except Exception as e:
-        try:
-            report(e)
-            try:
-                element = str(element, "utf-8")
-            except Exception as e:
-                print(e)
-            return (element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:].split(" ")[0].strip(), "Winget")
-        except Exception as e:
-            report(e)
-    return ("", "", "", "")
-   
-def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
+        report(e)
+        return []
+    
+def cacheAvailablePackages_v2() -> None:
+    """
+    Internal method, should not be called manually externally.
+    Will load the available packages and write them into the cache file
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} package caching")
     try:
-        print("🔵 Starting winget search")
-        cacheFile = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/wingetpackages")
-        cachePath = os.path.dirname(cacheFile)
-        correctCache = False
-        NeedToCacheIdSeparator = True
-        if not os.path.exists(cachePath):
-            os.makedirs(cachePath)
-        if os.path.exists(cacheFile):
-            with open(cacheFile, "r", encoding='utf-8', errors="ignore") as f:
-                content = f.read()
-                if content != "":
-                    print("🟢 Found valid cache for winget!")
-                    for line in content.split("\n"):
-                        if NeedToCacheIdSeparator:
-                            line = line.split("\r")[-1]
-                            if("Id" in line):
-                                idSeparator = len(line.split("Id")[0])
-                                verSeparator = idSeparator+2
-                                i=0
-                                while line.split("Id")[1].split(" ")[i] == "":
-                                    verSeparator += 1
-                                    i += 1
-                                NeedToCacheIdSeparator = False
-                        else:
-                            r = processElement(line, idSeparator, verSeparator)
-                            if r[0] and r[1]:
-                                signal.emit(r[0], r[1], r[2], r[3])
-                            correctCache = True
-                    if correctCache:
-                        finishSignal.emit("winget")
-            
-        print("🔵 Starting winget file update...")
-        p = subprocess.Popen(["mode", "400,30&", winget, "search", ""] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        output = ""
-        oldcontents = ""
-        NeedToCacheIdSeparator = True
+        p = subprocess.Popen([PACKAGE_MANAGER_NAME, "search", "", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+        ContentsToCache = ""
+        hasShownId: bool = False
+        idPosition: int = 0
+        versionPosition: int = 0
         while p.poll() is None:
-            line = p.stdout.readline()
-            line = line.strip()
+            line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
             if line:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                output += l +"\n"
-                if not correctCache:
-                    if NeedToCacheIdSeparator:
-                        l = l.split("\r")[-1]
-                        if("Id" in l):
-                            idSeparator = len(l.split("Id")[0])
-                            verSeparator = idSeparator+2
-                            i=0
-                            while l.split("Id")[1].split(" ")[i] == "":
-                                verSeparator += 1
-                                i += 1
-                            NeedToCacheIdSeparator = False
-                    else:
-                        r = processElement(l, idSeparator, verSeparator)
-                        if r[0] and r[1]:
-                            signal.emit(r[0], r[1], r[2], r[3])
-
+                if not hasShownId:
+                    if "Id" in line:
+                        line = line.replace("\x08-\x08\\\x08|\x08 \r","")
+                        for char in ("\r", "/", "|", "\\", "-"):
+                            line = line.split(char)[-1].strip()
+                        hasShownId = True
+                        idPosition = len(line.split("Id")[0])
+                        versionPosition = len(line.split("Version")[0])
+                elif "---" in line:
+                    pass
+                else:
+                    try:
+                        name = line[0:idPosition].strip()
+                        idVersionSubstr = line[idPosition:].strip()
+                        if "  " in name:
+                            oName = name
+                            while "  " in oName:
+                                oName = oName.replace("  ", " ")
+                            idVersionSubstr = oName.split(" ")[-1]+idVersionSubstr
+                            name = " ".join(oName.split(" ")[:-1])
+                        idVersionSubstr.replace("\t", " ")
+                        while "  " in idVersionSubstr:
+                            idVersionSubstr = idVersionSubstr.replace("  ", " ")
+                        iOffset = 0
+                        id = idVersionSubstr.split(" ")[iOffset]
+                        ver = idVersionSubstr.split(" ")[iOffset+1]
+                        if len(id) == 1:
+                            iOffset + 1
+                            id = idVersionSubstr.split(" ")[iOffset]
+                            ver = idVersionSubstr.split(" ")[iOffset+1]
+                        if ver.strip() in ("<", "-"):
+                            iOffset += 1
+                            ver = idVersionSubstr.split(" ")[iOffset+1]
+                        if not "  " in name:
+                            if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                                ContentsToCache += f"{name},{id},{ver}\n"
+                        else:
+                            if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                                name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                                while "##" in name:
+                                    name = name.replace("##", "#")
+                                print(f"🟡 package {name} failed parsing, going for method 2...")
+                                ContentsToCache += f"{name},{id},{ver}\n"
+                    except Exception as e:
+                        ContentsToCache += f"{line[0:idPosition].strip()},{line[idPosition:versionPosition].strip()},{line[versionPosition:].strip()}\n"
+                        if type(e) != IndexError:
+                            report(e)
+        AlreadyCachedPackages = ""
         try:
-            with open(cacheFile, "r", encoding="utf-8", errors="ignore") as f:
-                oldcontents = f.read()
+            if os.path.exists(CAHCE_FILE):
+                f = open(CAHCE_FILE, "r", encoding="utf-8", errors="ignore")
+                AlreadyCachedPackages = f.read()
                 f.close()
         except Exception as e:
             report(e)
-        for line in oldcontents.split("\n"):
-            if line.split(" ")[0] not in output:
-                output += line + "\n"
-        with open(cacheFile, "w", encoding="utf-8", errors="ignore") as f:
-            f.write(output)
-        finishSignal.emit("winget")  
-        print("🟢 Winget cache rebuilt")
+        for line in AlreadyCachedPackages.split("\n"):
+            if line.split(",")[0] not in ContentsToCache:
+                ContentsToCache += line + "\n"
+        with open(CAHCE_FILE, "w", encoding="utf-8", errors="ignore") as f:
+            f.write(ContentsToCache)
+        print(f"🟢 {PACKAGE_MANAGER_NAME} packages cached successfuly")
     except Exception as e:
         report(e)
-        finishSignal.emit("winget")  
+        
+def getAvailableUpdates_v2() -> list[UpgradablePackage]:
+    f"""
+    Will retieve the upgradable packages by {PACKAGE_MANAGER_NAME} in the format of a list[UpgradablePackage] object.
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for updates")
+    try:
+        packages: list[UpgradablePackage] = []
+        p = subprocess.Popen(["mode", "400,30&", EXECUTABLE, "upgrade", "--include-unknown", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        hasShownId: bool = False
+        idPosition: int = 0
+        versionPosition: int = 0
+        newVerPosition: int = 0
+        while p.poll() is None:
+            line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+            if not hasShownId:
+                if "Id" in line:
+                    line = line.replace("\x08-\x08\\\x08|\x08 \r","")
+                    for char in ("\r", "/", "|", "\\", "-"):
+                        line = line.split(char)[-1].strip()
+                    hasShownId = True
+                    idPosition = len(line.split("Id")[0])
+                    versionPosition = len(line.split("Version")[0])
+                    newVerPosition = len(line.split("Available")[0])
+                else:
+                    pass
+            elif "---" in line:
+                pass
+            else:
+                element = line
+                try:
+                    verElement = element[idPosition:].strip()
+                    verElement.replace("\t", " ")
+                    while "  " in verElement:
+                        verElement = verElement.replace("  ", " ")
+                    iOffset = 0
+                    id = verElement.split(" ")[iOffset+0]
+                    ver = verElement.split(" ")[iOffset+1]
+                    newver = verElement.split(" ")[iOffset+2]
+                    if len(id)==1:
+                        iOffset + 1
+                        id = verElement.split(" ")[iOffset+0]
+                        newver = verElement.split(" ")[iOffset+2]
+                        ver = verElement.split(" ")[iOffset+1]
+                    if ver.strip() in ("<", ">", "-"):
+                        iOffset += 1
+                        ver = verElement.split(" ")[iOffset+1]
+                        newver = verElement.split(" ")[iOffset+2]
+                    name = element[0:idPosition].strip()
+                    if not "  " in name:
+                        if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(UpgradablePackage(name, id, ver, newver, PACKAGE_MANAGER_NAME))
+                    else:
+                        name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                        while "##" in name:
+                            name = name.replace("##", "#")
+                        if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, PACKAGE_MANAGER_NAME))
+                except Exception as e:
+                    packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:].split(" ")[0].strip(), PACKAGE_MANAGER_NAME))
+                    if type(e) != IndexError:
+                        report(e)
+        print(f"🟢 {PACKAGE_MANAGER_NAME} search for updates finished with {len(packages)} result(s)")
+        return packages
+    except Exception as e:
+        report(e)
+        return []
+
+def getInstalledPackages_v2() -> list[Package]:
+    f"""
+    Will retieve the intalled packages by {PACKAGE_MANAGER_NAME} in the format of a list[Package] object.
+    """
+    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for installed packages")
+    try:
+        packages: list[Package] = []
+        p = subprocess.Popen(["mode", "400,30&", EXECUTABLE, "list", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        hasShownId: bool = False
+        idPosition: int = 0
+        versionPosition: int = 0
+        while p.poll() is None:
+            line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+            if not hasShownId:
+                if "Id" in line:
+                    line = line.replace("\x08-\x08\\\x08|\x08 \r","")
+                    for char in ("\r", "/", "|", "\\", "-"):
+                        line = line.split(char)[-1].strip()
+                    hasShownId = True
+                    idPosition = len(line.split("Id")[0])
+                    versionPosition = len(line.split("Version")[0])
+                else:
+                    pass
+            elif "---" in line:
+                pass
+            else:
+                element = line.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
+                try:
+                    verElement = element[idPosition:].strip()
+                    verElement.replace("\t", " ")
+                    while "  " in verElement:
+                        verElement = verElement.replace("  ", " ")
+                    iOffset = 0
+                    id = " ".join(verElement.split(" ")[iOffset:-1])
+                    ver = verElement.split(" ")[-1]
+                    if len(id) == 1:
+                        iOffset + 1
+                        id = verElement.split(" ")[iOffset+0]
+                        ver = verElement.split(" ")[iOffset+1]
+                    if ver.strip() in ("<", "-"):
+                        iOffset += 1
+                        ver = verElement.split(" ")[iOffset+1]
+                    name = element[0:idPosition].strip()
+                    if not "  " in name:
+                        if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(Package(name, id, ver, PACKAGE_MANAGER_NAME))
+                    else:
+                        if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
+                            print(f"🟡 package {name} failed parsing, going for method 2...")
+                            name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                            while "##" in name:
+                                name = name.replace("##", "#")
+                            packages.append(Package(name.split("#")[0], name.split("#")[-1]+id, ver, PACKAGE_MANAGER_NAME))
+                except Exception as e:
+                    packages.append(Package(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:].strip(), PACKAGE_MANAGER_NAME))
+                    if type(e) != IndexError:
+                        report(e)
+        print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
+        return packages
+    except Exception as e:
+        report(e)
+        return []
+ 
+def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
+    for r in getAvailablePackages_v2():
+        signal.emit(r.Name, r.Id, r.Version, r.Source)
+    finishSignal.emit("winget") 
 
 def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
     print(f"🟢 Starting winget search, winget on {winget}...")
@@ -158,128 +307,16 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
 
 def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen(["mode", "400,30&", winget, "upgrade", "--include-unknown"] + common_params[0:2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-    output = []
-    counter = 0
-    idSeparator = 0
-    while p.poll() is None:
-        line = p.stdout.readline()  # type: ignore
-        line = line.strip()
-        if line:
-            if(counter > 0):
-                if not b"upgrades available" in line:
-                    output.append(line)
-            else:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                for char in ("\r", "/", "|", "\\", "-"):
-                    l = l.split(char)[-1].strip()
-                if("Id" in l):
-                    idSeparator = len(l.split("Id")[0])
-                    verSeparator = len(l.split("Version")[0])
-                    newVerSeparator = len(l.split("Available")[0])
-                    counter += 1
-
-    if p.returncode != 0 and not noretry:
-        time.sleep(1)
-        print(p.returncode)
-        searchForUpdates(signal, finishSignal, noretry=True)
-    else:
-        counter = 0
-        for element in output:
-            try:
-                element = str(element, "utf-8", errors="ignore")
-                verElement = element[idSeparator:].strip()
-                verElement.replace("\t", " ")
-                while "  " in verElement:
-                    verElement = verElement.replace("  ", " ")
-                iOffset = 0
-                id = verElement.split(" ")[iOffset+0]
-                ver = verElement.split(" ")[iOffset+1]
-                newver = verElement.split(" ")[iOffset+2]
-                if len(id)==1:
-                    iOffset + 1
-                    id = verElement.split(" ")[iOffset+0]
-                    newver = verElement.split(" ")[iOffset+2]
-                    ver = verElement.split(" ")[iOffset+1]
-                if ver.strip() in ("<", ">", "-"):
-                    iOffset += 1
-                    ver = verElement.split(" ")[iOffset+1]
-                    newver = verElement.split(" ")[iOffset+2]
-                if not "  " in element[0:idSeparator].strip():
-                    signal.emit(element[0:idSeparator].strip(), id, ver, newver, "Winget")
-                else:
-                    name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                    while "##" in name:
-                        name = name.replace("##", "#")
-                    signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, newver, "Winget")
-            except Exception as e:
-                try:
-                    signal.emit(element[0:idSeparator].strip(), element[idSeparator:verSeparator].strip(), element[verSeparator:newVerSeparator].split(" ")[0].strip(), element[newVerSeparator:].split(" ")[0].strip(), "Winget")
-                except Exception as e:
-                    report(e)
-                except Exception as e:
-                    report(e)
-        print("🟢 Winget search finished")
-        finishSignal.emit("winget")
+    for package in getAvailableUpdates_v2():
+        signal.emit(package.Name, package.Id, package.Version, package.NewVersion, package.Source)
+    finishSignal.emit("winget")
 
 def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
     print(f"🟢 Starting winget search, winget on {winget}...")
-    p = subprocess.Popen(["mode", "400,30&", winget, "list"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-    output = []
-    counter = 0
-    idSeparator = 0
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        if line:
-            if(counter > 0 and not b"---" in line):
-                output.append(line)
-            else:
-                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","")
-                for char in ("\r", "/", "|", "\\", "-"):
-                    l = l.split(char)[-1].strip()
-                if("Id" in l):
-                    idSeparator = len(l.split("Id")[0])
-                    verSeparator = len(l.split("Version")[0])
-                    counter += 1
-    counter = 0
-    emptyStr = ""
-    wingetName = "Winget"
-    for element in output:
-        try:
-            element = str(element, "utf-8", errors="ignore")
-            element = element.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
-            verElement = element[idSeparator:].strip()
-            verElement.replace("\t", " ")
-            while "  " in verElement:
-                verElement = verElement.replace("  ", " ")
-            iOffset = 0
-            id = " ".join(verElement.split(" ")[iOffset:-1])
-            ver = verElement.split(" ")[-1]
-            if len(id)==1:
-                iOffset + 1
-                id = verElement.split(" ")[iOffset+0]
-                ver = verElement.split(" ")[iOffset+1]
-            if ver.strip() in ("<", "-"):
-                iOffset += 1
-                ver = verElement.split(" ")[iOffset+1]
-            if not "  " in element[0:idSeparator].strip():
-                signal.emit(element[0:idSeparator].strip(), id, ver, wingetName)
-            else:
-                print(f"🟡 package {element[0:idSeparator].strip()} failed parsing, going for method 2...")
-                print(element, verSeparator)
-                name = element[0:idSeparator].strip().replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                while "##" in name:
-                    name = name.replace("##", "#")
-                signal.emit(name.split("#")[0], name.split("#")[-1]+id, ver, wingetName)
-        except Exception as e:
-            try:
-                report(e)
-                element = str(element, "utf-8")
-                signal.emit(element[0:idSeparator].strip(), element[idSeparator:].strip(), emptyStr, wingetName)
-            except Exception as e:
-                report(e)
-    print("🟢 Winget uninstallable packages search finished")
+    for package in getInstalledPackages_v2():
+        signal.emit(package.Name, package.Id, package.Version, package.Source)
+    finishSignal.emit("winget")
+
     finishSignal.emit("winget")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> None:
@@ -460,7 +497,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
         outputCode = RETURNCODE_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
 
-
-
 if(__name__=="__main__"):
+    os.chdir("..")
     import __init__
