@@ -4,7 +4,8 @@ import os
 import time
 import tolgee_requests
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
+root_dir = os.path.join(os.path.dirname(__file__), "..")
+os.chdir(root_dir) # move to root project
 
 sys.path.append("wingetui")
 
@@ -28,7 +29,7 @@ if len(sys.argv)>1:
 
 import glob, zipfile
 
-os.chdir("wingetui/lang")
+os.chdir(os.path.normapth(os.path.join(root_dir, "wingetui/lang")))
 
 print()
 print("-------------------------------------------------------")
@@ -147,7 +148,7 @@ print("  Updating README.md...")
 
 
 # Generate language table
-readmeFilename = "../../README.md"
+readmeFilename = os.path.join(root_dir, "README.md")
 
 f = open(readmeFilename, "r+", encoding="utf-8")
 skip = False
