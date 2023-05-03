@@ -1,7 +1,8 @@
 import os
 import json
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
+root_dir = os.path.join(os.path.dirname(__file__), "..")
+os.chdir(root_dir) # move to root project
 
 print("Getting contributors...")
 
@@ -34,8 +35,8 @@ contributors = {json.dumps(contributors, indent=2, ensure_ascii=False)}
 contributorsInfo = {json.dumps(contributorsInfo, indent=2, ensure_ascii=False)}
 """
 
-f = open("wingetui/data/contributors.py", "w", encoding="utf-8")
-f.write(output.strip())
-f.close()
+contributors_filepath = os.path.normapth(os.path.join(root_dir, "wingetui/data/contributors.py"))
+with open(contributors_filepath, "w", encoding="utf-8") as f:
+    f.write(output.strip())
 
 print("done!")
