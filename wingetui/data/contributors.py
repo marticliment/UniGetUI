@@ -7,12 +7,12 @@ contributors = [
   "RavenMacDaddy",
   "adripo",
   "MisterEvans78",
+  "rumplin",
   "sklart",
   "vedantmgoyal2009",
   "candrapersada",
   "elliot-100",
   "neoOpus",
-  "rumplin",
   "Satanarious",
   "quantumfallout",
   "derula",
@@ -26,7 +26,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1305
+    "contributions": 1307
   },
   {
     "name": "ppvnf",
@@ -54,6 +54,11 @@ contributorsInfo = [
     "contributions": 4
   },
   {
+    "name": "rumplin",
+    "link": "https://github.com/rumplin",
+    "contributions": 3
+  },
+  {
     "name": "sklart",
     "link": "https://github.com/sklart",
     "contributions": 3
@@ -76,11 +81,6 @@ contributorsInfo = [
   {
     "name": "neoOpus",
     "link": "https://github.com/neoOpus",
-    "contributions": 1
-  },
-  {
-    "name": "rumplin",
-    "link": "https://github.com/rumplin",
     "contributions": 1
   },
   {

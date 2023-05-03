@@ -4,25 +4,20 @@ untranslatedPercentage = {
   "ar": "81%",
   "bg": "67%",
   "bn": "18%",
-  "cs": "99%",
   "da": "41%",
-  "de": "87%",
   "es": "81%",
   "fa": "81%",
   "fr": "98%",
   "hi": "57%",
   "hu": "86%",
-  "id": "56%",
-  "it": "83%",
+  "id": "72%",
   "ja": "80%",
   "ko": "99%",
   "nb": "98%",
   "nl": "99%",
   "ru": "98%",
-  "sl": "99%",
   "sr": "14%",
   "th": "39%",
-  "tr": "99%",
   "ua": "60%",
   "zh_CN": "99%",
   "zh_TW": "99%"
@@ -85,6 +80,10 @@ languageCredits = {
     {
       "name": "ebnater",
       "link": "https://github.com/ebnater"
+    },
+    {
+      "name": "michaelmairegger",
+      "link": "https://github.com/michaelmairegger"
     },
     {
       "name": "Seeloewen",
@@ -157,6 +156,10 @@ languageCredits = {
     {
       "name": "arthackrc",
       "link": "https://github.com/arthackrc"
+    },
+    {
+      "name": "joenior",
+      "link": "https://github.com/joenior"
     }
   ],
   "it": [
