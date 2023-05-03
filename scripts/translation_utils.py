@@ -5,7 +5,7 @@ import tolgee_requests
 
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
-os.chdir(os.path.join(root_dir, "wingetui")
+os.chdir(os.path.join(root_dir, "wingetui"))
 
 
 __blacklist_strings = [
