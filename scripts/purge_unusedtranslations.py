@@ -1,14 +1,15 @@
 import os, glob, json
 
 try:
-    os.chdir("../wingetui/lang/")
+    root_dir = os.path.join(os.path.dirname(__file__), "..)
+    os.chdir(os.path.normpath(root_dir, "wingetui/lang/"))
 
     contents = ""
 
     with open("lang_en.json", "r") as f:
         engfile = json.load(f)
 
-    os.chdir("../../")
+    os.chdir(root_dir)
     print(f"Working on 📂 {os.getcwd()}")
 
     for codefile in glob.glob("**/*.py", recursive=True):
