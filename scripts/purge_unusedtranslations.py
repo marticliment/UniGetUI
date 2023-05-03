@@ -1,7 +1,7 @@
 import os, glob, json
 
 try:
-    root_dir = os.path.join(os.path.dirname(__file__), "..)
+    root_dir = os.path.join(os.path.dirname(__file__), "..")
     os.chdir(os.path.normpath(root_dir, "wingetui/lang/"))
 
     contents = ""
