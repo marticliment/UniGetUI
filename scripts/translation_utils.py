@@ -4,8 +4,8 @@ import json
 import tolgee_requests
 
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
-os.chdir("wingetui")
+root_dir = os.path.join(os.path.dirname(__file__), "..")
+os.chdir(os.path.join(root_dir, "wingetui")
 
 
 __blacklist_strings = [
