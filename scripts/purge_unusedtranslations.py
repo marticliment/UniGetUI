@@ -20,7 +20,7 @@ try:
         key = key.replace("\n", "\\n")
         if not key in contents:
             if not key.replace("\"", "\\\"") in contents:
-                print("Unused key 😳: "+str(key))
+                print(f"Unused key 😳: {key}")
     print("Job finished succuessfully! 😎")
 except Exception as e:
     print("FAILED:", e)
