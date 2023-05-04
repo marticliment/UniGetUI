@@ -279,11 +279,6 @@ def getInstalledPackages_v2() -> list[Package]:
         report(e)
         return []
  
-def searchForPackage(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    for r in getAvailablePackages_v2():
-        signal.emit(r.Name, r.Id, r.Version, r.Source)
-    finishSignal.emit("winget") 
-
 def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
     print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
@@ -308,16 +303,6 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
                         i += 1
                     counter += 1
     return (id, id)
-
-def searchForUpdates(signal: Signal, finishSignal: Signal, noretry: bool = False) -> None:
-    for package in getAvailableUpdates_v2():
-        signal.emit(package.Name, package.Id, package.Version, package.NewVersion, package.Source)
-    finishSignal.emit("winget")
-
-def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    for package in getInstalledPackages_v2():
-        signal.emit(package.Name, package.Id, package.Version, package.Source)
-    finishSignal.emit("winget")
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> None:
     try:

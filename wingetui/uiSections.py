@@ -1185,7 +1185,6 @@ class UpdateSoftwareSection(QWidget):
         self.startLoadingPackages(force = True)
         print("🟢 Upgrades tab loaded")
 
-
     def finishLoadingIfNeeded(self, store: str) -> None:
         self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
         globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
@@ -1264,7 +1263,6 @@ class UpdateSoftwareSection(QWidget):
             Thread(target=lambda: (time.sleep(waitTime), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
         print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
             
-
     def resizeEvent(self, event: QResizeEvent):
         self.adjustWidgetsSize()
         return super().resizeEvent(event)
@@ -1419,7 +1417,6 @@ class UpdateSoftwareSection(QWidget):
             else:
                 self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""], currentVersion=currentVersion, newVersion=newVersion))
      
-
     def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None) -> None:
         self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, update=True, packageItem=packageItem, version=packageItem.text(4), installedVersion=packageItem.text(3))
         self.infobox.show()
@@ -1472,6 +1469,9 @@ class UpdateSoftwareSection(QWidget):
             else:
                 self.PackagesLoaded[manager] = True
         self.finishLoadingIfNeeded("none")
+        for action in globals.trayMenuUpdatesList.actions():
+            globals.trayMenuUpdatesList.removeAction(action)
+        globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
@@ -1512,7 +1512,6 @@ class UpdateSoftwareSection(QWidget):
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
         #self.showUnknownSection.setFixedWidth(self.showUnknownSection.sizeHint().width()+10)
 
-
     def showEvent(self, event: QShowEvent) -> None:
         self.adjustWidgetsSize()
         return super().showEvent(event)
@@ -1537,10 +1536,18 @@ class UninstallSoftwareSection(QWidget):
     toolbarDefaultWidth: int = 0
     packages: dict[str:dict] = {}
     
-    wingetLoaded = False
-    scoopLoaded =  False
-    chocoLoaded = False
-
+    
+    PackageManagers: list[PackageClasses.PackageManagerModule] = [
+        winget,
+        scoop,
+        choco
+    ]
+    
+    PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
+        winget: False,
+        scoop: False,
+        choco: False,
+    }
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.callInMain.connect(lambda f: f())
@@ -1558,7 +1565,7 @@ class UninstallSoftwareSection(QWidget):
         self.reloadButton = QPushButton()
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setStyleSheet("margin-top: 0px;")
-        self.reloadButton.clicked.connect(self.reload)
+        self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.reloadButton.setAccessibleName(_("Reload"))
 
@@ -1586,10 +1593,10 @@ class UninstallSoftwareSection(QWidget):
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
-        sct.activated.connect(self.reload)
+        sct.activated.connect(self.startLoadingPackages)
 
         sct = QShortcut(QKeySequence("F5"), self)
-        sct.activated.connect(self.reload)
+        sct.activated.connect(self.startLoadingPackages)
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
@@ -1889,26 +1896,8 @@ class UninstallSoftwareSection(QWidget):
         self.UPLAYIcon = QIcon(getMedia("uplay"))
         self.chocoIcon = QIcon(getMedia("choco"))
         
-    
-        if not getSettings("DisableWinget"):
-            Thread(target=winget.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoop.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        if not getSettings("DisableChocolatey"):
-            Thread(target=choco.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.chocoLoaded = True
-
-        self.finishLoadingIfNeeded("none")
-        print("🟢 Discover tab loaded")
-
         g = self.packageList.geometry()
             
-        
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
@@ -1938,6 +1927,10 @@ class UninstallSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+        
+        self.startLoadingPackages(force = True)
+        print("🟢 Discover tab loaded")
+
 
     def uninstallSelected(self) -> None:
         toUninstall = []
@@ -1989,50 +1982,28 @@ class UninstallSoftwareSection(QWidget):
             self.packageList.label.show()
 
     def finishLoadingIfNeeded(self, store: str) -> None:
-        if(store == "winget"):
-            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
-                self.packageList.label.setText(self.countLabel.text())
-            else:
-                self.packageList.label.setText("")
-            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
-            self.wingetLoaded = True
-            self.reloadButton.setEnabled(True)
-            self.searchButton.setEnabled(True)
-            self.filter()
-            self.query.setEnabled(True)
-        elif(store == "scoop"):
-            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
-                self.packageList.label.setText(self.countLabel.text())
-            else:
-                self.packageList.label.setText("")
-            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
-            self.scoopLoaded = True
-            self.reloadButton.setEnabled(True)
-            self.filter()
-            self.searchButton.setEnabled(True)
-            self.query.setEnabled(True)
-        elif(store == "chocolatey"):
-            self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
-                self.packageList.label.setText(self.countLabel.text())
-            else:
-                self.packageList.label.setText("")
-            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
-            self.chocoLoaded = True
-            self.reloadButton.setEnabled(True)
-            self.filter()
-            self.searchButton.setEnabled(True)
-            self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
-            self.reloadButton.setEnabled(True)
-            self.filter()
-            self.loadingProgressBar.hide()
-            globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
-            self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
+        self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+        if self.packageList.topLevelItemCount() == 0:
+            self.packageList.label.setText(self.countLabel.text())
+        else:
             self.packageList.label.setText("")
-            print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
+        globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
+        self.reloadButton.setEnabled(True)
+        self.searchButton.setEnabled(True)
+        self.filter()
+        self.query.setEnabled(True)
+        
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
+            if not self.PackagesLoaded[manager]:
+                return
+        
+        self.reloadButton.setEnabled(True)
+        self.filter()
+        self.loadingProgressBar.hide()
+        globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(str(self.packageList.topLevelItemCount())))
+        self.countLabel.setText(_("Found packages: {0}").format(str(self.packageList.topLevelItemCount())))
+        self.packageList.label.setText("")
+        print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
 
     def adjustWidgetsSize(self) -> None:
         if self.discoverLabelDefaultWidth == 0:
@@ -2205,35 +2176,42 @@ class UninstallSoftwareSection(QWidget):
             else: # Scoop
                 self.addInstallation(PackageUninstallerWidget(title, store, useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
 
-    def reload(self) -> None:
-        if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:
-            self.scoopLoaded = False
-            self.wingetLoaded = False
-            self.chocoLoaded = False
-            self.loadingProgressBar.show()
-            self.reloadButton.setEnabled(False)
-            self.searchButton.setEnabled(False)
-            self.query.setEnabled(False)
-            self.packageList.clear()
-            self.query.setText("")
-            self.countLabel.setText(_("Searching for installed packages..."))
-            self.packageList.label.setText(self.countLabel.text())
-            if not getSettings("DisableWinget"):
-                Thread(target=winget.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
+    def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
+        packages = manager.getInstalledPackages_v2()
+        for package in packages:
+            self.addProgram.emit(package.Name, package.Id, package.Version ,package.Source)
+        self.PackagesLoaded[manager] = True
+        self.finishLoading.emit(manager.NAME)
+    
+    def startLoadingPackages(self, force: bool = False) -> None:
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
+            if not self.PackagesLoaded[manager] and not force:
+                return
+            
+        for manager in self.PackageManagers:
+            self.PackagesLoaded[manager] = False
+        self.packageItems = []
+        self.packages = {}
+        self.shownItems = []
+        self.addedItems = []
+        self.loadingProgressBar.show()
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        self.packageList.clear()
+        self.query.setText("")
+        self.countLabel.setText(_("Searching for packages..."))
+        self.packageList.label.setText(self.countLabel.text())
+        
+        for manager in self.PackageManagers:
+            if manager.isEnabled():
+                Thread(target=self.loadPackages, args=(manager,), daemon=True, name=f"{manager.NAME} available packages loader").start()
             else:
-                self.wingetLoaded = True
-            if not getSettings("DisableScoop"):
-                Thread(target=scoop.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-            else:
-                self.scoopLoaded = True
-            if not getSettings("DisableChocolatey"):
-                Thread(target=choco.searchForInstalledPackage, args=(self.addProgram, self.finishLoading), daemon=True).start()
-            else:
-                self.chocoLoaded = True
-            self.finishLoadingIfNeeded("none")
-            for action in globals.trayMenuInstalledList.actions():
-                globals.trayMenuInstalledList.removeAction(action)
-            globals.trayMenuInstalledList.addAction(globals.installedHeader)
+                self.PackagesLoaded[manager] = True
+        self.finishLoadingIfNeeded("none")
+        for action in globals.trayMenuInstalledList.actions():
+            globals.trayMenuInstalledList.removeAction(action)
+        globals.trayMenuInstalledList.addAction(globals.installedHeader)
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)

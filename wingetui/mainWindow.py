@@ -345,7 +345,7 @@ class RootWindow(QMainWindow):
                 self.appliedStyleSheet = True
                 self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
         try:
-            globals.uninstall.reload()
+            globals.uninstall.startLoadingPackages()
         except Exception as e:
             report(e)
         return super().showEvent(event)

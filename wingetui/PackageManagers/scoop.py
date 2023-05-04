@@ -168,22 +168,6 @@ def getInstalledPackages_v2() -> list[Package]:
         report(e)
         return []
 
-
-def searchForPackage(signal: Signal, finishSignal: Signal) -> None:
-    for r in getAvailablePackages_v2():
-        signal.emit(r.Name, r.Id, r.Version, r.Source)
-    finishSignal.emit("scoop")  
-
-def searchForInstalledPackage(signal: Signal, finishSignal: Signal) -> None:
-    for package in getInstalledPackages_v2():
-        signal.emit(package.Name, package.Id, package.Version, package.Source)
-    finishSignal.emit("scoop")
-
-def searchForUpdates(signal: Signal, finishSignal: Signal) -> None:
-    for package in getAvailableUpdates_v2():
-        signal.emit(package.Name, package.Id, package.Version, package.NewVersion, package.Source)
-    finishSignal.emit("scoop")
-
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verbose: bool = False) -> None:
     print(f"🟢 Starting get info for title {title}")
     title = title.lower()
