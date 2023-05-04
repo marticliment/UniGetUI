@@ -6,8 +6,8 @@ from tools import _
 from .PackageClasses import *
 
 EXECUTABLE = "pacman.exe"
-PACKAGE_MANAGER_NAME = "PackageManager"
-CAHCE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{PACKAGE_MANAGER_NAME}CachedPackages")
+NAME = "PackageManager"
+CAHCE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
 CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
 BLACKLISTED_PACKAGE_NAMES = []
@@ -17,14 +17,17 @@ BLACKLISTED_PACKAGE_VERSIONS = []
 
 if not os.path.exists(CAHCE_FILE_PATH):
     os.makedirs(CAHCE_FILE_PATH)
+    
+def isEnabled() -> bool:
+    return not getSettings(f"Disable{NAME}")
 
 def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
     f"""
-    Will retieve the cached packages for the package manager {PACKAGE_MANAGER_NAME} in the format of a list[Package] object.
+    Will retieve the cached packages for the package manager {NAME} in the format of a list[Package] object.
     If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
     Finally, it will start a background cacher thread.
     """
-    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for available packages")
+    print(f"🔵 Starting {NAME} search for available packages")
     try:
         packages: list[Package] = []
         if os.path.exists(CAHCE_FILE):
@@ -32,25 +35,25 @@ def getAvailablePackages_v2(second_attempt: bool = False) -> list[Package]:
             content = f.read()
             f.close()
             if content != "":
-                print(f"🟢 Found valid, non-empty cache file for {PACKAGE_MANAGER_NAME}!")
+                print(f"🟢 Found valid, non-empty cache file for {NAME}!")
                 for line in content.split("\n"):
                     package = line.split(",")
                     if len(package) >= 3 and not package[0] in BLACKLISTED_PACKAGE_NAMES and not package[1] in BLACKLISTED_PACKAGE_IDS and not package[2] in BLACKLISTED_PACKAGE_VERSIONS:
-                        packages.append(Package(formatPackageIdAsName(package[0]), package[1], package[2], PACKAGE_MANAGER_NAME))
-                Thread(target=cacheAvailablePackages_v2, daemon=True, name=f"{PACKAGE_MANAGER_NAME} package cacher thread").start()
-                print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
+                        packages.append(Package(formatPackageIdAsName(package[0]), package[1], package[2], NAME))
+                Thread(target=cacheAvailablePackages_v2, daemon=True, name=f"{NAME} package cacher thread").start()
+                print(f"🟢 {NAME} search for installed packages finished with {len(packages)} result(s)")
                 return packages
             else:
-                print(f"🟠 {PACKAGE_MANAGER_NAME} cache file exists but is empty!")
+                print(f"🟠 {NAME} cache file exists but is empty!")
                 if second_attempt:
-                    print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                    print(f"🔴 Could not load {NAME} packages, returning an empty list!")
                     return []
                 cacheAvailablePackages_v2()
                 return getAvailablePackages_v2(second_attempt = True)
         else:
-            print(f"🟡 {PACKAGE_MANAGER_NAME} cache file does not exist, creating cache forcefully and returning new package list")
+            print(f"🟡 {NAME} cache file does not exist, creating cache forcefully and returning new package list")
             if second_attempt:
-                print(f"🔴 Could not load {PACKAGE_MANAGER_NAME} packages, returning an empty list!")
+                print(f"🔴 Could not load {NAME} packages, returning an empty list!")
                 return []
             cacheAvailablePackages_v2()
             return getAvailablePackages_v2(second_attempt = True)
@@ -63,9 +66,9 @@ def cacheAvailablePackages_v2() -> None:
     INTERNAL METHOD
     Will load the available packages and write them into the cache file
     """
-    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} package caching")
+    print(f"🔵 Starting {NAME} package caching")
     try:
-        p = subprocess.Popen([PACKAGE_MANAGER_NAME, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+        p = subprocess.Popen([NAME, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
         ContentsToCache = ""
         while p.poll() is None:
             line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -76,7 +79,7 @@ def cacheAvailablePackages_v2() -> None:
                     name = formatPackageIdAsName(line.split("|")[0])
                     id = line.split("|")[0]
                     version = line.split("|")[1]
-                    source = PACKAGE_MANAGER_NAME
+                    source = NAME
                 else:
                     continue
                 
@@ -95,15 +98,15 @@ def cacheAvailablePackages_v2() -> None:
                 ContentsToCache += line + "\n"
         with open(CAHCE_FILE, "w") as f:
             f.write(ContentsToCache)
-        print(f"🟢 {PACKAGE_MANAGER_NAME} packages cached successfuly")
+        print(f"🟢 {NAME} packages cached successfuly")
     except Exception as e:
         report(e)
         
 def getAvailableUpdates_v2() -> list[UpgradablePackage]:
     f"""
-    Will retieve the upgradable packages by {PACKAGE_MANAGER_NAME} in the format of a list[UpgradablePackage] object.
+    Will retieve the upgradable packages by {NAME} in the format of a list[UpgradablePackage] object.
     """
-    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for updates")
+    print(f"🔵 Starting {NAME} search for updates")
     try:
         packages: list[UpgradablePackage] = []
         p = subprocess.Popen([EXECUTABLE, "outdated"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
@@ -117,13 +120,13 @@ def getAvailableUpdates_v2() -> list[UpgradablePackage]:
                     id = line.split("|")[0]
                     version = line.split("|")[1]
                     newVersion = line.split("|")[2]
-                    source = PACKAGE_MANAGER_NAME
+                    source = NAME
                 else:
                     continue
                 
                 if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
                     packages.append(UpgradablePackage(name, id, version, newVersion, source))
-        print(f"🟢 {PACKAGE_MANAGER_NAME} search for updates finished with {len(packages)} result(s)")
+        print(f"🟢 {NAME} search for updates finished with {len(packages)} result(s)")
         return packages
     except Exception as e:
         report(e)
@@ -131,9 +134,9 @@ def getAvailableUpdates_v2() -> list[UpgradablePackage]:
 
 def getInstalledPackages_v2() -> list[Package]:
     f"""
-    Will retieve the intalled packages by {PACKAGE_MANAGER_NAME} in the format of a list[Package] object.
+    Will retieve the intalled packages by {NAME} in the format of a list[Package] object.
     """
-    print(f"🔵 Starting {PACKAGE_MANAGER_NAME} search for installed packages")
+    print(f"🔵 Starting {NAME} search for installed packages")
     try:
         packages: list[Package] = []
         p = subprocess.Popen([EXECUTABLE, "list", "--local-only"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
@@ -146,13 +149,13 @@ def getInstalledPackages_v2() -> list[Package]:
                     name = formatPackageIdAsName(line.split("|")[0])
                     id = line.split("|")[0]
                     version = line.split("|")[1]
-                    source = PACKAGE_MANAGER_NAME
+                    source = NAME
                 else:
                     continue
                 
                 if not name in BLACKLISTED_PACKAGE_NAMES and not id in BLACKLISTED_PACKAGE_IDS and not version in BLACKLISTED_PACKAGE_VERSIONS:
                     packages.append(Package(name, id, version, source))
-        print(f"🟢 {PACKAGE_MANAGER_NAME} search for installed packages finished with {len(packages)} result(s)")
+        print(f"🟢 {NAME} search for installed packages finished with {len(packages)} result(s)")
         return packages
     except Exception as e:
         report(e)

@@ -48,3 +48,34 @@ class PackageDetails(Package):
         self.Id = package.Id
         self.Version = package.Version
         self.Source = package.Source
+        
+    def asUrl(url: str) -> str:
+        return f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+    
+class PackageManagerModule:
+    NAME: str
+    EXECUTABLE: str
+    
+    def __init__(self):
+        raise NotImplementedError("This class is only used to provide syntax highlighting support")
+    
+    def isEnabled() -> bool:
+        pass
+    
+    def getAvailablePackages_v2(self) -> list[Package]:
+        f"""
+        Will retieve the cached packages for the package manager  in the format of a list[Package] object.
+        If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
+        Finally, it will start a background cacher thread.
+        """
+            
+    def getAvailableUpdates_v2(self) -> list[UpgradablePackage]:
+        f"""
+        Will retieve the upgradable packages by the package manager in the format of a list[UpgradablePackage] object.
+        """
+
+    def getInstalledPackages_v2(self) -> list[Package]:
+        f"""
+        Will retieve the intalled packages by the package manager in the format of a list[Package] object.
+        """
+

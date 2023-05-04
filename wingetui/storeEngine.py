@@ -9,7 +9,7 @@ from PySide6.QtWidgets import *
 from tools import *
 from tools import _
 
-from PackageManagers import wingetHelpers, scoopHelpers, chocoHelpers
+from PackageManagers import winget, scoop, choco
 from customWidgets import *
 import globals
 
@@ -173,11 +173,11 @@ class PackageInstallerWidget(QGroupBox):
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if(self.store.lower() == "winget"):
             if self.useId:
-                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--id", f"{self.packageId}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+                self.p = subprocess.Popen(self.adminstr + [winget.EXECUTABLE, "install", "-e", "--id", f"{self.packageId}"] + self.version + winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             else:
-                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "install", "-e", "--name", f"{self.programName}"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+                self.p = subprocess.Popen(self.adminstr + [winget.EXECUTABLE, "install", "-e", "--name", f"{self.programName}"] + self.version + winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             print(self.p.args)
-            self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t = KillableThread(target=winget.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
             cprint(self.store.lower())
@@ -186,11 +186,11 @@ class PackageInstallerWidget(QGroupBox):
                 bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "install", f"{bucket_prefix+self.packageId if self.packageId != '' else bucket_prefix+self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             print(self.p.args)
-            self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
+            self.t = KillableThread(target=scoop.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
             self.t.start()
         elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "install", self.packageId, "-y"] + self.version + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.p = subprocess.Popen(self.adminstr + [choco.EXECUTABLE, "install", self.packageId, "-y"] + self.version + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+            self.t = KillableThread(target=choco.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
@@ -251,7 +251,7 @@ class PackageInstallerWidget(QGroupBox):
             return
         elif "winget settings --enable InstallerHashOverride" in output:
             print("🟠 Requiring the user to enable skiphash setting!")
-            subprocess.run([GSUDO_EXE_PATH, wingetHelpers.winget, "settings", "--enable", "InstallerHashOverride"], shell=True)
+            subprocess.run([GSUDO_EXE_PATH, winget.EXECUTABLE, "settings", "--enable", "InstallerHashOverride"], shell=True)
             self.runInstallation()
             return
         self.finishedInstallation = True
@@ -413,19 +413,19 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         if(self.store.lower() == "winget"):
             print(self.adminstr)
             if self.useId:
-                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "upgrade", "-e", "--id", f"{self.packageId}", "--include-unknown"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+                self.p = subprocess.Popen(self.adminstr + [winget.EXECUTABLE, "upgrade", "-e", "--id", f"{self.packageId}", "--include-unknown"] + self.version + winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             else:
-                self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "upgrade", "-e", "--name", f"{self.programName}", "--include-unknown"] + self.version + wingetHelpers.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+                self.p = subprocess.Popen(self.adminstr + [winget.EXECUTABLE, "upgrade", "-e", "--name", f"{self.programName}", "--include-unknown"] + self.version + winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             print(self.p.args)
-            self.t = KillableThread(target=wingetHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.t = KillableThread(target=winget.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         elif("scoop" in self.store.lower()):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "update", f"{self.packageId if self.packageId != '' else self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=scoopHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
+            self.t = KillableThread(target=scoop.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
             self.t.start()
         elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "upgrade", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=chocoHelpers.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.p = subprocess.Popen(self.adminstr + [choco.EXECUTABLE, "upgrade", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+            self.t = KillableThread(target=choco.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
@@ -508,17 +508,17 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
         if(self.store == "winget" or self.store in ((_("Local PC").lower(), "microsoft store", "steam", "gog", "ubisoft connect"))):
-            self.p = subprocess.Popen(self.adminstr + [wingetHelpers.winget, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=wingetHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.p = subprocess.Popen(self.adminstr + [winget.EXECUTABLE, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+            self.t = KillableThread(target=winget.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
             print(self.p.args)
         elif("scoop" in self.store):
             self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.packageId if self.packageId != '' else self.programName}"] + (["-p"] if self.removeData else [""]) + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=scoopHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
+            self.t = KillableThread(target=scoop.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
             self.t.start()
         elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [chocoHelpers.choco, "uninstall", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=chocoHelpers.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
+            self.p = subprocess.Popen(self.adminstr + [choco.EXECUTABLE, "uninstall", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+            self.t = KillableThread(target=choco.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
         else:
             self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
@@ -1258,14 +1258,14 @@ class PackageInfoPopupWindow(QWidget):
 
             self.finishedCount = 0
             if(store.lower()=="winget"):
-                Thread(target=wingetHelpers.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
+                Thread(target=winget.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
             elif("scoop" in store.lower()):
                 bucket_prefix = ""
                 if len(self.store.lower().split(":"))>1 and not "/" in id and not "/" in title:
                     bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
-                Thread(target=scoopHelpers.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId, newProgram), daemon=True).start()
+                Thread(target=scoop.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId, newProgram), daemon=True).start()
             elif store.lower() == "chocolatey":
-                Thread(target=chocoHelpers.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
+                Thread(target=choco.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
 
     def printData(self, packageDetails: dict, progId) -> None:
         if self.currentProgram == progId:
