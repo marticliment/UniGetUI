@@ -40,12 +40,6 @@ class DiscoverSoftwareSection(QWidget):
         choco
     ]
     
-    PackageManagerFunction: dict[PackageClasses.PackageManagerModule:object] = {
-        winget: winget.getAvailablePackages_v2,
-        scoop: scoop.getAvailablePackages_v2,
-        choco: choco.getAvailablePackages_v2,
-    }
-    
     PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
         winget: False,
         scoop: False,
@@ -67,7 +61,7 @@ class DiscoverSoftwareSection(QWidget):
         self.reloadButton = QPushButton()
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setStyleSheet("margin-top: 0px;")
-        self.reloadButton.clicked.connect(self.startLoadingProcess)
+        self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.reloadButton.setAccessibleName(_("Reload"))
 
@@ -104,10 +98,10 @@ class DiscoverSoftwareSection(QWidget):
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
-        sct.activated.connect(self.startLoadingProcess)
+        sct.activated.connect(self.startLoadingPackages)
         
         sct = QShortcut(QKeySequence("F5"), self)
-        sct.activated.connect(self.startLoadingProcess)
+        sct.activated.connect(self.startLoadingPackages)
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
@@ -411,7 +405,7 @@ class DiscoverSoftwareSection(QWidget):
         
         print("🟢 Discover tab loaded")
         
-        self.startLoadingProcess(force = True)
+        self.startLoadingPackages(force = True)
         
     def sharePackage(self, package: QTreeWidgetItem):
         url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
@@ -545,7 +539,7 @@ class DiscoverSoftwareSection(QWidget):
         self.searchButton.setEnabled(True)
         self.query.setEnabled(True)
         
-        for manager in self.PackageManagers: # If all the packages have been loaded
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
             if not self.PackagesLoaded[manager]:
                 return
                 
@@ -688,8 +682,8 @@ class DiscoverSoftwareSection(QWidget):
         self.PackagesLoaded[manager] = True
         self.finishLoading.emit(manager.NAME)
     
-    def startLoadingProcess(self, force: bool = False) -> None:
-        for manager in self.PackageManagers:
+    def startLoadingPackages(self, force: bool = False) -> None:
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
             if not self.PackagesLoaded[manager] and not force:
                 return
             
@@ -776,6 +770,18 @@ class UpdateSoftwareSection(QWidget):
     scoopLoaded = False
     wingetLoaded = False
     chocoLoaded = False
+    
+    PackageManagers: list[PackageClasses.PackageManagerModule] = [
+        winget,
+        scoop,
+        choco
+    ]
+    
+    PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
+        winget: False,
+        scoop: False,
+        choco: False,
+    }
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -785,6 +791,7 @@ class UpdateSoftwareSection(QWidget):
         self.setStyleSheet("margin: 0px;")
         
         self.blacklistManager = IgnoredUpdatesManager(self.window())
+        self.LegacyBlacklist = getSettingsValue("BlacklistedUpdates")
 
         self.programbox = QWidget()
         self.setContentsMargins(0, 0, 0, 0)
@@ -797,7 +804,7 @@ class UpdateSoftwareSection(QWidget):
         self.reloadButton = QPushButton()
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setStyleSheet("margin-top: 0px;")
-        self.reloadButton.clicked.connect(self.reloadPackages)
+        self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.reloadButton.setAccessibleName(_("Reload"))
 
@@ -825,10 +832,10 @@ class UpdateSoftwareSection(QWidget):
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
-        sct.activated.connect(self.reloadPackages)
+        sct.activated.connect(self.startLoadingPackages)
         
         sct = QShortcut(QKeySequence("F5"), self)
-        sct.activated.connect(self.reloadPackages)
+        sct.activated.connect(self.startLoadingPackages)
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
@@ -1142,21 +1149,6 @@ class UpdateSoftwareSection(QWidget):
         self.scoopIcon = QIcon(getMedia("scoop"))
         self.chocoIcon = QIcon(getMedia("choco"))
 
-        self.blacklist = getSettingsValue("BlacklistedUpdates")
-        if not getSettings("DisableWinget"):
-            Thread(target=winget.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.wingetLoaded = True
-        if not getSettings("DisableScoop"):
-            Thread(target=scoop.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.scoopLoaded = True
-        if not getSettings("DisableChocolatey"):
-            Thread(target=choco.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-        else:
-            self.chocoLoaded = True
-        self.finishLoadingIfNeeded("none")
-        print("🟢 Upgrades tab loaded")
 
         g = self.packageList.geometry()
                     
@@ -1189,106 +1181,88 @@ class UpdateSoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
         self.leftSlow.start()
+        
+        self.startLoadingPackages(force = True)
+        print("🟢 Upgrades tab loaded")
+
 
     def finishLoadingIfNeeded(self, store: str) -> None:
-        if(store == "winget"):
-            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
-                self.packageList.label.setText(self.countLabel.text())
-            else:
-                self.packageList.label.setText("")
-            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            self.wingetLoaded = True
-            self.reloadButton.setEnabled(True)
-            self.filter()
-            self.searchButton.setEnabled(True)
-            self.query.setEnabled(True)
-        elif(store == "scoop"):
-            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
-                self.packageList.label.setText(self.countLabel.text())
-            else:
-                self.packageList.label.setText("")
-            self.scoopLoaded = True
-            self.filter()
-            self.reloadButton.setEnabled(True)
-            self.searchButton.setEnabled(True)
-            self.query.setEnabled(True)
-        elif(store == "chocolatey"):
-            self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
-            if self.packageList.topLevelItemCount() == 0:
-                self.packageList.label.setText(self.countLabel.text())
-            else:
-                self.packageList.label.setText("")
-            self.chocoLoaded = True
-            self.filter()
-            self.reloadButton.setEnabled(True)
-            self.searchButton.setEnabled(True)
-            self.query.setEnabled(True)
-        if(self.wingetLoaded and self.scoopLoaded and self.chocoLoaded):
-            self.reloadButton.setEnabled(True)
-            self.loadingProgressBar.hide()
-            self.loadingProgressBar.hide()
-            globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(self.packageList.topLevelItemCount())))
-            count = 0
-            lastVisibleItem = None
-            for i in range(self.packageList.topLevelItemCount()):
-                if not self.packageList.topLevelItem(i).isHidden():
-                    count += 1
-                    lastVisibleItem = self.packageList.topLevelItem(i)
-            if count > 0:
-                if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
-                    self.updateAll()
-                    t = ToastNotification(self, self.callInMain.emit)
-                    if count > 1:
-                        t.setTitle(_("Updates found!"))
-                        t.setDescription(_("{0} packages are being updated").format(count))
-                        packageList = ""
-                        for i in range(self.packageList.topLevelItemCount()):
-                            packageList += self.packageList.topLevelItem(i).text(1)+", "
-                        t.setSmallText(packageList[:-2])
-                    elif count == 1:
-                        t.setTitle(_("Update found!"))
-                        t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
-                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                    if ENABLE_UPDATES_NOTIFICATIONS:
-                        t.show() 
-                        
-                else:            
-                    t = ToastNotification(self, self.callInMain.emit)
-                    if count > 1:
-                        t.setTitle(_("Updates found!"))
-                        t.setDescription(_("{0} packages can be updated").format(count)+":")
-                        t.addAction(_("Update all"), self.updateAll)
-                        packageList = ""
-                        for i in range(self.packageList.topLevelItemCount()):
-                            packageList += self.packageList.topLevelItem(i).text(1)+", "
-                        t.setSmallText(packageList[:-2])
-                    elif count == 1:
-                        t.setTitle(_("Update found!"))
-                        t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
-                        t.addAction(_("Update"), self.updateAll)
-                    t.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
-                    t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                    if ENABLE_UPDATES_NOTIFICATIONS:
-                        t.show()
-                        
-                globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
-                self.packageList.label.setText("")
-            else:
-                globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
-            self.updatePackageNumber()
-            self.filter()
-            if not getSettings("DisableAutoCheckforUpdates"):
-                try:
-                    waitTime = int(getSettingsValue("UpdatesCheckInterval"))
-                except ValueError:
-                    print(f"🟡 Can't get custom interval time! (got value was '{getSettingsValue('UpdatesCheckInterval')}')")
-                    waitTime = 3600
-                Thread(target=lambda: (time.sleep(waitTime), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
-            print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
+        self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+        globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(self.packageList.topLevelItemCount())))
+        if self.packageList.topLevelItemCount() == 0:
+            self.packageList.label.setText(self.countLabel.text())
+        else:
+            self.packageList.label.setText("")
+        self.filter()
+        self.reloadButton.setEnabled(True)
+        self.searchButton.setEnabled(True)
+        self.query.setEnabled(True)
+            
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
+            if not self.PackagesLoaded[manager]:
+                return
+    
+        self.reloadButton.setEnabled(True)
+        self.loadingProgressBar.hide()
+        self.loadingProgressBar.hide()
+        globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(self.packageList.topLevelItemCount())))
+        count = 0
+        lastVisibleItem = None
+        for i in range(self.packageList.topLevelItemCount()):
+            if not self.packageList.topLevelItem(i).isHidden():
+                count += 1
+                lastVisibleItem = self.packageList.topLevelItem(i)
+        if count > 0:
+            if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
+                self.updateAll()
+                t = ToastNotification(self, self.callInMain.emit)
+                if count > 1:
+                    t.setTitle(_("Updates found!"))
+                    t.setDescription(_("{0} packages are being updated").format(count))
+                    packageList = ""
+                    for i in range(self.packageList.topLevelItemCount()):
+                        packageList += self.packageList.topLevelItem(i).text(1)+", "
+                    t.setSmallText(packageList[:-2])
+                elif count == 1:
+                    t.setTitle(_("Update found!"))
+                    t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
+                t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                if ENABLE_UPDATES_NOTIFICATIONS:
+                    t.show() 
+                    
+            else:            
+                t = ToastNotification(self, self.callInMain.emit)
+                if count > 1:
+                    t.setTitle(_("Updates found!"))
+                    t.setDescription(_("{0} packages can be updated").format(count)+":")
+                    t.addAction(_("Update all"), self.updateAll)
+                    packageList = ""
+                    for i in range(self.packageList.topLevelItemCount()):
+                        packageList += self.packageList.topLevelItem(i).text(1)+", "
+                    t.setSmallText(packageList[:-2])
+                elif count == 1:
+                    t.setTitle(_("Update found!"))
+                    t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
+                    t.addAction(_("Update"), self.updateAll)
+                t.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
+                t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                if ENABLE_UPDATES_NOTIFICATIONS:
+                    t.show()
+                    
+            globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
+            self.packageList.label.setText("")
+        else:
+            globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
+        self.updatePackageNumber()
+        self.filter()
+        if not getSettings("DisableAutoCheckforUpdates"):
+            try:
+                waitTime = int(getSettingsValue("UpdatesCheckInterval"))
+            except ValueError:
+                print(f"🟡 Can't get custom interval time! (got value was '{getSettingsValue('UpdatesCheckInterval')}')")
+                waitTime = 3600
+            Thread(target=lambda: (time.sleep(waitTime), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
+        print("🟢 Total packages: "+str(self.packageList.topLevelItemCount()))
             
 
     def resizeEvent(self, event: QResizeEvent):
@@ -1311,7 +1285,7 @@ class UpdateSoftwareSection(QWidget):
             if [id, newVersion.lower().replace(",", "."), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
                 print(f"🟡 Package {id} version {version} is ignored")
                 return
-            if id in self.blacklist:
+            if id in self.LegacyBlacklist:
                 print(f"🟠 Package {id} is legacy blacklisted")
                 return
             item = TreeWidgetItemWithQAction()
@@ -1463,39 +1437,41 @@ class UpdateSoftwareSection(QWidget):
             print(o2.stdout)
         except Exception as e:
             report(e)
-        self.callInMain.emit(self.reloadPackages)
+        self.callInMain.emit(self.startLoadingPackages)
     
-    def reloadPackages(self) -> None:
-        if self.wingetLoaded and self.scoopLoaded and self.chocoLoaded:
-            self.availableUpdates = 0
-            self.scoopLoaded = False
-            self.wingetLoaded = False
-            self.chocoLoaded = False
-            self.loadingProgressBar.show()
-            self.reloadButton.setEnabled(False)
-            self.searchButton.setEnabled(False)
-            self.query.setEnabled(False)
-            self.packageList.clear()
-            self.query.setText("")
-            for action in globals.trayMenuUpdatesList.actions():
-                globals.trayMenuUpdatesList.removeAction(action)
-            globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
-            self.countLabel.setText(_("Checking for updates..."))
-            self.packageList.label.setText(self.countLabel.text())
-            self.blacklist = getSettingsValue("BlacklistedUpdates")
-            if not getSettings("DisableWinget"):
-                Thread(target=winget.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
+    def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
+        packages = manager.getAvailableUpdates_v2()
+        for package in packages:
+            self.addProgram.emit(package.Name, package.Id, package.Version, package.NewVersion ,package.Source)
+        self.PackagesLoaded[manager] = True
+        self.finishLoading.emit(manager.NAME)
+    
+    def startLoadingPackages(self, force: bool = False) -> None:
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
+            if not self.PackagesLoaded[manager] and not force:
+                return
+            
+        for manager in self.PackageManagers:
+            self.PackagesLoaded[manager] = False
+        self.packageItems = []
+        self.packages = {}
+        self.shownItems = []
+        self.addedItems = []
+        self.loadingProgressBar.show()
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        self.packageList.clear()
+        self.query.setText("")
+        self.countLabel.setText(_("Searching for packages..."))
+        self.packageList.label.setText(self.countLabel.text())
+        
+        for manager in self.PackageManagers:
+            if manager.isEnabled():
+                Thread(target=self.loadPackages, args=(manager,), daemon=True, name=f"{manager.NAME} available packages loader").start()
             else:
-                self.wingetLoaded = True
-            if not getSettings("DisableScoop"):
-                Thread(target=scoop.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-            else:
-                self.scoopLoaded = True
-            if not getSettings("DisableChocolatey"):
-                Thread(target=choco.searchForUpdates, args=(self.addProgram, self.finishLoading), daemon=True).start()
-            else:
-                self.chocoLoaded = True
-            self.finishLoadingIfNeeded("none")
+                self.PackagesLoaded[manager] = True
+        self.finishLoadingIfNeeded("none")
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
