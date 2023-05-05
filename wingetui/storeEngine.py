@@ -1255,11 +1255,11 @@ class PackageInfoPopupWindow(QWidget):
             p = QPixmap()
             for l in self.imagesCarrousel:
                 l.setPixmap(p, index=0)
-            Thread(target=self.loadPackageScreenshots, args=(package.Id, package.Source)).start()
+            Thread(target=self.loadPackageScreenshots, args=(package,)).start()
 
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
-        Thread(target=self.loadPackageIcon, args=(package.Id, package.Source, package.Version)).start()
+        Thread(target=self.loadPackageIcon, args=(package,)).start()
         
         Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
 
@@ -1331,20 +1331,13 @@ class PackageInfoPopupWindow(QWidget):
         
         self.loadPackageCommandLine()
 
-    def loadPackageIcon(self, id: str, store: str, version: str) -> None:
+    def loadPackageIcon(self, package: Package) -> None:
         try:
-            iconprov = "winget" if not "scoop" in store.lower() else "scoop"
-            iconprov = iconprov if not "chocolatey" in store.lower() else "chocolatey"
-            iconId = id.lower()
-            if store.lower() == "winget":
-                iconId = ".".join(iconId.split(".")[1:])
-            elif store.lower() == "chocolatey":
-                iconId = iconId.replace(".install", "").replace(".portable", "")
-            iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
-            iconId = iconId.split("/")[-1]
+            id = package.Id
+            iconId = package.getIconId()
             iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconpath):
-                if iconprov == "chocolatey":
+                if package.isChocolatey():
                     iconurl = f"https://community.chocolatey.org/content/packageimages/{id}.{version}.png"
                 else:
                     iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
@@ -1367,21 +1360,16 @@ class PackageInfoPopupWindow(QWidget):
                 if type(e) != KeyError:
                     report(e)
                 else:
-                    print(f"🟡 Icon {id} not found in json")
+                    print(f"🟡 Icon {iconId} not found in json")
             except Exception as e:
                 report(e)
 
-    def loadPackageScreenshots(self, id: str, store: str) -> None:
+    def loadPackageScreenshots(self, package: Package) -> None:
         try:
+            id = package.Id
             self.validImageCount = 0
             self.canContinueWithImageLoading = 0
-            iconId = id.lower()
-            if store.lower() == "winget":
-                iconId = ".".join(iconId.split(".")[1:])
-            elif store.lower() == "chocolatey":
-                iconId = iconId.replace(".install", "").replace(".portable", "")
-            iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
-            iconId = iconId.split("/")[-1]
+            iconId = package.getIconId()
             count = 0
             for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
@@ -1436,7 +1424,7 @@ class PackageInfoPopupWindow(QWidget):
                 if type(e) != KeyError:
                     report(e)
                 else:
-                    print(f"🟡 Icon {id} not found in json")
+                    print(f"🟡 Image {iconId} not found in json")
             except Exception as e:
                 report(e)
 

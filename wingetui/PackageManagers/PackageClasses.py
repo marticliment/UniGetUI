@@ -21,6 +21,17 @@ class Package():
     def isChocolatey(self) -> bool:
         return self.Source.lower() == "chocolatey"
     
+    def getIconId(self) -> str:
+        iconId = self.Id.lower()
+        if self.isWinget():
+            iconId = ".".join(iconId.split(".")[1:])
+        elif self.isChocolatey():
+            iconId = iconId.replace(".install", "").replace(".portable", "")
+        elif self.isScoop():
+            iconId = iconId.split("/")[-1]
+        return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
+
+    
 class UpgradablePackage(Package):
     NewVersion = ""
     NewPackage: Package = None
