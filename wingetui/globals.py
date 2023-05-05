@@ -65,7 +65,7 @@ infobox: QWidget = None
 centralWindowLayout: QWidget = None
 centralTextureImage: QLabel = None
 
-scoopBuckets: dict = {}
+scoopBuckets: dict[str:str] = {}
 
 shareProcessHandler: Popen = None
 

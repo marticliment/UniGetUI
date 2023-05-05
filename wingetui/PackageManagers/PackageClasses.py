@@ -1,3 +1,5 @@
+from tools import _
+
 class Package():
     Name = ""
     Id = ""
@@ -25,20 +27,20 @@ class PackageDetails(Package):
     Version: str = ""
     NewVersion: str = ""
     Source: str = ""
-    Publisher: str = ""
-    Author: str = ""
-    Description: str = ""
-    HomepageURL: str = ""
-    License: str = ""
-    LicenseURL: str = ""
-    InstallerURL: str = ""
-    InstallerHash: str = ""
+    Publisher: str = _("Not available")
+    Author: str = _("Not available")
+    Description: str = _("Not available")
+    HomepageURL: str = _("Not available")
+    License: str = _("Not available")
+    LicenseURL: str = _("Not available")
+    InstallerURL: str = _("Not available")
+    InstallerHash: str = _("Not available")
     InstallerSize: int = 0
-    InstallerType: str = ""
-    ManifestUrl: str = ""
-    UpdateDate: str = ""
-    ReleaseNotes: str = ""
-    ReleaseNotesUrl: str = ""
+    InstallerType: str = _("Not available")
+    ManifestUrl: str = _("Not available")
+    UpdateDate: str = _("Not available")
+    ReleaseNotes: str = _("Not available")
+    ReleaseNotesUrl: str = _("Not available")
     Versions: list[str] = []
     Architectures: list[str] = []
     Scopes: list[str] = []
@@ -48,6 +50,8 @@ class PackageDetails(Package):
         self.Id = package.Id
         self.Version = package.Version
         self.Source = package.Source
+        if type(package) == UpgradablePackage:
+            self.NewVersion = package.NewVersion
         
     def asUrl(url: str) -> str:
         return f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"

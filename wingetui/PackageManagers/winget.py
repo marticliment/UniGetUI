@@ -279,6 +279,109 @@ def getInstalledPackages_v2() -> list[Package]:
         report(e)
         return []
  
+def getPackageDetails_v2(package: Package) -> PackageDetails:
+    """
+    Will return a PackageDetails object containing the information of the given Package object
+    """
+    print(f"🔵 Starting get info for {package.Name} on {NAME}")
+    if "…" in package.Id:
+        newId = getFullPackageId(package.Id)
+        if newId:
+            print(f"🔵 Replacing ID {package.Id} for {newId}")
+            package.Id = newId
+    details = PackageDetails(package)
+    try:
+        details.Scopes = [_("Current user"), _("Local machine")]
+        details.ManifestUrl = f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{id[0].lower()}/{'/'.join(id.split('.'))}"
+        details.Architectures = ["x64", "x86", "arm64"]
+        loadedInformationPieces = 0
+        currentIteration = 0
+        while loadedInformationPieces < 2 and currentIteration < 50:
+            currentIteration += 1
+            outputIsDescribing = False
+            outputIsShowingNotes = False
+            p = subprocess.Popen([winget, "show", "--id", f"{package.Id}", "--exact"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            output: list[str] = []
+            while p.poll() is None:
+                line = p.stdout.readline()
+                if line:
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
+                    
+            for line in output:
+                if line[0] == " " and outputIsDescribing:
+                    details.Description += "\n"+line
+                else:
+                    outputIsDescribing = False
+                if line[0] == " " and outputIsShowingNotes:
+                    details.ReleaseNotes += line + "<br>"
+                else:
+                    outputIsShowingNotes = False
+                    
+                if "Publisher:" in line:
+                    details.Publisher = line.replace("Publisher:", "").strip()
+                    loadedInformationPieces += 1
+                elif "Description:" in line:
+                    details.Description = line.replace("Description:", "").strip()
+                    outputIsDescribing = True
+                    loadedInformationPieces += 1
+                elif "Author:" in line:
+                    details.Author = line.replace("Author:", "").strip()
+                    loadedInformationPieces += 1
+                elif "Homepage:" in line:
+                    details.HomepageURL = line.replace("Homepage:", "").strip()
+                    loadedInformationPieces += 1
+                elif "License:" in line:
+                    details.License = line.replace("License:", "").strip()
+                    loadedInformationPieces += 1
+                elif "License Url:" in line:
+                    details.LicenseURL = line.replace("License Url:", "").strip()
+                    loadedInformationPieces += 1
+                elif "Installer SHA256:" in line:
+                    details.InstallerHash = line.replace("Installer SHA256:", "").strip()
+                    loadedInformationPieces += 1
+                elif "Installer Url:" in line:
+                    details.InstallerURL = line.replace("Installer Url:", "").strip()
+                    try:
+                        details.InstallerSize = int(urlopen(details.InstallerURL).length/1000000)
+                    except Exception as e:
+                        print("🟠 Can't get installer size:", type(e), str(e))
+                    loadedInformationPieces += 1
+                elif "Release Date:" in line:
+                    details.UpdateDate = line.replace("Release Date:", "").strip()
+                    loadedInformationPieces += 1
+                elif "Release Notes Url:" in line:
+                    details.ReleaseNotesUrl = line.replace("Release Notes Url:", "").strip()
+                    loadedInformationPieces += 1
+                elif "Release Notes:" in line:
+                    details.ReleaseNotes = ""
+                    outputIsShowingNotes = True
+                    loadedInformationPieces += 1
+                elif "Installer Type:" in line:
+                    details.InstallerType = line.replace("Installer Type:", "").strip()
+                    
+        print(f"🔵 Loading versions for {package.Name}")
+        currentIteration = 0
+        versions = []
+        while output == [] and currentIteration < 50:
+            currentIteration += 1
+            p = subprocess.Popen([winget, "show", "--id", f"{package.Id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            foundDashes = False
+            while p.poll() is None:
+                line = p.stdout.readline().strip()
+                if line:
+                    if foundDashes:
+                        versions.append(str(line, encoding='utf-8', errors="ignore"))
+                    elif b"--" in line:
+                            foundDashes = True
+        details.Version = output
+        
+        print(f"🟢 Get info finished for {package.Name} on {NAME}")
+        return details
+    except Exception as e:
+        report(e)
+        return details
+
+
 def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
     print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
@@ -303,6 +406,7 @@ def searchForOnlyOnePackage(id: str) -> tuple[str, str]:
                         i += 1
                     counter += 1
     return (id, id)
+
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: str) -> None:
     try:
@@ -481,6 +585,28 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
     if "1603" in output or "0x80070005" in output or "Access is denied" in output:
         outputCode = RETURNCODE_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
+    
+    
+    
+
+def getFullPackageId(id: str) -> tuple[str, str]:
+    print(f"🟢 Starting winget search, winget on {winget}...")
+    p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    idSeparator = -1
+    while p.poll() is None:
+        line = p.stdout.readline()
+        line = line.strip()
+        if line:
+            if idSeparator != -1:
+                if not b"---" in line:
+                    return str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
+            else:
+                l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","").split("\r")[-1]
+                if("Id" in l):
+                    idSeparator = len(l.split("Id")[0])
+    return id
+
+
 
 if(__name__=="__main__"):
     os.chdir("..")
