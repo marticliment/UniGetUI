@@ -128,7 +128,7 @@
   "Install as administrator" : "以管理员身份安装",
   "installation" : "安装",
   "Installation canceled by the user!" : "安装已经被用户取消！",
-  "Installation options" : null,
+  "Installation options" : "安装选项",
   "Installation scope:" : "安装范围：",
   "installed" : "已安装",
   "Installed Packages" : "已安装的软件包",
@@ -185,7 +185,7 @@
   "No packages found" : "找不到软件包",
   "No packages found matching the input criteria" : "没有找到任何与输入条件匹配的软件包",
   "Not available" : "不可用",
-  "Notes:" : null,
+  "Notes:" : "注意：",
   "Not found" : "未找到",
   "Notification tray options" : "任务栏托盘选项",
   "No updates are available" : "没有可用更新",
@@ -342,6 +342,6 @@
   "WingetUI tray application preferences" : "WingetUI 托盘应用程序首选项",
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI 的诞生离不开我们亲爱的贡献者的帮助。请查看他们的 GitHub 个人页面，没有他们就无法成就 WingetUI！",
   "Yes" : "是",
-  "You may now choose your weapons" : "请挑选您的战士",
+  "You may now choose your weapons" : "现在您可以挑选您的趁手兵器了",
   "You may restart your computer later if you wish" : "如果需要，您可以稍后重启您的电脑"
 }

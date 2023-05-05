@@ -81,7 +81,7 @@
   "Default" : "Standard",
   "Description:" : "Beschreibung:",
   "Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)" : "Direkt Installieren bei Doppelklick auf ein Element auf der Registerkarte \"Pakete entdecken\" (statt Anzeige der Paketinformationen)",
-  "Disable new share API (port 7058)" : "Deaktiviere die neue Teil-API (Port 7058)",
+  "Disable new share API (port 7058)" : "Deaktiviere die neue Teilen-API (Port 7058)",
   "DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE." : "HAFTUNGSAUSSCHLUSS: WIR SIND NICHT FÜR DIE HERUNTERGELADENEN PAKETE VERANTWORTLICH. BITTE STELLEN SIE SICHER, NUR VERTRAUENSWÜRDIGE SOFTWARE ZU INSTALLIEREN.",
   "Discover Packages" : "Pakete entdecken",
   "Do not download new app translations from GitHub automatically" : "Lade neue Übersetzungen aus GitHub nicht automatisch herunter",
