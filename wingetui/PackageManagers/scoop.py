@@ -98,7 +98,7 @@ def cacheAvailablePackages_v2() -> None:
         except Exception as e:
             report(e)
         for line in AlreadyCachedPackages.split("\n"):
-            if line.split(" ")[0] not in ContentsToCache:
+            if line.split(",")[0] not in ContentsToCache:
                 ContentsToCache += line + "\n"
         with open(CAHCE_FILE, "w") as f:
             f.write(ContentsToCache)
