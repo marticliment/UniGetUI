@@ -2763,8 +2763,11 @@ class SettingsSection(SmoothScrollArea):
         parallelInstalls.setEnabled(disableWinget.isChecked())
         button.setEnabled(disableWinget.isChecked())
         enableSystemWinget.setEnabled(disableWinget.isChecked())
-
         
+        resetCache = SectionButton(_("Reset {pm} cache").format(pm=winget.NAME), _("Reset"))
+        resetCache.clicked.connect(lambda: (os.remove(winget.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        self.wingetPreferences.addWidget(resetCache)
+
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
         self.layout.addWidget(self.scoopPreferences)
 
@@ -2791,6 +2794,9 @@ class SettingsSection(SmoothScrollArea):
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
+        resetCache = SectionButton(_("Reset {pm} cache").format(pm=scoop.NAME), _("Reset"))
+        resetCache.clicked.connect(lambda: (os.remove(scoop.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        self.scoopPreferences.addWidget(resetCache)
         
         self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
         self.layout.addWidget(self.chocoPreferences)
@@ -2802,9 +2808,9 @@ class SettingsSection(SmoothScrollArea):
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
         enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         self.chocoPreferences.addWidget(enableSystemChocolatey)
-        resetChocoCache = SectionButton(_("Reset chocolatey cache"), _("Reset"))
-        resetChocoCache.clicked.connect(lambda: (os.remove(os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata/chocolateypackages")), notify("WingetUI", _("Cache was reset successfully!"))))
-        self.chocoPreferences.addWidget(resetChocoCache)
+        resetCache = SectionButton(_("Reset {pm} cache").format(pm=choco.NAME), _("Reset"))
+        resetCache.clicked.connect(lambda: (os.remove(choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        self.chocoPreferences.addWidget(resetCache)
 
         self.layout.addStretch()
 
