@@ -362,7 +362,7 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
         print(f"🔵 Loading versions for {package.Name}")
         currentIteration = 0
         versions = []
-        while output == [] and currentIteration < 50:
+        while versions == [] and currentIteration < 50:
             currentIteration += 1
             p = subprocess.Popen([winget, "show", "--id", f"{package.Id}", "-e", "--versions"]+common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             foundDashes = False
@@ -372,9 +372,8 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
                     if foundDashes:
                         versions.append(str(line, encoding='utf-8', errors="ignore"))
                     elif b"--" in line:
-                            foundDashes = True
-        details.Version = output
-        
+                        foundDashes = True
+        details.Versions = versions
         print(f"🟢 Get info finished for {package.Name} on {NAME}")
         return details
     except Exception as e:
@@ -425,9 +424,6 @@ def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: 
         outputCode = RETURNCODE_NEEDS_ELEVATION
     closeAndInform.emit(outputCode, output)
     
-    
-    
-
 def getFullPackageId(id: str) -> tuple[str, str]:
     print(f"🟢 Starting winget search, winget on {winget}...")
     p = subprocess.Popen(["mode", "400,30&", winget, "search", "--id", id.replace("…", "")] + common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
