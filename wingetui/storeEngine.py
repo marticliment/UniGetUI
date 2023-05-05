@@ -739,19 +739,19 @@ class PackageInfoPopupWindow(QWidget):
 
         self.layout.addWidget(self.description)
 
-        self.homepage = QLinkLabel("<b>"+_('Homepage URL:')+"</b> "+_('Unknown'))
+        self.homepage = QLinkLabel("<b>"+_('Homepage')+":</b> "+_('Unknown'))
         self.homepage.setWordWrap(True)
 
         self.layout.addWidget(self.homepage)
 
-        self.publisher = QLinkLabel("<b>"+_('Publisher:')+"</b> "+_('Unknown'))
+        self.publisher = QLinkLabel("<b>"+_('Publisher')+":</b> "+_('Unknown'))
         self.publisher.setOpenExternalLinks(False)
         self.publisher.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
         self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
-        self.author = QLinkLabel("<b>"+_('Author:')+"</b> "+_('Unknown'))
+        self.author = QLinkLabel("<b>"+_('Author')+":</b> "+_('Unknown'))
         self.author.setOpenExternalLinks(False)
         self.author.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
         self.author.setWordWrap(True)
@@ -759,7 +759,7 @@ class PackageInfoPopupWindow(QWidget):
         self.layout.addWidget(self.author)
         self.layout.addSpacing(10)
 
-        self.license = QLinkLabel("<b>"+_('License:')+"</b> "+_('Unknown'))
+        self.license = QLinkLabel("<b>"+_('License')+":</b> "+_('Unknown'))
         self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
@@ -965,22 +965,22 @@ class PackageInfoPopupWindow(QWidget):
 
         self.layout.addSpacing(10)
 
-        self.packageId = QLinkLabel("<b>"+_('Program ID:')+"</b> "+_('Unknown'))
+        self.packageId = QLinkLabel("<b>"+_('Package ID')+"</b> "+_('Unknown'))
         self.packageId.setWordWrap(True)
         self.layout.addWidget(self.packageId)
-        self.manifest = QLinkLabel("<b>"+_('Manifest:')+"</b> "+_('Unknown'))
+        self.manifest = QLinkLabel("<b>"+_('Manifest')+"</b> "+_('Unknown'))
         self.manifest.setWordWrap(True)
         self.layout.addWidget(self.manifest)
         self.lastver = QLinkLabel("<b>"+_('Latest Version:')+"</b> "+_('Unknown'))
         self.lastver.setWordWrap(True)
         self.layout.addWidget(self.lastver)
-        self.sha = QLinkLabel("<b>"+_('Installer SHA256 (Latest Version):')+"</b> "+_('Unknown'))
+        self.sha = QLinkLabel(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> "+_('Unknown'))
         self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
-        self.link = QLinkLabel("<b>"+_('Installer URL (Latest Version):')+"</b> "+_('Unknown'))
+        self.link = QLinkLabel(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> "+_('Unknown'))
         self.link.setWordWrap(True)
         self.layout.addWidget(self.link)
-        self.type = QLinkLabel("<b>"+_('Installer Type (Latest Version):')+"</b> "+_('Unknown'))
+        self.type = QLinkLabel(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> "+_('Unknown'))
         self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
         self.date = QLinkLabel("<b>"+_('Last updated:')+"</b> "+_('Unknown'))
