@@ -1341,6 +1341,7 @@ class PackageInfoPopupWindow(QWidget):
             elif store.lower() == "chocolatey":
                 iconId = iconId.replace(".install", "").replace(".portable", "")
             iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
+            iconId = iconId.split("/")[-1]
             iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconpath):
                 if iconprov == "chocolatey":
@@ -1348,9 +1349,13 @@ class PackageInfoPopupWindow(QWidget):
                 else:
                     iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
                 print("🔵 Found icon: ", iconurl)
-                icondata = urlopen(iconurl).read()
-                with open(iconpath, "wb") as f:
-                    f.write(icondata)
+                if iconurl:
+                    icondata = urlopen(iconurl).read()
+                    with open(iconpath, "wb") as f:
+                        f.write(icondata)
+                else:
+                    print("🟡 Icon url empty")
+                    raise KeyError(f"{iconurl} was empty")
             else:
                 cprint(f"🔵 Found cached image in {iconpath}")
             if self.currentPackage.Id == id:
@@ -1376,6 +1381,7 @@ class PackageInfoPopupWindow(QWidget):
             elif store.lower() == "chocolatey":
                 iconId = iconId.replace(".install", "").replace(".portable", "")
             iconId = iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
+            iconId = iconId.split("/")[-1]
             count = 0
             for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
@@ -1394,9 +1400,13 @@ class PackageInfoPopupWindow(QWidget):
                     if not os.path.exists(imagepath):
                         iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["images"][i]
                         print("🔵 Found icon: ", iconurl)
-                        icondata = urlopen(iconurl).read()
-                        with open(imagepath, "wb") as f:
-                            f.write(icondata)
+                        if iconurl:
+                            icondata = urlopen(iconurl).read()
+                            with open(imagepath, "wb") as f:
+                                f.write(icondata)
+                        else:
+                            print("🟡 Image url empty")
+                            raise KeyError(f"{iconurl} was empty")
                     else:
                         cprint(f"🔵 Found cached image in {imagepath}")
                     p = QPixmap(imagepath)
@@ -1432,8 +1442,6 @@ class PackageInfoPopupWindow(QWidget):
 
 
     def install(self):
-        #title = self.title.text()
-        #packageId = self.currentPackage.Id
         print(f"🟢 Starting installation of package {self.currentPackage.Name} with id {self.currentPackage.Id}")
         cmdline_args = self.getCommandLineParameters()
         print("🔵 The issued command arguments are", cmdline_args)
