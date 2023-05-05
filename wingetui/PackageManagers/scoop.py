@@ -5,12 +5,12 @@ from tools import _
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-scoop = "powershell -ExecutionPolicy ByPass -Command scoop"
+EXECUTABLE = "powershell -ExecutionPolicy ByPass -Command scoop"
 
 
 from .PackageClasses import *
 
-EXECUTABLE = scoop
+scoop = EXECUTABLE
 NAME = "Scoop"
 CAHCE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
 CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
@@ -18,7 +18,6 @@ CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 BLACKLISTED_PACKAGE_NAMES = []
 BLACKLISTED_PACKAGE_IDS = []
 BLACKLISTED_PACKAGE_VERSIONS = []
-
 
 if not os.path.exists(CAHCE_FILE_PATH):
     os.makedirs(CAHCE_FILE_PATH)
