@@ -161,6 +161,54 @@ def getInstalledPackages_v2() -> list[Package]:
     except Exception as e:
         report(e)
         return []
+    
+def getPackageDetails_v2(package: Package) -> PackageDetails:
+    """
+    Will return a PackageDetails object containing the information of the given Package object
+    """
+    print(f"🔵 Starting get info for {package.Name} on {NAME}")
+    details = PackageDetails(package)
+    try:
+        p = subprocess.Popen([EXECUTABLE, "info", package.Id] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        output: list[str] = []
+        details.ManifestUrl = f"https://community.chocolatey.org/packages/{package.Name.lower()}"
+        details.Architectures = ["x86"]
+        while p.poll() is None:
+            line = p.stdout.readline().strip()
+            if line:
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+        for line in output:
+            if "Title:" in line:
+                details.Name = line.split("|")[0].replace("Title:", "").strip()
+                details.UpdateDate = line.split("|")[1].replace("Published:", "").strip()
+            elif "Author:" in line:
+                details.Author = line.replace("Author:", "").strip()
+            elif "Software Site:" in line:
+                details.HomepageURL = line.replace("Software Site:", "").strip()
+            elif "Software License:" in line:
+                details.LicenseURL = line.replace("Software License:", "").strip()
+            elif "Package Checksum:" in line:
+                details.InstallerHash = "<br>"+(line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", ""))
+            elif "Description:" in line:
+                details.Description = line.replace("Description:", "").strip()
+            elif "Release Notes" in line:
+                details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
+        details.Versions = []
+        p = subprocess.Popen([choco, "find", "-e", id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        print(f"🟢 Starting get info for id {id}")
+        output = []
+        while p.poll() is None:
+            line = p.stdout.readline().strip()
+            if line:
+                output.append(str(line, encoding='utf-8', errors="ignore"))
+        for line in output:
+            if "[Approved]" in line:
+                details.Versions.append(line.split(" ")[1])
+        print(f"🟢 Get info finished for {package.Name} on {NAME}")
+        return details
+    except Exception as e:
+        report(e)
+        return details
 
 def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> None:
     try:
