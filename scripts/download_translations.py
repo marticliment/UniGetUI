@@ -29,7 +29,7 @@ if len(sys.argv)>1:
 
 import glob, zipfile
 
-os.chdir(os.path.normapth(os.path.join(root_dir, "wingetui/lang")))
+os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/lang")))
 
 print()
 print("-------------------------------------------------------")
@@ -133,7 +133,7 @@ untranslatedPercentage = {json.dumps(langPerc, indent=2, ensure_ascii=False)}
 languageCredits = {json.dumps(langCredits, indent=2, ensure_ascii=False)}
 """
 
-translations_filepath = os.path.normapth(os.path.join(root_dir, "wingetui/data/translations.py"))
+translations_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/data/translations.py"))
 with open(translations_filepath, "w", encoding="utf-8") as f:
     f.write(outputString.strip())
 
