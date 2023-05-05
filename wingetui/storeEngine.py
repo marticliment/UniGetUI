@@ -660,10 +660,8 @@ class PackageInfoPopupWindow(QWidget):
     packageItem: TreeWidgetItemWithQAction = None
     finishedCount: int = 0
     backgroundApplied: bool = False
-    givenPackageId: str = ""
     isAnUpdate = False
     isAnUninstall = False
-    store = ""
 
     currentPackage: Package = None
     pressed = False
@@ -675,7 +673,6 @@ class PackageInfoPopupWindow(QWidget):
         self.callInMain.connect(lambda f: f())
         self.baseScrollArea = SmoothScrollArea()
         self.blurBackgroundEffect = QGraphicsBlurEffect()
-        self.store = ""
         self.setObjectName("bg")
         self.sct = QShortcut(QKeySequence("Esc"), self.baseScrollArea)
         self.sct.activated.connect(lambda: self.close())
@@ -993,7 +990,7 @@ class PackageInfoPopupWindow(QWidget):
         self.notesurl.setWordWrap(True)
         self.layout.addWidget(self.notesurl)
 
-        self.storeLabel = QLinkLabel("<b>"+_("Source:")+"</b> " + self.store)
+        self.storeLabel = QLinkLabel("<b>"+_("Source:")+"</b> ")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
 
@@ -1089,9 +1086,9 @@ class PackageInfoPopupWindow(QWidget):
         
     def getCommandLineParameters(self) -> list[str]:
         cmdline_args = []
-        WINGET = "winget" in self.store.lower()
-        SCOOP = "scoop" in self.store.lower()
-        CHOCO = "chocolatey" in self.store.lower()
+        WINGET = self.currentPackage.isWinget()
+        SCOOP = self.currentPackage.isScoop()
+        CHOCO = self.currentPackage.isChocolatey()
         
         if(self.hashCheckBox.isChecked()):
             if WINGET:
@@ -1103,7 +1100,7 @@ class PackageInfoPopupWindow(QWidget):
                 if not "--force" in cmdline_args:
                     cmdline_args.append("--force")
             else:
-                print(f"🟠 Unknown store {self.store}")
+                print(f"🟠 Unknown source {self.currentPackage.Source}")
                 
         if(self.interactiveCheckbox.isChecked()):
             if WINGET:
@@ -1116,7 +1113,7 @@ class PackageInfoPopupWindow(QWidget):
             if WINGET:
                 cmdline_args.append("--silent")
 
-        if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading...")):
+        if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
             if WINGET:
                 cmdline_args.append("--version")
                 cmdline_args.append(self.versionCombo.currentText())
@@ -1130,7 +1127,7 @@ class PackageInfoPopupWindow(QWidget):
             else:
                 print("🟡 Custom version not supported by store")
             
-        if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading...")):
+        if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
             if SCOOP:
                 cmdline_args.append("--arch")
                 cmdline_args.append(self.architectureCombo.currentText())
@@ -1143,7 +1140,7 @@ class PackageInfoPopupWindow(QWidget):
             else:
                 print("🟡 Custom architecture not supported by store")
                 
-        if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading...")):
+        if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
             if SCOOP:
                 chosenScope = self.scopeCombo.currentText()
                 if chosenScope in (_("Local"), "Local"):
@@ -1170,17 +1167,17 @@ class PackageInfoPopupWindow(QWidget):
 
     def loadPackageCommandLine(self):
         parameters = " ".join(self.getCommandLineParameters())
-        if self.store.lower() == "winget":
-            if not "…" in self.givenPackageId:
-                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.givenPackageId} --exact {parameters} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
+        if self.currentPackage.isWinget():
+            if not "…" in self.currentPackage.Id:
+                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
-        elif "scoop" in self.store.lower():
-            self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        elif self.store.lower() == "chocolatey":
-            self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.givenPackageId} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
+        elif self.currentPackage.isScoop():
+            self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+        elif self.currentPackage.isChocolatey():
+            self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
-            print(f"🟠 Unknown store {self.store}")
+            print(f"🟠 Unknown source {self.currentPackage.Source}")
         self.commandWindow.setCursorPosition(0)
 
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False, installedVersion: str = "") -> None:
@@ -1188,18 +1185,19 @@ class PackageInfoPopupWindow(QWidget):
         if package.isScoop():
             if len(store.split(': '))==2:
                 package.Id = store.split(': ')[1]+'/'+id
+        self.showPackageDetails_v2(package, update, packageItem, uninstall, installedVersion)
                 
+    def showPackageDetails_v2(self, package: Package, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, uninstall: bool = False, installedVersion: str = ""):
+        self.packageItem = packageItem
+        self.isAnUpdate = update
+        self.isAnUninstall = uninstall
+        
         if self.currentPackage == package:
             return
         self.currentPackage = package
         
         self.iv.resetImages()
-        self.packageItem = packageItem
-        self.givenPackageId = id
-        self.isAnUpdate = update
-        self.isAnUninstall = uninstall
-        self.store = store
-        if "…" in id:
+        if "…" in package.Id:
             self.installButton.setEnabled(False)
             self.installButton.setText(_("Please wait..."))
         else:
@@ -1209,8 +1207,8 @@ class PackageInfoPopupWindow(QWidget):
                 self.installButton.setText(_("Uninstall"))
             else:
                 self.installButton.setText(_("Install"))
-        store = store.lower()
-        self.title.setText(title)
+        
+        self.title.setText(package.Name)
 
         self.loadPackageCommandLine()
 
@@ -1229,9 +1227,9 @@ class PackageInfoPopupWindow(QWidget):
         self.homepage.setText(f"<b>{_('Homepage')}:</b> {_('Loading...')}")
         self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')}")
         lastVerString = ""
-        if update:
+        if self.isAnUpdate:
             lastVerString = f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(package.Version)})"
-        elif uninstall:
+        elif self.isAnUninstall:
             lastVerString = f"<b>{_('Installed Version')}:</b> {package.Version}"
         else:
             if package.isScoop():
@@ -1254,13 +1252,14 @@ class PackageInfoPopupWindow(QWidget):
         self.scopeCombo.addItems([_("Loading...")])
 
         def resetLayoutWidget():
+            p = QPixmap()
             for l in self.imagesCarrousel:
-                l.setPixmap(QPixmap(), index=0)
-            Thread(target=self.loadPackageScreenshots, args=(id, store)).start()
+                l.setPixmap(p, index=0)
+            Thread(target=self.loadPackageScreenshots, args=(package.Id, package.Source)).start()
 
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
-        Thread(target=self.loadPackageIcon, args=(id, store, version)).start()
+        Thread(target=self.loadPackageIcon, args=(package.Id, package.Source, package.Version)).start()
         
         Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
 
@@ -1312,7 +1311,7 @@ class PackageInfoPopupWindow(QWidget):
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isChocolatey() else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
@@ -1354,7 +1353,7 @@ class PackageInfoPopupWindow(QWidget):
                     f.write(icondata)
             else:
                 cprint(f"🔵 Found cached image in {iconpath}")
-            if self.givenPackageId == id:
+            if self.currentPackage.Id == id:
                 self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
             else:
                 print("Icon arrived too late!")
@@ -1402,7 +1401,7 @@ class PackageInfoPopupWindow(QWidget):
                         cprint(f"🔵 Found cached image in {imagepath}")
                     p = QPixmap(imagepath)
                     if not p.isNull():
-                        if self.givenPackageId == id:
+                        if self.currentPackage.Id == id:
                             self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p, self.validImageCount))
                             self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
                             self.callInMain.emit(partial(self.iv.addImage, p))
@@ -1433,22 +1432,22 @@ class PackageInfoPopupWindow(QWidget):
 
 
     def install(self):
-        title = self.title.text()
-        packageId = self.givenPackageId
-        print(f"🟢 Starting installation of package {title} with id {packageId}")
+        #title = self.title.text()
+        #packageId = self.currentPackage.Id
+        print(f"🟢 Starting installation of package {self.currentPackage.Name} with id {self.currentPackage.Id}")
         cmdline_args = self.getCommandLineParameters()
         print("🔵 The issued command arguments are", cmdline_args)
         
         if self.ignoreFutureUpdates.isChecked():
-            IgnorePackageUpdates_Permanent(packageId, self.store)
-            print(f"🟡 Blacklising package {packageId}")
+            IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
+            print(f"🟡 Blacklising package {self.currentPackage.Id}")
 
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(title, self.store, version=[], args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
+            p = PackageUpdaterWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in self.currentPackage.Id))
         elif self.isAnUninstall:            
-            p = PackageUninstallerWidget(title, self.store, args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
+            p = PackageUninstallerWidget(self.currentPackage.Name, self.currentPackage.Source, args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in self.currentPackage.Id))
         else:
-            p = PackageInstallerWidget(title, self.store, version=[], args=cmdline_args, packageId=packageId, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in packageId))
+            p = PackageInstallerWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in self.currentPackage.Id))
         self.addProgram.emit(p)
         self.close()
 
