@@ -175,7 +175,7 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
     details = PackageDetails(package)
     try:
         unknownStr = _("Not available")
-        bucket = "main" if len(id.split("/")) == 1 else package.Id.split('/')[0]
+        bucket = "main" if len(package.Id.split("/")) == 1 else package.Id.split('/')[0]
         if bucket in globals.scoopBuckets:
             bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
         else:
@@ -185,7 +185,7 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
         details.InstallerType = _("Scoop package")
     
         rawOutput = b""
-        p = subprocess.Popen(' '.join([scoop, "cat", f"{id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        p = subprocess.Popen(' '.join([scoop, "cat", f"{package.Id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         while p.poll() is None:
             pass
         for line in p.stdout.readlines():
@@ -279,140 +279,6 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
         report(e)
         return details
 
-def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool, verbose: bool = False) -> None:
-    print(f"🟢 Starting get info for title {title}")
-    title = title.lower()
-    output = []
-    unknownStr = _("Not available") if verbose else _("Loading...")
-    bucket = "main" if len(id.split("/")) == 1 else id.split('/')[0]
-    if bucket in globals.scoopBuckets:
-        bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
-    else:
-        bucketRoot = f"https://github.com/ScoopInstaller/{bucket}"
-    packageDetails = {
-        "title": title.split("/")[-1],
-        "id": id,
-        "publisher": unknownStr,
-        "author": unknownStr,
-        "description": unknownStr,
-        "homepage": unknownStr,
-        "license": unknownStr,
-        "license-url": unknownStr,
-        "installer-sha256": unknownStr,
-        "installer-url": unknownStr,
-        "installer-size": "",
-        "installer-type": _("Scoop shim"),
-        "manifest": f"{bucketRoot}/blob/master/bucket/{id.split('/')[-1]}.json",
-        "updatedate": unknownStr,
-        "releasenotes": unknownStr,
-        "releasenotesurl": unknownStr,
-        "versions": [],
-        "architectures": [],
-        "scopes": [_("Local"), _("Global")]
-    }
-    
-    rawOutput = b""
-    p = subprocess.Popen(' '.join([scoop, "cat", f"{id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-    while p.poll() is None:
-        pass
-    for line in p.stdout.readlines():
-        line = line.strip()
-        if line:
-            rawOutput += line+b"\n"
-    manifest = False
-    version = ""
-    lc = getSettings("LowercaseScoopApps")
-
-    with open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "wb") as f:
-        f.write(rawOutput)
-    try:
-        mfest = open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "r")
-        import json
-        data: dict = json.load(mfest)
-        if "description" in data.keys():
-            packageDetails["description"] = data["description"]
-            
-        if "version" in data.keys():
-            packageDetails["versions"].append(data["version"])
-
-        if "homepage" in data.keys():
-            w = data["homepage"]
-            packageDetails["homepage"] = w
-            if "https://github.com/" in w:
-                packageDetails["author"] = w.replace("https://github.com/", "").split("/")[0]
-            else:
-                for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de", ".kde", ".microsoft"):
-                    w = w.replace(e, "")
-                packageDetails["author"] = w.split("/")[0].capitalize()
-                
-        if "notes" in data.keys():
-            if type(data["notes"]) == list:
-                packageDetails["releasenotes"] = "\n".join(data["notes"])
-            else:
-                packageDetails["releasenotes"] = data["notes"]
-        if "license" in data.keys():
-            packageDetails["license"] = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
-            packageDetails["license-url"] = unknownStr if type(data["license"]) != dict else data["license"]["url"]
-
-        if "url" in data.keys():
-            packageDetails["installer-sha256"] = data["hash"][0] if type(data["hash"]) == list else data["hash"]
-            url = data["url"][0] if type(data["url"]) == list else data["url"]
-            packageDetails["installer-url"] = url
-            try:
-                packageDetails["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
-            except Exception as e:
-                print("🟠 Can't get installer size:", type(e), str(e))
-        elif "architecture" in data.keys():
-            packageDetails["installer-sha256"] = data["architecture"]["64bit"]["hash"]
-            url = data["architecture"]["64bit"]["url"]
-            packageDetails["installer-url"] = url
-            try:
-                packageDetails["installer-size"] = f"({int(urlopen(url).length/1000000)} MB)"
-            except Exception as e:
-                print("🟠 Can't get installer size:", type(e), str(e))
-            if type(data["architecture"]) == dict:
-                packageDetails["architectures"] = list(data["architecture"].keys())
-        
-        if "checkver" in data.keys():
-            if "url" in data["checkver"].keys():
-                url = data["checkver"]["url"]
-                packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
-        
-        packageDetails["installer-type"] = "Scoop package"
-        
-    except Exception as e:
-        report(e)
-        
-    if packageDetails["releasenotesurl"] == unknownStr and "github.com" in packageDetails["installer-url"]:
-        try:
-            url = "/".join(packageDetails["installer-url"].replace("/download/", "/tag/").split("/")[:-1])
-            packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
-        except Exception as e:
-            report(e)
-        
-    if verbose:
-        p = subprocess.Popen(' '.join([scoop, "info", f"{title.replace(' ', '-')}"]+ (["--verbose"] if verbose else [])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-        while p.poll() is None:
-            pass
-        for line in p.stdout.readlines():
-            line = line.strip()
-            if line:
-                output.append(ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
-        manifest = False
-        version = ""
-        for line in output:
-            for line in output:
-                if("Updated by" in line):
-                    packageDetails["publisher"] = line.replace("Updated by", "").strip()[1:].strip()
-                elif("Updated at" in line):
-                    packageDetails["updatedate"] = line.replace("Updated at", "").strip()[1:].strip()                
-    print(f"🔵 Scoop does not support specific version installs")
-    packageDetails["versions"] = [version]
-    packageDetails["title"] = packageDetails["title"] if lc else packageDetails["title"].capitalize()
-    signal.emit(packageDetails, progId)
-    if not verbose:
-        getInfo(signal, title, id, useId, progId, verbose=True)
-    
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal, alreadyGlobal: bool = False) -> None:
     print(f"🟢 scoop installer assistant thread started for process {p}")
     outputCode = 1

@@ -12,6 +12,7 @@ from tools import _
 from PackageManagers import winget, scoop, choco
 from customWidgets import *
 import globals
+from PackageManagers.PackageClasses import Package, UpgradablePackage, PackageDetails
 
 class PackageInstallerWidget(QGroupBox):
     onCancel = Signal()
@@ -664,10 +665,10 @@ class PackageInfoPopupWindow(QWidget):
     isAnUninstall = False
     store = ""
 
-    currentProgram = 0
+    currentPackage: Package = None
     pressed = False
     oldPos = QPoint(0, 0)
-
+    
     def __init__(self, parent):
         super().__init__(parent = parent)
         self.iv = ImageViewer(self.window())
@@ -938,7 +939,7 @@ class PackageInfoPopupWindow(QWidget):
         self.shareButton.setFixedWidth(200)
         self.shareButton.setStyleSheet("border-radius: 8px;")
         self.shareButton.setFixedHeight(35)
-        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.givenPackageId}^&pname={self.givenPackageId}", self.window()))
+        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}", self.window()))
         self.installButton = QPushButton()
         self.installButton.setText(_("Install"))
         self.installButton.setObjectName("AccentButton")
@@ -1183,140 +1184,153 @@ class PackageInfoPopupWindow(QWidget):
         self.commandWindow.setCursorPosition(0)
 
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False, installedVersion: str = "") -> None:
-        newProgram = id+store
-        if self.currentProgram != newProgram:
-            self.currentProgram = newProgram
-            self.iv.resetImages()
-            self.packageItem = packageItem
-            self.givenPackageId = id
-            self.isAnUpdate = update
-            self.isAnUninstall = uninstall
-            self.store = store
-            if "…" in id:
-                self.installButton.setEnabled(False)
-                self.installButton.setText(_("Please wait..."))
-            else:
-                if self.isAnUpdate:
-                    self.installButton.setText(_("Update"))
-                elif self.isAnUninstall:
-                    self.installButton.setText(_("Uninstall"))
-                else:
-                    self.installButton.setText(_("Install"))
-            store = store.lower()
-            self.title.setText(title)
-
-            self.loadPackageCommandLine()
-
-            self.loadingProgressBar.show()
-            self.hashCheckBox.setChecked(False)
-            self.hashCheckBox.setEnabled(False)
-            self.interactiveCheckbox.setChecked(False)
-            self.interactiveCheckbox.setEnabled(False)
-            self.adminCheckbox.setChecked(False)
-            self.architectureCombo.setEnabled(False)
-            self.scopeCombo.setEnabled(False)
-            self.versionCombo.setEnabled(False)
-            isScoop = "scoop" in self.store.lower()
-            self.description.setText(_("Loading..."))
-            self.author.setText("<b>"+_("Author")+":</b> "+_("Loading..."))
-            self.publisher.setText(f"<b>{_('Publisher')}:</b> "+_("Loading..."))
-            self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"\">{_('Loading...')}</a>")
-            self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')} (<a style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>)")
-            lastVerString = ""
-            if update:
-                lastVerString = f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(version)})"
-            elif uninstall:
-                lastVerString = f"<b>{_('Installed Version')}:</b> {version}"
-            else:
-                if isScoop:
-                    lastVerString = f"<b>{_('Current Version')}:</b> {version}"
-                else:
-                    lastVerString = f"<b>{_('Latest Version')}:</b> {version}"
-            self.lastver.setText(lastVerString)
-
-            self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
-            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a  style=\"color: {blueColor};\" href=\"\">{_('Loading...')}</a>")
-            self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
-            self.packageId.setText(f"<b>{_('Package ID')}:</b> {id}")
-            self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
-            self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
-            self.notes.setText(f"<b>{_('Notes:') if 'scoop' in self.store.lower() else _('Release notes:')}</b> {_('Loading...')}")
-            self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
-            self.storeLabel.setText(f"<b>{_('Source')}:</b> {self.store.capitalize()}")
-            self.versionCombo.addItems([_("Loading...")])
-            self.architectureCombo.addItems([_("Loading...")])
-            self.scopeCombo.addItems([_("Loading...")])
-
-            def resetLayoutWidget():
-                for l in self.imagesCarrousel:
-                    l.setPixmap(QPixmap(), index=0)
-                Thread(target=self.loadPackageScreenshots, args=(id, store)).start()
-
-            self.callInMain.emit(lambda: resetLayoutWidget())
-            self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
-            Thread(target=self.loadPackageIcon, args=(id, store, version)).start()
-
-            self.finishedCount = 0
-            if(store.lower()=="winget"):
-                Thread(target=winget.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
-            elif("scoop" in store.lower()):
-                bucket_prefix = ""
-                if len(self.store.lower().split(":"))>1 and not "/" in id and not "/" in title:
-                    bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
-                Thread(target=scoop.getInfo, args=(self.loadInfo, bucket_prefix+title, bucket_prefix+id, useId, newProgram), daemon=True).start()
-            elif store.lower() == "chocolatey":
-                Thread(target=choco.getInfo, args=(self.loadInfo, title, id, useId, newProgram), daemon=True).start()
-
-    def printData(self, packageDetails: dict, progId) -> None:
-        if self.currentProgram == progId:
-            self.finishedCount += 1
-            if not("scoop" in self.store.lower()) or self.finishedCount > 1:
-                self.loadingProgressBar.hide()
+        package = Package(title, id, version, store)
+        if package.isScoop():
+            if len(store.split(': '))==2:
+                package.Id = store.split(': ')[1]+'/'+id
+                
+        if self.currentPackage == package:
+            return
+        self.currentPackage = package
+        
+        self.iv.resetImages()
+        self.packageItem = packageItem
+        self.givenPackageId = id
+        self.isAnUpdate = update
+        self.isAnUninstall = uninstall
+        self.store = store
+        if "…" in id:
+            self.installButton.setEnabled(False)
+            self.installButton.setText(_("Please wait..."))
+        else:
             if self.isAnUpdate:
                 self.installButton.setText(_("Update"))
             elif self.isAnUninstall:
                 self.installButton.setText(_("Uninstall"))
             else:
                 self.installButton.setText(_("Install"))
-            self.installButton.setEnabled(True)
-            self.adminCheckbox.setEnabled(True)
-            self.hashCheckBox.setEnabled(not self.isAnUninstall)
-            self.versionCombo.setEnabled(not self.isAnUninstall and not self.isAnUpdate)
-            self.architectureCombo.setEnabled(not self.isAnUninstall)
-            self.scopeCombo.setEnabled(not self.isAnUninstall)
-            
-            if(self.store.lower() == "winget" or self.store.lower() == "chocolatey"):
-                self.interactiveCheckbox.setEnabled(True)
-            self.title.setText(packageDetails["title"])
-            self.description.setText(packageDetails["description"])
-            if self.store.lower() == "winget":
-                self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{packageDetails['id'].split('.')[0]}'>"+packageDetails["author"]+"</a>")
-                self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{packageDetails['id'].split('.')[0]}'>"+packageDetails["publisher"]+"</a>")
+        store = store.lower()
+        self.title.setText(title)
+
+        self.loadPackageCommandLine()
+
+        self.loadingProgressBar.show()
+        self.hashCheckBox.setChecked(False)
+        self.hashCheckBox.setEnabled(False)
+        self.interactiveCheckbox.setChecked(False)
+        self.interactiveCheckbox.setEnabled(False)
+        self.adminCheckbox.setChecked(False)
+        self.architectureCombo.setEnabled(False)
+        self.scopeCombo.setEnabled(False)
+        self.versionCombo.setEnabled(False)
+        self.description.setText(_("Loading..."))
+        self.author.setText("<b>"+_("Author")+":</b> "+_("Loading..."))
+        self.publisher.setText(f"<b>{_('Publisher')}:</b> "+_("Loading..."))
+        self.homepage.setText(f"<b>{_('Homepage')}:</b> {_('Loading...')}")
+        self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')}")
+        lastVerString = ""
+        if update:
+            lastVerString = f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(package.Version)})"
+        elif uninstall:
+            lastVerString = f"<b>{_('Installed Version')}:</b> {package.Version}"
+        else:
+            if package.isScoop():
+                lastVerString = f"<b>{_('Current Version')}:</b> {package.Version}"
             else:
-                self.author.setText(f"<b>{_('Author')}:</b> "+packageDetails["author"])
-                self.publisher.setText(f"<b>{_('Publisher')}:</b> "+packageDetails["publisher"])
-            self.homepage.setText(f"<b>{_('Homepage')}:</b> <a style=\"color: {blueColor};\"  href=\"{packageDetails['homepage']}\">{packageDetails['homepage']}</a>")
-            self.license.setText(f"<b>{_('License')}:</b> {packageDetails['license']} (<a style=\"color: {blueColor};\" href=\"{packageDetails['license-url']}\">{packageDetails['license-url']}</a>)")
-            self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {packageDetails['installer-sha256']}")
-            self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> <a style=\"color: {blueColor};\" href=\"{packageDetails['installer-url']}\">{packageDetails['installer-url']}</a> {packageDetails['installer-size']}")
-            self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {packageDetails['installer-type']}")
-            self.packageId.setText(f"<b>{_('Package ID')}:</b> {packageDetails['id']}")
-            self.date.setText(f"<b>{_('Last updated:')}</b> {packageDetails['updatedate']}")
-            self.notes.setText(f"<b>{_('Notes:') if 'scoop' in self.store.lower() else _('Release notes:')}</b> {packageDetails['releasenotes'].replace(r'%bluecolor%', blueColor)}")
-            self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {packageDetails['releasenotesurl'].replace(r'%bluecolor%', blueColor)}")
-            self.manifest.setText(f"<b>{_('Manifest')}:</b> <a style=\"color: {blueColor};\" href=\"{'file:///' if not 'https' in packageDetails['manifest'] else ''}"+packageDetails['manifest'].replace('\\', '/')+f"\">{packageDetails['manifest']}</a>")
-            while self.versionCombo.count()>0:
-                self.versionCombo.removeItem(0)
-            self.versionCombo.addItems([_("Latest")] + packageDetails["versions"])
-            while self.architectureCombo.count()>0:
-                self.architectureCombo.removeItem(0)
-            self.architectureCombo.addItems([_("Default")] + packageDetails["architectures"])
-            while self.scopeCombo.count()>0:
-                self.scopeCombo.removeItem(0)
-            self.scopeCombo.addItems([_("Default")] + packageDetails["scopes"])
-            if "…" in self.givenPackageId:
-                self.givenPackageId = packageDetails["id"]
-                self.loadPackageCommandLine()
+                lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
+        self.lastver.setText(lastVerString)
+
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isChocolatey() else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
+        self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
+        self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
+        self.notes.setText(f"<b>{_('Notes:') if package.isScoop() else _('Release notes:')}</b> {_('Loading...')}")
+        self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
+        self.storeLabel.setText(f"<b>{_('Source')}:</b> {package.Source}")
+        self.versionCombo.addItems([_("Loading...")])
+        self.architectureCombo.addItems([_("Loading...")])
+        self.scopeCombo.addItems([_("Loading...")])
+
+        def resetLayoutWidget():
+            for l in self.imagesCarrousel:
+                l.setPixmap(QPixmap(), index=0)
+            Thread(target=self.loadPackageScreenshots, args=(id, store)).start()
+
+        self.callInMain.emit(lambda: resetLayoutWidget())
+        self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
+        Thread(target=self.loadPackageIcon, args=(id, store, version)).start()
+        
+        Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
+
+        self.finishedCount = 0
+        
+    def loadPackageDetails(self, package: Package):
+        if package.isWinget():
+            details = winget.getPackageDetails_v2(package)
+        elif package.isScoop():
+            details = scoop.getPackageDetails_v2(package)
+        elif package.isChocolatey():
+            details = choco.getPackageDetails_v2(package)
+        self.callInMain.emit(lambda: self.printData(details))
+            
+    def printData(self, details: PackageDetails) -> None:
+        if details.PackageObject != self.currentPackage:
+            return 
+        package = self.currentPackage
+        
+        self.loadingProgressBar.hide()
+        self.installButton.setEnabled(True)
+        self.adminCheckbox.setEnabled(True)
+        self.hashCheckBox.setEnabled(not self.isAnUninstall)
+        self.versionCombo.setEnabled(not self.isAnUninstall and not self.isAnUpdate)
+        self.architectureCombo.setEnabled(not self.isAnUninstall)
+        self.scopeCombo.setEnabled(not self.isAnUninstall)
+        if self.isAnUpdate:
+            self.installButton.setText(_("Update"))
+        elif self.isAnUninstall:
+            self.installButton.setText(_("Uninstall"))
+        else:
+            self.installButton.setText(_("Install"))
+        
+        self.interactiveCheckbox.setEnabled(not package.isScoop())
+        self.title.setText(details.Name)
+        self.description.setText(details.Description)
+        if package.isWinget():
+            self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{details.Id.split('.')[0]}'>{details.Author}</a>")
+            self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{details.Id.split('.')[0]}'>{details.Publisher}</a>")
+        else:
+            self.author.setText(f"<b>{_('Author')}:</b> "+details.Author)
+            self.publisher.setText(f"<b>{_('Publisher')}:</b> "+details.Publisher)
+        self.homepage.setText(f"<b>{_('Homepage')}:</b> {details.asUrl(details.HomepageURL)}")
+        if details.License and details.LicenseURL:
+            self.license.setText(f"<b>{_('License')}:</b> {details.License} ({details.asUrl(details.License)})")
+        elif details.License:
+            self.license.setText(f"<b>{_('License')}:</b> {details.License}")
+        elif details.LicenseURL:
+            self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
+        else:
+            self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if self.store.lower() == 'chocolatey' else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
+        self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
+        self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
+        self.date.setText(f"<b>{_('Last updated:')}</b> {details.UpdateDate}")
+        self.notes.setText(f"<b>{_('Notes:') if package.isScoop() else _('Release notes:')}</b> {details.ReleaseNotes}")
+        self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {details.asUrl(details.ReleaseNotesUrl)}")
+        self.manifest.setText(f"<b>{_('Manifest')}:</b> {details.asUrl(details.ManifestUrl)}")
+        while self.versionCombo.count()>0:
+            self.versionCombo.removeItem(0)
+        self.versionCombo.addItems([_("Latest")] + details.Versions)
+        while self.architectureCombo.count()>0:
+            self.architectureCombo.removeItem(0)
+        self.architectureCombo.addItems([_("Default")] + details.Architectures)
+        while self.scopeCombo.count()>0:
+            self.scopeCombo.removeItem(0)
+        self.scopeCombo.addItems([_("Default")] + details.Scopes)
+        
+        self.loadPackageCommandLine()
 
     def loadPackageIcon(self, id: str, store: str, version: str) -> None:
         try:
@@ -1349,8 +1363,7 @@ class PackageInfoPopupWindow(QWidget):
                 if type(e) != KeyError:
                     report(e)
                 else:
-                    print(f"🟠 Icon {id} not found in json")
-                pass # TODO: implement fallback icon loader
+                    print(f"🟡 Icon {id} not found in json")
             except Exception as e:
                 report(e)
 
@@ -1397,13 +1410,13 @@ class PackageInfoPopupWindow(QWidget):
                         else:
                             print("Screenshot arrived too late!")
                     else:
-                        print(f"🟠 {imagepath} is a null image")
+                        print(f"🟡 {imagepath} is a null image")
                 except Exception as e:
                     self.callInMain.emit(self.imagesCarrousel[self.validImageCount].hide)
                     self.validImageCount += 1
                     report(e)
             if self.validImageCount == 0:
-                cprint("🟠 No valid screenshots were found")
+                cprint("🟡 No valid screenshots were found")
             else:
                 cprint(f"🟢 {self.validImageCount} vaild images found!")
             for i in range(self.validImageCount+1, 20):
@@ -1414,8 +1427,7 @@ class PackageInfoPopupWindow(QWidget):
                 if type(e) != KeyError:
                     report(e)
                 else:
-                    print(f"🟠 Icon {id} not found in json")
-                pass # TODO: implement fallback icon loader
+                    print(f"🟡 Icon {id} not found in json")
             except Exception as e:
                 report(e)
 

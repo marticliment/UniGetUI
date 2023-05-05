@@ -194,8 +194,8 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
             elif "Release Notes" in line:
                 details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
         details.Versions = []
-        p = subprocess.Popen([choco, "find", "-e", id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        print(f"🟢 Starting get info for id {id}")
+        p = subprocess.Popen([choco, "find", "-e", package.Id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        print(f"🟢 Starting get info for id {package.Id}")
         output = []
         while p.poll() is None:
             line = p.stdout.readline().strip()
@@ -209,72 +209,7 @@ def getPackageDetails_v2(package: Package) -> PackageDetails:
     except Exception as e:
         report(e)
         return details
-
-def getInfo(signal: Signal, title: str, id: str, useId: bool, progId: bool) -> None:
-    try:
-        p = subprocess.Popen([choco, "info", id] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        print(f"🟢 Starting get info for id {id}")
-        output = []
-        unknownStr = _("Not available")
-        packageDetails = {
-            "title": title,
-            "id": id,
-            "publisher": unknownStr,
-            "author": unknownStr,
-            "description": unknownStr,
-            "homepage": unknownStr,
-            "license": unknownStr,
-            "license-url": unknownStr,
-            "installer-sha256": unknownStr,
-            "installer-url": unknownStr,
-            "installer-size": "",
-            "installer-type": unknownStr,
-            "updatedate": unknownStr,
-            "releasenotes": unknownStr,
-            "releasenotesurl": unknownStr,
-            "manifest": f"https://community.chocolatey.org/packages/{id.lower()}",
-            "versions": [],
-            "architectures": ["x86"],
-            "scopes": []
-        }
-        while p.poll() is None:
-            line = p.stdout.readline()
-            line = line.strip()
-            if line:
-                output.append(str(line, encoding='utf-8', errors="ignore"))
-        for line in output:
-            if("Title:" in line):
-                packageDetails["title"] = line.split("|")[0].replace("Title:", "").strip()
-                packageDetails["updatedate"] = line.split("|")[1].replace("Published:", "").strip()
-            elif("Author:" in line):
-                packageDetails["author"] = line.replace("Author:", "").strip()
-            elif("Software Site:" in line):
-                packageDetails["homepage"] = line.replace("Software Site:", "").strip()
-            elif("Software License:" in line):
-                packageDetails["license-url"] = line.replace("Software License:", "").strip()
-                packageDetails["license"] = ""
-            elif("Package Checksum:" in line):
-                packageDetails["installer-sha256"] = "<br>"+(line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", ""))
-            elif("Description:" in line):
-                packageDetails["description"] = line.replace("Description:", "").strip()
-            elif("Release Notes" in line):
-                url = line.replace("Release Notes:", "").strip()
-                packageDetails["releasenotesurl"] = f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
-        packageDetails["versions"] = []
-        p = subprocess.Popen([choco, "find", "-e", id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-        print(f"🟢 Starting get info for id {id}")
-        output = []
-        while p.poll() is None:
-            line = p.stdout.readline().strip()
-            if line:
-                output.append(str(line, encoding='utf-8', errors="ignore"))
-        for line in output:
-            if "[Approved]" in line:
-                packageDetails["versions"].append(line.split(" ")[1])
-        signal.emit(packageDetails, progId)
-    except Exception as e:
-        report(e)
-    
+ 
 def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
     print(f"🟢 choco installer assistant thread started for process {p}")
     outputCode = RETURNCODE_OPERATION_SUCCEEDED

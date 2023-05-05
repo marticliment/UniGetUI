@@ -1,4 +1,4 @@
-from tools import _
+from tools import _, blueColor
 
 class Package():
     Name = ""
@@ -12,6 +12,15 @@ class Package():
         self.Version = Version
         self.Source = Source
         
+    def isWinget(self) -> bool:
+        return self.Source.lower() == "winget"
+        
+    def isScoop(self) -> bool:
+        return "scoop" in self.Source.lower()
+    
+    def isChocolatey(self) -> bool:
+        return self.Source.lower() == "chocolatey"
+    
 class UpgradablePackage(Package):
     NewVersion = ""
     NewPackage: Package = None
@@ -27,6 +36,7 @@ class PackageDetails(Package):
     Version: str = ""
     NewVersion: str = ""
     Source: str = ""
+    PackageObject: Package = None
     Publisher: str = _("Not available")
     Author: str = _("Not available")
     Description: str = _("Not available")
@@ -50,11 +60,12 @@ class PackageDetails(Package):
         self.Id = package.Id
         self.Version = package.Version
         self.Source = package.Source
+        self.PackageObject = package
         if type(package) == UpgradablePackage:
             self.NewVersion = package.NewVersion
         
-    def asUrl(url: str) -> str:
-        return f"<a href='{url}' style='color:%bluecolor%'>{url}</a>"
+    def asUrl(self, url: str) -> str:
+        return f"<a href='{url}' style='color:{blueColor}'>{url}</a>" if "://" in url else url
     
 class PackageManagerModule:
     NAME: str
