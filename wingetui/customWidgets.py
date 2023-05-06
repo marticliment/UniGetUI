@@ -732,10 +732,9 @@ class SoftwareSection(QWidget):
         sct.activated.connect(self.query.clear)
         
 
-        img = QLabel()
-        img.setFixedWidth(80)
-        img.setPixmap(QIcon(getMedia("desktop_download")).pixmap(QSize(64, 64)))
-        hLayout.addWidget(img)
+        self.SectionImage = QLabel()
+        self.SectionImage.setFixedWidth(80)
+        hLayout.addWidget(self.SectionImage)
 
         v = QVBoxLayout()
         v.setSpacing(0)
@@ -1005,7 +1004,6 @@ class SoftwareSection(QWidget):
         for manager in self.PackageManagers: # Stop here if not all package managers loaded
             if not self.PackagesLoaded[manager] and not force:
                 return
-            
         for manager in self.PackageManagers:
             self.PackagesLoaded[manager] = False
         self.packageItems = []

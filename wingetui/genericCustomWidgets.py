@@ -332,7 +332,10 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def setHidden(self, hide: bool) -> None:
         if self.itemAction != QAction:
             self.itemAction.setVisible(not hide)
-        return super().setHidden(hide)
+        try:
+            return super().setHidden(hide)
+        except RuntimeError:
+            return False
     
     def setText(self, column: int, text: str) -> None:
         self.setToolTip(column, text)
