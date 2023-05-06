@@ -223,7 +223,7 @@ def getInstalledPackages_v2() -> list[Package]:
     print(f"🔵 Starting {NAME} search for installed packages")
     try:
         packages: list[Package] = []
-        p = subprocess.Popen(["mode", "400,30&", EXECUTABLE, "list", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        p = subprocess.Popen(["mode", "400,30&", EXECUTABLE, "list", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         hasShownId: bool = False
         idPosition: int = 0
         versionPosition: int = 0

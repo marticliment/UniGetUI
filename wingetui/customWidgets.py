@@ -770,6 +770,8 @@ class SoftwareSection(QWidget):
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.header().sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
+        self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
+
 
         
         def updateItemState(item: TreeWidgetItemWithQAction, column: int):
