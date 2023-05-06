@@ -9,6 +9,7 @@ from PySide6.QtWidgets import *
 from tools import *
 from tools import _
 
+
 from PackageManagers import winget, scoop, choco
 from customWidgets import *
 import globals
@@ -657,13 +658,12 @@ class PackageInfoPopupWindow(QWidget):
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
     callInMain = Signal(object)
-    packageItem: TreeWidgetItemWithQAction = None
     finishedCount: int = 0
     backgroundApplied: bool = False
     isAnUpdate = False
     isAnUninstall = False
-
     currentPackage: Package = None
+
     pressed = False
     oldPos = QPoint(0, 0)
     
@@ -1182,16 +1182,15 @@ class PackageInfoPopupWindow(QWidget):
 
     def loadProgram(self, title: str, id: str, useId: bool, store: str, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, version = "", uninstall: bool = False, installedVersion: str = "") -> None:
         package = Package(title, id, version, store)
+        package.PackageItem = packageItem
         if package.isScoop():
             if len(store.split(': '))==2:
                 package.Id = store.split(': ')[1]+'/'+id
         self.showPackageDetails_v2(package, update, packageItem, uninstall, installedVersion)
                 
     def showPackageDetails_v2(self, package: Package, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, uninstall: bool = False, installedVersion: str = ""):
-        self.packageItem = packageItem
         self.isAnUpdate = update
         self.isAnUninstall = uninstall
-        
         if self.currentPackage == package:
             return
         self.currentPackage = package
@@ -1303,11 +1302,11 @@ class PackageInfoPopupWindow(QWidget):
             self.author.setText(f"<b>{_('Author')}:</b> "+details.Author)
             self.publisher.setText(f"<b>{_('Publisher')}:</b> "+details.Publisher)
         self.homepage.setText(f"<b>{_('Homepage')}:</b> {details.asUrl(details.HomepageURL)}")
-        if details.License and details.LicenseURL:
-            self.license.setText(f"<b>{_('License')}:</b> {details.License} ({details.asUrl(details.License)})")
-        elif details.License:
+        if details.License != "" and details.LicenseURL != "":
+            self.license.setText(f"<b>{_('License')}:</b> {details.License} ({details.asUrl(details.LicenseURL)})")
+        elif details.License != "":
             self.license.setText(f"<b>{_('License')}:</b> {details.License}")
-        elif details.LicenseURL:
+        elif details.LicenseURL != "":
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
@@ -1439,11 +1438,11 @@ class PackageInfoPopupWindow(QWidget):
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
 
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in self.currentPackage.Id))
+            p = PackageUpdaterWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
         elif self.isAnUninstall:            
-            p = PackageUninstallerWidget(self.currentPackage.Name, self.currentPackage.Source, args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in self.currentPackage.Id))
+            p = PackageUninstallerWidget(self.currentPackage.Name, self.currentPackage.Source, args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
         else:
-            p = PackageInstallerWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.packageItem, useId=not("…" in self.currentPackage.Id))
+            p = PackageInstallerWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
         self.addProgram.emit(p)
         self.close()
 

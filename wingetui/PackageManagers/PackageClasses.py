@@ -1,10 +1,12 @@
 from tools import _, blueColor
+from customWidgets import TreeWidgetItemWithQAction
 
 class Package():
-    Name = ""
-    Id = ""
-    Version = ""
-    Source = ""
+    Name: str = ""
+    Id: str = ""
+    Version: str = ""
+    Source: str = ""
+    PackageItem: TreeWidgetItemWithQAction = None
     
     def __init__(self, Name: str, Id: str, Version: str, Source: str):
         self.Name = Name
@@ -52,8 +54,8 @@ class PackageDetails(Package):
     Author: str = _("Not available")
     Description: str = _("Not available")
     HomepageURL: str = _("Not available")
-    License: str = _("Not available")
-    LicenseURL: str = _("Not available")
+    License: str = ""
+    LicenseURL: str = ""
     InstallerURL: str = _("Not available")
     InstallerHash: str = _("Not available")
     InstallerSize: int = 0
