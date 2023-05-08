@@ -680,9 +680,9 @@ class SoftwareSection(QWidget):
         self.programbox = QWidget()
         self.callInMain.connect(lambda f: f())
 
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(5, 5, 5, 5)
-        self.setLayout(self.layout)
+        self.mainLayout = QVBoxLayout()
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.mainLayout)
 
         self.reloadButton = QPushButton()
         self.reloadButton.setFixedSize(30, 30)
@@ -698,8 +698,8 @@ class SoftwareSection(QWidget):
         self.searchButton.setIcon(QIcon(getMedia("search")))
         self.searchButton.setAccessibleName(_("Search"))
 
-        hLayout = QHBoxLayout()
-        hLayout.setContentsMargins(25, 0, 25, 0)
+        headerLayout = QHBoxLayout()
+        headerLayout.setContentsMargins(0, 0, 0, 0)
 
         self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setFixedHeight(30)
@@ -735,7 +735,7 @@ class SoftwareSection(QWidget):
 
         self.SectionImage = QLabel()
         self.SectionImage.setFixedWidth(80)
-        hLayout.addWidget(self.SectionImage)
+        headerLayout.addWidget(self.SectionImage)
 
         v = QVBoxLayout()
         v.setSpacing(0)
@@ -749,14 +749,15 @@ class SoftwareSection(QWidget):
         self.titleWidget.setFixedHeight(70)
         self.titleWidget.setLayout(v)
 
-        hLayout.addWidget(self.titleWidget, stretch=1)
-        hLayout.addStretch()
+        headerLayout.addWidget(self.titleWidget, stretch=1)
+        headerLayout.addStretch()
+        headerLayout.setContentsMargins(5, 0, 5, 0)
         forceCheckBox = QVBoxLayout()
         forceCheckBox.addWidget(self.forceCheckBox)
-        hLayout.addLayout(forceCheckBox)
-        hLayout.addWidget(self.query)
-        hLayout.addWidget(self.searchButton)
-        hLayout.addWidget(self.reloadButton)
+        headerLayout.addLayout(forceCheckBox)
+        headerLayout.addWidget(self.query)
+        headerLayout.addWidget(self.searchButton)
+        headerLayout.addWidget(self.reloadButton)
 
         self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
@@ -806,7 +807,7 @@ class SoftwareSection(QWidget):
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
-        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 15px;margin-right: 15px;")
+        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 2px;margin-right: 2px;")
 
         layout = QVBoxLayout()
         w = QWidget()
@@ -827,7 +828,7 @@ class SoftwareSection(QWidget):
         self.countLabel.setObjectName("greyLabel")
     
         v.addWidget(self.countLabel)
-        layout.addLayout(hLayout)
+        layout.addLayout(headerLayout)
         self.toolbar = self.getToolbar()
         layout.addWidget(self.toolbar)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -846,7 +847,7 @@ class SoftwareSection(QWidget):
         hl2.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(hl2)
         self.programbox.setLayout(l)
-        self.layout.addWidget(self.programbox, stretch=1)
+        self.mainLayout.addWidget(self.programbox, stretch=1)
         self.infobox.hide()
 
         self.addProgram.connect(self.addItem)
