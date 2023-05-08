@@ -60,9 +60,6 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
-        self.wingetIcon = QIcon(getMedia("winget"))
-        self.scoopIcon = QIcon(getMedia("scoop"))
-        self.chocolateyIcon = QIcon(getMedia("choco"))
         
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():

@@ -27,7 +27,12 @@ class WingetPackageManager(SamplePackageManager):
     BLACKLISTED_PACKAGE_VERSIONS = []
 
 
-    icon = None
+    wingetIcon = None
+    localIcon = None
+    steamIcon = None
+    gogIcon = None
+    uPlayIcon = None
+    msStoreIcon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
@@ -83,7 +88,7 @@ class WingetPackageManager(SamplePackageManager):
         """
         print(f"🔵 Starting {self.NAME} package caching")
         try:
-            p = subprocess.Popen([self.NAME, "search", "", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "search", "", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
             ContentsToCache = ""
             hasShownId: bool = False
             idPosition: int = 0
@@ -103,14 +108,14 @@ class WingetPackageManager(SamplePackageManager):
                         pass
                     else:
                         try:
-                            self.NAME = line[0:idPosition].strip()
+                            name = line[0:idPosition].strip()
                             idVersionSubstr = line[idPosition:].strip()
-                            if "  " in self.NAME:
-                                oName = self.NAME
+                            if "  " in name:
+                                oName = name
                                 while "  " in oName:
                                     oName = oName.replace("  ", " ")
                                 idVersionSubstr = oName.split(" ")[-1]+idVersionSubstr
-                                self.NAME = " ".join(oName.split(" ")[:-1])
+                                name = " ".join(oName.split(" ")[:-1])
                             idVersionSubstr.replace("\t", " ")
                             while "  " in idVersionSubstr:
                                 idVersionSubstr = idVersionSubstr.replace("  ", " ")
@@ -124,16 +129,16 @@ class WingetPackageManager(SamplePackageManager):
                             if ver.strip() in ("<", "-"):
                                 iOffset += 1
                                 ver = idVersionSubstr.split(" ")[iOffset+1]
-                            if not "  " in self.NAME:
-                                if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                    ContentsToCache += f"{self.NAME},{id},{ver}\n"
+                            if not "  " in name:
+                                if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                    ContentsToCache += f"{name},{id},{ver}\n"
                             else:
-                                if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                    self.NAME = self.NAME.replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                                    while "##" in self.NAME:
-                                        self.NAME = self.NAME.replace("##", "#")
-                                    print(f"🟡 package {self.NAME} failed parsing, going for method 2...")
-                                    ContentsToCache += f"{self.NAME},{id},{ver}\n"
+                                if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                    name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                                    while "##" in name:
+                                        name = name.replace("##", "#")
+                                    print(f"🟡 package {name} failed parsing, going for method 2...")
+                                    ContentsToCache += f"{name},{id},{ver}\n"
                         except Exception as e:
                             ContentsToCache += f"{line[0:idPosition].strip()},{line[idPosition:versionPosition].strip()},{line[versionPosition:].strip()}\n"
                             if type(e) != IndexError:
@@ -202,16 +207,16 @@ class WingetPackageManager(SamplePackageManager):
                             iOffset += 1
                             ver = verElement.split(" ")[iOffset+1]
                             newver = verElement.split(" ")[iOffset+2]
-                        self.NAME = element[0:idPosition].strip()
-                        if not "  " in self.NAME:
-                            if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(self.NAME, id, ver, newver, self.NAME, Winget))
+                        name = element[0:idPosition].strip()
+                        if not "  " in name:
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(UpgradablePackage(name, id, ver, newver, self.NAME, Winget))
                         else:
-                            self.NAME = self.NAME.replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                            while "##" in self.NAME:
-                                self.NAME = self.NAME.replace("##", "#")
-                            if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(self.NAME.split("#")[0], self.NAME.split("#")[-1]+id, ver, newver, self.NAME, Winget))
+                            name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                            while "##" in name:
+                                name = name.replace("##", "#")
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, self.NAME, Winget))
                     except Exception as e:
                         packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:].split(" ")[0].strip(), self.NAME, Winget))
                         if type(e) != IndexError:
@@ -264,17 +269,17 @@ class WingetPackageManager(SamplePackageManager):
                         if ver.strip() in ("<", "-"):
                             iOffset += 1
                             ver = verElement.split(" ")[iOffset+1]
-                        self.NAME = element[0:idPosition].strip()
-                        if not "  " in self.NAME:
-                            if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(self.NAME, id, ver, self.NAME, Winget))
+                        name = element[0:idPosition].strip()
+                        if not "  " in name:
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(Package(name, id, ver, self.NAME, Winget))
                         else:
-                            if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                print(f"🟡 package {self.NAME} failed parsing, going for method 2...")
-                                self.NAME = self.NAME.replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                                while "##" in self.NAME:
-                                    self.NAME = self.NAME.replace("##", "#")
-                                packages.append(Package(self.NAME.split("#")[0], self.NAME.split("#")[-1]+id, ver, self.NAME, Winget))
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                print(f"🟡 package {name} failed parsing, going for method 2...")
+                                name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
+                                while "##" in name:
+                                    name = name.replace("##", "#")
+                                packages.append(Package(name.split("#")[0], name.split("#")[-1]+id, ver, self.NAME, Winget))
                     except Exception as e:
                         packages.append(Package(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:].strip(), self.NAME, Winget))
                         if type(e) != IndexError:
@@ -387,9 +392,25 @@ class WingetPackageManager(SamplePackageManager):
             return details
 
     def getIcon(self, source: str) -> QIcon:
-        if not self.icon:
-            self.icon = QIcon(getMedia("winget"))
-        return self.icon
+        if not self.wingetIcon:
+            self.wingetIcon = QIcon(getMedia("winget"))
+            self.localIcon = QIcon(getMedia("localpc"))
+            self.msStoreIcon = QIcon(getMedia("msstore"))
+            self.SteamIcon = QIcon(getMedia("steam"))
+            self.gogIcon = QIcon(getMedia("gog"))
+            self.uPlayIcon = QIcon(getMedia("uplay"))
+        if "microsoft store" in source.lower():
+            return self.msStoreIcon
+        elif source in (_("Local PC"), "Local PC"):
+            return self.localIcon
+        elif "steam" in source.lower():
+            return self.steamIcon
+        elif "gog" in source.lower():
+            return self.gogIcon
+        elif "ubisoft connect" in source.lower():
+            return self.uPlayIcon
+        else:
+            return self.wingetIcon
 
     def installAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
         print(f"🟢 winget installer assistant thread started for process {p}")
