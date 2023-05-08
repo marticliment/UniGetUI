@@ -89,11 +89,11 @@ class ChocoPackageManager(SamplePackageManager):
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
                     if len(line.split(" ")) >= 2:
-                        self.NAME = formatPackageIdAsName(line.split(" ")[0])
+                        name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
-                        if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                            ContentsToCache += f"{self.NAME},{id},{version}\n"
+                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            ContentsToCache += f"{name},{id},{version}\n"
             AlreadyCachedPackages = ""
             try:
                 if os.path.exists(self.CACHE_FILE):
@@ -125,7 +125,7 @@ class ChocoPackageManager(SamplePackageManager):
                     
                     if len(line.split("|")) >= 3:
                         #Replace these lines with the parse mechanism
-                        self.NAME = formatPackageIdAsName(line.split("|")[0])
+                        name = formatPackageIdAsName(line.split("|")[0])
                         id = line.split("|")[0]
                         version = line.split("|")[1]
                         newVersion = line.split("|")[2]
@@ -133,8 +133,8 @@ class ChocoPackageManager(SamplePackageManager):
                     else:
                         continue
                     
-                    if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                        packages.append(UpgradablePackage(self.NAME, id, version, newVersion, source, Choco))
+                    if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                        packages.append(UpgradablePackage(name, id, version, newVersion, source, Choco))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             return packages
         except Exception as e:
@@ -153,12 +153,12 @@ class ChocoPackageManager(SamplePackageManager):
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
                     if len(line.split(" ")) >= 2:
-                        self.NAME = formatPackageIdAsName(line.split(" ")[0])
+                        name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
                         source = self.NAME
-                        if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                            packages.append(Package(self.NAME, id, version, source, Choco))
+                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(Package(name, id, version, source, Choco))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             return packages
         except Exception as e:

@@ -21,7 +21,6 @@ class ScoopPackageManager(SamplePackageManager):
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
 
-
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
@@ -88,12 +87,12 @@ class ScoopPackageManager(SamplePackageManager):
                             DashesPassed = True
                     else:
                         package = list(filter(None, line.split(" ")))
-                        self.NAME = formatPackageIdAsName(package[0])
+                        name = formatPackageIdAsName(package[0])
                         id = package[0]
                         version = package[1]
                         source = f"Scoop: {package[2].strip()}"
-                        if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                            ContentsToCache += f"{self.NAME},{id},{version},{source}\n"
+                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            ContentsToCache += f"{name},{id},{version},{source}\n"
             AlreadyCachedPackages = ""
             try:
                 if os.path.exists(self.CACHE_FILE):
@@ -128,13 +127,13 @@ class ScoopPackageManager(SamplePackageManager):
                             DashesPassed = True
                     else:
                         package = list(filter(None, line.split(" ")))
-                        self.NAME = formatPackageIdAsName(package[0])
+                        name = formatPackageIdAsName(package[0])
                         id = package[0]
                         version = package[1]
                         newVersion = package[2]
                         source = self.NAME
-                        if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
-                            packages.append(UpgradablePackage(self.NAME, id, version, newVersion, source, Scoop))
+                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(UpgradablePackage(name, id, version, newVersion, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             return packages
         except Exception as e:
@@ -160,12 +159,12 @@ class ScoopPackageManager(SamplePackageManager):
                     else:
                         package = list(filter(None, line.split(" ")))
                         if len(package) >= 3:
-                            self.NAME = formatPackageIdAsName(package[0])
+                            name = formatPackageIdAsName(package[0])
                             id = package[0]
                             version = package[1]
                             source = f"Scoop: {package[2].strip()}"
-                            if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(self.NAME, id, version, source, Scoop))
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             return packages
         except Exception as e:

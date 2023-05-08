@@ -17,17 +17,8 @@ from PackageManagers import PackageClasses
 
 class DiscoverSoftwareSection(SoftwareSection):
 
-    PackageManagers: list[PackageClasses.PackageManagerModule] = [
-        Winget,
-        Scoop,
-        Choco
-    ]
-    
-    PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
-        Winget: False,
-        Scoop: False,
-        Choco: False,
-    }
+    PackageManagers = PackageManagersList.copy()
+    PackagesLoaded = PackagesLoadedDict.copy()
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -380,18 +371,8 @@ class UpdateSoftwareSection(SoftwareSection):
 
     addProgram = Signal(object)
     availableUpdates: int = 0
-        
-    PackageManagers: list[PackageClasses.PackageManagerModule] = [
-        Winget,
-        Scoop,
-        Choco
-    ]
-    
-    PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
-        Winget: False,
-        Scoop: False,
-        Choco: False,
-    }
+    PackageManagers = PackageManagersList.copy()
+    PackagesLoaded = PackagesLoadedDict.copy()
 
 
     def __init__(self, parent = None):
@@ -874,19 +855,8 @@ class UpdateSoftwareSection(SoftwareSection):
 class UninstallSoftwareSection(SoftwareSection):
     
     allPkgSelected: bool = False
-    
-    PackageManagers: list[PackageClasses.PackageManagerModule] = [
-        Winget,
-        Scoop,
-        Choco
-    ]
-    
-    PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
-        Winget: False,
-        Scoop: False,
-        Choco: False,
-    }
-
+    PackageManagers = PackageManagersList.copy()
+    PackagesLoaded = PackagesLoadedDict.copy()
     
     def __init__(self, parent = None):
         super().__init__(parent = parent)
