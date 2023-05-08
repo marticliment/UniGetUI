@@ -337,12 +337,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             item.setText(3, package.Version)
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.Source)
-            if package.isScoop():
-                item.setIcon(4, self.scoopIcon)
-            elif package.isWinget():
-                item.setIcon(4, self.wingetIcon)
-            else:
-                item.setIcon(4, self.chocolateyIcon)
+            item.setIcon(4, package.getSourceIcon())
             self.packages[package.Id] = {
                 "name": package.Name,
                 "version": package.Version,
@@ -438,9 +433,6 @@ class UpdateSoftwareSection(SoftwareSection):
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
-        self.wingetIcon = QIcon(getMedia("winget"))
-        self.scoopIcon = QIcon(getMedia("scoop"))
-        self.chocoIcon = QIcon(getMedia("choco"))
         
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
@@ -724,6 +716,7 @@ class UpdateSoftwareSection(SoftwareSection):
                     Thread(target=self.changeStore, args=(package)).start()
             else:
                 item.setText(5, package.Source)
+            item.setIcon(5, package.getSourceIcon())
 
             self.packages[package.Id] = {
                 "name": package.Name,
@@ -733,12 +726,6 @@ class UpdateSoftwareSection(SoftwareSection):
                 "item": item,
                 "package": package,
             }
-            if package.isScoop():
-                item.setIcon(5, self.scoopIcon)
-            elif package.isWinget():
-                item.setIcon(5, self.wingetIcon)
-            else:
-                item.setIcon(5, self.chocoIcon)
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
@@ -929,14 +916,6 @@ class UninstallSoftwareSection(SoftwareSection):
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
-        self.wingetIcon = QIcon(getMedia("winget"))
-        self.scoopIcon = QIcon(getMedia("scoop"))
-        self.localIcon = QIcon(getMedia("localpc"))
-        self.MSStoreIcon = QIcon(getMedia("msstore"))
-        self.SteamIcon = QIcon(getMedia("steam"))
-        self.GOGIcon = QIcon(getMedia("gog"))
-        self.UPLAYIcon = QIcon(getMedia("uplay"))
-        self.chocoIcon = QIcon(getMedia("choco"))
 
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
@@ -1203,22 +1182,7 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setText(3, package.Version)
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.Source)
-            if package.isScoop():
-                item.setIcon(4, self.scoopIcon)
-            elif "winget" in package.Source.lower():
-                item.setIcon(4, self.wingetIcon)
-            elif (_("Local PC")) in package.Source.lower():
-                item.setIcon(4, self.localIcon)
-            elif "steam" in package.Source.lower():
-                item.setIcon(4, self.SteamIcon)
-            elif "gog" in package.Source.lower():
-                item.setIcon(4, self.GOGIcon)
-            elif "ubisoft connect" in package.Source.lower():
-                item.setIcon(4, self.UPLAYIcon)
-            elif "chocolatey" in package.Source.lower():
-                item.setIcon(4, self.chocoIcon)
-            else:
-                item.setIcon(4, self.MSStoreIcon)
+            item.setIcon(4, package.getSourceIcon())
             self.packages[package.Id] = {
                 "name": package.Name,
                 "version": package.Version,
