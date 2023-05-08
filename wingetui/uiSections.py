@@ -172,9 +172,9 @@ class DiscoverSoftwareSection(SoftwareSection):
         tooltips = {
             self.installPackages: _("Install selected packages"),
             showInfo: _("Show package details"),
-            runAsAdmin: _("Run the installer with administrator privileges"),
-            checksum: _("Skip the hash check"),
-            interactive: _("Interactive installation"),
+            runAsAdmin: _("Install selected packages with administrator privileges"),
+            checksum: _("Skip the hash check when installing the selected packages"),
+            interactive: _("Do an interactive install for the selected packages"),
             share: _("Share this package"),
             self.selectNoneAction: _("Clear selection"),
             self.importAction: _("Install packages from a file"),
@@ -470,7 +470,9 @@ class UpdateSoftwareSection(SoftwareSection):
         ins4.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), interactive=True))
         ins5 = QAction(_("Uninstall package"))
         ins5.setIcon(QIcon(getMedia("menu_uninstall")))
-        ins5.triggered.connect(lambda: globals.uninstall.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5), packageItem=globals.uninstall.packages[self.packageList.currentItem().text(2)]["item"]))
+        def raiseexp():
+            raise NotImplementedError("This function is not ready yet")
+        ins5.triggered.connect(lambda: raiseexp)
         ins6 = QAction(_("Ignore updates for this package"))
         ins6.setIcon(QIcon(getMedia("pin")))
         ins6.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
@@ -590,7 +592,7 @@ class UpdateSoftwareSection(SoftwareSection):
             self.upgradeSelected: _("Update selected packages"),
             showInfo: _("Show package details"),
             runAsAdmin: _("Update selected packages with administrator privileges"),
-            checksum: _("Skip the hash check when updating selected packages"),
+            checksum: _("Skip the hash check when updating the selected packages"),
             interactive: _("Do an interactive update for the selected packages"),
             share: _("Share this package"),
             self.selectAllAction: _("Select all packages"),
@@ -696,7 +698,7 @@ class UpdateSoftwareSection(SoftwareSection):
             if [package.Id, package.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
                 print(f"🟡 Package {package.Id} is ignored")
                 return
-            if [package.Id, package.NewVersion.lower().replace(",", "."), package.NewVersion.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
+            if [package.Id, package.NewVersion.lower().replace(",", "."), package.Source.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
                 print(f"🟡 Package {package.Id} version {package.Version} is ignored")
                 return
             if package.Id in self.LegacyBlacklist:
@@ -847,17 +849,13 @@ class UpdateSoftwareSection(SoftwareSection):
                 
     def updatePackageItem(self, packageItem: TreeWidgetItemWithQAction, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         try:
-            title = packageItem.text(1)
-            id = packageItem.text(2)
-            currentVersion = packageItem.text(3)
-            newVersion = packageItem.text(4)
-            store = packageItem.text(5)
-            if "winget" == store.lower():
-                    self.addInstallation(PackageUpdaterWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), currentVersion=currentVersion, newVersion=newVersion))
-            elif "chocolatey" == store.lower():
-                self.addInstallation(PackageUpdaterWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem, currentVersion=currentVersion, newVersion=newVersion))
+            package: UpgradablePackage = self.packages[packageItem.text(2)]["package"]
+            if package.isWinget():
+                    self.addInstallation(PackageUpdaterWidget(package.Name, "winget", useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), currentVersion=package.Version, newVersion=package.NewVersion))
+            elif package.isChocolatey():
+                self.addInstallation(PackageUpdaterWidget(package.Name, "chocolatey", useId=True, packageId=package.Id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem, currentVersion=package.Version, newVersion=package.NewVersion))
             else:
-                self.addInstallation(PackageUpdaterWidget(title, store,  useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""], currentVersion=currentVersion, newVersion=newVersion))
+                self.addInstallation(PackageUpdaterWidget(package.Name, package.Source,  useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""], currentVersion=package.Version, newVersion=package.NewVersion))
         except Exception as e:
             report(e)
      
@@ -869,9 +867,6 @@ class UpdateSoftwareSection(SoftwareSection):
             o2 = subprocess.run(f"{winget.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
             print("Updated Winget packages with result", o2.returncode)
             o2 = subprocess.run(f"{choco.choco} source update --name winget", shell=True, stdout=subprocess.PIPE)
-
-            print(o1.stdout)
-            print(o2.stdout)
         except Exception as e:
             report(e)
         self.callInMain.emit(self.startLoadingPackages)
@@ -930,7 +925,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.countLabel.setText(_("Searching for installed packages..."))
         self.packageList.label.setText(self.countLabel.text())
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstall(item.text(1), item.text(2), item.text(4), packageItem=item))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstallPackageItem(item))
                
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
@@ -955,16 +950,16 @@ class UninstallSoftwareSection(SoftwareSection):
         ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
         ins1 = QAction(_("Uninstall"))
         ins1.setIcon(QIcon(getMedia("menu_uninstall")))
-        ins1.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem()))
+        ins1.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem()))
         ins2 = QAction(_("Uninstall as administrator"))
         ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
+        ins2.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), admin=True))
         ins3 = QAction(_("Remove permanent data"))
         ins3.setIcon(QIcon(getMedia("menu_close")))
-        ins3.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), removeData=True))
+        ins3.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), removeData=True))
         ins5 = QAction(_("Interactive uninstall"))
         ins5.setIcon(QIcon(getMedia("interactive")))
-        ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), interactive=True))
+        ins5.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
         ins7 = QAction(_("Ignore updates for this package"))
         ins7.setIcon(QIcon(getMedia("pin")))
         ins7.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4))))
@@ -999,7 +994,6 @@ class UninstallSoftwareSection(SoftwareSection):
         self.upgradeSelected = QAction(QIcon(getMedia("menu_uninstall")), _("Uninstall selected packages"), toolbar)
         self.upgradeSelected.triggered.connect(lambda: self.uninstallSelected())
         toolbar.addAction(self.upgradeSelected)
-        toolbar.addSeparator()
 
         def showInfo():
             item = self.packageList.currentItem()
@@ -1017,21 +1011,26 @@ class UninstallSoftwareSection(SoftwareSection):
             else:
                 self.openInfo(item)
 
-        inf = QAction("", toolbar)# ("Show info")
-        inf.triggered.connect(showInfo)
-        inf.setIcon(QIcon(getMedia("info")))
-        ins2 = QAction("", toolbar)# ("Run as administrator")
-        ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), admin=True))
-        ins5 = QAction("", toolbar)# ("Interactive uninstall")
-        ins5.setIcon(QIcon(getMedia("interactive")))
-        ins5.triggered.connect(lambda: self.uninstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem(), interactive=True))
-        ins6 = QAction("", toolbar)
-        ins6.setIcon(QIcon(getMedia("share")))
-        ins6.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        showInfoAction = QAction("", toolbar)# ("Show info")
+        showInfoAction.triggered.connect(showInfo)
+        showInfoAction.setIcon(QIcon(getMedia("info")))
+        runAsAdmin = QAction("", toolbar)# ("Run as administrator")
+        runAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
+        runAsAdmin.triggered.connect(lambda: self.uninstallSelected(admin=True))
+        interactive = QAction("", toolbar)# ("Interactive uninstall")
+        interactive.setIcon(QIcon(getMedia("interactive")))
+        interactive.triggered.connect(lambda: self.uninstallSelected(interactive=True))
+        share = QAction("", toolbar)
+        share.setIcon(QIcon(getMedia("share")))
+        share.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
+        for action in [runAsAdmin, interactive]:
+            toolbar.addAction(action)
+            toolbar.widgetForAction(action).setFixedSize(40, 45)
 
-        for action in [inf, ins2, ins5, ins6]:
+        toolbar.addSeparator()
+
+        for action in [showInfoAction, share]:
             toolbar.addAction(action)
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
@@ -1076,12 +1075,12 @@ class UninstallSoftwareSection(SoftwareSection):
          
         tooltips = {
             self.upgradeSelected: _("Uninstall selected packages"),
-            inf: _("Show package details"),
-            ins2: _("Uninstall with administrator privileges"),
-            ins5: _("Interactive uninstall"),
-            ins6: _("Share this package"),
-            self.selectNoneAction: _("Clear selection"),
-            self.selectAllAction: _("Select all"),
+            showInfoAction: _("Show package details"),
+            runAsAdmin: _("Uninstall the selected packages with administrator privileges"),
+            interactive: _("Do an interactive uninstall for the selected packages"),
+            share: _("Share this package"),
+            self.selectNoneAction: _("Clear package selection"),
+            self.selectAllAction: _("Select all packages"),
             self.exportSelectedAction: _("Export selected packages to a file")
         }
 
@@ -1091,7 +1090,7 @@ class UninstallSoftwareSection(SoftwareSection):
 
         return toolbar
 
-    def uninstallSelected(self) -> None:
+    def uninstallSelected(self, admin: bool = False, interactive: bool = False) -> None:
         toUninstall = []
         for program in self.packageItems:
             if not program.isHidden():
@@ -1101,7 +1100,7 @@ class UninstallSoftwareSection(SoftwareSection):
                 except AttributeError:
                     pass
         a = CustomMessageBox(self)
-        Thread(target=self.confirmUninstallSelected, args=(toUninstall, a,)).start()
+        Thread(target=self.confirmUninstallSelected, args=(toUninstall, a, admin, interactive)).start()
         
     def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: CustomMessageBox):
         questionData = {
@@ -1116,7 +1115,7 @@ class UninstallSoftwareSection(SoftwareSection):
             return
         if a.askQuestion(questionData):
             for program in toUninstall:
-                self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), packageItem=program, avoidConfirm=True))
+                self.callInMain.emit(partial(self.uninstallPackageItem, program, avoidConfirm=True))
 
     def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
         self.foundPackages = len(self.packageItems)
@@ -1234,7 +1233,7 @@ class UninstallSoftwareSection(SoftwareSection):
                 self.showableItems.append(item)
 
             action = QAction(package.Name+" \t"+package.Version, globals.trayMenuInstalledList)
-            action.triggered.connect(lambda: (self.uninstall(package.Name, package.Id, package.Version, packageItem=item)))
+            action.triggered.connect(lambda: (self.uninstallPackageItem(item)))
             action.setShortcut(package.Version)
             item.setAction(action)
             globals.trayMenuInstalledList.addAction(action)
@@ -1250,20 +1249,24 @@ class UninstallSoftwareSection(SoftwareSection):
         }
         if a.askQuestion(questionData):
             for program in toUninstall:
-                self.callInMain.emit(partial(self.uninstall, program.text(1), program.text(2), program.text(4), program, admin, interactive, removeData, avoidConfirm=True))
+                self.callInMain.emit(partial(self.uninstallPackageItem, program, admin, interactive, removeData, avoidConfirm=True))
 
     def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
+        self.uninstallPackageItem(self.packages[id]["item"], admin, removeData, interactive, avoidConfirm)
+
+    def uninstallPackageItem(self, packageItem: TreeWidgetItemWithQAction, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
+        package: Package = self.packages[packageItem.text(2)]["package"]
         if not avoidConfirm:
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
         else:
             print("🔵 Uninstalling", id)
-            if "winget" == store.lower():
-                self.addInstallation(PackageUninstallerWidget(title, "winget", useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent", "--force"]))
-            elif "chocolatey" == store.lower():
-                self.addInstallation(PackageUninstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, packageItem=packageItem, args=list(filter(None, ["--notsilent" if interactive else ""]))))
+            if package.isWinget():
+                self.addInstallation(PackageUninstallerWidget(package.Name, "winget", useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent", "--force"]))
+            elif package.isChocolatey():
+                self.addInstallation(PackageUninstallerWidget(package.Name, "chocolatey", useId=True, packageId=package.Id, admin=admin, packageItem=packageItem, args=list(filter(None, ["--notsilent" if interactive else ""]))))
             else: # Scoop
-                self.addInstallation(PackageUninstallerWidget(title, store, useId=not("…" in id), packageId=id, packageItem=packageItem, admin=admin, removeData=removeData))
+                self.addInstallation(PackageUninstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, removeData=removeData))
 
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getInstalledPackages_v2()
