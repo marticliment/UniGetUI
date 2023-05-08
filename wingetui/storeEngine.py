@@ -1188,7 +1188,7 @@ class PackageInfoPopupWindow(QWidget):
                 package.Id = store.split(': ')[1]+'/'+id
         self.showPackageDetails_v2(package, update, packageItem, uninstall, installedVersion)
                 
-    def showPackageDetails_v2(self, package: Package, update: bool = False, packageItem: TreeWidgetItemWithQAction = None, uninstall: bool = False, installedVersion: str = ""):
+    def showPackageDetails_v2(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
         self.isAnUpdate = update
         self.isAnUninstall = uninstall
         if self.currentPackage == package:

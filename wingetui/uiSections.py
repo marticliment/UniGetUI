@@ -40,7 +40,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.packageList.setColumnCount(5)
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item.text(1), item.text(2), item.text(4), item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4), packageItem=item))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4), packageItem=item))
                     
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -74,7 +74,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         contextMenu.setStyleSheet("* {background: red;color: black}")
         ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
         inf = QAction(_("Package details"))
-        inf.triggered.connect(lambda: (contextMenu.close(), self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem())))
+        inf.triggered.connect(lambda: (contextMenu.close(), self.openInfo(self.packageList.currentItem())))
         inf.setIcon(QIcon(getMedia("info")))
         ins1 = QAction(_("Install"))
         ins1.setIcon(QIcon(getMedia("newversion")))
@@ -115,7 +115,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         toolbar.addSeparator()
         
         inf = QAction("", toolbar)# ("Show info")
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), self.packageList.currentItem()))
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
         inf.setIcon(QIcon(getMedia("info")))
         ins2 = QAction("", toolbar)# ("Run as administrator")
         ins2.setIcon(QIcon(getMedia("runasadmin")))
@@ -302,51 +302,53 @@ class DiscoverSoftwareSection(SoftwareSection):
         except Exception as e:
             report(e)
         
-    def finishLoadingIfNeeded(self, store: str) -> None:
-        self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(len(self.packageItems))))
-        if len(self.packageItems) == 0:
+    def finishLoadingIfNeeded(self) -> None:
+        itemCount = len(self.packageItems)
+        self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(itemCount)))
+        if itemCount == 0:
             self.packageList.label.setText(self.countLabel.text())
         else:
             self.packageList.label.setText("")
         self.reloadButton.setEnabled(True)
-        self.finishFiltering(self.query.text())
         self.searchButton.setEnabled(True)
         self.query.setEnabled(True)
+        self.finishFiltering(self.query.text())
         
         for manager in self.PackageManagers: # Stop here if not all package managers loaded
             if not self.PackagesLoaded[manager]:
                 return
                 
         self.reloadButton.setEnabled(True)
-        self.finishFiltering(self.query.text())
         self.loadingProgressBar.hide()
-        self.countLabel.setText(_("Found packages: {0}").format(str(len(self.packageItems))))
+        self.countLabel.setText(_("Found packages: {0}").format(str(itemCount)))
         self.packageList.label.setText("")
-        print("🟢 Total packages: "+str(len(self.packageItems)))
+        print("🟢 Total packages: "+str(itemCount))
 
-    def addItem(self, name: str, id: str, version: str, store: str) -> None:
-        if not "---" in name and not name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
+    def addItem(self, package: Package) -> None:
+        if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
             item = TreeWidgetItemWithQAction(self)
-            item.setText(1, name)
-            item.setText(2, id)
+            item.setCheckState(0, Qt.CheckState.Unchecked)
+            item.setText(1, package.Name)
             item.setIcon(1, self.installIcon)
+            item.setText(2, package.Id)
             item.setIcon(2, self.IDIcon)
+            item.setText(3, package.Version)
             item.setIcon(3, self.versionIcon)
-            if "scoop" in store.lower():
+            item.setText(4, package.Source)
+            if package.isScoop():
                 item.setIcon(4, self.scoopIcon)
-            elif "winget" in store.lower():
+            elif package.isWinget():
                 item.setIcon(4, self.wingetIcon)
             else:
                 item.setIcon(4, self.chocolateyIcon)
-            item.setText(4, store)
-            item.setText(3, version)
-            item.setCheckState(0, Qt.CheckState.Unchecked)
-            self.packages[id] = {
-                "name": name,
-                "version": version,
-                "store": store,
-                "item": item
+            self.packages[package.Id] = {
+                "name": package.Name,
+                "version": package.Version,
+                "store": package.Source,
+                "item": item,
+                "package": package,
             }
+            package.PackageItem = item
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
@@ -362,9 +364,9 @@ class DiscoverSoftwareSection(SoftwareSection):
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getAvailablePackages_v2()
         for package in packages:
-            self.addProgram.emit(package.Name, package.Id, package.Version, package.Source)
+            self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
-        self.finishLoading.emit(manager.NAME)
+        self.finishLoading.emit()
     
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
@@ -372,7 +374,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     
 class UpdateSoftwareSection(SoftwareSection):
 
-    addProgram = Signal(str, str, str, str, str)
+    addProgram = Signal(object)
     availableUpdates: int = 0
         
     PackageManagers: list[PackageClasses.PackageManagerModule] = [
@@ -403,7 +405,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         
-        self.packageList.itemDoubleClicked.connect(lambda item, column: (self.update(item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item.text(1), item.text(2), item.text(5), item)))            
+        self.packageList.itemDoubleClicked.connect(lambda item, column: (self.update(item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item)))            
 
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -440,7 +442,7 @@ class UpdateSoftwareSection(SoftwareSection):
         contextMenu.setStyleSheet("* {background: red;color: black}")
         ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
         inf = QAction(_("Package details"))
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
         inf.setIcon(QIcon(getMedia("info")))
         ins1 = QAction(_("Update"))
         ins1.setIcon(QIcon(getMedia("menu_updates")))
@@ -521,7 +523,7 @@ class UpdateSoftwareSection(SoftwareSection):
         toolbar.addSeparator()
         
         inf = QAction("", toolbar)
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(5).lower(), self.packageList.currentItem()))
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
         inf.setIcon(QIcon(getMedia("info")))
         ins2 = QAction("", toolbar)
         ins2.setIcon(QIcon(getMedia("runasadmin")))
@@ -589,7 +591,7 @@ class UpdateSoftwareSection(SoftwareSection):
             
         return toolbar
 
-    def finishLoadingIfNeeded(self, store: str) -> None:
+    def finishLoadingIfNeeded(self) -> None:
         self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
         globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
         if len(self.packageItems) == 0:
@@ -667,66 +669,68 @@ class UpdateSoftwareSection(SoftwareSection):
             Thread(target=lambda: (time.sleep(waitTime), self.reloadSources()), daemon=True, name="AutoCheckForUpdates Thread").start()
         print("🟢 Total packages: "+str(len(self.packageItems)))
     
-    def changeStore(self, item: TreeWidgetItemWithQAction, store: str, id: str):
+    def changeStore(self, package: UpgradablePackage):
         time.sleep(3)
         try:
-            store = globals.uninstall.packages[id]["store"]
+            package.Source = globals.uninstall.packages[package.Id]["store"]
         except KeyError as e:
-            print(f"🟠 Package {id} found in the updates section but not in the installed one, happened again")
-        self.callInMain.emit(partial(item.setText, 5, store))
+            print(f"🟠 Package {package.Id} found in the updates section but not in the installed one, happened again")
+        self.callInMain.emit(partial(package.PackageItem.setText, 5, package.Source))
 
-    def addItem(self, name: str, id: str, version: str, newVersion: str, store) -> None:
-        if not "---" in name and not "The following packages" in name and not "Name  " in name and not name in ("+", "Scoop", "At", "The", "But", "Au") and not version.lower() in ("the", "is", "install") and not newVersion in ("Manifest", version):
-            if [id, store.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
-                print(f"🟡 Package {id} is ignored")
+    def addItem(self, package: UpgradablePackage) -> None:
+        if not "---" in package.Name and not "The following packages" in package.Name and not "Name  " in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not package.Version.lower() in ("the", "is", "install") and not package.NewVersion in ("Manifest", package.Version):
+            if [package.Id, package.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
+                print(f"🟡 Package {package.Id} is ignored")
                 return
-            if [id, newVersion.lower().replace(",", "."), store.lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
-                print(f"🟡 Package {id} version {version} is ignored")
+            if [package.Id, package.NewVersion.lower().replace(",", "."), package.NewVersion.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
+                print(f"🟡 Package {package.Id} version {package.Version} is ignored")
                 return
-            if id in self.LegacyBlacklist:
-                print(f"🟠 Package {id} is legacy blacklisted")
+            if package.Id in self.LegacyBlacklist:
+                print(f"🟠 Package {package.Id} is legacy blacklisted")
                 return
             item = TreeWidgetItemWithQAction()
-            item.setText(1, name)
+            item.setCheckState(0, Qt.CheckState.Checked)
+            item.setText(1, package.Name)
             item.setIcon(1, self.installIcon)
-            item.setText(2, id)
+            item.setText(2, package.Id)
             item.setIcon(2, self.IDIcon)
-            item.setText(3, version if version != "Unknown" else _("Unknown"))
+            item.setText(3, package.Version if package.Version != "Unknown" else _("Unknown"))
             item.setIcon(3, self.versionIcon)
-            item.setText(4, newVersion)
+            item.setText(4, package.NewVersion)
             item.setIcon(4, self.newVersionIcon)
-            if "scoop" in store.lower():
+            package.PackageItem = item
+            if package.isScoop():
                 try:
-                    if version == globals.uninstall.packages[id]["version"]:
-                        store = globals.uninstall.packages[id]["store"]
-                    item.setText(5, store)
+                    if version == globals.uninstall.packages[package.Id]["version"]:
+                        package.Source = globals.uninstall.packages[package.Id]["store"]
+                    item.setText(5, package.Source)
                 except KeyError as e:
                     item.setText(5, _("Loading..."))
-                    print(f"🟡 Package {id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
-                    Thread(target=self.changeStore, args=(item, store, id)).start()
+                    print(f"🟡 Package {package.Id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
+                    Thread(target=self.changeStore, args=(package)).start()
             else:
-                item.setText(5, store)
+                item.setText(5, package.Source)
 
-            self.packages[id] = {
-                "name": name,
-                "version": version,
-                "newVersion": newVersion,
-                "store": store,
+            self.packages[package.Id] = {
+                "name": package.Name,
+                "version": package.Version,
+                "newVersion": package.NewVersion,
+                "store": package.Source,
                 "item": item,
+                "package": package,
             }
-            if "scoop" in store.lower():
+            if package.isScoop():
                 item.setIcon(5, self.scoopIcon)
-            elif "winget" in store.lower():
+            elif package.isWinget():
                 item.setIcon(5, self.wingetIcon)
             else:
                 item.setIcon(5, self.chocoIcon)
-            item.setCheckState(0, Qt.CheckState.Checked)
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
-            action = QAction(name+"  \t"+version+"\t → \t"+newVersion, globals.trayMenuUpdatesList)
+            action = QAction(package.Name+"  \t"+package.Version+"\t → \t"+package.NewVersion, globals.trayMenuUpdatesList)
             action.triggered.connect(lambda : self.update(item))
-            action.setShortcut(version)
+            action.setShortcut(package.Version)
             item.setAction(action)
             globals.trayMenuUpdatesList.addAction(action)
 
@@ -862,9 +866,9 @@ class UpdateSoftwareSection(SoftwareSection):
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getAvailableUpdates_v2()
         for package in packages:
-            self.addProgram.emit(package.Name, package.Id, package.Version, package.NewVersion ,package.Source)
+            self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
-        self.finishLoading.emit(manager.NAME)
+        self.finishLoading.emit()
     
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for updates..."))
@@ -927,7 +931,6 @@ class UninstallSoftwareSection(SoftwareSection):
         self.UPLAYIcon = QIcon(getMedia("uplay"))
         self.chocoIcon = QIcon(getMedia("choco"))
 
-
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
             return
@@ -954,7 +957,7 @@ class UninstallSoftwareSection(SoftwareSection):
         ins7.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4))))
         ins4 = QAction(_("Package details"))
         ins4.setIcon(QIcon(getMedia("info")))
-        ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem()))
+        ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
         ins6 = QAction(_("Share this package"))
         ins6.setIcon(QIcon(getMedia("share")))
         ins6.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
@@ -999,7 +1002,7 @@ class UninstallSoftwareSection(SoftwareSection):
                     }
                 self.err.showErrorMessage(errorData, showNotification=False)
             else:
-                self.openInfo(item.text(1), item.text(2), item.text(4).lower(), item)
+                self.openInfo(item)
 
         inf = QAction("", toolbar)# ("Show info")
         inf.triggered.connect(showInfo)
@@ -1117,7 +1120,7 @@ class UninstallSoftwareSection(SoftwareSection):
             self.packageList.label.setText(_("{0} packages were found").format(0))
             self.packageList.label.show()
 
-    def finishLoadingIfNeeded(self, store: str) -> None:
+    def finishLoadingIfNeeded(self) -> None:
         self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(len(self.packageItems)))
         if len(self.packageItems) == 0:
             self.packageList.label.setText(self.countLabel.text())
@@ -1141,85 +1144,85 @@ class UninstallSoftwareSection(SoftwareSection):
         self.packageList.label.setText("")
         print("🟢 Total packages: "+str(len(self.packageItems)))
 
-    def addItem(self, name: str, id: str, version: str, store: str) -> None:
-        if not "---" in name and not name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
+    def addItem(self, package: Package) -> None:
+        if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not package.Version in ("the", "is"):
             item = TreeWidgetItemWithQAction()
-            if store.lower() == "winget":
+            if package.isWinget():
                 for illegal_char in ("{", "}", " "):
-                    if illegal_char in id:
-                        store = (_("Local PC"))
+                    if illegal_char in package.Id:
+                        package.Source = _("Local PC")
                         break
                 
-                if store.lower() == "winget":
-                    if id.count(".") != 1:
-                        store = (_("Local PC"))
-                        if id.count(".") > 1:
-                            for letter in id:
+                if package.Source.lower() == "winget":
+                    if package.Id.count(".") != 1:
+                        package.Source = (_("Local PC"))
+                        if package.Id.count(".") > 1:
+                            for letter in package.Id:
                                 if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                                    store = "Winget"
+                                    package.Source = "Winget"
                                     break
                 
-                if store == (_("Local PC")):
-                    if id == "Steam":
-                        store = "Steam"
-                    if id == "Uplay":
-                        store = "Ubisoft Connect"
-                    if id.count("_is1") == 1:
-                        store = "GOG"
-                        for number in id.split("_is1")[0]:
+                if package.Source == (_("Local PC")):
+                    if package.Id == "Steam":
+                        package.Source = "Steam"
+                    if package.Id == "Uplay":
+                        package.Source = "Ubisoft Connect"
+                    if package.Id.count("_is1") == 1:
+                        package.Source = "GOG"
+                        for number in package.Id.split("_is1")[0]:
                             if number not in "0123456789":
-                                store = (_("Local PC"))
+                                package.Source = (_("Local PC"))
                                 break
-                        if len(id) != 14:
-                            store = (_("Local PC"))
-                        if id.count("GOG") == 1:
-                            store = "GOG"
+                        if len(package.Id) != 14:
+                            package.Source = (_("Local PC"))
+                        if package.Id.count("GOG") == 1:
+                            package.Source = "GOG"
                 
-                if store.lower() == "winget":
-                    if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
-                        store = "Microsoft Store"
-                    elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
-                        store = "Microsoft Store"
+                if package.Source.lower() == "winget":
+                    if len(package.Id.split("_")[-1]) == 13 and len(package.Id.split("_"))==2:
+                        package.Source = "Microsoft Store"
+                    elif len(package.Id.split("_")[-1]) <= 13 and len(package.Id.split("_"))==2 and "…" == package.Id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
+                        package.Source = "Microsoft Store"
 
-            item.setText(1, name)
-            item.setText(2, id)
+            item.setCheckState(0, Qt.CheckState.Unchecked)
+            item.setText(1, package.Name)
             item.setIcon(1, self.installIcon)
+            item.setText(2, package.Id)
             item.setIcon(2, self.IDIcon)
+            item.setText(3, package.Version)
             item.setIcon(3, self.versionIcon)
-            item.setText(3, version)
-            if "scoop" in store.lower():
+            item.setText(4, package.Source)
+            if package.isScoop():
                 item.setIcon(4, self.scoopIcon)
-            elif "winget" in store.lower():
+            elif "winget" in package.Source.lower():
                 item.setIcon(4, self.wingetIcon)
-            elif (_("Local PC")) in store:
+            elif (_("Local PC")) in package.Source.lower():
                 item.setIcon(4, self.localIcon)
-            elif "steam" in store.lower():
+            elif "steam" in package.Source.lower():
                 item.setIcon(4, self.SteamIcon)
-            elif "gog" in store.lower():
+            elif "gog" in package.Source.lower():
                 item.setIcon(4, self.GOGIcon)
-            elif "ubisoft connect" in store.lower():
+            elif "ubisoft connect" in package.Source.lower():
                 item.setIcon(4, self.UPLAYIcon)
-            elif "chocolatey" in store.lower():
+            elif "chocolatey" in package.Source.lower():
                 item.setIcon(4, self.chocoIcon)
             else:
                 item.setIcon(4, self.MSStoreIcon)
-            item.setText(4, store)
-            self.packages[id] = {
-                "name": name,
-                "version": version,
-                "store": store,
+            self.packages[package.Id] = {
+                "name": package.Name,
+                "version": package.Version,
+                "store": package.Source,
                 "item": item,
+                "package": package
             }
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
-            item.setCheckState(0, Qt.CheckState.Unchecked)
             
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
 
-            action = QAction(name+" \t"+version, globals.trayMenuInstalledList)
-            action.triggered.connect(lambda: (self.uninstall(name, id, store, packageItem=item), print(name, id, store, item)))
-            action.setShortcut(version)
+            action = QAction(package.Name+" \t"+package.Version, globals.trayMenuInstalledList)
+            action.triggered.connect(lambda: (self.uninstall(package.Name, package.Id, package.Version, packageItem=item)))
+            action.setShortcut(package.Version)
             item.setAction(action)
             globals.trayMenuInstalledList.addAction(action)
 
@@ -1252,14 +1255,13 @@ class UninstallSoftwareSection(SoftwareSection):
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getInstalledPackages_v2()
         for package in packages:
-            self.addProgram.emit(package.Name, package.Id, package.Version ,package.Source)
+            self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
-        self.finishLoading.emit(manager.NAME)
+        self.finishLoading.emit()
     
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
-        self.finishLoadingIfNeeded("none")
         for action in globals.trayMenuInstalledList.actions():
             globals.trayMenuInstalledList.removeAction(action)
         globals.trayMenuInstalledList.addAction(globals.installedHeader)

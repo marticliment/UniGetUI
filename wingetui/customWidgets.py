@@ -644,8 +644,8 @@ class IgnoredUpdatesManager(QWidget):
 
 class SoftwareSection(QWidget):
 
-    addProgram = Signal(str, str, str, str)
-    finishLoading = Signal(str)
+    addProgram = Signal(object)
+    finishLoading = Signal()
     askForScoopInstall = Signal(str)
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
@@ -661,6 +661,7 @@ class SoftwareSection(QWidget):
     showableItems: list[TreeWidgetItemWithQAction] = []
     addedItems: list[TreeWidgetItemWithQAction] = []
     shownItems: list[TreeWidgetItemWithQAction] = []
+    nextItemToShow: int = 0
 
     PackageManagers: list = [
 
@@ -916,15 +917,13 @@ class SoftwareSection(QWidget):
         if reset:
             for item in self.shownItems:
                 item.setHidden(True)
-            nextItem = 0
+            self.nextItemToShow = 0
             self.shownItems = []
-        else:
-            nextItem = len(self.shownItems)
         addedItems = 0
         while addedItems < 100:
-            if nextItem >= len(self.showableItems):
+            if self.nextItemToShow >= len(self.showableItems):
                 break
-            itemToAdd = self.showableItems[nextItem]
+            itemToAdd = self.showableItems[self.nextItemToShow]
             if itemToAdd not in self.addedItems:
                 self.packageList.addTopLevelItem(itemToAdd)
                 self.addedItems.append(itemToAdd)
@@ -932,7 +931,7 @@ class SoftwareSection(QWidget):
                 itemToAdd.setHidden(False)
             self.shownItems.append(itemToAdd)
             addedItems += 1
-            nextItem += 1
+            self.nextItemToShow += 1
     
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
@@ -981,7 +980,6 @@ class SoftwareSection(QWidget):
                 except RuntimeError:
                     print("🟠 RuntimeError on SoftwareSection.finishFiltering")
         found = len(self.showableItems)
-        cprint(len(self.packageItems), len(self.showableItems))
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
@@ -997,8 +995,8 @@ class SoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def openInfo(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction) -> None:
-        self.infobox.loadProgram(title, id, useId=not("…" in id), store=store, packageItem=packageItem, version=packageItem.text(3))
+    def openInfo(self, item: QTreeWidgetItem) -> None:
+        self.infobox.showPackageDetails_v2(self.packages[item.text(2)]["package"])
         self.infobox.show()
     
     def loadPackages(self, manager) -> None:
@@ -1029,7 +1027,7 @@ class SoftwareSection(QWidget):
             else:
                 self.PackagesLoaded[manager] = True
                 
-        self.finishLoadingIfNeeded("none")
+        self.finishLoadingIfNeeded()
     
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
