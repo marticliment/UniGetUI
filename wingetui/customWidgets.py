@@ -6,7 +6,6 @@ from win32mica import *
 from tools import *
 from tools import _
 from genericCustomWidgets import *
-#from PackageManagers import PackageClasses, winget, scoop, choco
 
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):

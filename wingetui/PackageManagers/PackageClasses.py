@@ -1,5 +1,7 @@
 from tools import _, blueColor
 from customWidgets import TreeWidgetItemWithQAction
+from PySide6.QtCore import *
+from PySide6.QtGui import *
 
 class Package():
     Name: str = ""
@@ -7,12 +9,14 @@ class Package():
     Version: str = ""
     Source: str = ""
     PackageItem: TreeWidgetItemWithQAction = None
+    PackageManager: 'PackageManagerModule' = None
     
-    def __init__(self, Name: str, Id: str, Version: str, Source: str):
+    def __init__(self, Name: str, Id: str, Version: str, Source: str, PackageManager: 'PackageManagerModule'):
         self.Name = Name
         self.Id = Id
         self.Version = Version
         self.Source = Source
+        self.PackageManager = PackageManager
         
     def isWinget(self) -> bool:
         return self.Source.lower() == "winget"
@@ -32,16 +36,21 @@ class Package():
         elif self.isScoop():
             iconId = iconId.split("/")[-1]
         return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
-
     
+    def getSourceIcon(self) -> QIcon:
+        #if self.PackageItem:
+        return self.PackageManager.getIcon(self.Source)
+        #print(f"🔴 Null module for package {self.Id}")
+        #return QIcon()
+        
 class UpgradablePackage(Package):
     NewVersion = ""
     NewPackage: Package = None
     
-    def __init__(self, Name: str, Id: str, InstalledVersion: str, NewVersion: str, Source: str):
-        super().__init__(Name, Id, InstalledVersion, Source)
+    def __init__(self, Name: str, Id: str, InstalledVersion: str, NewVersion: str, Source: str, PackageManager: 'PackageManagerModule'):
+        super().__init__(Name, Id, InstalledVersion, Source, PackageManager)
         self.NewVersion = NewVersion
-        self.NewPackage = Package(Name, Id, NewVersion, Source)
+        self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
         
 class PackageDetails(Package):
     Name: str = ""
@@ -80,12 +89,10 @@ class PackageDetails(Package):
     def asUrl(self, url: str) -> str:
         return f"<a href='{url}' style='color:{blueColor}'>{url}</a>" if "://" in url else url
     
-class PackageManagerModule:
-    NAME: str
-    EXECUTABLE: str
-    
+class PackageManagerModule():
+
     def __init__(self):
-        raise NotImplementedError("This class is only used to provide syntax highlighting support")
+        pass
     
     def isEnabled() -> bool:
         pass
@@ -107,3 +114,7 @@ class PackageManagerModule:
         Will retieve the intalled packages by the package manager in the format of a list[Package] object.
         """
 
+    def getIcon(self, source: str) -> QIcon:
+        """
+        Will return the corresponding icon to the given source
+        """

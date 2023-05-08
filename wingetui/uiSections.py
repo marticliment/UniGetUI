@@ -13,20 +13,20 @@ from data.contributors import contributorsInfo
 import globals
 from customWidgets import *
 from tools import _
-from PackageManagers import winget, scoop, choco, PackageClasses
+from PackageManagers import PackageClasses
 
 class DiscoverSoftwareSection(SoftwareSection):
 
     PackageManagers: list[PackageClasses.PackageManagerModule] = [
-        winget,
-        scoop,
-        choco
+        Winget,
+        Scoop,
+        Choco
     ]
     
     PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
-        winget: False,
-        scoop: False,
-        choco: False,
+        Winget: False,
+        Scoop: False,
+        Choco: False,
     }
 
     def __init__(self, parent = None):
@@ -390,16 +390,17 @@ class UpdateSoftwareSection(SoftwareSection):
     availableUpdates: int = 0
         
     PackageManagers: list[PackageClasses.PackageManagerModule] = [
-        winget,
-        scoop,
-        choco
+        Winget,
+        Scoop,
+        Choco
     ]
     
     PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
-        winget: False,
-        scoop: False,
-        choco: False,
+        Winget: False,
+        Scoop: False,
+        Choco: False,
     }
+
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -864,9 +865,9 @@ class UpdateSoftwareSection(SoftwareSection):
         try:
             o1 = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
             print("Updated scoop packages with result", o1.returncode)
-            o2 = subprocess.run(f"{winget.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
+            o2 = subprocess.run(f"{Winget.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
             print("Updated Winget packages with result", o2.returncode)
-            o2 = subprocess.run(f"{choco.choco} source update --name winget", shell=True, stdout=subprocess.PIPE)
+            o2 = subprocess.run(f"{Choco.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
         except Exception as e:
             report(e)
         self.callInMain.emit(self.startLoadingPackages)
@@ -891,16 +892,17 @@ class UninstallSoftwareSection(SoftwareSection):
     allPkgSelected: bool = False
     
     PackageManagers: list[PackageClasses.PackageManagerModule] = [
-        winget,
-        scoop,
-        choco
+        Winget,
+        Scoop,
+        Choco
     ]
     
     PackagesLoaded: dict[PackageClasses.PackageManagerModule:bool] = {
-        winget: False,
-        scoop: False,
-        choco: False,
+        Winget: False,
+        Scoop: False,
+        Choco: False,
     }
+
     
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -1817,8 +1819,8 @@ class SettingsSection(SmoothScrollArea):
         button.setEnabled(disableWinget.isChecked())
         enableSystemWinget.setEnabled(disableWinget.isChecked())
         
-        resetCache = SectionButton(_("Reset {pm} cache").format(pm=winget.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(winget.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache = SectionButton(_("Reset {pm} cache").format(pm=Winget.NAME), _("Reset"))
+        resetCache.clicked.connect(lambda: (os.remove(Winget.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
         self.wingetPreferences.addWidget(resetCache)
 
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
@@ -1847,8 +1849,8 @@ class SettingsSection(SmoothScrollArea):
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
-        resetCache = SectionButton(_("Reset {pm} cache").format(pm=scoop.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(scoop.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache = SectionButton(_("Reset {pm} cache").format(pm=Scoop.NAME), _("Reset"))
+        resetCache.clicked.connect(lambda: (os.remove(Scoop.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
         self.scoopPreferences.addWidget(resetCache)
         
         self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
@@ -1861,8 +1863,8 @@ class SettingsSection(SmoothScrollArea):
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
         enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         self.chocoPreferences.addWidget(enableSystemChocolatey)
-        resetCache = SectionButton(_("Reset {pm} cache").format(pm=choco.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache = SectionButton(_("Reset {pm} cache").format(pm=Choco.NAME), _("Reset"))
+        resetCache.clicked.connect(lambda: (os.remove(Choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetCache)
 
         self.layout.addStretch()
@@ -2091,7 +2093,7 @@ class ScoopBucketManager(QWidget):
         for i in range(self.bucketList.topLevelItemCount()):
             item = self.bucketList.takeTopLevelItem(0)
             del item
-        Thread(target=scoop.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
+        Thread(target=Scoop.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
         self.loadingProgressBar.show()
         self.bucketList.label.show()
         self.bucketList.label.setText("Loading...")

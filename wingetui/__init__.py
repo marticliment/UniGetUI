@@ -324,7 +324,7 @@ try:
         def detectWinget(self):
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Winget")))
-                o = subprocess.run(f"{winget.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run(f"{Winget.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["wingetFound"] = o.returncode == 0
                 globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Winget", state = _("Yes") if globals.componentStatus['wingetFound'] else _("No"))))
@@ -335,7 +335,7 @@ try:
             try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Winget sources...")))
-                    o = subprocess.run(f"{winget.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
+                    o = subprocess.run(f"{Winget.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Winget sources")))
             except Exception as e:
                 print(e)
@@ -344,7 +344,7 @@ try:
         def detectChocolatey(self):
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Chocolatey")))
-                o = subprocess.run(f"{choco.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run(f"{Choco.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["chocoFound"] = o.returncode == 0
                 globals.componentStatus["chocoVersion"] = o.stdout.decode('utf-8').replace("\n", "")
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Chocolatey", state = _("Yes") if globals.componentStatus['chocoFound'] else _("No"))))
@@ -355,7 +355,7 @@ try:
         def detectScoop(self):
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Scoop")))
-                o = subprocess.run(f"{scoop.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run(f"{Scoop.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["scoopFound"] = o.returncode == 0
                 globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Scoop", state = _("Yes") if globals.componentStatus['scoopFound'] else _("No"))))
@@ -365,9 +365,9 @@ try:
             try:
                 if getSettings("EnableScoopCleanup"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
-                    p = subprocess.Popen(f"{scoop.EXECUTABLE} cache rm *", shell=True, stdout=subprocess.PIPE)
-                    p2 = subprocess.Popen(f"{scoop.EXECUTABLE} cleanup --all --cache", shell=True, stdout=subprocess.PIPE)
-                    p3 = subprocess.Popen(f"{scoop.EXECUTABLE} cleanup --all --global --cache", shell=True, stdout=subprocess.PIPE)
+                    p = subprocess.Popen(f"{Scoop.EXECUTABLE} cache rm *", shell=True, stdout=subprocess.PIPE)
+                    p2 = subprocess.Popen(f"{Scoop.EXECUTABLE} cleanup --all --cache", shell=True, stdout=subprocess.PIPE)
+                    p3 = subprocess.Popen(f"{Scoop.EXECUTABLE} cleanup --all --global --cache", shell=True, stdout=subprocess.PIPE)
                     p.wait()
                     p2.wait()
                     p3.wait()
@@ -377,7 +377,7 @@ try:
             try:
                 if not getSettings("DisableUpdateIndexes"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Scoop sources...")))
-                    o = subprocess.run(f"{scoop.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)
+                    o = subprocess.run(f"{Scoop.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Scoop sources")))
             except Exception as e:
                 print(e)
