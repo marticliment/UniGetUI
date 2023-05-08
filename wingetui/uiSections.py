@@ -593,8 +593,8 @@ class UpdateSoftwareSection(SoftwareSection):
             ins5: _("Share this package"),
             self.selectAllAction: _("Select all"),
             self.selectNoneAction: _("Clear selection"),
-            self.resetBlackList: _("Reset blacklist"),
-            self.blacklistAction: _("Blacklist packages")
+            self.resetBlackList: _("Manage ignored packages"),
+            self.blacklistAction: _("Ignore updates for the selected packages")
         }
             
         for action in tooltips.keys():
