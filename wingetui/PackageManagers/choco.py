@@ -20,9 +20,6 @@ class ChocoPackageManager(SamplePackageManager):
         EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe")
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
-    choco = EXECUTABLE
-
-
     icon = None
 
     NAME = "Chocolatey"

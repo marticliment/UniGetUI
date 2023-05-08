@@ -13,7 +13,6 @@ class ScoopPackageManager(SamplePackageManager):
 
     EXECUTABLE = "powershell -ExecutionPolicy ByPass -Command scoop"
 
-    scoop = EXECUTABLE
     NAME = "Scoop"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")

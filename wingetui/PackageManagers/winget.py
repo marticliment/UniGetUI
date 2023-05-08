@@ -16,8 +16,6 @@ class WingetPackageManager(SamplePackageManager):
     else:
         EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 
-    winget = EXECUTABLE
-
     NAME = "Winget"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
