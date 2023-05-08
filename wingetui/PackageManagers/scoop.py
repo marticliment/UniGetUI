@@ -2,7 +2,6 @@ from PySide6.QtCore import *
 import subprocess, os, sys, re
 from tools import *
 from tools import _
-
 from .PackageClasses import *
 from .sampleHelper import *
     

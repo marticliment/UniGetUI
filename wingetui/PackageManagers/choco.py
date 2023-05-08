@@ -2,13 +2,7 @@ from PySide6.QtCore import *
 import subprocess, time, os, sys
 from tools import *
 from tools import _
-
-
-common_params = []
-
-
 from .PackageClasses import *
-
 from .sampleHelper import *
 
 
@@ -172,7 +166,7 @@ class ChocoPackageManager(SamplePackageManager):
         print(f"🔵 Starting get info for {package.Name} on {self.NAME}")
         details = PackageDetails(package)
         try:
-            p = subprocess.Popen([self.EXECUTABLE, "info", package.Id] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "info", package.Id], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             output: list[str] = []
             details.ManifestUrl = f"https://community.chocolatey.org/packages/{package.Name.lower()}"
             details.Architectures = ["x86"]
@@ -197,7 +191,7 @@ class ChocoPackageManager(SamplePackageManager):
                 elif "Release Notes" in line:
                     details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
             details.Versions = []
-            p = subprocess.Popen([self.EXECUTABLE, "find", "-e", package.Id, "-a"] + common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "find", "-e", package.Id, "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             print(f"🟢 Starting get info for id {package.Id}")
             output = []
             while p.poll() is None:
