@@ -40,7 +40,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.packageList.setColumnCount(5)
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
-        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item) if not getSettings("InstallOnDoubleClick") else self.fastinstall(item.text(1), item.text(2), item.text(4), packageItem=item))
+        self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item) if not getSettings("InstallOnDoubleClick") else self.installPackageItem(item))
                     
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -78,16 +78,16 @@ class DiscoverSoftwareSection(SoftwareSection):
         inf.setIcon(QIcon(getMedia("info")))
         ins1 = QAction(_("Install"))
         ins1.setIcon(QIcon(getMedia("newversion")))
-        ins1.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), packageItem=self.packageList.currentItem()))
+        ins1.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem()))
         ins2 = QAction(_("Install as administrator"))
         ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), admin=True, packageItem=self.packageList.currentItem()))
+        ins2.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), admin=True))
         ins3 = QAction(_("Skip hash check"))
         ins3.setIcon(QIcon(getMedia("checksum")))
-        ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), skiphash=True, packageItem=self.packageList.currentItem()))
+        ins3.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), skiphash=True))
         ins4 = QAction(_("Interactive installation"))
         ins4.setIcon(QIcon(getMedia("interactive")))
-        ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), interactive=True, packageItem=self.packageList.currentItem()))
+        ins4.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), interactive=True,))
         ins5 = QAction(_("Share this package"))
         ins5.setIcon(QIcon(getMedia("share")))
         ins5.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
@@ -110,28 +110,33 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         toolbar.addWidget(TenPxSpacer())
         self.installPackages = QAction(QIcon(getMedia("newversion")), _("Install selected packages"), toolbar)
-        self.installPackages.triggered.connect(lambda: self.installSelected())
+        self.installPackages.triggered.connect(lambda: self.installSelectedPackageItems())
         toolbar.addAction(self.installPackages)
-        toolbar.addSeparator()
         
-        inf = QAction("", toolbar)# ("Show info")
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
-        inf.setIcon(QIcon(getMedia("info")))
-        ins2 = QAction("", toolbar)# ("Run as administrator")
-        ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), admin=True))
-        ins3 = QAction("", toolbar)# ("Skip hash check")
-        ins3.setIcon(QIcon(getMedia("checksum")))
-        ins3.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), skiphash=True))
-        ins4 = QAction("", toolbar)# ("Interactive update")
-        ins4.setIcon(QIcon(getMedia("interactive")))
-        ins4.triggered.connect(lambda: self.fastinstall(self.packageList.currentItem().text(1), self.packageList.currentItem().text(2), self.packageList.currentItem().text(4).lower(), packageItem=self.packageList.currentItem(), interactive=True))
-        ins5 = QAction("", toolbar)
-        ins5.setIcon(QIcon(getMedia("share")))
-        ins5.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        showInfo = QAction("", toolbar)# ("Show info")
+        showInfo.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
+        showInfo.setIcon(QIcon(getMedia("info")))
+        runAsAdmin = QAction("", toolbar)# ("Run as administrator")
+        runAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
+        runAsAdmin.triggered.connect(lambda: self.installSelectedPackageItems(admin=True))
+        checksum = QAction("", toolbar)# ("Skip hash check")
+        checksum.setIcon(QIcon(getMedia("checksum")))
+        checksum.triggered.connect(lambda: self.installSelectedPackageItems(skiphash=True))
+        interactive = QAction("", toolbar)# ("Interactive update")
+        interactive.setIcon(QIcon(getMedia("interactive")))
+        interactive.triggered.connect(lambda: self.installSelectedPackageItems(interactive=True))
+        share = QAction("", toolbar)
+        share.setIcon(QIcon(getMedia("share")))
+        share.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
         
-        for action in [inf, ins2, ins3, ins4, ins5]:
+        for action in [runAsAdmin, checksum, interactive]:
+            toolbar.addAction(action)
+            toolbar.widgetForAction(action).setFixedSize(40, 45)
+        
+        toolbar.addSeparator()
+
+        for action in [showInfo, share]:
             toolbar.addAction(action)
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
@@ -166,11 +171,11 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         tooltips = {
             self.installPackages: _("Install selected packages"),
-            inf: _("Show package details"),
-            ins2: _("Run the installer with administrator privileges"),
-            ins3: _("Skip the hash check"),
-            ins4: _("Interactive installation"),
-            ins5: _("Share this package"),
+            showInfo: _("Show package details"),
+            runAsAdmin: _("Run the installer with administrator privileges"),
+            checksum: _("Skip the hash check"),
+            interactive: _("Interactive installation"),
+            share: _("Share this package"),
             self.selectNoneAction: _("Clear selection"),
             self.importAction: _("Install packages from a file"),
             self.exportAction: _("Export selected packages to a file")
@@ -259,11 +264,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         except Exception as e:
             report(e)
 
-    def installSelected(self) -> None:
+    def installSelectedPackageItems(self, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         for package in self.packageItems:
             try:
                 if package.checkState(0) ==  Qt.CheckState.Checked:
-                    self.fastinstall(package.text(1), package.text(2), package.text(4), packageItem=package)
+                    self.installPackageItem(package, admin, interactive, skiphash)
             except AttributeError:
                 pass
 
@@ -296,7 +301,7 @@ class DiscoverSoftwareSection(SoftwareSection):
                 for packageId in packageList:
                     try:
                         item = self.packages[packageId]["item"]
-                        self.fastinstall(item.text(1), item.text(2), item.text(4))
+                        self.installPackageItem(item)
                     except KeyError:
                         print(f"🟠 Can't find package {packageId} in the package reference")
         except Exception as e:
@@ -353,14 +358,21 @@ class DiscoverSoftwareSection(SoftwareSection):
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
                 
-    def fastinstall(self, title: str, id: str, store: str, admin: bool = False, interactive: bool = False, skiphash: bool = False, packageItem: TreeWidgetItemWithQAction = None) -> None:
-        if "winget" == store.lower():
-            self.addInstallation(PackageInstallerWidget(title, "winget", useId=not("…" in id), packageId=id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), packageItem=packageItem))
-        elif "chocolatey" == store.lower():
-            self.addInstallation(PackageInstallerWidget(title, "chocolatey", useId=True, packageId=id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem))
-        else:
-            self.addInstallation(PackageInstallerWidget(title, store, useId=not("…" in id), packageId=id, admin=admin, args=["--skip" if skiphash else ""], packageItem=packageItem))
-    
+    def installPackageItem(self, item: QTreeWidgetItem, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+        """
+        Initialize the install procedure for the given package, passed as a QTreeWidgetItem. Switches: admin, interactive, skiphash
+        """
+        try:
+            package: Package = self.packages[item.text(2)]["package"]
+            if package.isWinget():
+                self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), packageItem=package.PackageItem))
+            elif package.isWinget():
+                self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=True, packageId=package.Id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=package.PackageItem))
+            else:
+                self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, admin=admin, args=["--skip" if skiphash else ""], packageItem=package.PackageItem))
+        except Exception as e:
+            report(e)
+        
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getAvailablePackages_v2()
         for package in packages:
