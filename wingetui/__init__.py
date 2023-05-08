@@ -71,7 +71,7 @@ try:
                     self.loadStatus = 1000 # Override loading status
                 
                 skipButton.clicked.connect(forceContinue)
-                Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show))).start()
+                Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show)), daemon=True).start()
                 
                 self.textEnterAnim = QVariantAnimation(self)
                 self.textEnterAnim.setStartValue(0)
