@@ -919,7 +919,7 @@ class SoftwareSection(QWidget):
             nextItem = 0
             self.shownItems = []
         else:
-            nextItem = self.packageList.topLevelItemCount()
+            nextItem = len(self.shownItems)
         addedItems = 0
         while addedItems < 100:
             if nextItem >= len(self.showableItems):
@@ -956,7 +956,6 @@ class SoftwareSection(QWidget):
         if self.query.text() != text:
             return
         self.showableItems = []
-        found = 0
         
         sortColumn = self.packageList.sortColumn()
         descendingSort = self.packageList.header().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
@@ -973,12 +972,16 @@ class SoftwareSection(QWidget):
                 self.packageItems.sort(key=getSource, reverse=descendingSort)
         
         for item in self.packageItems:
-            try:
-                if self.containsQuery(item, text.replace("-", "").replace(" ", "").lower()):
-                    self.showableItems.append(item)
-                    found += 1
-            except RuntimeError:
-                print("nullitem")
+            if text == "":
+                self.showableItems = self.packageItems.copy()
+            else:
+                try:
+                    if self.containsQuery(item, text.replace("-", "").replace(" ", "").lower()):
+                        self.showableItems.append(item)
+                except RuntimeError:
+                    print("🟠 RuntimeError on SoftwareSection.finishFiltering")
+        found = len(self.showableItems)
+        cprint(len(self.packageItems), len(self.showableItems))
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
