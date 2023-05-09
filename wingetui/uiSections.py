@@ -19,6 +19,9 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
+    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
+    IdPackageReference: dict[str:Package] = {}
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -179,12 +182,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         return toolbar
     
     def loadShared(self, id):
-        if id in self.packages:
-            package = self.packages[id]["package"]
+        if id in self.IdPackageReference:
+            package = self.IdPackageReference[id]
             self.infobox: PackageInfoPopupWindow
             self.infobox.showPackageDetails_v2(package)
             self.infobox.show()
-            cprint("shown")
         else:
             self.err = CustomMessageBox(self.window())
             errorData = {
@@ -263,7 +265,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def importPackages(self):
         try:
-            packageList = []
+            packageList: list[str] = []
             file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
@@ -289,7 +291,7 @@ class DiscoverSoftwareSection(SoftwareSection):
                     print("🟠 Invalid chocolatey section")
                 for packageId in packageList:
                     try:
-                        item = self.packages[packageId]["item"]
+                        item = self.ItemPackageReference[self.IdPackageReference[packageId]]
                         self.installPackageItem(item)
                     except KeyError:
                         print(f"🟠 Can't find package {packageId} in the package reference")
@@ -330,13 +332,9 @@ class DiscoverSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
-            self.packages[package.Id] = {
-                "name": package.Name,
-                "version": package.Version,
-                "store": package.Source,
-                "item": item,
-                "package": package,
-            }
+            self.PackageItemReference[package] = item
+            self.ItemPackageReference[item] = package
+            self.IdPackageReference[package.Id] = package
             package.PackageItem = item
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
@@ -347,7 +345,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         Initialize the install procedure for the given package, passed as a QTreeWidgetItem. Switches: admin, interactive, skiphash
         """
         try:
-            package: Package = self.packages[item.text(2)]["package"]
+            package: Package = self.ItemPackageReference[item]
             if package.isWinget():
                 self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), packageItem=package.PackageItem))
             elif package.isWinget():
@@ -374,6 +372,9 @@ class UpdateSoftwareSection(SoftwareSection):
     availableUpdates: int = 0
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
+    PackageItemReference: dict[UpgradablePackage:TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[TreeWidgetItemWithQAction:UpgradablePackage] = {}
+    IdPackageReference: dict[str:UpgradablePackage] = {}
 
 
     def __init__(self, parent = None):
@@ -660,7 +661,8 @@ class UpdateSoftwareSection(SoftwareSection):
     def changeStore(self, package: UpgradablePackage):
         time.sleep(3)
         try:
-            package.Source = globals.uninstall.packages[package.Id]["store"]
+            UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
+            package.Source = UNINSTALL_SECTION.IdPackageReference[package.Id].Source
         except KeyError as e:
             print(f"🟠 Package {package.Id} found in the updates section but not in the installed one, happened again")
         self.callInMain.emit(partial(package.PackageItem.setText, 5, package.Source))
@@ -689,8 +691,9 @@ class UpdateSoftwareSection(SoftwareSection):
             package.PackageItem = item
             if package.isScoop():
                 try:
-                    if package.Version == globals.uninstall.packages[package.Id]["version"]:
-                        package.Source = globals.uninstall.packages[package.Id]["store"]
+                    UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
+                    if package.Version == UNINSTALL_SECTION.IdPackageReference[package.Id].Version:
+                        package.Source = UNINSTALL_SECTION.IdPackageReference[package.Id].Source
                     item.setText(5, package.Source)
                 except KeyError as e:
                     item.setText(5, _("Loading..."))
@@ -699,15 +702,9 @@ class UpdateSoftwareSection(SoftwareSection):
             else:
                 item.setText(5, package.Source)
             item.setIcon(5, package.getSourceIcon())
-
-            self.packages[package.Id] = {
-                "name": package.Name,
-                "version": package.Version,
-                "newVersion": package.NewVersion,
-                "store": package.Source,
-                "item": item,
-                "package": package,
-            }
+            self.PackageItemReference[package] = item
+            self.ItemPackageReference[item] = package
+            self.IdPackageReference[package.Id] = package
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
@@ -816,7 +813,7 @@ class UpdateSoftwareSection(SoftwareSection):
                 
     def updatePackageItem(self, packageItem: TreeWidgetItemWithQAction, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         try:
-            package: UpgradablePackage = self.packages[packageItem.text(2)]["package"]
+            package: UpgradablePackage = self.ItemPackageReference[packageItem]
             if package.isWinget():
                     self.addInstallation(PackageUpdaterWidget(package.Name, "winget", useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), currentVersion=package.Version, newVersion=package.NewVersion))
             elif package.isChocolatey():
@@ -858,6 +855,9 @@ class UninstallSoftwareSection(SoftwareSection):
     allPkgSelected: bool = False
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
+    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
+    IdPackageReference: dict[str:Package] = {}
     
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -1117,13 +1117,9 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
-            self.packages[package.Id] = {
-                "name": package.Name,
-                "version": package.Version,
-                "store": package.Source,
-                "item": item,
-                "package": package
-            }
+            self.PackageItemReference[package] = item
+            self.ItemPackageReference[item] = package
+            self.IdPackageReference[package.Id] = package
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
@@ -1147,11 +1143,11 @@ class UninstallSoftwareSection(SoftwareSection):
             for program in toUninstall:
                 self.callInMain.emit(partial(self.uninstallPackageItem, program, admin, interactive, removeData, avoidConfirm=True))
 
-    def uninstall(self, title: str, id: str, store: str, packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
-        self.uninstallPackageItem(self.packages[id]["item"], admin, removeData, interactive, avoidConfirm)
+    def uninstall(self, id: str, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
+        self.uninstallPackageItem(self.ItemPackageReference[self.IdPackageReference[id]], admin, removeData, interactive, avoidConfirm)
 
     def uninstallPackageItem(self, packageItem: TreeWidgetItemWithQAction, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
-        package: Package = self.packages[packageItem.text(2)]["package"]
+        package: Package = self.ItemPackageReference[packageItem]
         if not avoidConfirm:
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()

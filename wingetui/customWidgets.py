@@ -654,7 +654,9 @@ class SoftwareSection(QWidget):
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
-    packages: dict[str:dict] = {}
+    PackageItemReference: dict['Package':TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[TreeWidgetItemWithQAction:'Package'] = {}
+    IdPackageReference: dict[str:'Package'] = {}
     sectionName: str = ""
     packageItems: list[TreeWidgetItemWithQAction] = []
     showableItems: list[TreeWidgetItemWithQAction] = []
@@ -996,7 +998,7 @@ class SoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, item: QTreeWidgetItem) -> None:
-        self.infobox.showPackageDetails_v2(self.packages[item.text(2)]["package"])
+        self.infobox.showPackageDetails_v2(self.ItemPackageReference[item])
         self.infobox.show()
     
     def loadPackages(self, manager) -> None:
@@ -1010,7 +1012,9 @@ class SoftwareSection(QWidget):
         for manager in self.PackageManagers:
             self.PackagesLoaded[manager] = False
         self.packageItems = []
-        self.packages = {}
+        self.PackageItemReference = {}
+        self.ItemPackageReference = {}
+        self.IdPackageReference = {}
         self.shownItems = []
         self.addedItems = []
         self.loadingProgressBar.show()

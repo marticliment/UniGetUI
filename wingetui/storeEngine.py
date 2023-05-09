@@ -545,8 +545,6 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
-
-
     def counter(self, line: int) -> None:
         if(line == 1):
             self.progressbar.setValue(250)
@@ -604,8 +602,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
                         del i
                         globals.uninstall.updatePackageNumber()
-                        if self.packageId in globals.updates.packages:
-                            packageItem = globals.updates.packages[self.packageId]["item"]
+                        if self.packageId in globals.updates.IdPackageReference:
+                            packageItem = globals.updates.ItemPackageReference[globals.updates.IdPackageReference[self.packageId]]
                             packageItem.setHidden(True)
                             i = packageItem.treeWidget().takeTopLevelItem(packageItem.treeWidget().indexOfTopLevelItem(packageItem))
                             del i
