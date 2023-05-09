@@ -1011,11 +1011,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.exportSelectedAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
         self.exportSelectedAction.triggered.connect(lambda: self.exportSelection())
         toolbar.addAction(self.exportSelectedAction)
-
-        self.exportAction = QAction(QIcon(getMedia("export")), _("Export all"), toolbar)
-        self.exportAction.triggered.connect(lambda: self.exportSelection(all=True))
-        #toolbar.addAction(self.exportAction)
-
+        
         w = QWidget()
         w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         toolbar.addWidget(w)
