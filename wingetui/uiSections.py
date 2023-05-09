@@ -193,39 +193,7 @@ class DiscoverSoftwareSection(SoftwareSection):
                 pass
 
     def importPackages(self):
-        try:
-            packageList: list[str] = []
-            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
-            if file != "":
-                f = open(file, "r")
-                contents = json.load(f)
-                f.close()
-                try:
-                    packages = contents["winget"]["Sources"][0]["Packages"]
-                    for pkg in packages:
-                        packageList.append(pkg["PackageIdentifier"])
-                except KeyError as e:
-                    print("🟠 Invalid winget section")
-                try:
-                    packages = contents["scoop"]["apps"]
-                    for pkg in packages:
-                        packageList.append(pkg["Name"])
-                except KeyError as e:
-                    print("🟠 Invalid scoop section")
-                try:
-                    packages = contents["chocolatey"]["apps"]
-                    for pkg in packages:
-                        packageList.append(pkg["Name"])
-                except KeyError as e:
-                    print("🟠 Invalid chocolatey section")
-                for packageId in packageList:
-                    try:
-                        item = self.ItemPackageReference[self.IdPackageReference[packageId]]
-                        self.installPackageItem(item)
-                    except KeyError:
-                        print(f"🟠 Can't find package {packageId} in the package reference")
-        except Exception as e:
-            report(e)
+        self.imprter = PackageImporter(self)
         
     def finishLoadingIfNeeded(self) -> None:
         itemCount = len(self.packageItems)

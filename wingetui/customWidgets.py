@@ -1389,6 +1389,149 @@ class PackageExporter(MovableFramelessWindow):
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 
+class PackageImporter(MovableFramelessWindow):
+    def __init__(self, parent: QWidget | None = ...) -> None:
+        super().__init__(parent)
+        self.setLayout(QVBoxLayout())
+        self.setObjectName("background")
+        title = QLabel(_("Import packages"))
+        title.setContentsMargins(10, 0, 0, 0)
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        image = QLabel()
+        image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
+        image.setFixedWidth(32)
+        h = QHBoxLayout()
+        h.setContentsMargins(10, 0, 0, 0)
+        h.addWidget(image)
+        h.addWidget(title)
+        h.addStretch()
+        self.layout().addLayout(h)
+        desc = QLabel(_("The following packages are going to be installed on your system.")+"\n"+_("Please note that certain packages might not be installable, due to the package managers that are enabled on this machine."))
+        desc.setWordWrap(True)
+        self.layout().addWidget(desc)
+        desc.setContentsMargins(10, 0, 0, 0)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.setWindowTitle("\x20")
+        self.setMinimumSize(QSize(650, 400))
+        self.treewidget = TreeWidget(_("No packages found"))
+        self.layout().addWidget(self.treewidget)
+        self.treewidget.setColumnCount(4)
+        self.treewidget.header().setStretchLastSection(False)
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(4, QHeaderView.Fixed)
+        self.treewidget.setColumnWidth(2, 150)
+        self.treewidget.setColumnWidth(3, 100)
+        self.treewidget.setColumnWidth(4, 0)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
+        
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 5, 5)
+        hLayout.addStretch()
+        cancelButton = QPushButton(_("Cancel"))
+        cancelButton.setFixedHeight(30)
+        cancelButton.clicked.connect(self.close)
+        hLayout.addWidget(cancelButton)
+        installButton = QPushButton(_("Install"))
+        installButton.clicked.connect(self.installPackages)
+        installButton.setFixedHeight(30)
+        installButton.setObjectName("AccentButton")
+        hLayout.addWidget(installButton)
+        self.layout().addLayout(hLayout)
+        
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        self.versionIcon = QIcon(getMedia("version"))
+        self.showImportUI()
+
+    def showImportUI(self):
+        """
+        Starts the process of installinf selected packages from a file.
+        """
+        try:
+            DISCOVER_SECTION: SoftwareSection = globals.discover
+            self.treewidget.clear()
+            packageList: list[str] = []
+            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
+            if file != "":
+                f = open(file, "r")
+                contents = json.load(f)
+                f.close()
+                try:
+                    packages = contents["winget"]["Sources"][0]["Packages"]
+                    for pkg in packages:
+                        packageList.append(pkg["PackageIdentifier"])
+                except KeyError as e:
+                    print("🟠 Invalid winget section")
+                try:
+                    packages = contents["scoop"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    print("🟠 Invalid scoop section")
+                try:
+                    packages = contents["chocolatey"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    print("🟠 Invalid chocolatey section")
+                for packageId in packageList:
+                    item = TreeWidgetItemWithQAction()
+                    unknownIcon = QIcon(getMedia("question"))
+                    self.treewidget.addTopLevelItem(item)
+                    if packageId in DISCOVER_SECTION.IdPackageReference:
+                        package = DISCOVER_SECTION.IdPackageReference[packageId]
+                        item.setText(0, package.Name)
+                        item.setText(1, package.Id)
+                        item.setText(2, package.Version)
+                        item.setText(3, package.Source)
+                        item.setIcon(0, self.installIcon)
+                        item.setIcon(1, self.idIcon)
+                        item.setIcon(2, self.versionIcon)
+                        item.setIcon(3, package.getSourceIcon())
+                        removeButton = QPushButton()
+                        removeButton.setIcon(self.removeIcon)
+                        removeButton.setFixedSize(QSize(24, 24))
+                        removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
+                        self.treewidget.setItemWidget(item, 4, removeButton)
+                    else:
+                        # If the package is not available from any package manager:
+                        item.setText(0, packageId)
+                        item.setText(1, packageId)
+                        item.setText(2, _("Unknown"))
+                        item.setText(3, _("Unknown"))
+                        item.setIcon(0, self.installIcon)
+                        item.setIcon(1, self.idIcon)
+                        item.setIcon(2, unknownIcon)
+                        item.setIcon(3, unknownIcon)
+                        item.setDisabled(True)
+                self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
+                self.show()
+        except Exception as e:
+            report(e)
+
+    def installPackages(self) -> None:
+        DISCOVER_SECTION: SoftwareSection = globals.discover
+        for i in range(self.treewidget.topLevelItemCount()):
+            if not self.treewidget.topLevelItem(i).isDisabled():
+                try:
+                    id = self.treewidget.topLevelItem(i).text(1)
+                    item = DISCOVER_SECTION.PackageItemReference[DISCOVER_SECTION.IdPackageReference[id]]
+                    DISCOVER_SECTION.installPackageItem(item)
+                except Exception as e:
+                    report(e)
+        self.close()
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        return super().resizeEvent(event)
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        return super().showEvent(event)
 
 if __name__ == "__main__":
     import __init__
