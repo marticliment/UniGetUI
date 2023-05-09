@@ -16,13 +16,8 @@ from tools import _
 from PackageManagers import PackageClasses
 
 class DiscoverSoftwareSection(SoftwareSection):
-
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
-    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
-    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
-    IdPackageReference: dict[str:Package] = {}
-
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         
@@ -132,19 +127,9 @@ class DiscoverSoftwareSection(SoftwareSection):
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
         toolbar.addSeparator()
-                
-        def setAllSelected(checked: bool) -> None:
-            itemList = []
-            self.packageList.setSortingEnabled(False)
-            for i in range(self.packageList.topLevelItemCount()):
-                itemList.append(self.packageList.topLevelItem(i))
-            for program in itemList:
-                if not program.isHidden():
-                    program.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
-            self.packageList.setSortingEnabled(True)
 
         self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", toolbar)
-        self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
+        self.selectNoneAction.triggered.connect(lambda: self.setAllPackagesSelected(False))
         toolbar.addAction(self.selectNoneAction)
         toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
         
@@ -156,7 +141,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         toolbar.addAction(self.importAction)
 
         self.exportAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
-        self.exportAction.triggered.connect(lambda: self.exportSelection())
+        self.exportAction.triggered.connect(lambda: self.exportSelectedPackages())
         toolbar.addAction(self.exportAction)
 
 
@@ -198,62 +183,6 @@ class DiscoverSoftwareSection(SoftwareSection):
                     "icon": QIcon(getMedia("notif_warn")),
                 }
             self.err.showErrorMessage(errorData, showNotification=False)
-
-    def exportSelection(self) -> None:
-        """
-        Export all selected packages into a file.
-
-        """
-        wingetPackagesList = []
-        scoopPackageList = []
-        chocoPackageList = []
-
-        try:
-            for item in self.packageItems:
-                if ((item.checkState(0) ==  Qt.CheckState.Checked) and item.text(4).lower() == "winget"):
-                    id = item.text(2).strip()
-                    wingetPackage = {"PackageIdentifier": id}
-                    wingetPackagesList.append(wingetPackage)
-                elif ((item.checkState(0) ==  Qt.CheckState.Checked) and "scoop" in item.text(4).lower()):
-                    scoopPackage = {"Name": item.text(2)}
-                    scoopPackageList.append(scoopPackage)
-                elif ((item.checkState(0) ==  Qt.CheckState.Checked) and item.text(4).lower() == "chocolatey"):
-                    chocoPackage = {"Name": item.text(2)}
-                    chocoPackageList.append(chocoPackage)
-
-            wingetDetails = {
-                "Argument": "https://cdn.winget.microsoft.com/cache",
-                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
-                "Name": "winget",
-                "Type" : "Microsoft.PreIndexed.Package"
-            }
-            wingetExportSchema = {
-                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
-                "Sources": [{
-                    "Packages": wingetPackagesList,
-                    "SourceDetails": wingetDetails}],
-                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
-            }
-            scoopExportSchema = {
-                "apps": scoopPackageList,
-            }
-            chocoExportSchema = {
-                "apps": chocoPackageList,
-            }
-            overAllSchema = {
-                "winget": wingetExportSchema,
-                "scoop": scoopExportSchema,
-                "chocolatey": chocoExportSchema
-            }
-
-            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
-            if filename[0] != "":
-                with open(filename[0], 'w') as f:
-                    f.write(json.dumps(overAllSchema, indent=4))
-
-        except Exception as e:
-            report(e)
 
     def installSelectedPackageItems(self, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         for package in self.packageItems:
@@ -368,14 +297,13 @@ class DiscoverSoftwareSection(SoftwareSection):
     
 class UpdateSoftwareSection(SoftwareSection):
 
-    addProgram = Signal(object)
-    availableUpdates: int = 0
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
+    addProgram = Signal(object)
+    availableUpdates: int = 0
     PackageItemReference: dict[UpgradablePackage:TreeWidgetItemWithQAction] = {}
     ItemPackageReference: dict[TreeWidgetItemWithQAction:UpgradablePackage] = {}
     IdPackageReference: dict[str:UpgradablePackage] = {}
-
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -489,17 +417,6 @@ class UpdateSoftwareSection(SoftwareSection):
                         pass
             self.updatePackageNumber()
 
-        def setAllSelected(checked: bool) -> None:
-            itemList: list[TreeWidgetItemWithQAction] = []
-            self.packageList.setSortingEnabled(False)
-            for i in range(self.packageList.topLevelItemCount()):
-                itemList.append(self.packageList.topLevelItem(i))
-            for program in itemList:
-                if not program.isHidden():
-                    program.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
-            self.packageList.setSortingEnabled(True)
-
-
         toolbar = QToolBar(self.window())
         toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
@@ -541,11 +458,11 @@ class UpdateSoftwareSection(SoftwareSection):
         # self.upgradeAllAction is Required for the systray context menu
 
         self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", toolbar)
-        self.selectAllAction.triggered.connect(lambda: setAllSelected(True))
+        self.selectAllAction.triggered.connect(lambda: self.setAllPackagesSelected(True))
         toolbar.addAction(self.selectAllAction)
         toolbar.widgetForAction(self.selectAllAction).setFixedSize(40, 45)
         self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", toolbar)
-        self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
+        self.selectNoneAction.triggered.connect(lambda: self.setAllPackagesSelected(False))
         toolbar.addAction(self.selectNoneAction)
         toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
         toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Clear selection"))
@@ -851,14 +768,9 @@ class UpdateSoftwareSection(SoftwareSection):
         return super().startLoadingPackages(force)
 
 class UninstallSoftwareSection(SoftwareSection):
-    
     allPkgSelected: bool = False
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
-    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
-    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
-    IdPackageReference: dict[str:Package] = {}
-    
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.query.setPlaceholderText(" "+_("Search on your software"))
@@ -985,22 +897,12 @@ class UninstallSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        def setAllSelected(checked: bool) -> None:
-            itemList = []
-            self.packageList.setSortingEnabled(False)
-            for i in range(self.packageList.topLevelItemCount()):
-                itemList.append(self.packageList.topLevelItem(i))
-            for program in itemList:
-                if not program.isHidden():
-                    program.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
-            self.packageList.setSortingEnabled(True)
-
         self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", toolbar)
-        self.selectAllAction.triggered.connect(lambda: setAllSelected(True))
+        self.selectAllAction.triggered.connect(lambda: self.setAllPackagesSelected(True))
         toolbar.addAction(self.selectAllAction)
         toolbar.widgetForAction(self.selectAllAction).setFixedSize(40, 45)
         self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", toolbar)
-        self.selectNoneAction.triggered.connect(lambda: setAllSelected(False))
+        self.selectNoneAction.triggered.connect(lambda: self.setAllPackagesSelected(False))
         toolbar.addAction(self.selectNoneAction)
         toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
         toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Clear selection"))
@@ -1009,7 +911,7 @@ class UninstallSoftwareSection(SoftwareSection):
         toolbar.addSeparator()
 
         self.exportSelectedAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
-        self.exportSelectedAction.triggered.connect(lambda: self.exportSelection())
+        self.exportSelectedAction.triggered.connect(lambda: self.exportSelectedPackages())
         toolbar.addAction(self.exportSelectedAction)
         
         w = QWidget()
@@ -1176,61 +1078,6 @@ class UninstallSoftwareSection(SoftwareSection):
         for item in self.packageItems:
             item.setCheckState(Qt.CheckState.Checked if self.allPkgSelected else Qt.CheckState.Unchecked)
     
-    def exportSelection(self, all: bool = False) -> None:
-        """
-        Export all selected packages into a file.
-
-        """
-        wingetPackagesList = []
-        scoopPackageList = []
-        chocoPackageList = []
-
-        try:
-            for item in self.packageItems:
-                if ((item.checkState(0) ==  Qt.CheckState.Checked or all) and item.text(4).lower() == "winget"):
-                    id = item.text(2).strip()
-                    wingetPackage = {"PackageIdentifier": id}
-                    wingetPackagesList.append(wingetPackage)
-                elif ((item.checkState(0) ==  Qt.CheckState.Checked or all) and "scoop" in item.text(4).lower()):
-                    scoopPackage = {"Name": item.text(2)}
-                    scoopPackageList.append(scoopPackage)
-                elif ((item.checkState(0) ==  Qt.CheckState.Checked or all) and item.text(4).lower() == "chocolatey"):
-                    chocoPackage = {"Name": item.text(2)}
-                    chocoPackageList.append(chocoPackage)
-
-            wingetDetails = {
-                "Argument": "https://cdn.winget.microsoft.com/cache",
-                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
-                "Name": "winget",
-                "Type" : "Microsoft.PreIndexed.Package"
-            }
-            wingetExportSchema = {
-                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
-                "Sources": [{
-                    "Packages": wingetPackagesList,
-                    "SourceDetails": wingetDetails}],
-                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
-            }
-            scoopExportSchema = {
-                "apps": scoopPackageList,
-            }
-            chocoExportSchema = {
-                "apps": chocoPackageList,
-            }
-            overAllSchema = {
-                "winget": wingetExportSchema,
-                "scoop": scoopExportSchema,
-                "chocolatey": chocoExportSchema
-            }
-
-            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("wingetui exported packages"), filter='JSON (*.json)')
-            if filename[0] != "":
-                with open(filename[0], 'w') as f:
-                    f.write(json.dumps(overAllSchema, indent=4))
-
-        except Exception as e:
-            report(e)
 
 class AboutSection(SmoothScrollArea):
     def __init__(self, parent = None):
@@ -2250,9 +2097,7 @@ class PackageInfoPopupWindow(QWidget):
         self.backButton.show()
 
         self.hide()
-
         self.loadInfo.connect(self.printData)
-
 
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)

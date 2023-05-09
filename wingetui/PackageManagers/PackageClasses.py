@@ -1,14 +1,15 @@
 from tools import _, blueColor
-from customWidgets import TreeWidgetItemWithQAction
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
 
 class Package():
     Name: str = ""
     Id: str = ""
     Version: str = ""
     Source: str = ""
-    PackageItem: TreeWidgetItemWithQAction = None
+    PackageItem: QTreeWidgetItem = None
     PackageManager: 'PackageManagerModule' = None
     
     def __init__(self, Name: str, Id: str, Version: str, Source: str, PackageManager: 'PackageManagerModule'):
@@ -38,10 +39,7 @@ class Package():
         return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
     
     def getSourceIcon(self) -> QIcon:
-        #if self.PackageItem:
         return self.PackageManager.getIcon(self.Source)
-        #print(f"🔴 Null module for package {self.Id}")
-        #return QIcon()
         
 class UpgradablePackage(Package):
     NewVersion = ""

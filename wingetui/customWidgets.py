@@ -6,6 +6,24 @@ from win32mica import *
 from tools import *
 from tools import _
 from genericCustomWidgets import *
+from PackageManagers.PackageClasses import *
+
+from PackageManagers.winget import Winget
+from PackageManagers.scoop import Scoop
+from PackageManagers.choco import Choco
+from PackageManagers import PackageClasses
+
+PackageManagersList: list[PackageClasses.PackageManagerModule] = [
+    Winget,
+    Scoop,
+    Choco
+]
+
+PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+    Winget: False,
+    Scoop: False,
+    Choco: False,
+}
 
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
@@ -521,7 +539,7 @@ class WelcomeWizardPackageManager(QWidget):
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
 
-class IgnoredUpdatesManager(QWidget):
+class IgnoredUpdatesManager(MovableFramelessWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -531,15 +549,21 @@ class IgnoredUpdatesManager(QWidget):
         title = QLabel(_("Ignored updates"))
         title.setContentsMargins(10, 0, 0, 0)
         title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
-        self.layout().addWidget(title)
+        image = QLabel()
+        image.setPixmap(QPixmap(getMedia("pin_color")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
+        image.setFixedWidth(32)
+        h = QHBoxLayout()
+        h.setContentsMargins(10, 0, 0, 0)
+        h.addWidget(image)
+        h.addWidget(title)
+        h.addStretch()
+        self.layout().addLayout(h)
         desc = QLabel(_("The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates."))
         desc.setWordWrap(True)
         self.layout().addWidget(desc)
+        self.layout().setContentsMargins(5, 5, 5, 5)
         desc.setContentsMargins(10, 0, 0, 0)
         self.setWindowTitle("\x20")
-        self.setWindowFlag(Qt.WindowType.Window, True)
-        self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
-        self.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages found"))
         self.layout().addWidget(self.treewidget)
@@ -654,28 +678,26 @@ class SoftwareSection(QWidget):
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
-    PackageItemReference: dict['Package':TreeWidgetItemWithQAction] = {}
-    ItemPackageReference: dict[TreeWidgetItemWithQAction:'Package'] = {}
-    IdPackageReference: dict[str:'Package'] = {}
+    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
+    IdPackageReference: dict[str:Package] = {}
     sectionName: str = ""
-    packageItems: list[TreeWidgetItemWithQAction] = []
-    showableItems: list[TreeWidgetItemWithQAction] = []
-    addedItems: list[TreeWidgetItemWithQAction] = []
-    shownItems: list[TreeWidgetItemWithQAction] = []
+    packageItems: list[QTreeWidgetItem] = []
+    showableItems: list[QTreeWidgetItem] = []
+    addedItems: list[QTreeWidgetItem] = []
+    shownItems: list[QTreeWidgetItem] = []
     nextItemToShow: int = 0
 
-    PackageManagers: list = [
-
-    ]
-    
-    PackagesLoaded: dict = {
-
-    }
+    PackageManagers: list[PackageManagerModule] = PackageManagersList
+    PackagesLoaded: dict[PackageManagerModule:bool] = {}
+    for manager in PackageManagers:
+        PackagesLoaded[manager] = False
 
     def __init__(self, parent = None, sectionName: str = "Install"):
         super().__init__(parent = parent)
         self.sectionName = sectionName
         self.infobox = globals.infobox
+        self.packageExporter = PackageExporter(self)
         self.setStyleSheet("margin: 0px;")
 
         self.programbox = QWidget()
@@ -1004,7 +1026,22 @@ class SoftwareSection(QWidget):
     def loadPackages(self, manager) -> None:
         raise NotImplementedError("This function requires being reimplemented")
 
-    
+    def exportSelectedPackages(self, all: bool = False) -> None:
+        """
+        Export all selected packages into a file.
+        """
+        packagesToExport: list[Package] = []
+        for item in self.packageItems:
+            if item.checkState(0) == Qt.CheckState.Checked or all:
+                packagesToExport.append(self.ItemPackageReference[item])
+        self.packageExporter.showExportUI(packagesToExport)
+        
+    def setAllPackagesSelected(self, checked: bool) -> None:
+        self.packageList.setSortingEnabled(False)
+        for item in self.packageItems:
+            item.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+        self.packageList.setSortingEnabled(True)
+
     def startLoadingPackages(self, force: bool = False) -> None:
         for manager in self.PackageManagers: # Stop here if not all package managers loaded
             if not self.PackagesLoaded[manager] and not force:
@@ -1074,7 +1111,6 @@ class SoftwareSection(QWidget):
                     self.isToolbarSmall = False
                     self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
-
 
 class ImageViewer(QWidget):
     callInMain = Signal(object)
@@ -1212,6 +1248,146 @@ class ImageViewer(QWidget):
                 self.nextButton.click()
         return super().wheelEvent(event)
 
+class PackageExporter(MovableFramelessWindow):
+    def __init__(self, parent: QWidget | None = ...) -> None:
+        super().__init__(parent)
+        self.setLayout(QVBoxLayout())
+        self.setObjectName("background")
+        title = QLabel(_("Export packages"))
+        title.setContentsMargins(10, 0, 0, 0)
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        image = QLabel()
+        image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
+        image.setFixedWidth(32)
+        h = QHBoxLayout()
+        h.setContentsMargins(10, 0, 0, 0)
+        h.addWidget(image)
+        h.addWidget(title)
+        h.addStretch()
+        self.layout().addLayout(h)
+        desc = QLabel(_("The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved.")+"\n"+_("Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported."))
+        desc.setWordWrap(True)
+        self.layout().addWidget(desc)
+        desc.setContentsMargins(10, 0, 0, 0)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.setWindowTitle("\x20")
+        self.setMinimumSize(QSize(650, 400))
+        self.treewidget = TreeWidget(_("No packages selected"))
+        self.layout().addWidget(self.treewidget)
+        self.treewidget.setColumnCount(4)
+        self.treewidget.header().setStretchLastSection(False)
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.treewidget.setColumnWidth(2, 150)
+        self.treewidget.setColumnWidth(3, 0)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source"), ""])
+        
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 5, 5)
+        hLayout.addStretch()
+        cancelButton = QPushButton(_("Cancel"))
+        cancelButton.setFixedHeight(30)
+        cancelButton.clicked.connect(self.close)
+        hLayout.addWidget(cancelButton)
+        exportButton = QPushButton(_("Export"))
+        exportButton.clicked.connect(self.exportPackages)
+        exportButton.setFixedHeight(30)
+        exportButton.setObjectName("AccentButton")
+        hLayout.addWidget(exportButton)
+        self.layout().addLayout(hLayout)
+        
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+
+    def showExportUI(self, packageList: list[Package]):
+        """
+        Starts the process of exporting selected packages into a file.
+        Receives a list composed of Package objects as the unique parameter
+        """
+        self.treewidget.clear()
+        for package in packageList:
+            item = TreeWidgetItemWithQAction()
+            item.setText(0, package.Name)
+            item.setText(1, package.Id)
+            item.setText(2, package.Source)
+            item.setIcon(0, self.installIcon)
+            item.setIcon(1, self.idIcon)
+            item.setIcon(2, package.getSourceIcon())
+            if package.getSourceIcon() != Winget.wingetIcon and package.PackageManager == Winget:
+                # If the package is not available from winget servers, being the case that the package manager is winget:
+                item.setDisabled(True)
+            removeButton = QPushButton()
+            removeButton.setIcon(self.removeIcon)
+            removeButton.setFixedSize(QSize(24, 24))
+            removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
+            self.treewidget.addTopLevelItem(item)
+            self.treewidget.setItemWidget(item, 3, removeButton)
+        self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
+        self.show()
+        
+    def exportPackages(self) -> None:
+        wingetPackagesList = []
+        scoopPackageList = []
+        chocoPackageList = []
+        try:
+            for i in range(self.treewidget.topLevelItemCount()):
+                item = self.treewidget.topLevelItem(i)
+                if item.text(2).lower() == "winget":
+                    id = item.text(1).strip()
+                    wingetPackage = {"PackageIdentifier": id}
+                    wingetPackagesList.append(wingetPackage)
+                elif "scoop" in item.text(2).lower():
+                    scoopPackage = {"Name": item.text(1)}
+                    scoopPackageList.append(scoopPackage)
+                elif item.text(2).lower() == "chocolatey":
+                    chocoPackage = {"Name": item.text(1)}
+                    chocoPackageList.append(chocoPackage)
+            wingetDetails = {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type" : "Microsoft.PreIndexed.Package"
+            }
+            wingetExportSchema = {
+                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
+                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
+                "Sources": [{
+                    "Packages": wingetPackagesList,
+                    "SourceDetails": wingetDetails}],
+                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
+            }
+            scoopExportSchema = {
+                "apps": scoopPackageList,
+            }
+            chocoExportSchema = {
+                "apps": chocoPackageList,
+            }
+            overallSchema = {
+                "winget": wingetExportSchema,
+                "scoop": scoopExportSchema,
+                "chocolatey": chocoExportSchema
+            }
+            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
+            if filename[0] != "" and filename[1]:
+                print(f"🔵 Saving JSON to {filename[0]}")
+                with open(filename[0], 'w') as f:
+                    f.write(json.dumps(overallSchema, indent=4))
+                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+                self.hide()
+
+        except Exception as e:
+            report(e)
+                
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        return super().resizeEvent(event)
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        return super().showEvent(event)
 
 
 if __name__ == "__main__":
