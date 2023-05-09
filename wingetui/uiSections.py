@@ -1132,7 +1132,7 @@ class UninstallSoftwareSection(SoftwareSection):
 
     def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: CustomMessageBox, admin: bool = False, interactive: bool = False, removeData: bool = False):
         questionData = {
-            "titlebarTitle": "Wait!",
+            "titlebarTitle": _("Wait!"),
             "mainTitle": _("Are you sure?"),
             "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
             "acceptButtonTitle": _("Yes"),
@@ -1152,7 +1152,7 @@ class UninstallSoftwareSection(SoftwareSection):
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
         else:
-            print("🔵 Uninstalling", id)
+            print("🔵 Uninstalling", package.Id)
             if package.isWinget():
                 self.addInstallation(PackageUninstallerWidget(package.Name, "winget", useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent", "--force"]))
             elif package.isChocolatey():
