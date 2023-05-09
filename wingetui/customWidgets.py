@@ -1072,5 +1072,143 @@ class SoftwareSection(QWidget):
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
 
 
+class ImageViewer(QWidget):
+    callInMain = Signal(object)
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.callInMain.connect(lambda f: f())
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        self.images = {}
+
+        try:
+            self.sct = QShortcut(Qt.Key.Key_Escape, self)
+            self.sct.activated.connect(lambda: self.close())
+        except TypeError:
+            pass
+        self.setStyleSheet(f"""
+        QGroupBox {{
+            border: 0px;
+        }}
+        #backgroundWidget{{
+            border-radius: 5px;
+            padding: 5px;
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
+            border-radius: 16px;
+            border: 1px solid #88888888;
+        }}
+        QPushButton {{
+            background-color: {'rgba(20, 20, 20, 80%)' if isDark() else 'rgba(255, 255, 255, 80%)'};
+        }}
+        """)
+
+        self.stackedWidget = QStackedWidget()
+        self.stackedWidget.setObjectName("backgroundWidget")
+
+        layout.addWidget(self.stackedWidget)
+        self.setLayout(layout)
+
+        self.closeButton = QPushButton(QIcon(getMedia("close")), "", self)
+        self.closeButton.move(self.width()-40, 0)
+        self.closeButton.resize(40, 40)
+        self.closeButton.setFlat(True)
+        self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.closeButton.clicked.connect(lambda: (self.close()))
+        self.closeButton.show()
+
+
+        self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
+        try:
+            self.bk = QShortcut(QKeySequence(Qt.Key.Key_Left), parent=self)
+            self.bk.activated.connect(lambda: self.backButton.click())
+        except TypeError:
+            pass
+        self.backButton.move(0, self.height()//2-24)
+        self.backButton.resize(48, 48)
+        self.backButton.setFlat(False)
+        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
+        self.backButton.show()
+
+        self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
+        try:
+            self.nxt = QShortcut(Qt.Key.Key_Right, self)
+            self.nxt.activated.connect(lambda: self.nextButton.click())
+        except TypeError:
+            pass
+        self.nextButton.move(self.width()-48, self.height()//2-24)
+        self.nextButton.resize(48, 48)
+        self.nextButton.setFlat(False)
+        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
+        self.nextButton.show()
+        self.hide()
+
+
+    def resizeEvent(self, event = None):
+        self.closeButton.move(self.width()-40, 0)
+        self.backButton.move(10, self.height()//2-24)
+        self.nextButton.move(self.width()-58, self.height()//2-24)
+        for i in range(self.stackedWidget.count()):
+            l: QLabel = self.stackedWidget.widget(i)
+            l.resize(self.stackedWidget.size())
+            pixmap: QPixmap = self.images[l]
+            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        if(event):
+            return super().resizeEvent(event)
+
+    def show(self, index: int = 0) -> None:
+        g = QRect(0, 0, self.window().geometry().width(), self.window().geometry().height())
+        self.resize(g.width()-100, g.height()-100)
+        self.move(50, 50)
+        self.raise_()
+        self.stackedWidget.setCurrentIndex(index)
+        for i in range(self.stackedWidget.count()):
+            l: QLabel = self.stackedWidget.widget(i)
+            l.resize(self.stackedWidget.size())
+            pixmap: QPixmap = self.images[l]
+            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        return super().show()
+
+    def close(self) -> bool:
+        return super().close()
+
+    def hide(self) -> None:
+        return super().hide()
+
+    def resetImages(self) -> None:
+        del self.images
+        self.images = {}
+        for i in range(self.stackedWidget.count()):
+            widget = self.stackedWidget.widget(0)
+            self.stackedWidget.removeWidget(widget)
+            widget.close()
+            widget.deleteLater()
+            del widget
+
+    def addImage(self, pixmap: QPixmap) -> None:
+        l = QLabel()
+        l.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.stackedWidget.addWidget(l)
+        l.resize(self.stackedWidget.size())
+        l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.images[l] = pixmap
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        if abs(event.angleDelta().x()) <= 30:
+            if event.angleDelta().y() < -30:
+                self.backButton.click()
+            elif event.angleDelta().y() > 30:
+                self.nextButton.click()
+        else:
+            if event.angleDelta().x() < -30:
+                self.backButton.click()
+            elif event.angleDelta().x() > 30:
+                self.nextButton.click()
+        return super().wheelEvent(event)
+
+
+
 if __name__ == "__main__":
     import __init__

@@ -667,401 +667,86 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         super().close()
         super().destroy()
 
-class PackageInfoPopupWindow(QWidget):
-    onClose = Signal()
-    loadInfo = Signal(dict, str)
-    closeDialog = Signal()
-    addProgram = Signal(PackageInstallerWidget)
+class ScoopBucketManager(QWidget):
+    addBucketsignal = Signal(str, str, str, str)
+    finishLoading = Signal()
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
-    callInMain = Signal(object)
-    finishedCount: int = 0
-    backgroundApplied: bool = False
-    isAnUpdate = False
-    isAnUninstall = False
-    currentPackage: Package = None
-
-    pressed = False
-    oldPos = QPoint(0, 0)
     
-    def __init__(self, parent):
-        super().__init__(parent = parent)
-        self.iv = ImageViewer(self.window())
-        self.callInMain.connect(lambda f: f())
-        self.baseScrollArea = SmoothScrollArea()
-        self.blurBackgroundEffect = QGraphicsBlurEffect()
-        self.setObjectName("bg")
-        self.sct = QShortcut(QKeySequence("Esc"), self.baseScrollArea)
-        self.sct.activated.connect(lambda: self.close())
-        self.baseScrollArea.setWidgetResizable(True)
-        self.baseScrollArea.setStyleSheet(f"""
-        QGroupBox {{
-            border: 0px;
-        }}
-        QScrollArea{{
-            border-radius: 5px;
-            padding: 5px;
-            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 50%)'};
-            border-radius: 16px;
-            border: 1px solid {"#303030" if isDark() else "#bbbbbb"};
-        }}
-        """)
-
+    def __init__(self):
+        super().__init__()
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setObjectName("stBtn")
+        self.addBucketsignal.connect(self.addItem)
+        layout = QVBoxLayout()
+        hLayout = QHBoxLayout()
+        hLayout.addWidget(QLabel(_("Manage scoop buckets")))
+        hLayout.addStretch()
+        
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.hide()
+        self.finishLoading.connect(lambda: self.loadingProgressBar.hide())
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-
-        self.vLayout = QVBoxLayout()
-        self.layout = QVBoxLayout()
-        self.title = QLinkLabel()
-        self.title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
-        self.title.setText(_("Loading..."))
-
-        self.appIcon = QLabel()
-        self.appIcon.setFixedSize(QSize(96, 96))
-        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};")
-        self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
-        self.appIcon.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignHCenter)
-
-        fortyWidget = QWidget()
-        fortyWidget.setFixedWidth(120)
-
-        fortyTopWidget = QWidget()
-        fortyTopWidget.setFixedWidth(120)
-        fortyTopWidget.setMinimumHeight(30)
-
-        self.mainGroupBox = QGroupBox()
-        self.mainGroupBox.setFlat(True)
-
-        hl = QHBoxLayout()
-        hl.addWidget(self.appIcon)
-        hl.addSpacing(16)
-        hl.addWidget(self.title)
-
-        self.layout.addLayout(hl)
-        self.layout.addStretch()
-
-        self.hLayout = QHBoxLayout()
-        self.oLayout = QHBoxLayout()
-        self.description = QLinkLabel("<b>"+_('Description:')+"</b> "+_('Unknown'))
-        self.description.setWordWrap(True)
-
-        self.layout.addWidget(self.description)
-
-        self.homepage = QLinkLabel("<b>"+_('Homepage')+":</b> "+_('Unknown'))
-        self.homepage.setWordWrap(True)
-
-        self.layout.addWidget(self.homepage)
-
-        self.publisher = QLinkLabel("<b>"+_('Publisher')+":</b> "+_('Unknown'))
-        self.publisher.setOpenExternalLinks(False)
-        self.publisher.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
-        self.publisher.setWordWrap(True)
-
-        self.layout.addWidget(self.publisher)
-
-        self.author = QLinkLabel("<b>"+_('Author')+":</b> "+_('Unknown'))
-        self.author.setOpenExternalLinks(False)
-        self.author.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
-        self.author.setWordWrap(True)
-
-        self.layout.addWidget(self.author)
-        self.layout.addSpacing(10)
-
-        self.license = QLinkLabel("<b>"+_('License')+":</b> "+_('Unknown'))
-        self.license.setWordWrap(True)
-
-        self.layout.addWidget(self.license)
-        self.layout.addSpacing(10)
-
-        self.screenshotsWidget = QScrollArea()
-        self.screenshotsWidget.setWidgetResizable(True)
-        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};border: 0px solid black;}};")
-        self.screenshotsWidget.setFixedHeight(150)
-        self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.layout.addWidget(self.screenshotsWidget)
-        self.centralwidget = QWidget(self)
-
-        self.blackCover = QWidget(self.centralwidget)
-        self.blackCover.setStyleSheet("border: none;border-radius: 16px; margin: 0px;background-color: rgba(0, 0, 0, 30%);")
-        self.blackCover.hide()
-        blackCover = self.blackCover
-
-        self.imagesLayout = QHBoxLayout()
-        self.imagesLayout.setContentsMargins(0, 0, 0, 0)
-        self.imagesLayout.setSpacing(0)
-        self.imagesWidget = QWidget()
-        self.imagesWidget.setLayout(self.imagesLayout)
-        self.screenshotsWidget.setWidget(self.imagesWidget)
-        self.imagesLayout.addStretch()
-
-        class LabelWithImageViewer(QLabel):
-            currentPixmap = QPixmap()
-            index = 0
-            def __init__(self, parent: QWidget):
-                super().__init__()
-                self.parentwidget: PackageInfoPopupWindow = parent
-                self.clickableButton = QPushButton(self)
-                self.setMinimumWidth(0)
-                self.clickableButton.clicked.connect(self.showBigImage)
-                self.clickableButton.setStyleSheet(f"QPushButton{{background-color: rgba(127, 127, 127, 1%);border: 0px;border-radius: 0px;}}QPushButton:hover{{background-color: rgba({'255, 255, 255' if not isDark() else '0, 0, 0'}, 10%)}}")
-
-            def resizeEvent(self, event: QResizeEvent) -> None:
-                self.clickableButton.move(0, 0)
-                self.clickableButton.resize(self.size())
-                return super().resizeEvent(event)
-
-            def showBigImage(self):
-                cprint(self.index)
-                self.parentwidget.iv.show(self.index)
-                self.parentwidget.iv.raise_()
-
-            def setPixmap(self, arg__1: QPixmap, index = 0) -> None:
-                self.index = index
-                self.currentPixmap = arg__1
-                if arg__1.isNull():
-                    self.hide()
-                super().setPixmap(arg__1.scaledToHeight(self.height(), Qt.SmoothTransformation))
-
-            def showEvent(self, event: QShowEvent) -> None:
-                if self.pixmap().isNull():
-                    self.hide()
-                return super().showEvent(event)
-
-        self.imagesCarrousel: list[LabelWithImageViewer] = []
-        for i in range(20):
-            l = LabelWithImageViewer(self)
-            l.setStyleSheet("border-radius: 4px;margin: 0px;margin-right: 4px;")
-            self.imagesCarrousel.append(l)
-            self.imagesLayout.addWidget(l)
-
-        self.contributeLabel = QLabel()
-        self.contributeLabel.setText(f"""{_('Is this package missing the icon?')}<br>{_('Are these screenshots wron or blurry?')}<br>{_('The icons and screenshots are maintained by users like you!')}<br><a  style=\"color: {blueColor};\" href=\"https://github.com/marticliment/WingetUI/wiki/Home#the-icon-and-screenshots-database\">{_('Contribute to the icon and screenshot repository')}</a>
-        """)
-        self.contributeLabel.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        self.contributeLabel.setOpenExternalLinks(True)
-        self.imagesLayout.addWidget(self.contributeLabel)
-        self.imagesLayout.addStretch()
-
-        self.imagesScrollbar = CustomScrollBar()
-        self.imagesScrollbar.setOrientation(Qt.Horizontal)
-        self.screenshotsWidget.setHorizontalScrollBar(self.imagesScrollbar)
-        self.imagesScrollbar.move(self.screenshotsWidget.x(), self.screenshotsWidget.y()+self.screenshotsWidget.width()-16)
-        self.imagesScrollbar.show()
-        self.imagesScrollbar.setFixedHeight(12)
-
-        self.layout.addWidget(self.imagesScrollbar)
-
-        hLayout = QHBoxLayout()
-
-        downloadGroupBox = QGroupBox()
-        downloadGroupBox.setFlat(True)
         
-        optionsSection = SmallCollapsableSection(_("Installation options"), getMedia("options"))
+        self.reloadButton = QPushButton()
+        self.reloadButton.clicked.connect(self.loadBuckets)
+        self.reloadButton.setFixedSize(30, 30)
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
+        self.addBucketButton = QPushButton(_("Add bucket"))
+        self.addBucketButton.setFixedHeight(30)
+        self.addBucketButton.clicked.connect(self.scoopAddExtraBucket)
+        hLayout.addWidget(self.addBucketButton)
+        hLayout.addWidget(self.reloadButton)
+        hLayout.setContentsMargins(10, 0, 15, 0)
+        layout.setContentsMargins(60, 10, 5, 10)
+        self.bucketList = TreeWidget()
+        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        if isDark():
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+        else:
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
 
-        self.hashCheckBox = QCheckBox()
-        self.hashCheckBox.setText(_("Skip hash check"))
-        self.hashCheckBox.setChecked(False)
-        self.hashCheckBox.clicked.connect(self.loadPackageCommandLine)
-
-        self.interactiveCheckbox = QCheckBox()
-        self.interactiveCheckbox.setText(_("Interactive installation"))
-        self.interactiveCheckbox.setChecked(False) 
-        self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
-
-        self.adminCheckbox = QCheckBox()
-        self.adminCheckbox.setText(_("Run as admin"))
-        self.adminCheckbox.setChecked(False)
-        self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
-
-        firstRow = SectionHWidget()
-        firstRow.addWidget(self.hashCheckBox)
-        firstRow.addWidget(self.interactiveCheckbox)
-        firstRow.addWidget(self.adminCheckbox)
+        self.bucketList.label.setText(_("Loading buckets..."))
+        self.bucketList.label.show()
+        self.bucketList.setColumnCount(4)
+        self.bucketList.setHeaderLabels([_("Name"), _("Source"), _("Update date"), _("Manifests"), _("Remove")])
+        self.bucketList.sortByColumn(0, Qt.SortOrder.AscendingOrder)
+        self.bucketList.setSortingEnabled(True)
+        self.bucketList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
+        self.bucketList.setIconSize(QSize(24, 24))
+        self.bucketList.setColumnWidth(0, 120)
+        self.bucketList.setColumnWidth(1, 280)
+        self.bucketList.setColumnWidth(2, 120)
+        self.bucketList.setColumnWidth(3, 80)
+        self.bucketList.setColumnWidth(4, 50)
+        layout.addLayout(hLayout)
+        layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.bucketList)
+        self.setLayout(layout)
+        self.bucketIcon = QIcon(getMedia("bucket"))
         
-        optionsSection.addWidget(firstRow)
-
-        self.commandWindow = CommandLineEdit()
-        self.commandWindow.setReadOnly(True)
-        
-        commandWidget = SectionHWidget(lastOne = True)
-        commandWidget.addWidget(self.commandWindow)
-        
-        
-        self.versionLabel = QLabel(_("Version to install:"))
-        self.versionCombo = CustomComboBox()
-        self.versionCombo.setFixedWidth(150)
-        self.versionCombo.setIconSize(QSize(24, 24))
-        self.versionCombo.setFixedHeight(30)
-        versionSection = SectionHWidget()
-        versionSection.addWidget(self.versionLabel)
-        versionSection.addWidget(self.versionCombo)
-        versionSection.setFixedHeight(50)
-        
-        self.ignoreFutureUpdates = QCheckBox()
-        self.ignoreFutureUpdates.setText(_("Ignore future updates for this package"))
-        self.ignoreFutureUpdates.setChecked(False)
-        
-        ignoreUpdatesSection = SectionHWidget()
-        ignoreUpdatesSection.addWidget(self.ignoreFutureUpdates)
-        
-        self.architectureLabel = QLabel(_("Architecture to install:"))
-        self.architectureCombo = CustomComboBox()
-        self.architectureCombo.setFixedWidth(150)
-        self.architectureCombo.setIconSize(QSize(24, 24))
-        self.architectureCombo.setFixedHeight(30)
-        architectureSection = SectionHWidget()
-        architectureSection.addWidget(self.architectureLabel)
-        architectureSection.addWidget(self.architectureCombo)
-        architectureSection.setFixedHeight(50)
-        
-        self.scopeLabel = QLabel(_("Installation scope:"))
-        self.scopeCombo = CustomComboBox()
-        self.scopeCombo.setFixedWidth(150)
-        self.scopeCombo.setIconSize(QSize(24, 24))
-        self.scopeCombo.setFixedHeight(30)
-        scopeSection = SectionHWidget()
-        scopeSection.addWidget(self.scopeLabel)
-        scopeSection.addWidget(self.scopeCombo)
-        scopeSection.setFixedHeight(50)
-        
-        customArgumentsSection = SectionHWidget()
-        customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
-        self.customArgumentsLineEdit = CustomLineEdit()
-        self.customArgumentsLineEdit.textChanged.connect(self.loadPackageCommandLine)
-        self.customArgumentsLineEdit.setFixedHeight(30)
-        customArgumentsSection.addWidget(customArgumentsLabel)
-        customArgumentsSection.addWidget(self.customArgumentsLineEdit)
-        customArgumentsSection.setFixedHeight(50)
-        
-        
-        optionsSection.addWidget(versionSection)
-        optionsSection.addWidget(ignoreUpdatesSection)
-        optionsSection.addWidget(architectureSection)
-        optionsSection.addWidget(scopeSection)
-        optionsSection.addWidget(customArgumentsSection)
-        optionsSection.addWidget(commandWidget)
-        
-        self.shareButton = QPushButton(_("Share this package"))
-        self.shareButton.setIcon(QIcon(getMedia("share")))
-        self.shareButton.setFixedWidth(200)
-        self.shareButton.setStyleSheet("border-radius: 8px;")
-        self.shareButton.setFixedHeight(35)
-        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}", self.window()))
-        self.installButton = QPushButton()
-        self.installButton.setText(_("Install"))
-        self.installButton.setObjectName("AccentButton")
-        self.installButton.setStyleSheet("border-radius: 8px;")
-        self.installButton.setIconSize(QSize(24, 24))
-        self.installButton.clicked.connect(self.install)
-        self.installButton.setFixedWidth(200)
-        self.installButton.setFixedHeight(35)
-        
-        hLayout.addWidget(self.shareButton)
-        hLayout.addStretch()
-        hLayout.addWidget(self.installButton)
-
-        vl = QVBoxLayout()
-        vl.addStretch()
-        vl.addLayout(hLayout)
-
-        vl.addStretch()
-
-        downloadGroupBox.setLayout(vl)
-        self.layout.addWidget(downloadGroupBox)
-        self.layout.addWidget(optionsSection)
-
-        self.layout.addSpacing(10)
-
-        self.packageId = QLinkLabel("<b>"+_('Package ID')+"</b> "+_('Unknown'))
-        self.packageId.setWordWrap(True)
-        self.layout.addWidget(self.packageId)
-        self.manifest = QLinkLabel("<b>"+_('Manifest')+"</b> "+_('Unknown'))
-        self.manifest.setWordWrap(True)
-        self.layout.addWidget(self.manifest)
-        self.lastver = QLinkLabel("<b>"+_('Latest Version:')+"</b> "+_('Unknown'))
-        self.lastver.setWordWrap(True)
-        self.layout.addWidget(self.lastver)
-        self.sha = QLinkLabel(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> "+_('Unknown'))
-        self.sha.setWordWrap(True)
-        self.layout.addWidget(self.sha)
-        self.link = QLinkLabel(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> "+_('Unknown'))
-        self.link.setWordWrap(True)
-        self.layout.addWidget(self.link)
-        self.type = QLinkLabel(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> "+_('Unknown'))
-        self.type.setWordWrap(True)
-        self.layout.addWidget(self.type)
-        self.date = QLinkLabel("<b>"+_('Last updated:')+"</b> "+_('Unknown'))
-        self.date.setWordWrap(True)
-        self.layout.addWidget(self.date)
-        self.notes = QLinkLabel("<b>"+_('Release notes:')+"</b> "+_('Unknown'))
-        self.notes.setWordWrap(True)
-        self.layout.addWidget(self.notes)
-        self.notesurl = QLinkLabel("<b>"+_('Release notes URL:')+"</b> "+_('Unknown'))
-        self.notesurl.setWordWrap(True)
-        self.layout.addWidget(self.notesurl)
-
-        self.storeLabel = QLinkLabel("<b>"+_("Source:")+"</b> ")
-        self.storeLabel.setWordWrap(True)
-        self.layout.addWidget(self.storeLabel)
-
-        self.layout.addSpacing(10)
-        self.layout.addStretch()
-        self.advert = QLinkLabel("<b>"+_("DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE."))
-        self.advert.setWordWrap(True)
-        self.layout.addWidget(self.advert)
-
-        self.mainGroupBox.setLayout(self.layout)
-        self.mainGroupBox.setMinimumHeight(480)
-        self.vLayout.addWidget(self.mainGroupBox)
-        self.hLayout.addLayout(self.vLayout, stretch=0)
-
-        self.centralwidget.setLayout(self.hLayout)
-        if(isDark()):
-            print("🔵 Is Dark")
-        self.baseScrollArea.setWidget(self.centralwidget)
-
-        l = QHBoxLayout()
-        l.setContentsMargins(0,0, 0, 0)
-        l.addWidget(self.baseScrollArea)
-        self.setLayout(l)
-
-
-        self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
-        self.setStyleSheet("margin: 0px;")
-        self.backButton.move(self.width()-40, 0)
-        self.backButton.resize(40, 40)
-        self.backButton.setFlat(True)
-        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
-        self.backButton.clicked.connect(lambda: (self.onClose.emit(), self.close()))
-        self.backButton.show()
-
-        self.hide()
-
-        self.loadInfo.connect(self.printData)
-
-
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-
+        
         self.rightSlow = QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-
+        
         self.leftFast = QVariantAnimation()
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -1075,594 +760,63 @@ class PackageInfoPopupWindow(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-
+        
         self.leftSlow.start()
-
-        self.baseScrollArea.horizontalScrollBar().setEnabled(False)
-        self.baseScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.verticalScrollbar = CustomScrollBar()
-        self.baseScrollArea.setVerticalScrollBar(self.verticalScrollbar)
-        self.verticalScrollbar.setParent(self)
-        self.verticalScrollbar.show()
-        self.verticalScrollbar.setFixedWidth(12)
         
-        self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-        self.architectureCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-        self.scopeCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-
-    def resizeEvent(self, event = None):
-        self.centralwidget.setFixedWidth(self.width()-18)
-        g = self.mainGroupBox.geometry()
-        self.loadingProgressBar.move(16, 0)
-        self.loadingProgressBar.resize(self.width()-32, 4)
-        self.verticalScrollbar.move(self.width()-16, 44)
-        self.verticalScrollbar.resize(12, self.height()-64)
-        self.backButton.move(self.width()-40, 0)
-        self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
-        if(event):
-            return super().resizeEvent(event)
+    def showEvent(self, event: QShowEvent) -> None:
+        self.loadBuckets()
+        return super().showEvent(event)
         
-    def getCommandLineParameters(self) -> list[str]:
-        cmdline_args = []
-        WINGET = self.currentPackage.isWinget()
-        SCOOP = self.currentPackage.isScoop()
-        CHOCO = self.currentPackage.isChocolatey()
-        
-        if(self.hashCheckBox.isChecked()):
-            if WINGET:
-                cmdline_args.append("--ignore-security-hash")
-            elif SCOOP:
-                cmdline_args.append("--skip")
-            elif CHOCO:
-                cmdline_args.append("--ignore-checksums")
-                if not "--force" in cmdline_args:
-                    cmdline_args.append("--force")
-            else:
-                print(f"🟠 Unknown source {self.currentPackage.Source}")
-                
-        if(self.interactiveCheckbox.isChecked()):
-            if WINGET:
-                cmdline_args.append("--interactive")
-            elif CHOCO:
-                cmdline_args.append("--notsilent")
-            else:
-                print("🟡 Interactive installation not supported by store")
-        else:
-            if WINGET:
-                cmdline_args.append("--silent")
-
-        if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
-            if WINGET:
-                cmdline_args.append("--version")
-                cmdline_args.append(self.versionCombo.currentText())
-                if not "--force" in cmdline_args:
-                    cmdline_args.append("--force")
-            elif CHOCO:
-                cmdline_args.append("--version="+self.versionCombo.currentText())
-                cmdline_args.append("--allow-downgrade")
-                if not "--force" in cmdline_args:
-                    cmdline_args.append("--force")
-            else:
-                print("🟡 Custom version not supported by store")
-            
-        if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
-            if SCOOP:
-                cmdline_args.append("--arch")
-                cmdline_args.append(self.architectureCombo.currentText())
-            elif WINGET:
-                cmdline_args.append("--architecture")
-                cmdline_args.append(self.architectureCombo.currentText())
-            elif CHOCO:
-                if self.architectureCombo.currentText() == "x86":
-                    cmdline_args.append("--forcex86")
-            else:
-                print("🟡 Custom architecture not supported by store")
-                
-        if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
-            if SCOOP:
-                chosenScope = self.scopeCombo.currentText()
-                if chosenScope in (_("Local"), "Local"):
-                        pass # Scoop installs locally by default
-                elif chosenScope in (_("Global"), "Global"):
-                        cmdline_args.append("--global")
-                else:
-                    print(f"🟠 Scope {chosenScope} not supported by Scoop")
-            elif WINGET:
-                chosenScope = self.scopeCombo.currentText()
-                if chosenScope in (_("Current user"), "Current user"):
-                        cmdline_args.append("--scope")
-                        cmdline_args.append("user")
-                elif chosenScope in (_("Local machine"), "Local machine"):
-                        cmdline_args.append("--scope")
-                        cmdline_args.append("machine")
-                else:
-                    print(f"🟠 Scope {chosenScope} not supported by Winget")
-            else:
-                print("🟡 Custom scope not supported by store")
-
-        cmdline_args += [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
-        return cmdline_args
-
-    def loadPackageCommandLine(self):
-        parameters = " ".join(self.getCommandLineParameters())
-        if self.currentPackage.isWinget():
-            if not "…" in self.currentPackage.Id:
-                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
-            else:
-                self.commandWindow.setText(_("Loading..."))
-        elif self.currentPackage.isScoop():
-            self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        elif self.currentPackage.isChocolatey():
-            self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        else:
-            print(f"🟠 Unknown source {self.currentPackage.Source}")
-        self.commandWindow.setCursorPosition(0)
-                
-    def showPackageDetails_v2(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
-        self.isAnUpdate = update
-        self.isAnUninstall = uninstall
-        if self.currentPackage == package:
+    def loadBuckets(self):
+        if getSettings("DisableScoop"):
             return
-        self.currentPackage = package
-        
-        self.iv.resetImages()
-        if "…" in package.Id:
-            self.installButton.setEnabled(False)
-            self.installButton.setText(_("Please wait..."))
-        else:
-            if self.isAnUpdate:
-                self.installButton.setText(_("Update"))
-            elif self.isAnUninstall:
-                self.installButton.setText(_("Uninstall"))
-            else:
-                self.installButton.setText(_("Install"))
-        
-        self.title.setText(package.Name)
-
-        self.loadPackageCommandLine()
-
+        for i in range(self.bucketList.topLevelItemCount()):
+            item = self.bucketList.takeTopLevelItem(0)
+            del item
+        Thread(target=Scoop.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
         self.loadingProgressBar.show()
-        self.hashCheckBox.setChecked(False)
-        self.hashCheckBox.setEnabled(False)
-        self.interactiveCheckbox.setChecked(False)
-        self.interactiveCheckbox.setEnabled(False)
-        self.adminCheckbox.setChecked(False)
-        self.architectureCombo.setEnabled(False)
-        self.scopeCombo.setEnabled(False)
-        self.versionCombo.setEnabled(False)
-        self.description.setText(_("Loading..."))
-        self.author.setText("<b>"+_("Author")+":</b> "+_("Loading..."))
-        self.publisher.setText(f"<b>{_('Publisher')}:</b> "+_("Loading..."))
-        self.homepage.setText(f"<b>{_('Homepage')}:</b> {_('Loading...')}")
-        self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')}")
-        lastVerString = ""
-        if self.isAnUpdate:
-            lastVerString = f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(package.Version)})"
-        elif self.isAnUninstall:
-            lastVerString = f"<b>{_('Installed Version')}:</b> {package.Version}"
-        else:
-            if package.isScoop():
-                lastVerString = f"<b>{_('Current Version')}:</b> {package.Version}"
+        self.bucketList.label.show()
+        self.bucketList.label.setText("Loading...")
+        globals.scoopBuckets = {}
+        
+    def addItem(self, name: str, source: str, updatedate: str, manifests: str):
+        self.bucketList.label.hide()
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setToolTip(0, name)
+        item.setIcon(0, self.bucketIcon)
+        item.setText(1, source)
+        item.setToolTip(1, source)
+        item.setText(2, updatedate)
+        item.setToolTip(2, updatedate)
+        item.setText(3, manifests)
+        item.setToolTip(3, manifests)
+        self.bucketList.addTopLevelItem(item)
+        btn = QPushButton()
+        btn.clicked.connect(lambda: (self.scoopRemoveExtraBucket(name), self.bucketList.takeTopLevelItem(self.bucketList.indexOfTopLevelItem(item))))
+        btn.setFixedSize(24, 24)
+        btn.setIcon(QIcon(getMedia("menu_uninstall")))
+        self.bucketList.setItemWidget(item, 4, btn)
+        globals.scoopBuckets[name] = source
+        
+    def scoopAddExtraBucket(self) -> None:
+        r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another bucket")), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", _("Another bucket")], 1, editable=False)
+        if r[1]:
+            if r[0] == _("Another bucket"):
+                r2 = QInputDialog.getText(self, _("Scoop bucket manager"), _("Type here the name and the URL of the bucket you want to add, separated by a space."), text="extras https://github.com/ScoopInstaller/Extras")
+                if r2[1]:
+                    bName = r2[0].split(" ")[0]
+                    p = PackageInstallerWidget(f"{bName} Scoop bucket", "custom", customCommand=f"scoop bucket add {r2[0]}")
+                    globals.installersWidget.addItem(p)
+                    p.finishInstallation.connect(self.loadBuckets)
+
             else:
-                lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
-        self.lastver.setText(lastVerString)
-
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isChocolatey() else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
-        self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
-        self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
-        self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
-        self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
-        self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
-        self.notes.setText(f"<b>{_('Notes:') if package.isScoop() else _('Release notes:')}</b> {_('Loading...')}")
-        self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
-        self.storeLabel.setText(f"<b>{_('Source')}:</b> {package.Source}")
-        self.versionCombo.addItems([_("Loading...")])
-        self.architectureCombo.addItems([_("Loading...")])
-        self.scopeCombo.addItems([_("Loading...")])
-
-        def resetLayoutWidget():
-            p = QPixmap()
-            for l in self.imagesCarrousel:
-                l.setPixmap(p, index=0)
-            Thread(target=self.loadPackageScreenshots, args=(package,)).start()
-
-        self.callInMain.emit(lambda: resetLayoutWidget())
-        self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
-        Thread(target=self.loadPackageIcon, args=(package,)).start()
-        
-        Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
-
-        self.finishedCount = 0
-        
-    def loadPackageDetails(self, package: Package):
-        if package.isWinget():
-            details = Winget.getPackageDetails_v2(package)
-        elif package.isScoop():
-            details = Scoop.getPackageDetails_v2(package)
-        elif package.isChocolatey():
-            details = Choco.getPackageDetails_v2(package)
-        self.callInMain.emit(lambda: self.printData(details))
+                p = PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}")
+                globals.installersWidget.addItem(p)
+                p.finishInstallation.connect(self.loadBuckets)
             
-    def printData(self, details: PackageDetails) -> None:
-        if details.PackageObject != self.currentPackage:
-            return 
-        package = self.currentPackage
-        
-        self.loadingProgressBar.hide()
-        self.installButton.setEnabled(True)
-        self.adminCheckbox.setEnabled(True)
-        self.hashCheckBox.setEnabled(not self.isAnUninstall)
-        self.versionCombo.setEnabled(not self.isAnUninstall and not self.isAnUpdate)
-        self.architectureCombo.setEnabled(not self.isAnUninstall)
-        self.scopeCombo.setEnabled(not self.isAnUninstall)
-        if self.isAnUpdate:
-            self.installButton.setText(_("Update"))
-        elif self.isAnUninstall:
-            self.installButton.setText(_("Uninstall"))
-        else:
-            self.installButton.setText(_("Install"))
-        
-        self.interactiveCheckbox.setEnabled(not package.isScoop())
-        self.title.setText(details.Name)
-        self.description.setText(details.Description)
-        if package.isWinget():
-            self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{details.Id.split('.')[0]}'>{details.Author}</a>")
-            self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{details.Id.split('.')[0]}'>{details.Publisher}</a>")
-        else:
-            self.author.setText(f"<b>{_('Author')}:</b> "+details.Author)
-            self.publisher.setText(f"<b>{_('Publisher')}:</b> "+details.Publisher)
-        self.homepage.setText(f"<b>{_('Homepage')}:</b> {details.asUrl(details.HomepageURL)}")
-        if details.License != "" and details.LicenseURL != "":
-            self.license.setText(f"<b>{_('License')}:</b> {details.License} ({details.asUrl(details.LicenseURL)})")
-        elif details.License != "":
-            self.license.setText(f"<b>{_('License')}:</b> {details.License}")
-        elif details.LicenseURL != "":
-            self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
-        else:
-            self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isChocolatey() else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
-        self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
-        self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
-        self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
-        self.date.setText(f"<b>{_('Last updated:')}</b> {details.UpdateDate}")
-        self.notes.setText(f"<b>{_('Notes:') if package.isScoop() else _('Release notes:')}</b> {details.ReleaseNotes}")
-        self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {details.asUrl(details.ReleaseNotesUrl)}")
-        self.manifest.setText(f"<b>{_('Manifest')}:</b> {details.asUrl(details.ManifestUrl)}")
-        while self.versionCombo.count()>0:
-            self.versionCombo.removeItem(0)
-        self.versionCombo.addItems([_("Latest")] + details.Versions)
-        while self.architectureCombo.count()>0:
-            self.architectureCombo.removeItem(0)
-        self.architectureCombo.addItems([_("Default")] + details.Architectures)
-        while self.scopeCombo.count()>0:
-            self.scopeCombo.removeItem(0)
-        self.scopeCombo.addItems([_("Default")] + details.Scopes)
-        
-        self.loadPackageCommandLine()
-
-    def loadPackageIcon(self, package: Package) -> None:
-        try:
-            id = package.Id
-            iconId = package.getIconId()
-            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
-            if not os.path.exists(iconpath):
-                if package.isChocolatey():
-                    iconurl = f"https://community.chocolatey.org/content/packageimages/{id}.{version}.png"
-                else:
-                    iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
-                print("🔵 Found icon: ", iconurl)
-                if iconurl:
-                    icondata = urlopen(iconurl).read()
-                    with open(iconpath, "wb") as f:
-                        f.write(icondata)
-                else:
-                    print("🟡 Icon url empty")
-                    raise KeyError(f"{iconurl} was empty")
-            else:
-                cprint(f"🔵 Found cached image in {iconpath}")
-            if self.currentPackage.Id == id:
-                self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
-            else:
-                print("Icon arrived too late!")
-        except Exception as e:
-            try:
-                if type(e) != KeyError:
-                    report(e)
-                else:
-                    print(f"🟡 Icon {iconId} not found in json")
-            except Exception as e:
-                report(e)
-
-    def loadPackageScreenshots(self, package: Package) -> None:
-        try:
-            id = package.Id
-            self.validImageCount = 0
-            self.canContinueWithImageLoading = 0
-            iconId = package.getIconId()
-            count = 0
-            for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
-                try:
-                    p = QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)
-                    if not p.isNull():
-                        self.callInMain.emit(self.imagesCarrousel[i].show)
-                        self.callInMain.emit(partial(self.imagesCarrousel[i].setPixmap, p, count))
-                        count += 1
-                except Exception as e:
-                    report(e)
-            for i in range(count+1, 20):
-                self.callInMain.emit(self.imagesCarrousel[i].hide)
-            for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
-                try:
-                    imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.screenshot.{i}.png")
-                    if not os.path.exists(imagepath):
-                        iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["images"][i]
-                        print("🔵 Found icon: ", iconurl)
-                        if iconurl:
-                            icondata = urlopen(iconurl).read()
-                            with open(imagepath, "wb") as f:
-                                f.write(icondata)
-                        else:
-                            print("🟡 Image url empty")
-                            raise KeyError(f"{iconurl} was empty")
-                    else:
-                        cprint(f"🔵 Found cached image in {imagepath}")
-                    p = QPixmap(imagepath)
-                    if not p.isNull():
-                        if self.currentPackage.Id == id:
-                            self.callInMain.emit(partial(self.imagesCarrousel[self.validImageCount].setPixmap, p, self.validImageCount))
-                            self.callInMain.emit(self.imagesCarrousel[self.validImageCount].show)
-                            self.callInMain.emit(partial(self.iv.addImage, p))
-                            self.validImageCount += 1
-                        else:
-                            print("Screenshot arrived too late!")
-                    else:
-                        print(f"🟡 {imagepath} is a null image")
-                except Exception as e:
-                    self.callInMain.emit(self.imagesCarrousel[self.validImageCount].hide)
-                    self.validImageCount += 1
-                    report(e)
-            if self.validImageCount == 0:
-                cprint("🟡 No valid screenshots were found")
-            else:
-                cprint(f"🟢 {self.validImageCount} vaild images found!")
-            for i in range(self.validImageCount+1, 20):
-                self.callInMain.emit(self.imagesCarrousel[i].hide)
-
-        except Exception as e:
-            try:
-                if type(e) != KeyError:
-                    report(e)
-                else:
-                    print(f"🟡 Image {iconId} not found in json")
-            except Exception as e:
-                report(e)
-
-
-    def install(self):
-        print(f"🟢 Starting installation of package {self.currentPackage.Name} with id {self.currentPackage.Id}")
-        cmdline_args = self.getCommandLineParameters()
-        print("🔵 The issued command arguments are", cmdline_args)
-        
-        if self.ignoreFutureUpdates.isChecked():
-            IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
-            print(f"🟡 Blacklising package {self.currentPackage.Id}")
-
-        if self.isAnUpdate:
-            p = PackageUpdaterWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
-        elif self.isAnUninstall:            
-            p = PackageUninstallerWidget(self.currentPackage.Name, self.currentPackage.Source, args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
-        else:
-            p = PackageInstallerWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
-        self.addProgram.emit(p)
-        self.close()
-
-    def show(self) -> None:
-        self.blackCover.hide()
-        g = QRect(0, 0, self.parent().window().geometry().width(), self.parent().window().geometry().height())
-        self.resize(700, 650)
-        self.parent().window().blackmatt.show()
-        self.move(g.x()+g.width()//2-700//2, g.y()+g.height()//2-650//2)
-        self.raise_()
-        if not self.backgroundApplied:
-            globals.centralWindowLayout.setGraphicsEffect(self.blurBackgroundEffect)
-            self.backgroundApplied = True
-        self.blurBackgroundEffect.setEnabled(True)
-        self.blurBackgroundEffect.setBlurRadius(40)
-        backgroundImage = globals.centralWindowLayout.grab(QRect(QPoint(0, 0), globals.centralWindowLayout.size()))
-        self.blurBackgroundEffect.setEnabled(False)
-        self.imagesScrollbar.move(self.screenshotsWidget.x()+22, self.screenshotsWidget.y()+self.screenshotsWidget.height()+4)
-        self.blackCover.resize(self.width(), self.centralwidget.height())
-        if globals.centralWindowLayout:
-            globals.centralTextureImage.setPixmap(backgroundImage)
-            globals.centralTextureImage.show()
-            globals.centralWindowLayout.hide()
-        _ = super().show()
-        return _
-
-    def close(self) -> bool:
-        self.blackCover.hide()
-        self.iv.close()
-        self.parent().window().blackmatt.hide()
-        self.blurBackgroundEffect.setEnabled(False)
-        if globals.centralWindowLayout:
-            globals.centralTextureImage.hide()
-            globals.centralWindowLayout.show()
-        return super().close()
-
-    def hide(self) -> None:
-        self.blackCover.hide()
-        try:
-            self.parent().window().blackmatt.hide()
-        except AttributeError:
-            pass
-        self.blurBackgroundEffect.setEnabled(False)
-        self.iv.close()
-        if globals.centralWindowLayout:
-            globals.centralTextureImage.hide()
-            globals.centralWindowLayout.show()
-        return super().hide()
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        #self.pressed = True
-        #self.oldPos = event.pos()
-        return super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        #if self.pressed:
-        #    self.window().move(self.pos()+(event.pos()-self.oldPos))
-        return super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        #self.pressed = False
-        #self.oldPos = event.pos()
-        return super().mouseReleaseEvent(event)
-
-    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
-        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
-            anim: QVariantAnimation
-            anim.pause()
-            anim.stop()
-            anim.valueChanged.disconnect()
-            anim.finished.disconnect()
-            anim.deleteLater()
-        return super().destroy(destroyWindow, destroySubWindows)
-
-class ImageViewer(QWidget):
-    callInMain = Signal(object)
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.callInMain.connect(lambda f: f())
-        layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-        self.images = {}
-
-        try:
-            self.sct = QShortcut(Qt.Key.Key_Escape, self)
-            self.sct.activated.connect(lambda: self.close())
-        except TypeError:
-            pass
-        self.setStyleSheet(f"""
-        QGroupBox {{
-            border: 0px;
-        }}
-        #backgroundWidget{{
-            border-radius: 5px;
-            padding: 5px;
-            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
-            border-radius: 16px;
-            border: 1px solid #88888888;
-        }}
-        QPushButton {{
-            background-color: {'rgba(20, 20, 20, 80%)' if isDark() else 'rgba(255, 255, 255, 80%)'};
-        }}
-        """)
-
-        self.stackedWidget = QStackedWidget()
-        self.stackedWidget.setObjectName("backgroundWidget")
-
-        layout.addWidget(self.stackedWidget)
-        self.setLayout(layout)
-
-        self.closeButton = QPushButton(QIcon(getMedia("close")), "", self)
-        self.closeButton.move(self.width()-40, 0)
-        self.closeButton.resize(40, 40)
-        self.closeButton.setFlat(True)
-        self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
-        self.closeButton.clicked.connect(lambda: (self.close()))
-        self.closeButton.show()
-
-
-        self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
-        try:
-            self.bk = QShortcut(QKeySequence(Qt.Key.Key_Left), parent=self)
-            self.bk.activated.connect(lambda: self.backButton.click())
-        except TypeError:
-            pass
-        self.backButton.move(0, self.height()//2-24)
-        self.backButton.resize(48, 48)
-        self.backButton.setFlat(False)
-        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
-        self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
-        self.backButton.show()
-
-        self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
-        try:
-            self.nxt = QShortcut(Qt.Key.Key_Right, self)
-            self.nxt.activated.connect(lambda: self.nextButton.click())
-        except TypeError:
-            pass
-        self.nextButton.move(self.width()-48, self.height()//2-24)
-        self.nextButton.resize(48, 48)
-        self.nextButton.setFlat(False)
-        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
-        self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
-        self.nextButton.show()
-        self.hide()
-
-
-    def resizeEvent(self, event = None):
-        self.closeButton.move(self.width()-40, 0)
-        self.backButton.move(10, self.height()//2-24)
-        self.nextButton.move(self.width()-58, self.height()//2-24)
-        for i in range(self.stackedWidget.count()):
-            l: QLabel = self.stackedWidget.widget(i)
-            l.resize(self.stackedWidget.size())
-            pixmap: QPixmap = self.images[l]
-            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-        if(event):
-            return super().resizeEvent(event)
-
-    def show(self, index: int = 0) -> None:
-        g = QRect(0, 0, self.window().geometry().width(), self.window().geometry().height())
-        self.resize(g.width()-100, g.height()-100)
-        self.move(50, 50)
-        self.raise_()
-        self.stackedWidget.setCurrentIndex(index)
-        for i in range(self.stackedWidget.count()):
-            l: QLabel = self.stackedWidget.widget(i)
-            l.resize(self.stackedWidget.size())
-            pixmap: QPixmap = self.images[l]
-            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-        return super().show()
-
-    def close(self) -> bool:
-        return super().close()
-
-    def hide(self) -> None:
-        return super().hide()
-
-    def resetImages(self) -> None:
-        del self.images
-        self.images = {}
-        for i in range(self.stackedWidget.count()):
-            widget = self.stackedWidget.widget(0)
-            self.stackedWidget.removeWidget(widget)
-            widget.close()
-            widget.deleteLater()
-            del widget
-
-    def addImage(self, pixmap: QPixmap) -> None:
-        l = QLabel()
-        l.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        self.stackedWidget.addWidget(l)
-        l.resize(self.stackedWidget.size())
-        l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-        self.images[l] = pixmap
-
-    def wheelEvent(self, event: QWheelEvent) -> None:
-        if abs(event.angleDelta().x()) <= 30:
-            if event.angleDelta().y() < -30:
-                self.backButton.click()
-            elif event.angleDelta().y() > 30:
-                self.nextButton.click()
-        else:
-            if event.angleDelta().x() < -30:
-                self.backButton.click()
-            elif event.angleDelta().x() > 30:
-                self.nextButton.click()
-        return super().wheelEvent(event)
-
+    def scoopRemoveExtraBucket(self, bucket: str) -> None:
+        globals.installersWidget.addItem(PackageUninstallerWidget(f"{bucket} Scoop bucket", "custom", customCommand=f"scoop bucket rm {bucket}"))
 
 
 
