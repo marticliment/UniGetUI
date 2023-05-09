@@ -176,7 +176,7 @@ class ChocoPackageManager(SamplePackageManager):
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
                 if "Title:" in line:
-                    details.self.NAME = line.split("|")[0].replace("Title:", "").strip()
+                    details.Name = line.split("|")[0].replace("Title:", "").strip()
                     details.UpdateDate = line.split("|")[1].replace("Published:", "").strip()
                 elif "Author:" in line:
                     details.Author = line.replace("Author:", "").strip()

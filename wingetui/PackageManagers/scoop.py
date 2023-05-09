@@ -211,7 +211,7 @@ class ScoopPackageManager(SamplePackageManager):
                 details.InstallerType = "Inno Setup"
 
             if "homepage" in data.keys():
-                w = data["homepage"]
+                w: str = data["homepage"]
                 details.HomepageURL = w
                 if "https://github.com/" in w:
                     details.Author = w.replace("https://github.com/", "").split("/")[0]
@@ -261,7 +261,7 @@ class ScoopPackageManager(SamplePackageManager):
                 except Exception as e:
                     report(e)
                     
-            output = []   
+            output: list[str] = []   
             p = subprocess.Popen(' '.join([self.EXECUTABLE, "info", package.Id]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
             while p.poll() is None:
                 pass

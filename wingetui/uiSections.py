@@ -180,8 +180,9 @@ class DiscoverSoftwareSection(SoftwareSection):
     
     def loadShared(self, id):
         if id in self.packages:
-            package = self.packages[id]
-            self.infobox.loadProgram(package["name"], id, useId=not("…" in id), store=package["store"], packageItem=package["item"], version=package["store"])
+            package = self.packages[id]["package"]
+            self.infobox: PackageInfoPopupWindow
+            self.infobox.showPackageDetails_v2(package)
             self.infobox.show()
             cprint("shown")
         else:
@@ -1879,7 +1880,6 @@ class DebuggingSection(QWidget):
     def showEvent(self, event: QShowEvent) -> None:
         self.textEdit.setPlainText(stdout_buffer.getvalue())
         return super().showEvent(event)
-
 
 class PackageInfoPopupWindow(QWidget):
     onClose = Signal()
