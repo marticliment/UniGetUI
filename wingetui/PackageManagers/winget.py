@@ -227,6 +227,43 @@ class WingetPackageManager(SamplePackageManager):
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
+        
+        def getSource(id: str) -> str:
+            s = "Winget"
+            for illegal_char in ("{", "}", " "):
+                if illegal_char in id:
+                    s = _("Local PC")
+                    break
+            if s == "Winget":
+                if id.count(".") != 1:
+                    s = (_("Local PC"))
+                    if id.count(".") > 1:
+                        for letter in id:
+                            if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                                s = "Winget"
+                                break
+            if s == _("Local PC"):
+                if id == "Steam":
+                    s = "Steam"
+                if id == "Uplay":
+                    s = "Ubisoft Connect"
+                if id.count("_is1") == 1:
+                    s = "GOG"
+                    for number in id.split("_is1")[0]:
+                        if number not in "0123456789":
+                            s = _("Local PC")
+                            break
+                    if len(id) != 14:
+                        s = _("Local PC")
+                    if id.count("GOG") == 1:
+                        s = "GOG"
+            if s == "Winget":
+                if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
+                    s = "Microsoft Store"
+                elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
+                    s = "Microsoft Store"
+            return s
+        
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
@@ -268,16 +305,16 @@ class WingetPackageManager(SamplePackageManager):
                         name = element[0:idPosition].strip()
                         if not "  " in name:
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, ver, self.NAME, Winget))
+                                packages.append(Package(name, id, ver, getSource(id), Winget))
                         else:
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 print(f"🟡 package {name} failed parsing, going for method 2...")
                                 name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                                 while "##" in name:
                                     name = name.replace("##", "#")
-                                packages.append(Package(name.split("#")[0], name.split("#")[-1]+id, ver, self.NAME, Winget))
+                                packages.append(Package(name.split("#")[0], name.split("#")[-1]+id, ver, getSource(id), Winget))
                     except Exception as e:
-                        packages.append(Package(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:].strip(), self.NAME, Winget))
+                        packages.append(Package(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:].strip(), getSource(id), Winget))
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")

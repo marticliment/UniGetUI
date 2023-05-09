@@ -1107,43 +1107,6 @@ class UninstallSoftwareSection(SoftwareSection):
     def addItem(self, package: Package) -> None:
         if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not package.Version in ("the", "is"):
             item = TreeWidgetItemWithQAction()
-            if package.isWinget():
-                for illegal_char in ("{", "}", " "):
-                    if illegal_char in package.Id:
-                        package.Source = _("Local PC")
-                        break
-                
-                if package.Source.lower() == "winget":
-                    if package.Id.count(".") != 1:
-                        package.Source = (_("Local PC"))
-                        if package.Id.count(".") > 1:
-                            for letter in package.Id:
-                                if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                                    package.Source = "Winget"
-                                    break
-                
-                if package.Source == (_("Local PC")):
-                    if package.Id == "Steam":
-                        package.Source = "Steam"
-                    if package.Id == "Uplay":
-                        package.Source = "Ubisoft Connect"
-                    if package.Id.count("_is1") == 1:
-                        package.Source = "GOG"
-                        for number in package.Id.split("_is1")[0]:
-                            if number not in "0123456789":
-                                package.Source = (_("Local PC"))
-                                break
-                        if len(package.Id) != 14:
-                            package.Source = (_("Local PC"))
-                        if package.Id.count("GOG") == 1:
-                            package.Source = "GOG"
-                
-                if package.Source.lower() == "winget":
-                    if len(package.Id.split("_")[-1]) == 13 and len(package.Id.split("_"))==2:
-                        package.Source = "Microsoft Store"
-                    elif len(package.Id.split("_")[-1]) <= 13 and len(package.Id.split("_"))==2 and "…" == package.Id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
-                        package.Source = "Microsoft Store"
-
             item.setCheckState(0, Qt.CheckState.Unchecked)
             item.setText(1, package.Name)
             item.setIcon(1, self.installIcon)
@@ -1160,7 +1123,6 @@ class UninstallSoftwareSection(SoftwareSection):
                 "item": item,
                 "package": package
             }
-            
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
