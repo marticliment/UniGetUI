@@ -228,7 +228,7 @@ class ChocoPackageManager(SamplePackageManager):
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = [self.EXECUTABLE, "install", package.Id, "-y"] + self.getParameters()
+        Command = [self.EXECUTABLE, "install", package.Id, "-y"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -236,16 +236,16 @@ class ChocoPackageManager(SamplePackageManager):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = [self.EXECUTABLE, "upgrade", package.Id, "-y"] + self.getParameters()
+        Command = [self.EXECUTABLE, "upgrade", package.Id, "-y"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
 
-
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
+        counter = 0
         p.stdin = b"\r\n"
         while p.poll() is None:
             line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
@@ -264,9 +264,15 @@ class ChocoPackageManager(SamplePackageManager):
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
 
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "uninstall", package.Id, "-y"] + self.getParameters(options)
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} uninstall with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstalling {package.Name}").start()
 
-    def uninstallAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-        print(f"🟢 choco installer assistant thread started for process {p}")
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         outputCode = RETURNCODE_OPERATION_SUCCEEDED
         counter = 0
         output = ""
@@ -276,9 +282,9 @@ class ChocoPackageManager(SamplePackageManager):
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                infoSignal.emit(line)
+                widget.addInfoLine.emit(line)
                 counter += 1
-                counterSignal.emit(counter)
+                widget.counterSignal.emit(counter)
                 output += line+"\n"
         p.wait()
         outputCode = p.returncode
@@ -288,7 +294,7 @@ class ChocoPackageManager(SamplePackageManager):
             outputCode = RETURNCODE_NEEDS_RESTART
         elif "Run as administrator" in output or "The requested operation requires elevation" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
-        closeAndInform.emit(outputCode, output)
+        widget.finishInstallation.emit(outputCode, output)
 
 Choco = ChocoPackageManager()
 

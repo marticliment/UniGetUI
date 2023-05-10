@@ -1010,13 +1010,11 @@ class UninstallSoftwareSection(SoftwareSection):
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
         else:
-            print("🔵 Uninstalling", package.Id)
-            if package.isWinget():
-                self.addInstallation(PackageUninstallerWidget(package.Name, "winget", useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, removeData=removeData, args=["--interactive" if interactive else "--silent", "--force"]))
-            elif package.isChocolatey():
-                self.addInstallation(PackageUninstallerWidget(package.Name, "chocolatey", useId=True, packageId=package.Id, admin=admin, packageItem=packageItem, args=list(filter(None, ["--notsilent" if interactive else ""]))))
-            else: # Scoop
-                self.addInstallation(PackageUninstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, removeData=removeData))
+            options = InstallationOptions()
+            options.RunAsAdministrator = admin
+            options.InteractiveInstallation = interactive
+            options.RemoveDataOnUninstall = removeData
+            self.addInstallation(PackageUninstallerWidget(package, options))
 
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getInstalledPackages_v2()
@@ -2389,9 +2387,6 @@ class PackageInfoPopupWindow(QWidget):
 
     def install(self):
         print(f"🟢 Starting installation of package {self.currentPackage.Name} with id {self.currentPackage.Id}")
-        cmdline_args = self.getCommandLineParameters()
-        print("🔵 The issued command arguments are", cmdline_args)
-        
         if self.ignoreFutureUpdates.isChecked():
             IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
@@ -2399,7 +2394,7 @@ class PackageInfoPopupWindow(QWidget):
         if self.isAnUpdate:
             p = PackageUpdaterWidget(self.currentPackage, self.getInstallationOptions())
         elif self.isAnUninstall:            
-            p = PackageUninstallerWidget(self.currentPackage.Name, self.currentPackage.Source, args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
+            p = PackageUninstallerWidget(self.currentPackage, self.getInstallationOptions())
         else:
             p = PackageInstallerWidget(self.currentPackage, self.getInstallationOptions())
         self.addProgram.emit(p)

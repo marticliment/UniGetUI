@@ -134,6 +134,8 @@ class PackageInstallerWidget(QGroupBox):
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
         print(f"🟢 Waiting for install permission... title={self.Package.Name}, id={self.Package.Id}, installId={self.installId}")
+        print("🔵 Given package:", package)
+        print("🔵 Installation options:", options)
 
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -356,11 +358,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.p = self.Package.PackageManager.startUpdate(self.Package, self.Options, self)
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == RETURNCODE_NEEDS_SCOOP_ELEVATION:
-            self.Options.RunAsAdministrator = True
-            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
-            self.runInstallation()
-        elif returncode == RETURNCODE_NEEDS_ELEVATION:
+        if returncode in (RETURNCODE_NEEDS_ELEVATION, RETURNCODE_NEEDS_SCOOP_ELEVATION):
             self.Options.RunAsAdministrator = True
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
@@ -396,23 +394,16 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = [], customCommand = ""):
-        self.Package.PackageItem = packageItem
-        self.Package.Name = title
-        self.Package.Id = packageId
-        super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args, packageItem=packageItem, customCommand=customCommand)
-        self.useId = useId
+    def __init__(self, package: UpgradablePackage, options: InstallationOptions):
+        super().__init__(package, options)
         self.actionDone = _("uninstalled")
-        self.removeData = removeData
         self.actionDoing = _("uninstalling")
         self.actionName = _("uninstallation")
         self.actionVerb = _("uninstall")
         self.finishedInstallation = True
-        self.Options.RunAsAdministrator = admin
-        self.Package.Source = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
-        self.label.setText(_("{0} Uninstallation").format(title))
+        self.label.setText(_("{0} Uninstallation").format(package.Name))
 
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -421,6 +412,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.callInMain.emit(self.runInstallation)
 
     def runInstallation(self) -> None:
+        self.finishedInstallation = False
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -429,20 +421,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.Package.Name = self.Package.Name.replace("…", "")
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
-        self.finishedInstallation = False
-        if(self.Package.Source == "winget" or self.Package.Source in ((_("Local PC").lower(), "microsoft store", "steam", "gog", "ubisoft connect"))):
-            self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "uninstall", "-e"] + (["--id", self.Package.Id] if self.useId else ["--name", self.Package.Name]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=Winget.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-            print(self.p.args)
-        elif("scoop" in self.Package.Source):
-            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.Package.Id if self.Package.Id != '' else self.Package.Name}"] + (["-p"] if self.removeData else [""]) + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=Scoop.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
-            self.t.start()
-        elif self.Package.Source == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [Choco.EXECUTABLE, "uninstall", self.Package.Id, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=Choco.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
+        self.p = self.Package.PackageManager.startUninstallation(self.Package, self.Options, self)
 
     def counter(self, line: int) -> None:
         if(line == 1):
@@ -482,34 +461,37 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == RETURNCODE_NEEDS_SCOOP_ELEVATION:
-            self.adminstr = [GSUDO_EXECUTABLE]
-            self.cmdline_args.append("--global")
-            self.Options.RunAsAdministrator = True
-            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
-            self.runInstallation()
-        elif returncode == RETURNCODE_NEEDS_ELEVATION:
-            self.adminstr = [GSUDO_EXECUTABLE]
+        if returncode in (RETURNCODE_NEEDS_ELEVATION, RETURNCODE_NEEDS_SCOOP_ELEVATION):
             self.Options.RunAsAdministrator = True
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         else:
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
-                if self.Package.PackageItem:
-                    try:
-                        self.Package.PackageItem.setHidden(True)
-                        i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
-                        del i
-                        globals.uninstall.updatePackageNumber()
-                        if self.Package.Id in globals.updates.IdPackageReference:
-                            packageItem = globals.updates.ItemPackageReference[globals.updates.IdPackageReference[self.Package.Id]]
-                            packageItem.setHidden(True)
-                            i = packageItem.treeWidget().takeTopLevelItem(packageItem.treeWidget().indexOfTopLevelItem(packageItem))
+                try:
+                    self.Package.PackageItem.setHidden(True)
+                    globals.uninstall.packageItems.remove(self.Package.PackageItem)
+                    if self.Package.PackageItem in globals.uninstall.showableItems:
+                        globals.uninstall.showableItems.remove(self.Package.PackageItem)
+                    i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
+                    del i
+                except Exception as e:
+                    report(e)
+                globals.uninstall.updatePackageNumber()
+                if self.Package.Id in globals.updates.IdPackageReference:
+                    packageItem = globals.updates.ItemPackageReference[globals.updates.IdPackageReference[self.Package.Id]]
+                    packageItem.setHidden(True)
+                    i = packageItem.treeWidget().takeTopLevelItem(packageItem.treeWidget().indexOfTopLevelItem(packageItem))
+                    if i:
+                        try:
+                            i.setHidden(True)
+                            i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(i))
+                            globals.updates.packageItems.remove(i)
+                            if i in globals.updates.showableItems:
+                                globals.updates.showableItems.remove(i)
                             del i
-                            globals.updates.updatePackageNumber()
-
-                    except Exception as e:
-                        report(e)
+                        except Exception as e:
+                            report(e)
+                    globals.updates.updatePackageNumber()
             self.finishedInstallation = True
             self.cancelButton.setEnabled(True)
             removeProgram(self.installId)

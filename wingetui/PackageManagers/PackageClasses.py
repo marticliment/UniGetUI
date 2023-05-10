@@ -50,6 +50,9 @@ class Package():
         Check if the package manager equals the given package manager
         """
         return manager == self.PackageManager
+    
+    def __str__(self) -> str:
+        return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
         
 class UpgradablePackage(Package):
     NewVersion = ""
@@ -106,6 +109,17 @@ class InstallationOptions():
     InstallationScope: str = ""
     CustomParameters: list[str] = []
     RemoveDataOnUninstall: bool = False
+    
+    def __str__(self) -> str:
+        str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
+        str += f"InteractiveInstallation={self.InteractiveInstallation};"
+        str += f"RunAsAdministrator={self.RunAsAdministrator};"
+        str += f"Version={self.Version};"
+        str += f"Architecture={self.Architecture};"
+        str += f"InstallationScope={self.InstallationScope};"
+        str += f"CustomParameters={self.CustomParameters};"
+        str += f"RemoveDataOnUninstall={self.RemoveDataOnUninstall}>"
+        return str
 
 class InstallationWidgetType(QWidget):
     finishInstallation: Signal
@@ -152,12 +166,22 @@ class PackageManagerModule():
         
     def startUpdate(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
         """
-        Starts a thread that installs the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
+        Starts a thread that updates the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
         """
         
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: InstallationWidgetType):
         """
         Internal method that handles the installation of the given package
+        """
+        
+    def startUninstallation(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        """
+        Starts a thread that removes the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
+        """
+        
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: InstallationWidgetType):
+        """
+        Internal method that handles the removal of the given package
         """
         
     def getParameters(self, options: InstallationOptions) -> list[str]:

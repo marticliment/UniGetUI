@@ -303,13 +303,15 @@ class ScoopPackageManager(SamplePackageManager):
             Parameters += ["--skip-integrity-checks", "--force"]
         if options.Version:
             Parameters += ["--version", options.Version]
+        if options.RemoveDataOnUninstall:
+            Parameters.append("--purge")
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":"))>1 and not "/" in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = [self.EXECUTABLE, "install", bucket_prefix+package.Id] + self.getParameters
+        Command = [self.EXECUTABLE, "install", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + "--global"
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -320,7 +322,7 @@ class ScoopPackageManager(SamplePackageManager):
         bucket_prefix = ""
         if len(package.Source.split(":"))>1 and not "/" in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = [self.EXECUTABLE, "update", bucket_prefix+package.Id] + self.getParameters
+        Command = [self.EXECUTABLE, "update", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + "--global"
         print(f"🔵 Starting {package} update with Command", Command)
@@ -353,9 +355,19 @@ class ScoopPackageManager(SamplePackageManager):
         if "Latest versions for all apps are installed" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
-    
-    def uninstallAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal, alreadyGlobal: bool = False) -> None:
-        print(f"🟢 scoop uninstaller assistant thread started for process {p}")
+        
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        bucket_prefix = ""
+        if len(package.Source.split(":"))>1 and not "/" in package.Source:
+            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
+        Command = [self.EXECUTABLE, "uninstall", bucket_prefix+package.Id] + self.getParameters(options)
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command + "--global"
+        print(f"🔵 Starting {package} uninstall with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
+        
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         outputCode = 1
         output = ""
         while p.poll() is None:
@@ -364,20 +376,20 @@ class ScoopPackageManager(SamplePackageManager):
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
                 if("Uninstalling" in line):
-                    counterSignal.emit(1)
+                    widget.counterSignal.emit(1)
                 elif("Removing shim for" in line):
-                    counterSignal.emit(4)
+                    widget.counterSignal.emit(4)
                 elif("was uninstalled" in line):
-                    counterSignal.emit(6)
-                infoSignal.emit(line)
+                    widget.counterSignal.emit(6)
+                widget.addInfoLine(line)
                 if("was uninstalled" in line):
                     outputCode = 0
                 output += line+"\n"
-        if "-g" in output and not "was uninstalled" in output and not alreadyGlobal:
+        if "-g" in output and not "was uninstalled" in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
-        closeAndInform.emit(outputCode, output)
+        widget.finishInstallation.emit(outputCode, output)
 
 
     def loadBuckets(self, packageSignal: Signal, finishSignal: Signal) -> None:

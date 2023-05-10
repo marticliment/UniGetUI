@@ -446,7 +446,7 @@ class WingetPackageManager(SamplePackageManager):
             return self.wingetIcon
         
     def getParameters(self, options: InstallationOptions) -> list[str]:
-        Parameters: list[str] = []
+        Parameters: list[str] = ["--accept-source-agreements"]
         if options.Architecture:
             Parameters += ["--architecture", options.Architecture]
         if options.CustomParameters:
@@ -467,6 +467,8 @@ class WingetPackageManager(SamplePackageManager):
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        if "…" in package.Id:
+            package.Id = self.getFullPackageId(package.Id)
         Command = [self.EXECUTABLE, "install", "--exact", "--id", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -475,6 +477,8 @@ class WingetPackageManager(SamplePackageManager):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
     
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        if "…" in package.Id:
+            package.Id = self.getFullPackageId(package.Id)
         Command = [self.EXECUTABLE, "upgrade", "--exact", "--id", package.Id, "--include-unknown"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -503,25 +507,32 @@ class WingetPackageManager(SamplePackageManager):
         if "No applicable upgrade found" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
+        
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        if "…" in package.Id:
+            package.Id = self.getFullPackageId(package.Id)
+        Command = [self.EXECUTABLE, "uninstall", "--exact", "--id", package.Id] + self.getParameters(options)
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} uninstall with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
 
-    def uninstallAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-        print(f"🟢 winget uninstaller assistant thread started for process {p}")
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         counter = RETURNCODE_OPERATION_SUCCEEDED
         output = ""
         while p.poll() is None:
-            line = p.stdout.readline()
-            line = line.strip()
-            line = str(line, encoding='utf-8', errors="ignore").strip()
+            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
             if line:
-                infoSignal.emit(line)
+                widget.addInfoLine.emit(line)
                 counter += 1
-                counterSignal.emit(counter)
+                widget.counterSignal.emit(counter)
                 output += line+"\n"
         p.wait()
         outputCode = p.returncode
         if "1603" in output or "0x80070005" in output or "Access is denied" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
-        closeAndInform.emit(outputCode, output)
+        widget.finishInstallation.emit(outputCode, output)
         
     def getFullPackageId(self, id: str) -> tuple[str, str]:
         print(f"🟢 Starting winget search, winget on {self.EXECUTABLE}...")

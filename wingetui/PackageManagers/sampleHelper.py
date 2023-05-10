@@ -202,7 +202,8 @@ class SamplePackageManager(PackageManagerModule):
         return Parameters
     
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters()
+        print("🔴 This function should be reimplented!")
+        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -210,14 +211,14 @@ class SamplePackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters()
+        print("🔴 This function should be reimplented!")
+        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
 
-        
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
@@ -232,60 +233,27 @@ class SamplePackageManager(PackageManagerModule):
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
 
-"""
-    
-def installAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"🟢 choco installer assistant thread started for process {p}")
-    outputCode = RETURNCODE_OPERATION_SUCCEEDED
-    counter = 0
-    output = ""
-    p.stdin = b"\r\n"
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        line = str(line, encoding='utf-8', errors="ignore").strip()
-        if line:
-            infoSignal.emit(line)
-            counter += 1
-            counterSignal.emit(counter)
-            output += line+"\n"
-    p.wait()
-    outputCode = p.returncode
-    if outputCode in (1641, 3010):
-        outputCode = RETURNCODE_OPERATION_SUCCEEDED
-    elif outputCode == 3010:
-        outputCode = RETURNCODE_NEEDS_RESTART
-    elif ("Run as administrator" in output or "The requested operation requires elevation" in output) and outputCode != 0:
-        outputCode = RETURNCODE_NEEDS_ELEVATION
-    closeAndInform.emit(outputCode, output)
- 
-def uninstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"🟢 choco installer assistant thread started for process {p}")
-    outputCode = RETURNCODE_OPERATION_SUCCEEDED
-    counter = 0
-    output = ""
-    p.stdin = b"\r\n"
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        line = str(line, encoding='utf-8', errors="ignore").strip()
-        if line:
-            infoSignal.emit(line)
-            counter += 1
-            counterSignal.emit(counter)
-            output += line+"\n"
-    p.wait()
-    outputCode = p.returncode
-    if outputCode in (1605, 1614, 1641):
-        outputCode = RETURNCODE_OPERATION_SUCCEEDED
-    elif outputCode == 3010:
-        outputCode = RETURNCODE_NEEDS_RESTART
-    elif "Run as administrator" in output or "The requested operation requires elevation" in output:
-        outputCode = RETURNCODE_NEEDS_ELEVATION
-    closeAndInform.emit(outputCode, output)
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        print("🔴 This function should be reimplented!")
+        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} update with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
 
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+        output = ""
+        while p.poll() is None:
+            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            if line:
+                output += line+"\n"
+                widget.addInfoLine.emit(line)
+                if "removing" in line:
+                    widget.counterSignal.emit(5)
+        print(p.returncode)
+        widget.finishInstallation.emit(p.returncode, output)
 
 
 if(__name__=="__main__"):
     import __init__
-    """
