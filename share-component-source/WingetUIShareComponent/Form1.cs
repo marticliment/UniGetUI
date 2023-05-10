@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Pickers;
 
 namespace WingetUIShareComponent
 {
@@ -61,8 +62,7 @@ namespace WingetUIShareComponent
                 height = rect.Height;
                 x = rect.Left;
                 y = rect.Top;
-                Debug.WriteLine(rect.ToString());  
-                Debug.WriteLine(ex.ToString());
+                Debug.WriteLine(rect.ToString());
             }
 
             Height = height-1;
@@ -78,21 +78,46 @@ namespace WingetUIShareComponent
             var dtm = DataTransferManagerHelper.GetForWindow(hwnd);
             dtm.DataRequested += OnDataRequested;
             DataTransferManagerHelper.ShowShareUIForWindow(hwnd);
-            
+        }
+
+        private void Form1_GotFocus(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args) {
             DataRequest dataPackage = args.Request;
-
             dataPackage.Data.SetWebLink(new Uri(this.link));
             dataPackage.Data.Properties.Title = "Sharing "+this.name;
             dataPackage.Data.Properties.ApplicationName = "WingetUI";
             dataPackage.Data.Properties.ContentSourceWebLink = new Uri(this.link);
             dataPackage.Data.Properties.Description = "Share "+this.name+" with your friends";
             dataPackage.Data.Properties.PackageFamilyName = "WingetUI";
+            dataPackage.Data.ShareCanceled += ShareCanceled;
+            dataPackage.Data.OperationCompleted += OperationCompleted;
+            dataPackage.Data.ShareCompleted += ShareCompleted;
+            dataPackage.Data.Destroyed += DataPackageDestroyed;
+            this.GotFocus += Form1_GotFocus;
+        }
 
-            dataPackage.Data.ShareCanceled += (a1, a2) => { CloseFromThread(); };
-            dataPackage.Data.ShareCompleted += (a1, a2) => { CloseFromThread(); };
+        private void DataPackageDestroyed(DataPackage sender, object args)
+        {
+            this.CloseFromThread();
+        }
+
+        private void ShareCompleted(DataPackage sender, ShareCompletedEventArgs args)
+        {
+            this.CloseFromThread();
+        }
+
+        private void OperationCompleted(DataPackage sender, OperationCompletedEventArgs args)
+        {
+            this.CloseFromThread();
+        }
+
+        private void ShareCanceled(DataPackage sender, object args)
+        {
+            this.CloseFromThread();
         }
 
         private void CloseFromThread()
