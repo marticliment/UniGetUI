@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14016,
-        "done": 7556
+        "total": 14017,
+        "done": 7557
     },
     "icons_and_screenshots": {
         "115": {
@@ -48650,6 +48650,14 @@
         "veeam-backup-for-microsoft-365-iso": {
             "icon": "https://community.chocolatey.org/content/packageimages/veeam-backup-for-microsoft-365-iso.7.0.0.2911.png",
             "images": []
+        },
+        "Pylogmon.pot": {
+            "icon": "https://cdn.staticaly.com/gh/Pylogmon/pot/master/public/icon.png",
+            "images": [
+                "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/dark.png",
+                "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/example.png",
+                "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/light.png"
+            ]
         }
     }
 }
