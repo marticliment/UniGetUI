@@ -1,3 +1,7 @@
+import subprocess
+from typing import Optional
+import PySide6.QtCore
+import PySide6.QtWidgets
 from tools import _, blueColor
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -40,6 +44,12 @@ class Package():
     
     def getSourceIcon(self) -> QIcon:
         return self.PackageManager.getIcon(self.Source)
+    
+    def isManager(self, manager: 'PackageManagerModule') -> bool:
+        """
+        Check if the package manager equals the given package manager
+        """
+        return manager == self.PackageManager
         
 class UpgradablePackage(Package):
     NewVersion = ""
@@ -86,9 +96,27 @@ class PackageDetails(Package):
         
     def asUrl(self, url: str) -> str:
         return f"<a href='{url}' style='color:{blueColor}'>{url}</a>" if "://" in url else url
+
+class InstallationOptions():
+    SkipHashCheck: bool = False
+    InteractiveInstallation: bool = False
+    RunAsAdministrator: bool = False
+    Version: str = ""
+    Architecture: str = ""
+    InstallationScope: str = ""
+    CustomParameters: list[str] = []
+    RemoveDataOnUninstall: bool = False
+
+class InstallationWidgetType(QWidget):
+    finishInstallation: Signal
+    addInfoLine: Signal
+    counterSignal: Signal
+    
+    def __init__(self) -> None:
+        raise RuntimeError("This class is a type declaration!")
     
 class PackageManagerModule():
-
+    NAME: str
     def __init__(self):
         pass
     
@@ -115,4 +143,24 @@ class PackageManagerModule():
     def getIcon(self, source: str) -> QIcon:
         """
         Will return the corresponding icon to the given source
+        """
+        
+    def startInstallation(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        """
+        Starts a thread that installs the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
+        """
+        
+    def startUpdate(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        """
+        Starts a thread that installs the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
+        """
+        
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: InstallationWidgetType):
+        """
+        Internal method that handles the installation of the given package
+        """
+        
+    def getParameters(self, options: InstallationOptions) -> list[str]:
+        """
+        Returns the list of parameters that the package manager ib nasis of the given InstallationOptions object
         """

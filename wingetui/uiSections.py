@@ -241,16 +241,12 @@ class DiscoverSoftwareSection(SoftwareSection):
         """
         Initialize the install procedure for the given package, passed as a QTreeWidgetItem. Switches: admin, interactive, skiphash
         """
-        try:
-            package: Package = self.ItemPackageReference[item]
-            if package.isWinget():
-                self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), packageItem=package.PackageItem))
-            elif package.isWinget():
-                self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=True, packageId=package.Id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=package.PackageItem))
-            else:
-                self.addInstallation(PackageInstallerWidget(package.Name, package.Source, useId=not("…" in package.Id), packageId=package.Id, admin=admin, args=["--skip" if skiphash else ""], packageItem=package.PackageItem))
-        except Exception as e:
-            report(e)
+        package: Package = self.ItemPackageReference[item]
+        options = InstallationOptions()
+        options.RunAsAdministrator = admin
+        options.InteractiveInstallation = interactive
+        options.SkipHashCheck = skiphash
+        self.addInstallation(PackageInstallerWidget(package, options))
         
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
         packages = manager.getAvailablePackages_v2()
@@ -696,17 +692,13 @@ class UpdateSoftwareSection(SoftwareSection):
             if not item.isHidden() and item.checkState(0) ==  Qt.CheckState.Checked:
                 self.updatePackageItem(item, admin, skiphash, interactive)
                 
-    def updatePackageItem(self, packageItem: TreeWidgetItemWithQAction, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
-        try:
-            package: UpgradablePackage = self.ItemPackageReference[packageItem]
-            if package.isWinget():
-                    self.addInstallation(PackageUpdaterWidget(package.Name, "winget", useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, args=list(filter(None, ["--interactive" if interactive else "--silent", "--ignore-security-hash" if skiphash else "", "--force"])), currentVersion=package.Version, newVersion=package.NewVersion))
-            elif package.isChocolatey():
-                self.addInstallation(PackageUpdaterWidget(package.Name, "chocolatey", useId=True, packageId=package.Id, admin=admin, args=list(filter(None, ["--force" if skiphash else "", "--ignore-checksums" if skiphash else "", "--notsilent" if interactive else ""])), packageItem=packageItem, currentVersion=package.Version, newVersion=package.NewVersion))
-            else:
-                self.addInstallation(PackageUpdaterWidget(package.Name, package.Source,  useId=not("…" in package.Id), packageId=package.Id, packageItem=packageItem, admin=admin, args=["--skip" if skiphash else ""], currentVersion=package.Version, newVersion=package.NewVersion))
-        except Exception as e:
-            report(e)
+    def updatePackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+        package: Package = self.ItemPackageReference[item]
+        options = InstallationOptions()
+        options.RunAsAdministrator = admin
+        options.InteractiveInstallation = interactive
+        options.SkipHashCheck = skiphash
+        self.addInstallation(PackageUpdaterWidget(package, options))
      
     def reloadSources(self):
         print("Reloading sources...")
@@ -1433,7 +1425,7 @@ class SettingsSection(SmoothScrollArea):
         doCacheAdminPrivileges.setChecked(getSettings("DoCacheAdminRights"))
         
         def resetAdminRightsCache():
-            resetsudo = subprocess.Popen([GSUDO_EXE_PATH, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+            resetsudo = subprocess.Popen([GSUDO_EXECUTABLE, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             resetsudo.wait()
             globals.adminRightsGranted = False
         
@@ -2121,86 +2113,24 @@ class PackageInfoPopupWindow(QWidget):
         if(event):
             return super().resizeEvent(event)
         
-    def getCommandLineParameters(self) -> list[str]:
-        cmdline_args = []
-        WINGET = self.currentPackage.isWinget()
-        SCOOP = self.currentPackage.isScoop()
-        CHOCO = self.currentPackage.isChocolatey()
-        
-        if(self.hashCheckBox.isChecked()):
-            if WINGET:
-                cmdline_args.append("--ignore-security-hash")
-            elif SCOOP:
-                cmdline_args.append("--skip")
-            elif CHOCO:
-                cmdline_args.append("--ignore-checksums")
-                if not "--force" in cmdline_args:
-                    cmdline_args.append("--force")
-            else:
-                print(f"🟠 Unknown source {self.currentPackage.Source}")
-                
-        if(self.interactiveCheckbox.isChecked()):
-            if WINGET:
-                cmdline_args.append("--interactive")
-            elif CHOCO:
-                cmdline_args.append("--notsilent")
-            else:
-                print("🟡 Interactive installation not supported by store")
-        else:
-            if WINGET:
-                cmdline_args.append("--silent")
-
+    def getInstallationOptions(self) -> InstallationOptions:
+        options = InstallationOptions()
+        options.RunAsAdministrator = self.adminCheckbox.isChecked()
+        options.InteractiveInstallation = self.interactiveCheckbox.isChecked()
+        options.SkipHashCheck = self.hashCheckBox.isChecked()
         if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
-            if WINGET:
-                cmdline_args.append("--version")
-                cmdline_args.append(self.versionCombo.currentText())
-                if not "--force" in cmdline_args:
-                    cmdline_args.append("--force")
-            elif CHOCO:
-                cmdline_args.append("--version="+self.versionCombo.currentText())
-                cmdline_args.append("--allow-downgrade")
-                if not "--force" in cmdline_args:
-                    cmdline_args.append("--force")
-            else:
-                print("🟡 Custom version not supported by store")
-            
+            options.Version = self.versionCombo.currentText()
         if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
-            if SCOOP:
-                cmdline_args.append("--arch")
-                cmdline_args.append(self.architectureCombo.currentText())
-            elif WINGET:
-                cmdline_args.append("--architecture")
-                cmdline_args.append(self.architectureCombo.currentText())
-            elif CHOCO:
-                if self.architectureCombo.currentText() == "x86":
-                    cmdline_args.append("--forcex86")
-            else:
-                print("🟡 Custom architecture not supported by store")
-                
+            options.Architecture = self.architectureCombo.currentText()
+            if options.Architecture in (_("Global"), "Global"):
+                options.RunAsAdministrator = True
         if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
-            if SCOOP:
-                chosenScope = self.scopeCombo.currentText()
-                if chosenScope in (_("Local"), "Local"):
-                        pass # Scoop installs locally by default
-                elif chosenScope in (_("Global"), "Global"):
-                        cmdline_args.append("--global")
-                else:
-                    print(f"🟠 Scope {chosenScope} not supported by Scoop")
-            elif WINGET:
-                chosenScope = self.scopeCombo.currentText()
-                if chosenScope in (_("Current user"), "Current user"):
-                        cmdline_args.append("--scope")
-                        cmdline_args.append("user")
-                elif chosenScope in (_("Local machine"), "Local machine"):
-                        cmdline_args.append("--scope")
-                        cmdline_args.append("machine")
-                else:
-                    print(f"🟠 Scope {chosenScope} not supported by Winget")
-            else:
-                print("🟡 Custom scope not supported by store")
-
-        cmdline_args += [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
-        return cmdline_args
+            options.InstallationScope = self.scopeCombo.currentText()
+        options.CustomParameters = [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
+        return options
+        
+    def getCommandLineParameters(self) -> list[str]:
+        return self.currentPackage.PackageManager.getParameters(self.getInstallationOptions())
 
     def loadPackageCommandLine(self):
         parameters = " ".join(self.getCommandLineParameters())
@@ -2465,13 +2395,13 @@ class PackageInfoPopupWindow(QWidget):
         if self.ignoreFutureUpdates.isChecked():
             IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
-
+            
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
+            p = PackageUpdaterWidget(self.currentPackage, self.getInstallationOptions())
         elif self.isAnUninstall:            
             p = PackageUninstallerWidget(self.currentPackage.Name, self.currentPackage.Source, args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
         else:
-            p = PackageInstallerWidget(self.currentPackage.Name, self.currentPackage.Source, version=[], args=cmdline_args, packageId=self.currentPackage.Id, admin=self.adminCheckbox.isChecked(), packageItem=self.currentPackage.PackageItem, useId=not("…" in self.currentPackage.Id))
+            p = PackageInstallerWidget(self.currentPackage, self.getInstallationOptions())
         self.addProgram.emit(p)
         self.close()
 

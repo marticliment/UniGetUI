@@ -182,6 +182,55 @@ class SamplePackageManager(PackageManagerModule):
 
     def getIcon(source: str = "") -> QIcon:
         return QIcon()
+    
+    def getParameters(self, options: InstallationOptions) -> list[str]:
+        Parameters: list[str] = []
+        if options.Architecture:
+            Parameters += ["-a", options.Architecture]
+        if options.CustomParameters:
+            Parameters += options.CustomParameters
+        if options.InstallationScope:
+            Parameters += ["-s", options.InstallationScope]
+        if options.InteractiveInstallation:
+            Parameters.append("--interactive")
+        if options.RemoveDataOnUninstall:
+            Parameters.append("--remove-user-data")
+        if options.SkipHashCheck:
+            Parameters += ["--skip-integrity-checks", "--force"]
+        if options.Version:
+            Parameters += ["--version", options.Version]
+        return Parameters
+    
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters()
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
+
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters()
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} update with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
+
+        
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+        output = ""
+        while p.poll() is None:
+            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            if line:
+                output += line+"\n"
+                widget.addInfoLine.emit(line)
+                if "downloading" in line:
+                    widget.counterSignal.emit(3)
+                elif "installing" in line:
+                    widget.counterSignal.emit(7)
+        print(p.returncode)
+        widget.finishInstallation.emit(p.returncode, output)
 
 """
     

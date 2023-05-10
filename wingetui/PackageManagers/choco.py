@@ -211,22 +211,48 @@ class ChocoPackageManager(SamplePackageManager):
         if not self.icon:
             self.icon = QIcon(getMedia("choco"))
         return self.icon
-
     
-    def installAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-        print(f"🟢 choco installer assistant thread started for process {p}")
-        outputCode = RETURNCODE_OPERATION_SUCCEEDED
-        counter = 0
+    def getParameters(self, options: InstallationOptions) -> list[str]:
+        Parameters: list[str] = []
+        if options.Architecture:
+            if options.Architecture == "x86":
+                Parameters.append("--forcex86")
+        if options.CustomParameters:
+            Parameters += options.CustomParameters
+        if options.InteractiveInstallation:
+            Parameters.append("--notsilent")
+        if options.SkipHashCheck:
+            Parameters += ["--ignore-checksums", "--force"]
+        if options.Version:
+            Parameters += ["--version="+options.Version, "--allow-downgrade"]
+        return Parameters
+
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "install", package.Id, "-y"] + self.getParameters()
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
+        
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "upgrade", package.Id, "-y"] + self.getParameters()
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {package} update with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
+
+
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = p.stdout.readline()
-            line = line.strip()
-            line = str(line, encoding='utf-8', errors="ignore").strip()
+            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
             if line:
-                infoSignal.emit(line)
+                widget.addInfoLine.emit(line)
                 counter += 1
-                counterSignal.emit(counter)
+                widget.counterSignal.emit(counter)
                 output += line+"\n"
         p.wait()
         outputCode = p.returncode
@@ -236,8 +262,9 @@ class ChocoPackageManager(SamplePackageManager):
             outputCode = RETURNCODE_NEEDS_RESTART
         elif ("Run as administrator" in output or "The requested operation requires elevation" in output) and outputCode != 0:
             outputCode = RETURNCODE_NEEDS_ELEVATION
-        closeAndInform.emit(outputCode, output)
-    
+        widget.finishInstallation.emit(outputCode, output)
+
+
     def uninstallAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
         print(f"🟢 choco installer assistant thread started for process {p}")
         outputCode = RETURNCODE_OPERATION_SUCCEEDED

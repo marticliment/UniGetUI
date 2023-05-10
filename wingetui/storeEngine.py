@@ -23,9 +23,10 @@ class PackageInstallerWidget(QGroupBox):
     counterSignal = Signal(int)
     callInMain = Signal(object)
     changeBarOrientation = Signal()
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", admin: bool = False, useId: bool = False, packageItem: TreeWidgetItemWithQAction = None):
-        super().__init__(parent=parent)
-        self.packageItem = packageItem
+    def __init__(self, package: Package, options: InstallationOptions):
+        super().__init__()
+        self.Package = package
+        self.Options = options
         self.actionDone = _("installed")
         self.actionDoing = _("installing")
         self.actionName = _("installation")
@@ -33,51 +34,34 @@ class PackageInstallerWidget(QGroupBox):
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.liveOutputWindow = CustomPlainTextEdit(self)
-        self.liveOutputWindow.setWindowFlag(Qt.Window)
+        self.liveOutputWindow.setWindowFlag(Qt.WindowType.Window)
         self.liveOutputWindow.setWindowIcon(self.window().windowIcon())
         self.liveOutputWindow.setReadOnly(True)
         self.liveOutputWindow.resize(500, 200)
         self.liveOutputWindow.setWindowTitle(_("Live command-line output"))
         self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
         ApplyMica(self.liveOutputWindow.winId(), MICAMODE.DARK)
-        self.runAsAdmin = admin
-        self.useId = useId  
-        self.adminstr = [GSUDO_EXE_PATH] if self.runAsAdmin else []
         
-        if store.lower() == "winget" and getSettings("AlwaysElevateWinget"):
-            print("🟡 Winget installation automatically elevated!")
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
-        elif store.lower() == "chocolatey" and getSettings("AlwaysElevateChocolatey"):
-            print("🟡 Chocolatey installation automatically elevated!")
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
-        elif "scoop" in store.lower() and getSettings("AlwaysElevateScoop"):
-            print("🟡 Chocolatey installation automatically elevated!")
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
+        for manager in PackageManagersList:
+            if self.Package.isManager(manager) and getSettings(f"AlwaysElevate{manager.NAME}"):
+                print(f"🟡 {manager.NAME} installation automatically elevated!")
+                self.Options.RunAsAdministrator = True
+
         if getSettings("DoCacheAdminRights"):
-            if self.runAsAdmin and not globals.adminRightsGranted:
-                cprint(" ".join([GSUDO_EXE_PATH, "cache", "on", "--pid", f"{os.getpid()}", "-d" , "-1"]))
-                asksudo = subprocess.Popen([GSUDO_EXE_PATH, "cache", "on", "--pid", f"{os.getpid()}", "-d" , "-1"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+            if self.Options.RunAsAdministrator and not globals.adminRightsGranted:
+                cprint(" ".join([GSUDO_EXECUTABLE, "cache", "on", "--pid", f"{os.getpid()}", "-d" , "-1"]))
+                asksudo = subprocess.Popen([GSUDO_EXECUTABLE, "cache", "on", "--pid", f"{os.getpid()}", "-d" , "-1"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 asksudo.wait()
                 globals.adminRightsGranted = True
 
         self.finishedInstallation = True
         self.callInMain.connect(lambda f: f())
         self.setMinimumHeight(500)
-        self.store = store.lower()
-        self.customCommand = customCommand
         self.setObjectName("package")
         self.setFixedHeight(50)
-        self.programName = title
-        self.packageId = packageId
-        self.version = version
-        self.cmdline_args = args
-        cprint("args")
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(30, 10, 10, 10)
-        self.label = QLabel(_("{0} installation").format(title))
+        self.label = QLabel(_("{0} installation").format(package.Name))
         self.layout.addWidget(self.label)
         self.layout.addSpacing(5)
         self.progressbar = QProgressBar()
@@ -93,7 +77,7 @@ class PackageInstallerWidget(QGroupBox):
         self.adminBadge.setEnabled(False)
         self.adminBadge.setToolTip(_("This process is running with administrator privileges"))
         self.layout.addWidget(self.adminBadge)
-        if not self.runAsAdmin:
+        if not self.Options.RunAsAdministrator:
             self.adminBadge.setVisible(False)
         self.info = CustomLineEdit()
         self.info.setClearButtonEnabled(False)
@@ -121,39 +105,35 @@ class PackageInstallerWidget(QGroupBox):
         self.installId = str(time.time())
         queueProgram(self.installId)
 
-        self.leftSlow = QVariantAnimation()
+        self.leftSlow = QPropertyAnimation(self.progressbar, b"value")
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
-        self.leftSlow.setDuration(900)
-        self.leftSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.leftSlow.setDuration(700)
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-
-        self.rightSlow = QVariantAnimation()
+        
+        self.rightSlow = QPropertyAnimation(self.progressbar, b"value")
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
-        self.rightSlow.setDuration(900)
-        self.rightSlow.valueChanged.connect(lambda v: self.progressbar.setValue(v))
+        self.rightSlow.setDuration(700)
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-
-        self.leftFast = QVariantAnimation()
+        
+        self.leftFast = QPropertyAnimation(self.progressbar, b"value")
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
         self.leftFast.setDuration(300)
-        self.leftFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
         self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
 
-        self.rightFast = QVariantAnimation()
+        self.rightFast = QPropertyAnimation(self.progressbar, b"value")
         self.rightFast.setStartValue(1000)
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.progressbar.setValue(v))
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
 
         self.leftSlow.start()
 
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
-        print(f"🟢 Waiting for install permission... title={self.programName}, id={self.packageId}, installId={self.installId}")
+        print(f"🟢 Waiting for install permission... title={self.Package.Name}, id={self.Package.Id}, installId={self.installId}")
 
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -170,36 +150,9 @@ class PackageInstallerWidget(QGroupBox):
         self.rightFast.stop()
         self.addInfoLine.emit(_("Starting installation..."))
         self.progressbar.setValue(0)
-        self.packageId = self.packageId.replace("…", "")
-        self.programName = self.programName.replace("…", "")
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
-        if(self.store.lower() == "winget"):
-            if self.useId:
-                self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "install", "-e", "--id", f"{self.packageId}"] + self.version + Winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            else:
-                self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "install", "-e", "--name", f"{self.programName}"] + self.version + Winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            print(self.p.args)
-            self.t = KillableThread(target=Winget.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-        elif("scoop" in self.store.lower()):
-            cprint(self.store.lower())
-            bucket_prefix = ""
-            if len(self.store.lower().split(":"))>1 and not "/" in self.packageId:
-                bucket_prefix = self.store.lower().split(":")[1].replace(" ", "")+"/"
-            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "install", f"{bucket_prefix+self.packageId if self.packageId != '' else bucket_prefix+self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            print(self.p.args)
-            self.t = KillableThread(target=Scoop.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
-            self.t.start()
-        elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [Choco.EXECUTABLE, "install", self.packageId, "-y"] + self.version + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=Choco.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-        else:
-            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-
-
+        self.p = self.Package.PackageManager.startInstallation(self.Package, self.Options, self)
+        
     def counter(self, line: int) -> None:
         if(line == 1):
             self.progressbar.setValue(250)
@@ -238,30 +191,20 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
-        if returncode == RETURNCODE_NEEDS_SCOOP_ELEVATION:
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
-            self.adminBadge.setVisible(self.runAsAdmin)
-            self.cmdline_args.append("--global")
-            self.runInstallation()
-            return
-        elif returncode == RETURNCODE_NEEDS_ELEVATION:
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
-            self.adminBadge.setVisible(self.runAsAdmin)
+        if returncode in (RETURNCODE_NEEDS_ELEVATION, RETURNCODE_NEEDS_SCOOP_ELEVATION):
+            self.Options.RunAsAdministrator = True
+            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
             return
         elif "winget settings --enable InstallerHashOverride" in output:
             print("🟠 Requiring the user to enable skiphash setting!")
-            subprocess.run([GSUDO_EXE_PATH, Winget.EXECUTABLE, "settings", "--enable", "InstallerHashOverride"], shell=True)
+            subprocess.run([GSUDO_EXECUTABLE, Winget.EXECUTABLE, "settings", "--enable", "InstallerHashOverride"], shell=True)
             self.runInstallation()
             return
         self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         removeProgram(self.installId)
         try: self.waitThread.kill()
-        except: pass
-        try: self.t.kill()
         except: pass
         try: os.kill(self.p.pid, signal.CTRL_C_EVENT)
         except: pass
@@ -275,40 +218,40 @@ class PackageInstallerWidget(QGroupBox):
         if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
             if returncode in (RETURNCODE_OPERATION_SUCCEEDED, RETURNCODE_NO_APPLICABLE_UPDATE_FOUND):
                 t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
-                t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", "."))
+                t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                 if ENABLE_SUCCESS_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
                 self.startCoolDown()
-            if returncode == RETURNCODE_NEEDS_RESTART: # if the installer need restart computer
+            if returncode == RETURNCODE_NEEDS_RESTART:
                 t.setTitle(_("Restart required"))
-                t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", ".")+" "+_("Restart your computer to finish the installation"))
+                t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", ".")+" "+_("Restart your computer to finish the installation"))
                 t.setSmallText(_("You may restart your computer later if you wish"))
-                t.addAction(_("Restart now"), globals.mainWindow.askRestart) #TODO: add restart pc
+                t.addAction(_("Restart now"), globals.mainWindow.askRestart)
                 t.addAction(_("Restart later"), t.close)
                 if ENABLE_WINGETUI_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.info.setText(_("Restart your PC to finish installation"))
             if type(self) == PackageInstallerWidget:
-                if self.packageItem:
-                    if not self.packageItem.text(2) in globals.uninstall.packages.keys():
-                        globals.uninstall.addItem(self.packageItem.text(1), self.packageItem.text(2), self.packageItem.text(3), self.packageItem.text(4)) # Add the package on the uninstaller
-                        globals.uninstall.updatePackageNumber()
+                if not self.Package.Id in globals.uninstall.IdPackageReference.keys():
+                    print("🔵 Adding package to the uninstall section...")
+                    globals.uninstall.addItem(self.Package)
+                    globals.uninstall.updatePackageNumber()
         else:
             globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
             self.err = CustomMessageBox(self.window())
             warnIcon = QIcon(getMedia("notif_warn"))
             t.addAction(_("Show details"), lambda: (globals.mainWindow.showWindow(-1)))
-            t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))
+            t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.Package.Name))
             dialogData = {
-                    "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                    "titlebarTitle": _("WingetUI - {0} {1}").format(self.Package.Name, self.actionName),
                     "buttonTitle": _("Close"),
                     "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                     "icon": warnIcon,
-                    "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.programName),
+                    "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.Package.Name),
                     "notifIcon": warnIcon,
             }
             if returncode == RETURNCODE_INCORRECT_HASH: # if the installer's hash does not coincide
@@ -316,10 +259,10 @@ class PackageInstallerWidget(QGroupBox):
                 dialogData["mainTitle"] = _("{0} aborted").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check.").format(self.actionVerb)
             else: # if there's a generic error
-                t.setDescription(_("{0} {1} failed").format(self.programName.capitalize(), self.actionName))
+                t.setDescription(_("{0} {1} failed").format(self.Package.Name.capitalize(), self.actionName))
                 t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
                 dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
-                dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(action=self.actionVerb, package=self.programName, showDetails=_("Show details"))
+                dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(action=self.actionVerb, package=self.Package.Name, showDetails=_("Show details"))
             self.err.showErrorMessage(dialogData, showNotification=False)
             if ENABLE_ERROR_NOTIFICATIONS:
                 t.show()
@@ -384,16 +327,14 @@ class PackageInstallerWidget(QGroupBox):
 
 class PackageUpdaterWidget(PackageInstallerWidget):
 
-    def __init__(self, title: str, store: str, version: list = [], parent=None, customCommand: str = "", args: list = [], packageId="", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, useId: bool = False, currentVersion: str = "", newVersion: str = ""):
-        self.currentVersion = currentVersion
-        self.newVersion = newVersion
-        super().__init__(title, store, version, parent, customCommand, args, packageId, admin, useId)
-        self.packageItem = packageItem
+    def __init__(self, package: UpgradablePackage, options: InstallationOptions):
+        super().__init__(package, options)
+        self.Package = package
         self.actionDone = _("updated")
         self.actionDoing = _("updating")
         self.actionName = _("update(noun)")
         self.actionVerb = _("update(verb)")
-        self.label.setText(_("{0} update").format(title))
+        self.label.setText(_("{0} update").format(package.Name))
 
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -409,57 +350,37 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.addInfoLine.emit(_("Applying update..."))
         self.rightFast.stop()
         self.progressbar.setValue(0)
-        self.packageId = self.packageId.replace("…", "")
-        self.programName = self.programName.replace("…", "")
+        self.Package.Id = self.Package.Id.replace("…", "")
+        self.Package.Name = self.Package.Name.replace("…", "")
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
-        if(self.store.lower() == "winget"):
-            print(self.adminstr)
-            if self.useId:
-                self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "upgrade", "-e", "--id", f"{self.packageId}", "--include-unknown"] + self.version + Winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            else:
-                self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "upgrade", "-e", "--name", f"{self.programName}", "--include-unknown"] + self.version + Winget.common_params + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            print(self.p.args)
-            self.t = KillableThread(target=Winget.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-        elif("scoop" in self.store.lower()):
-            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "update", f"{self.packageId if self.packageId != '' else self.programName}"] + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=Scoop.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
-            self.t.start()
-        elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [Choco.EXECUTABLE, "upgrade", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=Choco.installAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-        else:
-            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
+        self.p = self.Package.PackageManager.startUpdate(self.Package, self.Options, self)
 
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode == RETURNCODE_NEEDS_SCOOP_ELEVATION:
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.cmdline_args.append("--global")
-            self.runAsAdmin = True
-            self.adminBadge.setVisible(self.runAsAdmin)
+            self.Options.RunAsAdministrator = True
+            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         elif returncode == RETURNCODE_NEEDS_ELEVATION:
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
-            self.adminBadge.setVisible(self.runAsAdmin)
+            self.Options.RunAsAdministrator = True
+            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         else:
-            if self.currentVersion in (_("Unknown"), "Unknown"):
-                IgnorePackageUpdates_SpecificVersion(self.packageId, self.newVersion, self.store)
+            if self.Package.Version in (_("Unknown"), "Unknown"):
+                IgnorePackageUpdates_SpecificVersion(self.Package.Id, self.Package.NewVersion, self.Package.Source)
             if returncode == RETURNCODE_NO_APPLICABLE_UPDATE_FOUND and not self.canceled:
-                IgnorePackageUpdates_SpecificVersion(self.packageId, self.newVersion, self.store)
+                IgnorePackageUpdates_SpecificVersion(self.Package.Id, self.Package.NewVersion, self.Package.Source)
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
-                if self.packageItem:
+                if self.Package.PackageItem:
                     try:
-                        self.packageItem.setHidden(True)
-                        i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
+                        self.Package.PackageItem.setHidden(True)
+                        i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
+                        globals.updates.packageItems.remove(self.Package.PackageItem)
+                        if self.Package.PackageItem in globals.updates.showableItems:
+                            globals.updates.showableItems.remove(self.Package.PackageItem)
                         del i
                     except Exception as e:
                         report(e)
-                    globals.updates.updatePackageNumber()
+                globals.updates.updatePackageNumber()
             super().finish(returncode, output)
 
     def close(self):
@@ -476,9 +397,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
     def __init__(self, title: str, store: str, useId=False, packageId = "", packageItem: TreeWidgetItemWithQAction = None, admin: bool = False, removeData: bool = False, args: list = [], customCommand = ""):
-        self.packageItem = packageItem
-        self.programName = title
-        self.packageId = packageId
+        self.Package.PackageItem = packageItem
+        self.Package.Name = title
+        self.Package.Id = packageId
         super().__init__(parent=None, title=title, store=store, packageId=packageId, admin=admin, args=args, packageItem=packageItem, customCommand=customCommand)
         self.useId = useId
         self.actionDone = _("uninstalled")
@@ -487,8 +408,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.actionName = _("uninstallation")
         self.actionVerb = _("uninstall")
         self.finishedInstallation = True
-        self.runAsAdmin = admin
-        self.store = store.lower()
+        self.Options.RunAsAdministrator = admin
+        self.Package.Source = store.lower()
         self.setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px; border: none}")
         self.setFixedHeight(50)
         self.label.setText(_("{0} Uninstallation").format(title))
@@ -504,27 +425,23 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
-        self.packageId = self.packageId.replace("…", "")
-        self.programName = self.programName.replace("…", "")
+        self.Package.Id = self.Package.Id.replace("…", "")
+        self.Package.Name = self.Package.Name.replace("…", "")
         self.progressbar.setValue(0)
         if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         self.finishedInstallation = False
-        if(self.store == "winget" or self.store in ((_("Local PC").lower(), "microsoft store", "steam", "gog", "ubisoft connect"))):
-            self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "uninstall", "-e"] + (["--id", self.packageId] if self.useId else ["--name", self.programName]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        if(self.Package.Source == "winget" or self.Package.Source in ((_("Local PC").lower(), "microsoft store", "steam", "gog", "ubisoft connect"))):
+            self.p = subprocess.Popen(self.adminstr + [Winget.EXECUTABLE, "uninstall", "-e"] + (["--id", self.Package.Id] if self.useId else ["--name", self.Package.Name]) + ["--accept-source-agreements"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             self.t = KillableThread(target=Winget.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
             print(self.p.args)
-        elif("scoop" in self.store):
-            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.packageId if self.packageId != '' else self.programName}"] + (["-p"] if self.removeData else [""]) + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        elif("scoop" in self.Package.Source):
+            self.p = subprocess.Popen(' '.join(self.adminstr + ["powershell", "-Command", "scoop", "uninstall", f"{self.Package.Id if self.Package.Id != '' else self.Package.Name}"] + (["-p"] if self.removeData else [""]) + self.cmdline_args), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             self.t = KillableThread(target=Scoop.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal, "--global" in self.cmdline_args))
             self.t.start()
-        elif self.store == "chocolatey":
-            self.p = subprocess.Popen(self.adminstr + [Choco.EXECUTABLE, "uninstall", self.packageId, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        elif self.Package.Source == "chocolatey":
+            self.p = subprocess.Popen(self.adminstr + [Choco.EXECUTABLE, "uninstall", self.Package.Id, "-y"] + self.cmdline_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             self.t = KillableThread(target=Choco.uninstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
-            self.t.start()
-        else:
-            self.p = subprocess.Popen(self.customCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-            self.t = KillableThread(target=genericInstallAssistant, args=(self.p, self.finishInstallation, self.addInfoLine, self.counterSignal))
             self.t.start()
 
     def counter(self, line: int) -> None:
@@ -566,26 +483,26 @@ class PackageUninstallerWidget(PackageInstallerWidget):
 
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode == RETURNCODE_NEEDS_SCOOP_ELEVATION:
-            self.adminstr = [GSUDO_EXE_PATH]
+            self.adminstr = [GSUDO_EXECUTABLE]
             self.cmdline_args.append("--global")
-            self.runAsAdmin = True
-            self.adminBadge.setVisible(self.runAsAdmin)
+            self.Options.RunAsAdministrator = True
+            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         elif returncode == RETURNCODE_NEEDS_ELEVATION:
-            self.adminstr = [GSUDO_EXE_PATH]
-            self.runAsAdmin = True
-            self.adminBadge.setVisible(self.runAsAdmin)
+            self.adminstr = [GSUDO_EXECUTABLE]
+            self.Options.RunAsAdministrator = True
+            self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         else:
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
-                if self.packageItem:
+                if self.Package.PackageItem:
                     try:
-                        self.packageItem.setHidden(True)
-                        i = self.packageItem.treeWidget().takeTopLevelItem(self.packageItem.treeWidget().indexOfTopLevelItem(self.packageItem))
+                        self.Package.PackageItem.setHidden(True)
+                        i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
                         del i
                         globals.uninstall.updatePackageNumber()
-                        if self.packageId in globals.updates.IdPackageReference:
-                            packageItem = globals.updates.ItemPackageReference[globals.updates.IdPackageReference[self.packageId]]
+                        if self.Package.Id in globals.updates.IdPackageReference:
+                            packageItem = globals.updates.ItemPackageReference[globals.updates.IdPackageReference[self.Package.Id]]
                             packageItem.setHidden(True)
                             i = packageItem.treeWidget().takeTopLevelItem(packageItem.treeWidget().indexOfTopLevelItem(packageItem))
                             del i
@@ -613,7 +530,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     t = ToastNotification(self, self.callInMain.emit)                    
                     t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
                     t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
-                    t.setDescription(_("{0} was {1} successfully!").format(self.programName, self.actionDone).replace("!", "."))
+                    t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                     if ENABLE_SUCCESS_NOTIFICATIONS:
                         t.show()
                 else:
@@ -625,14 +542,14 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.err = CustomMessageBox(self.window())
                     t = ToastNotification(self, self.callInMain.emit)                    
                     t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
-                    t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.programName))           
-                    t.setDescription(_("{0} {1} failed").format(self.programName.capitalize(), self.actionName))
+                    t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.Package.Name))           
+                    t.setDescription(_("{0} {1} failed").format(self.Package.Name.capitalize(), self.actionName))
                     t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
                     t.addAction(_("Show details"), lambda: (globals.mainWindow.showWindow(-1)))
                     errorData = {
-                        "titlebarTitle": _("WingetUI - {0} {1}").format(self.programName, self.actionName),
+                        "titlebarTitle": _("WingetUI - {0} {1}").format(self.Package.Name, self.actionName),
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
-                        "mainText": _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the uninstaller.").format(action=self.actionVerb, package=self.programName, showDetails=_("Show details")),
+                        "mainText": _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the uninstaller.").format(action=self.actionVerb, package=self.Package.Name, showDetails=_("Show details")),
                         "buttonTitle": _("Close"),
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("notif_warn")),

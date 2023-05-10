@@ -287,9 +287,47 @@ class ScoopPackageManager(SamplePackageManager):
             self.icon = QIcon(getMedia("scoop"))
         return self.icon
 
-    def installAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal, alreadyGlobal: bool = False) -> None:
-        print(f"🟢 scoop installer assistant thread started for process {p}")
-        outputCode = 1
+    def getParameters(self, options: InstallationOptions) -> list[str]:
+        Parameters: list[str] = []
+        if options.Architecture:
+            Parameters += ["-a", options.Architecture]
+        if options.CustomParameters:
+            Parameters += options.CustomParameters
+        if options.InstallationScope:
+            Parameters += ["-s", options.InstallationScope]
+        if options.InteractiveInstallation:
+            Parameters.append("--interactive")
+        if options.RemoveDataOnUninstall:
+            Parameters.append("--remove-user-data")
+        if options.SkipHashCheck:
+            Parameters += ["--skip-integrity-checks", "--force"]
+        if options.Version:
+            Parameters += ["--version", options.Version]
+        return Parameters
+
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        bucket_prefix = ""
+        if len(package.Source.split(":"))>1 and not "/" in package.Source:
+            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
+        Command = [self.EXECUTABLE, "install", bucket_prefix+package.Id] + self.getParameters
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command + "--global"
+        print(f"🔵 Starting {package} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
+
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        bucket_prefix = ""
+        if len(package.Source.split(":"))>1 and not "/" in package.Source:
+            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
+        Command = [self.EXECUTABLE, "update", bucket_prefix+package.Id] + self.getParameters
+        if options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command + "--global"
+        print(f"🔵 Starting {package} update with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
+        
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
             line = p.stdout.readline()
@@ -297,25 +335,24 @@ class ScoopPackageManager(SamplePackageManager):
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
                 if("Installing" in line):
-                    counterSignal.emit(1)
+                    widget.counterSignal.emit(1)
                 elif("] 100%" in line or "Downloading" in line):
-                    counterSignal.emit(4)
+                    widget.counterSignal.emit(4)
                 elif("was installed successfully!" in line):
-                    counterSignal.emit(6)
-                infoSignal.emit(line)
+                    widget.counterSignal.emit(6)
+                widget.addInfoLine.emit(line)
                 if("was installed successfully" in line):
                     outputCode = 0
                 elif ("is already installed" in line):
                     outputCode = 0
                 output += line+"\n"
-        if "-g" in output and not "successfully" in output and not alreadyGlobal:
+        if "-g" in output and not "successfully" in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         if "Latest versions for all apps are installed" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
-        closeAndInform.emit(outputCode, output)
-
+        widget.finishInstallation.emit(outputCode, output)
     
     def uninstallAssistant(self, p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal, alreadyGlobal: bool = False) -> None:
         print(f"🟢 scoop uninstaller assistant thread started for process {p}")
@@ -374,8 +411,3 @@ class ScoopPackageManager(SamplePackageManager):
         finishSignal.emit()
 
 Scoop = ScoopPackageManager()
-
-
-
-if(__name__=="__main__"):
-    import wingetui.__init__

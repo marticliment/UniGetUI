@@ -326,22 +326,7 @@ class KillableThread(Thread):
 def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
     if ENABLE_WINGETUI_NOTIFICATIONS:
         globals.trayIcon.showMessage(title, text, QIcon())
-
-def genericInstallAssistant(p: subprocess.Popen, closeAndInform: Signal, infoSignal: Signal, counterSignal: Signal) -> None:
-    print(f"🟢 winget installer assistant thread started for process {p}")
-    outputCode = 1
-    output = ""
-    while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
-        line = str(line, encoding='utf-8', errors="ignore").strip()
-        if line:
-            output += line+"\n"
-            infoSignal.emit(line)
-            print(line)
-    print(p.returncode)
-    closeAndInform.emit(p.returncode, output)
-
+        
 def foregroundWindowThread():
     """
     This thread will periodically get the window focused by the user every 10 secs, so the tray icon can monitor wether the app should be shown or not.
@@ -418,10 +403,10 @@ if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     except:
         pass
 
-GSUDO_EXE_PATH = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
+GSUDO_EXECUTABLE = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
 
 try:
-    GSUDO_EXE_LOCATION = os.path.dirname(GSUDO_EXE_PATH)
+    GSUDO_EXE_LOCATION = os.path.dirname(GSUDO_EXECUTABLE)
 except TypeError as e:
     report(e)
     GSUDO_EXE_LOCATION = os.path.expanduser("~")
