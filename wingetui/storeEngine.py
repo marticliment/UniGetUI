@@ -368,17 +368,17 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             if returncode == RETURNCODE_NO_APPLICABLE_UPDATE_FOUND and not self.canceled:
                 IgnorePackageUpdates_SpecificVersion(self.Package.Id, self.Package.NewVersion, self.Package.Source)
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
-                if self.Package.PackageItem:
-                    try:
-                        self.Package.PackageItem.setHidden(True)
-                        i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
-                        globals.updates.packageItems.remove(self.Package.PackageItem)
-                        if self.Package.PackageItem in globals.updates.showableItems:
-                            globals.updates.showableItems.remove(self.Package.PackageItem)
-                        del i
-                    except Exception as e:
-                        report(e)
-                globals.updates.updatePackageNumber()
+                UPDATES_SECTION: SoftwareSection = globals.updates
+                try:
+                    self.Package.PackageItem.setHidden(True)
+                    i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
+                    UPDATES_SECTION.packageItems.remove(self.Package.PackageItem)
+                    if self.Package.PackageItem in UPDATES_SECTION.showableItems:
+                        UPDATES_SECTION.showableItems.remove(self.Package.PackageItem)
+                    del i
+                except Exception as e:
+                    report(e)
+                UPDATES_SECTION.updatePackageNumber()
             super().finish(returncode, output)
 
     def close(self):
@@ -467,30 +467,32 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.runInstallation()
         else:
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
+                UPDATES_SECTION: SoftwareSection = globals.updates
+                UNINSTALL_SECTION: SoftwareSection = globals.uninstall
                 try:
+                    print(self.Package.PackageItem, UNINSTALL_SECTION.packageList.indexOfTopLevelItem(self.Package.PackageItem))
                     self.Package.PackageItem.setHidden(True)
-                    globals.uninstall.packageItems.remove(self.Package.PackageItem)
-                    if self.Package.PackageItem in globals.uninstall.showableItems:
-                        globals.uninstall.showableItems.remove(self.Package.PackageItem)
-                    i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
+                    i = UNINSTALL_SECTION.packageList.takeTopLevelItem(UNINSTALL_SECTION.packageList.indexOfTopLevelItem(self.Package.PackageItem))
+                    UNINSTALL_SECTION.packageItems.remove(self.Package.PackageItem)
+                    if self.Package.PackageItem in UNINSTALL_SECTION.showableItems:
+                        UNINSTALL_SECTION.showableItems.remove(self.Package.PackageItem)
                     del i
                 except Exception as e:
                     report(e)
-                globals.uninstall.updatePackageNumber()
-                if self.Package.Id in globals.updates.IdPackageReference:
-                    packageItem = globals.updates.ItemPackageReference[globals.updates.IdPackageReference[self.Package.Id]]
+                UNINSTALL_SECTION.updatePackageNumber()
+                if self.Package.Id in UPDATES_SECTION.IdPackageReference:
+                    packageItem = UPDATES_SECTION.PackageItemReference[UPDATES_SECTION.IdPackageReference[self.Package.Id]]
                     packageItem.setHidden(True)
-                    i = packageItem.treeWidget().takeTopLevelItem(packageItem.treeWidget().indexOfTopLevelItem(packageItem))
-                    if i:
-                        try:
-                            i.setHidden(True)
-                            i = self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(i))
-                            globals.updates.packageItems.remove(i)
-                            if i in globals.updates.showableItems:
-                                globals.updates.showableItems.remove(i)
-                            del i
-                        except Exception as e:
-                            report(e)
+                    i = UPDATES_SECTION.packageList.takeTopLevelItem(UPDATES_SECTION.packageList.indexOfTopLevelItem(packageItem))
+                    try:
+                        i.setHidden(True)
+                        i = UPDATES_SECTION.packageList.takeTopLevelItem(UPDATES_SECTION.packageList.indexOfTopLevelItem(i))
+                        UPDATES_SECTION.packageItems.remove(i)
+                        if i in globals.updates.showableItems:
+                            UPDATES_SECTION.showableItems.remove(i)
+                        del i
+                    except Exception as e:
+                        report(e)
                     globals.updates.updatePackageNumber()
             self.finishedInstallation = True
             self.cancelButton.setEnabled(True)

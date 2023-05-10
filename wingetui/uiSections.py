@@ -978,6 +978,7 @@ class UninstallSoftwareSection(SoftwareSection):
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package
+            package.PackageItem = item
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
