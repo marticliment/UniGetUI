@@ -159,6 +159,11 @@ class PackageManagerModule():
         Will return the corresponding icon to the given source
         """
         
+    def getPackageDetails_v2(self, package: Package):
+        """
+        Will return a PackageDetails object containing the information of the given Package object
+        """
+
     def startInstallation(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
         """
         Starts a thread that installs the specified Package, making use of the given options. Reports the progress through the given InstallationWidget

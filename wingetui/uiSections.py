@@ -570,7 +570,7 @@ class UpdateSoftwareSection(SoftwareSection):
             item.setText(4, package.NewVersion)
             item.setIcon(4, self.newVersionIcon)
             package.PackageItem = item
-            if package.isScoop():
+            if package.isManager(Scoop):
                 try:
                     UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
                     if package.Version == UNINSTALL_SECTION.IdPackageReference[package.Id].Version:
@@ -2133,14 +2133,14 @@ class PackageInfoPopupWindow(QWidget):
 
     def loadPackageCommandLine(self):
         parameters = " ".join(self.getCommandLineParameters())
-        if self.currentPackage.isWinget():
+        if self.currentPackage.isManager(Winget):
             if not "…" in self.currentPackage.Id:
                 self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
-        elif self.currentPackage.isScoop():
+        elif self.currentPackage.isManager(Scoop):
             self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        elif self.currentPackage.isChocolatey():
+        elif self.currentPackage.isManager(Choco):
             self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
             print(f"🟠 Unknown source {self.currentPackage.Source}")
@@ -2189,19 +2189,19 @@ class PackageInfoPopupWindow(QWidget):
         elif self.isAnUninstall:
             lastVerString = f"<b>{_('Installed Version')}:</b> {package.Version}"
         else:
-            if package.isScoop():
+            if package.isManager(Scoop):
                 lastVerString = f"<b>{_('Current Version')}:</b> {package.Version}"
             else:
                 lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
         self.lastver.setText(lastVerString)
 
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isChocolatey() else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
         self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
-        self.notes.setText(f"<b>{_('Notes:') if package.isScoop() else _('Release notes:')}</b> {_('Loading...')}")
+        self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {_('Loading...')}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
         self.storeLabel.setText(f"<b>{_('Source')}:</b> {package.Source}")
         self.versionCombo.addItems([_("Loading...")])
@@ -2223,12 +2223,7 @@ class PackageInfoPopupWindow(QWidget):
         self.finishedCount = 0
         
     def loadPackageDetails(self, package: Package):
-        if package.isWinget():
-            details = Winget.getPackageDetails_v2(package)
-        elif package.isScoop():
-            details = Scoop.getPackageDetails_v2(package)
-        elif package.isChocolatey():
-            details = Choco.getPackageDetails_v2(package)
+        details = package.PackageManager.getPackageDetails_v2(package)
         self.callInMain.emit(lambda: self.printData(details))
             
     def printData(self, details: PackageDetails) -> None:
@@ -2250,10 +2245,10 @@ class PackageInfoPopupWindow(QWidget):
         else:
             self.installButton.setText(_("Install"))
         
-        self.interactiveCheckbox.setEnabled(not package.isScoop())
+        self.interactiveCheckbox.setEnabled(not package.isManager(Scoop))
         self.title.setText(details.Name)
         self.description.setText(details.Description)
-        if package.isWinget():
+        if package.isManager(Winget):
             self.author.setText(f"<b>{_('Author')}:</b> <a style=\"color: {blueColor};\" href='{details.Id.split('.')[0]}'>{details.Author}</a>")
             self.publisher.setText(f"<b>{_('Publisher')}:</b> <a style=\"color: {blueColor};\" href='{details.Id.split('.')[0]}'>{details.Publisher}</a>")
         else:
@@ -2268,12 +2263,12 @@ class PackageInfoPopupWindow(QWidget):
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isChocolatey() else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
         self.date.setText(f"<b>{_('Last updated:')}</b> {details.UpdateDate}")
-        self.notes.setText(f"<b>{_('Notes:') if package.isScoop() else _('Release notes:')}</b> {details.ReleaseNotes}")
+        self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {details.ReleaseNotes}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {details.asUrl(details.ReleaseNotesUrl)}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {details.asUrl(details.ManifestUrl)}")
         while self.versionCombo.count()>0:
@@ -2294,7 +2289,7 @@ class PackageInfoPopupWindow(QWidget):
             iconId = package.getIconId()
             iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconpath):
-                if package.isChocolatey():
+                if package.isManager(Choco):
                     iconurl = f"https://community.chocolatey.org/content/packageimages/{id}.{version}.png"
                 else:
                     iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
