@@ -170,7 +170,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         if id in self.IdPackageReference:
             package = self.IdPackageReference[id]
             self.infobox: PackageInfoPopupWindow
-            self.infobox.showPackageDetails_v2(package)
+            self.infobox.showPackageDetails(package)
             self.infobox.show()
         else:
             self.err = CustomMessageBox(self.window())
@@ -249,7 +249,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.addInstallation(PackageInstallerWidget(package, options))
         
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
-        packages = manager.getAvailablePackages_v2()
+        packages = manager.getAvailablePackages()
         for package in packages:
             self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
@@ -713,7 +713,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.callInMain.emit(self.startLoadingPackages)
     
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
-        packages = manager.getAvailableUpdates_v2()
+        packages = manager.getAvailableUpdates()
         for package in packages:
             self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
@@ -1018,7 +1018,7 @@ class UninstallSoftwareSection(SoftwareSection):
             self.addInstallation(PackageUninstallerWidget(package, options))
 
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
-        packages = manager.getInstalledPackages_v2()
+        packages = manager.getInstalledPackages()
         for package in packages:
             self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
@@ -2143,7 +2143,7 @@ class PackageInfoPopupWindow(QWidget):
             print(f"🟠 Unknown source {self.currentPackage.Source}")
         self.commandWindow.setCursorPosition(0)
                 
-    def showPackageDetails_v2(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
+    def showPackageDetails(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
         self.isAnUpdate = update
         self.isAnUninstall = uninstall
         if self.currentPackage == package:
@@ -2220,7 +2220,7 @@ class PackageInfoPopupWindow(QWidget):
         self.finishedCount = 0
         
     def loadPackageDetails(self, package: Package):
-        details = package.PackageManager.getPackageDetails_v2(package)
+        details = package.PackageManager.getPackageDetails(package)
         self.callInMain.emit(lambda: self.printData(details))
             
     def printData(self, details: PackageDetails) -> None:

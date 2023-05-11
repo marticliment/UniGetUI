@@ -1020,7 +1020,7 @@ class SoftwareSection(QWidget):
         self.infobox.hide()
 
     def openInfo(self, item: QTreeWidgetItem) -> None:
-        self.infobox.showPackageDetails_v2(self.ItemPackageReference[item])
+        self.infobox.showPackageDetails(self.ItemPackageReference[item])
         self.infobox.show()
     
     def loadPackages(self, manager) -> None:

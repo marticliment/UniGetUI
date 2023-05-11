@@ -30,7 +30,7 @@ class ChocoPackageManager(SamplePackageManager):
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
 
-    def getAvailablePackages_v2(self, second_attempt: bool = False) -> list[Package]:
+    def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
         f"""
         Will retieve the cached packages for the package manager {self.NAME} in the format of a list[Package] object.
         If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
@@ -49,7 +49,7 @@ class ChocoPackageManager(SamplePackageManager):
                         package = line.split(",")
                         if len(package) >= 3 and not package[0] in self.BLACKLISTED_PACKAGE_NAMES and not package[1] in self.BLACKLISTED_PACKAGE_IDS and not package[2] in self.BLACKLISTED_PACKAGE_VERSIONS:
                             packages.append(Package(formatPackageIdAsName(package[0]), package[1], package[2], self.NAME, Choco))
-                    Thread(target=self.cacheAvailablePackages_v2, daemon=True, name=f"{self.NAME} package cacher thread").start()
+                    Thread(target=self.cacheAvailablePackages, daemon=True, name=f"{self.NAME} package cacher thread").start()
                     print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
                     return packages
                 else:
@@ -57,20 +57,20 @@ class ChocoPackageManager(SamplePackageManager):
                     if second_attempt:
                         print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
                         return []
-                    self.cacheAvailablePackages_v2()
-                    return self.getAvailablePackages_v2(second_attempt = True)
+                    self.cacheAvailablePackages()
+                    return self.getAvailablePackages(second_attempt = True)
             else:
                 print(f"🟡 {self.NAME} cache file does not exist, creating cache forcefully and returning new package list")
                 if second_attempt:
                     print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
                     return []
-                self.cacheAvailablePackages_v2()
-                return self.getAvailablePackages_v2(second_attempt = True)
+                self.cacheAvailablePackages()
+                return self.getAvailablePackages(second_attempt = True)
         except Exception as e:
             report(e)
             return []
         
-    def cacheAvailablePackages_v2(self) -> None:
+    def cacheAvailablePackages(self) -> None:
         """
         INTERNAL METHOD
         Will load the available packages and write them into the cache file
@@ -105,7 +105,7 @@ class ChocoPackageManager(SamplePackageManager):
         except Exception as e:
             report(e)
             
-    def getAvailableUpdates_v2(self) -> list[UpgradablePackage]:
+    def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
         """
@@ -135,7 +135,7 @@ class ChocoPackageManager(SamplePackageManager):
             report(e)
             return []
 
-    def getInstalledPackages_v2(self) -> list[Package]:
+    def getInstalledPackages(self) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
@@ -159,7 +159,7 @@ class ChocoPackageManager(SamplePackageManager):
             report(e)
             return []
         
-    def getPackageDetails_v2(self, package: Package) -> PackageDetails:
+    def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
         """

@@ -137,19 +137,19 @@ class PackageManagerModule():
     def isEnabled() -> bool:
         pass
     
-    def getAvailablePackages_v2(self) -> list[Package]:
+    def getAvailablePackages(self) -> list[Package]:
         f"""
         Will retieve the cached packages for the package manager  in the format of a list[Package] object.
         If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
         Finally, it will start a background cacher thread.
         """
             
-    def getAvailableUpdates_v2(self) -> list[UpgradablePackage]:
+    def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by the package manager in the format of a list[UpgradablePackage] object.
         """
 
-    def getInstalledPackages_v2(self) -> list[Package]:
+    def getInstalledPackages(self) -> list[Package]:
         f"""
         Will retieve the intalled packages by the package manager in the format of a list[Package] object.
         """
@@ -159,7 +159,7 @@ class PackageManagerModule():
         Will return the corresponding icon to the given source
         """
         
-    def getPackageDetails_v2(self, package: Package):
+    def getPackageDetails(self, package: Package):
         """
         Will return a PackageDetails object containing the information of the given Package object
         """
