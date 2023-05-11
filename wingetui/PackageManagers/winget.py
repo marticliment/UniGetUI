@@ -290,11 +290,18 @@ class WingetPackageManager(SamplePackageManager):
                     try:
                         verElement = element[idPosition:].strip()
                         verElement.replace("\t", " ")
+                        untrimmedVerelement = verElement
                         while "  " in verElement:
                             verElement = verElement.replace("  ", " ")
                         iOffset = 0
-                        id = " ".join(verElement.split(" ")[iOffset:-1])
+                        id = " ".join(untrimmedVerelement.split(" ")[iOffset:-1])
                         ver = verElement.split(" ")[-1]
+                        if " " in id:
+                            print(id, len(id), (versionPosition - idPosition))
+                        if len(id) > (versionPosition - idPosition):
+                            id = " ".join(untrimmedVerelement.split(" ")[iOffset])
+                            id = id.replace("  ", "#").replace(" ", "").replace("#", " ")
+                            ver = verElement.split(" ")[iOffset+1]
                         if len(id) == 1:
                             iOffset + 1
                             id = verElement.split(" ")[iOffset+0]
