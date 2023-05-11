@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14016,
-        "done": 7555
+        "total": 14017,
+        "done": 7557
     },
     "icons_and_screenshots": {
         "115": {
@@ -10151,8 +10151,10 @@
             "images": []
         },
         "numere": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/numere-org/Resources/main/icons/folder.png",
+            "images": [
+                "https://lh6.googleusercontent.com/yRDXccfYN1gqv2pjp0raonCusKLlYqOEXfi63VLLNyn8eR3L9IeEBaiO-LKFYxqR1I7upXFnX_s98H1CmavVtL5okxB_6xo8vpt9BdN7i6fNMNzcqBZr0uzYYeAo3ACt0g=w1280"
+            ]
         },
         "aquasnap": {
             "icon": "https://static.techspot.com/images2/downloads/topdownload/2014/11/aquasnap.png",
@@ -48648,6 +48650,14 @@
         "veeam-backup-for-microsoft-365-iso": {
             "icon": "https://community.chocolatey.org/content/packageimages/veeam-backup-for-microsoft-365-iso.7.0.0.2911.png",
             "images": []
+        },
+        "Pylogmon.pot": {
+            "icon": "https://cdn.staticaly.com/gh/Pylogmon/pot/master/public/icon.png",
+            "images": [
+                "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/dark.png",
+                "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/example.png",
+                "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/light.png"
+            ]
         }
     }
 }

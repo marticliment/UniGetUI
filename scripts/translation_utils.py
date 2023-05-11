@@ -4,8 +4,8 @@ import json
 import tolgee_requests
 
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
-os.chdir("wingetui")
+root_dir = os.path.join(os.path.dirname(__file__), "..")
+os.chdir(os.path.join(root_dir, "wingetui"))
 
 
 __blacklist_strings = [
@@ -30,11 +30,10 @@ def get_all_strings():
             _file_name, file_ext = os.path.splitext(file)
             if (file_ext != ".py"):
                 continue
-            f = open(os.path.join(dirpath, file), "r", encoding="utf-8")
-            matches: list[str] = re.findall(regex, f.read())
-            for match in matches:
-                translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
-            f.close()
+            with open(os.path.join(dirpath, file), "r", encoding="utf-8") as f:
+                matches: list[str] = re.findall(regex, f.read())
+                for match in matches:
+                    translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
 
     translation_strings = list(set(translation_strings)) # uniq
     translation_strings.sort(key=lambda x: (remove_special_chars(x.lower()), x))
@@ -42,9 +41,8 @@ def get_all_strings():
 
 
 def get_all_translations(lang = "en"):
-    f = open(f"lang/lang_{lang}.json", "r", encoding="utf-8")
-    lang_strings: dict[str, str] = json.load(f)
-    f.close()
+    with open(f"lang/lang_{lang}.json", "r", encoding="utf-8") as f:
+        lang_strings: dict[str, str] = json.load(f)
     return lang_strings
 
 

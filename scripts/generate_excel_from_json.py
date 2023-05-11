@@ -4,9 +4,8 @@ import json
 import re
 import subprocess
 
-os.chdir(os.path.dirname(__file__) + "/..") # move to root project
-
-os.chdir("WebBasedData")
+root_dir = os.path.join(os.path.dirname(__file__), "..")
+os.chdir(os.path.join(root_dir, "WebBasedData"))
 
 contents = json.load(open("screenshot-database-v2.json"))
 
