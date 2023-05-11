@@ -1,6 +1,10 @@
+from typing import Optional
 from PySide6.QtCore import *
+import PySide6.QtCore
 from PySide6.QtGui import *
+import PySide6.QtGui
 from PySide6.QtWidgets import *
+import PySide6.QtWidgets
 from win32mica import *
 from tools import *
 from tools import _
@@ -332,7 +336,10 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def setHidden(self, hide: bool) -> None:
         if self.itemAction != QAction:
             self.itemAction.setVisible(not hide)
-        return super().setHidden(hide)
+        try:
+            return super().setHidden(hide)
+        except RuntimeError:
+            return False
     
     def setText(self, column: int, text: str) -> None:
         self.setToolTip(column, text)
@@ -1085,8 +1092,51 @@ class ToastNotification(QObject):
                 self.signalCaller(self.onClickFun)
             else:
                 self.onClickFun()
-        
+       
+class DraggableWindow(QWidget):
+    pressed = False
+    oldPos = QPoint(0, 0)
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
 
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.pressed = True
+        self.oldPos = event.pos()
+        return super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if self.pressed:
+            self.move(self.pos()+(event.pos()-self.oldPos))
+        return super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        self.pressed = False
+        self.oldPos = event.pos()
+        return super().mouseReleaseEvent(event)
+
+class MovableFramelessWindow(DraggableWindow):
+    def __init__(self, parent: QWidget | None = ...) -> None:
+        super().__init__(parent)
+        self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint)
+        self.setAutoFillBackground(True)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        self.setStyleSheet("margin: 0px;")
+        self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
+        self.backButton.move(self.width()-40, 0)
+        self.backButton.resize(30, 30)
+        self.backButton.setFlat(True)
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:red;}")
+        self.backButton.clicked.connect(self.close)
+        self.backButton.show()
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.backButton.move(self.width()-35, 0)
+        return super().resizeEvent(event)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        return super().showEvent(event)
 
 if __name__ == "__main__":
     import __init__

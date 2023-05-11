@@ -6,6 +6,24 @@ from win32mica import *
 from tools import *
 from tools import _
 from genericCustomWidgets import *
+from PackageManagers.PackageClasses import *
+
+from PackageManagers.winget import Winget
+from PackageManagers.scoop import Scoop
+from PackageManagers.choco import Choco
+from PackageManagers import PackageClasses
+
+PackageManagersList: list[PackageClasses.PackageManagerModule] = [
+    Winget,
+    Scoop,
+    Choco
+]
+
+PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+    Winget: False,
+    Scoop: False,
+    Choco: False,
+}
 
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
@@ -521,7 +539,7 @@ class WelcomeWizardPackageManager(QWidget):
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
 
-class IgnoredUpdatesManager(QWidget):
+class IgnoredUpdatesManager(MovableFramelessWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -531,15 +549,21 @@ class IgnoredUpdatesManager(QWidget):
         title = QLabel(_("Ignored updates"))
         title.setContentsMargins(10, 0, 0, 0)
         title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
-        self.layout().addWidget(title)
+        image = QLabel()
+        image.setPixmap(QPixmap(getMedia("pin_color")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
+        image.setFixedWidth(32)
+        h = QHBoxLayout()
+        h.setContentsMargins(10, 0, 0, 0)
+        h.addWidget(image)
+        h.addWidget(title)
+        h.addStretch()
+        self.layout().addLayout(h)
         desc = QLabel(_("The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates."))
         desc.setWordWrap(True)
         self.layout().addWidget(desc)
+        self.layout().setContentsMargins(5, 5, 5, 5)
         desc.setContentsMargins(10, 0, 0, 0)
         self.setWindowTitle("\x20")
-        self.setWindowFlag(Qt.WindowType.Window, True)
-        self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
-        self.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages found"))
         self.layout().addWidget(self.treewidget)
@@ -641,7 +665,873 @@ class IgnoredUpdatesManager(QWidget):
         self.loadItems()
         return super().showEvent(event)
 
+class SoftwareSection(QWidget):
 
+    addProgram = Signal(object)
+    finishLoading = Signal()
+    askForScoopInstall = Signal(str)
+    setLoadBarValue = Signal(str)
+    startAnim = Signal(QVariantAnimation)
+    changeBarOrientation = Signal()
+    callInMain = Signal(object)
+    discoverLabelDefaultWidth: int = 0
+    discoverLabelIsSmall: bool = False
+    isToolbarSmall: bool = False
+    toolbarDefaultWidth: int = 0
+    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
+    IdPackageReference: dict[str:Package] = {}
+    sectionName: str = ""
+    packageItems: list[QTreeWidgetItem] = []
+    showableItems: list[QTreeWidgetItem] = []
+    addedItems: list[QTreeWidgetItem] = []
+    shownItems: list[QTreeWidgetItem] = []
+    nextItemToShow: int = 0
+
+    PackageManagers: list[PackageManagerModule] = PackageManagersList
+    PackagesLoaded: dict[PackageManagerModule:bool] = {}
+    for manager in PackageManagers:
+        PackagesLoaded[manager] = False
+
+    def __init__(self, parent = None, sectionName: str = "Install"):
+        super().__init__(parent = parent)
+        self.sectionName = sectionName
+        self.infobox = globals.infobox
+        self.packageExporter = PackageExporter(self)
+        self.setStyleSheet("margin: 0px;")
+
+        self.programbox = QWidget()
+        self.callInMain.connect(lambda f: f())
+
+        self.mainLayout = QVBoxLayout()
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.mainLayout)
+
+        self.reloadButton = QPushButton()
+        self.reloadButton.setFixedSize(30, 30)
+        self.reloadButton.setStyleSheet("margin-top: 0px;")
+        self.reloadButton.clicked.connect(self.startLoadingPackages)
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
+
+        self.searchButton = QPushButton()
+        self.searchButton.setFixedSize(30, 30)
+        self.searchButton.setStyleSheet("margin-top: 0px;")
+        self.searchButton.clicked.connect(self.filter)
+        self.searchButton.setIcon(QIcon(getMedia("search")))
+        self.searchButton.setAccessibleName(_("Search"))
+
+        headerLayout = QHBoxLayout()
+        headerLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.forceCheckBox = QCheckBox(_("Instant search"))
+        self.forceCheckBox.setFixedHeight(30)
+        self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
+        self.forceCheckBox.setStyleSheet("margin-top: 0px;")
+        self.forceCheckBox.setChecked(True)
+        self.forceCheckBox.setChecked(not getSettings(f"DisableInstantSearchOn{sectionName}"))
+        self.forceCheckBox.clicked.connect(lambda v: setSettings(f"DisableInstantSearchOn{sectionName}", bool(not v)))
+         
+        self.query = CustomLineEdit()
+        self.query.setPlaceholderText(" PlaceholderText")
+        self.query.returnPressed.connect(lambda: (self.filter()))
+        self.query.editingFinished.connect(lambda: (self.filter()))
+        self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
+        self.query.setFixedHeight(30)
+        self.query.setStyleSheet("margin-top: 0px;")
+        self.query.setMinimumWidth(100)
+        self.query.setMaximumWidth(250)
+        self.query.setBaseSize(250, 30)
+        
+        sct = QShortcut(QKeySequence("Ctrl+F"), self)
+        sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
+
+        sct = QShortcut(QKeySequence("Ctrl+R"), self)
+        sct.activated.connect(self.startLoadingPackages)
+        
+        sct = QShortcut(QKeySequence("F5"), self)
+        sct.activated.connect(self.startLoadingPackages)
+
+        sct = QShortcut(QKeySequence("Esc"), self)
+        sct.activated.connect(self.query.clear)
+        
+
+        self.SectionImage = QLabel()
+        self.SectionImage.setFixedWidth(80)
+        headerLayout.addWidget(self.SectionImage)
+
+        v = QVBoxLayout()
+        v.setSpacing(0)
+        v.setContentsMargins(0, 0, 0, 0)
+        self.discoverLabel = QLabel("SectionTitle")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+        v.addWidget(self.discoverLabel)
+
+        self.titleWidget = QWidget()
+        self.titleWidget.setContentsMargins(0, 0, 0, 0)
+        self.titleWidget.setFixedHeight(70)
+        self.titleWidget.setLayout(v)
+
+        headerLayout.addWidget(self.titleWidget, stretch=1)
+        headerLayout.addStretch()
+        headerLayout.setContentsMargins(5, 0, 5, 0)
+        forceCheckBox = QVBoxLayout()
+        forceCheckBox.addWidget(self.forceCheckBox)
+        headerLayout.addLayout(forceCheckBox)
+        headerLayout.addWidget(self.query)
+        headerLayout.addWidget(self.searchButton)
+        headerLayout.addWidget(self.reloadButton)
+
+        self.packageListScrollBar = CustomScrollBar()
+        self.packageListScrollBar.setOrientation(Qt.Vertical)
+        self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v>=(self.packageListScrollBar.maximum()-20) else None)
+
+        self.packageList = TreeWidget("")
+        self.packageList.setSortingEnabled(True)
+        self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
+        self.packageList.setVerticalScrollBar(self.packageListScrollBar)
+        self.packageList.connectCustomScrollbar(self.packageListScrollBar)
+        self.packageList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
+        self.packageList.setIconSize(QSize(24, 24))
+        self.packageList.header().sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
+        self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
+
+
+        
+        def updateItemState(item: TreeWidgetItemWithQAction, column: int):
+            if column == 0:
+                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
+                if item.checkState(0) == Qt.CheckState.Checked:
+                    self.packageList.setCurrentItem(item)
+            
+        self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
+
+        sct = QShortcut(Qt.Key.Key_Return, self.packageList)
+        sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
+        
+        def toggleItemState():
+            item = self.packageList.currentItem()
+            checked = item.checkState(0) == Qt.CheckState.Checked
+            item.setCheckState(0, Qt.CheckState.Unchecked if checked else Qt.CheckState.Checked)
+
+        sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
+        sct.activated.connect(toggleItemState)
+        
+        self.packageList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.packageList.customContextMenuRequested.connect(self.showContextMenu)
+
+        header = self.packageList.header()
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
+        header.sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
+        
+        self.loadingProgressBar = QProgressBar()
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 2px;margin-right: 2px;")
+
+        layout = QVBoxLayout()
+        w = QWidget()
+        w.setLayout(layout)
+        w.setMaximumWidth(1300)
+
+        self.bodyWidget = QWidget()
+        l = QHBoxLayout()
+        l.addWidget(ScrollWidget(self.packageList), stretch=0)
+        l.addWidget(w)
+        l.setContentsMargins(0, 0, 0, 0)
+        l.addWidget(ScrollWidget(self.packageList), stretch=0)
+        l.addWidget(self.packageListScrollBar)
+        self.bodyWidget.setLayout(l)
+        
+        self.countLabel = QLabel(_("Searching for packages..."))
+        self.packageList.label.setText(self.countLabel.text())
+        self.countLabel.setObjectName("greyLabel")
+    
+        v.addWidget(self.countLabel)
+        layout.addLayout(headerLayout)
+        self.toolbar = self.getToolbar()
+        layout.addWidget(self.toolbar)
+        layout.setContentsMargins(0, 0, 0, 0)
+        v.addWidget(self.countLabel)
+        
+        self.informationBanner = ClosableOpaqueMessage()
+        self.informationBanner.image.hide()
+        self.informationBanner.hide()
+        
+        layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.informationBanner)
+        hl2 = QHBoxLayout()
+        hl2.addWidget(self.packageList)
+        hl2.addWidget(self.packageListScrollBar)
+        hl2.setSpacing(0)
+        hl2.setContentsMargins(0, 0, 0, 0)
+        layout.addLayout(hl2)
+        self.programbox.setLayout(l)
+        self.mainLayout.addWidget(self.programbox, stretch=1)
+        self.infobox.hide()
+
+        self.addProgram.connect(self.addItem)
+
+        self.finishLoading.connect(self.finishLoadingIfNeeded)
+        self.infobox.addProgram.connect(self.addInstallation)
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        
+        g = self.packageList.geometry()
+        
+        self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+        
+        self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.leftSlow.start()
+        
+        print(f"🟢 {sectionName} tab loaded successfully")
+        
+        self.startLoadingPackages(force = True)
+        
+    def showContextMenu(self, pos: QPoint):
+        raise NotImplementedError("This function requires being reimplemented")
+    
+    def getToolbar(self) -> QToolBar:
+        raise NotImplementedError("This function requires being reimplemented")
+        
+    def sharePackage(self, package: QTreeWidgetItem):
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
+        nativeWindowsShare(package.text(2), url, self.window())
+
+    def finishLoadingIfNeeded(self, store: str) -> None:
+        raise NotImplementedError("This function requires being reimplemented")
+
+    def resizeEvent(self, event: QResizeEvent):
+        self.adjustWidgetsSize()
+        return super().resizeEvent(event)
+    
+    def addItem(self, name: str, id: str, version: str, store: str) -> None:
+        raise NotImplementedError("This function requires being reimplemented")
+
+    def addItemsToTreeWidget(self, reset: bool = False):
+        if reset:
+            for item in self.shownItems:
+                item.setHidden(True)
+            self.nextItemToShow = 0
+            self.shownItems = []
+        addedItems = 0
+        while addedItems < 100:
+            if self.nextItemToShow >= len(self.showableItems):
+                break
+            itemToAdd = self.showableItems[self.nextItemToShow]
+            if itemToAdd not in self.addedItems:
+                self.packageList.addTopLevelItem(itemToAdd)
+                self.addedItems.append(itemToAdd)
+            else:
+                itemToAdd.setHidden(False)
+            self.shownItems.append(itemToAdd)
+            addedItems += 1
+            self.nextItemToShow += 1
+    
+    def filter(self) -> None:
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
+        Thread(target=lambda: (time.sleep(0.1), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
+        
+    def containsQuery(self, item: QTreeWidgetItem, querytext: str) -> bool:
+        return querytext in item.text(1).lower().replace("-", "").replace(" ", "") or querytext in item.text(2).lower().replace("-", "").replace(" ", "")
+    
+    def finishFiltering(self, text: str):
+        def getChecked(item: QTreeWidgetItem) -> str:
+            return "" if item.checkState(0) == Qt.CheckState.Checked else " "
+        def getTitle(item: QTreeWidgetItem) -> str:
+            return item.text(1)
+        def getID(item: QTreeWidgetItem) -> str:
+            return item.text(2)
+        def getVersion(item: QTreeWidgetItem) -> str:
+            return item.text(3)
+        def getSource(item: QTreeWidgetItem) -> str:
+            return item.text(4)
+        
+        if self.query.text() != text:
+            return
+        self.showableItems = []
+        
+        sortColumn = self.packageList.sortColumn()
+        descendingSort = self.packageList.header().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
+        match sortColumn:
+            case 0:
+                self.packageItems.sort(key=getChecked, reverse=descendingSort)
+            case 1:
+                self.packageItems.sort(key=getTitle, reverse=descendingSort)
+            case 2:
+                self.packageItems.sort(key=getID, reverse=descendingSort)
+            case 3:
+                self.packageItems.sort(key=getVersion, reverse=descendingSort)
+            case 4:
+                self.packageItems.sort(key=getSource, reverse=descendingSort)
+        
+        for item in self.packageItems:
+            if text == "":
+                self.showableItems = self.packageItems.copy()
+            else:
+                try:
+                    if self.containsQuery(item, text.replace("-", "").replace(" ", "").lower()):
+                        self.showableItems.append(item)
+                except RuntimeError:
+                    print("🟠 RuntimeError on SoftwareSection.finishFiltering")
+        found = len(self.showableItems)
+        if found == 0:
+            if self.packageList.label.text() == "":
+                self.packageList.label.show()
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
+        else:
+            if self.packageList.label.text() == _("No packages found matching the input criteria"):
+                self.packageList.label.hide()
+                self.packageList.label.setText("")
+        self.addItemsToTreeWidget(reset = True)
+        self.packageList.scrollToItem(self.packageList.currentItem())
+    
+    def showQuery(self) -> None:
+        self.programbox.show()
+        self.infobox.hide()
+
+    def openInfo(self, item: QTreeWidgetItem) -> None:
+        self.infobox.showPackageDetails_v2(self.ItemPackageReference[item])
+        self.infobox.show()
+    
+    def loadPackages(self, manager) -> None:
+        raise NotImplementedError("This function requires being reimplemented")
+
+    def exportSelectedPackages(self, all: bool = False) -> None:
+        """
+        Export all selected packages into a file.
+        """
+        packagesToExport: list[Package] = []
+        for item in self.packageItems:
+            if item.checkState(0) == Qt.CheckState.Checked or all:
+                packagesToExport.append(self.ItemPackageReference[item])
+        self.packageExporter.showExportUI(packagesToExport)
+        
+    def setAllPackagesSelected(self, checked: bool) -> None:
+        self.packageList.setSortingEnabled(False)
+        for item in self.packageItems:
+            item.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+        self.packageList.setSortingEnabled(True)
+
+    def startLoadingPackages(self, force: bool = False) -> None:
+        for manager in self.PackageManagers: # Stop here if not all package managers loaded
+            if not self.PackagesLoaded[manager] and not force:
+                return
+        for manager in self.PackageManagers:
+            self.PackagesLoaded[manager] = False
+        self.packageItems = []
+        self.PackageItemReference = {}
+        self.ItemPackageReference = {}
+        self.IdPackageReference = {}
+        self.shownItems = []
+        self.addedItems = []
+        self.loadingProgressBar.show()
+        self.reloadButton.setEnabled(False)
+        self.searchButton.setEnabled(False)
+        self.query.setEnabled(False)
+        self.packageList.clear()
+        self.query.setText("")
+        self.packageList.label.setText(self.countLabel.text())
+        
+        for manager in self.PackageManagers:
+            if manager.isEnabled():
+                Thread(target=self.loadPackages, args=(manager,), daemon=True, name=f"{manager.NAME} available packages loader").start()
+            else:
+                self.PackagesLoaded[manager] = True
+                
+        self.finishLoadingIfNeeded()
+    
+    def addInstallation(self, p) -> None:
+        globals.installersWidget.addItem(p)
+    
+    def destroyAnims(self) -> None:
+        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
+            anim: QVariantAnimation
+            anim.pause()
+            anim.stop()
+            anim.valueChanged.disconnect()
+            anim.finished.disconnect()
+            anim.deleteLater()
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.adjustWidgetsSize()
+        return super().showEvent(event)
+
+    def adjustWidgetsSize(self) -> None:
+        if self.discoverLabelDefaultWidth == 0:
+            self.discoverLabelDefaultWidth = self.discoverLabel.sizeHint().width()
+        if self.discoverLabelDefaultWidth > self.titleWidget.width():
+            if not self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = True
+                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+        else:
+            if self.discoverLabelIsSmall:
+                self.discoverLabelIsSmall = False
+                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+        if self.toolbarDefaultWidth == 0:
+            self.toolbarDefaultWidth = self.toolbar.sizeHint().width()+2
+        if self.toolbarDefaultWidth != 0:
+            if self.toolbarDefaultWidth > self.toolbar.width():
+                if not self.isToolbarSmall:
+                    self.isToolbarSmall = True
+                    self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            else:
+                if self.isToolbarSmall:
+                    self.isToolbarSmall = False
+                    self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+
+class ImageViewer(QWidget):
+    callInMain = Signal(object)
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.callInMain.connect(lambda f: f())
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        self.images = {}
+
+        try:
+            self.sct = QShortcut(Qt.Key.Key_Escape, self)
+            self.sct.activated.connect(lambda: self.close())
+        except TypeError:
+            pass
+        self.setStyleSheet(f"""
+        QGroupBox {{
+            border: 0px;
+        }}
+        #backgroundWidget{{
+            border-radius: 5px;
+            padding: 5px;
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 75%)'};
+            border-radius: 16px;
+            border: 1px solid #88888888;
+        }}
+        QPushButton {{
+            background-color: {'rgba(20, 20, 20, 80%)' if isDark() else 'rgba(255, 255, 255, 80%)'};
+        }}
+        """)
+
+        self.stackedWidget = QStackedWidget()
+        self.stackedWidget.setObjectName("backgroundWidget")
+
+        layout.addWidget(self.stackedWidget)
+        self.setLayout(layout)
+
+        self.closeButton = QPushButton(QIcon(getMedia("close")), "", self)
+        self.closeButton.move(self.width()-40, 0)
+        self.closeButton.resize(40, 40)
+        self.closeButton.setFlat(True)
+        self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.closeButton.clicked.connect(lambda: (self.close()))
+        self.closeButton.show()
+
+
+        self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
+        try:
+            self.bk = QShortcut(QKeySequence(Qt.Key.Key_Left), parent=self)
+            self.bk.activated.connect(lambda: self.backButton.click())
+        except TypeError:
+            pass
+        self.backButton.move(0, self.height()//2-24)
+        self.backButton.resize(48, 48)
+        self.backButton.setFlat(False)
+        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
+        self.backButton.show()
+
+        self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
+        try:
+            self.nxt = QShortcut(Qt.Key.Key_Right, self)
+            self.nxt.activated.connect(lambda: self.nextButton.click())
+        except TypeError:
+            pass
+        self.nextButton.move(self.width()-48, self.height()//2-24)
+        self.nextButton.resize(48, 48)
+        self.nextButton.setFlat(False)
+        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
+        self.nextButton.show()
+        self.hide()
+
+
+    def resizeEvent(self, event = None):
+        self.closeButton.move(self.width()-40, 0)
+        self.backButton.move(10, self.height()//2-24)
+        self.nextButton.move(self.width()-58, self.height()//2-24)
+        for i in range(self.stackedWidget.count()):
+            l: QLabel = self.stackedWidget.widget(i)
+            l.resize(self.stackedWidget.size())
+            pixmap: QPixmap = self.images[l]
+            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        if(event):
+            return super().resizeEvent(event)
+
+    def show(self, index: int = 0) -> None:
+        g = QRect(0, 0, self.window().geometry().width(), self.window().geometry().height())
+        self.resize(g.width()-100, g.height()-100)
+        self.move(50, 50)
+        self.raise_()
+        self.stackedWidget.setCurrentIndex(index)
+        for i in range(self.stackedWidget.count()):
+            l: QLabel = self.stackedWidget.widget(i)
+            l.resize(self.stackedWidget.size())
+            pixmap: QPixmap = self.images[l]
+            l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        return super().show()
+
+    def close(self) -> bool:
+        return super().close()
+
+    def hide(self) -> None:
+        return super().hide()
+
+    def resetImages(self) -> None:
+        del self.images
+        self.images = {}
+        for i in range(self.stackedWidget.count()):
+            widget = self.stackedWidget.widget(0)
+            self.stackedWidget.removeWidget(widget)
+            widget.close()
+            widget.deleteLater()
+            del widget
+
+    def addImage(self, pixmap: QPixmap) -> None:
+        l = QLabel()
+        l.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.stackedWidget.addWidget(l)
+        l.resize(self.stackedWidget.size())
+        l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.images[l] = pixmap
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        if abs(event.angleDelta().x()) <= 30:
+            if event.angleDelta().y() < -30:
+                self.backButton.click()
+            elif event.angleDelta().y() > 30:
+                self.nextButton.click()
+        else:
+            if event.angleDelta().x() < -30:
+                self.backButton.click()
+            elif event.angleDelta().x() > 30:
+                self.nextButton.click()
+        return super().wheelEvent(event)
+
+class PackageExporter(MovableFramelessWindow):
+    def __init__(self, parent: QWidget | None = ...) -> None:
+        super().__init__(parent)
+        self.setLayout(QVBoxLayout())
+        self.setObjectName("background")
+        title = QLabel(_("Export packages"))
+        title.setContentsMargins(10, 0, 0, 0)
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        image = QLabel()
+        image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
+        image.setFixedWidth(32)
+        h = QHBoxLayout()
+        h.setContentsMargins(10, 0, 0, 0)
+        h.addWidget(image)
+        h.addWidget(title)
+        h.addStretch()
+        self.layout().addLayout(h)
+        desc = QLabel(_("The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved.")+"\n"+_("Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported."))
+        desc.setWordWrap(True)
+        self.layout().addWidget(desc)
+        desc.setContentsMargins(10, 0, 0, 0)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.setWindowTitle("\x20")
+        self.setMinimumSize(QSize(650, 400))
+        self.treewidget = TreeWidget(_("No packages selected"))
+        self.layout().addWidget(self.treewidget)
+        self.treewidget.setColumnCount(4)
+        self.treewidget.header().setStretchLastSection(False)
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.treewidget.setColumnWidth(2, 150)
+        self.treewidget.setColumnWidth(3, 0)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source"), ""])
+        
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 5, 5)
+        hLayout.addStretch()
+        cancelButton = QPushButton(_("Cancel"))
+        cancelButton.setFixedHeight(30)
+        cancelButton.clicked.connect(self.close)
+        hLayout.addWidget(cancelButton)
+        exportButton = QPushButton(_("Export"))
+        exportButton.clicked.connect(self.exportPackages)
+        exportButton.setFixedHeight(30)
+        exportButton.setObjectName("AccentButton")
+        hLayout.addWidget(exportButton)
+        self.layout().addLayout(hLayout)
+        
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+
+    def showExportUI(self, packageList: list[Package]):
+        """
+        Starts the process of exporting selected packages into a file.
+        Receives a list composed of Package objects as the unique parameter
+        """
+        self.treewidget.clear()
+        for package in packageList:
+            item = TreeWidgetItemWithQAction()
+            item.setText(0, package.Name)
+            item.setText(1, package.Id)
+            item.setText(2, package.Source)
+            item.setIcon(0, self.installIcon)
+            item.setIcon(1, self.idIcon)
+            item.setIcon(2, package.getSourceIcon())
+            if package.getSourceIcon() != Winget.wingetIcon and package.PackageManager == Winget:
+                # If the package is not available from winget servers, being the case that the package manager is winget:
+                item.setDisabled(True)
+            removeButton = QPushButton()
+            removeButton.setIcon(self.removeIcon)
+            removeButton.setFixedSize(QSize(24, 24))
+            removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
+            self.treewidget.addTopLevelItem(item)
+            self.treewidget.setItemWidget(item, 3, removeButton)
+        self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
+        self.show()
+        
+    def exportPackages(self) -> None:
+        wingetPackagesList = []
+        scoopPackageList = []
+        chocoPackageList = []
+        try:
+            for i in range(self.treewidget.topLevelItemCount()):
+                item = self.treewidget.topLevelItem(i)
+                if item.text(2).lower() == "winget":
+                    id = item.text(1).strip()
+                    wingetPackage = {"PackageIdentifier": id}
+                    wingetPackagesList.append(wingetPackage)
+                elif "scoop" in item.text(2).lower():
+                    scoopPackage = {"Name": item.text(1)}
+                    scoopPackageList.append(scoopPackage)
+                elif item.text(2).lower() == "chocolatey":
+                    chocoPackage = {"Name": item.text(1)}
+                    chocoPackageList.append(chocoPackage)
+            wingetDetails = {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type" : "Microsoft.PreIndexed.Package"
+            }
+            wingetExportSchema = {
+                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
+                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
+                "Sources": [{
+                    "Packages": wingetPackagesList,
+                    "SourceDetails": wingetDetails}],
+                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
+            }
+            scoopExportSchema = {
+                "apps": scoopPackageList,
+            }
+            chocoExportSchema = {
+                "apps": chocoPackageList,
+            }
+            overallSchema = {
+                "winget": wingetExportSchema,
+                "scoop": scoopExportSchema,
+                "chocolatey": chocoExportSchema
+            }
+            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
+            if filename[0] != "" and filename[1]:
+                print(f"🔵 Saving JSON to {filename[0]}")
+                with open(filename[0], 'w') as f:
+                    f.write(json.dumps(overallSchema, indent=4))
+                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+                self.hide()
+
+        except Exception as e:
+            report(e)
+                
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        return super().resizeEvent(event)
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        return super().showEvent(event)
+
+class PackageImporter(MovableFramelessWindow):
+    def __init__(self, parent: QWidget | None = ...) -> None:
+        super().__init__(parent)
+        self.setLayout(QVBoxLayout())
+        self.setObjectName("background")
+        title = QLabel(_("Import packages"))
+        title.setContentsMargins(10, 0, 0, 0)
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        image = QLabel()
+        image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
+        image.setFixedWidth(32)
+        h = QHBoxLayout()
+        h.setContentsMargins(10, 0, 0, 0)
+        h.addWidget(image)
+        h.addWidget(title)
+        h.addStretch()
+        self.layout().addLayout(h)
+        desc = QLabel(_("The following packages are going to be installed on your system.")+"\n"+_("Please note that certain packages might not be installable, due to the package managers that are enabled on this machine."))
+        desc.setWordWrap(True)
+        self.layout().addWidget(desc)
+        desc.setContentsMargins(10, 0, 0, 0)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.setWindowTitle("\x20")
+        self.setMinimumSize(QSize(650, 400))
+        self.treewidget = TreeWidget(_("No packages found"))
+        self.layout().addWidget(self.treewidget)
+        self.treewidget.setColumnCount(4)
+        self.treewidget.header().setStretchLastSection(False)
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.treewidget.header().setSectionResizeMode(4, QHeaderView.Fixed)
+        self.treewidget.setColumnWidth(2, 150)
+        self.treewidget.setColumnWidth(3, 100)
+        self.treewidget.setColumnWidth(4, 0)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
+        
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 5, 5)
+        hLayout.addStretch()
+        cancelButton = QPushButton(_("Cancel"))
+        cancelButton.setFixedHeight(30)
+        cancelButton.clicked.connect(self.close)
+        hLayout.addWidget(cancelButton)
+        installButton = QPushButton(_("Install"))
+        installButton.clicked.connect(self.installPackages)
+        installButton.setFixedHeight(30)
+        installButton.setObjectName("AccentButton")
+        hLayout.addWidget(installButton)
+        self.layout().addLayout(hLayout)
+        
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        self.versionIcon = QIcon(getMedia("version"))
+        self.showImportUI()
+
+    def showImportUI(self):
+        """
+        Starts the process of installinf selected packages from a file.
+        """
+        try:
+            DISCOVER_SECTION: SoftwareSection = globals.discover
+            self.treewidget.clear()
+            packageList: list[str] = []
+            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
+            if file != "":
+                f = open(file, "r")
+                contents = json.load(f)
+                f.close()
+                try:
+                    packages = contents["winget"]["Sources"][0]["Packages"]
+                    for pkg in packages:
+                        packageList.append(pkg["PackageIdentifier"])
+                except KeyError as e:
+                    print("🟠 Invalid winget section")
+                try:
+                    packages = contents["scoop"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    print("🟠 Invalid scoop section")
+                try:
+                    packages = contents["chocolatey"]["apps"]
+                    for pkg in packages:
+                        packageList.append(pkg["Name"])
+                except KeyError as e:
+                    print("🟠 Invalid chocolatey section")
+                for packageId in packageList:
+                    item = TreeWidgetItemWithQAction()
+                    unknownIcon = QIcon(getMedia("question"))
+                    self.treewidget.addTopLevelItem(item)
+                    if packageId in DISCOVER_SECTION.IdPackageReference:
+                        package = DISCOVER_SECTION.IdPackageReference[packageId]
+                        item.setText(0, package.Name)
+                        item.setText(1, package.Id)
+                        item.setText(2, package.Version)
+                        item.setText(3, package.Source)
+                        item.setIcon(0, self.installIcon)
+                        item.setIcon(1, self.idIcon)
+                        item.setIcon(2, self.versionIcon)
+                        item.setIcon(3, package.getSourceIcon())
+                        removeButton = QPushButton()
+                        removeButton.setIcon(self.removeIcon)
+                        removeButton.setFixedSize(QSize(24, 24))
+                        removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
+                        self.treewidget.setItemWidget(item, 4, removeButton)
+                    else:
+                        # If the package is not available from any package manager:
+                        item.setText(0, packageId)
+                        item.setText(1, packageId)
+                        item.setText(2, _("Unknown"))
+                        item.setText(3, _("Unknown"))
+                        item.setIcon(0, self.installIcon)
+                        item.setIcon(1, self.idIcon)
+                        item.setIcon(2, unknownIcon)
+                        item.setIcon(3, unknownIcon)
+                        item.setDisabled(True)
+                self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
+                self.show()
+        except Exception as e:
+            report(e)
+
+    def installPackages(self) -> None:
+        DISCOVER_SECTION: SoftwareSection = globals.discover
+        for i in range(self.treewidget.topLevelItemCount()):
+            if not self.treewidget.topLevelItem(i).isDisabled():
+                try:
+                    id = self.treewidget.topLevelItem(i).text(1)
+                    item = DISCOVER_SECTION.PackageItemReference[DISCOVER_SECTION.IdPackageReference[id]]
+                    DISCOVER_SECTION.installPackageItem(item)
+                except Exception as e:
+                    report(e)
+        self.close()
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        return super().resizeEvent(event)
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        return super().showEvent(event)
 
 if __name__ == "__main__":
     import __init__

@@ -31,6 +31,8 @@ try:
         updatesMenu: QMenu = None
         installedMenu: QMenu = None
         running = True
+        finishedPreloadingStep: Signal = Signal()
+        loadStatus: int = 0
         
         def __init__(self):
             try:
@@ -71,7 +73,7 @@ try:
                     self.loadStatus = 1000 # Override loading status
                 
                 skipButton.clicked.connect(forceContinue)
-                Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show))).start()
+                Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show)), daemon=True).start()
                 
                 self.textEnterAnim = QVariantAnimation(self)
                 self.textEnterAnim.setStartValue(0)
@@ -151,6 +153,9 @@ try:
                 os.chdir(os.path.expanduser("~"))                    
                 self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                 self.callInMain.connect(lambda f: f())
+                def increaseStep():
+                    self.loadStatus += 1
+                self.finishedPreloadingStep.connect(increaseStep)
                 if getSettings("AskedAbout3PackageManagers") == False or "--welcomewizard" in sys.argv:
                     self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadPreUIComponents, daemon=True).start())
                 else:
@@ -202,7 +207,6 @@ try:
             
             mainLayout.addStretch()
             
-            
             blayout = QHBoxLayout()
             mainLayout.addLayout(blayout)
             blayout.addStretch()
@@ -243,39 +247,39 @@ try:
 
         def loadPreUIComponents(self):
             try:
-                self.loadStatus = 0 # There are 9 items (preparation threads)
-                setSettings("CachingChocolatey", False)
+                self.loadStatus = 0
                 
                 # Preparation threads
                 Thread(target=self.checkForRunningInstances, daemon=True).start()
                 Thread(target=self.downloadPackagesMetadata, daemon=True).start()
                 if not getSettings("DisableApi"):
                     Thread(target=runBackendApi, args=(self.showProgram,), daemon=True).start()
-                if not getSettings("DisableWinget"):
-                    Thread(target=self.detectWinget, daemon=True).start()
+                    
+                for manager in PackageManagersList:
+                    if manager.isEnabled():
+                        Thread(target=manager.detectManager, args=(self.finishedPreloadingStep,), daemon=True).start()
+                    else:
+                        self.loadStatus += 1
+                        globals.componentStatus[f"{manager.NAME}Found"] = False
+                        globals.componentStatus[f"{manager.NAME}Version"] = _("{0} is disabled").format(manager.NAME)
+                        
+                if not getSettings("DisableUpdateIndexes"):
+                    for manager in PackageManagersList:
+                        if manager.isEnabled():
+                            Thread(target=manager.updateSources, args=(self.finishedPreloadingStep,), daemon=True).start()
+                        else:
+                            self.loadStatus += 1
                 else:
-                    self.loadStatus += 2
-                    globals.componentStatus["wingetFound"] = False
-                    globals.componentStatus["wingetVersion"] = _("{0} is disabled").format("Winget")
-                if not getSettings("DisableChocolatey"):
-                    Thread(target=self.detectChocolatey, daemon=True).start()
-                else:
-                    self.loadStatus += 1
-                    globals.componentStatus["chocoFound"] = False
-                    globals.componentStatus["chocoVersion"] = _("{0} is disabled").format("Chocolatey")
-                if not getSettings("DisableScoop"):
-                    Thread(target=self.detectScoop, daemon=True).start()
-                else:
-                    self.loadStatus += 3
-                    globals.componentStatus["scoopFound"] = False
-                    globals.componentStatus["scoopVersion"] = _("{0} is disabled").format("Scoop")
+                    self.loadStatus += len(PackageManagersList)
+                        
                 Thread(target=self.detectSudo, daemon=True).start()
+                Thread(target=self.removeScoopCache, daemon=True).start()
 
                 # Daemon threads
                 Thread(target=self.instanceThread, daemon=True).start()
                 Thread(target=self.updateIfPossible, daemon=True).start()
                 
-                while self.loadStatus < 9:
+                while self.loadStatus < 3 + len(PackageManagersList)*2:
                     time.sleep(0.01)
             except Exception as e:
                 print(e)
@@ -288,112 +292,57 @@ try:
                 print(globals.componentStatus)
 
         def checkForRunningInstances(self):
-                print("Scanning for instances...")
-                self.nowTime = time.time()
-                self.lockFileName = f"WingetUI_{self.nowTime}"
-                setSettings(self.lockFileName, True)
-                try:
-                    timestamps = [float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), "")) for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*"))] # get a list with the timestamps
-                    validTimestamps = [timestamp for timestamp in timestamps if timestamp < self.nowTime]
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Checking found instace(s)...")))
-                    print("Found lock file(s), reactivating...")
-                    for tst in validTimestamps:
-                        setSettings("RaiseWindow_"+str(tst), True)
-                    if validTimestamps != [] and timestamps != [self.nowTime]:
-                        for i in range(16):
-                            time.sleep(0.1)
-                            self.callInMain.emit(lambda: self.loadingText.setText(_("Sent handshake. Waiting for instance listener's answer... ({0}%)").format(int(i/15*100))))
-                            for tst in validTimestamps:
-                                if not getSettings("RaiseWindow_"+str(tst), cache = False):
-                                    print(f"Instance {tst} responded, quitting...")
-                                    self.callInMain.emit(lambda: self.loadingText.setText(_("Instance {0} responded, quitting...").format(tst)))
-                                    setSettings(self.lockFileName, False)
-                                    while self.textEnterAnim.state() == QAbstractAnimation.State.Running:
-                                        time.sleep(0.1)
-                                    self.kill.emit()
-                                    sys.exit(0)
-                        self.callInMain.emit(lambda: self.loadingText.setText(_("Starting daemons...")))
-                        print("Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
+            print("🔵 Looking for alive instances...")
+            self.nowTime = time.time()
+            self.lockFileName = f"WingetUI_{self.nowTime}"
+            setSettings(self.lockFileName, True)
+            try:
+                timestamps = [float(file.replace(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_"), "")) for file in glob.glob(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), "WingetUI_*"))] # get a list with the timestamps
+                validTimestamps = [timestamp for timestamp in timestamps if timestamp < self.nowTime]
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Checking found instace(s)...")))
+                print("🟡 Found lock file(s), reactivating...")
+                for tst in validTimestamps:
+                    setSettings("RaiseWindow_"+str(tst), True)
+                if validTimestamps != [] and timestamps != [self.nowTime]:
+                    for i in range(16):
+                        time.sleep(0.1)
+                        self.callInMain.emit(lambda: self.loadingText.setText(_("Sent handshake. Waiting for instance listener's answer... ({0}%)").format(int(i/15*100))))
                         for tst in validTimestamps:
-                            setSettings("RaiseWindow_"+str(tst), False)
-                            setSettings("WingetUI_"+str(tst), False)
-                except Exception as e:
-                    print(e)
-                self.loadStatus += 1
+                            if not getSettings("RaiseWindow_"+str(tst), cache = False):
+                                print(f"🟡 Instance {tst} responded, quitting...")
+                                self.callInMain.emit(lambda: self.loadingText.setText(_("Instance {0} responded, quitting...").format(tst)))
+                                setSettings(self.lockFileName, False)
+                                while self.textEnterAnim.state() == QAbstractAnimation.State.Running:
+                                    time.sleep(0.1)
+                                self.kill.emit()
+                                sys.exit(0)
+                    self.callInMain.emit(lambda: self.loadingText.setText(_("Starting daemons...")))
+                    print("🔵 Reactivation signal ignored: RaiseWindow_"+str(validTimestamps))
+                    for tst in validTimestamps:
+                        setSettings("RaiseWindow_"+str(tst), False)
+                        setSettings("WingetUI_"+str(tst), False)
+            except Exception as e:
+                print(e)
+            self.loadStatus += 1
 
-        def detectWinget(self):
-            try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Winget")))
-                o = subprocess.run(f"{wingetHelpers.winget} -v", shell=True, stdout=subprocess.PIPE)
-                print(o.stdout)
-                print(o.stderr)
-                globals.componentStatus["wingetFound"] = o.returncode == 0
-                globals.componentStatus["wingetVersion"] = o.stdout.decode('utf-8').replace("\n", "")
-                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Winget", state = _("Yes") if globals.componentStatus['wingetFound'] else _("No"))))
-            except Exception as e:
-                print(e)
-            self.loadStatus += 1
-            print("updating winget")
-            try:
-                if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Winget sources...")))
-                    o = subprocess.run(f"{wingetHelpers.winget} source update --name winget", shell=True, stdout=subprocess.PIPE)
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Winget sources")))
-            except Exception as e:
-                print(e)
-            self.loadStatus += 1
-            
-        def detectChocolatey(self):
-            try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Chocolatey")))
-                o = subprocess.run(f"{chocoHelpers.choco} -v", shell=True, stdout=subprocess.PIPE)
-                print(o.stdout)
-                print(o.stderr)
-                globals.componentStatus["chocoFound"] = o.returncode == 0
-                globals.componentStatus["chocoVersion"] = o.stdout.decode('utf-8').replace("\n", "")
-                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Chocolatey", state = _("Yes") if globals.componentStatus['chocoFound'] else _("No"))))
-            except Exception as e:
-                print(e)
-            self.loadStatus += 1
-            
-        def detectScoop(self):
-            try:
-                self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "Scoop")))
-                o = subprocess.run(f"{scoopHelpers.scoop} -v", shell=True, stdout=subprocess.PIPE)
-                print(o.stdout)
-                print(o.stderr)
-                globals.componentStatus["scoopFound"] = o.returncode == 0
-                globals.componentStatus["scoopVersion"] = o.stdout.decode('utf-8').split("\n")[1]
-                self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Scoop", state = _("Yes") if globals.componentStatus['scoopFound'] else _("No"))))
-            except Exception as e:
-                print(e)
-            self.loadStatus += 1
+        def removeScoopCache(self):
             try:
                 if getSettings("EnableScoopCleanup"):
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Clearing Scoop cache...")))
-                    p = subprocess.Popen(f"{scoopHelpers.scoop} cache rm *", shell=True, stdout=subprocess.PIPE)
-                    p2 = subprocess.Popen(f"{scoopHelpers.scoop} cleanup --all --cache", shell=True, stdout=subprocess.PIPE)
-                    p3 = subprocess.Popen(f"{scoopHelpers.scoop} cleanup --all --global --cache", shell=True, stdout=subprocess.PIPE)
+                    p = subprocess.Popen(f"{Scoop.EXECUTABLE} cache rm *", shell=True, stdout=subprocess.PIPE)
+                    p2 = subprocess.Popen(f"{Scoop.EXECUTABLE} cleanup --all --cache", shell=True, stdout=subprocess.PIPE)
+                    p3 = subprocess.Popen(f"{Scoop.EXECUTABLE} cleanup --all --global --cache", shell=True, stdout=subprocess.PIPE)
                     p.wait()
                     p2.wait()
                     p3.wait()
             except Exception as e:
                 report(e)
-            self.loadStatus += 1
-            try:
-                if not getSettings("DisableUpdateIndexes"):
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updating Scoop sources...")))
-                    o = subprocess.run(f"{scoopHelpers.scoop} update", shell=True, stdout=subprocess.PIPE)
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Updated Scoop sources")))
-            except Exception as e:
-                print(e)
-            self.loadStatus += 1
 
         def detectSudo(self):
             global GSUDO_EXE_LOCATION
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "sudo")))
-                o = subprocess.run(f"{GSUDO_EXE_PATH} -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run(f"{GSUDO_EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["sudoFound"] = o.returncode == 0
                 globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Sudo", state = _("Yes") if globals.componentStatus['sudoFound'] else _("No"))))
