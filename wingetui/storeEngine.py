@@ -486,7 +486,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     i = UPDATES_SECTION.packageList.takeTopLevelItem(UPDATES_SECTION.packageList.indexOfTopLevelItem(packageItem))
                     try:
                         UPDATES_SECTION.packageItems.remove(packageItem)
-                        if i in globals.updates.showableItems:
+                        if i in UPDATES_SECTION.showableItems:
                             UPDATES_SECTION.showableItems.remove(packageItem)
                         del i
                     except Exception as e:
