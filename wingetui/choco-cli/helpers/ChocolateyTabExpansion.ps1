@@ -51,11 +51,11 @@ $commandOptions = @{
   list = "--lo --id-only --pre --exact --by-id-only --id-starts-with --detailed --approved-only --not-broken --source='' --user='' --password='' --local-only --prerelease --include-programs --page='' --page-size='' --order-by-popularity --download-cache-only --disable-package-repository-optimizations" + $proListOptions + $allcommands
   search = "--pre --exact --by-id-only --id-starts-with --detailed --approved-only --not-broken --source='' --user='' --password='' --local-only --prerelease --include-programs --page='' --page-size='' --order-by-popularity --download-cache-only --disable-package-repository-optimizations" + $proListOptions + $allcommands
   info = "--pre --lo --source='' --user='' --password='' --local-only --prerelease --disable-package-repository-optimizations" + $proInfoOptions + $allcommands
-  install = "-y -whatif -? --pre --version= --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --source='webpi' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --force-dependencies --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --allow-multiple-versions --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --stop-on-first-package-failure --disable-package-repository-optimizations --pin" + $proInstallUpgradeOptions + $allcommands
+  install = "-y -whatif -? --pre --version= --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --force-dependencies --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --allow-multiple-versions --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --stop-on-first-package-failure --disable-package-repository-optimizations --pin" + $proInstallUpgradeOptions + $allcommands
   pin = "--name='' --version='' -?" + $proPinOptions + $allcommands
   outdated = "-? --source='' --user='' --password='' --ignore-pinned --ignore-unfound --pre --prerelease --disable-package-repository-optimizations" + $proOutdatedOptions + $allcommands
-  upgrade = "-y -whatif -? --pre --version='' --except='' --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --source='webpi' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --allow-multiple-versions --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --fail-on-unfound --fail-on-not-installed --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --exclude-prerelease --stop-on-first-package-failure --use-remembered-options --ignore-remembered-options --skip-when-not-installed --install-if-not-installed --disable-package-repository-optimizations --pin" + $proInstallUpgradeOptions + $proUpgradeOptions + $allcommands
-  uninstall = "-y -whatif -? --force-dependencies --remove-dependencies --all-versions --source='windowsfeatures' --source='webpi' --version= --uninstall-arguments='' --override-arguments --not-silent --params='' --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --use-autouninstaller --skip-autouninstaller --fail-on-autouninstaller --ignore-autouninstaller-failure --stop-on-first-package-failure" + $proUninstallOptions + $allcommands
+  upgrade = "-y -whatif -? --pre --version='' --except='' --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --allow-multiple-versions --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --fail-on-unfound --fail-on-not-installed --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --exclude-prerelease --stop-on-first-package-failure --use-remembered-options --ignore-remembered-options --skip-when-not-installed --install-if-not-installed --disable-package-repository-optimizations --pin" + $proInstallUpgradeOptions + $proUpgradeOptions + $allcommands
+  uninstall = "-y -whatif -? --force-dependencies --remove-dependencies --all-versions --source='windowsfeatures' --version= --uninstall-arguments='' --override-arguments --not-silent --params='' --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --use-autouninstaller --skip-autouninstaller --fail-on-autouninstaller --ignore-autouninstaller-failure --stop-on-first-package-failure" + $proUninstallOptions + $allcommands
   new = "--template-name='' --output-directory='' --automaticpackage --version='' --maintainer='' packageversion='' maintainername='' maintainerrepo='' installertype='' url='' url64='' silentargs='' --use-built-in-template -?" + $proNewOptions + $allcommands
   pack = "--version='' --output-directory='' -?" + $allcommands
   push = "--source='' --api-key='' --timeout='' -?" + $proPushOptions + $allcommands
@@ -229,8 +229,8 @@ function TabExpansion($line, $lastWord) {
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBGjaxm+vmSfEki
-# LosbhkJvv4po5gvdr7k4NfsY5LtCj6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA3ID+iDcuzZo3I
+# 6lWvOPhuwIPXnL6Avz1iBv6KB/dXcaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -393,28 +393,28 @@ function TabExpansion($line, $lastWord) {
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgGT3vLbMuswPvopZVYs+Q7G7dz9C2MjTMzGHVK49QmOMwDQYJ
-# KoZIhvcNAQEBBQAEggEACycOdlkhhPwD0FeVRwxLExfDzuOSoB4mv1Pp2pYPvRLR
-# HIUNp1SJ0vDLkTfwNFUpxu81XlVn3uhH/WaT8oWHFX/l+C/DNnLPGaLqfz1Ln3fd
-# uUhLH491xf7sQbKpbDeQ1kjD6vJ+lHjZ/Xs0ZzEnCMyWLvREHjquryWV8+F/GEMq
-# fjYqCG4W+JWHnPqtMK/gNBNNbNt0ENUkyGHhyW338Z6jiHcGihb3hTua/NHmvCIt
-# HFSuOU0R8y8eyzwAZtgFLvQEcJoIGTvoStmZ3opOlZZRncUJPmiam9OUBNrnHfXN
-# neyvdbgdALEQ5Rocv/dxGp+aCTIdfpWoVt/3tXOHGqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgt3oI/+GtTMEMY5o2wJ+SgfizBnHaQZIoePJ1087yfmcwDQYJ
+# KoZIhvcNAQEBBQAEggEAkr6a5E0/5hzQs/q38XvfiJ7R1eyS90IFftQN7ki3qiYP
+# X+yZtr1Cp8o05qkgSClv1hC7ONG2aM2fWxlU8MJa2lZcNuOofagu26mRl6y3Y9n+
+# v61w5F1Yl7buvdHl05B/fFch00rPbyaE/mmw7iy7yuhhW8jkp4Ipaqgfjf6xKs9I
+# mE3g+BTfWR+TbHg3CFbgIjpYd+4SneFf56ziAJ/b0Z6HIMDzC24g3jf/fep9BqEU
+# TBVVkZ+NgwpGiXRCtAGvfkLVWfUnOr+/DMvEkYPXTwF0V3DSHhm9eyJx78eln8HB
+# FsATS/CdHAd6QScMYHv9Xk/jVIX3kSxr3jIr1gwZ3aGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMjEyMDYxOTM5MTNaMC8GCSqGSIb3DQEJBDEiBCAssKIhKT7nn7qW/8CODu38
-# dkuKfl0ycpK1Mt0cQZQU7TANBgkqhkiG9w0BAQEFAASCAgC3qRdQzylds8cGfNMN
-# rOqd10lIWolg3j+CI4elrbZ1ftCCXRpQDOrVs+9CFbQOCVzsrpl4wQxP+bOrjqhm
-# 4BSsxykE1BStskTcG3DOWRc8WsCd1F4AXDxww6mxWe4mt70Y4E2fTZYQMuXg16L7
-# egVQyCTr2OnWrQX89NzzsLTifcpI6QiYoQHIGtnD32bwCrgP+lwvxXtUFogTQZv2
-# wh8OzL9t5JXdoY7u6ouDOa6cwVL61gXhmI6iZJdXpMaoEIbrBm9YEskGqKyFL6Ya
-# WKGxxlOkalsdrVIHs8onmZ0tBT2cM+niPG5RayzZkjoCBQipKJbd3EimhdQfNqbA
-# psN6MHFFUX2kmTg6RDCo9pgd+sTWPRvK/Na+DDGaNDRQu4oIebUbhjLD1uY4D2RT
-# LdlJm9mYBIlbc5cIkd0XIBM+Ka47Ezw28kCFslyva5IgVaHEx7ONMHdXKdg+XAjB
-# +RYKn0TJRtcBWBrtZmfKolZAGGfND8Jzavn1kJBBmVs5Y/opWutSIXmlFXxmhpqD
-# 9K52ORIjwpJmmFUmj9KFMHNId3/Mtc4HYW3zyhx93PSb2WP96CrGn+f+M8r8n69S
-# Lg4XVG69um3zBhm9sByLxXWTeoWaW4axh/mBro13X7JRe5V8SS0yD1UIeWvsRwPG
-# AZ0N/Pq4Y9N229nI8FXLY0nuUQ==
+# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCDbEyyKs7gHH5fR5s1zElHW
+# yMhml3AjP8BTsWtI7k8nWDANBgkqhkiG9w0BAQEFAASCAgCgHMfvCTm+YQhHD9e+
+# jvH+bG9WSE3cvlpkzHHEi2EQM1vOon54kSOkLmjHnUf/E25WRjeE8bDR88KMS7IB
+# tDgPmDJAJhYQWUTXmTQ5zr0r8phrdt8AtULG22RFaEzloNZg6TggoK+MmT2EF2FV
+# cXLu0zATVTLjGiXl1SJrh/Bwt+scmr6dTZj2rpoA2SJVbgV/64XY35FjKyC3Hy5x
+# KQqfkX+uNGNkUnS4lqv50Tk+in1OQZV0ldoWpcceD6knAgYvYlP/gwJRXIVrhqIa
+# amaet5w/tqeNR8gTyVZWuj8ydfduqq13jBlwZZJByq0mW3BiBQ7TIiTKqY6G77hl
+# kRqgq4iS8T/34c5z5xbxEzVgNm7YF1y1g7VSs/5qMJVf4czzNw8oMPGOmc7vV/H2
+# Gwg2ok8TPFQc1HIUgUjU+vL+KcOx53EyyFEK7O24wGYsaRlmB6UVbATIdHWWyYlR
+# X6a7PFVgww2CFFco82ArRS5RuXCA12UF5sUX//Afw4uQABH/EcerccG0+eVP3ez0
+# IqykLMkJm7QOYbCF3addf1T6LgSIs4pjQjOuTybP48L0+3KlKLA0xDcEpmTdzBG4
+# jwDOn/4ysS6lXkGhcLLyttOH5lPIxriyrp3BIBtE7xYNpFDYPZRD3zRVuvPjtbvf
+# Osrw6jCgyPX5SdqRL0bhmNnK9Q==
 # SIG # End signature block

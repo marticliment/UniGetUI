@@ -11,7 +11,7 @@
   - [Checksum @ 0.2.0](#checksum--020)
   - [log4net @ 2.0.12](#log4net--2012)
   - [Microsoft.Web.Xdt @ 2.1.1](#microsoftwebxdt--211)
-  - [NuGet.Core @ 2.11.0.20220901 (modified)](#nugetcore--211020220901-modified)
+  - [NuGet.Core @ 2.11.0.20230509 (modified)](#nugetcore--211020230509-modified)
   - [Rhino.Licensing @ 1.4.1 (modified)](#rhinolicensing--141-modified)
   - [Rx (Reactive Extensions) @ 2.1.30214.0](#rx-reactive-extensions--21302140)
   - [Shim Generator (shimgen) @ 1.0.0](#shim-generator-shimgen--100)
@@ -75,7 +75,7 @@ Their details are below.
 - [Checksum @ 0.2.0](#checksum--020)
 - [log4net @ 2.0.12](#log4net--2012)
 - [Microsoft.Web.Xdt @ 2.1.1](#microsoftwebxdt--211)
-- [NuGet.Core @ 2.11.0.20220901 (modified)](#nugetcore--211020220901-modified)
+- [NuGet.Core @ 2.11.0.20230509 (modified)](#nugetcore--211020230509-modified)
 - [Rhino.Licensing @ 1.4.1 (modified)](#rhinolicensing--141-modified)
 - [Rx (Reactive Extensions) @ 2.1.30214.0](#rx-reactive-extensions--21302140)
 - [Shim Generator (shimgen) @ 1.0.0](#shim-generator-shimgen--100)
@@ -685,7 +685,7 @@ It is also a requirement of NuGet.Core.
   It also applies even if Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your country may not allow the exclusion or limitation of incidental, consequential or other damages.
 ```
 
-### NuGet.Core @ 2.11.0.20220901 (modified)
+### NuGet.Core @ 2.11.0.20230509 (modified)
 
 Chocolatey uses [NuGet.Core](https://github.com/NuGet/NuGet2) [(modified)](https://github.com/chocolatey/nuget-chocolatey) to work with packaging.
 [License terms](https://github.com/NuGet/NuGet2/blob/c3d1027a51b31fd0c41e9abbe90810cf1c924c9f/COPYRIGHT.txt):
