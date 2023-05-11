@@ -207,7 +207,6 @@ try:
             
             mainLayout.addStretch()
             
-            
             blayout = QHBoxLayout()
             mainLayout.addLayout(blayout)
             blayout.addStretch()
