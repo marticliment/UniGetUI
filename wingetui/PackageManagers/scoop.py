@@ -311,7 +311,7 @@ class ScoopPackageManager(SamplePackageManager):
         bucket_prefix = ""
         if len(package.Source.split(":"))>1 and not "/" in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = [self.EXECUTABLE, "install", bucket_prefix+package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["install", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + "--global"
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -322,7 +322,7 @@ class ScoopPackageManager(SamplePackageManager):
         bucket_prefix = ""
         if len(package.Source.split(":"))>1 and not "/" in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = [self.EXECUTABLE, "update", bucket_prefix+package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["update", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + "--global"
         print(f"🔵 Starting {package} update with Command", Command)
@@ -360,7 +360,7 @@ class ScoopPackageManager(SamplePackageManager):
         bucket_prefix = ""
         if len(package.Source.split(":"))>1 and not "/" in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = [self.EXECUTABLE, "uninstall", bucket_prefix+package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + "--global"
         print(f"🔵 Starting {package} uninstall with Command", Command)
@@ -381,7 +381,7 @@ class ScoopPackageManager(SamplePackageManager):
                     widget.counterSignal.emit(4)
                 elif("was uninstalled" in line):
                     widget.counterSignal.emit(6)
-                widget.addInfoLine(line)
+                widget.addInfoLine.emit(line)
                 if("was uninstalled" in line):
                     outputCode = 0
                 output += line+"\n"

@@ -485,15 +485,13 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     packageItem.setHidden(True)
                     i = UPDATES_SECTION.packageList.takeTopLevelItem(UPDATES_SECTION.packageList.indexOfTopLevelItem(packageItem))
                     try:
-                        i.setHidden(True)
-                        i = UPDATES_SECTION.packageList.takeTopLevelItem(UPDATES_SECTION.packageList.indexOfTopLevelItem(i))
-                        UPDATES_SECTION.packageItems.remove(i)
+                        UPDATES_SECTION.packageItems.remove(packageItem)
                         if i in globals.updates.showableItems:
-                            UPDATES_SECTION.showableItems.remove(i)
+                            UPDATES_SECTION.showableItems.remove(packageItem)
                         del i
                     except Exception as e:
                         report(e)
-                    globals.updates.updatePackageNumber()
+                    UPDATES_SECTION.updatePackageNumber()
             self.finishedInstallation = True
             self.cancelButton.setEnabled(True)
             removeProgram(self.installId)
