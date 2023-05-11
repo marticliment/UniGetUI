@@ -1,3 +1,3 @@
-version = 1.71
-versionName = "1.7.1"
-versionISS = "1.7.1.0"
+version = 1.99
+versionName = "2.0.0-beta"
+versionISS = "2.0.0.0"
