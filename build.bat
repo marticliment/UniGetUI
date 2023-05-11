@@ -25,6 +25,7 @@ if %errorlevel% neq 0 goto:error
 
 del /S *.py
 copy ..\wingetui\__init__.py .\
+del __init__.pyc
 rmdir /Q /S __pycache__
 rmdir /Q /S external\__pycache__
 rmdir /Q /S data\__pycache__
@@ -56,6 +57,7 @@ rmdir /Q /S lib
 rmdir /Q /S lib-bad
 rmdir /Q /S lib-bkp
 rmdir /Q /S logs
+mkdir lib
 popd
 move dist\wingetuiBin ..\
 popd
