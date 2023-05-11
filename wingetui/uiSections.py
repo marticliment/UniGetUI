@@ -798,7 +798,7 @@ class UninstallSoftwareSection(SoftwareSection):
             contextMenu.addSeparator()
         else:
             contextMenu.addAction(ins5)
-        if self.packageList.currentItem().text(4) not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
+        if self.packageList.currentItem().text(4) not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"), "Android Subsystem")):
             contextMenu.addSeparator()
             contextMenu.addAction(ins7)
             contextMenu.addSeparator()

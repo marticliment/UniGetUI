@@ -29,6 +29,7 @@ class WingetPackageManager(SamplePackageManager):
     gogIcon = None
     uPlayIcon = None
     msStoreIcon = None
+    wsaIcon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
@@ -229,6 +230,13 @@ class WingetPackageManager(SamplePackageManager):
         """
         
         def getSource(id: str) -> str:
+            id = id.strip()
+            androidValid = True
+            for letter in id:
+                if letter not in "abcdefghijklmnopqrstuvwxyz.":
+                    androidValid = False
+            if androidValid and "." in id:
+                return _("Android Subsystem")
             s = "Winget"
             for illegal_char in ("{", "}", " "):
                 if illegal_char in id:
@@ -241,7 +249,7 @@ class WingetPackageManager(SamplePackageManager):
                         for letter in id:
                             if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                                 s = "Winget"
-                                break
+                                break    
             if s == _("Local PC"):
                 if id == "Steam":
                     s = "Steam"
@@ -434,6 +442,7 @@ class WingetPackageManager(SamplePackageManager):
             self.wingetIcon = QIcon(getMedia("winget"))
             self.localIcon = QIcon(getMedia("localpc"))
             self.msStoreIcon = QIcon(getMedia("msstore"))
+            self.wsaIcon = QIcon(getMedia("android"))
             self.SteamIcon = QIcon(getMedia("steam"))
             self.gogIcon = QIcon(getMedia("gog"))
             self.uPlayIcon = QIcon(getMedia("uplay"))
@@ -447,6 +456,8 @@ class WingetPackageManager(SamplePackageManager):
             return self.gogIcon
         elif "ubisoft connect" in source.lower():
             return self.uPlayIcon
+        elif source in (_("Android Subsystem"), "Android Subsystem"):
+            return self.wsaIcon
         else:
             return self.wingetIcon
         
