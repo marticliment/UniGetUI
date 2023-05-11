@@ -421,5 +421,17 @@ class ScoopPackageManager(SamplePackageManager):
 
         print("🟢 Scoop bucket search finished")
         finishSignal.emit()
+        
+    def detectManager(self, signal: Signal = None) -> None:
+        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[1]
+        if signal:
+            signal.emit()
+        
+    def updateSources(self, signal: Signal = None) -> None:
+        subprocess.run(f"{self.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)
+        if signal:
+            signal.emit()
 
 Scoop = ScoopPackageManager()

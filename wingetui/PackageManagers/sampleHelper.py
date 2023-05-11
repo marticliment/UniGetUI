@@ -253,6 +253,20 @@ class SamplePackageManager(PackageManagerModule):
                     widget.counterSignal.emit(5)
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
+        
+    def detectManager(self, signal: Signal = None) -> None:
+        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        if signal:
+            signal.emit()
+        
+    def updateSources(self, signal: Signal = None) -> None:
+        subprocess.run(f"{self.EXECUTABLE} update self", shell=True, stdout=subprocess.PIPE)
+        if signal:
+            signal.emit()
+
+
 
 
 if(__name__=="__main__"):

@@ -296,8 +296,6 @@ class WingetPackageManager(SamplePackageManager):
                         iOffset = 0
                         id = " ".join(untrimmedVerelement.split(" ")[iOffset:-1])
                         ver = verElement.split(" ")[-1]
-                        if " " in id:
-                            print(id, len(id), (versionPosition - idPosition))
                         if len(id) > (versionPosition - idPosition):
                             id = " ".join(untrimmedVerelement.split(" ")[iOffset])
                             id = id.replace("  ", "#").replace(" ", "").replace("#", " ")
@@ -557,6 +555,18 @@ class WingetPackageManager(SamplePackageManager):
                     if("Id" in l):
                         idSeparator = len(l.split("Id")[0])
         return id
+
+    def detectManager(self, signal: Signal = None) -> None:
+        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        if signal:
+            signal.emit()
+        
+    def updateSources(self, signal: Signal = None) -> None:
+        subprocess.run(f"{self.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
+        if signal:
+            signal.emit()
 
 Winget = WingetPackageManager()
 

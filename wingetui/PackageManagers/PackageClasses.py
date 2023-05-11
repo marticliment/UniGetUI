@@ -193,3 +193,13 @@ class PackageManagerModule():
         """
         Returns the list of parameters that the package manager ib nasis of the given InstallationOptions object
         """
+        
+    def detectManager(self, signal: Signal = None) -> None:
+        """
+        Detect if the package manager components exist.
+        """
+        
+    def updateSources(self, signal: Signal = None) -> None:
+        """
+        Force update package manager's sources
+        """

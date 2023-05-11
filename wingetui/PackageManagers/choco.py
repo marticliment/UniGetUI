@@ -295,6 +295,18 @@ class ChocoPackageManager(SamplePackageManager):
         elif "Run as administrator" in output or "The requested operation requires elevation" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
+        
+    def detectManager(self, signal: Signal = None) -> None:
+        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        if signal:
+            signal.emit()
+        
+    def updateSources(self, signal: Signal = None) -> None:
+        print("🟡 Chocolatey has no source update procedure (yet)")
+        if signal:
+            signal.emit()
 
 Choco = ChocoPackageManager()
 
