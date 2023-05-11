@@ -69,7 +69,12 @@ Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [InstallDelete]
 Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{autopf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe'); 
+Type: filesandordirs; Name: "{autopf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{autopf}\WingetUI\pip-23.0.dist-info";
+Type: filesandordirs; Name: "{autopf}\WingetUI\pip-23.1.2.dist-info";
+Type: filesandordirs; Name: "{autopf}\WingetUI\setuptools-65.5.0.dist-info";   
+Type: filesandordirs; Name: "{autopf}\WingetUI\sudo";
+Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc";
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
