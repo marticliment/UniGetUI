@@ -317,15 +317,15 @@ class WingetPackageManager(SamplePackageManager):
                             ver = verElement.split(" ")[iOffset+1]
                         name = element[0:idPosition].strip()
                         if not "  " in name:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, ver, getSource(id), Winget))
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(Package(name, id.strip(), ver, getSource(id), Winget))
                         else:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 print(f"🟡 package {name} failed parsing, going for method 2...")
                                 name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                                 while "##" in name:
                                     name = name.replace("##", "#")
-                                packages.append(Package(name.split("#")[0], name.split("#")[-1]+id, ver, getSource(id), Winget))
+                                packages.append(Package(name.split("#")[0], (name.split("#")[-1]+id).strip(), ver, getSource(id), Winget))
                     except Exception as e:
                         packages.append(Package(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:].strip(), getSource(id), Winget))
                         if type(e) != IndexError:
