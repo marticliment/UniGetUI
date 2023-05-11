@@ -224,7 +224,7 @@ class PackageInstallerWidget(QGroupBox):
                 if ENABLE_SUCCESS_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
-                self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
+                self.info.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                 self.startCoolDown()
             if returncode == RETURNCODE_NEEDS_RESTART:
                 t.setTitle(_("Restart required"))
@@ -506,7 +506,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
-                    self.info.setText(_("{action} was successfully!").format(action = self.actionDone.capitalize()))
+                    self.info.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
                     t = ToastNotification(self, self.callInMain.emit)                    
