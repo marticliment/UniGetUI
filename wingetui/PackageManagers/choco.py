@@ -81,7 +81,6 @@ class ChocoPackageManager(SamplePackageManager):
             ContentsToCache = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                print(line)
                 if line:
                     if len(line.split(" ")) >= 2:
                         name = formatPackageIdAsName(line.split(" ")[0])

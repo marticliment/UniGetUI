@@ -44,7 +44,10 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.packageList.setColumnWidth(4, 150)
         self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
-        self.informationBanner.setText(_("Chocolatey packages are being loaded. Since this is the first time, it might take a while, and they will show here once loaded."))
+        self.informationBanner.setText(_("Packages are being loaded for the first time. This process will take longer than usual, since package caches are being rebuilt."))
+        if not getSettings("WarnedAboutPackages_v2"):
+            setSettings("WarnedAboutPackages_v2", True)
+            self.informationBanner.show()
         
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
