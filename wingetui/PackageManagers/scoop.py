@@ -313,7 +313,7 @@ class ScoopPackageManager(SamplePackageManager):
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
         Command = self.EXECUTABLE.split(" ") + ["install", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
-            Command = [GSUDO_EXECUTABLE] + Command + "--global"
+            Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
@@ -324,7 +324,7 @@ class ScoopPackageManager(SamplePackageManager):
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
         Command = self.EXECUTABLE.split(" ") + ["update", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
-            Command = [GSUDO_EXECUTABLE] + Command + "--global"
+            Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
@@ -362,7 +362,7 @@ class ScoopPackageManager(SamplePackageManager):
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
         Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix+package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
-            Command = [GSUDO_EXECUTABLE] + Command + "--global"
+            Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} uninstall with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
