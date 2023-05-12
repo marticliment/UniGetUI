@@ -48,7 +48,6 @@ class DiscoverSoftwareSection(SoftwareSection):
         if not getSettings("WarnedAboutPackages_v2"):
             setSettings("WarnedAboutPackages_v2", True)
             self.informationBanner.show()
-        
         self.installIcon = QIcon(getMedia("install"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
