@@ -1082,11 +1082,19 @@ class AboutSection(SmoothScrollArea):
             table.setItem(currentIndex, 1, QTableWidgetItem(" "+str(globals.componentStatus["sudoVersion"])))
             
             for manager in PackageManagersList:
-                currentIndex += 1
-                table.setItem(currentIndex, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus[f"{manager.NAME}Found"] else _("Not found")))
-                table.setItem(currentIndex, 1, QTableWidgetItem(" "+str(globals.componentStatus[f"{manager.NAME}Version"])))
-                table.verticalHeaderItem(currentIndex).setTextAlignment(Qt.AlignRight)
-                table.setRowHeight(currentIndex, 35)
+                try:
+                    currentIndex += 1
+                    table.setItem(currentIndex, 0, QTableWidgetItem("  "+_("Found") if globals.componentStatus[f"{manager.NAME}Found"] else _("Not found")))
+                    table.setItem(currentIndex, 1, QTableWidgetItem(" "+str(globals.componentStatus[f"{manager.NAME}Version"])))
+                    table.verticalHeaderItem(currentIndex).setTextAlignment(Qt.AlignRight)
+                    table.setRowHeight(currentIndex, 35)
+                except Exception as e:
+                    report(e)
+                    currentIndex += 1
+                    table.setItem(currentIndex, 0, QTableWidgetItem("  "+_("Error")))
+                    table.setItem(currentIndex, 1, QTableWidgetItem(" "+str(e)))
+                    table.verticalHeaderItem(currentIndex).setTextAlignment(Qt.AlignRight)
+                    table.setRowHeight(currentIndex, 35)
             
             table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignLeft)
             table.setRowHeight(0, 35)
