@@ -58,6 +58,10 @@ rmdir /Q /S lib-bad
 rmdir /Q /S lib-bkp
 rmdir /Q /S logs
 mkdir lib
+mkdir logs
+mkdir .chocolatey
+mkdir lib-bad
+mkdir lib-bkp
 popd
 move dist\wingetuiBin ..\
 popd
