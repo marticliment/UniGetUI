@@ -285,7 +285,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         
-        self.packageList.itemDoubleClicked.connect(lambda item, column: (self.updatePackageItem(item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item)))            
+        self.packageList.itemDoubleClicked.connect(lambda item, column: (self.updatePackageItem(item) if not getSettings("DoNotUpdateOnDoubleClick") else self.openInfo(item, update=True)))            
 
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -319,7 +319,7 @@ class UpdateSoftwareSection(SoftwareSection):
         contextMenu.setStyleSheet("* {background: red;color: black}")
         ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
         inf = QAction(_("Package details"))
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
+        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), update=True))
         inf.setIcon(QIcon(getMedia("info")))
         ins1 = QAction(_("Update"))
         ins1.setIcon(QIcon(getMedia("menu_updates")))
@@ -390,7 +390,7 @@ class UpdateSoftwareSection(SoftwareSection):
         toolbar.addAction(self.upgradeSelected)
         
         showInfo = QAction("", toolbar)
-        showInfo.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
+        showInfo.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), update=True))
         showInfo.setIcon(QIcon(getMedia("info")))
         runAsAdmin = QAction("", toolbar)
         runAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
@@ -786,7 +786,7 @@ class UninstallSoftwareSection(SoftwareSection):
         ins7.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4))))
         ins4 = QAction(_("Package details"))
         ins4.setIcon(QIcon(getMedia("info")))
-        ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
+        ins4.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), uninstall=True))
         ins6 = QAction(_("Share this package"))
         ins6.setIcon(QIcon(getMedia("share")))
         ins6.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
@@ -830,7 +830,7 @@ class UninstallSoftwareSection(SoftwareSection):
                     }
                 self.err.showErrorMessage(errorData, showNotification=False)
             else:
-                self.openInfo(item)
+                self.openInfo(item, uninstall=True)
 
         showInfoAction = QAction("", toolbar)# ("Show info")
         showInfoAction.triggered.connect(showInfo)
@@ -2156,6 +2156,8 @@ class PackageInfoPopupWindow(QWidget):
             self.installButton.setText(_("Please wait..."))
         else:
             if self.isAnUpdate:
+                if type(package) == UpgradablePackage:
+                    installedVersion = package.Version
                 self.installButton.setText(_("Update"))
             elif self.isAnUninstall:
                 self.installButton.setText(_("Uninstall"))
@@ -2182,7 +2184,7 @@ class PackageInfoPopupWindow(QWidget):
         self.license.setText(f"<b>{_('License')}:</b> {_('Loading...')}")
         lastVerString = ""
         if self.isAnUpdate:
-            lastVerString = f"<b>{_('Installed Version')}:</b> {installedVersion} ({_('Update to {0} available').format(package.Version)})"
+            lastVerString = f"<b>{_('Installed Version')}:</b> {package.Version} ({_('Update to {0} available').format(package.NewVersion)})"
         elif self.isAnUninstall:
             lastVerString = f"<b>{_('Installed Version')}:</b> {package.Version}"
         else:

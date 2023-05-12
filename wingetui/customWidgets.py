@@ -1019,8 +1019,8 @@ class SoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def openInfo(self, item: QTreeWidgetItem) -> None:
-        self.infobox.showPackageDetails(self.ItemPackageReference[item])
+    def openInfo(self, item: QTreeWidgetItem, update: bool = False, uninstall: bool = False, installedVersion: str = "") -> None:
+        self.infobox.showPackageDetails(self.ItemPackageReference[item], update, uninstall, installedVersion)
         self.infobox.show()
     
     def loadPackages(self, manager) -> None:
