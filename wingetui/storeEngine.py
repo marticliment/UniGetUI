@@ -97,7 +97,7 @@ class PackageInstallerWidget(QGroupBox):
         self.adminBadge.setEnabled(False)
         self.adminBadge.setToolTip(_("This process is running with administrator privileges"))
         self.layout.addWidget(self.adminBadge)
-        if not self.Options.RunAsAdministrator:
+        if not self.Options.RunAsAdministrator and not globals.mainWindow.isAdmin():
             self.adminBadge.setVisible(False)
         self.cancelButton = QPushButton(QIcon(getMedia("cancel", autoIconMode = False)), _("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
