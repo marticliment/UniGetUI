@@ -828,19 +828,11 @@ class SectionButton(QWidget):
             self.button.setStyleSheet("font-size: 9pt;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
         self.label.setObjectName("StLbl")
         self.button.clicked.connect(self.clicked.emit)
-
-    def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
-
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self.button.move(self.width()-(170), 10)
-        self.label.move((70), 10)
-        self.label.setFixedWidth(self.width()-(250))
-        self.label.setFixedHeight((self.fh))
-        self.setFixedHeight((50+(self.fh-30)))
-        self.button.setFixedHeight((self.fh))
-        self.button.setFixedWidth(150)
-        return super().resizeEvent(event)
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.label)
+        self.layout().addStretch()
+        self.layout().addWidget(self.button)
+        self.layout().setContentsMargins(70, 0, 20, 0)
 
     def setIcon(self, icon: QIcon) -> None:
         self.button.setIcon(icon)
@@ -875,6 +867,13 @@ class SectionComboBox(QWidget):
             self.combobox.setStyleSheet("font-size: 9pt;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
             self.restartButton.setStyleSheet("font-size: 9pt;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
         self.label.setObjectName("StLbl")
+        self.setFixedHeight(50)
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.label)
+        self.layout().addStretch()
+        self.layout().addWidget(self.restartButton)
+        self.layout().addWidget(self.combobox)
+        self.layout().setContentsMargins(70, 0, 20, 0)
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
@@ -893,19 +892,6 @@ class SectionComboBox(QWidget):
         self.combobox.currentTextChanged.connect(self.textChanged.emit)
         self.combobox.currentTextChanged.connect(self.valueChanged.emit)
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self.combobox.move(self.width()-(270), 10)
-        self.label.move((70), 10)
-        self.label.setFixedWidth(self.width()-(530))
-        self.label.setFixedHeight(30)
-        if self.buttonOn:
-            self.restartButton.move(self.width()-(480), 10)
-            self.restartButton.setFixedWidth(200)
-            self.restartButton.setFixedHeight(30)
-        self.setFixedHeight(50)
-        self.combobox.setFixedHeight(30)
-        self.combobox.setFixedWidth(250)
-        return super().resizeEvent(event)
 
     def setIcon(self, icon: QIcon) -> None:
         pass
@@ -940,6 +926,9 @@ class SectionCheckBox(QWidget):
         self.checkbox.setObjectName("stChk")
         self.checkbox.stateChanged.connect(self.stateChanged.emit)
         self.setFixedHeight(50)
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.checkbox)
+        self.layout().setContentsMargins(70, 0, 20, 0)
 
     def setChecked(self, checked: bool) -> None:
         self.checkbox.setChecked(checked)
@@ -949,16 +938,6 @@ class SectionCheckBox(QWidget):
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
-
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        if self.height() != 30:
-            self.checkbox.move((self.margin), 10)
-        else:
-            self.checkbox.move((self.margin), 0)
-        self.checkbox.setFixedHeight(30)
-        self.checkbox.setFixedWidth(self.width()-(self.margin))
-        return super().resizeEvent(event)
-
     def text(self) -> str:
         return self.checkbox.text()
 
