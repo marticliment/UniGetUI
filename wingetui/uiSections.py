@@ -1765,12 +1765,16 @@ class PackageInfoPopupWindow(QWidget):
 
         self.layout.addLayout(hl)
         self.layout.addStretch()
+        
+        self.tagsWidget = QWidget()
+        self.tagsWidget.setLayout(FlowLayout())
 
         self.hLayout = QHBoxLayout()
         self.oLayout = QHBoxLayout()
         self.description = QLinkLabel("<b>"+_('Description:')+"</b> "+_('Unknown'))
         self.description.setWordWrap(True)
 
+        self.layout.addWidget(self.tagsWidget)
         self.layout.addWidget(self.description)
 
         self.homepage = QLinkLabel("<b>"+_('Homepage')+":</b> "+_('Unknown'))
@@ -2228,6 +2232,8 @@ class PackageInfoPopupWindow(QWidget):
         Thread(target=self.loadPackageIcon, args=(package,)).start()
         
         Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
+        
+        self.tagsWidget.layout().clear()
 
         self.finishedCount = 0
         
@@ -2239,7 +2245,7 @@ class PackageInfoPopupWindow(QWidget):
         if details.PackageObject != self.currentPackage:
             return 
         package = self.currentPackage
-        
+            
         self.loadingProgressBar.hide()
         self.installButton.setEnabled(True)
         self.adminCheckbox.setEnabled(True)
@@ -2290,6 +2296,12 @@ class PackageInfoPopupWindow(QWidget):
             self.scopeCombo.removeItem(0)
         self.scopeCombo.addItems([_("Default")] + details.Scopes)
         
+        for tag in details.Tags:
+            label = QLabel(tag)
+            label.setStyleSheet(f"padding: 5px;padding-bottom: 2px;padding-top: 2px;background-color: {blueColor if isDark() else f'rgb({getColors()[0]})'}; color: black; border-radius: 10px;")
+            label.setFixedHeight(20)
+            self.tagsWidget.layout().addWidget(label)
+
         self.loadPackageCommandLine()
 
     def loadPackageIcon(self, package: Package) -> None:

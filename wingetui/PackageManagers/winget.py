@@ -357,6 +357,7 @@ class WingetPackageManager(SamplePackageManager):
                 currentIteration += 1
                 outputIsDescribing = False
                 outputIsShowingNotes = False
+                outputIsShowingTags = False
                 p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact"]+self.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 output: list[str] = []
                 while p.poll() is None:
@@ -373,6 +374,10 @@ class WingetPackageManager(SamplePackageManager):
                         details.ReleaseNotes += line + "<br>"
                     else:
                         outputIsShowingNotes = False
+                    if line[0] == " " and outputIsShowingTags:
+                        details.Tags.append(line.strip())
+                    else:
+                        outputIsShowingTags = False
                         
                     if "Publisher:" in line:
                         details.Publisher = line.replace("Publisher:", "").strip()
@@ -412,6 +417,10 @@ class WingetPackageManager(SamplePackageManager):
                     elif "Release Notes:" in line:
                         details.ReleaseNotes = ""
                         outputIsShowingNotes = True
+                        loadedInformationPieces += 1
+                    elif "Tags:" in line:
+                        details.Tags = []
+                        outputIsShowingTags = True
                         loadedInformationPieces += 1
                     elif "Installer Type:" in line:
                         details.InstallerType = line.replace("Installer Type:", "").strip()

@@ -87,6 +87,7 @@ class PackageDetails(Package):
     Versions: list[str] = []
     Architectures: list[str] = []
     Scopes: list[str] = []
+    Tags: list[str] = []
     
     def __init__(self, package: Package):
         self.Name = package.Name

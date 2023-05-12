@@ -191,6 +191,8 @@ class ChocoPackageManager(SamplePackageManager):
                     details.Description = line.replace("Description:", "").strip()
                 elif "Release Notes" in line:
                     details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
+                elif "Tags" in line:
+                    details.Tags = [tag for tag in line.replace("Tags:", "").strip().split(" ") if tag != ""]
             details.Versions = []
             p = subprocess.Popen([self.EXECUTABLE, "find", "-e", package.Id, "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             print(f"🟢 Starting get info for id {package.Id}")
