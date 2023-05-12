@@ -235,7 +235,7 @@ class WingetPackageManager(SamplePackageManager):
             for letter in id:
                 if letter not in "abcdefghijklmnopqrstuvwxyz.":
                     androidValid = False
-            if androidValid and "." in id:
+            if androidValid and id.count(".") > 1:
                 return _("Android Subsystem")
             s = "Winget"
             for illegal_char in ("{", "}", " "):
