@@ -77,15 +77,17 @@ class ChocoPackageManager(SamplePackageManager):
         """
         print(f"🔵 Starting {self.NAME} package caching")
         try:
-            p = subprocess.Popen([self.NAME, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
             ContentsToCache = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                print(line)
                 if line:
                     if len(line.split(" ")) >= 2:
                         name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
+                        
                         if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                             ContentsToCache += f"{name},{id},{version}\n"
             AlreadyCachedPackages = ""
