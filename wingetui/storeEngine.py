@@ -193,6 +193,7 @@ class PackageInstallerWidget(QGroupBox):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
+        self.progressbar.setValue(1000)
         self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
         print("🔵 Sending cancel signal...")
         if not self.finishedInstallation:
@@ -384,12 +385,6 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.actionVerb = _("update(verb)")
         self.label.setText(_("{0} update").format(package.Name))
 
-    def startInstallation(self) -> None:
-        while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
-            time.sleep(0.2)
-        print("🟢 Have permission to install, starting installation threads...")
-        self.callInMain.emit(self.runInstallation)
-
     def runInstallation(self) -> None:
         self.finishedInstallation = False
         self.addInfoLine.emit(_("Running the updater..."))
@@ -404,6 +399,12 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         else:
+            self.leftSlow.stop()
+            self.leftFast.stop()
+            self.rightSlow.stop()
+            self.rightFast.stop()
+            self.progressbar.setValue(1000)
+            if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
             if self.Package.Version in (_("Unknown"), "Unknown"):
                 IgnorePackageUpdates_SpecificVersion(self.Package.Id, self.Package.NewVersion, self.Package.Source)
             if returncode == RETURNCODE_NO_APPLICABLE_UPDATE_FOUND and not self.canceled:
@@ -446,12 +447,6 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.setFixedHeight(50)
         self.label.setText(_("{0} Uninstallation").format(package.Name))
 
-    def startInstallation(self) -> None:
-        while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
-            time.sleep(0.2)
-        print("🟢 Have permission to install, starting installation threads...")
-        self.callInMain.emit(self.runInstallation)
-
     def runInstallation(self) -> None:
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
@@ -475,6 +470,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
+        self.progressbar.setValue(1000)
+        self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
         self.liveOutputButton.setText(_("Uninstall canceled by the user!"))
         if not self.finishedInstallation:
             try:
@@ -503,6 +500,12 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
         else:
+            self.leftSlow.stop()
+            self.leftFast.stop()
+            self.rightSlow.stop()
+            self.rightFast.stop()
+            self.progressbar.setValue(1000)
+            if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
                 UPDATES_SECTION: SoftwareSection = globals.updates
                 UNINSTALL_SECTION: SoftwareSection = globals.uninstall
@@ -540,6 +543,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             except: pass
             if not(self.canceled):
                 if(returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED):
+                    self.setProgressbarColor("#11945a" if isDark() else "#11945a")
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
@@ -553,6 +557,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     if ENABLE_SUCCESS_NOTIFICATIONS:
                         t.show()
                 else:
+                    self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
                     globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))

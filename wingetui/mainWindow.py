@@ -89,7 +89,6 @@ class RootWindow(QMainWindow):
             }}""")
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
-        self.discover.addInstallation(PackageInstallerWidget(Package("", "", "", "", Winget), InstallationOptions()))
         globals.discover = self.discover
         self.widgets[self.discover] = self.addTab(self.discover, _("Discover Packages"))
         self.updates = UpdateSoftwareSection()
