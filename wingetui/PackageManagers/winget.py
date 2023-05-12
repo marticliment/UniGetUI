@@ -7,8 +7,6 @@ from .sampleHelper import *
 
 class WingetPackageManager(SamplePackageManager):
 
-    common_params = ["--source", "winget", "--accept-source-agreements"]
-
     if getSettings("UseSystemWinget"):
         EXECUTABLE = "winget.exe"
     else:
@@ -358,7 +356,7 @@ class WingetPackageManager(SamplePackageManager):
                 outputIsDescribing = False
                 outputIsShowingNotes = False
                 outputIsShowingTags = False
-                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact"]+self.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 output: list[str] = []
                 while p.poll() is None:
                     line = p.stdout.readline()
@@ -430,7 +428,7 @@ class WingetPackageManager(SamplePackageManager):
             versions = []
             while versions == [] and currentIteration < 50:
                 currentIteration += 1
-                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "-e", "--versions"]+self.common_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "-e", "--versions", "--source", "winget", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 foundDashes = False
                 while p.poll() is None:
                     line = p.stdout.readline().strip()
@@ -560,25 +558,27 @@ class WingetPackageManager(SamplePackageManager):
         widget.finishInstallation.emit(outputCode, output)
         
     def getFullPackageId(self, id: str) -> tuple[str, str]:
-        print(f"🟢 Starting winget search, winget on {self.EXECUTABLE}...")
-        p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--id", id.replace("…", "")] + self.self.common_params ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--id", id.replace("…", ""), "--source", "winget", "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         idSeparator = -1
+        print(f"🔵 Finding Id for {id}")
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
             if line:
                 if idSeparator != -1:
                     if not b"---" in line:
+                        print(f"🔵 found Id", str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip())
                         return str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
                 else:
                     l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","").split("\r")[-1]
                     if("Id" in l):
                         idSeparator = len(l.split("Id")[0])
+        print("🟡 Better id not found!")
         return id
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()

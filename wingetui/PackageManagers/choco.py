@@ -301,7 +301,7 @@ class ChocoPackageManager(SamplePackageManager):
         
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
