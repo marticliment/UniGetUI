@@ -764,6 +764,28 @@ try:
         border: 0px solid rgba(100, 100, 100, 25%);
         height: 30px;
     }}
+    #package {{
+        background-color:rgba(100, 100, 100, 6%);
+        border-radius: 8px;
+        border: 0px solid rgba(100, 100, 100, 25%);
+        height: 30px;
+    }}
+    #PackageButton {{
+        width: 150px;
+        background-color:rgba(81, 81, 81, 15%);
+        border-radius: 6px;
+        border: 0px solid rgba(86, 86, 86, 25%);
+        height: 25px;
+        font-size: 9pt;
+        margin: 0px;
+        font-family: "Segoe UI Variable Display Semib";
+    }}
+    #PackageButton:hover {{
+        background-color:rgba(86, 86, 86, 25%);
+        border-radius: 6px;
+        border: 0px solid rgba(100, 100, 100, 25%);
+        height: 30px;
+    }}
     #buttonier {{
         border: 0px solid rgba(100, 100, 100, 25%);
         border-radius: 12px;
@@ -1058,13 +1080,6 @@ try:
         border: none;
         padding-left: 10px;
         border-radius: 4px;
-    }}
-    #package {{
-        margin: 0px;
-        padding: 0px;
-        background-color: #55303030;
-        border-radius: 8px;
-        border: 1px solid #1f1f1f;
     }}
     QListWidget{{
         border: 0px;
@@ -1522,6 +1537,28 @@ try:
         border: 0px solid rgba(100, 100, 100, 25%);
         height: 30px;
     }}
+    #package {{
+        background-color:rgba(1, 1, 1, 3%);
+        border-radius: 8px;
+        border: 0px solid rgba(100, 100, 100, 25%);
+        height: 30px;
+    }}
+    #PackageButton {{
+        width: 150px;
+        background-color:rgba(255, 255, 255, 60%);
+        border-radius: 6px;
+        border: 0px solid rgba(86, 86, 86, 25%);
+        height: 25px;
+        font-size: 9pt;
+        margin: 0px;
+        font-family: "Segoe UI Variable Display Semib";
+    }}
+    #PackageButton:hover {{
+        background-color:rgba(255, 255, 255, 100%);
+        border-radius: 6px;
+        border: 0px solid rgba(100, 100, 100, 25%);
+        height: 30px;
+    }}
     #buttonier {{
         border: 0px solid rgba(100, 100, 100, 25%);
         border-radius: 12px;
@@ -1804,13 +1841,6 @@ try:
         border-top: 1px solid rgba(220, 220, 220, 80%);
         border-radius: 6px;
         height: 30px;
-    }}
-    #package {{
-        margin: 0px;
-        padding: 0px;
-        border-radius: 8px;
-        background-color:rgba(255, 255, 255, 55%);
-        border: 1px solid rgba(220, 220, 220, 55%);
     }}
     QPlainTextEdit{{
         border: 1px solid #eeeeee;

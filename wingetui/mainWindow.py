@@ -53,7 +53,7 @@ class RootWindow(QMainWindow):
             QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
 
-        
+
         print("🟢 Main application loaded...")
 
     def loadWidgets(self) -> None:
@@ -79,6 +79,7 @@ class RootWindow(QMainWindow):
         self.extrasMenuButton = QPushButton()
         self.showHideButton = QPushButton()
         self.installationsWidget = DynamicScrollArea(self.showHideButton)
+        self.installationsWidget.scrollArea.goTopButton.setVisible(False)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
         globals.installersWidget = self.installationsWidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)
@@ -88,6 +89,7 @@ class RootWindow(QMainWindow):
             }}""")
         self.discover = DiscoverSoftwareSection()
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
+        self.discover.addInstallation(PackageInstallerWidget(Package("", "", "", "", Winget), InstallationOptions()))
         globals.discover = self.discover
         self.widgets[self.discover] = self.addTab(self.discover, _("Discover Packages"))
         self.updates = UpdateSoftwareSection()

@@ -1138,5 +1138,12 @@ class MovableFramelessWindow(DraggableWindow):
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 
+class ButtonWithResizeSignal(QPushButton):
+    resized = Signal()
+    
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.resized.emit()
+        return super().resizeEvent(event)
+
 if __name__ == "__main__":
     import __init__

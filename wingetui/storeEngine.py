@@ -5,6 +5,7 @@ import sys, subprocess, time, os, json
 from threading import Thread
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+import PySide6.QtGui
 from PySide6.QtWidgets import *
 from tools import *
 from tools import _
@@ -60,18 +61,35 @@ class PackageInstallerWidget(QGroupBox):
         self.setObjectName("package")
         self.setFixedHeight(50)
         self.layout = QHBoxLayout()
-        self.layout.setContentsMargins(30, 10, 10, 10)
+        self.layout.setContentsMargins(10, 10, 10, 10)
+        self.iconLabel = QPushButton(self)
+        self.iconLabel.setIcon(QIcon(getMedia("install")))
+        self.iconLabel.setFixedHeight(30)
+        self.iconLabel.setIconSize(QSize(24, 24))
+        self.iconLabel.setFixedWidth(30)
         self.label = QLabel(_("{0} installation").format(package.Name))
+        self.layout.addWidget(self.iconLabel)
+        self.layout.addSpacing(5)
         self.layout.addWidget(self.label)
         self.layout.addSpacing(5)
-        self.progressbar = QProgressBar()
+        self.progressbar = QProgressBar(self)
         self.progressbar.setTextVisible(False)
         self.progressbar.setRange(0, 1000)
+        self.setProgressbarColor("grey")
         self.progressbar.setValue(0)
-        self.progressbar.setFixedHeight(4)
+        self.progressbar.show()
+        self.progressbar.setFixedHeight(2)
         self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not(self.progressbar.invertedAppearance())))
-        self.layout.addWidget(self.progressbar, stretch=1)
-        self.adminBadge = QPushButton()
+        self.finishInstallation.connect(self.finish)
+        self.addInfoLine.connect(lambda text: self.liveOutputButton.setText(text))
+        self.counterSignal.connect(self.counter)
+        self.liveOutputButton = ButtonWithResizeSignal(QIcon(getMedia("console", autoIconMode = False)), "")
+        self.liveOutputButton.clicked.connect(lambda: (self.liveOutputWindow.show(), ApplyMica(self.liveOutputWindow.winId(), isDark())))
+        self.liveOutputButton.setToolTip(_("Show the live output"))
+        self.liveOutputButton.setText(_("Waiting for other installations to finish..."))
+        self.liveOutputButton.resized.connect(self.updateProgressbarSize)
+        self.layout.addWidget(self.liveOutputButton, stretch=1)
+        self.adminBadge = QPushButton(self)
         self.adminBadge.setFixedSize(QSize(30, 30))
         self.adminBadge.setIcon(QIcon(getMedia("runasadmin")))
         self.adminBadge.setEnabled(False)
@@ -79,30 +97,19 @@ class PackageInstallerWidget(QGroupBox):
         self.layout.addWidget(self.adminBadge)
         if not self.Options.RunAsAdministrator:
             self.adminBadge.setVisible(False)
-        self.info = CustomLineEdit()
-        self.info.setClearButtonEnabled(False)
-        self.info.setStyleSheet("color: grey; border-bottom: inherit;")
-        self.info.setText(_("Waiting for other installations to finish..."))
-        self.info.setReadOnly(True)
-        self.addInfoLine.connect(lambda text: self.info.setText(text))
-        self.finishInstallation.connect(self.finish)
-        self.layout.addWidget(self.info)
-        self.counterSignal.connect(self.counter)
-        self.liveOutputButton = QPushButton(QIcon(getMedia("console", autoIconMode = False)), "")
-        self.liveOutputButton.clicked.connect(lambda: (self.liveOutputWindow.show(), ApplyMica(self.liveOutputWindow.winId(), isDark())))
-        self.liveOutputButton.setFixedHeight(30)
-        self.liveOutputButton.setFixedWidth(30)
-        self.liveOutputButton.setToolTip(_("Show the live output"))
-        self.liveOutputButton.setIcon(QIcon(getMedia("console")))
-        self.layout.addWidget(self.liveOutputButton)
         self.cancelButton = QPushButton(QIcon(getMedia("cancel", autoIconMode = False)), _("Cancel"))
         self.cancelButton.clicked.connect(self.cancel)
         self.cancelButton.setFixedHeight(30)
-        self.info.setFixedHeight(30)
+        self.liveOutputButton.setFixedHeight(28)
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
         self.canceled = False
         self.installId = str(time.time())
+        self.cancelButton.setObjectName("PackageButton")
+        self.adminBadge.setObjectName("PackageButton")
+        self.liveOutputButton.setObjectName("PackageButton")
+        self.liveOutputButton.setStyleSheet(f"text-align:left;font-family: \"Consolas\";font-weight: regular;padding-left: 5px;padding-right: 5px; color: {'lightgray' if isDark() else '#262626'};border-bottom-left-radius: 4px;border-bottom-right-radius: 4px;")
+        self.iconLabel.setObjectName("FlatButton")
         queueProgram(self.installId)
 
         self.leftSlow = QPropertyAnimation(self.progressbar, b"value")
@@ -129,10 +136,9 @@ class PackageInstallerWidget(QGroupBox):
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
 
-        self.leftSlow.start()
-
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
+        Thread(target=self.loadIconThread, daemon=True, name=f"Installer: loading icon for {package}").start()
         print(f"🟢 Waiting for install permission... title={self.Package.Name}, id={self.Package.Id}, installId={self.installId}")
         print("🔵 Given package:", package)
         print("🔵 Installation options:", options)
@@ -140,19 +146,37 @@ class PackageInstallerWidget(QGroupBox):
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
+            append = " "
+            try:
+                append += _("(Number {0} in the queue)").format(globals.pending_programs.index(self.installId))
+            except ValueError:
+                print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
+            globals.pending_programs.index(self.installId)
+            self.addInfoLine.emit(_("Waiting for other installations to finish...")+append)
         print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
+        
+    def loadIconThread(self):
+        iconPath = getPackageIcon(self.Package)
+        if os.path.exists(iconPath):
+            icon = QIcon(iconPath)
+            if not icon.isNull():
+                self.callInMain.emit(lambda: self.iconLabel.setIcon(icon))
+            else:
+                print(f"🟠 Icon for {self.Package.Id} exists but is null")
+        else:
+            print(f"🟡 Icon for {self.Package.Id} does not exist")
+            
+    def setProgressbarColor(self, color: str):
+        self.progressbar.raise_()
+        self.progressbar.setStyleSheet(f"QProgressBar::chunk{{border-top-left-radius: 0px;border-top-right-radius: 0px;margin-right: 2px;margin-left: 2px;background-color: {color}}}")
 
     def runInstallation(self) -> None:
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
-        self.leftSlow.stop()
-        self.leftFast.stop()
-        self.rightSlow.stop()
-        self.rightFast.stop()
-        self.addInfoLine.emit(_("Starting installation..."))
-        self.progressbar.setValue(0)
-        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
+        self.addInfoLine.emit(_("Running the installer..."))
+        self.leftSlow.start()
+        self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startInstallation(self.Package, self.Options, self)
         
     def counter(self, line: int) -> None:
@@ -169,6 +193,7 @@ class PackageInstallerWidget(QGroupBox):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
+        self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
         print("🔵 Sending cancel signal...")
         if not self.finishedInstallation:
             try:
@@ -176,7 +201,7 @@ class PackageInstallerWidget(QGroupBox):
             except Exception as e:
                 report(e)
         self.finishedInstallation = True
-        self.info.setText(_("Installation canceled by the user!"))
+        self.liveOutputButton.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
         self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
@@ -193,6 +218,12 @@ class PackageInstallerWidget(QGroupBox):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
+        self.leftSlow.stop()
+        self.leftFast.stop()
+        self.rightSlow.stop()
+        self.rightFast.stop()
+        self.progressbar.setValue(1000)
+        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
         if returncode in (RETURNCODE_NEEDS_ELEVATION, RETURNCODE_NEEDS_SCOOP_ELEVATION):
             self.Options.RunAsAdministrator = True
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
@@ -218,13 +249,14 @@ class PackageInstallerWidget(QGroupBox):
         t = ToastNotification(self, self.callInMain.emit)
         t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
         if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
+            self.setProgressbarColor("#11945a" if isDark() else "#11945a")
             if returncode in (RETURNCODE_OPERATION_SUCCEEDED, RETURNCODE_NO_APPLICABLE_UPDATE_FOUND):
                 t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
                 t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                 if ENABLE_SUCCESS_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
-                self.info.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
+                self.liveOutputButton.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                 self.startCoolDown()
             if returncode == RETURNCODE_NEEDS_RESTART:
                 t.setTitle(_("Restart required"))
@@ -235,13 +267,14 @@ class PackageInstallerWidget(QGroupBox):
                 if ENABLE_WINGETUI_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
-                self.info.setText(_("Restart your PC to finish installation"))
+                self.liveOutputButton.setText(_("Restart your PC to finish installation"))
             if type(self) == PackageInstallerWidget:
                 if not self.Package.Id in globals.uninstall.IdPackageReference.keys():
                     print("🔵 Adding package to the uninstall section...")
                     globals.uninstall.addItem(self.Package)
                     globals.uninstall.updatePackageNumber()
         else:
+            self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
             globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
             self.err = CustomMessageBox(self.window())
@@ -279,15 +312,14 @@ class PackageInstallerWidget(QGroupBox):
                 op3=QGraphicsOpacityEffect(self)
                 op4=QGraphicsOpacityEffect(self)
                 op5=QGraphicsOpacityEffect(self)
-                op6=QGraphicsOpacityEffect(self)
-                ops = [op1, op2, op3, op4, op5, op6]
+                ops = [op1, op2, op3, op4, op5]
                 return ops
 
             def updateOp(v: float):
                 i = 0
                 if self.ops == -1:
                     self.ops = setUpOPS()
-                for widget in [self.cancelButton, self.label, self.progressbar, self.info, self.liveOutputButton, self.adminBadge]:
+                for widget in [self.cancelButton, self.label, self.progressbar, self.liveOutputButton, self.adminBadge]:
                     self.ops[i].setOpacity(v)
                     widget: QWidget
                     widget.setGraphicsEffect(self.ops[i])
@@ -326,6 +358,20 @@ class PackageInstallerWidget(QGroupBox):
         super().close()
         self.liveOutputWindow.close()
         super().destroy()
+        
+    def showEvent(self, event: QShowEvent) -> None:
+        self.updateProgressbarSize()
+        return super().showEvent(event)
+        
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.updateProgressbarSize()
+        return super().resizeEvent(event)
+        
+    def updateProgressbarSize(self):
+        pos = self.liveOutputButton.pos()
+        pos.setY(pos.y()+self.liveOutputButton.height()-2)
+        self.progressbar.move(pos)
+        self.progressbar.setFixedWidth(self.liveOutputButton.width())
 
 class PackageUpdaterWidget(PackageInstallerWidget):
 
@@ -346,15 +392,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
 
     def runInstallation(self) -> None:
         self.finishedInstallation = False
-        self.leftSlow.stop()
-        self.leftFast.stop()
-        self.rightSlow.stop()
-        self.addInfoLine.emit(_("Applying update..."))
-        self.rightFast.stop()
-        self.progressbar.setValue(0)
-        self.Package.Id = self.Package.Id.replace("…", "")
-        self.Package.Name = self.Package.Name.replace("…", "")
-        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
+        self.addInfoLine.emit(_("Running the updater..."))
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
+        self.leftSlow.start()
+        self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startUpdate(self.Package, self.Options, self)
 
     def finish(self, returncode: int, output: str = "") -> None:
@@ -413,14 +454,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
 
     def runInstallation(self) -> None:
         self.finishedInstallation = False
-        self.leftSlow.stop()
-        self.leftFast.stop()
-        self.rightSlow.stop()
-        self.rightFast.stop()
-        self.Package.Id = self.Package.Id.replace("…", "")
-        self.Package.Name = self.Package.Name.replace("…", "")
-        self.progressbar.setValue(0)
-        if self.progressbar.invertedAppearance(): self.progressbar.setInvertedAppearance(False)
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
+        self.leftSlow.start()
+        self.addInfoLine.emit(_("Running the uninstaller..."))
+        self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startUninstallation(self.Package, self.Options, self)
 
     def counter(self, line: int) -> None:
@@ -438,7 +475,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
-        self.info.setText(_("Uninstall canceled by the user!"))
+        self.liveOutputButton.setText(_("Uninstall canceled by the user!"))
         if not self.finishedInstallation:
             try:
                 os.kill(self.p.pid, signal.CTRL_C_EVENT)
@@ -506,7 +543,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)
-                    self.info.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
+                    self.liveOutputButton.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
                     t = ToastNotification(self, self.callInMain.emit)                    

@@ -381,6 +381,34 @@ def formatPackageIdAsName(id: str):
     """
     return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")])
 
+def getPackageIcon(package) -> str:
+    try:
+        id = package.Id
+        iconId = package.getIconId()
+        iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
+        if not os.path.exists(iconpath):
+            iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+            print("🔵 Found icon: ", iconurl)
+            if iconurl:
+                icondata = urlopen(iconurl).read()
+                with open(iconpath, "wb") as f:
+                    f.write(icondata)
+            else:
+                print("🟡 Icon url empty")
+                raise KeyError(f"{iconurl} was empty")
+        else:
+            cprint(f"🔵 Found cached image in {iconpath}")
+        return iconpath
+    except Exception as e:
+        try:
+            if type(e) != KeyError:
+                report(e)
+            else:
+                print(f"🟡 Icon {iconId} not found in json")
+        except Exception as e:
+            report(e)
+        return ""
+
 ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
 ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
 ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
