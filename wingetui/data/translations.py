@@ -6,7 +6,6 @@ untranslatedPercentage = {
   "bn": "18%",
   "da": "41%",
   "fa": "81%",
-  "hi": "57%",
   "id": "85%",
   "ja": "80%",
   "nb": "98%",
@@ -130,7 +129,11 @@ languageCredits = {
   ],
   "hi": [
     {
-      "name": "Satyam Singh Niranjan",
+      "name": "atharva_xoxo",
+      "link": "https://github.com/atharva_xoxo"
+    },
+    {
+      "name": "{0} {0} {0} Satyam Singh Niranjan",
       "link": ""
     }
   ],
