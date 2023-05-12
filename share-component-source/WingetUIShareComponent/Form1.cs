@@ -54,7 +54,7 @@ namespace WingetUIShareComponent
                 {
                     throw new ArgumentException("Width and Height values must not be smaller than 100px each");
                 }
-            } catch (Exception ex)
+            } catch (Exception)
             {
                 Screen screen = Screen.PrimaryScreen;
                 Rectangle rect = screen.Bounds;
