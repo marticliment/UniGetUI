@@ -1,1 +1,0 @@
-"%AppData%/../Local/Programs/wingetUI Store/unins000.exe" /verysilent

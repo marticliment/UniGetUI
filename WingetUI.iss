@@ -27,7 +27,8 @@ CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputBaseFilename=WingetUI Installer
-OutputDir=.
+OutputDir=.     
+MinVersion=10.0
 SetupIconFile=wingetui\resources\icon.ico
 UninstallDisplayIcon={app}\WingetUI.exe
 Compression=lzma
