@@ -156,9 +156,7 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 [Files]
 Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
-Source: "Y:\WinGetUI-Store\disable_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
-; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
+; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
 Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -169,8 +167,6 @@ Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-;Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
-;Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
 
