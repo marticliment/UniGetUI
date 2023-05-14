@@ -156,7 +156,6 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 [Files]
 Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "Y:\WinGetUI-Store\remove-old.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "Y:\WinGetUI-Store\install_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "Y:\WinGetUI-Store\disable_scoop.cmd"; DestDir: "{app}"; Flags: deleteafterinstall
 ; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
