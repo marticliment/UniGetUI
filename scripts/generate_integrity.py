@@ -8,8 +8,12 @@ import time
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(root_dir) # move to root project
 
-sys.path.append("wingetui")
-os.chdir("wingetui")
+if not "--buildfiles" in sys.argv:
+    sys.path.append("wingetui")
+    os.chdir("wingetui")
+else:
+    sys.path.append("wingetui_bin")
+    os.chdir("wingetui_bin")
 
 HASHES: dict[str:str] = {}
 

@@ -34,10 +34,11 @@ rmdir /Q /S lang\__pycache__
 rmdir /Q /S build
 rmdir /Q /S dist
 
+%py% ..\scripts\generate_integrity.py --buildfiles
 %py% -m PyInstaller "Win.spec"
 if %errorlevel% neq 0 goto:error
 
-timeout 2
+timeout 5
 
 pushd dist\wingetuiBin\PySide6
 del opengl32sw.dll
@@ -66,6 +67,8 @@ popd
 move dist\wingetuiBin ..\
 popd
 rmdir /Q /S wingetui_bin
+
+timeout 2
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
