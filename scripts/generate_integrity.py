@@ -16,7 +16,7 @@ HASHES: dict[str:str] = {}
 time0 = time.time()
 
 for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./components/**.exe") + glob.glob("./**/**.pyc") + glob.glob("./**.pyc"):
-    if "__init__" in file:
+    if "__init__" in file or "__pycache__" in file:
         continue
     with open(file,"rb") as f:
         bytes = f.read() # read entire file as bytes
