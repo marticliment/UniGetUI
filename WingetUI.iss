@@ -170,7 +170,6 @@ Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\remove-old.cmd"; Flags: runhidden
 ;Filename: "{app}\install_scoop.cmd"; Flags: runhidden; Tasks: installscoop
 ;Filename: "{app}\disable_scoop.cmd"; Flags: runhidden; Tasks: disablescoop
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
