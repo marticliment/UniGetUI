@@ -15,8 +15,8 @@ HASHES: dict[str:str] = {}
 
 time0 = time.time()
 
-for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./**/**.exe") + glob.glob("./**/**.pyc") + glob.glob("./**.pyc"):
-    if file in (".\\winget-cli\\winget.exe", ".\\winget-cli\\WindowsPackageManagerServer.exe", ".\\choco-cli\\choco.exe"):
+for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./components/**.exe") + glob.glob("./**/**.pyc") + glob.glob("./**.pyc"):
+    if "__init__" in file:
         continue
     with open(file,"rb") as f:
         bytes = f.read() # read entire file as bytes
