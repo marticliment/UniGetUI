@@ -341,7 +341,6 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def __init__(self, parent = None):
         super().__init__()
         
-
     def setAction(self, action: QAction):
         self.itemAction = action
 
@@ -1174,6 +1173,14 @@ class VerticallyDraggableWidget(QLabel):
         globals.app.restoreOverrideCursor()
         self.oldPos = QCursor.pos()
         return super().mouseReleaseEvent(event)
+    
+    def hideEvent(self, event: QHideEvent) -> None:
+        globals.app.restoreOverrideCursor()
+        return super().hideEvent(event)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        globals.app.restoreOverrideCursor()
+        return super().closeEvent(event)
 
 
 if __name__ == "__main__":
