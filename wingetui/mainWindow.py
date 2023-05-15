@@ -77,9 +77,8 @@ class RootWindow(QMainWindow):
         self.buttonier.setObjectName("buttonier")
         self.buttonier.setLayout(self.buttonLayout)
         self.extrasMenuButton = QPushButton()
-        self.showHideButton = QPushButton()
         self.resizewidget = VerticallyDraggableWidget()
-        self.installationsWidget = DynamicScrollArea(self.showHideButton, self.resizewidget)
+        self.installationsWidget = DynamicScrollArea(self.resizewidget)
         self.installationsWidget.scrollArea.goTopButton.setVisible(False)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
         globals.installersWidget = self.installationsWidget
@@ -149,24 +148,11 @@ class RootWindow(QMainWindow):
         vl.addLayout(hl)
         vl.addWidget(self.mainWidget, stretch=1)
         self.buttonBox.buttons()[0].setChecked(True)
-        self.showHideButton.setStyleSheet("padding: 2px;border-radius: 4px;")
-        self.showHideButton.setIconSize(QSize(12, 12))
-        self.showHideButton.setFixedSize(QSize(32, 16))
-        self.showHideButton.hide()
-        self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-        self.showHideButton.clicked.connect(lambda: self.toggleInstallationsSection())
         self.resizewidget.setObjectName("DraggableVerticalSection")
         self.resizewidget.setFixedHeight(9)
         self.resizewidget.setFixedWidth(300)
         self.resizewidget.hide()
         self.resizewidget.dragged.connect(self.adjustInstallationsSize)
-        ebw = QWidget()
-        ebw.setLayout(QHBoxLayout())
-        ebw.layout().setContentsMargins(0, 0, 0, 0)
-        ebw.layout().addStretch()
-        ebw.layout().addWidget(self.showHideButton)
-        ebw.layout().addStretch()
-        vl.addWidget(ebw)
         ebw = QWidget()
         ebw.setLayout(QHBoxLayout())
         ebw.layout().setContentsMargins(0, 0, 0, 0)
@@ -193,12 +179,10 @@ class RootWindow(QMainWindow):
         if self.installationsWidget.isVisible():
             self.installationsWidget.setVisible(False)
             self.resizewidget.setVisible(False)
-            self.showHideButton.setIcon(QIcon(getMedia("expand")))
         else:
             self.installationsWidget.setVisible(True)
             self.resizewidget.setVisible(False)
             self.adjustInstallationsSize()
-            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
             
     def adjustInstallationsSize(self, offset: int = 0) -> None:
         if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():

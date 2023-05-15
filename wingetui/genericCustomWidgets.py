@@ -280,10 +280,9 @@ class ResizableWidget(QWidget):
 
 class DynamicScrollArea(QWidget):
     maxHeight = 200
-    def __init__(self, showHideArrow: QPushButton = None, resizeBar: QWidget = None, parent = None) -> None:
+    def __init__(self, resizeBar: QWidget = None, parent = None) -> None:
         super().__init__(parent)
         l = QVBoxLayout()
-        self.showHideArrow = showHideArrow
         self.resizeBar = resizeBar
         l.setContentsMargins(5, 0, 5, 5)
         self.scrollArea = SmoothScrollArea()
@@ -330,13 +329,11 @@ class DynamicScrollArea(QWidget):
         if self.itemCount <= 0:
             globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
             self.resizeBar.hide()
-            #self.showHideArrow.hide()
 
     def addItem(self, item: QWidget):
         self.vlayout.addWidget(item)
         self.itemCount = self.vlayout.count()
         self.resizeBar.show()
-        #self.showHideArrow.show()
         globals.trayIcon.setIcon(QIcon(getMedia("icon")))
 
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
@@ -1153,7 +1150,7 @@ class VerticallyDraggableWidget(QLabel):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.pressed = True
-        self.oldPos = event.pos()
+        self.oldPos = QCursor.pos()
         return super().mousePressEvent(event)
     
     def enterEvent(self, event: QEnterEvent) -> None:
@@ -1164,12 +1161,18 @@ class VerticallyDraggableWidget(QLabel):
         if not self.pressed:
             globals.app.restoreOverrideCursor()
         return super().leaveEvent(event)
+    
+    def mouseMoveEvent(self, ev: QMouseEvent) -> None:
+        if self.pressed:
+            self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(QCursor.pos()).y()))
+            self.oldPos = QCursor.pos()
+        return super().mouseMoveEvent(ev)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.pressed = False
-        self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(event.pos()).y()))
+        self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(QCursor.pos()).y()))
         globals.app.restoreOverrideCursor()
-        self.oldPos = event.pos()
+        self.oldPos = QCursor.pos()
         return super().mouseReleaseEvent(event)
 
 
