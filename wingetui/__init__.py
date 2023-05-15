@@ -712,7 +712,6 @@ try:
         }}
         QMenu {{
             padding: 2px;
-            outline: 0px;
             color: white;
             background: transparent;
             border-radius: 8px;
@@ -738,7 +737,6 @@ try:
             background: transparent;
             height: 30px;
             color: grey;
-            outline: none;
             border: none;
             padding-right: 10px;
             padding-left: 10px;
@@ -747,7 +745,6 @@ try:
         QMenu::item:selected{{
             background: rgba(255, 255, 255, 10%);
             height: 30px;
-            outline: none;
             border: none;
             padding-right: 10px;
             padding-left: 10px;
@@ -756,7 +753,6 @@ try:
         QMenu::item:selected:disabled{{
             background: transparent;
             height: 30px;
-            outline: none;
             border: none;
             padding-right: 10px;
             padding-left: 10px;
@@ -967,7 +963,6 @@ try:
             background-color: transparent;
             padding: 0px;
             margin: 0px;
-            outline: none;
             border-radius: 6px;
             border: 0px solid #1f1f1f;
         }}
@@ -976,7 +971,6 @@ try:
             margin-bottom: 3px;
             padding-top: 3px;
             padding-bottom: 3px;
-            outline: none;
             background-color: rgba(48, 48, 48, 20%);
             height: 25px;
             border-bottom: 1px solid #1f1f1f;
@@ -988,7 +982,6 @@ try:
             padding: 0px;
             padding-top: 3px;
             padding-bottom: 3px;
-            outline: none;
             background-color: rgba(48, 48, 48, 35%);
             height: 25px;
             border-bottom: 1px solid #303030;
@@ -1001,7 +994,6 @@ try:
             padding: 0px;
             padding-top: 3px;
             padding-bottom: 3px;
-            outline: none;
             background-color: rgba(48, 48, 48, 45%);
             height: 25px;
             border-bottom: 1px solid #303030;
@@ -1123,7 +1115,6 @@ try:
         QComboBox QAbstractItemView {{
             padding: 4px;
             margin: 0px;
-            outline: 0px;
             border-radius: 8px;
         }}
         QComboBox#transparent QAbstractItemView {{
@@ -1139,7 +1130,6 @@ try:
         QComboBox QAbstractItemView::item:selected{{
             background: rgba(255, 255, 255, 6%);
             height: 30px;
-            outline: none;
             border: none;
             padding-left: 10px;
             border-radius: 4px;
@@ -1177,6 +1167,9 @@ try:
             font-family: "Segoe UI Variable Text";
             font-size: 9pt;
             padding: 4px;
+            outline: 2px solid white;
+            outline-offset: -3px;
+            outline-radius: 8px;
         }}
         QToolButton:hover {{
             background-color:rgba(100, 100, 100, 12%);
@@ -1354,7 +1347,6 @@ try:
         #stCmbbx QAbstractItemView {{
             border: 1px solid rgba(36, 36, 36, 50%);
             padding: 4px;
-            outline: 0;
             padding-right: 0;
             background-color: #303030;
             border-radius: 8px;
@@ -1368,7 +1360,6 @@ try:
         #stCmbbx QAbstractItemView::item:selected{{
             background: rgba(255, 255, 255, 6%);
             height: 30px;
-            outline: none;
             border: none;
             padding-left: 10px;
             border-radius: 4px;
@@ -1850,7 +1841,6 @@ try:
             height: 2px;
             width: 2px;
         }}
-        
         QComboBox QAbstractItemView {{
             padding: 0px;
             margin: 0px;

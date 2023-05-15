@@ -83,6 +83,8 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.contextMenu.addAction(self.MenuDetailsAction)
         self.contextMenu.addSeparator()
         
+        self.finishInitialisation()
+        
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
             return
@@ -364,6 +366,8 @@ class UpdateSoftwareSection(SoftwareSection):
         self.contextMenu.addSeparator()
         self.contextMenu.addAction(self.ShareAction)
         self.contextMenu.addAction(self.DetailsAction)
+        
+        self.finishInitialisation()
         
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
@@ -810,6 +814,8 @@ class UninstallSoftwareSection(SoftwareSection):
         self.contextMenu.addSeparator()
         self.contextMenu.addAction(self.ShareAction)
         self.contextMenu.addAction(self.DetailsAction)
+
+        self.finishInitialisation()
 
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():

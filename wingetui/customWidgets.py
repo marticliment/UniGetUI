@@ -911,12 +911,17 @@ class SoftwareSection(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         
+    def finishInitialisation(self):
+        print(f"🟢 {self.sectionName} tab loaded successfully")
+        toolbarWidgets = [self.toolbar.widgetForAction(action) for action in self.toolbar.actions() if self.toolbar.widgetForAction(action) != None and type(self.toolbar.widgetForAction(action)) != TenPxSpacer]
+        print(toolbarWidgets)
+        taborder = [self.forceCheckBox, self.query, self.searchButton, self.reloadButton] + toolbarWidgets + [self.packageList]
+        for i in range(len(taborder)-1):
+            print(taborder[i], taborder[i+1])
+            self.setTabOrder(taborder[i], taborder[i+1])
         self.leftSlow.start()
-        
-        print(f"🟢 {sectionName} tab loaded successfully")
-        
         self.startLoadingPackages(force = True)
-        
+
     def showContextMenu(self, pos: QPoint):
         raise NotImplementedError("This function requires being reimplemented")
     
