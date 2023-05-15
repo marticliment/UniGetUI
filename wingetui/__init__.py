@@ -2106,6 +2106,15 @@ try:
             padding-left: 10px;
             border-radius: 4px;
         }}
+        #DraggableVerticalSection {{
+            background-color: rgba(0, 0, 0, 17%);
+            border-radius: 2px;
+            margin: 5px;
+            margin-bottom: 0px;
+        }}
+        #DraggableVerticalSection:hover {{
+            background-color: rgba(0, 0, 0, 25%);
+        }}
         """
 
         menuLightCSS = f"""
