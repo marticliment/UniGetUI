@@ -38,7 +38,6 @@ class SmoothScrollArea(QScrollArea):
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
         self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
-        self.verticalScrollBar().setFixedWidth(15)
         
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
@@ -372,11 +371,15 @@ class PushButtonWithAction(QPushButton):
 class CustomComboBox(QComboBox):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
+        self.setAutoFillBackground(True)
+        self.setAttribute(Qt.WA_StyledBackground)
         self.setItemDelegate(QStyledItemDelegate(self))
+        self.setObjectName("transparent")
+        self.view().window().setObjectName("transparent")
 
     def showEvent(self, event: QShowEvent) -> None:
         v = self.view().window()
-        ApplyMenuBlur(v.winId(), v)
+        ApplyMenuBlur(v.winId().__int__(), v)
         return super().showEvent(event)
 
     def dg(self):
@@ -830,7 +833,10 @@ class SectionButton(QWidget):
         self.button = QPushButton(btntext+" ", self)
         self.button.setLayoutDirection(Qt.RightToLeft)
         self.setObjectName("stBtn")
-        self.label = QLabel("\u200e"+text, self)
+        self.button.setMinimumWidth(250)
+        self.setFixedHeight(50)
+        self.button.setFixedHeight(30)
+        self.label = QLabel(text, self)
         if lang["locale"] == "zh_TW":
             self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
             self.button.setStyleSheet("font-size: 10pt;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
@@ -862,11 +868,14 @@ class SectionComboBox(QWidget):
         self.buttonOn = buttonEnabled
         self.setAttribute(Qt.WA_StyledBackground)
         self.combobox = CustomComboBox(self)
+        self.combobox.setMinimumWidth(250)
         self.setObjectName("stBtn")
         self.restartButton = QPushButton("Restart ElevenClock", self)
         self.restartButton.hide()
+        self.restartButton.setFixedHeight(30)
+        self.restartButton.setFixedWidth(150)
         self.restartButton.setObjectName("AccentButton")
-        self.label = QLabel("\u200e"+text, self)
+        self.label = QLabel(text, self)
 
         if lang["locale"] == "zh_TW":
             self.label.setStyleSheet("font-size: 11pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")

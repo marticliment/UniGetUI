@@ -891,33 +891,41 @@ try:
         QLabel{{
             selection-background-color: rgb({colors[2]});
         }}
-        QScrollBar:vertical {{
+        QScrollBar {{
             background: transparent;
-            border: 1px solid #1f1f1f;
-            margin: 3px;
-            width: 18px;
+            margin: 4px;
+            margin-left: 0;
+            width: 16px;
+            height: 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
+        }}
+        QScrollBar:horizontal {{
+            margin-bottom: 0;
+            padding-bottom: 0;
+            height: 12px;
         }}
         QScrollBar::handle {{
             margin: 3px;
             min-height: 20px;
             min-width: 20px;
             border-radius: 3px;
-            background: #505050;
+            background: rgba(80, 80, 80, 40%);
         }}
         QScrollBar::handle:hover {{
             margin: 3px;
             border-radius: 3px;
-            background: #808080;
+            background: rgba(112, 112, 112, 35%);
         }}
         QScrollBar::add-line {{
             height: 0;
+            width: 0;
             subcontrol-position: bottom;
             subcontrol-origin: margin;
         }}
         QScrollBar::sub-line {{
             height: 0;
+            width: 0;
             subcontrol-position: top;
             subcontrol-origin: margin;
         }}
@@ -1077,21 +1085,21 @@ try:
             border-radius: 4px;
         }}
         QComboBox {{
-            width: 100px;
-            background-color: rgba(81, 81, 81, 25%);
+            width: 200px;
+            background-color:rgba(81, 81, 81, 10%);
             border-radius: 6px;
-            border: 1px solid rgba(86, 86, 86, 25%);
+            border: 1px solid rgba(86, 86, 86, 10%);
             height: 30px;
+            border-top: 1px solid rgba(99, 99, 99, 10%);
             padding-left: 10px;
-            border: 1px solid rgba(86, 86, 86, 25%);
-            margin: 0px;
+            padding-right: 10px;
         }}
         QComboBox:hover {{
-            background-color: rgba(86, 86, 86, 25%);
+            background-color:rgba(86, 86, 86, 20%);
             border-radius: 6px;
-            border: 1px solid rgba(100, 100, 100, 25%);
+            border: 1px solid rgba(100, 100, 100, 15%);
             height: 30px;
-            padding-left: 10px;
+            border-top: 1px solid rgba(107, 107, 107, 15%);
         }}
         QComboBox::drop-down {{
             subcontrol-origin: padding;
@@ -1113,12 +1121,14 @@ try:
             width: 8px;
         }}
         QComboBox QAbstractItemView {{
-            border: 1px solid rgba(36, 36, 36, 50%);
             padding: 4px;
             margin: 0px;
             outline: 0px;
-            background-color: #303030;
             border-radius: 8px;
+        }}
+        QComboBox#transparent QAbstractItemView {{
+            border: 1px solid transparent;
+            background-color: transparent;
         }}
         QComboBox QAbstractItemView::item{{
             height: 30px;
