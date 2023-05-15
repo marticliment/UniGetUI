@@ -191,20 +191,20 @@ class PackageInstallerWidget(QGroupBox):
             self.progressbar.setValue(750)
 
     def cancel(self):
+        print("🔵 Sending cancel signal...")
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
         self.rightFast.stop()
         self.progressbar.setValue(1000)
         self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
-        print("🔵 Sending cancel signal...")
+        self.liveOutputButton.setText(_("Installation canceled by the user!"))
         if not self.finishedInstallation:
             try:
                 os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except Exception as e:
                 report(e)
         self.finishedInstallation = True
-        self.liveOutputButton.setText(_("Installation canceled by the user!"))
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
         self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
@@ -315,14 +315,15 @@ class PackageInstallerWidget(QGroupBox):
                 op3=QGraphicsOpacityEffect(self)
                 op4=QGraphicsOpacityEffect(self)
                 op5=QGraphicsOpacityEffect(self)
-                ops = [op1, op2, op3, op4, op5]
+                op6=QGraphicsOpacityEffect(self)
+                ops = [op1, op2, op3, op4, op5, op6]
                 return ops
 
             def updateOp(v: float):
                 i = 0
                 if self.ops == -1:
                     self.ops = setUpOPS()
-                for widget in [self.cancelButton, self.label, self.progressbar, self.liveOutputButton, self.adminBadge]:
+                for widget in [self.cancelButton, self.label, self.progressbar, self.liveOutputButton, self.adminBadge, self.iconLabel]:
                     self.ops[i].setOpacity(v)
                     widget: QWidget
                     widget.setGraphicsEffect(self.ops[i])
@@ -480,7 +481,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                 os.kill(self.p.pid, signal.CTRL_C_EVENT)
             except Exception as e:
                 report(e)
-            self.finishedInstallation = True
+        self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         self.cancelButton.setText(_("Close"))
         self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
