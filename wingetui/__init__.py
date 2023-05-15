@@ -1507,28 +1507,6 @@ try:
             padding-left: 10px;
             border-radius: 4px;
         }}
-        QComboBox QAbstractItemView {{
-            border: 1px solid rgba(196, 196, 196, 25%);
-            padding: 4px;
-            outline: 0px;
-            background-color: rgba(255, 255, 255, 10%);
-            border-radius: 8px;
-        }}
-        QComboBox QAbstractItemView::item{{
-            height: 10px;
-            border: none;
-            padding-left: 10px;
-            border-radius: 4px;
-        }}
-        QComboBox QAbstractItemView::item:selected{{
-            background: rgba(0, 0, 0, 6%);
-            height: 10px;
-            outline: none;
-            color: black;
-            border: none;
-            padding-left: 10px;
-            border-radius: 4px;
-        }}
         QMessageBox{{
             background-color: #f9f9f9;
         }}
@@ -1655,40 +1633,52 @@ try:
             border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 55%);
         }}
-        QScrollBar:vertical {{
+        QScrollBar {{
             background: transparent;
-            border: 1px solid rgba(240, 240, 240, 55%);
-            margin: 3px;
-            width: 18px;
+            margin: 4px;
+            margin-left: 0;
+            width: 16px;
+            height: 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
         }}
-        QScrollBar::handle {{
+        QScrollBar:horizontal {{
+            margin-bottom: 0;
+            padding-bottom: 0;
+            height: 12px;
+        }}
+        QScrollBar:vertical {{
+            background: rgba(255, 255, 255, 0%);
+            margin: 4px;
+            width: 16px;
+            border: none;
+            border-radius: 5px;
+        }}
+        QScrollBar::handle:vertical {{
             margin: 3px;
+            border-radius: 3px;
             min-height: 20px;
-            min-width: 20px;
-            border-radius: 3px;
-            background: #a0a0a0;
+            background: rgba(90, 90, 90, 25%);
         }}
-        QScrollBar::handle:hover {{
+        QScrollBar::handle:vertical:hover {{
             margin: 3px;
             border-radius: 3px;
-            background: #808080;
+            background: rgba(90, 90, 90, 35%);
         }}
-        QScrollBar::add-line {{
+        QScrollBar::add-line:vertical {{
             height: 0;
             subcontrol-position: bottom;
             subcontrol-origin: margin;
         }}
-        QScrollBar::sub-line {{
+        QScrollBar::sub-line:vertical {{
             height: 0;
             subcontrol-position: top;
             subcontrol-origin: margin;
         }}
-        QScrollBar::up-arrow, QScrollBar::down-arrow {{
+        QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {{
             background: none;
         }}
-        QScrollBar::add-page, QScrollBar::sub-page {{
+        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
             background: none;
         }}
         QHeaderView,QAbstractItemView {{
@@ -1869,14 +1859,16 @@ try:
             border-radius: 8px;
             color: black;
         }}
+        QComboBox#transparent QAbstractItemView {{
+            border: 1px solid transparent;
+            background-color: transparent;
+            padding: 4px;
+        }}
         QComboBox QAbstractItemView::item{{
             height: 30px;
-            margin: 4px;
             border: none;
             padding-left: 10px;
-            color: black;
             border-radius: 4px;
-            background: rgba(255, 255, 255, 1%);
         }}
         QComboBox QAbstractItemView::item:hover{{
             background: rgba(0, 0, 0, 10%);
