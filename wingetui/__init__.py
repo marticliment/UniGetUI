@@ -396,7 +396,7 @@ try:
                 try:
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm = "sudo")))
                     o = subprocess.run(f"{GSUDO_EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-                    globals.componentStatus["sudoFound"] = o.returncode == 0
+                    globals.componentStatus["sudoFound"] = shutil.which(GSUDO_EXECUTABLE) != None
                     globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
                     self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm = "Sudo", state = _("Yes") if globals.componentStatus['sudoFound'] else _("No"))))
                 except Exception as e:
