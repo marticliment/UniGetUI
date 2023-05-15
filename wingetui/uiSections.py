@@ -315,60 +315,69 @@ class UpdateSoftwareSection(SoftwareSection):
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
         
+        self.contextMenu = QMenu(self)
+        self.contextMenu.setParent(self)
+        self.contextMenu.setStyleSheet("* {background: red;color: black}")
+        self.DetailsAction = QAction(_("Package details"))
+        self.DetailsAction.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), update=True))
+        self.DetailsAction.setIcon(QIcon(getMedia("info")))
+        self.UpdateAction = QAction(_("Update"))
+        self.UpdateAction.setIcon(QIcon(getMedia("menu_updates")))
+        self.UpdateAction.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem()))
+        self.AdminAction = QAction(_("Update as administrator"))
+        self.AdminAction.setIcon(QIcon(getMedia("runasadmin")))
+        self.AdminAction.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), admin=True))
+        self.SkipHashAction = QAction(_("Skip hash check"))
+        self.SkipHashAction.setIcon(QIcon(getMedia("checksum")))
+        self.SkipHashAction.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), skiphash=True))
+        self.InteractiveAction = QAction(_("Interactive update"))
+        self.InteractiveAction.setIcon(QIcon(getMedia("interactive")))
+        self.InteractiveAction.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), interactive=True))
+        self.UninstallAction = QAction(_("Uninstall package"))
+        self.UninstallAction.setIcon(QIcon(getMedia("menu_uninstall")))
+        def uninstallPackage():
+            UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
+            if self.packageList.currentItem():
+                id = self.ItemPackageReference[self.packageList.currentItem()].Id
+            UNINSTALL_SECTION.uninstallPackageItem(UNINSTALL_SECTION.IdPackageReference[id].PackageItem)
+        self.UninstallAction.triggered.connect(lambda: uninstallPackage())
+        self.IgnoreUpdates = QAction(_("Ignore updates for this package"))
+        self.IgnoreUpdates.setIcon(QIcon(getMedia("pin")))
+        self.IgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
+        self.SkipVersionAction = QAction(_("Skip this version"))
+        self.SkipVersionAction.setIcon(QIcon(getMedia("skip")))
+        self.SkipVersionAction.triggered.connect(lambda: (IgnorePackageUpdates_SpecificVersion(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
+
+        self.ShareAction = QAction(_("Share this package"))
+        self.ShareAction.setIcon(QIcon(getMedia("share")))
+        self.ShareAction.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+
+        self.contextMenu.addAction(self.UpdateAction)
+        self.contextMenu.addSeparator()
+        self.contextMenu.addAction(self.AdminAction)
+        self.contextMenu.addAction(self.InteractiveAction)
+        self.contextMenu.addAction(self.SkipHashAction)
+        self.contextMenu.addAction(self.UninstallAction)
+        self.contextMenu.addSeparator()
+        self.contextMenu.addAction(self.IgnoreUpdates)
+        self.contextMenu.addAction(self.SkipVersionAction)
+        self.contextMenu.addSeparator()
+        self.contextMenu.addAction(self.ShareAction)
+        self.contextMenu.addAction(self.DetailsAction)
+        
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
             return
         if self.packageList.currentItem().isHidden():
             return
-        contextMenu = QMenu(self)
-        contextMenu.setParent(self)
-        contextMenu.setStyleSheet("* {background: red;color: black}")
-        ApplyMenuBlur(contextMenu.winId().__int__(), contextMenu)
-        inf = QAction(_("Package details"))
-        inf.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), update=True))
-        inf.setIcon(QIcon(getMedia("info")))
-        ins1 = QAction(_("Update"))
-        ins1.setIcon(QIcon(getMedia("menu_updates")))
-        ins1.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem()))
-        ins2 = QAction(_("Update as administrator"))
-        ins2.setIcon(QIcon(getMedia("runasadmin")))
-        ins2.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), admin=True))
-        ins3 = QAction(_("Skip hash check"))
-        ins3.setIcon(QIcon(getMedia("checksum")))
-        ins3.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), skiphash=True))
-        ins4 = QAction(_("Interactive update"))
-        ins4.setIcon(QIcon(getMedia("interactive")))
-        ins4.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), interactive=True))
-        ins5 = QAction(_("Uninstall package"))
-        ins5.setIcon(QIcon(getMedia("menu_uninstall")))
-        def raiseexp():
-            raise NotImplementedError("This function is not ready yet")
-        ins5.triggered.connect(lambda: raiseexp)
-        ins6 = QAction(_("Ignore updates for this package"))
-        ins6.setIcon(QIcon(getMedia("pin")))
-        ins6.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
-        ins8 = QAction(_("Skip this version"))
-        ins8.setIcon(QIcon(getMedia("skip")))
-        ins8.triggered.connect(lambda: (IgnorePackageUpdates_SpecificVersion(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
+        if self.ItemPackageReference[self.packageList.currentItem()].PackageManager != Scoop:
+            self.InteractiveAction.setVisible(True)
+        else:
+            self.InteractiveAction.setVisible(False)
+        pos.setY(pos.y()+35)
+        ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
 
-        ins7 = QAction(_("Share this package"))
-        ins7.setIcon(QIcon(getMedia("share")))
-        ins7.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
-
-        contextMenu.addAction(ins1)
-        contextMenu.addSeparator()
-        contextMenu.addAction(ins2)
-        if not "scoop" in self.packageList.currentItem().text(5).lower():
-            contextMenu.addAction(ins4)
-        contextMenu.addAction(ins3)
-        contextMenu.addAction(ins5)
-        contextMenu.addSeparator()
-        contextMenu.addAction(ins6)
-        contextMenu.addAction(ins8)
-        contextMenu.addSeparator()
-        contextMenu.addAction(ins7)
-        contextMenu.addAction(inf)
-        contextMenu.exec(QCursor.pos())
+        self.contextMenu.exec(pos)
 
     def getToolbar(self) -> QToolBar:
         
