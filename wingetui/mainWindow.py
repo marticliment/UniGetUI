@@ -78,7 +78,8 @@ class RootWindow(QMainWindow):
         self.buttonier.setLayout(self.buttonLayout)
         self.extrasMenuButton = QPushButton()
         self.showHideButton = QPushButton()
-        self.installationsWidget = DynamicScrollArea(self.showHideButton)
+        self.resizewidget = VerticallyDraggableWidget()
+        self.installationsWidget = DynamicScrollArea(self.showHideButton, self.resizewidget)
         self.installationsWidget.scrollArea.goTopButton.setVisible(False)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
         globals.installersWidget = self.installationsWidget
@@ -150,15 +151,27 @@ class RootWindow(QMainWindow):
         self.buttonBox.buttons()[0].setChecked(True)
         self.showHideButton.setStyleSheet("padding: 2px;border-radius: 4px;")
         self.showHideButton.setIconSize(QSize(12, 12))
-        self.showHideButton.hide()
         self.showHideButton.setFixedSize(QSize(32, 16))
+        self.showHideButton.hide()
         self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-        self.showHideButton.clicked.connect(lambda: (self.installationsWidget.setVisible(not self.installationsWidget.isVisible()), self.showHideButton.setIcon(QIcon(getMedia("collapse"))) if self.installationsWidget.isVisible() else self.showHideButton.setIcon(QIcon(getMedia("expand")))))
+        self.showHideButton.clicked.connect(lambda: self.toggleInstallationsSection())
+        self.resizewidget.setObjectName("DraggableVerticalSection")
+        self.resizewidget.setFixedHeight(9)
+        self.resizewidget.setFixedWidth(300)
+        self.resizewidget.hide()
+        self.resizewidget.dragged.connect(self.adjustInstallationsSize)
         ebw = QWidget()
         ebw.setLayout(QHBoxLayout())
         ebw.layout().setContentsMargins(0, 0, 0, 0)
         ebw.layout().addStretch()
         ebw.layout().addWidget(self.showHideButton)
+        ebw.layout().addStretch()
+        vl.addWidget(ebw)
+        ebw = QWidget()
+        ebw.setLayout(QHBoxLayout())
+        ebw.layout().setContentsMargins(0, 0, 0, 0)
+        ebw.layout().addStretch()
+        ebw.layout().addWidget(self.resizewidget)
         ebw.layout().addStretch()
         vl.addWidget(ebw)
         vl.addWidget(self.installationsWidget)
@@ -176,6 +189,25 @@ class RootWindow(QMainWindow):
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
+    def toggleInstallationsSection(self) -> None:
+        if self.installationsWidget.isVisible():
+            self.installationsWidget.setVisible(False)
+            self.resizewidget.setVisible(False)
+            self.showHideButton.setIcon(QIcon(getMedia("expand")))
+        else:
+            self.installationsWidget.setVisible(True)
+            self.resizewidget.setVisible(False)
+            self.adjustInstallationsSize()
+            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
+            
+    def adjustInstallationsSize(self, offset: int = 0) -> None:
+        if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():
+            self.installationsWidget.maxHeight = self.installationsWidget.getFullHeight()
+        self.installationsWidget.maxHeight = self.installationsWidget.maxHeight+offset
+        if self.installationsWidget.maxHeight < 4 and self.installationsWidget.itemCount > 0:
+            self.installationsWidget.maxHeight = 4
+        self.installationsWidget.calculateSize()
+        
     def addTab(self, widget: QWidget, label: str, addToMenu: bool = False, actionIcon: str = "") -> QPushButton:
         i = self.mainWidget.addWidget(widget)
         btn = PushButtonWithAction(label)

@@ -280,11 +280,12 @@ class ResizableWidget(QWidget):
 
 class DynamicScrollArea(QWidget):
     maxHeight = 200
-    def __init__(self, showHideArrow: QWidget = None, parent = None) -> None:
+    def __init__(self, showHideArrow: QPushButton = None, resizeBar: QWidget = None, parent = None) -> None:
         super().__init__(parent)
         l = QVBoxLayout()
         self.showHideArrow = showHideArrow
-        l.setContentsMargins(5, 5, 5, 5)
+        self.resizeBar = resizeBar
+        l.setContentsMargins(5, 0, 5, 5)
         self.scrollArea = SmoothScrollArea()
         self.coushinWidget = QWidget()
         l.addWidget(self.coushinWidget)
@@ -302,10 +303,25 @@ class DynamicScrollArea(QWidget):
         self.rss()
 
     def rss(self):
-        if self.w.sizeHint().height() >= self.maxHeight:
+        """
+        Legacy code
+        """
+        self.calculateSize()
+        
+    def calculateSize(self) -> None:
+        """
+        Recalculates minimum height
+        """
+        if self.getFullHeight() >= self.maxHeight:
             self.setFixedHeight(self.maxHeight)
         else:
-            self.setFixedHeight(self.w.sizeHint().height()+20 if self.w.sizeHint().height() > 0 else 4)
+            self.setFixedHeight(self.getFullHeight() if self.getFullHeight() > 20 else 4)
+            
+    def getFullHeight(self) -> int:
+        """
+        Returns the full height of the widget
+        """
+        return self.w.sizeHint().height()+20
 
     def removeItem(self, item: QWidget):
         self.vlayout.removeWidget(item)
@@ -313,12 +329,14 @@ class DynamicScrollArea(QWidget):
         self.itemCount = self.vlayout.count()
         if self.itemCount <= 0:
             globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
-            self.showHideArrow.hide()
+            self.resizeBar.hide()
+            #self.showHideArrow.hide()
 
     def addItem(self, item: QWidget):
         self.vlayout.addWidget(item)
         self.itemCount = self.vlayout.count()
-        self.showHideArrow.show()
+        self.resizeBar.show()
+        #self.showHideArrow.show()
         globals.trayIcon.setIcon(QIcon(getMedia("icon")))
 
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
@@ -741,33 +759,33 @@ class SmallCollapsableSection(CollapsableSection):
         self.image.setPixmap(QIcon(icon).pixmap(QSize((24), (24))))
 
     def resizeEvent(self, event: QResizeEvent = None) -> None:
-            self.image.show()
-            self.showHideButton.show()
-            self.button.show()
-            self.label.show()
-            self.button.move(0, 0)
-            self.button.resize(self.width(), (40))
-            self.showHideButton.setIconSize(QSize((12), (12)))
-            self.showHideButton.setFixedSize(30, 30)
-            self.showHideButton.move(self.width()-(45), (5))
+        self.image.show()
+        self.showHideButton.show()
+        self.button.show()
+        self.label.show()
+        self.button.move(0, 0)
+        self.button.resize(self.width(), (40))
+        self.showHideButton.setIconSize(QSize((12), (12)))
+        self.showHideButton.setFixedSize(30, 30)
+        self.showHideButton.move(self.width()-(45), (5))
 
-            self.label.move((45), (10))
-            self.label.setFixedHeight(20)
+        self.label.move((45), (10))
+        self.label.setFixedHeight(20)
 
-            self.image.move((10), (8))
-            self.image.setFixedHeight(24)
-            if self.childsVisible and self.NotAnimated:
-                self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(40))
-                self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
-            elif self.NotAnimated:
-                self.setFixedHeight(40)
-            self.compressibleWidget.move(0, (40))
-            self.compressibleWidget.setFixedWidth(self.width())
-            self.label.setFixedWidth(self.width()-(140))
-            self.image.setFixedWidth(30)
-            self.bg70.show()
-            self.bg70.move(0, 0)
-            self.bg70.resize(self.width()-(0), (40))
+        self.image.move((10), (8))
+        self.image.setFixedHeight(24)
+        if self.childsVisible and self.NotAnimated:
+            self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(40))
+            self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
+        elif self.NotAnimated:
+            self.setFixedHeight(40)
+        self.compressibleWidget.move(0, (40))
+        self.compressibleWidget.setFixedWidth(self.width())
+        self.label.setFixedWidth(self.width()-(140))
+        self.image.setFixedWidth(30)
+        self.bg70.show()
+        self.bg70.move(0, 0)
+        self.bg70.resize(self.width()-(0), (40))
 
     def addWidget(self, widget: QWidget) -> None:
         self.compressibleWidget.layout().addWidget(widget)
@@ -1123,6 +1141,37 @@ class ButtonWithResizeSignal(QPushButton):
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resized.emit()
         return super().resizeEvent(event)
+    
+         
+class VerticallyDraggableWidget(QLabel):
+    pressed = False
+    oldPos = QPoint(0, 0)
+    dragged = Signal(int)
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+        self.setMouseTracking(True)
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.pressed = True
+        self.oldPos = event.pos()
+        return super().mousePressEvent(event)
+    
+    def enterEvent(self, event: QEnterEvent) -> None:
+        globals.app.setOverrideCursor(QCursor(Qt.CursorShape.SizeVerCursor))
+        return super().enterEvent(event)
+    
+    def leaveEvent(self, event: QEvent) -> None:
+        if not self.pressed:
+            globals.app.restoreOverrideCursor()
+        return super().leaveEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        self.pressed = False
+        self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(event.pos()).y()))
+        globals.app.restoreOverrideCursor()
+        self.oldPos = event.pos()
+        return super().mouseReleaseEvent(event)
+
 
 if __name__ == "__main__":
     import __init__

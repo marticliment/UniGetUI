@@ -1363,6 +1363,15 @@ try:
             padding-left: 10px;
             border-radius: 4px;
         }}
+        #DraggableVerticalSection {{
+            background-color: rgba(255, 255, 255, 13%);
+            border-radius: 2px;
+            margin: 5px;
+            margin-bottom: 0px;
+        }}
+        #DraggableVerticalSection:hover {{
+            background-color: rgba(255, 255, 255, 17%);
+        }}
         """
 
         menuDarkCSS = f"""
