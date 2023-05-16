@@ -16,10 +16,20 @@ from tools import _
 from PackageManagers import PackageClasses
 
 class DiscoverSoftwareSection(SoftwareSection):
-    PackageManagers = PackageManagersList.copy()
-    PackagesLoaded = PackagesLoadedDict.copy()
+    PackageManagers = StaticPackageManagersList.copy()
+    PackagesLoaded = StaticPackagesLoadedDict.copy()
+    
+    DynaimcPackageManagers = DynaimcPackageManagersList.copy()
+    DynamicPackagesLoaded = DynamicPackagesLoadedDict.copy()
+    
+    LastQueryDynamicallyLoaded: str = ""
+    
+    finishDynamicLoading = Signal()
+    
     def __init__(self, parent = None):
         super().__init__(parent = parent)
+        
+        self.finishDynamicLoading.connect(self.finishDynamicLoadingIfNeeded)
         
         self.query.setPlaceholderText(" "+_("Search for packages"))
         self.discoverLabel.setText(_("Discover Packages"))
@@ -203,6 +213,20 @@ class DiscoverSoftwareSection(SoftwareSection):
     def importPackages(self):
         self.imprter = PackageImporter(self)
         
+    def filter(self) -> None:
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
+        
+        def waitAndFilter(query: str):
+            time.sleep(0.1)
+            if query == self.query.text():
+                self.callInMain.emit(partial(self.finishFiltering, query))
+                if query != "" and query != self.LastQueryDynamicallyLoaded:
+                    self.LastQueryDynamicallyLoaded = query
+                    self.callInMain.emit(partial(self.startLoadingDyamicPackages, query))
+
+        Thread(target=lambda: waitAndFilter(self.query.text())).start()
+
+        
     def finishLoadingIfNeeded(self) -> None:
         itemCount = len(self.packageItems)
         self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(itemCount)))
@@ -224,6 +248,13 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.countLabel.setText(_("Found packages: {0}").format(str(itemCount)))
         self.packageList.label.setText("")
         print("🟢 Total packages: "+str(itemCount))
+
+    def finishDynamicLoadingIfNeeded(self) -> None:
+        self.finishFiltering(self.query.text())
+        for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
+            if not self.DynamicPackagesLoaded[manager]:
+                return
+        self.loadingProgressBar.hide()
 
     def addItem(self, package: Package) -> None:
         if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
@@ -263,9 +294,35 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.PackagesLoaded[manager] = True
         self.finishLoading.emit()
     
+    def loadDynamicPackages(self, query: str, manager: PackageClasses.DynamicPackageManager) -> None:
+        packages = manager.getPackagesForQuery(query)
+        if query == self.query.text():
+            for package in packages:
+                if package.Id not in self.IdPackageReference:
+                    self.addProgram.emit(package)
+                elif package.Source != self.IdPackageReference[package.Id].Source:
+                    self.addProgram.emit(package)
+            self.DynamicPackagesLoaded[manager] = True
+            if query == self.query.text():
+                self.finishDynamicLoading.emit()
+    
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
         return super().startLoadingPackages(force)
+    
+    def startLoadingDyamicPackages(self, query: str, force: bool = False) -> None:
+        print(f"🔵 Loading dynamic packages for query {query}")
+        for manager in self.DynaimcPackageManagers:
+            self.DynamicPackagesLoaded[manager] = False
+        self.loadingProgressBar.show()
+        
+        for manager in self.DynaimcPackageManagers:
+            if manager.isEnabled():
+                Thread(target=self.loadDynamicPackages, args=(query, manager), daemon=True, name=f"{manager.NAME} dyamic packages loader").start()
+            else:
+                self.PackagesLoaded[manager] = True
+                
+        self.finishDynamicLoadingIfNeeded()
     
 class UpdateSoftwareSection(SoftwareSection):
 
