@@ -240,7 +240,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.finishFiltering(self.query.text())
         
         for manager in self.PackageManagers: # Stop here if not all package managers loaded
-            if not self.PackagesLoaded[manager]:
+            if not self.PackagesLoaded[manager] and manager.isEnabled():
                 return
                 
         self.reloadButton.setEnabled(True)
@@ -252,7 +252,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     def finishDynamicLoadingIfNeeded(self) -> None:
         self.finishFiltering(self.query.text())
         for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
-            if not self.DynamicPackagesLoaded[manager]:
+            if not self.DynamicPackagesLoaded[manager] and manager.isEnabled():
                 return
         self.loadingProgressBar.hide()
 
@@ -1192,7 +1192,7 @@ class AboutSection(SmoothScrollArea):
             table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
             table.setCornerWidget(QLabel(""))
             table.setCornerButtonEnabled(False)
-            table.setFixedHeight(190)
+            table.setFixedHeight(230)
             table.cornerWidget().setStyleSheet("background: transparent;")
             self.layout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
@@ -1525,19 +1525,11 @@ class SettingsSection(SmoothScrollArea):
         
         doCacheAdminPrivileges.stateChanged.connect(lambda v: (setSettings("DoCacheAdminRights", bool(v)), resetAdminRightsCache()))
         self.advancedOptions.addWidget(doCacheAdminPrivileges)
-        alwaysRunWingetAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Winget"))
-        alwaysRunWingetAsAdmin.setChecked(getSettings("AlwaysElevateWinget"))
-        alwaysRunWingetAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateWinget", bool(v)))
-        self.advancedOptions.addWidget(alwaysRunWingetAsAdmin)
-        alwaysRunScoopAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Scoop"))
-        alwaysRunScoopAsAdmin.setChecked(getSettings("AlwaysElevateScoop"))
-        alwaysRunScoopAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateScoop", bool(v)))
-        self.advancedOptions.addWidget(alwaysRunScoopAsAdmin)
-        alwaysRunChocolateyAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Chocolatey"))
-        alwaysRunChocolateyAsAdmin.setChecked(getSettings("AlwaysElevateChocolatey"))
-        alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
-        alwaysRunChocolateyAsAdmin.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-        self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
+        for manager in PackageManagersList:
+            alwaysRunAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm=manager.NAME))
+            alwaysRunAsAdmin.setChecked(getSettings(f"AlwaysElevate{manager.NAME}"))
+            alwaysRunAsAdmin.stateChanged.connect(lambda v: setSettings(f"AlwaysElevate{manager.NAME}", bool(v)))
+            self.advancedOptions.addWidget(alwaysRunAsAdmin)
         dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
         dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
         dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
@@ -1653,6 +1645,15 @@ class SettingsSection(SmoothScrollArea):
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Choco.NAME), _("Reset"))
         resetCache.clicked.connect(lambda: (os.remove(Choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetCache)
+
+
+        self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Pip"), getMedia("python"), _("{pm} package manager specific preferences").format(pm = "Pip"))
+        self.layout.addWidget(self.pipPreferences)
+        disablePip = SectionCheckBox(_("Enable {pm}").format(pm = "Pip"))
+        disablePip.setChecked(not getSettings("DisablePip"))
+        disablePip.stateChanged.connect(lambda v: (setSettings("DisablePip", not bool(v))))
+        self.pipPreferences.addWidget(disablePip)
+
 
         self.layout.addStretch()
 
