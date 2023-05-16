@@ -381,7 +381,7 @@ class UpdateSoftwareSection(SoftwareSection):
         pos.setY(pos.y()+35)
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
 
-        self.contextMenu.exec(pos)
+        self.contextMenu.exec(self.packageList.mapToGlobal(pos))
 
     def getToolbar(self) -> QToolBar:
         
