@@ -246,7 +246,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -V", shell=True, stdout=subprocess.PIPE)
         globals.componentStatus[f"{self.NAME}Found"] = shutil.which("python.exe") != None
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[1]
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[0]
         if signal:
             signal.emit()
         
