@@ -11,18 +11,41 @@ from PackageManagers.PackageClasses import *
 from PackageManagers.winget import Winget
 from PackageManagers.scoop import Scoop
 from PackageManagers.choco import Choco
+from PackageManagers.pip import Pip
 from PackageManagers import PackageClasses
 
 PackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Winget,
     Scoop,
-    Choco
+    Choco,
+    Pip
 ]
 
 PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Winget: False,
     Scoop: False,
     Choco: False,
+    Pip: False
+}
+
+StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
+    Winget,
+    Scoop,
+    Choco
+]
+
+StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+    Winget: False,
+    Scoop: False,
+    Choco: False
+}
+
+DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
+    Pip,
+]
+
+DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+    Pip: False
 }
 
 class QLinkLabel(QLabel):
@@ -914,10 +937,8 @@ class SoftwareSection(QWidget):
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")
         toolbarWidgets = [self.toolbar.widgetForAction(action) for action in self.toolbar.actions() if self.toolbar.widgetForAction(action) != None and type(self.toolbar.widgetForAction(action)) != TenPxSpacer]
-        print(toolbarWidgets)
         taborder = [self.forceCheckBox, self.query, self.searchButton, self.reloadButton] + toolbarWidgets + [self.packageList]
         for i in range(len(taborder)-1):
-            print(taborder[i], taborder[i+1])
             self.setTabOrder(taborder[i], taborder[i+1])
         self.leftSlow.start()
         self.startLoadingPackages(force = True)
