@@ -307,7 +307,7 @@ class ChocoPackageManager(SamplePackageManager):
             signal.emit()
         
     def updateSources(self, signal: Signal = None) -> None:
-        print("🟡 Chocolatey has no source update procedure (yet)")
+        pass # Handled by the package manager, no need to manually reload
         if signal:
             signal.emit()
 
