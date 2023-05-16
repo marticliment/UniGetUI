@@ -220,82 +220,60 @@ class ScoopPackageManager(SamplePackageManager):
             self.icon = QIcon(getMedia("python"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, removeprogressbar: bool = True) -> list[str]:
         Parameters: list[str] = []
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
             if options.InstallationScope in ("User", _("User")):
                 Parameters.append("--user")
-        Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache", "--progress-bar", "off"]
+        Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
+        if removeprogressbar:
+            Parameters += ["--progress-bar", "off"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        raise NotImplementedError
-        bucket_prefix = ""
-        if len(package.Source.split(":"))>1 and not "/" in package.Source:
-            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = self.EXECUTABLE.split(" ") + ["install", bucket_prefix+package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["install", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
-            Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
+            Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        raise NotImplementedError
-        bucket_prefix = ""
-        if len(package.Source.split(":"))>1 and not "/" in package.Source:
-            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = self.EXECUTABLE.split(" ") + ["update", bucket_prefix+package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["install", package.Id, "--upgrade"] + self.getParameters(options)
         if options.RunAsAdministrator:
-            Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
+            Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
-        raise NotImplementedError
         output = ""
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                if("Installing" in line):
-                    widget.counterSignal.emit(1)
-                elif("] 100%" in line or "Downloading" in line):
-                    widget.counterSignal.emit(4)
-                elif("was installed successfully!" in line):
-                    widget.counterSignal.emit(6)
                 widget.addInfoLine.emit(line)
-                if("was installed successfully" in line):
-                    outputCode = 0
-                elif ("is already installed" in line):
-                    outputCode = 0
                 output += line+"\n"
-        if "-g" in output and not "successfully" in output and not options.RunAsAdministrator:
-            outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
-        elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
-            outputCode = RETURNCODE_NEEDS_ELEVATION
-        if "Latest versions for all apps are installed" in output:
-            outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
+        match p.returncode:
+            case 0:
+                outputCode = RETURNCODE_OPERATION_SUCCEEDED
+            case other:
+                outputCode = RETURNCODE_FAILED 
+                
         widget.finishInstallation.emit(outputCode, output)
         
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        raise NotImplementedError
-        bucket_prefix = ""
-        if len(package.Source.split(":"))>1 and not "/" in package.Source:
-            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix+package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["uninstall", package.Id, "-y"] + self.getParameters(options, removeprogressbar=False)
         if options.RunAsAdministrator:
-            Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
+            Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
-        raise NotImplementedError
         outputCode = 1
         output = ""
         while p.poll() is None:
@@ -303,20 +281,13 @@ class ScoopPackageManager(SamplePackageManager):
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                if("Uninstalling" in line):
-                    widget.counterSignal.emit(1)
-                elif("Removing shim for" in line):
-                    widget.counterSignal.emit(4)
-                elif("was uninstalled" in line):
-                    widget.counterSignal.emit(6)
                 widget.addInfoLine.emit(line)
-                if("was uninstalled" in line):
-                    outputCode = 0
                 output += line+"\n"
-        if "-g" in output and not "was uninstalled" in output and not options.RunAsAdministrator:
-            outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
-        elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
-            outputCode = RETURNCODE_NEEDS_ELEVATION
+        match p.returncode:
+            case 0:
+                outputCode = RETURNCODE_OPERATION_SUCCEEDED
+            case other:
+                outputCode = RETURNCODE_FAILED        
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
