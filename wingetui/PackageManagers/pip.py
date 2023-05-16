@@ -172,111 +172,42 @@ class ScoopPackageManager(SamplePackageManager):
             return []
         
     def getPackageDetails(self, package: Package) -> PackageDetails:
-        raise NotImplementedError
         """
         Will return a PackageDetails object containing the information of the given Package object
         """
         print(f"🔵 Starting get info for {package.Name} on {self.NAME}")
         details = PackageDetails(package)
         try:
-            unknownStr = _("Not available")
-            bucket = "main" if len(package.Id.split("/")) == 1 else package.Id.split('/')[0]
-            if bucket in globals.scoopBuckets:
-                bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
-            else:
-                bucketRoot = f"https://github.com/ScoopInstaller/{bucket}"
-            details.ManifestUrl = f"{bucketRoot}/blob/master/bucket/{package.Id.split('/')[-1]}.json"
-            details.Scopes = [_("Local"), _("Global")]
-            details.InstallerType = _("Scoop package")
+            details.ManifestUrl = f"https://pypi.org/project/{package.Id}/"
+            details.ReleaseNotesUrl = f"https://pypi.org/project/{package.Id}/#history"
+            details.InstallerURL = f"https://pypi.org/project/{package.Id}/#files"
+            details.Scopes = [_("User")]
+            details.InstallerType = "Pip"
         
-            rawOutput = b""
-            p = subprocess.Popen(' '.join([self.EXECUTABLE, "cat", f"{package.Id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+            p = subprocess.Popen(f"{self.EXECUTABLE} show {package.Id} -v", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+            output: list[str] = []
             while p.poll() is None:
-                pass
-            for line in p.stdout.readlines():
-                line = line.strip()
+                line = p.stdout.readline()
                 if line:
-                    rawOutput += line+b"\n"
-
-            with open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "wb") as f:
-                f.write(rawOutput)
-            mfest = open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "r")
-            import json
-            data: dict = json.load(mfest)
-            if "description" in data.keys():
-                details.Description = data["description"]
-                
-            if "version" in data.keys():
-                details.Versions.append(data["version"])
-                
-            if "innosetup" in data.keys():
-                details.InstallerType = "Inno Setup"
-
-            if "homepage" in data.keys():
-                w: str = data["homepage"]
-                details.HomepageURL = w
-                if "https://github.com/" in w:
-                    details.Author = w.replace("https://github.com/", "").split("/")[0]
-                else:
-                    for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de", ".kde", ".microsoft"):
-                        w = w.replace(e, "")
-                    details.Author = w.split("/")[0].capitalize()
-                    
-            if "notes" in data.keys():
-                if type(data["notes"]) == list:
-                    details.ReleaseNotes = "\n".join(data["notes"])
-                else:
-                    details.ReleaseNotes = data["notes"]
-            if "license" in data.keys():
-                details.License = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
-                details.LicenseURL = unknownStr if type(data["license"]) != dict else data["license"]["url"]
-
-            if "url" in data.keys():
-                details.InstallerHash = data["hash"][0] if type(data["hash"]) == list else data["hash"]
-                url = data["url"][0] if type(data["url"]) == list else data["url"]
-                details.InstallerURL = url
-                try:
-                    details.InstallerSize = int(urlopen(url).length/1000000)
-                except Exception as e:
-                    print("🟠 Can't get installer size:", type(e), str(e))
-            elif "architecture" in data.keys():
-                details.InstallerHash = data["architecture"]["64bit"]["hash"]
-                url = data["architecture"]["64bit"]["url"]
-                details.InstallerURL = url
-                try:
-                    details.InstallerSize = int(urlopen(url).length/1000000)
-                except Exception as e:
-                    print("🟠 Can't get installer size:", type(e), str(e))
-                if type(data["architecture"]) == dict:
-                    details.Architectures = list(data["architecture"].keys())
-            
-            if "checkver" in data.keys():
-                if "url" in data["checkver"].keys():
-                    url = data["checkver"]["url"]
-                    details.ReleaseNotesUrl = url
-            
-            
-            if details.ReleaseNotesUrl == unknownStr and "github.com" in details.InstallerURL:
-                try:
-                    url = "/".join(details.InstallerURL.replace("/download/", "/tag/").split("/")[:-1])
-                    details.ReleaseNotesUrl = url
-                except Exception as e:
-                    report(e)
-                    
-            output: list[str] = []   
-            p = subprocess.Popen(' '.join([self.EXECUTABLE, "info", package.Id]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-            while p.poll() is None:
-                pass
-            for line in p.stdout.readlines():
-                line = line.strip()
-                if line:
-                    output.append(self.ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
-                for line in output:
-                    if("Updated by" in line):
-                        details.Publisher = line.replace("Updated by", "").strip()[1:].strip()
-                    elif("Updated at" in line):
-                        details.UpdateDate = line.replace("Updated at", "").strip()[1:].strip()
+                if "Name:" in line:
+                    details.Name = formatPackageIdAsName(line.replace("Name:", "").strip()) if "-" in line else line.replace("Name:", "").strip()
+                elif "Author:" in line:
+                    details.Author = line.replace("Author:", "").strip()
+                elif "Home-page:" in line:
+                    details.HomepageURL = line.replace("Home-page:", "").strip()
+                elif "License:" in line:
+                    details.License = line.replace("License:", "").strip()
+                elif "License ::" in line:
+                    details.License = line.split("::")[-1].strip()
+                elif "Summary:" in line:
+                    details.Description = line.replace("Summary:", "").strip()
+                elif "Release Notes" in line:
+                    details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
+                elif "Topic ::" in line:
+                    if line.split("::")[-1].strip() not in details.Tags:
+                        details.Tags.append(line.split("::")[-1].strip())
                     
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
@@ -290,24 +221,13 @@ class ScoopPackageManager(SamplePackageManager):
         return self.icon
 
     def getParameters(self, options: InstallationOptions) -> list[str]:
-        raise NotImplementedError
         Parameters: list[str] = []
-        if options.Architecture:
-            Parameters += ["-a", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
-            Parameters += ["-s", options.InstallationScope]
-        if options.InteractiveInstallation:
-            Parameters.append("--interactive")
-        if options.RemoveDataOnUninstall:
-            Parameters.append("--remove-user-data")
-        if options.SkipHashCheck:
-            Parameters += ["--skip-integrity-checks", "--force"]
-        if options.Version:
-            Parameters += ["--version", options.Version]
-        if options.RemoveDataOnUninstall:
-            Parameters.append("--purge")
+            if options.InstallationScope in ("User", _("User")):
+                Parameters.append("--user")
+        Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache", "--progress-bar", "off"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
