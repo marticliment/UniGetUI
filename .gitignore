@@ -92,3 +92,5 @@ wui-1.7.0-console.zip
 wui1.7.0-debug2.zip
 env/
 .vs/*
+wingetui/components/package-lock.json
+wingetui/components/package.json
