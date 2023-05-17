@@ -942,10 +942,8 @@ class SoftwareSection(QWidget):
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")
         toolbarWidgets = [self.toolbar.widgetForAction(action) for action in self.toolbar.actions() if self.toolbar.widgetForAction(action) != None and type(self.toolbar.widgetForAction(action)) != TenPxSpacer]
-        print(toolbarWidgets)
         taborder = [self.forceCheckBox, self.query, self.searchButton, self.reloadButton] + toolbarWidgets + [self.packageList]
         for i in range(len(taborder)-1):
-            print(taborder[i], taborder[i+1])
             self.setTabOrder(taborder[i], taborder[i+1])
         self.leftSlow.start()
         self.startLoadingPackages(force = True)

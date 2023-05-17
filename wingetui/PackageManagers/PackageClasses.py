@@ -204,6 +204,15 @@ class PackageManagerModule():
         """
         Force update package manager's sources
         """
+        
+class DynamicPackageManager(PackageManagerModule):
+        
+    def getPackagesForQuery(self, query: str) -> list[Package]:
+        f"""
+        Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
+        """
+
+
 
 RETURNCODE_OPERATION_SUCCEEDED = 0
 RETURNCODE_NO_APPLICABLE_UPDATE_FOUND = 92849
@@ -211,6 +220,7 @@ RETURNCODE_NEEDS_RESTART = 3
 
 LIST_RETURNCODES_OPERATION_SUCCEEDED = (RETURNCODE_OPERATION_SUCCEEDED, RETURNCODE_NO_APPLICABLE_UPDATE_FOUND, RETURNCODE_NEEDS_RESTART)
 
+RETURNCODE_FAILED = 1
 RETURNCODE_INCORRECT_HASH = 2
 RETURNCODE_NEEDS_ELEVATION = 1603
 RETURNCODE_NEEDS_SCOOP_ELEVATION = 1602

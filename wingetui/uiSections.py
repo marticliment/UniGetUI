@@ -16,10 +16,20 @@ from tools import _
 from PackageManagers import PackageClasses
 
 class DiscoverSoftwareSection(SoftwareSection):
-    PackageManagers = PackageManagersList.copy()
-    PackagesLoaded = PackagesLoadedDict.copy()
+    PackageManagers = StaticPackageManagersList.copy()
+    PackagesLoaded = StaticPackagesLoadedDict.copy()
+    
+    DynaimcPackageManagers = DynaimcPackageManagersList.copy()
+    DynamicPackagesLoaded = DynamicPackagesLoadedDict.copy()
+    
+    LastQueryDynamicallyLoaded: str = ""
+    
+    finishDynamicLoading = Signal()
+    
     def __init__(self, parent = None):
         super().__init__(parent = parent)
+        
+        self.finishDynamicLoading.connect(self.finishDynamicLoadingIfNeeded)
         
         self.query.setPlaceholderText(" "+_("Search for packages"))
         self.discoverLabel.setText(_("Discover Packages"))
@@ -203,6 +213,20 @@ class DiscoverSoftwareSection(SoftwareSection):
     def importPackages(self):
         self.imprter = PackageImporter(self)
         
+    def filter(self) -> None:
+        print(f"🟢 Searching for string \"{self.query.text()}\"")
+        
+        def waitAndFilter(query: str):
+            time.sleep(0.1)
+            if query == self.query.text():
+                self.callInMain.emit(partial(self.finishFiltering, query))
+                if query != "" and query != self.LastQueryDynamicallyLoaded:
+                    self.LastQueryDynamicallyLoaded = query
+                    self.callInMain.emit(partial(self.startLoadingDyamicPackages, query))
+
+        Thread(target=lambda: waitAndFilter(self.query.text())).start()
+
+        
     def finishLoadingIfNeeded(self) -> None:
         itemCount = len(self.packageItems)
         self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(itemCount)))
@@ -216,7 +240,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.finishFiltering(self.query.text())
         
         for manager in self.PackageManagers: # Stop here if not all package managers loaded
-            if not self.PackagesLoaded[manager]:
+            if not self.PackagesLoaded[manager] and manager.isEnabled():
                 return
                 
         self.reloadButton.setEnabled(True)
@@ -224,6 +248,13 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.countLabel.setText(_("Found packages: {0}").format(str(itemCount)))
         self.packageList.label.setText("")
         print("🟢 Total packages: "+str(itemCount))
+
+    def finishDynamicLoadingIfNeeded(self) -> None:
+        self.finishFiltering(self.query.text())
+        for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
+            if not self.DynamicPackagesLoaded[manager] and manager.isEnabled():
+                return
+        self.loadingProgressBar.hide()
 
     def addItem(self, package: Package) -> None:
         if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
@@ -263,9 +294,35 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.PackagesLoaded[manager] = True
         self.finishLoading.emit()
     
+    def loadDynamicPackages(self, query: str, manager: PackageClasses.DynamicPackageManager) -> None:
+        packages = manager.getPackagesForQuery(query)
+        if query == self.query.text():
+            for package in packages:
+                if package.Id not in self.IdPackageReference:
+                    self.addProgram.emit(package)
+                elif package.Source != self.IdPackageReference[package.Id].Source:
+                    self.addProgram.emit(package)
+            self.DynamicPackagesLoaded[manager] = True
+            if query == self.query.text():
+                self.finishDynamicLoading.emit()
+    
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
         return super().startLoadingPackages(force)
+    
+    def startLoadingDyamicPackages(self, query: str, force: bool = False) -> None:
+        print(f"🔵 Loading dynamic packages for query {query}")
+        for manager in self.DynaimcPackageManagers:
+            self.DynamicPackagesLoaded[manager] = False
+        self.loadingProgressBar.show()
+        
+        for manager in self.DynaimcPackageManagers:
+            if manager.isEnabled():
+                Thread(target=self.loadDynamicPackages, args=(query, manager), daemon=True, name=f"{manager.NAME} dyamic packages loader").start()
+            else:
+                self.PackagesLoaded[manager] = True
+                
+        self.finishDynamicLoadingIfNeeded()
     
 class UpdateSoftwareSection(SoftwareSection):
 
@@ -1135,7 +1192,7 @@ class AboutSection(SmoothScrollArea):
             table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
             table.setCornerWidget(QLabel(""))
             table.setCornerButtonEnabled(False)
-            table.setFixedHeight(190)
+            table.setFixedHeight(230)
             table.cornerWidget().setStyleSheet("background: transparent;")
             self.layout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
@@ -1468,19 +1525,11 @@ class SettingsSection(SmoothScrollArea):
         
         doCacheAdminPrivileges.stateChanged.connect(lambda v: (setSettings("DoCacheAdminRights", bool(v)), resetAdminRightsCache()))
         self.advancedOptions.addWidget(doCacheAdminPrivileges)
-        alwaysRunWingetAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Winget"))
-        alwaysRunWingetAsAdmin.setChecked(getSettings("AlwaysElevateWinget"))
-        alwaysRunWingetAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateWinget", bool(v)))
-        self.advancedOptions.addWidget(alwaysRunWingetAsAdmin)
-        alwaysRunScoopAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Scoop"))
-        alwaysRunScoopAsAdmin.setChecked(getSettings("AlwaysElevateScoop"))
-        alwaysRunScoopAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateScoop", bool(v)))
-        self.advancedOptions.addWidget(alwaysRunScoopAsAdmin)
-        alwaysRunChocolateyAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm="Chocolatey"))
-        alwaysRunChocolateyAsAdmin.setChecked(getSettings("AlwaysElevateChocolatey"))
-        alwaysRunChocolateyAsAdmin.stateChanged.connect(lambda v: setSettings("AlwaysElevateChocolatey", bool(v)))
-        alwaysRunChocolateyAsAdmin.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-        self.advancedOptions.addWidget(alwaysRunChocolateyAsAdmin)
+        for manager in PackageManagersList:
+            alwaysRunAsAdmin = SectionCheckBox(_("Always elevate {pm} installations by default").format(pm=manager.NAME))
+            alwaysRunAsAdmin.setChecked(getSettings(f"AlwaysElevate{manager.NAME}"))
+            alwaysRunAsAdmin.stateChanged.connect(lambda v: setSettings(f"AlwaysElevate{manager.NAME}", bool(v)))
+            self.advancedOptions.addWidget(alwaysRunAsAdmin)
         dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
         dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
         dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
@@ -1596,6 +1645,15 @@ class SettingsSection(SmoothScrollArea):
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Choco.NAME), _("Reset"))
         resetCache.clicked.connect(lambda: (os.remove(Choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetCache)
+
+
+        self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Pip"), getMedia("python"), _("{pm} package manager specific preferences").format(pm = "Pip"))
+        self.layout.addWidget(self.pipPreferences)
+        disablePip = SectionCheckBox(_("Enable {pm}").format(pm = "Pip"))
+        disablePip.setChecked(not getSettings("DisablePip"))
+        disablePip.stateChanged.connect(lambda v: (setSettings("DisablePip", not bool(v))))
+        self.pipPreferences.addWidget(disablePip)
+
 
         self.layout.addStretch()
 
@@ -2184,6 +2242,8 @@ class PackageInfoPopupWindow(QWidget):
             self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Choco):
             self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
+        elif self.currentPackage.isManager(Pip):
+            self.commandWindow.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
             print(f"🟠 Unknown source {self.currentPackage.Source}")
         self.commandWindow.setCursorPosition(0)
