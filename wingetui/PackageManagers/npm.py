@@ -6,7 +6,7 @@ from .PackageClasses import *
 from .sampleHelper import *
     
     
-class ScoopPackageManager(DynamicLoadPackageManager):
+class NPMPackageManager(DynamicLoadPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -46,9 +46,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                     else:
                         package = list(filter(None, line.split("|")))
                         if len(package) >= 4:
-                            name = formatPackageIdAsName(package[0][1:] if package[0][0] == "@" else package[0])
-                            id = package[0]
-                            version = package[4]
+                            name = formatPackageIdAsName(package[0][1:] if package[0][0] == "@" else package[0]).strip()
+                            id = package[0].strip()
+                            version = package[4].strip()
                             source = self.NAME
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Npm))
@@ -76,10 +76,10 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                     else:
                         package = list(filter(None, line.split(" ")))
                         if len(package) >= 4:
-                            name = formatPackageIdAsName(package[0][1:] if package[0][0] == "@" else package[0])
-                            id = package[0]
-                            version = package[1]
-                            newVersion = package[3]
+                            name = formatPackageIdAsName(package[0][1:] if package[0][0] == "@" else package[0]).strip()
+                            id = package[0].strip()
+                            version = package[1].strip()
+                            newVersion = package[3].strip()
                             source = self.NAME
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
@@ -106,9 +106,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                         package = line.split("@")
                         if len(package) >= 2:
                             idString = '@'.join(package[:-1]).strip()
-                            name = formatPackageIdAsName(idString[1:] if idString[0] == "@" else idString)
-                            id = idString
-                            version = package[-1]
+                            name = formatPackageIdAsName(idString[1:] if idString[0] == "@" else idString).strip()
+                            id = idString.strip()
+                            version = package[-1].strip()
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME+currentScope, Npm))
                     elif "@" in line.split(" ")[0]:
@@ -190,23 +190,23 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         if options.InstallationScope:
             if options.InstallationScope in ("Global", _("Global")):
                 Parameters.append("--global")
-        Parameters += []
+        Parameters += ["--no-package-lock"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id] + self.getParameters(options)
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id+"@latest"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: UpgradablePackage, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = ["cmd.exe", "/C", self.EXECUTABLE, "update", package.Id] + self.getParameters(options)
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id+"@"+package.NewVersion] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -272,4 +272,4 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         if signal:
             signal.emit()
 
-Npm = ScoopPackageManager()
+Npm = NPMPackageManager()
