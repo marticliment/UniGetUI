@@ -53,28 +53,6 @@ DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Npm: False
 }
 
-StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
-    Winget,
-    Scoop,
-    Choco
-]
-
-StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
-    Winget: False,
-    Scoop: False,
-    Choco: False
-}
-
-DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
-    Pip,
-    Npm
-]
-
-DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
-    Pip: False,
-    Npm: False
-}
-
 class QLinkLabel(QLabel):
     def __init__(self, text: str = "", stylesheet: str = ""):
         super().__init__(text)
