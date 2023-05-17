@@ -141,37 +141,30 @@ class NPMPackageManager(DynamicLoadPackageManager):
         print(f"🔵 Starting get info for {package.Name} on {self.NAME}")
         details = PackageDetails(package)
         try:
-            details.ManifestUrl = f"https://pypi.org/project/{package.Id}/"
-            details.ReleaseNotesUrl = f"https://pypi.org/project/{package.Id}/#history"
-            details.InstallerURL = f"https://pypi.org/project/{package.Id}/#files"
-            details.Scopes = [_("User")]
-            details.InstallerType = "NPM"
-        
-            p = subprocess.Popen(f"{self.EXECUTABLE} show {package.Id} -v", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+            details.InstallerType = "Tarball"
+            details.Scopes = ["Global"]       
+            p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
             output: list[str] = []
             while p.poll() is None:
                 line = p.stdout.readline()
                 if line:
-                    output.append(str(line, encoding='utf-8', errors="ignore"))
+                    output.append(str(line, encoding='utf-8', errors="ignore").strip())
+            lineNo = 0
             for line in output:
-                if "Name:" in line:
-                    details.Name = formatPackageIdAsName(line.replace("Name:", "").strip()) if "-" in line else line.replace("Name:", "").strip()
-                elif "Author:" in line:
-                    details.Author = line.replace("Author:", "").strip()
-                elif "Home-page:" in line:
-                    details.HomepageURL = line.replace("Home-page:", "").strip()
-                elif "License:" in line:
-                    details.License = line.replace("License:", "").strip()
-                elif "License ::" in line:
-                    details.License = line.split("::")[-1].strip()
-                elif "Summary:" in line:
-                    details.Description = line.replace("Summary:", "").strip()
-                elif "Release Notes" in line:
-                    details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
-                elif "Topic ::" in line:
-                    if line.split("::")[-1].strip() not in details.Tags:
-                        details.Tags.append(line.split("::")[-1].strip())
-                    
+                lineNo += 1
+                if lineNo == 2:
+                    details.Description = line
+                elif line == 3:
+                    details.HomepageURL = line
+                elif line.startswith(".tarball"):
+                    details.InstallerURL = line.replace(".tarball: ", "")
+                    try:
+                        details.InstallerSize = int(urlopen(details.InstallerURL).length/1000000)
+                    except Exception as e:
+                        print("🟠 Can't get installer size:", type(e), str(e))
+                elif line.startswith(".shasum"):
+                    details.InstallerHash = line.replace(".shasum: sha512-", "").replace("==", "")
+                
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:
