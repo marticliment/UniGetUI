@@ -281,22 +281,5 @@ class DynamicLoadPackageManager(SamplePackageManager):
         """
         raise NotImplementedError("This method must be reimplemented")
 
-
-class DynamicLoadPackageManager(SamplePackageManager):
-        
-    def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
-        print(f"🟠 Package manager {self.NAME} does not support listing available packages")
-        return []
-    
-    def cacheAvailablePackages(self) -> None:
-        print(f"🟠 Package manager {self.NAME} does not support caching available packages")
-
-    def getPackagesForQuery(self, query: str) -> list[Package]:
-        f"""
-        Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
-        """
-        raise NotImplementedError("This method must be reimplemented")
-
-
 if(__name__=="__main__"):
     import __init__

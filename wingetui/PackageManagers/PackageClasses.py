@@ -214,15 +214,6 @@ class DynamicPackageManager(PackageManagerModule):
 
 
 
-class DynamicPackageManager(PackageManagerModule):
-        
-    def getPackagesForQuery(self, query: str) -> list[Package]:
-        f"""
-        Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
-        """
-
-
-
 RETURNCODE_OPERATION_SUCCEEDED = 0
 RETURNCODE_NO_APPLICABLE_UPDATE_FOUND = 92849
 RETURNCODE_NEEDS_RESTART = 3
