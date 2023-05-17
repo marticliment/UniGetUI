@@ -11,18 +11,46 @@ from PackageManagers.PackageClasses import *
 from PackageManagers.winget import Winget
 from PackageManagers.scoop import Scoop
 from PackageManagers.choco import Choco
+from PackageManagers.pip import Pip
+from PackageManagers.npm import Npm
 from PackageManagers import PackageClasses
 
 PackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Winget,
     Scoop,
-    Choco
+    Choco,
+    Pip,
+    Npm
 ]
 
 PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Winget: False,
     Scoop: False,
     Choco: False,
+    Pip: False,
+    Npm: False
+}
+
+StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
+    Winget,
+    Scoop,
+    Choco
+]
+
+StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+    Winget: False,
+    Scoop: False,
+    Choco: False
+}
+
+DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
+    Pip,
+    Npm
+]
+
+DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+    Pip: False,
+    Npm: False
 }
 
 class QLinkLabel(QLabel):
