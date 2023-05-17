@@ -67,10 +67,12 @@ StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
 
 DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
     Pip,
+    Npm
 ]
 
 DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
-    Pip: False
+    Pip: False,
+    Npm: False
 }
 
 class QLinkLabel(QLabel):

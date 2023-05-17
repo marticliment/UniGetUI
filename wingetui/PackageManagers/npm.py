@@ -16,9 +16,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
-    BLACKLISTED_PACKAGE_NAMES = ["WARNING:", "[notice]", "Package"]
-    BLACKLISTED_PACKAGE_IDS = ["WARNING:", "[notice]", "Package"]
-    BLACKLISTED_PACKAGE_VERSIONS = ["Ignoring", "invalie"]
+    BLACKLISTED_PACKAGE_NAMES = []
+    BLACKLISTED_PACKAGE_IDS = []
+    BLACKLISTED_PACKAGE_VERSIONS = []
 
     icon = None
 
@@ -97,6 +97,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         try:
             packages: list[Package] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            currentScope = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line and len(line) > 4:
@@ -109,9 +110,10 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                             id = idString
                             version = package[-1]
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, version, self.NAME, Npm))
-                    else:
-                        print(line)
+                                packages.append(Package(name, id, version, self.NAME+currentScope, Npm))
+                    elif "@" in line.split(" ")[0]:
+                        currentScope = "@"+line.split(" ")[0][:-1]
+                        print("🔵 NPM changed scope to", currentScope)
             p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -125,9 +127,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                             id = idString
                             version = package[-1].strip()
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, version, self.NAME, Npm))
-                    else:
-                        print(line)
+                                packages.append(Package(name, id, version, self.NAME+"@global", Npm))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             return packages
         except Exception as e:
@@ -183,7 +183,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             self.icon = QIcon(getMedia("node"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions, removeprogressbar: bool = True) -> list[str]:
+    def getParameters(self, options: InstallationOptions) -> list[str]:
         Parameters: list[str] = []
         if options.CustomParameters:
             Parameters += options.CustomParameters
@@ -194,7 +194,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = [self.EXECUTABLE, "install", package.Id] + self.getParameters(options)
+        if "@global" in package.Source:
+            options.InstallationScope = "Global"
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -202,7 +204,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = [self.EXECUTABLE, "update", package.Id] + self.getParameters(options)
+        if "@global" in package.Source:
+            options.InstallationScope = "Global"
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "update", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -227,11 +231,16 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         widget.finishInstallation.emit(outputCode, output)
         
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = [self.EXECUTABLE, "uninstall", package.Id, "-y"] + self.getParameters(options, removeprogressbar=False)
+        uninstallId = package.Id
+        if "@global" in package.Source:
+            options.InstallationScope = "Global"
+        elif "@" in package.Source:
+            uninstallId = package.Source.replace(self.NAME, "")+"/"+package.Id
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "uninstall", uninstallId] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
-        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        p = subprocess.Popen(" ".join(Command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
