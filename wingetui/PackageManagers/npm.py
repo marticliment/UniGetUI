@@ -35,7 +35,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         print(f"🔵 Starting {self.NAME} search for dynamic packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen(f"{self.EXECUTABLE} search {query}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen(f"{self.EXECUTABLE} search {query}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -65,7 +65,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         print(f"🔵 Starting {self.NAME} search for updates")
         try:
             packages: list[UpgradablePackage] = []
-            p = subprocess.Popen(f"{self.EXECUTABLE} outdated", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen(f"{self.EXECUTABLE} outdated", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -96,7 +96,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             currentScope = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -114,7 +114,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                     elif "@" in line.split(" ")[0]:
                         currentScope = "@"+line.split(" ")[0][:-1]
                         print("🔵 NPM changed scope to", currentScope)
-            p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line and len(line) > 4:
@@ -145,7 +145,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
             details.ManifestUrl = f"https://www.npmjs.com/package/{package.Id}"
             details.ReleaseNotesUrl = f"https://www.npmjs.com/package/{package.Id}?activeTab=versions"
             details.Scopes = ["Global"]       
-            p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+            p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
             while p.poll() is None:
                 line = p.stdout.readline()
@@ -195,7 +195,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         if options.InstallationScope:
             if options.InstallationScope in ("Global", _("Global")):
                 Parameters.append("--global")
-        Parameters += ["--no-package-lock"]
+        Parameters += []
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
@@ -205,7 +205,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
-        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.path.expanduser("~"), env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
 
     def startUpdate(self, package: UpgradablePackage, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
@@ -215,7 +215,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
-        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.path.expanduser("~"), env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
@@ -239,13 +239,13 @@ class NPMPackageManager(DynamicLoadPackageManager):
         uninstallId = package.Id
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        elif "@" in package.Source:
-            uninstallId = package.Source.replace(self.NAME, "")+"/"+package.Id
-        Command = ["cmd.exe", "/C", self.EXECUTABLE, "uninstall", uninstallId] + self.getParameters(options)
+        #elif "@" in package.Source:
+        #    uninstallId = package.Source.replace(self.NAME, "")+"/"+package.Id
+        Command = [self.EXECUTABLE, "uninstall", uninstallId] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
-        p = subprocess.Popen(" ".join(Command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        p = subprocess.Popen(" ".join(Command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.path.expanduser("~"), env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
