@@ -265,7 +265,7 @@ class SamplePackageManager(PackageManagerModule):
         subprocess.run(f"{self.EXECUTABLE} update self", shell=True, stdout=subprocess.PIPE)
         if signal:
             signal.emit()
-
+            
 class DynamicLoadPackageManager(SamplePackageManager):
         
     def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
@@ -280,7 +280,6 @@ class DynamicLoadPackageManager(SamplePackageManager):
         Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
         raise NotImplementedError("This method must be reimplemented")
-
 
 if(__name__=="__main__"):
     import __init__

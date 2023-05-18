@@ -6,7 +6,7 @@ from .PackageClasses import *
 from .sampleHelper import *
     
     
-class ScoopPackageManager(DynamicLoadPackageManager):
+class PipPackageManager(DynamicLoadPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -254,4 +254,4 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         if signal:
             signal.emit()
 
-Pip = ScoopPackageManager()
+Pip = PipPackageManager()

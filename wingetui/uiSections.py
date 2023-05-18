@@ -1192,7 +1192,7 @@ class AboutSection(SmoothScrollArea):
             table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
             table.setCornerWidget(QLabel(""))
             table.setCornerButtonEnabled(False)
-            table.setFixedHeight(230)
+            table.setFixedHeight(260)
             table.cornerWidget().setStyleSheet("background: transparent;")
             self.layout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
@@ -1581,8 +1581,8 @@ class SettingsSection(SmoothScrollArea):
         self.wingetPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Winget"), getMedia("winget"), _("{pm} package manager specific preferences").format(pm = "Winget"))
         self.layout.addWidget(self.wingetPreferences)
         disableWinget = SectionCheckBox(_("Enable {pm}").format(pm = "Winget"))
-        disableWinget.setChecked(not getSettings("DisableWinget"))
-        disableWinget.stateChanged.connect(lambda v: (setSettings("DisableWinget", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v)))
+        disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
+        disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v)))
         self.wingetPreferences.addWidget(disableWinget)
 
         parallelInstalls = SectionCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
@@ -1606,8 +1606,8 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.scoopPreferences)
 
         disableScoop = SectionCheckBox(_("Enable {pm}").format(pm = "Scoop"))
-        disableScoop.setChecked(not getSettings("DisableScoop"))
-        disableScoop.stateChanged.connect(lambda v: (setSettings("DisableScoop", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v)))
+        disableScoop.setChecked(not getSettings(f"Disable{Scoop.NAME}"))
+        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v)))
         self.scoopPreferences.addWidget(disableScoop)
         scoopPreventCaps = SectionCheckBox(_("Show Scoop packages in lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
@@ -1635,8 +1635,8 @@ class SettingsSection(SmoothScrollArea):
         self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
         self.layout.addWidget(self.chocoPreferences)
         disableChocolatey = SectionCheckBox(_("Enable {pm}").format(pm = "Chocolatey"))
-        disableChocolatey.setChecked(not getSettings("DisableChocolatey"))
-        disableChocolatey.stateChanged.connect(lambda v: (setSettings("DisableChocolatey", not bool(v))))
+        disableChocolatey.setChecked(not getSettings(f"Disable{Choco.NAME}"))
+        disableChocolatey.stateChanged.connect(lambda v: (setSettings(f"Disable{Choco.NAME}", not bool(v))))
         self.chocoPreferences.addWidget(disableChocolatey)
         enableSystemChocolatey = SectionCheckBox(_("Use system Chocolatey (Needs a restart)"))
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
@@ -1650,8 +1650,15 @@ class SettingsSection(SmoothScrollArea):
         self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Pip"), getMedia("python"), _("{pm} package manager specific preferences").format(pm = "Pip"))
         self.layout.addWidget(self.pipPreferences)
         disablePip = SectionCheckBox(_("Enable {pm}").format(pm = "Pip"))
-        disablePip.setChecked(not getSettings("DisablePip"))
-        disablePip.stateChanged.connect(lambda v: (setSettings("DisablePip", not bool(v))))
+        disablePip.setChecked(not getSettings(f"Disable{Pip.NAME}"))
+        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v))))
+        self.pipPreferences.addWidget(disablePip)
+        
+        self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Npm"), getMedia("node"), _("{pm} package manager specific preferences").format(pm = "Npm"))
+        self.layout.addWidget(self.pipPreferences)
+        disablePip = SectionCheckBox(_("Enable {pm}").format(pm = Npm.NAME))
+        disablePip.setChecked(not getSettings(f"Disable{Npm.NAME}"))
+        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v))))
         self.pipPreferences.addWidget(disablePip)
 
 
@@ -2244,6 +2251,8 @@ class PackageInfoPopupWindow(QWidget):
             self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Pip):
             self.commandWindow.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+        elif self.currentPackage.isManager(Npm):
+            self.commandWindow.setText(f"npm {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
             print(f"🟠 Unknown source {self.currentPackage.Source}")
         self.commandWindow.setCursorPosition(0)
@@ -2299,12 +2308,12 @@ class PackageInfoPopupWindow(QWidget):
                 lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
         self.lastver.setText(lastVerString)
 
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
-        self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
+        self.date.setText(f"<b>{_('Publication date:') if package.isManager(Npm) else _('Last updated:')}</b> {_('Loading...')}")
         self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {_('Loading...')}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
         self.storeLabel.setText(f"<b>{_('Source')}:</b> {package.Source}")
@@ -2369,11 +2378,11 @@ class PackageInfoPopupWindow(QWidget):
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
-        self.date.setText(f"<b>{_('Last updated:')}</b> {details.UpdateDate}")
+        self.date.setText(f"<b>{_('Publication date:') if package.isManager(Npm) else _('Last updated:')}</b> {details.UpdateDate}")
         self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {details.ReleaseNotes}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {details.asUrl(details.ReleaseNotesUrl)}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {details.asUrl(details.ManifestUrl)}")
