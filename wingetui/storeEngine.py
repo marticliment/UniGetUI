@@ -16,7 +16,7 @@ from customWidgets import *
 import globals
 from PackageManagers.PackageClasses import Package, UpgradablePackage, PackageDetails
 
-class PackageInstallerWidget(QGroupBox):
+class PackageInstallerWidget(QWidget):
     onCancel = Signal()
     killSubprocess = Signal()
     addInfoLine = Signal(str)
@@ -35,7 +35,7 @@ class PackageInstallerWidget(QGroupBox):
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.liveOutputWindowWindow = QMainWindow(self)
-        self.liveOutputWindow = CustomPlainTextEdit()
+        self.liveOutputWindow = CustomPlainTextEdit(self.liveOutputWindowWindow)
         self.liveOutputWindowWindow.setCentralWidget(self.liveOutputWindow)
         self.liveOutputWindowWindow.setContentsMargins(10, 10, 10, 10)
         self.liveOutputWindowWindow.setWindowIcon(self.window().windowIcon())
@@ -376,6 +376,7 @@ class PackageInstallerWidget(QGroupBox):
         pos.setY(pos.y()+self.liveOutputButton.height()-2)
         self.progressbar.move(pos)
         self.progressbar.setFixedWidth(self.liveOutputButton.width())
+
 
 class PackageUpdaterWidget(PackageInstallerWidget):
 
