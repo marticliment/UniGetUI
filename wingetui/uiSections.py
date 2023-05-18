@@ -2244,6 +2244,8 @@ class PackageInfoPopupWindow(QWidget):
             self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Pip):
             self.commandWindow.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+        elif self.currentPackage.isManager(Npm):
+            self.commandWindow.setText(f"npm {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
             print(f"🟠 Unknown source {self.currentPackage.Source}")
         self.commandWindow.setCursorPosition(0)
@@ -2299,12 +2301,12 @@ class PackageInfoPopupWindow(QWidget):
                 lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
         self.lastver.setText(lastVerString)
 
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {_('Loading...')}")
-        self.date.setText(f"<b>{_('Last updated:')}</b> {_('Loading...')}")
+        self.date.setText(f"<b>{_('Publication date:') if package.isManager(Npm) else _('Last updated:')}</b> {_('Loading...')}")
         self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {_('Loading...')}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
         self.storeLabel.setText(f"<b>{_('Source')}:</b> {package.Source}")
@@ -2369,11 +2371,11 @@ class PackageInfoPopupWindow(QWidget):
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
-        self.date.setText(f"<b>{_('Last updated:')}</b> {details.UpdateDate}")
+        self.date.setText(f"<b>{_('Publication date:') if package.isManager(Npm) else _('Last updated:')}</b> {details.UpdateDate}")
         self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {details.ReleaseNotes}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {details.asUrl(details.ReleaseNotesUrl)}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {details.asUrl(details.ManifestUrl)}")

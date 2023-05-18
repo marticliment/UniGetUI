@@ -142,6 +142,8 @@ class NPMPackageManager(DynamicLoadPackageManager):
         details = PackageDetails(package)
         try:
             details.InstallerType = "Tarball"
+            details.ManifestUrl = f"https://www.npmjs.com/package/{package.Id}"
+            details.ReleaseNotesUrl = f"https://www.npmjs.com/package/{package.Id}?activeTab=versions"
             details.Scopes = ["Global"]       
             p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
             output: list[str] = []
@@ -150,21 +152,31 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 if line:
                     output.append(str(line, encoding='utf-8', errors="ignore").strip())
             lineNo = 0
+            ReadingMaintainer = False
             for line in output:
                 lineNo += 1
                 if lineNo == 2:
-                    details.Description = line
-                elif line == 3:
-                    details.HomepageURL = line
+                    details.License = line.split("|")[1]
+                elif lineNo == 3:
+                    details.Description = line.strip()
+                elif line == 4:
+                    details.HomepageURL = line.strip()
                 elif line.startswith(".tarball"):
-                    details.InstallerURL = line.replace(".tarball: ", "")
+                    details.InstallerURL = line.replace(".tarball: ", "").strip()
                     try:
                         details.InstallerSize = int(urlopen(details.InstallerURL).length/1000000)
                     except Exception as e:
                         print("🟠 Can't get installer size:", type(e), str(e))
-                elif line.startswith(".shasum"):
-                    details.InstallerHash = line.replace(".shasum: sha512-", "").replace("==", "")
-                
+                elif line.startswith(".integrity"):
+                    details.InstallerHash = "<br>"+line.replace(".integrity: sha512-", "").replace("==", "").strip()
+                elif line.startswith("maintainers:"):
+                    ReadingMaintainer = True
+                elif ReadingMaintainer:
+                    ReadingMaintainer = False
+                    details.Author = line.replace("-", "").split("<")[0].strip()
+                elif line.startswith("published"):
+                    details.Publisher = line.split("by")[-1].split("<")[0].strip()
+                    details.UpdateDate = line.split("by")[0].replace("published", "").strip()
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:
