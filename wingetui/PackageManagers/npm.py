@@ -12,7 +12,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
 
     EXECUTABLE = "npm"
 
-    NAME = "NPM"
+    NAME = "Npm"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
@@ -236,12 +236,9 @@ class NPMPackageManager(DynamicLoadPackageManager):
         widget.finishInstallation.emit(outputCode, output)
         
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        uninstallId = package.Id
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        #elif "@" in package.Source:
-        #    uninstallId = package.Source.replace(self.NAME, "")+"/"+package.Id
-        Command = [self.EXECUTABLE, "uninstall", uninstallId] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall", ] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
