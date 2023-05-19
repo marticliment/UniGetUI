@@ -2265,7 +2265,10 @@ class PackageInfoPopupWindow(QWidget):
         elif self.currentPackage.isManager(Choco):
             self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Pip):
-            self.commandWindow.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+            idtoInstall = self.currentPackage.Id
+            if self.versionCombo.currentText() not in ("Latest", _("Latest"), "Loading...", _("Loading...")):
+                idtoInstall += "=="+self.versionCombo.currentText()
+            self.commandWindow.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {idtoInstall} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Npm):
             self.commandWindow.setText(f"npm {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:

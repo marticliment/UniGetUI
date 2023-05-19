@@ -362,9 +362,10 @@ class PackageInstallerWidget(QWidget):
         a.start()
 
     def close(self):
+        self.liveOutputWindow.close()
+        self.liveOutputWindowWindow.close()
         globals.installersWidget.removeItem(self)
         super().close()
-        self.liveOutputWindow.close()
         super().destroy()
         
     def showEvent(self, event: QShowEvent) -> None:
@@ -432,9 +433,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             super().finish(returncode, output)
 
     def close(self):
+        self.liveOutputWindow.close()
+        self.liveOutputWindowWindow.close()
         globals.installersWidget.removeItem(self)
         super().destroy()
-        self.liveOutputWindow.close()
         super().close()
 
 class PackageUninstallerWidget(PackageInstallerWidget):
@@ -591,8 +593,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.err.showErrorMessage(errorData, showNotification=False)
 
     def close(self):
-        globals.installersWidget.removeItem(self)
         self.liveOutputWindow.close()
+        self.liveOutputWindowWindow.close()
+        globals.installersWidget.removeItem(self)
         super().close()
         super().destroy()
 

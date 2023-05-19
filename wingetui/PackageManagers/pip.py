@@ -5,6 +5,7 @@ from tools import _
 from .PackageClasses import *
 from .sampleHelper import *
     
+# TODO: Implement auto --user fallback
     
 class PipPackageManager(DynamicLoadPackageManager):
 
@@ -25,9 +26,9 @@ class PipPackageManager(DynamicLoadPackageManager):
     Capabilities.CanSkipIntegrityChecks = False
     Capabilities.CanRunInteractively = False
     Capabilities.CanRemoveDataOnUninstall = False
-    Capabilities.SupportsCustomVersions = False # TODO: implement version listing
+    Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
-    Capabilities.SupportsCustomScopes = False # TODO: implement --user custom scope
+    Capabilities.SupportsCustomScopes = True
     
     icon = None
 
@@ -169,6 +170,17 @@ class PipPackageManager(DynamicLoadPackageManager):
                 elif "Topic ::" in line:
                     if line.split("::")[-1].strip() not in details.Tags:
                         details.Tags.append(line.split("::")[-1].strip())
+                        
+            p = subprocess.Popen(f"{self.EXECUTABLE} index versions {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
+            output: list[str] = []
+            while p.poll() is None:
+                line = p.stdout.readline()
+                if line:
+                    output.append(str(line, encoding='utf-8', errors="ignore").strip())
+            for line in output:
+                if "Available versions:" in line:
+                    details.Versions = [v.strip() for v in line.replace("Available versions:", "").split(",")]
+                    break
                     
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
@@ -194,7 +206,10 @@ class PipPackageManager(DynamicLoadPackageManager):
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = self.EXECUTABLE.split(" ") + ["install", package.Id] + self.getParameters(options)
+        idtoInstall = package.Id
+        if options.Version:
+            idtoInstall += "=="+options.Version
+        Command = self.EXECUTABLE.split(" ") + ["install", idtoInstall] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -202,7 +217,10 @@ class PipPackageManager(DynamicLoadPackageManager):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = self.EXECUTABLE.split(" ") + ["install", package.Id, "--upgrade"] + self.getParameters(options)
+        idtoInstall = package.Id
+        if options.Version:
+            idtoInstall += "=="+options.Version
+        Command = self.EXECUTABLE.split(" ") + ["install", idtoInstall, "--upgrade"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -222,7 +240,7 @@ class PipPackageManager(DynamicLoadPackageManager):
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
-                outputCode = RETURNCODE_FAILED 
+                outputCode = RETURNCODE_FAILED
                 
         widget.finishInstallation.emit(outputCode, output)
         
