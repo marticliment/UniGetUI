@@ -610,9 +610,11 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
 
         self.installIcon = QIcon(getMedia("install"))
         self.versionIcon = QIcon(getMedia("newversion"))
-        self.wingetIcon = QIcon(getMedia("winget"))
-        self.scoopIcon = QIcon(getMedia("scoop"))
-        self.chocolateyIcon = QIcon(getMedia("choco"))
+        self.wingetIcon = Winget.getIcon("Winget")
+        self.scoopIcon = Scoop.getIcon("Scoop")
+        self.chocolateyIcon = Choco.getIcon("Chocolatey")
+        self.pipIcon = Pip.getIcon("Pip")
+        self.npmIcon = Npm.getIcon("Npm")
         self.localIcon = QIcon(getMedia("localpc"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
 
@@ -642,6 +644,10 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
             item.setIcon(2, self.wingetIcon)
         elif "choco" in store.lower():
             item.setIcon(2, self.chocolateyIcon)
+        elif "pip" in store.lower():
+            item.setIcon(2, self.pipIcon)
+        elif "npm" in store.lower():
+            item.setIcon(2, self.npmIcon)
         else:
             item.setIcon(2, self.localIcon)
         self.treewidget.addTopLevelItem(item)
