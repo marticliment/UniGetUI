@@ -101,10 +101,15 @@ class DiscoverSoftwareSection(SoftwareSection):
         if self.packageList.currentItem().isHidden():
             return
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
-        if self.ItemPackageReference[self.packageList.currentItem()].PackageManager != Scoop:
-            self.InteractiveAction.setVisible(True)
-        else:
-            self.InteractiveAction.setVisible(False)
+        
+        try:
+            Capabilities: PackageManagerCapabilities =  self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
+            self.AdminAction.setVisible(Capabilities.CanRunAsAdmin)
+            self.SkipHashAction.setVisible(Capabilities.CanSkipIntegrityChecks)
+            self.InteractiveAction.setVisible(Capabilities.CanRunInteractively)
+        except Exception as e:
+            report(e)
+        
         pos.setY(pos.y()+35)
         self.contextMenu.exec(self.packageList.mapToGlobal(pos))
         
@@ -431,10 +436,15 @@ class UpdateSoftwareSection(SoftwareSection):
             return
         if self.packageList.currentItem().isHidden():
             return
-        if self.ItemPackageReference[self.packageList.currentItem()].PackageManager != Scoop:
-            self.InteractiveAction.setVisible(True)
-        else:
-            self.InteractiveAction.setVisible(False)
+        
+        try:
+            Capabilities: PackageManagerCapabilities =  self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
+            self.AdminAction.setVisible(Capabilities.CanRunAsAdmin)
+            self.SkipHashAction.setVisible(Capabilities.CanSkipIntegrityChecks)
+            self.InteractiveAction.setVisible(Capabilities.CanRunInteractively)
+        except Exception as e:
+            report(e)
+            
         pos.setY(pos.y()+35)
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
 
@@ -881,9 +891,14 @@ class UninstallSoftwareSection(SoftwareSection):
             return
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
                     
-        self.RemoveDataAction.setVisible(self.ItemPackageReference[self.packageList.currentItem()].PackageManager == Scoop)
-        self.InteractiveAction.setVisible(self.ItemPackageReference[self.packageList.currentItem()].PackageManager != Scoop)
-        
+        try:
+            Capabilities: PackageManagerCapabilities =  self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
+            self.AdminAction.setVisible(Capabilities.CanRunAsAdmin)
+            self.RemoveDataAction.setVisible(Capabilities.CanRemoveDataOnUninstall)
+            self.InteractiveAction.setVisible(Capabilities.CanRunInteractively)
+        except Exception as e:
+            report(e)
+                    
         if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
             self.IgnoreUpdatesAction.setVisible(True)
             self.ShareAction.setVisible(True)
