@@ -281,7 +281,7 @@
   "Unable to load informarion" : "Não foi possível carregar as informações",
   "uninstall" : "desinstalar",
   "Uninstall" : "Desinstalar",
-  "Uninstallable packages with the origin listed as \"{0}\" are not published on any package manager, so there's no information available to show about them." : "Pacotes desinstaláveis com a origem listada como \"{0}\" não estão publicados em nenhum gerenciador de pacotes, então não há informações disponíveis para mostrar sobre eles.",
+  "Uninstallable packages with the origin listed as \"{0}\" are not published on any package manager, so there's no information available to show about them." : "Pacotes desinstaláveis com a origem listada como \"{0}\" não foram publicados em nenhum gerenciador de pacotes, então não há informações disponíveis para mostrar sobre eles.",
   "Uninstall as administrator" : "Desinstalar como administrador",
   "uninstallation" : "desinstalação",
   "Uninstall canceled by the user!" : "Desinstalação cancelada pelo usuário!",
