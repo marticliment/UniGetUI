@@ -118,24 +118,28 @@ class PackageInstallerWidget(QWidget):
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(self.update)
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
         
         self.rightSlow = QPropertyAnimation(self.progressbar, b"value")
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(self.update)
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
         
         self.leftFast = QPropertyAnimation(self.progressbar, b"value")
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
         self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(self.update)
         self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
 
         self.rightFast = QPropertyAnimation(self.progressbar, b"value")
         self.rightFast.setStartValue(1000)
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(self.update)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
 
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
