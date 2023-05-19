@@ -169,7 +169,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 elif lineNo == 3:
                     details.Description = line.strip()
                 elif line == 4:
-                    details.HomepageURL = line.strip()
+                    details.HomepageURL = line.strip() # TODO: Fix homepage not showing
                 elif line.startswith(".tarball"):
                     details.InstallerURL = line.replace(".tarball: ", "").strip()
                     try:

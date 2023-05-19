@@ -2326,7 +2326,18 @@ class PackageInfoPopupWindow(QWidget):
             for l in self.imagesCarrousel:
                 l.setPixmap(p, index=0)
             Thread(target=self.loadPackageScreenshots, args=(package,)).start()
-
+            
+        Capabilities =  package.PackageManager.Capabilities
+        self.adminCheckbox.setEnabled(Capabilities.CanRunAsAdmin)
+        self.hashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
+        self.interactiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
+        self.versionCombo.setEnabled(Capabilities.SupportsCustomVersions)
+        self.versionLabel.setEnabled(Capabilities.SupportsCustomVersions)
+        self.architectureCombo.setEnabled(Capabilities.SupportsCustomArchitectures)
+        self.architectureLabel.setEnabled(Capabilities.SupportsCustomArchitectures)
+        self.scopeCombo.setEnabled(Capabilities.SupportsCustomScopes)
+        self.scopeLabel.setEnabled(Capabilities.SupportsCustomScopes)
+        
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
         Thread(target=self.loadPackageIcon, args=(package,)).start()
@@ -2349,10 +2360,6 @@ class PackageInfoPopupWindow(QWidget):
         self.loadingProgressBar.hide()
         self.installButton.setEnabled(True)
         self.adminCheckbox.setEnabled(True)
-        self.hashCheckBox.setEnabled(not self.isAnUninstall)
-        self.versionCombo.setEnabled(not self.isAnUninstall and not self.isAnUpdate)
-        self.architectureCombo.setEnabled(not self.isAnUninstall)
-        self.scopeCombo.setEnabled(not self.isAnUninstall)
         if self.isAnUpdate:
             self.installButton.setText(_("Update"))
         elif self.isAnUninstall:
@@ -2401,6 +2408,17 @@ class PackageInfoPopupWindow(QWidget):
             label.setStyleSheet(f"padding: 5px;padding-bottom: 2px;padding-top: 2px;background-color: {blueColor if isDark() else f'rgb({getColors()[0]})'}; color: black; border-radius: 10px;")
             label.setFixedHeight(20)
             self.tagsWidget.layout().addWidget(label)
+            
+        Capabilities =  package.PackageManager.Capabilities
+        self.adminCheckbox.setEnabled(Capabilities.CanRunAsAdmin)
+        self.hashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
+        self.interactiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
+        self.versionCombo.setEnabled(Capabilities.SupportsCustomVersions)
+        self.versionLabel.setEnabled(Capabilities.SupportsCustomVersions)
+        self.architectureCombo.setEnabled(Capabilities.SupportsCustomArchitectures)
+        self.architectureLabel.setEnabled(Capabilities.SupportsCustomArchitectures)
+        self.scopeCombo.setEnabled(Capabilities.SupportsCustomScopes)
+        self.scopeLabel.setEnabled(Capabilities.SupportsCustomScopes)
 
         self.loadPackageCommandLine()
 

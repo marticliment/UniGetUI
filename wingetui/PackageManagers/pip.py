@@ -27,7 +27,7 @@ class PipPackageManager(DynamicLoadPackageManager):
     Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = False # TODO: implement version listing
     Capabilities.SupportsCustomArchitectures = False
-    Capabilities.SupportsCustomScopes = False
+    Capabilities.SupportsCustomScopes = False # TODO: implement --user custom scope
     
     icon = None
 
