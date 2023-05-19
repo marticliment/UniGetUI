@@ -14,7 +14,6 @@ from PackageManagers.scoop import Scoop
 from PackageManagers.choco import Choco
 from PackageManagers.pip import Pip
 from PackageManagers.npm import Npm
-from PackageManagers.msstore import MsStore
 from PackageManagers import PackageClasses
 
 PackageManagersList: list[PackageClasses.PackageManagerModule] = [
@@ -23,7 +22,6 @@ PackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Choco,
     Pip,
     Npm,
-#    MsStore
 ]
 
 PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
@@ -32,7 +30,6 @@ PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Choco: False,
     Pip: False,
     Npm: False,
-#    MsStore: False
 }
 
 StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
@@ -50,13 +47,13 @@ StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
 DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
     Pip,
     Npm,
-#    MsStore
+    Winget # Microsoft Store source only
 ]
 
 DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Pip: False,
     Npm: False,
-#    MsStore: False
+    Winget: False  # Microsoft Store source only
 }
 
 class QLinkLabel(QLabel):

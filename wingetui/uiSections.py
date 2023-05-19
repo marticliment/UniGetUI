@@ -899,7 +899,7 @@ class UninstallSoftwareSection(SoftwareSection):
         except Exception as e:
             report(e)
                     
-        if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
+        if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
             self.IgnoreUpdatesAction.setVisible(True)
             self.ShareAction.setVisible(True)
             self.DetailsAction.setVisible(True)
