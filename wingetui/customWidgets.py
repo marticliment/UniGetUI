@@ -14,6 +14,7 @@ from PackageManagers.scoop import Scoop
 from PackageManagers.choco import Choco
 from PackageManagers.pip import Pip
 from PackageManagers.npm import Npm
+from PackageManagers.msstore import MsStore
 from PackageManagers import PackageClasses
 
 PackageManagersList: list[PackageClasses.PackageManagerModule] = [
@@ -21,7 +22,8 @@ PackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Scoop,
     Choco,
     Pip,
-    Npm
+    Npm,
+#    MsStore
 ]
 
 PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
@@ -29,7 +31,8 @@ PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Scoop: False,
     Choco: False,
     Pip: False,
-    Npm: False
+    Npm: False,
+#    MsStore: False
 }
 
 StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
@@ -46,12 +49,14 @@ StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
 
 DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
     Pip,
-    Npm
+    Npm,
+#    MsStore
 ]
 
 DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Pip: False,
-    Npm: False
+    Npm: False,
+#    MsStore: False
 }
 
 class QLinkLabel(QLabel):

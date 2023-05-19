@@ -5,14 +5,14 @@ from tools import _
 from .PackageClasses import *
 from .sampleHelper import *
 
-class WingetPackageManager(SamplePackageManager):
+class MsStorePackageManager(DynamicPackageManager):
 
     if getSettings("UseSystemWinget"):
         EXECUTABLE = "winget.exe"
     else:
         EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
 
-    NAME = "Winget"
+    NAME = "Microsoft Store"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
@@ -29,75 +29,26 @@ class WingetPackageManager(SamplePackageManager):
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = True
 
-    wingetIcon = None
-    localIcon = None
-    steamIcon = None
-    gogIcon = None
-    uPlayIcon = None
     msStoreIcon = None
-    wsaIcon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
         
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
-
-    def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
-        f"""
-        Will retieve the cached packages for the package manager {self.NAME} in the format of a list[Package] object.
-        If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
-        Finally, it will start a background cacher thread.
-        """
-        print(f"🔵 Starting {self.NAME} search for available packages")
+        
+    def getPackagesForQuery(self, query: str) -> list[Package]:
+        print(f"🔵 Starting {self.NAME} search for dynamic packages")
         try:
             packages: list[Package] = []
-            if os.path.exists(self.CACHE_FILE):
-                f = open(self.CACHE_FILE, "r", encoding="utf-8", errors="ignore")
-                content = f.read()
-                f.close()
-                if content != "":
-                    print(f"🟢 Found valid, non-empty cache file for {self.NAME}!")
-                    for line in content.split("\n"):
-                        package = line.split(",")
-                        if len(package) >= 2:
-                            packages.append(Package(package[0], package[1], package[2], self.NAME, Winget))
-                    Thread(target=self.cacheAvailablePackages, daemon=True, name=f"{self.NAME} package cacher thread").start()
-                    print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-                    return packages
-                else:
-                    print(f"🟠 {self.NAME} cache file exists but is empty!")
-                    f.close()
-                    if second_attempt:
-                        print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
-                        return []
-                    self.cacheAvailablePackages()
-                    return self.getAvailablePackages(second_attempt = True)
-            else:
-                print(f"🟡 {self.NAME} cache file does not exist, creating cache forcefully and returning new package list")
-                if second_attempt:
-                    print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
-                    return []
-                self.cacheAvailablePackages()
-                return self.getAvailablePackages(second_attempt = True)
-        except Exception as e:
-            report(e)
-            return []
-        
-    def cacheAvailablePackages(self) -> None:
-        """
-        Internal method, should not be called manually externally.
-        Will load the available packages and write them into the cache file
-        """
-        print(f"🔵 Starting {self.NAME} package caching")
-        try:
-            p = subprocess.Popen([self.EXECUTABLE, "search", "", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "search", query, "--source", "msstore", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
             ContentsToCache = ""
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                print(line)
                 if line:
                     if not hasShownId:
                         if "Id" in line:
@@ -146,20 +97,15 @@ class WingetPackageManager(SamplePackageManager):
                             ContentsToCache += f"{line[0:idPosition].strip()},{line[idPosition:versionPosition].strip()},{line[versionPosition:].strip()}\n"
                             if type(e) != IndexError:
                                 report(e)
-            AlreadyCachedPackages = ""
-            try:
-                if os.path.exists(self.CACHE_FILE):
-                    f = open(self.CACHE_FILE, "r", encoding="utf-8", errors="ignore")
-                    AlreadyCachedPackages = f.read()
-                    f.close()
-            except Exception as e:
-                report(e)
-            for line in AlreadyCachedPackages.split("\n"):
-                if line.split(",")[0] not in ContentsToCache:
-                    ContentsToCache += line + "\n"
-            with open(self.CACHE_FILE, "w", encoding="utf-8", errors="ignore") as f:
-                f.write(ContentsToCache)
-            print(f"🟢 {self.NAME} packages cached successfuly")
+            
+            for line in ContentsToCache.split("\n"):
+                package = line.split(",")
+                if len(package) >= 2:
+                    packages.append(Package(package[0], package[1], package[2], self.NAME, MsStore))
+            
+            print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            return packages
+        
         except Exception as e:
             report(e)
             
@@ -170,7 +116,7 @@ class WingetPackageManager(SamplePackageManager):
         print(f"🔵 Starting {self.NAME} search for updates")
         try:
             packages: list[UpgradablePackage] = []
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "upgrade", "--include-unknown", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "upgrade", "--include-unknown", "--source", "msstore", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
@@ -213,15 +159,15 @@ class WingetPackageManager(SamplePackageManager):
                         name = element[0:idPosition].strip()
                         if not "  " in name:
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name, id, ver, newver, self.NAME, Winget))
+                                packages.append(UpgradablePackage(name, id, ver, newver, self.NAME, MsStore))
                         else:
                             name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                             while "##" in name:
                                 name = name.replace("##", "#")
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, self.NAME, Winget))
+                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, self.NAME, MsStore))
                     except Exception as e:
-                        packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:].split(" ")[0].strip(), self.NAME, Winget))
+                        packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:].split(" ")[0].strip(), self.NAME, MsStore))
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
@@ -234,113 +180,7 @@ class WingetPackageManager(SamplePackageManager):
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
-        
-        def getSource(id: str) -> str:
-            id = id.strip()
-            androidValid = True
-            for letter in id:
-                if letter not in "abcdefghijklmnopqrstuvwxyz.":
-                    androidValid = False
-            if androidValid and id.count(".") > 1:
-                return _("Android Subsystem")
-            s = "Winget"
-            for illegal_char in ("{", "}", " "):
-                if illegal_char in id:
-                    s = _("Local PC")
-                    break
-            if s == "Winget":
-                if id.count(".") != 1:
-                    s = (_("Local PC"))
-                    if id.count(".") > 1:
-                        for letter in id:
-                            if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                                s = "Winget"
-                                break    
-            if s == _("Local PC"):
-                if id == "Steam":
-                    s = "Steam"
-                if id == "Uplay":
-                    s = "Ubisoft Connect"
-                if id.count("_is1") == 1:
-                    s = "GOG"
-                    for number in id.split("_is1")[0]:
-                        if number not in "0123456789":
-                            s = _("Local PC")
-                            break
-                    if len(id) != 14:
-                        s = _("Local PC")
-                    if id.count("GOG") == 1:
-                        s = "GOG"
-            if s == "Winget":
-                if len(id.split("_")[-1]) == 13 and len(id.split("_"))==2:
-                    s = "Microsoft Store"
-                elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
-                    s = "Microsoft Store"
-            return s
-        
-        print(f"🔵 Starting {self.NAME} search for installed packages")
-        try:
-            packages: list[Package] = []
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "list", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            hasShownId: bool = False
-            idPosition: int = 0
-            versionPosition: int = 0
-            while p.poll() is None:
-                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                if not hasShownId:
-                    if "Id" in line:
-                        line = line.replace("\x08-\x08\\\x08|\x08 \r","")
-                        for char in ("\r", "/", "|", "\\", "-"):
-                            line = line.split(char)[-1].strip()
-                        hasShownId = True
-                        idPosition = len(line.split("Id")[0])
-                        versionPosition = len(line.split("Version")[0])
-                    else:
-                        pass
-                elif "---" in line:
-                    pass
-                else:
-                    element = line.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
-                    try:
-                        verElement = element[idPosition:].strip()
-                        verElement.replace("\t", " ")
-                        untrimmedVerelement = verElement
-                        while "  " in verElement:
-                            verElement = verElement.replace("  ", " ")
-                        iOffset = 0
-                        id = " ".join(untrimmedVerelement.split(" ")[iOffset:-1])
-                        ver = verElement.split(" ")[-1]
-                        if len(id) > (versionPosition - idPosition):
-                            id = " ".join(untrimmedVerelement.split(" ")[iOffset])
-                            id = id.replace("  ", "#").replace(" ", "").replace("#", " ")
-                            ver = verElement.split(" ")[iOffset+1]
-                        if len(id) == 1:
-                            iOffset + 1
-                            id = verElement.split(" ")[iOffset+0]
-                            ver = verElement.split(" ")[iOffset+1]
-                        if ver.strip() in ("<", "-"):
-                            iOffset += 1
-                            ver = verElement.split(" ")[iOffset+1]
-                        name = element[0:idPosition].strip()
-                        if not "  " in name:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id.strip(), ver, getSource(id), Winget))
-                        else:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                print(f"🟡 package {name} failed parsing, going for method 2...")
-                                name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                                while "##" in name:
-                                    name = name.replace("##", "#")
-                                packages.append(Package(name.split("#")[0], (name.split("#")[-1]+id).strip(), ver, getSource(id), Winget))
-                    except Exception as e:
-                        packages.append(Package(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:].strip(), getSource(id), Winget))
-                        if type(e) != IndexError:
-                            report(e)
-            print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            return packages
-        except Exception as e:
-            report(e)
-            return []
+        return [] # Uninstallable packages will be loaded by Winget
     
     def getPackageDetails(self, package: Package) -> PackageDetails:
         """
@@ -364,7 +204,7 @@ class WingetPackageManager(SamplePackageManager):
                 outputIsDescribing = False
                 outputIsShowingNotes = False
                 outputIsShowingTags = False
-                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--source", "msstore", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 output: list[str] = []
                 while p.poll() is None:
                     line = p.stdout.readline()
@@ -436,7 +276,7 @@ class WingetPackageManager(SamplePackageManager):
             versions = []
             while versions == [] and currentIteration < 50:
                 currentIteration += 1
-                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "-e", "--versions", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "-e", "--versions", "--source", "msstore", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 foundDashes = False
                 while p.poll() is None:
                     line = p.stdout.readline().strip()
@@ -453,28 +293,9 @@ class WingetPackageManager(SamplePackageManager):
             return details
 
     def getIcon(self, source: str) -> QIcon:
-        if not self.wingetIcon:
-            self.wingetIcon = QIcon(getMedia("winget"))
-            self.localIcon = QIcon(getMedia("localpc"))
+        if not self.msStoreIcon:
             self.msStoreIcon = QIcon(getMedia("msstore"))
-            self.wsaIcon = QIcon(getMedia("android"))
-            self.SteamIcon = QIcon(getMedia("steam"))
-            self.gogIcon = QIcon(getMedia("gog"))
-            self.uPlayIcon = QIcon(getMedia("uplay"))
-        if "microsoft store" in source.lower():
-            return self.msStoreIcon
-        elif source in (_("Local PC"), "Local PC"):
-            return self.localIcon
-        elif "steam" in source.lower():
-            return self.steamIcon
-        elif "gog" in source.lower():
-            return self.gogIcon
-        elif "ubisoft connect" in source.lower():
-            return self.uPlayIcon
-        elif source in (_("Android Subsystem"), "Android Subsystem"):
-            return self.wsaIcon
-        else:
-            return self.wingetIcon
+        return self.msStoreIcon
         
     def getParameters(self, options: InstallationOptions) -> list[str]:
         Parameters: list[str] = ["--accept-source-agreements"]
@@ -566,7 +387,7 @@ class WingetPackageManager(SamplePackageManager):
         widget.finishInstallation.emit(outputCode, output)
         
     def getFullPackageId(self, id: str) -> tuple[str, str]:
-        p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--id", id.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--id", id.replace("…", ""), "--source", "msstore", "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         idSeparator = -1
         print(f"🔵 Finding Id for {id}")
         while p.poll() is None:
@@ -596,7 +417,7 @@ class WingetPackageManager(SamplePackageManager):
         if signal:
             signal.emit()
 
-Winget = WingetPackageManager()
+MsStore = MsStorePackageManager()
 
 
 if(__name__=="__main__"):
