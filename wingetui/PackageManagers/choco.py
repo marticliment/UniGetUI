@@ -24,6 +24,15 @@ class ChocoPackageManager(SamplePackageManager):
     BLACKLISTED_PACKAGE_IDS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable"]
     BLACKLISTED_PACKAGE_VERSIONS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations"]
 
+    Capabilities = PackageManagerCapabilities()
+    Capabilities.CanRunAsAdmin = True
+    Capabilities.CanSkipIntegrityChecks = True
+    Capabilities.CanRunInteractively = True
+    Capabilities.CanRemoveDataOnUninstall = False
+    Capabilities.SupportsCustomVersions = True
+    Capabilities.SupportsCustomArchitectures = True
+    Capabilities.SupportsCustomScopes = False
+    
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
         

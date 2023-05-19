@@ -19,7 +19,16 @@ class NPMPackageManager(DynamicLoadPackageManager):
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
-
+    
+    Capabilities = PackageManagerCapabilities()
+    Capabilities.CanRunAsAdmin = True
+    Capabilities.CanSkipIntegrityChecks = False
+    Capabilities.CanRunInteractively = False
+    Capabilities.CanRemoveDataOnUninstall = False
+    Capabilities.SupportsCustomVersions = False # TODO: add version listing
+    Capabilities.SupportsCustomArchitectures = False
+    Capabilities.SupportsCustomScopes = True
+    
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
@@ -160,7 +169,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 elif lineNo == 3:
                     details.Description = line.strip()
                 elif line == 4:
-                    details.HomepageURL = line.strip()
+                    details.HomepageURL = line.strip() # TODO: Fix homepage not showing
                 elif line.startswith(".tarball"):
                     details.InstallerURL = line.replace(".tarball: ", "").strip()
                     try:

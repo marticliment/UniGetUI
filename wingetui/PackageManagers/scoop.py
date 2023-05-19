@@ -19,6 +19,15 @@ class ScoopPackageManager(SamplePackageManager):
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
+    
+    Capabilities = PackageManagerCapabilities()
+    Capabilities.CanRunAsAdmin = True
+    Capabilities.CanSkipIntegrityChecks = True
+    Capabilities.CanRunInteractively = False
+    Capabilities.CanRemoveDataOnUninstall = True
+    Capabilities.SupportsCustomVersions = False
+    Capabilities.SupportsCustomArchitectures = True
+    Capabilities.SupportsCustomScopes = True
 
     icon = None
 

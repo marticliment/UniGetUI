@@ -15,8 +15,15 @@ class SamplePackageManager(PackageManagerModule):
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
-
-    self = sys.modules[__name__]
+    
+    Capabilities = PackageManagerCapabilities()
+    Capabilities.CanRunAsAdmin = True
+    Capabilities.CanSkipIntegrityChecks = True
+    Capabilities.CanRunInteractively = False
+    Capabilities.CanRemoveDataOnUninstall = False
+    Capabilities.SupportsCustomVersions = True
+    Capabilities.SupportsCustomArchitectures = False
+    Capabilities.SupportsCustomScopes = False
 
     if not os.path.exists(CAHCE_FILE_PATH):
         os.makedirs(CAHCE_FILE_PATH)

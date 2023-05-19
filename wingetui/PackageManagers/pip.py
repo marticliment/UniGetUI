@@ -20,6 +20,15 @@ class PipPackageManager(DynamicLoadPackageManager):
     BLACKLISTED_PACKAGE_IDS = ["WARNING:", "[notice]", "Package"]
     BLACKLISTED_PACKAGE_VERSIONS = ["Ignoring", "invalie"]
 
+    Capabilities = PackageManagerCapabilities()
+    Capabilities.CanRunAsAdmin = True
+    Capabilities.CanSkipIntegrityChecks = False
+    Capabilities.CanRunInteractively = False
+    Capabilities.CanRemoveDataOnUninstall = False
+    Capabilities.SupportsCustomVersions = False # TODO: implement version listing
+    Capabilities.SupportsCustomArchitectures = False
+    Capabilities.SupportsCustomScopes = False # TODO: implement --user custom scope
+    
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
