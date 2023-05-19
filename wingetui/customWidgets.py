@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import partial
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -1382,13 +1383,18 @@ class PackageExporter(MovableFramelessWindow):
                 "Name": "winget",
                 "Type" : "Microsoft.PreIndexed.Package"
             }
+            wingetVersion = "1.4"
+            try:
+                wingetVersion = globals.componentStatus["WingetVersion"] if globals.componentStatus["WingetVersion"] else wingetVersion
+            except Exception as e:
+                report(e)
             wingetExportSchema = {
                 "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate" : "2022-08-16T20:55:44.415-00:00", # TODO: get data automatically
+                "CreationDate" : datetime.now(),
                 "Sources": [{
                     "Packages": wingetPackagesList,
                     "SourceDetails": wingetDetails}],
-                "WinGetVersion" : "1.4.2161-preview" # TODO: get installed winget version
+                "WinGetVersion" : wingetVersion
             }
             scoopExportSchema = {
                 "apps": scoopPackageList,
