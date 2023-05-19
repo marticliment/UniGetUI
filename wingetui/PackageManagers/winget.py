@@ -19,7 +19,15 @@ class WingetPackageManager(SamplePackageManager):
     BLACKLISTED_PACKAGE_NAMES = [""]
     BLACKLISTED_PACKAGE_IDS = [""]
     BLACKLISTED_PACKAGE_VERSIONS = []
-
+    
+    Capabilities = PackageManagerCapabilities()
+    Capabilities.CanRunAsAdmin = True
+    Capabilities.CanSkipIntegrityChecks = True
+    Capabilities.CanRunInteractively = True
+    Capabilities.CanRemoveDataOnUninstall = False
+    Capabilities.SupportsCustomVersions = True
+    Capabilities.SupportsCustomArchitectures = True
+    Capabilities.SupportsCustomScopes = True
 
     wingetIcon = None
     localIcon = None

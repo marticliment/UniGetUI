@@ -122,6 +122,15 @@ class InstallationOptions():
         str += f"RemoveDataOnUninstall={self.RemoveDataOnUninstall}>"
         return str
 
+class PackageManagerCapabilities():
+    CanRunAsAdmin: bool = False
+    CanSkipIntegrityChecks: bool = False
+    CanRunInteractively: bool = False
+    CanRemoveDataOnUninstall: bool = False
+    SupportsCustomVersions: bool = False
+    SupportsCustomArchitectures: bool = False
+    SupportsCustomScopes: bool = False
+
 class InstallationWidgetType(QWidget):
     finishInstallation: Signal
     addInfoLine: Signal
@@ -132,6 +141,7 @@ class InstallationWidgetType(QWidget):
     
 class PackageManagerModule():
     NAME: str
+    Capabilities: PackageManagerCapabilities
     def __init__(self):
         pass
     
