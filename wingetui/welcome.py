@@ -37,10 +37,10 @@ class WelcomeWindow(QMainWindow):
 
         self.widgetOrder = (
             FirstRunSlide(),
-            SelectModeSlide(),
-            SelectFullScreenSlide(),
-            DateTimeFormat(),
-            ClockAppearance(),
+            #SelectModeSlide(),
+            #SelectFullScreenSlide(),
+            #DateTimeFormat(),
+            #ClockAppearance(),
             LastSlide(),
         )
 
@@ -301,6 +301,7 @@ class BasicNavWidget(QWidget):
     previous = Signal()
     finished = Signal()
     skipped = Signal()
+    centralWidget: QWidget = None
 
     def __init__(self, parent=None, startEnabled=False, closeEnabled=False, finishEnabled=False, nextGreyed=False) -> None:
         super().__init__(parent=parent)
@@ -364,50 +365,78 @@ class BasicNavWidget(QWidget):
         self.outAnim(self.next.emit)
 
     def setCentralWidget(self, w: QWidget) -> QWidget:
+        self.centralWidget = w
         self.l.addWidget(w, stretch=1)
         self.l.addLayout(self.navLayout, stretch=0)
+        self.opacityEffect = QGraphicsOpacityEffect(self.centralWidget)
+        self.centralWidget.setGraphicsEffect(self.opacityEffect)
+        self.opacityEffect.setOpacity(0)
 
     def inAnim(self) -> None:
-        bgAnim = QPropertyAnimation(self, b"pos", self)
-        pos = self.pos()
-        pos.setX(pos.x()+self.width())
+        anim = QVariantAnimation(self.centralWidget)
+        anim.setStartValue(0)
+        anim.setEndValue(100)
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.setEasingCurve(QEasingCurve.OutQuad)
+        anim.setDuration(200)
+        anim.start()
+        
+        bgAnim = QPropertyAnimation(self.centralWidget, b"pos", self.centralWidget)
+        pos = self.centralWidget.pos()
+        pos.setX(pos.x()+(self.centralWidget.width()/20))
         bgAnim.setStartValue(pos)
-        bgAnim.setEndValue(self.pos())
-        bgAnim.setEasingCurve(QEasingCurve.OutQuart)
+        bgAnim.setEasingCurve(QEasingCurve.OutQuad)
+        bgAnim.setEndValue(self.centralWidget.pos())
         bgAnim.setDuration(200)
         bgAnim.start()
 
     def invertedinAnim(self) -> None:
-        bgAnim = QPropertyAnimation(self, b"pos", self)
-        pos = self.pos()
-        pos.setX(pos.x()-self.width())
+        anim = QVariantAnimation(self)
+        anim.setStartValue(0)
+        anim.setEndValue(100)
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.setEasingCurve(QEasingCurve.OutQuad)
+        anim.setDuration(20)
+        anim.start()
+        
+        bgAnim = QPropertyAnimation(self.centralWidget, b"pos", self.centralWidget)
+        pos = self.centralWidget.pos()
+        pos.setX(self.centralWidget.x()-(self.centralWidget.width()/20))
         bgAnim.setStartValue(pos)
-        bgAnim.setEndValue(self.pos())
-        bgAnim.setEasingCurve(QEasingCurve.OutQuart)
+        bgAnim.setEndValue(self.centralWidget.pos())
+        bgAnim.setEasingCurve(QEasingCurve.OutQuad)
         bgAnim.setDuration(200)
         bgAnim.start()
 
     def outAnim(self, f) -> None:
+        anim = QVariantAnimation(self)
+        anim.setStartValue(100)
+        anim.setEndValue(0)
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.setEasingCurve(QEasingCurve.InQuad)
+        anim.setDuration(100)
+        anim.start()
+        anim.finished.connect(f)
+        return
         bgAnim = QPropertyAnimation(self, b"pos", self)
         bgAnim.setStartValue(self.pos())
         pos = self.pos()
-        pos.setX(pos.x()-self.width())
+        pos.setX(pos.x()-(self.width()/2))
         bgAnim.setEndValue(pos)
         bgAnim.setEasingCurve(QEasingCurve.InQuart)
-        bgAnim.setDuration(200)
+        bgAnim.setDuration(100)
         bgAnim.start()
-        bgAnim.finished.connect(f)
 
     def invertedOutAnim(self, f) -> None:
-        bgAnim = QPropertyAnimation(self, b"pos", self)
-        bgAnim.setStartValue(self.pos())
-        pos = self.pos()
-        pos.setX(pos.x()+self.width())
-        bgAnim.setEndValue(pos)
-        bgAnim.setEasingCurve(QEasingCurve.InQuart)
-        bgAnim.setDuration(200)
-        bgAnim.start()
-        bgAnim.finished.connect(f)
+        anim = QVariantAnimation(self)
+        anim.setStartValue(100)
+        anim.setEndValue(0)
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.setEasingCurve(QEasingCurve.InQuad)
+        anim.setDuration(100)
+        anim.start()
+        anim.finished.connect(f)
+        return
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
@@ -668,6 +697,7 @@ class FirstRunSlide(BasicNavWidget):
         vl.addWidget(label3)
         vl.addStretch()
         self.setCentralWidget(widget)
+        self.opacityEffect.setOpacity(1)
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
@@ -677,7 +707,7 @@ class LastSlide(BasicNavWidget):
         super().__init__(parent=parent, finishEnabled=True)
         widget = QWidget()
         l = QHBoxLayout()
-        l.setContentsMargins(0, 10, 0, 10)
+        l.setContentsMargins(0, 0, 0, 10)
         widget.setLayout(l)
         vl = QVBoxLayout()
         vl.setContentsMargins(0, 0, 0, 0)
@@ -685,24 +715,20 @@ class LastSlide(BasicNavWidget):
         l.addLayout(vl)
 
         label1 = IconLabel(size=96, frame=False)
-        label1.setIcon("finish_color.png")
-        label1.setText(f"""<h1>{_("You are now ready to go!")}</h1>
-                       <h3>{_("But here are other things you can do:")}</h3>""")
+        label1.setIcon("finish.png")
+        label1.setText(f"""<h1>{_("Systems are now ready to go!")}</h1>
+                       <h3>{_("But here are other things you can do to learn about WingetUI even more:")}</h3>""")
 
-        settings = ButtonLabel(size=64)
-        settings.setIcon("further_custom_color.png")
-        settings.setText(f"""
-             <h3>{_("Customize WingetUI even more")}</h3>
-             {_("Open the settings window and customize WingetUI even further.")}""")
-        settings.setButtonText(_("Open"))
-        settings.clicked.connect(lambda: closeAndOpenSettings())
-
-        def closeAndOpenSettings():
-            globals.sw.show()
-            self.finished.emit()
+        youtube = ButtonLabel(size=64)
+        youtube.setIcon("youtube.png")
+        youtube.setText(f"""
+             <h3>{_("Check out some WingetUI overviews")}</h3>
+             {_("There are some great videos on YouTube that showcase WingetUI and its capabilities. You could learn useful tricks and tips!")}""")
+        youtube.setButtonText(_("Open"))
+        youtube.clicked.connect(lambda: os.startfile("https://www.youtube.com/results?search_query=WingetUI&sp=CAI%253D"))
 
         donate = ButtonLabel(size=64)
-        donate.setIcon("cafe_color.png")
+        donate.setIcon("kofi.png")
         donate.setText(f"""
              <h3>{_("Suport the developer")}</h3>
              {_("Developing is hard, and this aplication is free. But if you liked the application, you can always <b>buy me a coffee</b> :)")}""")
@@ -710,7 +736,7 @@ class LastSlide(BasicNavWidget):
         donate.clicked.connect(lambda: os.startfile("https://ko-fi.com/martinet101"))
 
         report = ButtonLabel(size=64)
-        report.setIcon("github_color.png")
+        report.setIcon("github.png")
         report.setText(f"""
              <h3>{_("View WingetUI on GitHub")}</h3>
              {_("View WingetUI's source code. From there, you can report bugs or suggest features, or even contribute direcly to The WingetUI Project")}""")
@@ -719,11 +745,13 @@ class LastSlide(BasicNavWidget):
 
         vl.addWidget(label1)
         vl.addStretch()
-        vl.addWidget(settings)
+        vl.addStretch()
+        vl.addWidget(youtube)
         vl.addStretch()
         vl.addWidget(donate)
         vl.addStretch()
         vl.addWidget(report)
+        vl.addStretch()
         vl.addStretch()
         self.setCentralWidget(widget)
 
@@ -731,7 +759,7 @@ class LastSlide(BasicNavWidget):
         return round(i*self.screen().devicePixelRatio())
     
     def showEvent(self, event: QShowEvent) -> None:
-        setSettings("AlreadyDoneWelcomeWizard", True)
+        setSettings("ShownWelcomeWizard", True)
         return super().showEvent(event)
     
 class SelectModeSlide(BasicNavWidget):

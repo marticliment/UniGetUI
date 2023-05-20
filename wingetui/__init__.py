@@ -219,7 +219,6 @@ try:
 
             def askAboutPackageManagers(self, onclose: object):
                 import welcome
-                setSettings("ShownWelcomeWizard", True)
                 self.ww = welcome.WelcomeWindow(callback=lambda: (self.popup.show(), onclose()))
                 self.popup.hide()
                 self.ww.show()
