@@ -209,7 +209,7 @@ try:
                     def increaseStep():
                         self.loadStatus += 1
                     self.finishedPreloadingStep.connect(increaseStep)
-                    if getSettings("AskedAbout3PackageManagers") == False or "--welcomewizard" in sys.argv:
+                    if getSettings("ShownWelcomeWizard") == False or "--welcomewizard" in sys.argv or "--welcome" in sys.argv or True: # AskedAbout3PackageManagers
                         self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadPreUIComponents, daemon=True).start())
                     else:
                         Thread(target=self.loadPreUIComponents, daemon=True).start()
@@ -218,6 +218,13 @@ try:
                     raise e
 
             def askAboutPackageManagers(self, onclose: object):
+                import welcome
+                setSettings("ShownWelcomeWizard", True)
+                self.ww = welcome.WelcomeWindow(callback=lambda: (self.popup.show(), onclose()))
+                self.popup.hide()
+                self.ww.show()
+                
+                return
                 self.w = NotClosableWidget()
                 self.w.setObjectName("micawin")
                 self.w.setWindowFlag(Qt.WindowType.Window)
@@ -264,19 +271,6 @@ try:
                 mainLayout.addLayout(blayout)
                 blayout.addStretch()
                 
-                def performSelectionAndContinue():
-                    self.w.close()
-                    setSettings("AskedAbout3PackageManagers", True)
-                    setSettings("DisableWinget", not winget.isChecked())
-                    setSettings("DisableScoop", not scoop.isChecked())
-                    setSettings("ScoopEnabledByAssistant", scoop.isChecked())
-                    setSettings("DisableChocolatey", not choco.isChecked())
-                    if choco.isChecked() and shutil.which("choco") != None:
-                        setSettings("UseSystemChocolatey", True)
-                    if scoop.isChecked() and shutil.which("scoop") == None:
-                        os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))
-                    else:
-                        onclose()
                         
                 okbutton = QPushButton(_("Apply and start WingetUI"))
                 okbutton.setFixedSize(190, 30)
