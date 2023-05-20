@@ -570,6 +570,49 @@ class WelcomeWizardPackageManager(QWidget):
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
 
+class NewWelcomeWizardPackageManager(QWidget):
+    def __init__(self, text, description, image) -> None:
+        super().__init__()
+        mainw = QWidget(self)
+        mainw.setContentsMargins(0, 0, 0, 0)
+        mainw.setObjectName("bgwidget")
+        mainw.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.checkbox = QCheckBox(text, mainw)
+        self.checkbox.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, False)
+        self.checkbox.stateChanged.connect(lambda v: (self.description.setEnabled(v), self.image.setEnabled(v)))
+        self.checkbox.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        self.description = QLabel(description)
+        self.description.setWordWrap(True)
+        self.description.setEnabled(False)
+        self.image = QLabel()
+        self.image.setPixmap(QPixmap(image).scaledToHeight(48, Qt.TransformationMode.SmoothTransformation))
+        h = QHBoxLayout()
+        v = QVBoxLayout()
+        v.addWidget(self.checkbox)
+        v.addWidget(self.description, stretch=1)
+        h.addLayout(v, stretch=1)
+        h.addWidget(self.image)
+        h.setContentsMargins(12, 8, 16, 8)
+        h2 = QHBoxLayout()
+        h.addStretch()
+        mainw.setLayout(h)
+        h2.addStretch()
+        h2.addWidget(mainw)
+        h2.setContentsMargins(0, 0, 0, 0)
+        h2.addStretch()
+        mainw.setFixedWidth(600)
+        self.setLayout(h2)
+        if isDark():
+            self.setStyleSheet("""#bgwidget{background-color: rgba(255, 255, 255, 5%); border: 1px solid #101010; padding: 8px; border-radius: 8px;}""")
+        else:
+            self.setStyleSheet("""#bgwidget{background-color: rgba(255, 255, 255, 50%); border: 1px solid #eeeeee; padding: 8px; border-radius: 8px;}""")
+        
+    def setChecked(self, v: bool) -> None:
+        self.checkbox.setChecked(v)
+        
+    def isChecked(self) -> bool:
+        return self.checkbox.isChecked()
+
 class IgnoredUpdatesManager(MovableFramelessWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)

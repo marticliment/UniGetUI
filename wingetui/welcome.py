@@ -1,19 +1,12 @@
 from threading import Thread
 
-import platform
-import subprocess
 import os
-import sys
-import locale
 import time
 import ctypes
-from PySide6 import QtGui
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-import PySide6.QtGui
 from PySide6.QtWidgets import *
-#from PySide6.QtCore import pyqtSignal as Signal
-import external.FramelessWindow as FramelessWindow
+from customWidgets import *
 
 import globals
 
@@ -36,7 +29,7 @@ class WelcomeWindow(QMainWindow):
 
         self.widgetOrder = (
             FirstRunSlide(),
-            SelectModeSlide(),
+            PackageManagersSlide(),
             #SelectFullScreenSlide(),
             #DateTimeFormat(),
             #ClockAppearance(),
@@ -157,6 +150,92 @@ class WelcomeWindow(QMainWindow):
                 #TitleLabel {{
                     font-size: 26pt;
                 }}
+                QCheckBox {{
+                    font-family: Segoe UI Variable Display;
+                    font-weight: bold;
+                    font-size: 15pt;
+                }}
+                QCheckBox::indicator{{
+                    height: 20px;
+                    width: 20px;
+                }}
+                QTreeView::indicator:unchecked,QCheckBox::indicator:unchecked {{
+                    background-color: rgba(30, 30, 30, 25%);
+                    border: 1px solid #444444;
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:disabled,QCheckBox::indicator:disabled {{
+                    background-color: rgba(30, 30, 30, 5%);
+                    color: #dddddd;
+                    border: 1px solid rgba(255, 255, 255, 5%);
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:unchecked:hover,QCheckBox::indicator:unchecked:hover {{
+                    background-color: #2a2a2a;
+                    border: 1px solid #444444;
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:checked,QCheckBox::indicator:checked {{
+                    border: 1px solid #444444;
+                    background-color: rgba({colors[1]}, 80%);
+                    border-radius: 6px;
+                    image: url("{getMedia("tick")}");
+                }}
+                QTreeView::indicator:disabled,QCheckBox::indicator:checked:disabled {{
+                    border: 1px solid #444444;
+                    background-color: #303030;
+                    color: #dddddd;
+                    border-radius:6px;
+                }}
+                QTreeView::indicator:checked:hover,QCheckBox::indicator:checked:hover {{
+                    border: 1px solid #444444;
+                    background-color: rgb({colors[2]});
+                    border-radius: 6px;
+                }}
+                QScrollBar {{
+                    background: transparent;
+                    margin: 4px;
+                    margin-left: 0;
+                    width: 16px;
+                    height: 20px;
+                    border: none;
+                    border-radius: 5px;
+                }}
+                QScrollBar:horizontal {{
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                    height: 12px;
+                }}
+                QScrollBar::handle {{
+                    margin: 3px;
+                    min-height: 20px;
+                    min-width: 20px;
+                    border-radius: 3px;
+                    background: rgba(80, 80, 80, 40%);
+                }}
+                QScrollBar::handle:hover {{
+                    margin: 3px;
+                    border-radius: 3px;
+                    background: rgba(112, 112, 112, 35%);
+                }}
+                QScrollBar::add-line {{
+                    height: 0;
+                    width: 0;
+                    subcontrol-position: bottom;
+                    subcontrol-origin: margin;
+                }}
+                QScrollBar::sub-line {{
+                    height: 0;
+                    width: 0;
+                    subcontrol-position: top;
+                    subcontrol-origin: margin;
+                }}
+                QScrollBar::up-arrow, QScrollBar::down-arrow {{
+                    background: none;
+                }}
+                QScrollBar::add-page, QScrollBar::sub-page {{
+                    background: none;
+                }}
                 """)
         else:
             self.bgWidget.setStyleSheet(f"""
@@ -243,6 +322,95 @@ class WelcomeWindow(QMainWindow):
                 }}
                 #TitleLabel {{
                     font-size: 26pt;
+                }}
+                QCheckBox {{
+                    font-weight: bold;
+                    font-dize: 15pt;
+                }}
+                QCheckBox::indicator{{
+                    height: 20px;
+                    width: 20px;
+                }}
+                QTreeView::indicator:unchecked,QCheckBox::indicator:unchecked {{
+                    background-color: rgba(255, 255, 255, 25%);
+                    border: 1px solid rgba(0, 0, 0, 10%);
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:disabled,QCheckBox::indicator:disabled {{
+                    background-color: rgba(240, 240, 240, 0%);
+                    color: #444444;
+                    border: 1px solid rgba(0, 0, 0, 5%);
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:unchecked:hover,QCheckBox::indicator:unchecked:hover {{
+                    background-color: rgba(0, 0, 0, 5%);
+                    border: 1px solid rgba(0, 0, 0, 20%);
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:checked,QCheckBox::indicator:checked {{
+                    border: 1px solid rgb({colors[3]});
+                    background-color: rgb({colors[2]});
+                    border-radius: 6px;
+                    image: url("{getMedia("tick")}");
+                }}
+                QTreeView::indicator:checked:disabled,QCheckBox::indicator:checked:disabled {{
+                    border: 1px solid #444444;
+                    background-color: #303030;
+                    color: #444444;
+                    border-radius: 6px;
+                }}
+                QTreeView::indicator:checked:hover,QCheckBox::indicator:checked:hover {{
+                    border: 1px solid rgb({colors[3]});
+                    background-color: rgb({colors[3]});
+                    border-radius: 6px;
+                }}
+                QScrollBar {{
+                    background: transparent;
+                    margin: 4px;
+                    margin-left: 0;
+                    width: 16px;
+                    height: 20px;
+                    border: none;
+                    border-radius: 5px;
+                }}
+                QScrollBar:horizontal {{
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                    height: 12px;
+                }}
+                QScrollBar:vertical {{
+                    background: rgba(255, 255, 255, 0%);
+                    margin: 4px;
+                    width: 16px;
+                    border: none;
+                    border-radius: 5px;
+                }}
+                QScrollBar::handle:vertical {{
+                    margin: 3px;
+                    border-radius: 3px;
+                    min-height: 20px;
+                    background: rgba(90, 90, 90, 25%);
+                }}
+                QScrollBar::handle:vertical:hover {{
+                    margin: 3px;
+                    border-radius: 3px;
+                    background: rgba(90, 90, 90, 35%);
+                }}
+                QScrollBar::add-line:vertical {{
+                    height: 0;
+                    subcontrol-position: bottom;
+                    subcontrol-origin: margin;
+                }}
+                QScrollBar::sub-line:vertical {{
+                    height: 0;
+                    subcontrol-position: top;
+                    subcontrol-origin: margin;
+                }}
+                QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {{
+                    background: none;
+                }}
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
+                    background: none;
                 }}
                 """)
 
@@ -771,97 +939,59 @@ class LastSlide(BasicNavWidget):
         setSettings("ShownWelcomeWizard", True)
         return super().showEvent(event)
     
-class SelectModeSlide(BasicNavWidget):
+class PackageManagersSlide(BasicNavWidget):
     def __init__(self, parent=None) -> None:
-        super().__init__(parent=parent, nextGreyed=True)
+        super().__init__(parent=parent)
         self.defaultSelected = False
         widget = QWidget()
         l = QHBoxLayout()
-        l.setContentsMargins(0, 10, 0, 10)
+        l.setContentsMargins(0, 0, 0, 0)
         widget.setLayout(l)
-        self.selector = MovableFocusSelector(self)
-        self.selector.hide()
         vl = QVBoxLayout()
         vl.setContentsMargins(0, 0, 0, 0)
-        l.addSpacing(10)
         l.addLayout(vl)
 
-        label1 = IconLabel(size=(96), frame=False)
-        label1.setIcon(getPath("timespan_color.png"))
-        label1.setText(f"""<h1>{_("What time do you want to see?")}</h1>
-                       {_("Please select one of the following and click next.")}
-                       {_("If you don't know which one is the best, choose {0}").format(_("Local time"))}""")
+        label1 = IconLabel(size=(48), frame=False)
+        label1.setIcon(getPath("console_color.png"))
+        label1.setText(f"""<h1>{_("Which package managers do you want to use?")}</h1>
+                       {_("They are the programs in charge of installing, updating and removing packages.")}""")
 
-        self.localTime = ClickableButtonLabelWithBiggerIcon(size=64)
-        self.localTime.setIcon(getPath(f"desktop_cactus.png"))
-        self.localTime.clicked.connect(lambda: self.toggleClockMode("secondary", shouldChangePrefs=True))
-        self.localTime.setText(f"""
-            <h3>{_("Local time")}</h3>
-            {_("Show the local computer time. The time will not be synced with the internet and might be inaccurate")}""")
 
-        self.internetTime = ClickableButtonLabelWithBiggerIcon(size=64)
-        self.internetTime.setIcon(getPath(f"globe.png"))
-        self.internetTime.clicked.connect(lambda: self.toggleClockMode("format", shouldChangePrefs=True))
-        self.internetTime.setText(f"""
-             <h3>{_("Internet time")}</h3>
-             {_("Precise internet time. Ideal if you are <b>not</b> using any kind of VPN or proxy")}""")
+        self.managers = DynamicScrollArea()
+        winget = NewWelcomeWizardPackageManager("Winget", "Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</p>", getMedia("winget_color"))
+        scoop = NewWelcomeWizardPackageManager("Scoop", "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, command-line packages, General Software (extras bucket required)</b>", getMedia("scoop_color"))
+        choco = NewWelcomeWizardPackageManager("Chocolatey", "The package manager for windows You'll find everything there. <br>Contains: <b>General Software</b>", getMedia("choco_color"))
+        pip = NewWelcomeWizardPackageManager("Pip", "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>", getMedia("pip_color"))
+        npm = NewWelcomeWizardPackageManager("Npm", "Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>", getMedia("node_color"))
+        
+        managers = [winget, scoop, choco, pip, npm]
+        
+        for manager in managers:
+            self.managers.addItem(manager)
+            
+        def enablePackageManagers():
+            setSettings("DisableWinget", not winget.isChecked())
+            setSettings("DisableChocolatey", not choco.isChecked())
+            setSettings("DisableScoop", not scoop.isChecked())
+            setSettings("DisablePip", not pip.isChecked())
+            setSettings("DisableNpm", not npm.isChecked())
+            
+        self.nextButton.clicked.connect(lambda: enablePackageManagers())
 
+        winget.setChecked(True)
+        choco.setChecked(True)
+        scoop.setChecked(shutil.which("scoop") != None)
+        npm.setChecked(shutil.which("npm") != None)
+        pip.setChecked(shutil.which("pip") != None)
 
         vl.addWidget(label1)
-        vl.addStretch()
-        vl.addWidget(self.internetTime)
-        vl.addStretch()
-        vl.addWidget(self.localTime)
-        vl.addStretch()
+        vl.addWidget(self.managers, stretch=1)
         self.setCentralWidget(widget)
 
         self.clockMode = ""
 
-    def toggleClockMode(self, mode: str, shouldChangePrefs: bool = False) -> None:
-        self.enableNextButton()
-        if shouldChangePrefs:
-            self.defaultSelected = True
-        if mode == "secondary":
-            self.clockMode = "secondary"
-            self.moveSelector(self.localTime)
-            if shouldChangePrefs:
-                setSettings("EnableInternetTime", False, r=True)
-        elif mode == "format":
-            self.clockMode = "format"
-            self.moveSelector(self.internetTime)
-            if shouldChangePrefs:
-                setSettings("EnableInternetTime", True, r=True)
-        else:
-            raise ValueError("Function toggleCheckMode() called with invalid arguments. Accepted values are: custom, format, secondary")
-
     def showEvent(self, event) -> None:
-        if not self.defaultSelected:
-            self.toggleClockMode("secondary")
         return super().showEvent(event)
-
-    def moveSelector(self, w: QWidget) -> None:
-        if not self.selector.isVisible():
-            self.selector.show()
-            self.selector.move(w.pos().x(), w.pos().y())
-            self.selector.resize(w.size().width(), w.size().height())
-        else:
-            posAnim = QPropertyAnimation(self.selector, b"pos", self)
-            posAnim.setStartValue(self.selector.pos())
-            posAnim.setEndValue(w.pos())
-            posAnim.setEasingCurve(QEasingCurve.InOutCirc)
-            posAnim.setDuration(200)
-
-            sizeAnim = QPropertyAnimation(self.selector, b"size", self)
-            sizeAnim.setStartValue(self.selector.size())
-            s = w.size()
-            s.setWidth(s.width()+18)
-            s.setHeight(s.height()+18)
-            sizeAnim.setEndValue(s)
-            sizeAnim.setEasingCurve(QEasingCurve.InOutCirc)
-            sizeAnim.setDuration(200)
-
-            posAnim.start()
-            sizeAnim.start()
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
