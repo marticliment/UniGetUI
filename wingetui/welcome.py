@@ -1,6 +1,4 @@
-from ctypes import c_int, windll
 from threading import Thread
-windll.shcore.SetProcessDpiAwareness(c_int(2))
 
 import platform
 import subprocess
@@ -12,6 +10,7 @@ import ctypes
 from PySide6 import QtGui
 from PySide6.QtGui import *
 from PySide6.QtCore import *
+import PySide6.QtGui
 from PySide6.QtWidgets import *
 #from PySide6.QtCore import pyqtSignal as Signal
 import external.FramelessWindow as FramelessWindow
@@ -37,7 +36,7 @@ class WelcomeWindow(QMainWindow):
 
         self.widgetOrder = (
             FirstRunSlide(),
-            #SelectModeSlide(),
+            SelectModeSlide(),
             #SelectFullScreenSlide(),
             #DateTimeFormat(),
             #ClockAppearance(),
@@ -263,7 +262,7 @@ class WelcomeWindow(QMainWindow):
             else:
                 w.inAnim()
 
-    def nextWidget(self, anim=True) -> None:
+    def nextWidget(self, anim: bool = True) -> None:
         if self.currentIndex == len(self.widgetOrder)-1:
             self.close()
         else:
@@ -299,7 +298,7 @@ class BasicNavWidget(QWidget):
     skipped = Signal()
     centralWidget: QWidget = None
 
-    def __init__(self, parent=None, startEnabled=False, closeEnabled=False, finishEnabled=False, nextGreyed=False) -> None:
+    def __init__(self, parent: bool = None, startEnabled: bool = False, closeEnabled: bool = False, finishEnabled: bool = False, nextGreyed: bool = False, noNavBar: bool = False) -> None:
         super().__init__(parent=parent)
         self.l = QVBoxLayout()
         self.setLayout(self.l)
@@ -312,53 +311,57 @@ class BasicNavWidget(QWidget):
             self.negIconMode = "white"
 
         self.navLayout = QHBoxLayout()
-        if closeEnabled:
-            closeButton = QPushButton(_("Skip"))
-            closeButton.setIconSize(QSize(12, 12))
-            closeButton.setFixedSize((96), (36))
-            closeButton.setIcon(QIcon(getPath(f"close_{self.iconMode}.png")))
-            closeButton.clicked.connect(lambda: self.outAnim(self.skipped.emit))
-            self.navLayout.addWidget(closeButton)
-        self.navLayout.addStretch()
-        if startEnabled:
-            startButton = QPushButton(_("Start"))
-            startButton.setLayoutDirection(Qt.RightToLeft)
-            startButton.setIconSize(QSize(12, 12))
-            startButton.setFixedSize((96), (36))
-            startButton.setIcon(QIcon(getPath(f"next_{self.negIconMode}.png")))
-            startButton.clicked.connect(lambda: self.outAnim(self.next.emit))
-            startButton.setObjectName("AccentButton")
-            self.navLayout.addWidget(startButton)
-        else:
-            backButton = QPushButton("")
-            backButton.setFixedSize((36), (36))
-            backButton.clicked.connect(lambda: self.invertedOutAnim(self.previous.emit))
-            backButton.setIcon(QIcon(getPath(f"previous_{self.iconMode}.png")))
-            backButton.setIconSize(QSize(12, 12))
-            self.navLayout.addWidget(backButton)
-            if finishEnabled:
-                finishButton = QPushButton(_("Finish"))
-                finishButton.setObjectName("AccentButton")
-                finishButton.setFixedSize((96), (36))
-                finishButton.setIconSize(QSize(12, 12))
-                finishButton.setLayoutDirection(Qt.RightToLeft)
-                finishButton.clicked.connect(lambda: self.outAnim(self.finished.emit))
-                self.navLayout.addWidget(finishButton)
+        if not noNavBar:
+            if closeEnabled:
+                closeButton = QPushButton(_("Skip"))
+                closeButton.setIconSize(QSize(12, 12))
+                closeButton.setFixedSize((96), (36))
+                closeButton.setIcon(QIcon(getPath(f"close_{self.iconMode}.png")))
+                closeButton.clicked.connect(lambda: self.outAnim(self.skipped.emit))
+                self.navLayout.addWidget(closeButton)
+            self.navLayout.addStretch()
+            if startEnabled:
+                startButton = QPushButton(_("Start"))
+                startButton.setLayoutDirection(Qt.RightToLeft)
+                startButton.setIconSize(QSize(12, 12))
+                startButton.setFixedSize((96), (36))
+                startButton.setIcon(QIcon(getPath(f"next_{self.negIconMode}.png")))
+                startButton.clicked.connect(lambda: self.outAnim(self.next.emit))
+                startButton.setObjectName("AccentButton")
+                self.navLayout.addWidget(startButton)
             else:
-                self.nextButton = QPushButton("")
-                self.nextButton.setEnabled(not nextGreyed)
-                self.nextButton.setIconSize(QSize(12, 12))
-                self.nextButton.setFixedSize((36), (36))
-                self.nextButton.clicked.connect(lambda:self.outAnim(self.next.emit))
-                self.nextButton.setIcon(QIcon(getPath(f"next_{self.negIconMode}.png")))
-                self.nextButton.setObjectName("AccentButton")
-                self.navLayout.addWidget(self.nextButton)
+                backButton = QPushButton("")
+                backButton.setFixedSize((36), (36))
+                backButton.clicked.connect(lambda: self.invertedOutAnim(self.previous.emit))
+                backButton.setIcon(QIcon(getPath(f"previous_{self.iconMode}.png")))
+                backButton.setIconSize(QSize(12, 12))
+                self.navLayout.addWidget(backButton)
+                if finishEnabled:
+                    finishButton = QPushButton(_("Finish"))
+                    finishButton.setObjectName("AccentButton")
+                    finishButton.setFixedSize((96), (36))
+                    finishButton.setIconSize(QSize(12, 12))
+                    finishButton.setLayoutDirection(Qt.RightToLeft)
+                    finishButton.clicked.connect(lambda: self.outAnim(self.finished.emit))
+                    self.navLayout.addWidget(finishButton)
+                else:
+                    self.nextButton = QPushButton("")
+                    self.nextButton.setEnabled(not nextGreyed)
+                    self.nextButton.setIconSize(QSize(12, 12))
+                    self.nextButton.setFixedSize((36), (36))
+                    self.nextButton.clicked.connect(lambda:self.outAnim(self.next.emit))
+                    self.nextButton.setIcon(QIcon(getPath(f"next_{self.negIconMode}.png")))
+                    self.nextButton.setObjectName("AccentButton")
+                    self.navLayout.addWidget(self.nextButton)
 
     def enableNextButton(self) -> None:
         self.nextButton.setEnabled(True)
 
     def nextWidget(self):
         self.outAnim(self.next.emit)
+        
+    def lastWidget(self):
+        self.outAnim(self.skipped.emit)
 
     def setCentralWidget(self, w: QWidget) -> QWidget:
         self.centralWidget = w
@@ -413,16 +416,7 @@ class BasicNavWidget(QWidget):
         anim.setDuration(100)
         anim.start()
         anim.finished.connect(f)
-        return
-        bgAnim = QPropertyAnimation(self, b"pos", self)
-        bgAnim.setStartValue(self.pos())
-        pos = self.pos()
-        pos.setX(pos.x()-(self.width()/2))
-        bgAnim.setEndValue(pos)
-        bgAnim.setEasingCurve(QEasingCurve.InQuart)
-        bgAnim.setDuration(100)
-        bgAnim.start()
-
+        
     def invertedOutAnim(self, f) -> None:
         anim = QVariantAnimation(self)
         anim.setStartValue(100)
@@ -432,7 +426,7 @@ class BasicNavWidget(QWidget):
         anim.setDuration(100)
         anim.start()
         anim.finished.connect(f)
-        return
+        
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
@@ -574,6 +568,8 @@ class MovableFocusSelector(QLabel):
         return super().resize(w+17, h+17)
 
 class ClickableButtonLabelWithBiggerIcon(QPushButton):
+    buttonClicked = Signal()
+    lastClick = 0
     def __init__(self, size=96) -> None:
         super().__init__()
         self.setAttribute(Qt.WA_StyledBackground)
@@ -587,7 +583,7 @@ class ClickableButtonLabelWithBiggerIcon(QPushButton):
         self.iconLabel.setMinimumWidth(size)
         self.iconLabel.clicked.connect(self.animateClick)
         self.iconLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.setMinimumHeight((self.iconSize*1.5))
+        self.setMinimumHeight(int(self.iconSize*1.5))
         self.textLabel = ClickableLabel()
         self.textLabel.clicked.connect(self.animateClick)
         self.textLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
@@ -599,12 +595,19 @@ class ClickableButtonLabelWithBiggerIcon(QPushButton):
         self.layout().addSpacing((20/96*self.iconSize))
         self.layout().addWidget(self.textLabel, stretch=1)
         self.layout().addSpacing((40/96*self.iconSize))
-
+        self.clicked.connect(self.mightClick)
+        
+    def mightClick(self):
+        if time.time() - self.lastClick > 1:
+            self.lastClick = time.time()
+            self.buttonClicked.emit()
+        
+    def animateClick(self) -> None:
+        self.mightClick()
+        return super().animateClick()
+        
     def setText(self, text: str) -> None:
         self.textLabel.setText(text)
-
-    def setButtonText(self, t: str) -> None:
-        self.button.setText(t)
 
     def setIcon(self, path: str) -> None:
         self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap(QSize((self.iconSize+20), (self.iconSize+20)), mode=QIcon.Normal))
@@ -653,7 +656,7 @@ class ClickableImageWithText(QPushButton):
 
 class FirstRunSlide(BasicNavWidget):
     def __init__(self, parent=None) -> None:
-        super().__init__(parent=parent, startEnabled=True, closeEnabled=True)
+        super().__init__(parent=parent, noNavBar = True)
         widget = QWidget()
         l = QHBoxLayout()
         l.setContentsMargins(0, 10, 0, 10)
@@ -667,31 +670,41 @@ class FirstRunSlide(BasicNavWidget):
         label1 = IconLabel(size=96, frame=False)
         label1.setIcon("icon.png")
         label1.setText(f"""
-             <h1>{_("Welcome to WingetUI") + ((" "+_('version 2.0')) if getSettings('AskedAbout3PackageManagers') else "")}</h1>
+             <h1>{_("Welcome to WingetUI")}</h1>
              {_("If you already know how does this work, or you want to skip the welcome wizard, please click on the bottom-left <i>Skip</i> button.")}<br>
-             {_("WingetUI version {version} brings lots of new features, so I thought you'd like to see the new features, despite already using WingetUI.").format(version=version) if getSettings('AskedAbout3PackageManagers') else ""}
              """)
 
-
-        label3 = IconLabel(size=64)
-        label3.setIcon("agreement.png")
-        label3.setText(f"""
-             <h3>{_("Wait a minute!")}</h3>
-             {_("Please make sure to install WingetUI from official sources only. Also, using WingetUI implies accepting of the <b>LGPLv2.1 license</b>")}
-             {_("You may also want to know that we do not collect your usage data. However, package managers might.")}""")
-
-        label2 = IconLabel(size=64)
+        label2 = IconLabel(size=64, frame=True)
         label2.setIcon("rocket.png")
         label2.setText(f"""
-             <h3>{_("This wizard will help you configure and customize WingetUI. Click Start to get started!")}</h3>
-             {_("Remember that this wizard can be run at any time from the Settings Window")}""") # TODO: Actually implement this
-
+             <h3>{_("This wizard will help you configure and customize WingetUI!")}</h3>
+             {_("Please select how you want to configure WingetUI")}""") # TODO: Actually implement this
+        
+        self.defaultPrefs = ClickableButtonLabelWithBiggerIcon(64)
+        self.defaultPrefs.setText(f"""
+            <h3>{_("Default preferences - suitable for regular users</h3>")}</h3>
+            {_("Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>")}""")
+        self.defaultPrefs.setIcon("simple_user.png")
+        self.defaultPrefs.buttonClicked.connect(lambda: self.outAnim(self.skipped.emit))
+        
+        
+        self.hacker = ClickableButtonLabelWithBiggerIcon(64)
+        self.hacker.setText(f"""
+            <h3>{_("Customize WingetUI - for hackers and advanced users only")}</h3>
+            {_("Select which <b>package managers</b> to use ({0}), configure how packages are installed, manage how administrator rights are handled, etc.").format("Winget, Chocolatey, Scoop, Npm, Pip, etc.")}""")
+        self.hacker.setIcon("hacker.png")
+        self.hacker.buttonClicked.connect(lambda: (self.outAnim(self.next.emit)))
+        
         vl.addWidget(label1)
-        vl.addStretch()
+        #vl.addStretch()
         vl.addWidget(label2)
         vl.addStretch()
-        vl.addWidget(label3)
         vl.addStretch()
+        vl.addStretch()
+        vl.addWidget(self.defaultPrefs)
+        vl.addWidget(self.hacker)
+        vl.addStretch()
+        #vl.addStretch()
         self.setCentralWidget(widget)
         self.opacityEffect.setOpacity(1)
 
