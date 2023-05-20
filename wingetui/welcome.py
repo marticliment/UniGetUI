@@ -117,19 +117,17 @@ class WelcomeWindow(QMainWindow):
                     background-color: rgba(60, 60, 60, 25%);
                     border: 1px solid rgba(100, 100, 100, 25%);
                     border-top: 1px solid rgba(100, 100, 100, 25%);
-                    border-radius: 4px;
-                    height: 25px;
+                    border-radius: 8px;
+                    height: 30px;
                 }}
                 QPushButton:hover {{
                     background-color: rgba(77, 77, 77, 50%);
                     border: 1px solid rgba(89, 89, 89, 50%);
-                    height: 25px;
                     border-top: 1px solid rgba(95, 95, 95, 50%);
                 }}
                 QPushButton:pressed {{
                     background-color: rgba(89, 89, 89, 50%);
                     border: 1px solid rgba(95, 95, 95, 50%);
-                    height: 25px;
                     border-top: 1px solid rgba(99, 99, 99 , 50%);
                 }}
                 #AccentButton{{
@@ -204,21 +202,19 @@ class WelcomeWindow(QMainWindow):
                     font-size: 9pt;
                     width: 100px;
                     background-color: #ffffff;
-                    border-radius: 4px;
+                    border-radius: 8px;
                     border: 1px solid rgba(230, 230, 230, 80%);
-                    height: 25px;
+                    height: 30px;
                     border-bottom: 1px solid rgba(220, 220, 220, 100%);
                 }}
                 QPushButton:hover {{
                     background-color: rgba(240, 240, 240, 50%);
                     border: 1px solid rgba(220, 220, 220, 80%);
-                    height: 25px;
                     border-bottom: 1px solid rgba(200, 200, 200, 100%);
                 }}
                 QPushButton:pressed {{
                     background-color: rgba(89, 89, 89, 50%);
                     border: 1px solid rgba(95, 95, 95, 50%);
-                    height: 25px;
                     border-top: 1px solid rgba(99, 99, 99 , 50%);
                 }}
                 #AccentButton{{
