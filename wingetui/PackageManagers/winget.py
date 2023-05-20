@@ -164,7 +164,10 @@ class WingetPackageManager(DynamicPackageManager):
             report(e)
     
     def getPackagesForQuery(self, query: str) -> list[Package]:
-        print(f"🔵 Starting {self.NAME} search for dynamic packages")
+        if getSettings("DisableMicrosoftStore"):
+            print("🟡 Microsoft Store source is disabled")
+            return []
+        print(f"🔵 Starting {self.NAME} search for dynamic packages (msstore source)")
         try:
             packages: list[Package] = []
             p = subprocess.Popen([self.EXECUTABLE, "search", query, "--source", "msstore", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
@@ -227,9 +230,9 @@ class WingetPackageManager(DynamicPackageManager):
             for line in ContentsToCache.split("\n"):
                 package = line.split(",")
                 if len(package) >= 2:
-                    packages.append(Package(package[0], package[1], package[2], "Microsoft Store", Winget))
+                    packages.append(Package(package[0], package[1], package[2], self.NAME, Winget))
             
-            print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s) (msstore)")
             return packages
         
         except Exception as e:
@@ -349,7 +352,7 @@ class WingetPackageManager(DynamicPackageManager):
                 elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
                     s = "Microsoft Store"
             if len(id) in (13, 14) and (id.upper() == id):
-                s = "Microsoft Store"
+                s = "Winget"
             return s
         
         print(f"🔵 Starting {self.NAME} search for installed packages")
@@ -420,9 +423,6 @@ class WingetPackageManager(DynamicPackageManager):
         """
         Will return a PackageDetails object containing the information of the given Package object
         """
-        msStoreId = package.Id
-        if "_" in package.Id and package.Source == "Microsoft Store":
-            msStoreId = package.Id.split("_")[-1].upper()
         print(f"🔵 Starting get info for {package.Id} on {self.NAME}")
         if "…" in package.Id:
             newId = self.getFullPackageId(package.Id)
@@ -432,7 +432,7 @@ class WingetPackageManager(DynamicPackageManager):
         details = PackageDetails(package)
         try:
             details.Scopes = [_("Current user"), _("Local machine")]
-            details.ManifestUrl = f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{package.Id[0].lower()}/{'/'.join(package.Id.split('.'))}" if package.Source != "Microsoft Store" else f"https://apps.microsoft.com/store/detail/{msStoreId}"
+            details.ManifestUrl = f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{package.Id[0].lower()}/{'/'.join(package.Id.split('.'))}" if not (len(package.Id) == 14 and package.Id == package.Id.upper()) else f"https://apps.microsoft.com/store/detail/{package.Id}"
             details.Architectures = ["x64", "x86", "arm64"]
             loadedInformationPieces = 0
             currentIteration = 0

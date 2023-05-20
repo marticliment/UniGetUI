@@ -890,7 +890,7 @@ class UninstallSoftwareSection(SoftwareSection):
         if self.packageList.currentItem().isHidden():
             return
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
-                    
+        
         try:
             Capabilities: PackageManagerCapabilities =  self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
             self.AdminAction.setVisible(Capabilities.CanRunAsAdmin)
@@ -898,8 +898,8 @@ class UninstallSoftwareSection(SoftwareSection):
             self.InteractiveAction.setVisible(Capabilities.CanRunInteractively)
         except Exception as e:
             report(e)
-                    
-        if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
+        
+        if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
             self.IgnoreUpdatesAction.setVisible(True)
             self.ShareAction.setVisible(True)
             self.DetailsAction.setVisible(True)
@@ -909,7 +909,7 @@ class UninstallSoftwareSection(SoftwareSection):
             self.DetailsAction.setVisible(False)
         
         pos.setY(pos.y()+35)
-            
+        
         self.contextMenu.exec(self.packageList.mapToGlobal(pos))
 
     def getToolbar(self) -> QToolBar:
@@ -1372,11 +1372,11 @@ class SettingsSection(SmoothScrollArea):
             self.language.toggleRestartButton(selectedLang != langName)
             setSettingsValue("PreferredLanguage", selectedLang)
 
-        def restartElevenClockByLangChange():
+        def restartWingetUIByLangChange():
             subprocess.run(str("start /B \"\" \""+sys.executable)+"\"", shell=True)
             globals.app.quit()
 
-        self.language.restartButton.clicked.connect(restartElevenClockByLangChange)
+        self.language.restartButton.clicked.connect(restartWingetUIByLangChange)
         self.language.combobox.currentTextChanged.connect(changeLang)
         
         updateCheckBox = SectionCheckBox(_("Update WingetUI automatically"))
@@ -1466,7 +1466,7 @@ class SettingsSection(SmoothScrollArea):
             report(e)
         
         self.theme.combobox.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), self.theme.restartButton.setVisible(True)))
-        self.theme.restartButton.clicked.connect(restartElevenClockByLangChange)
+        self.theme.restartButton.clicked.connect(restartWingetUIByLangChange)
 
         self.startup = CollapsableSection(_("Startup options"), getMedia("launch"), _("WingetUI autostart behaviour, application launch settings"))    
         self.layout.addWidget(self.startup)
@@ -1556,6 +1556,10 @@ class SettingsSection(SmoothScrollArea):
         disableShareApi.setChecked(getSettings("DisableApi"))
         disableShareApi.stateChanged.connect(lambda v: setSettings("DisableApi", bool(v)))
         self.advancedOptions.addWidget(disableShareApi)
+        parallelInstalls = SectionCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
+        parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
+        parallelInstalls.stateChanged.connect(lambda v: setSettings("AllowParallelInstalls", bool(v)))
+        self.advancedOptions.addWidget(parallelInstalls)
 
         enableSystemWinget = SectionCheckBox(_("Use system Winget (Needs a restart)"))
         enableSystemWinget.setChecked(getSettings("UseSystemWinget"))
@@ -1581,7 +1585,7 @@ class SettingsSection(SmoothScrollArea):
                         pass
             setSettings("DisableScoop", sd)
             setSettings("DisableWinget", wd)
-            restartElevenClockByLangChange()
+            restartWingetUIByLangChange()
         
         resetWingetUI = SectionButton(_("Reset WingetUI and its preferences"), _("Reset"))
         resetWingetUI.clicked.connect(lambda: resetWingetUIStore())
@@ -1599,11 +1603,12 @@ class SettingsSection(SmoothScrollArea):
         disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
         disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v)))
         self.wingetPreferences.addWidget(disableWinget)
+        disableWinget = SectionCheckBox(_("Enable Microsoft Store package source"))
+        disableWinget.setChecked(not getSettings(f"DisableMicrosoftStore"))
+        disableWinget.stateChanged.connect(lambda v: (setSettings(f"DisableMicrosoftStore", not bool(v))))
+        self.wingetPreferences.addWidget(disableWinget)
 
-        parallelInstalls = SectionCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
-        parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
-        parallelInstalls.stateChanged.connect(lambda v: setSettings("AllowParallelInstalls", bool(v)))
-        self.wingetPreferences.addWidget(parallelInstalls)
+        
         button = SectionButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
         button.clicked.connect(lambda: (os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
         self.wingetPreferences.addWidget(button)
@@ -2257,7 +2262,7 @@ class PackageInfoPopupWindow(QWidget):
         parameters = " ".join(self.getCommandLineParameters())
         if self.currentPackage.isManager(Winget):
             if not "…" in self.currentPackage.Id:
-                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --source winget --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
+                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
                 self.commandWindow.setText(_("Loading..."))
         elif self.currentPackage.isManager(Scoop):
