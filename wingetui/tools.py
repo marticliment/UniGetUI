@@ -181,7 +181,6 @@ def isDark() -> bool:
             return False      
     return SYSTEM_THEME_ON_LAUNCH == 0
 
-
 def queueProgram(id: str):
     globals.pending_programs.append(id)
 

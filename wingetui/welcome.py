@@ -30,9 +30,8 @@ class WelcomeWindow(QMainWindow):
         self.widgetOrder = (
             FirstRunSlide(),
             PackageManagersSlide(),
-            #SelectFullScreenSlide(),
-            #DateTimeFormat(),
-            #ClockAppearance(),
+            AdministratorPreferences(),
+            UpdatesPreferences(),
             LastSlide(),
         )
 
@@ -86,11 +85,11 @@ class WelcomeWindow(QMainWindow):
                 #SampleItem {{
                     font-family: "Segoe UI Variable Text";
                     width: 100px;
-                    background-color: rgba(80, 80, 80, 15%);
+                    background-color: rgba(80, 80, 80, 7%);
                     padding: 20px;
                     border-radius: 8px;
-                    border: 1px solid rgba(100, 100, 100, 25%);
-                    border-top: 1px solid rgba(100, 100, 100, 25%);
+                    border: 1px solid rgba(100, 100, 100, 15%);
+                    border-top: 1px solid rgba(100, 100, 100, 15%);
                     height: 25px;
                 }}
                 #FramelessSampleItem {{
@@ -139,9 +138,9 @@ class WelcomeWindow(QMainWindow):
                     border-bottom-color: #363636;
                 }}
                 #FocusSelector {{
-                    border: 5px solid rgb({colors[1]});
-                    border-radius: 5px;
-                    background-color: rgb({colors[1]});
+                    border: 4px solid rgb({colors[1]});
+                    border-radius: 16px;
+                    background-color: transparent;/*rgb({colors[1]})*/;
                 }}
                 QLabel {{
                     border: none;
@@ -259,12 +258,11 @@ class WelcomeWindow(QMainWindow):
                 #SampleItem {{
                     font-family: "Segoe UI Variable Text";
                     width: 100px;
-                    background-color: #ffffff;
+                    background-color: rgba(255, 255, 255, 70%);
                     padding: 20px;
                     border-radius: 8px;
-                    border: 1px solid rgba(230, 230, 230, 80%);
+                    border: 1px solid rgba(255, 255, 255, 70%);
                     height: 25px;
-                    border-bottom: 1px solid rgba(220, 220, 220, 100%);
                 }}
                 #FramelessSampleItem {{
                     font-family: "Segoe UI Variable Text";
@@ -296,25 +294,26 @@ class WelcomeWindow(QMainWindow):
                     border-top: 1px solid rgba(99, 99, 99 , 50%);
                 }}
                 #AccentButton{{
-                    color: white;
-                    background-color: rgb({colors[3]});
-                    border-color: rgb({colors[2]});
-                    border-bottom-color: rgb({colors[4]});
+                    color: black;
+                    background-color: rgb({colors[1]});
+                    border: 1px solid rgba(230, 230, 230, 80%);
+                    height: 30px;
+                    border-bottom: 1px solid rgba(220, 220, 220, 100%);
                 }}
                 #AccentButton:hover{{
                     background-color: rgba({colors[2]}, 80%);
-                    border-color: rgb({colors[1]});
-                    border-bottom-color: rgb({colors[3]});
+                    border: 1px solid rgba(95, 95, 95, 50%);
+                    border-top: 1px solid rgba(99, 99, 99 , 50%);
                 }}
                 #AccentButton:disabled{{
-                    background-color: #212121;
-                    border-color: #303030;
-                    border-bottom-color: #363636;
+                    background-color: transparent;
+                    border-color: #eeeeee;
+                    border-bottom-color: #eeeeee;
                 }}
                 #FocusSelector {{
-                    border: 5px solid rgb({colors[1]});
-                    border-radius: 5px;
-                    background-color: rgb({colors[1]});
+                    border: 4px solid rgb({colors[1]});
+                    border-radius: 16px;
+                    background-color: transparent;
                 }}
                 QLabel {{
                     border: none;
@@ -471,7 +470,7 @@ class BasicNavWidget(QWidget):
         self.l = QVBoxLayout()
         self.setLayout(self.l)
 
-        if(readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)==0):
+        if(isDark()):
             self.iconMode = "white"
             self.negIconMode = "black"
         else:
@@ -493,7 +492,7 @@ class BasicNavWidget(QWidget):
                 startButton.setLayoutDirection(Qt.RightToLeft)
                 startButton.setIconSize(QSize(12, 12))
                 startButton.setFixedSize((96), (36))
-                startButton.setIcon(QIcon(getPath(f"next_{self.negIconMode}.png")))
+                startButton.setIcon(QIcon(getPath(f"next_black.png")))
                 startButton.clicked.connect(lambda: self.outAnim(self.next.emit))
                 startButton.setObjectName("AccentButton")
                 self.navLayout.addWidget(startButton)
@@ -518,7 +517,7 @@ class BasicNavWidget(QWidget):
                     self.nextButton.setIconSize(QSize(12, 12))
                     self.nextButton.setFixedSize((36), (36))
                     self.nextButton.clicked.connect(lambda:self.outAnim(self.next.emit))
-                    self.nextButton.setIcon(QIcon(getPath(f"next_{self.negIconMode}.png")))
+                    self.nextButton.setIcon(QIcon(getPath(f"next_black.png")))
                     self.nextButton.setObjectName("AccentButton")
                     self.navLayout.addWidget(self.nextButton)
 
@@ -853,7 +852,25 @@ class FirstRunSlide(BasicNavWidget):
             <h3>{_("Default preferences - suitable for regular users</h3>")}</h3>
             {_("Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>")}""")
         self.defaultPrefs.setIcon("simple_user.png")
-        self.defaultPrefs.buttonClicked.connect(lambda: self.outAnim(self.skipped.emit))
+        
+        def loadDefaultsAndSkip():
+            setSettings("DisableUpdatesNotifications", False)
+            setSettings("DisableAutoCheckforUpdates", False)
+            setSettings("AutomaticallyUpdatePackages", False)
+
+            for manager in PackageManagersList:
+                setSettings(f"AlwaysElevate{manager.NAME}", False)
+            setSettings("DoCacheAdminRights", False)
+            
+            setSettings("DisableWinget", False)
+            setSettings("DisableChocolatey", False)
+            setSettings("DisableScoop", True)
+            setSettings("DisablePip", True)
+            setSettings("DisableNpm", True)
+            
+            self.outAnim(self.skipped.emit)
+        
+        self.defaultPrefs.buttonClicked.connect(lambda: loadDefaultsAndSkip())
         
         
         self.hacker = ClickableButtonLabelWithBiggerIcon(64)
@@ -951,18 +968,18 @@ class PackageManagersSlide(BasicNavWidget):
         vl.setContentsMargins(0, 0, 0, 0)
         l.addLayout(vl)
 
-        label1 = IconLabel(size=(48), frame=False)
-        label1.setIcon(getPath("console_color.png"))
+        label1 = IconLabel(size=(64), frame=False)
+        label1.setIcon("console_color.png")
         label1.setText(f"""<h1>{_("Which package managers do you want to use?")}</h1>
                        {_("They are the programs in charge of installing, updating and removing packages.")}""")
 
 
         self.managers = DynamicScrollArea()
-        winget = NewWelcomeWizardPackageManager("Winget", "Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</p>", getMedia("winget_color"))
-        scoop = NewWelcomeWizardPackageManager("Scoop", "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, command-line packages, General Software (extras bucket required)</b>", getMedia("scoop_color"))
-        choco = NewWelcomeWizardPackageManager("Chocolatey", "The package manager for windows You'll find everything there. <br>Contains: <b>General Software</b>", getMedia("choco_color"))
-        pip = NewWelcomeWizardPackageManager("Pip", "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>", getMedia("pip_color"))
-        npm = NewWelcomeWizardPackageManager("Npm", "Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>", getMedia("node_color"))
+        winget = WelcomeWizardPackageManager("Winget", "Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</p>", getMedia("winget_color"))
+        scoop = WelcomeWizardPackageManager("Scoop", "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>", getMedia("scoop_color"))
+        choco = WelcomeWizardPackageManager("Chocolatey", "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>", getMedia("choco_color"))
+        pip = WelcomeWizardPackageManager("Pip", "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>", getMedia("pip_color"))
+        npm = WelcomeWizardPackageManager("Npm", "Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>", getMedia("node_color"))
         
         managers = [winget, scoop, choco, pip, npm]
         
@@ -996,7 +1013,7 @@ class PackageManagersSlide(BasicNavWidget):
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
 
-class SelectFullScreenSlide(BasicNavWidget):
+class AdministratorPreferences(BasicNavWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent, nextGreyed=True)
         self.defaultSelected = False
@@ -1012,55 +1029,78 @@ class SelectFullScreenSlide(BasicNavWidget):
         l.addLayout(vl)
 
         label1 = IconLabel(size=(96), frame=False)
-        label1.setIcon(getPath("video_color.png"))
-        label1.setText(f"""<h1>{_("Fullscreen behaviour")}</h1>
-                       {_("WingetUI can hide when there's a fullscreen window present (when you are watching a video, you are playing, etc.), but it can also show over those windows (It might be useful if you use fullscreened terminals, etc.).<br><br>Please select one of the following and click next to continue")}""")
+        label1.setIcon("admin_color.png")
+        label1.setText(f"""<h1>{_("Administrator rights")}</h1>
+                       {_("How should installations that require administrator privileges be treated?")}""")
 
-        self.secondaryClock = ClickableButtonLabelWithBiggerIcon(size=64)
-        self.secondaryClock.setIcon(getPath(f"hide_color.png"))
-        self.secondaryClock.clicked.connect(lambda: self.toggleClockMode("hide", shouldChangePrefs=True))
-        self.secondaryClock.setText(f"""
-            <h3>{_("Hide the clock (<i>Recommended</i>)")}</h3>
-            {_("Hide the clock, as the default windows clock would do.")}""")
+        self.default = ClickableButtonLabelWithBiggerIcon(64)
+        self.default.setText(f"""
+            <h3>{_("Ask for administrator rights when required")}</h3>
+            {_("WingetUI will show a UAC prompt every time a package requires elevation to be installed.")+" "+_("This is the <b>default choice</b>.")}""")
+        self.default.setIcon("shield_green.png")
+        self.default.clicked.connect(lambda: self.toggleClockMode("hide", shouldChangePrefs=True))
+        
+        
+        self.askOnce = ClickableButtonLabelWithBiggerIcon(64)
+        self.askOnce.setText(f"""
+            <h3>{_("Cache administrator rights, but elevate installers only when required")}</h3>
+            {_("You will be prompted only once, and administrator rights will be granted to packages that request them.")+" "+_("This could represent a <b>security risk</b>.")}""")
+        self.askOnce.setIcon("shield_yellow.png")
+        self.askOnce.clicked.connect(lambda: self.toggleClockMode("show", shouldChangePrefs=True))
 
-        self.formattedClock = ClickableButtonLabelWithBiggerIcon(size=64)
-        self.formattedClock.setIcon(getPath(f"show_color.png"))
-        self.formattedClock.clicked.connect(lambda: self.toggleClockMode("show", shouldChangePrefs=True))
-        self.formattedClock.setText(f"""
-            <h3>{_("Show the clock over the fullscreen window")}</h3>
-            {_("Show the clock over fullscreen windows. This might cover some in-app controls, like youtube's exit fullscreen button, but it might be useful to see the time when playing")}""")
+        self.askNever = ClickableButtonLabelWithBiggerIcon(64)
+        self.askNever.setText(f"""
+            <h3>{_("Cache administrator rights and elevate installers by default")}</h3>
+            {_("You will be prompted only once, and every future installation will be elevated automatically. ")+" "+_("Select only <b>if you know what you are doing</b>.")}""")
+        self.askNever.setIcon("shield_red.png")
+        self.askNever.clicked.connect(lambda: self.toggleClockMode("elevate", shouldChangePrefs=True))
 
 
         vl.addWidget(label1)
         vl.addStretch()
-        vl.addWidget(self.secondaryClock)
+        vl.addWidget(self.default)
         vl.addStretch()
-        vl.addWidget(self.formattedClock)
+        vl.addWidget(self.askOnce)
+        vl.addStretch()
+        vl.addWidget(self.askNever)
         vl.addStretch()
         self.setCentralWidget(widget)
 
         self.clockMode = ""
 
     def toggleClockMode(self, mode: str, shouldChangePrefs: bool = False) -> None:
-        self.enableNextButton()
+        if mode != "hidedef":
+            self.enableNextButton()
         if shouldChangePrefs:
             self.defaultSelected = True
-        if mode == "hide":
+        if mode == "hide" or mode=="hidedef":
             self.clockMode = "hide"
-            self.moveSelector(self.secondaryClock)
+            self.moveSelector(self.default)
             if shouldChangePrefs:
-                setSettings("DisableHideOnFullScreen", False, r=shouldChangePrefs)
+                for manager in PackageManagersList:
+                    setSettings(f"AlwaysElevate{manager.NAME}", False)
+                setSettings("DoCacheAdminRights", False)
         elif mode == "show":
             self.clockMode = "show"
-            self.moveSelector(self.formattedClock)
+            self.moveSelector(self.askOnce)
             if shouldChangePrefs:
-                setSettings("DisableHideOnFullScreen", True, r=shouldChangePrefs)
+                for manager in PackageManagersList:
+                    setSettings(f"AlwaysElevate{manager.NAME}", False)
+                setSettings("DoCacheAdminRights", True)
+        elif mode == "elevate":
+            self.clockMode = "elevate"
+            self.moveSelector(self.askNever)
+            if shouldChangePrefs:
+                for manager in PackageManagersList:
+                    setSettings(f"AlwaysElevate{manager.NAME}", True)
+                setSettings("DoCacheAdminRights", True)
         else:
             raise ValueError("Function toggleCheckMode() called with invalid arguments. Accepted values are: hide, show")
 
     def showEvent(self, event) -> None:
         if not self.defaultSelected:
-            self.toggleClockMode("hide")
+            pass
+            #self.toggleClockMode("hidedef")
         return super().showEvent(event)
 
     def moveSelector(self, w: QWidget) -> None:
@@ -1090,7 +1130,8 @@ class SelectFullScreenSlide(BasicNavWidget):
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
 
-class DateTimeFormat(BasicNavWidget):
+
+class UpdatesPreferences(BasicNavWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent, nextGreyed=True)
         self.defaultSelected = False
@@ -1106,303 +1147,78 @@ class DateTimeFormat(BasicNavWidget):
         l.addLayout(vl)
 
         label1 = IconLabel(size=(96), frame=False)
-        label1.setIcon(getPath("formatting.png"))
-        label1.setText(f"""<h1>{_("Let's talk: Format")}</h1>
-                       {_("Please select the date and time format you like the most. You will be able to change this after in the settings window")}""")
+        label1.setIcon("update_pc_color.png")
+        label1.setText(f"""<h1>{_("Updates")}</h1>
+                       {_("WingetUI can check for updates and install them automatically")}""")
 
-        self.noChanges = ClickableImageWithText(size=96)
-        self.noChanges.setIcon(getPath(f"default_format.png"))
-        self.noChanges.clicked.connect(lambda: self.toggleClockMode("default", shouldChangePrefs=True))
-        self.noChanges.setText(f"""<h3>{_("Default")}</h3>""")
+        self.default = ClickableButtonLabelWithBiggerIcon(64)
+        self.default.setText(f"""
+            <h3>{_("Do NOT check for updates")}</h3>
+            {_("WingetUI will not check for updates periodically. They will still be checked at launch, but you won't be warned about them.")}""")
+        self.default.setIcon("shield_yellow.png")
+        self.default.clicked.connect(lambda: self.toggleClockMode("noupdates", shouldChangePrefs=True))
+        
+        
+        self.askOnce = ClickableButtonLabelWithBiggerIcon(64)
+        self.askOnce.setText(f"""
+            <h3>{_("Check for updates periodically")}</h3>
+            {_("Check for updates regularly, and ask me what to do when updates are found.")+" "+_("This is the <b>default choice</b>.")}""")
+        self.askOnce.setIcon("shield_question.png")
+        self.askOnce.clicked.connect(lambda: self.toggleClockMode("checkupdates", shouldChangePrefs=True))
 
-        self.weekday = ClickableImageWithText(size=96)
-        self.weekday.setIcon(getPath(f"weekday.png"))
-        self.weekday.clicked.connect(lambda: self.toggleClockMode("weekday", shouldChangePrefs=True))
-        self.weekday.setText(f"""<h3>{_("Weekday")}</h3>""")
+        self.askNever = ClickableButtonLabelWithBiggerIcon(64)
+        self.askNever.setText(f"""
+            <h3>{_("Install updates automatically")}</h3>
+            {_("Check for updates regulary, and automatically install available ones.")}""")
+        self.askNever.setIcon("shield_reload.png")
+        self.askNever.clicked.connect(lambda: self.toggleClockMode("installupdates", shouldChangePrefs=True))
 
-        self.OnlyTime = ClickableImageWithText(size=96)
-        self.OnlyTime.setIcon(getPath(f"onlytime.png"))
-        self.OnlyTime.clicked.connect(lambda: self.toggleClockMode("OnlyTime", shouldChangePrefs=True))
-        self.OnlyTime.setText(f"""<h3>{_("Only Time")}</h3>""")
-
-        self.OnlyDate = ClickableImageWithText(size=96)
-        self.OnlyDate.setIcon(getPath(f"onlydate.png"))
-        self.OnlyDate.clicked.connect(lambda: self.toggleClockMode("OnlyDate", shouldChangePrefs=True))
-        self.OnlyDate.setText(f"""<h3>{_("Only Date")}</h3>""")
-
-        self.WeekNumber = ClickableImageWithText(size=96)
-        self.WeekNumber.setIcon(getPath(f"weeknumber.png"))
-        self.WeekNumber.clicked.connect(lambda: self.toggleClockMode("WeekNumber", shouldChangePrefs=True))
-        self.WeekNumber.setText(f"""<h3>{_("Week Number")}</h3>""")
-
-        self.Seconds = ClickableImageWithText(size=96)
-        self.Seconds.setIcon(getPath(f"seconds.png"))
-        self.Seconds.clicked.connect(lambda: self.toggleClockMode("Seconds", shouldChangePrefs=True))
-        self.Seconds.setText(f"""<h3>{_("Ft. Seconds")}</h3>""")
-
-        hl1 = QHBoxLayout()
-        hl1.addStretch()
-        hl1.addWidget(self.weekday)
-        hl1.addStretch()
-        hl1.addWidget(self.noChanges)
-        hl1.addStretch()
-        hl1.addWidget(self.Seconds)
-        hl1.addStretch()
-
-        hl2 = QHBoxLayout()
-        hl2.addStretch()
-        hl2.addWidget(self.OnlyTime)
-        hl2.addStretch()
-        hl2.addWidget(self.WeekNumber)
-        hl2.addStretch()
-        hl2.addWidget(self.OnlyDate)
-        hl2.addStretch()
 
         vl.addWidget(label1)
         vl.addStretch()
-        vl.addLayout(hl1)
+        vl.addWidget(self.default)
         vl.addStretch()
-        vl.addLayout(hl2)
+        vl.addWidget(self.askOnce)
+        vl.addStretch()
+        vl.addWidget(self.askNever)
         vl.addStretch()
         self.setCentralWidget(widget)
 
         self.clockMode = ""
 
     def toggleClockMode(self, mode: str, shouldChangePrefs: bool = False) -> None:
-        self.enableNextButton()
+        if mode != "hidedef":
+            self.enableNextButton()
         if shouldChangePrefs:
             self.defaultSelected = True
-        if mode == "Seconds":
-            self.clockMode = "Seconds"
-            self.moveSelector(self.Seconds)
-            if shouldChangePrefs:
-                setSettings("EnableSeconds", True, r=False)
-                setSettings("DisableTime", False, r=False)
-                setSettings("DisableDate", False, r=False)
-                setSettings("EnableWeekNumber", False, r=False)
-                setSettings("EnableWeekDay", False, r=True)
-        elif mode == "default":
-            self.clockMode = "default"
-            self.moveSelector(self.noChanges)
-            if shouldChangePrefs:
-                setSettings("EnableSeconds", False, r=False)
-                setSettings("DisableTime", False, r=False)
-                setSettings("DisableDate", False, r=False)
-                setSettings("EnableWeekNumber", False, r=False)
-                setSettings("EnableWeekDay", False, r=True)
-        elif mode == "weekday":
-            self.clockMode = "weekday"
-            self.moveSelector(self.weekday)
-            if shouldChangePrefs:
-                setSettings("EnableSeconds", False, r=False)
-                setSettings("DisableTime", False, r=False)
-                setSettings("DisableDate", False, r=False)
-                setSettings("EnableWeekNumber", False, r=False)
-                setSettings("EnableWeekDay", True, r=True)
-        elif mode == "OnlyDate":
-            self.clockMode = "OnlyDate"
-            self.moveSelector(self.OnlyDate)
-            if shouldChangePrefs:
-                setSettings("EnableSeconds", False, r=False)
-                setSettings("DisableTime", True, r=False)
-                setSettings("DisableDate", False, r=False)
-                setSettings("EnableWeekNumber", False, r=False)
-                setSettings("EnableWeekDay", False, r=True)
-        elif mode == "OnlyTime":
-            self.clockMode = "OnlyTime"
-            self.moveSelector(self.OnlyTime)
-            if shouldChangePrefs:
-                setSettings("EnableSeconds", False, r=False)
-                setSettings("DisableTime", False, r=False)
-                setSettings("DisableDate", True, r=False)
-                setSettings("EnableWeekNumber", False, r=False)
-                setSettings("EnableWeekDay", False, r=True)
-        elif mode == "WeekNumber":
-            self.clockMode = "WeekNumber"
-            self.moveSelector(self.WeekNumber)
-            if shouldChangePrefs:
-                setSettings("EnableSeconds", False, r=False)
-                setSettings("DisableTime", False, r=False)
-                setSettings("DisableDate", False, r=False)
-                setSettings("EnableWeekNumber", True, r=False)
-                setSettings("EnableWeekDay", False, r=True)
-        else:
-            raise ValueError("Function toggleCheckMode() called with invalid arguments ("+mode+"). Accepted values are: default, weekday, OnlyTime, OnlyDate, WeekNumber, Seconds")
-
-    def showEvent(self, event) -> None:
-        if not self.defaultSelected:
-            self.toggleClockMode("default")
-        return super().showEvent(event)
-
-    def moveSelector(self, w: QWidget) -> None:
-        if not self.selector.isVisible():
-            self.selector.show()
-            self.selector.move(w.pos().x(), w.pos().y())
-            self.selector.resize(w.size().width(), w.size().height())
-        else:
-            posAnim = QPropertyAnimation(self.selector, b"pos", self)
-            posAnim.setStartValue(self.selector.pos())
-            posAnim.setEndValue(w.pos())
-            posAnim.setEasingCurve(QEasingCurve.InOutCirc)
-            posAnim.setDuration(200)
-
-            sizeAnim = QPropertyAnimation(self.selector, b"size", self)
-            sizeAnim.setStartValue(self.selector.size())
-            s = w.size()
-            s.setWidth(s.width()+18)
-            s.setHeight(s.height()+18)
-            sizeAnim.setEndValue(s)
-            sizeAnim.setEasingCurve(QEasingCurve.InOutCirc)
-            sizeAnim.setDuration(200)
-
-            posAnim.start()
-            sizeAnim.start()
-
-    def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
-
-class ClockAppearance(BasicNavWidget):
-    def __init__(self, parent=None) -> None:
-        super().__init__(parent=parent, nextGreyed=True)
-        self.defaultSelected = False
-        widget = QWidget()
-        l = QHBoxLayout()
-        l.setContentsMargins(0, 10, 0, 10)
-        widget.setLayout(l)
-        self.selector = MovableFocusSelector(self)
-        self.selector.hide()
-        vl = QVBoxLayout()
-        vl.setContentsMargins(0, 0, 0, 0)
-        l.addSpacing(10)
-        l.addLayout(vl)
-
-        label1 = IconLabel(size=(96), frame=False)
-        label1.setIcon(getPath("appearance.png"))
-        label1.setText(f"""<h1>{_("One last thing: Appearance")}</h1>
-                       {_("Please select the clock style you like the most. You will be able to change this after in the settings window")}""")
-
-        self.default = ClickableImageWithText(size=96)
-        self.default.setIcon(getPath(f"default_style.png"))
-        self.default.clicked.connect(lambda: self.toggleClockMode("default", shouldChangePrefs=True))
-        self.default.setText(f"""<h3>{_("Default")}</h3>""")
-
-        self.msdos = ClickableImageWithText(size=96)
-        self.msdos.setIcon(getPath(f"msdos.png"))
-        self.msdos.clicked.connect(lambda: self.toggleClockMode("msdos", shouldChangePrefs=True))
-        self.msdos.setText(f"""<h3>MS-DOS</h3>""")
-
-        self.win95 = ClickableImageWithText(size=96)
-        self.win95.setIcon(getPath(f"win95.png"))
-        self.win95.clicked.connect(lambda: self.toggleClockMode("win95", shouldChangePrefs=True))
-        self.win95.setText(f"""<h3>Windows 95</h3>""")
-
-        self.bw = ClickableImageWithText(size=96)
-        self.bw.setIcon(getPath(f"bw.png"))
-        self.bw.clicked.connect(lambda: self.toggleClockMode("bw", shouldChangePrefs=True))
-        self.bw.setText(f"""<h3>{_("Black&White")}</h3>""")
-
-        self.wb = ClickableImageWithText(size=96)
-        self.wb.setIcon(getPath(f"wb.png"))
-        self.wb.clicked.connect(lambda: self.toggleClockMode("wb", shouldChangePrefs=True))
-        self.wb.setText(f"""<h3>{_("White&Black")}</h3>""")
-
-        self.accent = ClickableImageWithText(size=96)
-        self.accent.setIcon(getPath(f"accent.png"))
-        self.accent.clicked.connect(lambda: self.toggleClockMode("accent", shouldChangePrefs=True))
-        self.accent.setText(f"""<h3>{_("Accent")}</h3>""")
-
-        hl1 = QHBoxLayout()
-        hl1.addStretch()
-        hl1.addWidget(self.msdos)
-        hl1.addStretch()
-        hl1.addWidget(self.default)
-        hl1.addStretch()
-        hl1.addWidget(self.win95)
-        hl1.addStretch()
-
-        hl2 = QHBoxLayout()
-        hl2.addStretch()
-        hl2.addWidget(self.bw)
-        hl2.addStretch()
-        hl2.addWidget(self.accent)
-        hl2.addStretch()
-        hl2.addWidget(self.wb)
-        hl2.addStretch()
-
-        vl.addWidget(label1)
-        vl.addStretch()
-        vl.addLayout(hl1)
-        vl.addStretch()
-        vl.addLayout(hl2)
-        vl.addStretch()
-        self.setCentralWidget(widget)
-
-        self.clockMode = ""
-
-    def toggleClockMode(self, mode: str, shouldChangePrefs: bool = False) -> None:
-        self.enableNextButton()
-        if shouldChangePrefs:
-            self.defaultSelected = True
-        if mode == "msdos":
-            self.clockMode = "msdos"
-            self.moveSelector(self.msdos)
-            if shouldChangePrefs:
-                setSettingsValue("UseCustomFont", "Consolas,10,-1,5,50,0,0,0,0,0,Regular", r=False)
-                setSettingsValue("UseCustomFontColor", "0,255,0", r=False)
-                setSettings("DisableTaskbarBackgroundColor", False, r=False)
-                setSettingsValue("UseCustomBgColor", "0,0,0,100", r=False)
-                setSettings("AccentBackgroundcolor", False, r=True)
-        elif mode == "default":
-            self.clockMode = "default"
+        if mode == "noupdates" or mode=="hidedef":
+            self.clockMode = "noupdates"
             self.moveSelector(self.default)
             if shouldChangePrefs:
-                setSettings("UseCustomFont", False, r=False)
-                setSettings("UseCustomFontColor", False, r=False)
-                setSettings("DisableTaskbarBackgroundColor", False, r=False)
-                setSettings("UseCustomBgColor", False, r=False)
-                setSettings("AccentBackgroundcolor", False, r=True)
-        elif mode == "bw":
-            self.clockMode = "bw"
-            self.moveSelector(self.bw)
+                setSettings("DisableUpdatesNotifications", True)
+                setSettings("DisableAutoCheckforUpdates", True)
+                setSettings("AutomaticallyUpdatePackages", False)
+        elif mode == "checkupdates":
+            self.clockMode = "checkupdates"
+            self.moveSelector(self.askOnce)
             if shouldChangePrefs:
-                setSettings("UseCustomFont", False, r=False)
-                setSettingsValue("UseCustomFontColor", "0,0,0", r=False)
-                setSettings("DisableTaskbarBackgroundColor", False, r=False)
-                setSettingsValue("UseCustomBgColor", "255,255,255,100", r=False)
-                setSettings("AccentBackgroundcolor", False, r=True)
-        elif mode == "wb":
-            self.clockMode = "wb"
-            self.moveSelector(self.wb)
+                setSettings("DisableUpdatesNotifications", False)
+                setSettings("DisableAutoCheckforUpdates", False)
+                setSettings("AutomaticallyUpdatePackages", False)
+        elif mode == "installupdates":
+            self.clockMode = "installupdates"
+            self.moveSelector(self.askNever)
             if shouldChangePrefs:
-                setSettings("UseCustomFont", False, r=False)
-                setSettingsValue("UseCustomFontColor", "255,255,255", r=False)
-                setSettings("DisableTaskbarBackgroundColor", False, r=False)
-                setSettingsValue("UseCustomBgColor", "0,0,0,100", r=False)
-                setSettings("AccentBackgroundcolor", False, r=True)
-        elif mode == "accent":
-            self.clockMode = "accent"
-            self.moveSelector(self.accent)
-            if shouldChangePrefs:
-                setSettings("UseCustomFont", False, r=False)
-                setSettings("UseCustomFontColor", False, r=False)
-                setSettings("DisableTaskbarBackgroundColor", False, r=False)
-                setSettings("UseCustomBgColor", False, r=False)
-                setSettings("AccentBackgroundcolor", True, r=True)
-        elif mode == "win95":
-            self.clockMode = "win95"
-            self.moveSelector(self.win95)
-            if shouldChangePrefs:
-                setSettingsValue("UseCustomFont", "Segoe UI,11,-1,5,50,0,0,0,0,0,Normal", r=False)
-                setSettingsValue("UseCustomFontColor", "205,205,205", r=False)
-                setSettings("DisableTaskbarBackgroundColor", False, r=False)
-                setSettingsValue("UseCustomBgColor", "1,127,128,100.0", r=False)
-                setSettings("AccentBackgroundcolor", False, r=True)
+                setSettings("DisableUpdatesNotifications", False)
+                setSettings("DisableAutoCheckforUpdates", False)
+                setSettings("AutomaticallyUpdatePackages", True)
         else:
-            raise ValueError("Function toggleCheckMode() called with invalid arguments ("+mode+"). Accepted values are: default, weekday, OnlyTime, OnlyDate, WeekNumber, Seconds")
+            raise ValueError("Function toggleCheckMode() called with invalid arguments. Accepted values are: hide, show")
 
     def showEvent(self, event) -> None:
         if not self.defaultSelected:
-            self.toggleClockMode("default")
+            pass
+            #self.toggleClockMode("hidedef")
         return super().showEvent(event)
 
     def moveSelector(self, w: QWidget) -> None:
@@ -1431,7 +1247,6 @@ class ClockAppearance(BasicNavWidget):
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
-
 
 if __name__ == "__main__":
     from ctypes import c_int, windll

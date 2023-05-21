@@ -1193,6 +1193,16 @@ class VerticallyDraggableWidget(QLabel):
         globals.app.restoreOverrideCursor()
         return super().closeEvent(event)
 
+class ClickableLabel(QLabel):
+    clicked = Signal()
+    
+    def __init__(self, text: str = "", parent: QWidget = None):
+        super().__init__(text, parent)
+        self.setMouseTracking(True)
+    
+    def mousePressEvent(self, ev: QMouseEvent) -> None:
+        self.clicked.emit()
+        return super().mousePressEvent(ev)
 
 if __name__ == "__main__":
     import __init__
