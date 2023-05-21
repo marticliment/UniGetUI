@@ -341,6 +341,7 @@ class ScoopPackageManager(SamplePackageManager):
         
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
+        outputCode = 1
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()

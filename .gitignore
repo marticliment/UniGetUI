@@ -94,3 +94,10 @@ env/
 .vs/*
 wingetui/components/package-lock.json
 wingetui/components/package.json
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/Test-WindowsUpdate.ps1
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/Install-WindowsUpdate.ps1
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/Install-ChocolateyPackageAndHandleExitCode.ps1
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/Get-WindowsUpdateErrorDescription.ps1
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/Get-NativeInstallerExitCode.ps1
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/chocolatey-windowsupdate.psm1
+wingetui/choco-cli/extensions/chocolatey-windowsupdate/Set-PowerShellExitCode.ps1
