@@ -838,18 +838,17 @@ class FirstRunSlide(BasicNavWidget):
         label1.setIcon("icon.png")
         label1.setText(f"""
              <h1>{_("Welcome to WingetUI")}</h1>
-             {_("If you already know how does this work, or you want to skip the welcome wizard, please click on the bottom-left <i>Skip</i> button.")}<br>
              """)
 
         label2 = IconLabel(size=64, frame=True)
         label2.setIcon("rocket.png")
         label2.setText(f"""
              <h3>{_("This wizard will help you configure and customize WingetUI!")}</h3>
-             {_("Please select how you want to configure WingetUI")}""") # TODO: Actually implement this
+             {_("Please select how you want to configure WingetUI")}""")
         
         self.defaultPrefs = ClickableButtonLabelWithBiggerIcon(64)
         self.defaultPrefs.setText(f"""
-            <h3>{_("Default preferences - suitable for regular users</h3>")}</h3>
+            <h3>{_("Default preferences - suitable for regular users")}</h3>
             {_("Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>")}""")
         self.defaultPrefs.setIcon("simple_user.png")
         
