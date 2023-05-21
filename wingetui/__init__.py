@@ -126,7 +126,7 @@ try:
                         self.loadStatus = 1000 # Override loading status
                     
                     skipButton.clicked.connect(forceContinue)
-                    Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show)), daemon=True).start()
+                    
                     
                     self.textEnterAnim = QVariantAnimation(self)
                     self.textEnterAnim.setStartValue(0)
@@ -209,94 +209,20 @@ try:
                     def increaseStep():
                         self.loadStatus += 1
                     self.finishedPreloadingStep.connect(increaseStep)
-                    if getSettings("AskedAbout3PackageManagers") == False or "--welcomewizard" in sys.argv:
-                        self.askAboutPackageManagers(onclose=lambda: Thread(target=self.loadPreUIComponents, daemon=True).start())
+                    if getSettings("ShownWelcomeWizard") == False or "--welcomewizard" in sys.argv or "--welcome" in sys.argv:
+                        self.askAboutPackageManagers(onclose=lambda: (Thread(target=self.loadPreUIComponents, daemon=True).start(), Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show)), daemon=True).start()))
                     else:
                         Thread(target=self.loadPreUIComponents, daemon=True).start()
+                        Thread(target=lambda: (time.sleep(15), self.callInMain.emit(skipButton.show)), daemon=True).start()
                         self.loadingText.setText(_("Checking for other running instances..."))
                 except Exception as e:
                     raise e
 
             def askAboutPackageManagers(self, onclose: object):
-                self.w = NotClosableWidget()
-                self.w.setObjectName("micawin")
-                self.w.setWindowFlag(Qt.WindowType.Window)
-                self.w.setWindowTitle("\x20")
-                pixmap = QPixmap(4, 4)
-                pixmap.fill(Qt.GlobalColor.transparent)
-                self.w.setWindowIcon(pixmap)
-                self.w.setAutoFillBackground(True)
-                self.w.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
-                self.w.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, False)
-                self.w.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
-                self.w.setWindowModality(Qt.WindowModality.WindowModal)
-                
-                self.w.setMinimumWidth(750)
-                self.w.setContentsMargins(20, 0, 20, 10)
-                mainLayout = QVBoxLayout()
-                label = (QLabel("<p style='font-size: 25pt;font-weight: bold;'>"+_("Welcome to WingetUI")+"</p><p style='font-size: 17pt;font-weight: bold;'>"+_("You may now choose your weapons")+"</p>"))
-                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                label.setWordWrap(True)
-                mainLayout.addWidget(label)
-                label = (QLabel(_("WingetUI is based on package managers. They are the engines used to load, install update and remove software from your computer. Please select the desired package managers and hit \"Apply\" to continue. The default ones are Winget and Chocolatey")))
-                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                label.setWordWrap(True)
-                mainLayout.addWidget(label)
-
-                winget = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Winget"), _("Microsoft's official package manager. It contains well known software such as browsers, PDF readers, windows add-ons and other utilities, as well as other less-known but useful software, such as Microsoft Visual C++ Redistributables. Packages from Winget have been carefully validated"), getMedia("winget"))
-                winget.setChecked(True)
-                scoop = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Scoop"), _("From scoop you will be able to download utilities that might not be suitable for everybody. Install CLI utilities such as nano, sudo or nmap for Windows. And with the ability to add custom buckets, you will be able to download unlimited amounts of different utilities, apps, fonts, games, and any other thing you can dream of."), getMedia("scoop"))
-                scoop.setChecked(False)
-                if (getSettings("ScoopAlreadySetup") or getSettings("ScoopEnabledByAssistant")) and not getSettings("DisableScoop"):
-                    scoop.setChecked(True)
-                choco = WelcomeWizardPackageManager(_("Enable {pm}").format(pm="Chocolatey"), _("The package manager for Windows by default. With more than {0} packages on their repositories, you will find anything you want to install. From Firefox to Sysinternals, almost every package is available to download from Chocolatey servers").format("9500"), getMedia("choco"))
-                choco.setChecked(True)
-                
-                mainLayout.addSpacing(20)
-                mainLayout.addWidget(winget)
-                mainLayout.addWidget(scoop)
-                mainLayout.addWidget(choco)
-                mainLayout.addSpacing(20)
-                
-                mainLayout.addStretch()
-                
-                blayout = QHBoxLayout()
-                mainLayout.addLayout(blayout)
-                blayout.addStretch()
-                
-                def performSelectionAndContinue():
-                    self.w.close()
-                    setSettings("AskedAbout3PackageManagers", True)
-                    setSettings("DisableWinget", not winget.isChecked())
-                    setSettings("DisableScoop", not scoop.isChecked())
-                    setSettings("ScoopEnabledByAssistant", scoop.isChecked())
-                    setSettings("DisableChocolatey", not choco.isChecked())
-                    if choco.isChecked() and shutil.which("choco") != None:
-                        setSettings("UseSystemChocolatey", True)
-                    if scoop.isChecked() and shutil.which("scoop") == None:
-                        os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))
-                    else:
-                        onclose()
-                        
-                okbutton = QPushButton(_("Apply and start WingetUI"))
-                okbutton.setFixedSize(190, 30)
-                okbutton.setObjectName("AccentButton")
-                okbutton.clicked.connect(performSelectionAndContinue)
-                blayout.addWidget(okbutton)
-                
-                w = QWidget(self.w)
-                w.setObjectName("mainbg")
-                w.setLayout(mainLayout)
-                l = QHBoxLayout()
-                l.addWidget(w)
-                self.w.setLayout(l)
-                
-                r = ApplyMica(self.w.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
-                if r != 0:
-                    self.w.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
-                    self.w.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, False)
-                self.w.setStyleSheet(darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020") if isDark() else lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f5f5f5"))
-                self.w.show()
+                import welcome
+                self.ww = welcome.WelcomeWindow(callback=lambda: (self.popup.show(), onclose()))
+                self.popup.hide()
+                self.ww.show()
 
             def loadPreUIComponents(self):
                 try:

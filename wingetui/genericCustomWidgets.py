@@ -310,10 +310,11 @@ class DynamicScrollArea(QWidget):
         """
         Recalculates minimum height
         """
-        if self.getFullHeight() >= self.maxHeight:
-            self.setFixedHeight(self.maxHeight)
-        else:
-            self.setFixedHeight(self.getFullHeight() if self.getFullHeight() > 20 else 4)
+        if self.resizeBar:
+            if self.getFullHeight() >= self.maxHeight:
+                self.setFixedHeight(self.maxHeight)
+            else:
+                self.setFixedHeight(self.getFullHeight() if self.getFullHeight() > 20 else 4)
             
     def getFullHeight(self) -> int:
         """
@@ -325,15 +326,16 @@ class DynamicScrollArea(QWidget):
         self.vlayout.removeWidget(item)
         self.rss()
         self.itemCount = self.vlayout.count()
-        if self.itemCount <= 0:
+        if self.itemCount <= 0 and self.resizeBar:
             globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
             self.resizeBar.hide()
 
     def addItem(self, item: QWidget):
         self.vlayout.addWidget(item)
         self.itemCount = self.vlayout.count()
-        self.resizeBar.show()
-        globals.trayIcon.setIcon(QIcon(getMedia("icon")))
+        if self.resizeBar:
+            self.resizeBar.show()
+            globals.trayIcon.setIcon(QIcon(getMedia("icon")))
 
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction
@@ -1191,6 +1193,16 @@ class VerticallyDraggableWidget(QLabel):
         globals.app.restoreOverrideCursor()
         return super().closeEvent(event)
 
+class ClickableLabel(QLabel):
+    clicked = Signal()
+    
+    def __init__(self, text: str = "", parent: QWidget = None):
+        super().__init__(text, parent)
+        self.setMouseTracking(True)
+    
+    def mousePressEvent(self, ev: QMouseEvent) -> None:
+        self.clicked.emit()
+        return super().mousePressEvent(ev)
 
 if __name__ == "__main__":
     import __init__
