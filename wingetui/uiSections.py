@@ -235,7 +235,6 @@ class DiscoverSoftwareSection(SoftwareSection):
                 self.LastQueryDynamicallyLoaded = text
                 self.startLoadingDyamicPackages(text)
             super().finishFiltering(text)
-            print(self.showableItems, self.isLoadingDynamic)
             if len(self.showableItems) == 0 and self.isLoadingDynamic:
                 self.packageList.label.setText(_("Looking for packages..."))
         else:
@@ -1992,7 +1991,6 @@ class PackageInfoPopupWindow(QWidget):
                 return super().resizeEvent(event)
 
             def showBigImage(self):
-                cprint(self.index)
                 self.parentwidget.iv.show(self.index)
                 self.parentwidget.iv.raise_()
 
