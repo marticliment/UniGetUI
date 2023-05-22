@@ -25,6 +25,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     LastQueryDynamicallyLoaded: str = ""
     
     finishDynamicLoading = Signal()
+    isLoadingDynamic: bool = False
     
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -225,20 +226,31 @@ class DiscoverSoftwareSection(SoftwareSection):
             time.sleep(0.1)
             if query == self.query.text():
                 self.callInMain.emit(partial(self.finishFiltering, query))
-                if query != "" and query != self.LastQueryDynamicallyLoaded:
-                    self.LastQueryDynamicallyLoaded = query
-                    self.callInMain.emit(partial(self.startLoadingDyamicPackages, query))
 
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
-
         
+    def finishFiltering(self, text: str) -> None:
+        if len(text) >= 3:
+            if text != self.LastQueryDynamicallyLoaded:
+                self.LastQueryDynamicallyLoaded = text
+                self.startLoadingDyamicPackages(text)
+            super().finishFiltering(text)
+            print(self.showableItems, self.isLoadingDynamic)
+            if len(self.showableItems) == 0 and self.isLoadingDynamic:
+                self.packageList.label.setText(_("Looking for packages..."))
+        else:
+            self.showableItems = []
+            self.addItemsToTreeWidget(reset=True)
+            self.loadingProgressBar.hide()
+            self.packageList.label.show()
+            if len(text) == 0:
+                self.packageList.label.setText(_("Search for packages to start"))
+            else:
+                self.packageList.label.setText(_("Please type at least three characters"))
+
     def finishLoadingIfNeeded(self) -> None:
         itemCount = len(self.packageItems)
         self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(str(itemCount)))
-        if itemCount == 0:
-            self.packageList.label.setText(self.countLabel.text())
-        else:
-            self.packageList.label.setText("")
         self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(True)
         self.query.setEnabled(True)
@@ -251,7 +263,6 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.reloadButton.setEnabled(True)
         self.loadingProgressBar.hide()
         self.countLabel.setText(_("Found packages: {0}").format(str(itemCount)))
-        self.packageList.label.setText("")
         print("🟢 Total packages: "+str(itemCount))
 
     def finishDynamicLoadingIfNeeded(self) -> None:
@@ -259,6 +270,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
             if not self.DynamicPackagesLoaded[manager] and manager.isEnabled():
                 return
+        if len(self.showableItems) == 0 and len(self.query.text())>=3:
+            self.packageList.label.setText(_("No packages found matching the input criteria"))
+        else:
+            self.packageList.label.setText(_(""))
+        self.isLoadingDynamic = False
         self.loadingProgressBar.hide()
 
     def addItem(self, package: Package) -> None:
@@ -317,6 +333,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     
     def startLoadingDyamicPackages(self, query: str, force: bool = False) -> None:
         print(f"🔵 Loading dynamic packages for query {query}")
+        self.isLoadingDynamic = True
         for manager in self.DynaimcPackageManagers:
             self.DynamicPackagesLoaded[manager] = False
         self.loadingProgressBar.show()
