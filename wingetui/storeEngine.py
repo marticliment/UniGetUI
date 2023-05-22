@@ -276,7 +276,8 @@ class PackageInstallerWidget(QWidget):
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.liveOutputButton.setText(_("Restart your PC to finish installation"))
             if type(self) == PackageInstallerWidget:
-                if not self.Package.Id in globals.uninstall.IdPackageReference.keys():
+                self.Package.PackageItem.setCheckState(0, Qt.CheckState.Unchecked)
+                if not self.Package.Id in globals.uninstall.IdPackageReference.keys():    
                     print("🔵 Adding package to the uninstall section...")
                     globals.uninstall.addItem(self.Package)
                     globals.uninstall.updatePackageNumber()
