@@ -21,6 +21,8 @@ class Section(QWidget):
        pass
 
 componentStatus: dict = {
+    "sudoFound": False,
+    "sudoVersion": False
 }
 
 app: QApplication = None
