@@ -190,13 +190,20 @@ class DiscoverSoftwareSection(SoftwareSection):
         
         return toolbar
     
-    def loadShared(self, id):
+    def loadShared(self, id: str, second_round: bool = False):
         if id in self.IdPackageReference:
             package = self.IdPackageReference[id]
             self.infobox: PackageInfoPopupWindow
             self.infobox.showPackageDetails(package)
             self.infobox.show()
+            self.packageList.setEnabled(True)
+        elif not second_round:
+            self.query.setText(id)
+            self.finishFiltering(self.query.text())
+            self.packageList.setEnabled(False)
+            Thread(target=self.loadSharedId, args=(id,), daemon=True).start()
         else:
+            self.packageList.setEnabled(True)
             self.err = CustomMessageBox(self.window())
             errorData = {
                     "titlebarTitle": _("Unable to find package"),
@@ -207,6 +214,13 @@ class DiscoverSoftwareSection(SoftwareSection):
                     "icon": QIcon(getMedia("notif_warn")),
                 }
             self.err.showErrorMessage(errorData, showNotification=False)
+
+                
+    def loadSharedId(self, id: str):
+        while self.isLoadingDynamic:
+            time.sleep(0.1)
+        self.callInMain.emit(lambda: self.loadShared(id, second_round=True))
+            
 
     def installSelectedPackageItems(self, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         for package in self.packageItems:
