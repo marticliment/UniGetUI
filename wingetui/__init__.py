@@ -229,7 +229,7 @@ try:
 
             def loadPreUIComponents(self):
                 try:
-                    self.loadStatus = -14
+                    self.loadStatus = 0
                     
                     # Preparation threads
                     Thread(target=self.checkForRunningInstances, daemon=True).start()

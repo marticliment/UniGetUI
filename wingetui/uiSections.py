@@ -1482,6 +1482,8 @@ class SettingsSection(SmoothScrollArea):
         
 
         self.theme = SectionComboBox(_("Application theme:"))
+        self.theme.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+
         self.generalTitle.addWidget(self.theme)
         self.theme.restartButton.setText(_("Restart WingetUI"))
         
@@ -1507,6 +1509,64 @@ class SettingsSection(SmoothScrollArea):
         
         self.theme.combobox.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), self.theme.restartButton.setVisible(True)))
         self.theme.restartButton.clicked.connect(restartWingetUIByLangChange)
+        
+        
+        def exportSettings():
+            nonlocal self
+            try:
+                rawstr = ""
+                for file in glob.glob(os.path.join(os.path.expanduser("~"), ".wingetui/*")):
+                    if not "Running" in file and not "png" in file and not "PreferredLanguage" in file and not "json" in file:
+                        sName = file.replace("\\", "/").split("/")[-1]
+                        rawstr += sName+"|@|"+getSettingsValue(sName)+"|~|"
+                fileName = QFileDialog.getSaveFileName(self, _("Export settings to a local file"), os.path.expanduser("~"), f"{_('WingetUI Settings File')} (*.conf);;{_('All files')} (*.*)")
+                if fileName[0] != "":
+                    oFile =  open(fileName[0], "w")
+                    oFile.write(rawstr)
+                    oFile.close()
+                    subprocess.run("explorer /select,\""+fileName[0].replace('/', '\\')+"\"", shell=True)
+            except Exception as e:
+                report(e)
+
+        def importSettings():
+            nonlocal self
+            try:
+                fileName = QFileDialog.getOpenFileName(self, _("Import settings from a local file"), os.path.expanduser("~"), f"{_('WingetUI Settings File')} (*.conf);;{_('All files')} (*.*)")
+                if fileName:
+                    iFile = open(fileName[0], "r")
+                    rawstr = iFile.read()
+                    iFile.close()
+                    resetSettings()
+                    for element in rawstr.split("|~|"):
+                        pairValue = element.split("|@|")
+                        if len(pairValue) == 2:
+                            setSettings(pairValue[0], True)
+                            if pairValue[1] != "":
+                                setSettingsValue(pairValue[0], pairValue[1])
+                    os.startfile(sys.executable)
+                    globals.app.quit()
+            except Exception as e:
+                report(e)
+
+        def resetSettings():
+            for file in glob.glob(os.path.join(os.path.expanduser("~"), ".wingetui/*")):
+                if not "Running" in file:
+                    try:
+                        os.remove(file)
+                    except:
+                        pass
+                    
+        self.importSettings = SectionButton(_("Import settings from a local file"), _("Import"))
+        self.importSettings.clicked.connect(lambda: importSettings())
+        self.importSettings.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        self.generalTitle.addWidget(self.importSettings)
+        self.exportSettings = SectionButton(_("Export settings to a local file"), _("Export"))
+        self.exportSettings.clicked.connect(lambda: exportSettings())
+        self.exportSettings.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        self.generalTitle.addWidget(self.exportSettings)
+        self.resetButton = SectionButton(_("Reset WingetUI"), _("Reset"))
+        self.resetButton.clicked.connect(lambda: (resetSettings(), os.startfile(sys.executable), globals.app.quit()))
+        self.generalTitle.addWidget(self.resetButton)
 
         self.startup = CollapsableSection(_("Startup options"), getMedia("launch"), _("WingetUI autostart behaviour, application launch settings"))    
         self.layout.addWidget(self.startup)
@@ -1522,7 +1582,7 @@ class SettingsSection(SmoothScrollArea):
         enableScoopCleanup.setChecked(getSettings("EnableScoopCleanup"))
         enableScoopCleanup.stateChanged.connect(lambda v: setSettings("EnableScoopCleanup", bool(v)))
         enableScoopCleanup.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-
+        
         self.startup.addWidget(enableScoopCleanup)
         
         self.UITitle = CollapsableSection(_("User interface preferences"), getMedia("interactive"), _("Action when double-clicking packages, hide successful installations"))
