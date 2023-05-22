@@ -598,6 +598,12 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages found"))
         self.layout().addWidget(self.treewidget)
+        hl = QHBoxLayout()
+        hl.addStretch()
+        resetButton = QPushButton(_("Reset"))
+        resetButton.clicked.connect(self.resetAll)
+        hl.addWidget(resetButton)
+        self.layout().addLayout(hl)
         self.treewidget.setColumnCount(4)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
@@ -667,6 +673,12 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
                 removeButton.clicked.connect(lambda: self.unBlackistAllVersions(id, store, item))
                 
         self.treewidget.setItemWidget(item, 3, removeButton)
+        
+    def resetAll(self):
+        for i in range(self.treewidget.topLevelItemCount()):
+            self.treewidget.itemWidget(self.treewidget.topLevelItem(0), 3).click()
+        self.close()
+        globals.updates.startLoadingPackages(force=True)
         
     def unBlackistLegacy(self, id: str, item: QTreeWidgetItem):
         setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
