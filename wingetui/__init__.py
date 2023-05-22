@@ -120,7 +120,7 @@ try:
                     
                     skipButton = QPushButton(_("Stuck here? Skip initialization"), self.popup)
                     skipButton.setFlat(True)
-                    skipButton.move(390, 350)
+                    skipButton.move(280, 350)
                     skipButton.setStyleSheet(f"color: {'white' if isDark() else 'black'}; border-radius: 4px; background-color: rgba({'255, 255, 255, 7%' if isDark() else '0, 0, 0, 7%'}); border: 1px solid rgba({'255, 255, 255, 10%' if isDark() else '0, 0, 0, 10%'})")
                     skipButton.resize(300, 30)
                     skipButton.hide()
@@ -229,7 +229,7 @@ try:
 
             def loadPreUIComponents(self):
                 try:
-                    self.loadStatus = 0
+                    self.loadStatus = -14
                     
                     # Preparation threads
                     Thread(target=self.checkForRunningInstances, daemon=True).start()
