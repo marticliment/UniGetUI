@@ -54,7 +54,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.packageList.setColumnWidth(4, 150)
         self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
-        self.informationBanner.setText(_("Packages are being loaded for the first time. This process will take longer than usual, since package caches are being rebuilt."))
+        self.informationBanner.setText(_("The packages are being loaded for the first time. This process will take longer than usual, since package caches are being rebuilt."))
         if not getSettings("WarnedAboutPackages_v2"):
             setSettings("WarnedAboutPackages_v2", True)
             self.informationBanner.show()
@@ -1379,6 +1379,16 @@ class SettingsSection(SmoothScrollArea):
         self.language.restartButton.clicked.connect(restartWingetUIByLangChange)
         self.language.combobox.currentTextChanged.connect(changeLang)
         
+        self.wizardButton = SectionButton(_("Open the welcome wizard"), _("Open"))
+        def ww():
+            subprocess.run(str("start /B \"\" \""+sys.executable)+"\" --welcome", shell=True)
+            globals.app.quit()
+            
+        self.wizardButton.clicked.connect(ww)
+        self.wizardButton.button.setObjectName("AccentButton")
+        self.wizardButton.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        self.generalTitle.addWidget(self.wizardButton)
+        
         updateCheckBox = SectionCheckBox(_("Update WingetUI automatically"))
         updateCheckBox.setChecked(not getSettings("DisableAutoUpdateWingetUI"))
         updateCheckBox.stateChanged.connect(lambda v: setSettings("DisableAutoUpdateWingetUI", not bool(v)))
@@ -1532,6 +1542,8 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.advancedOptions)
         doCacheAdminPrivileges = SectionCheckBox(_("Ask only once for administrator privileges (not recommended)"))
         doCacheAdminPrivileges.setChecked(getSettings("DoCacheAdminRights"))
+        doCacheAdminPrivileges.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+
         
         def resetAdminRightsCache():
             resetsudo = subprocess.Popen([GSUDO_EXECUTABLE, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
@@ -1548,6 +1560,7 @@ class SettingsSection(SmoothScrollArea):
         dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
         dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
         dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        dontUseBuiltInGsudo.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.advancedOptions.addWidget(dontUseBuiltInGsudo)
 
         self.advancedOptions = CollapsableSection(_("Experimental settings and developer options"), getMedia("testing"), _("Beta features and other options that shouldn't be touched"))
@@ -1611,8 +1624,8 @@ class SettingsSection(SmoothScrollArea):
         
         button = SectionButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
         button.clicked.connect(lambda: (os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
+        button.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.wingetPreferences.addWidget(button)
-        button.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         
         parallelInstalls.setEnabled(disableWinget.isChecked())
         button.setEnabled(disableWinget.isChecked())
@@ -1643,6 +1656,8 @@ class SettingsSection(SmoothScrollArea):
         uninstallScoop = SectionButton(_("Uninstall Scoop (and its packages)"), _("Uninstall"))
         uninstallScoop.clicked.connect(lambda: (setSettings("DisableScoop", True), disableScoop.setChecked(True), os.startfile(os.path.join(realpath, "resources/uninstall_scoop.cmd"))))
         self.scoopPreferences.addWidget(uninstallScoop)
+        uninstallScoop.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+
         
         scoopPreventCaps.setEnabled(disableScoop.isChecked())
         bucketManager.setEnabled(disableScoop.isChecked())
@@ -1673,13 +1688,15 @@ class SettingsSection(SmoothScrollArea):
         disablePip.setChecked(not getSettings(f"Disable{Pip.NAME}"))
         disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v))))
         self.pipPreferences.addWidget(disablePip)
+        disablePip.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         
-        self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Npm"), getMedia("node"), _("{pm} package manager specific preferences").format(pm = "Npm"))
-        self.layout.addWidget(self.pipPreferences)
-        disablePip = SectionCheckBox(_("Enable {pm}").format(pm = Npm.NAME))
-        disablePip.setChecked(not getSettings(f"Disable{Npm.NAME}"))
-        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v))))
-        self.pipPreferences.addWidget(disablePip)
+        self.npmPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Npm"), getMedia("node"), _("{pm} package manager specific preferences").format(pm = "Npm"))
+        self.layout.addWidget(self.npmPreferences)
+        disableNpm = SectionCheckBox(_("Enable {pm}").format(pm = Npm.NAME))
+        disableNpm.setChecked(not getSettings(f"Disable{Npm.NAME}"))
+        disableNpm.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v))))
+        self.npmPreferences.addWidget(disableNpm)
+        disableNpm.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8pc;border-bottom: 1px;}")
 
 
         self.layout.addStretch()
