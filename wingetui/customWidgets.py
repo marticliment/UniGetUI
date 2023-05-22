@@ -1193,7 +1193,7 @@ class ImageViewer(QWidget):
         self.closeButton.move(self.width()-40, 0)
         self.closeButton.resize(40, 40)
         self.closeButton.setFlat(True)
-        self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:#c42b1c;}")
         self.closeButton.clicked.connect(lambda: (self.close()))
         self.closeButton.show()
 
@@ -1207,7 +1207,7 @@ class ImageViewer(QWidget):
         self.backButton.move(0, self.height()//2-24)
         self.backButton.resize(48, 48)
         self.backButton.setFlat(False)
-        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:#c42b1c;}")
         self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
         self.backButton.show()
 
@@ -1220,7 +1220,7 @@ class ImageViewer(QWidget):
         self.nextButton.move(self.width()-48, self.height()//2-24)
         self.nextButton.resize(48, 48)
         self.nextButton.setFlat(False)
-        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:#c42b1c;}")
         self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
         self.nextButton.show()
         self.hide()

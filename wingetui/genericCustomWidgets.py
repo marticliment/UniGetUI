@@ -1129,7 +1129,7 @@ class MovableFramelessWindow(DraggableWindow):
         self.backButton.move(self.width()-40, 0)
         self.backButton.resize(30, 30)
         self.backButton.setFlat(True)
-        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:red;}")
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:#c42b1c;}")
         self.backButton.clicked.connect(self.close)
         self.backButton.show()
 
