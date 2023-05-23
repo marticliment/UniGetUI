@@ -1043,21 +1043,6 @@ class UninstallSoftwareSection(SoftwareSection):
                     pass
         a = CustomMessageBox(self)
         Thread(target=self.confirmUninstallSelected, args=(toUninstall, a, admin, interactive)).start()
-        
-    def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: CustomMessageBox):
-        questionData = {
-            "titlebarTitle": "Wait!",
-            "mainTitle": _("Are you sure?"),
-            "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
-            "acceptButtonTitle": _("Yes"),
-            "cancelButtonTitle": _("No"),
-            "icon": QIcon(),
-        }
-        if len(toUninstall) == 0:
-            return
-        if a.askQuestion(questionData):
-            for program in toUninstall:
-                self.callInMain.emit(partial(self.uninstallPackageItem, program, avoidConfirm=True))
 
     def updatePackageNumber(self, showQueried: bool = False, foundResults: int = 0):
         self.foundPackages = len(self.packageItems)
@@ -1126,13 +1111,15 @@ class UninstallSoftwareSection(SoftwareSection):
 
     def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: CustomMessageBox, admin: bool = False, interactive: bool = False, removeData: bool = False):
         questionData = {
-            "titlebarTitle": _("Wait!"),
+            "titlebarTitle": _("Uninstall"),
             "mainTitle": _("Are you sure?"),
             "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else  _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
             "acceptButtonTitle": _("Yes"),
             "cancelButtonTitle": _("No"),
             "icon": QIcon(),
         }
+        if len(toUninstall) == 0:
+            return
         if a.askQuestion(questionData):
             for program in toUninstall:
                 self.callInMain.emit(partial(self.uninstallPackageItem, program, admin, interactive, removeData, avoidConfirm=True))
