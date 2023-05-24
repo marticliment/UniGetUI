@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14017,
-        "done": 7557
+        "done": 7558
     },
     "icons_and_screenshots": {
         "115": {
@@ -17140,8 +17140,8 @@
             "icon": "",
             "images": []
         },
-        "ludusavi": {
-            "icon": "https://community.chocolatey.org/content/packageimages/ludusavi.0.15.2.png",
+        "https://imgur.com/ZGKQslT": {
+            "icon": "",
             "images": []
         },
         "mucommander": {
@@ -22717,6 +22717,10 @@
         },
         "luau": {
             "icon": "",
+            "images": []
+        },
+        "ludusavi": {
+            "icon": "https://imgur.com/ZGKQslT",
             "images": []
         },
         "lwc": {
