@@ -168,8 +168,8 @@ class NPMPackageManager(DynamicLoadPackageManager):
                     details.License = line.split("|")[1]
                 elif lineNo == 3:
                     details.Description = line.strip()
-                elif line == 4:
-                    details.HomepageURL = line.strip() # TODO: Fix homepage not showing
+                elif lineNo == 4:
+                    details.HomepageURL = line.strip()
                 elif line.startswith(".tarball"):
                     details.InstallerURL = line.replace(".tarball: ", "").strip()
                     try:
