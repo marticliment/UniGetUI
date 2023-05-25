@@ -25,7 +25,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     Capabilities.CanSkipIntegrityChecks = False
     Capabilities.CanRunInteractively = False
     Capabilities.CanRemoveDataOnUninstall = False
-    Capabilities.SupportsCustomVersions = False # TODO: Support custom architectures
+    Capabilities.SupportsCustomVersions = False # TODO: Support custom versions
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
     
