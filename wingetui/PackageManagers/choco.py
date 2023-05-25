@@ -272,7 +272,7 @@ class ChocoPackageManager(SamplePackageManager):
             outputCode = RETURNCODE_OPERATION_SUCCEEDED
         elif outputCode == 3010:
             outputCode = RETURNCODE_NEEDS_RESTART
-        elif ("Run as administrator" in output or "The requested operation requires elevation" in output) and outputCode != 0:
+        elif ("Run as administrator" in output or "The requested operation requires elevation" in output or 'ERROR: Exception calling "CreateDirectory" with "1" argument(s): "Access to the path' in output) and outputCode != 0:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
 
