@@ -241,7 +241,8 @@ class PipPackageManager(DynamicLoadPackageManager):
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
                 outputCode = RETURNCODE_FAILED
-                
+        if "--user" in output:
+            outputCode = RETURNCODE_NEEDS_PIP_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
         
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
@@ -266,7 +267,9 @@ class PipPackageManager(DynamicLoadPackageManager):
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
-                outputCode = RETURNCODE_FAILED        
+                outputCode = RETURNCODE_FAILED   
+        if "--user" in output:
+            outputCode = RETURNCODE_NEEDS_PIP_ELEVATION     
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:

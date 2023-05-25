@@ -236,6 +236,10 @@ class PackageInstallerWidget(QWidget):
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
             return
+        elif returncode == RETURNCODE_NEEDS_PIP_ELEVATION:
+            self.Options.CustomParameters.append("--user")
+            self.runInstallation()
+            return
         elif "winget settings --enable InstallerHashOverride" in output:
             print("🟠 Requiring the user to enable skiphash setting!")
             subprocess.run([GSUDO_EXECUTABLE, Winget.EXECUTABLE, "settings", "--enable", "InstallerHashOverride"], shell=True)
@@ -408,6 +412,10 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.Options.RunAsAdministrator = True
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
+        elif returncode == RETURNCODE_NEEDS_PIP_ELEVATION:
+            self.Options.CustomParameters.append("--user")
+            self.runInstallation()
+            return
         else:
             self.leftSlow.stop()
             self.leftFast.stop()
@@ -510,6 +518,10 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.Options.RunAsAdministrator = True
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
             self.runInstallation()
+        elif returncode == RETURNCODE_NEEDS_PIP_ELEVATION:
+            self.Options.CustomParameters.append("--user")
+            self.runInstallation()
+            return
         else:
             self.leftSlow.stop()
             self.leftFast.stop()
