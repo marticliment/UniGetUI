@@ -333,6 +333,12 @@ class DynamicScrollArea(QWidget):
     def addItem(self, item: QWidget):
         self.vlayout.addWidget(item)
         self.itemCount = self.vlayout.count()
+        self.calculateSize()
+        self.setEnabled(True)
+        self.w.setEnabled(True)
+        self.scrollArea.setEnabled(True)
+        self.coushinWidget.setEnabled(True)
+        item.setEnabled(True)
         if self.resizeBar:
             self.resizeBar.show()
             globals.trayIcon.setIcon(QIcon(getMedia("icon")))

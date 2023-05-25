@@ -4,9 +4,7 @@ from tools import *
 from tools import _
 from .PackageClasses import *
 from .sampleHelper import *
-    
-# TODO: Implement auto --user fallback
-    
+        
 class PipPackageManager(DynamicLoadPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
