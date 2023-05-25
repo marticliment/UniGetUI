@@ -61,7 +61,7 @@ class WingetPackageManager(DynamicPackageManager):
                     for line in content.split("\n"):
                         package = line.split(",")
                         if len(package) >= 2:
-                            packages.append(Package(package[0], package[1], package[2], self.NAME, Winget))
+                            packages.append(Package(package[0], package[1], package[2], "Winget: winget", Winget))
                     Thread(target=self.cacheAvailablePackages, daemon=True, name=f"{self.NAME} package cacher thread").start()
                     print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
                     return packages
@@ -230,7 +230,7 @@ class WingetPackageManager(DynamicPackageManager):
             for line in ContentsToCache.split("\n"):
                 package = line.split(",")
                 if len(package) >= 2:
-                    packages.append(Package(package[0], package[1], package[2], self.NAME, Winget))
+                    packages.append(Package(package[0], package[1], package[2], "Winget: msstore", Winget))
             
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s) (msstore)")
             return packages
@@ -286,17 +286,22 @@ class WingetPackageManager(DynamicPackageManager):
                             ver = verElement.split(" ")[iOffset+1]
                             newver = verElement.split(" ")[iOffset+2]
                         name = element[0:idPosition].strip()
+                        StoreName = "Winget"
+                        if "winget" in line:
+                            StoreName = "Winget: winget"
+                        elif "msstore" in line:
+                            StoreName = "Winget: msstore"
                         if not "  " in name:
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name, id, ver, newver, self.NAME, Winget))
+                                packages.append(UpgradablePackage(name, id, ver, newver, StoreName, Winget))
                         else:
                             name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                             while "##" in name:
                                 name = name.replace("##", "#")
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, self.NAME, Winget))
+                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, StoreName, Winget))
                     except Exception as e:
-                        packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:].split(" ")[0].strip(), self.NAME, Winget))
+                        packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:].split(" ")[0].strip(), StoreName, Winget))
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
@@ -352,7 +357,9 @@ class WingetPackageManager(DynamicPackageManager):
                 elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
                     s = "Microsoft Store"
             if len(id) in (13, 14) and (id.upper() == id):
-                s = "Winget"
+                s = "Winget: msstore"
+            if s == "Winget":
+                s = "Winget: winget"
             return s
         
         print(f"🔵 Starting {self.NAME} search for installed packages")
@@ -399,6 +406,11 @@ class WingetPackageManager(DynamicPackageManager):
                             iOffset += 1
                             ver = verElement.split(" ")[iOffset+1]
                         name = element[0:idPosition].strip()
+                        StoreName = "Winget"
+                        if "winget" in line:
+                            StoreName = "Winget: winget"
+                        elif "msstore" in line:
+                            StoreName = "Winget: msstore"
                         if not "  " in name:
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id.strip(), ver, getSource(id), Winget))
