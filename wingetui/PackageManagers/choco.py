@@ -178,7 +178,7 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             p = subprocess.Popen([self.EXECUTABLE, "info", package.Id], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             output: list[str] = []
-            details.ManifestUrl = f"https://community.chocolatey.org/packages/{package.Name.lower()}"
+            details.ManifestUrl = f"https://community.chocolatey.org/packages/{package.Id}"
             details.Architectures = ["x86"]
             while p.poll() is None:
                 line = p.stdout.readline().strip()
