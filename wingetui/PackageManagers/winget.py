@@ -634,6 +634,7 @@ class WingetPackageManager(DynamicPackageManager):
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
         Command = [self.EXECUTABLE, "uninstall", "--exact", "--id", package.Id] + self.getParameters(options)
+        Command.remove("--accept-package-agreements")
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
