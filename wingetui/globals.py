@@ -68,3 +68,8 @@ dispfont: str = "Segoe UI Variable Display"
 dispfontsemib: str = "Segoe UI Variable Display Semib"
 
 settingsCache = {}
+
+ENABLE_WINGETUI_NOTIFICATIONS = True
+ENABLE_SUCCESS_NOTIFICATIONS = True
+ENABLE_ERROR_NOTIFICATIONS = True
+ENABLE_UPDATES_NOTIFICATIONS = True

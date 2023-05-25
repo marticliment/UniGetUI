@@ -618,7 +618,7 @@ class UpdateSoftwareSection(SoftwareSection):
                     t.setTitle(_("Update found!"))
                     t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
                 t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                if ENABLE_UPDATES_NOTIFICATIONS:
+                if globals.ENABLE_UPDATES_NOTIFICATIONS:
                     t.show() 
                     
             else:            
@@ -637,7 +637,7 @@ class UpdateSoftwareSection(SoftwareSection):
                     t.addAction(_("Update"), self.updateAllPackageItems)
                 t.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
                 t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                if ENABLE_UPDATES_NOTIFICATIONS:
+                if globals.ENABLE_UPDATES_NOTIFICATIONS:
                     t.show()
                     
             globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))

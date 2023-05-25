@@ -94,11 +94,10 @@ def setSettings(s: str, v: bool) -> None:
     except Exception as e:
         print(e)
     if "Notifications" in s:
-        global ENABLE_WINGETUI_NOTIFICATIONS, ENABLE_SUCCESS_NOTIFICATIONS, ENABLE_ERROR_NOTIFICATIONS, ENABLE_UPDATES_NOTIFICATIONS
-        ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
-        ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
-        ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
-        ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+        globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
+        globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+        globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+        globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
         
 
 def getSettingsValue(s: str) -> str:
@@ -322,7 +321,7 @@ class KillableThread(Thread):
         return self.localtrace 
 
 def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
-    if ENABLE_WINGETUI_NOTIFICATIONS:
+    if globals.ENABLE_WINGETUI_NOTIFICATIONS:
         globals.trayIcon.showMessage(title, text, QIcon())
         
 def foregroundWindowThread():
@@ -408,10 +407,10 @@ def getPackageIcon(package) -> str:
             report(e)
         return ""
 
-ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
-ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
-ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
-ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and ENABLE_WINGETUI_NOTIFICATIONS
+globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
+globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
 
 
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):

@@ -264,7 +264,7 @@ class PackageInstallerWidget(QWidget):
             if returncode in (RETURNCODE_OPERATION_SUCCEEDED, RETURNCODE_NO_APPLICABLE_UPDATE_FOUND):
                 t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
                 t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
-                if ENABLE_SUCCESS_NOTIFICATIONS:
+                if globals.ENABLE_SUCCESS_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode = False)))
                 self.liveOutputButton.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
@@ -275,7 +275,7 @@ class PackageInstallerWidget(QWidget):
                 t.setSmallText(_("You may restart your computer later if you wish"))
                 t.addAction(_("Restart now"), globals.mainWindow.askRestart)
                 t.addAction(_("Restart later"), t.close)
-                if ENABLE_WINGETUI_NOTIFICATIONS:
+                if globals.ENABLE_WINGETUI_NOTIFICATIONS:
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.liveOutputButton.setText(_("Restart your PC to finish installation"))
@@ -311,7 +311,7 @@ class PackageInstallerWidget(QWidget):
                 dialogData["mainTitle"] = _("{0} failed").format(self.actionName.capitalize())
                 dialogData["mainText"] = _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer.").format(action=self.actionVerb, package=self.Package.Name, showDetails=_("Show details"))
             self.err.showErrorMessage(dialogData, showNotification=False)
-            if ENABLE_ERROR_NOTIFICATIONS:
+            if globals.ENABLE_ERROR_NOTIFICATIONS:
                 t.show()
 
 
@@ -577,7 +577,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
                     t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
                     t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
-                    if ENABLE_SUCCESS_NOTIFICATIONS:
+                    if globals.ENABLE_SUCCESS_NOTIFICATIONS:
                         t.show()
                 else:
                     self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
@@ -601,7 +601,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("notif_warn")),
                         }
-                    if ENABLE_ERROR_NOTIFICATIONS:
+                    if globals.ENABLE_ERROR_NOTIFICATIONS:
                         t.show()
                     self.err.showErrorMessage(errorData, showNotification=False)
 
