@@ -25,7 +25,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     Capabilities.CanSkipIntegrityChecks = False
     Capabilities.CanRunInteractively = False
     Capabilities.CanRemoveDataOnUninstall = False
-    Capabilities.SupportsCustomVersions = False # TODO: Support custom versions
+    Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
     
@@ -186,6 +186,12 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 elif line.startswith("published"):
                     details.Publisher = line.split("by")[-1].split("<")[0].strip()
                     details.UpdateDate = line.split("by")[0].replace("published", "").strip()
+            p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id} versions --json", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
+            output: list[str] = []
+            while p.poll() is None:
+                line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+                if line.startswith("\""):
+                    details.Versions = [line[:-1].replace("\"", "")] + details.Versions # The addition order is inverted, so the latest version shows at the top
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:
@@ -210,7 +216,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id+"@latest"] + self.getParameters(options)
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id+("@latest" if options.Version == "" else f"@{options.Version}")] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
