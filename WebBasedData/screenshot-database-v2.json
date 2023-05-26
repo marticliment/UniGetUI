@@ -1,10 +1,14 @@
 {
     "package_count": {
-        "total": 14017,
+        "total": 14018,
         "done": 7558
     },
     "icons_and_screenshots": {
         "115": {
+            "icon": "",
+            "images": []
+        },
+        "": {
             "icon": "",
             "images": []
         },
@@ -22720,8 +22724,10 @@
             "images": []
         },
         "ludusavi": {
-            "icon": "https://imgur.com/ZGKQslT",
-            "images": []
+            "icon": "https://imgur.com/0wG1NM3",
+            "images": [
+                "https://imgur.com/AJS547V"
+            ]
         },
         "lwc": {
             "icon": "",
