@@ -7,12 +7,12 @@ untranslatedPercentage = {
   "cs": "92%",
   "da": "34%",
   "de": "94%",
-  "es": "82%",
+  "es": "99%",
   "fa": "82%",
   "it": "99%",
   "ja": "77%",
   "ko": "84%",
-  "nb": "88%",
+  "nb": "91%",
   "pt_BR": "82%",
   "pt_PT": "82%",
   "ru": "99%",
@@ -261,8 +261,8 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "Артем",
-      "link": ""
+      "name": "sklart",
+      "link": "https://github.com/sklart"
     }
   ],
   "sl": [
