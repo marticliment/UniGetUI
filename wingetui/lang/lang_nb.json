@@ -319,7 +319,7 @@
   "Status" : "Status",
   "Stuck here? Skip initialization" : "Kommer ikke videre? Hopp over initialiseringen",
   "Suport the developer" : "Støtt utvikleren",
-  "Systems are now ready to go!" : null,
+  "Systems are now ready to go!" : "Systemene er nå klare for bruk!",
   "Text file" : "Tekstfil",
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : "Sjekksummen til installasjonsprogrammet stemmer ikke overens med den forventede verdien, og autentisiteten til installasjonsprogrammet kan ikke bekreftes. Hvis du stoler på utgiveren, {0} pakken igjen og hopp over hash-sjekken.",
   "The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved." : null,
