@@ -1384,19 +1384,27 @@ class PackageExporter(MovableFramelessWindow):
         wingetPackagesList = []
         scoopPackageList = []
         chocoPackageList = []
+        npmPackageList = []
+        pipPackageList = []
         try:
             for i in range(self.treewidget.topLevelItemCount()):
                 item = self.treewidget.topLevelItem(i)
-                if item.text(2).lower() == "winget":
+                if "winget" in item.text(2).lower():
                     id = item.text(1).strip()
                     wingetPackage = {"PackageIdentifier": id}
                     wingetPackagesList.append(wingetPackage)
                 elif "scoop" in item.text(2).lower():
                     scoopPackage = {"Name": item.text(1)}
                     scoopPackageList.append(scoopPackage)
-                elif item.text(2).lower() == "chocolatey":
+                elif "chocolatey" in item.text(2).lower():
                     chocoPackage = {"Name": item.text(1)}
                     chocoPackageList.append(chocoPackage)
+                elif "npm" in item.text(2).lower():
+                    npmPackage = {"Name": item.text(1)}
+                    npmPackageList.append(npmPackage)
+                elif "pip" in item.text(2).lower():
+                    pipPackage = {"Name": item.text(1)}
+                    pipPackageList.append(pipPackage)
             wingetDetails = {
                 "Argument": "https://cdn.winget.microsoft.com/cache",
                 "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
@@ -1410,7 +1418,7 @@ class PackageExporter(MovableFramelessWindow):
                 report(e)
             wingetExportSchema = {
                 "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate" : datetime.now(),
+                "CreationDate" : str(datetime.now()),
                 "Sources": [{
                     "Packages": wingetPackagesList,
                     "SourceDetails": wingetDetails}],
@@ -1422,10 +1430,18 @@ class PackageExporter(MovableFramelessWindow):
             chocoExportSchema = {
                 "apps": chocoPackageList,
             }
+            pipExportSchema = {
+                "apps": pipPackageList,
+            }
+            npmExportSchema = {
+                "apps": npmPackageList,
+            }
             overallSchema = {
                 "winget": wingetExportSchema,
                 "scoop": scoopExportSchema,
-                "chocolatey": chocoExportSchema
+                "chocolatey": chocoExportSchema,
+                "pip": pipExportSchema,
+                "npm": npmExportSchema
             }
             filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
             if filename[0] != "" and filename[1]:
@@ -1447,6 +1463,9 @@ class PackageExporter(MovableFramelessWindow):
         return super().showEvent(event)
 
 class PackageImporter(MovableFramelessWindow):
+    
+    pendingPackages: dict[str:QTreeWidgetItem] = []
+    
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
@@ -1536,24 +1555,12 @@ class PackageImporter(MovableFramelessWindow):
                 except KeyError as e:
                     print("🟠 Invalid chocolatey section")
                 for packageId in packageList:
-                    item = TreeWidgetItemWithQAction()
+                    item = QTreeWidgetItem()
                     unknownIcon = QIcon(getMedia("question"))
                     self.treewidget.addTopLevelItem(item)
                     if packageId in DISCOVER_SECTION.IdPackageReference:
                         package = DISCOVER_SECTION.IdPackageReference[packageId]
-                        item.setText(0, package.Name)
-                        item.setText(1, package.Id)
-                        item.setText(2, package.Version)
-                        item.setText(3, package.Source)
-                        item.setIcon(0, self.installIcon)
-                        item.setIcon(1, self.idIcon)
-                        item.setIcon(2, self.versionIcon)
-                        item.setIcon(3, package.getSourceIcon())
-                        removeButton = QPushButton()
-                        removeButton.setIcon(self.removeIcon)
-                        removeButton.setFixedSize(QSize(24, 24))
-                        removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
-                        self.treewidget.setItemWidget(item, 4, removeButton)
+                        self.addItemFromPackage(package, item)
                     else:
                         # If the package is not available from any package manager:
                         item.setText(0, packageId)
@@ -1565,10 +1572,45 @@ class PackageImporter(MovableFramelessWindow):
                         item.setIcon(2, unknownIcon)
                         item.setIcon(3, unknownIcon)
                         item.setDisabled(True)
+                        self.pendingPackages[packageId] = item
                 self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
+                Thread(target=self.loadDynamicPackages).Start()
                 self.show()
         except Exception as e:
             report(e)
+            
+    def addItemFromPackage(self, package: Package, item: QTreeWidgetItem) -> None:                        
+        item.setText(0, package.Name)
+        item.setText(1, package.Id)
+        item.setText(2, package.Version)
+        item.setText(3, package.Source)
+        item.setIcon(0, self.installIcon)
+        item.setIcon(1, self.idIcon)
+        item.setIcon(2, self.versionIcon)
+        item.setIcon(3, package.getSourceIcon())
+        removeButton = QPushButton()
+        removeButton.setIcon(self.removeIcon)
+        removeButton.setFixedSize(QSize(24, 24))
+        removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
+        self.treewidget.setItemWidget(item, 4, removeButton)
+
+    def loadDynamicPackages(self):
+        DISCOVER_SECTION: SoftwareSection = globals.discover
+        DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.packageList.setEnabled(False))
+        for packageId in self.pendingPackages.keys():
+            DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.query.setText(packageId))
+            DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.finishFiltering(self.query.text()))
+            while DISCOVER_SECTION.isLoadingDynamic:
+                time.sleep(0.01)
+            if packageId in DISCOVER_SECTION.IdPackageReference:
+                package = DISCOVER_SECTION.IdPackageReference[packageId]
+                self.addItemFromPackage(package, self.pendingPackages[packageId])
+        DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.packageList.setEnabled(True))
+                
+            
+
+
+
 
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover

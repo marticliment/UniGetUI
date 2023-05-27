@@ -215,12 +215,10 @@ class DiscoverSoftwareSection(SoftwareSection):
                 }
             self.err.showErrorMessage(errorData, showNotification=False)
 
-                
     def loadSharedId(self, id: str):
         while self.isLoadingDynamic:
             time.sleep(0.1)
         self.callInMain.emit(lambda: self.loadShared(id, second_round=True))
-            
 
     def installSelectedPackageItems(self, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         for package in self.packageItems:
@@ -231,7 +229,7 @@ class DiscoverSoftwareSection(SoftwareSection):
                 pass
 
     def importPackages(self):
-        self.imprter = PackageImporter(self)
+        self.importer = PackageImporter(self)
         
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
