@@ -1464,7 +1464,11 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
     
-    pendingPackages: dict[str:QTreeWidgetItem] = []
+    pendingPackages: dict[str:QTreeWidgetItem] = {}
+    setLoadBarValue = Signal(str)
+    startAnim = Signal(QVariantAnimation)
+    changeBarOrientation = Signal()
+
     
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1490,6 +1494,43 @@ class PackageImporter(MovableFramelessWindow):
         self.setWindowTitle("\x20")
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages found"))
+        
+        self.loadingProgressBar = QProgressBar(self)
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+    
+        self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+        
+        self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QPropertyAnimation(self.loadingProgressBar, b"value")
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        self.leftSlow.start()
+
+        self.layout().addWidget(self.loadingProgressBar)
         self.layout().addWidget(self.treewidget)
         self.treewidget.setColumnCount(4)
         self.treewidget.header().setStretchLastSection(False)
@@ -1521,6 +1562,7 @@ class PackageImporter(MovableFramelessWindow):
         self.idIcon = QIcon(getMedia("ID"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
         self.versionIcon = QIcon(getMedia("version"))
+        
         self.showImportUI()
 
     def showImportUI(self):
@@ -1528,9 +1570,12 @@ class PackageImporter(MovableFramelessWindow):
         Starts the process of installinf selected packages from a file.
         """
         try:
+            self.loadingProgressBar.show()
+            self.pendingPackages = {}
             DISCOVER_SECTION: SoftwareSection = globals.discover
             self.treewidget.clear()
             packageList: list[str] = []
+            self.show()
             file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
@@ -1542,18 +1587,13 @@ class PackageImporter(MovableFramelessWindow):
                         packageList.append(pkg["PackageIdentifier"])
                 except KeyError as e:
                     print("🟠 Invalid winget section")
-                try:
-                    packages = contents["scoop"]["apps"]
-                    for pkg in packages:
-                        packageList.append(pkg["Name"])
-                except KeyError as e:
-                    print("🟠 Invalid scoop section")
-                try:
-                    packages = contents["chocolatey"]["apps"]
-                    for pkg in packages:
-                        packageList.append(pkg["Name"])
-                except KeyError as e:
-                    print("🟠 Invalid chocolatey section")
+                for manager in ["chocolatey", "scoop", "pip", "npm"]:
+                    try:
+                        packages = contents[manager]["apps"]
+                        for pkg in packages:
+                            packageList.append(pkg["Name"])
+                    except KeyError as e:
+                        print(f"🟠 Invalid {manager} section")
                 for packageId in packageList:
                     item = QTreeWidgetItem()
                     unknownIcon = QIcon(getMedia("question"))
@@ -1574,8 +1614,11 @@ class PackageImporter(MovableFramelessWindow):
                         item.setDisabled(True)
                         self.pendingPackages[packageId] = item
                 self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
-                Thread(target=self.loadDynamicPackages).Start()
-                self.show()
+                Thread(target=self.loadDynamicPackages).start()
+                self.loadingProgressBar.hide()
+            else:
+                self.close()
+                self.loadingProgressBar.hide()
         except Exception as e:
             report(e)
             
@@ -1587,6 +1630,7 @@ class PackageImporter(MovableFramelessWindow):
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.idIcon)
         item.setIcon(2, self.versionIcon)
+        item.setDisabled(False)
         item.setIcon(3, package.getSourceIcon())
         removeButton = QPushButton()
         removeButton.setIcon(self.removeIcon)
@@ -1597,20 +1641,21 @@ class PackageImporter(MovableFramelessWindow):
     def loadDynamicPackages(self):
         DISCOVER_SECTION: SoftwareSection = globals.discover
         DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.packageList.setEnabled(False))
+        DISCOVER_SECTION.callInMain.emit(lambda: self.loadingProgressBar.show())
         for packageId in self.pendingPackages.keys():
+            print(packageId)
             DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.query.setText(packageId))
-            DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.finishFiltering(self.query.text()))
+            DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.finishFiltering(DISCOVER_SECTION.query.text()))
+            while not DISCOVER_SECTION.isLoadingDynamic: # Make time before packages actually start loading
+                time.sleep(0.001)
             while DISCOVER_SECTION.isLoadingDynamic:
                 time.sleep(0.01)
             if packageId in DISCOVER_SECTION.IdPackageReference:
                 package = DISCOVER_SECTION.IdPackageReference[packageId]
-                self.addItemFromPackage(package, self.pendingPackages[packageId])
+                DISCOVER_SECTION.callInMain.emit(lambda: self.addItemFromPackage(package, self.pendingPackages[packageId]))
+                DISCOVER_SECTION.callInMain.emit(lambda: self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0))
+        DISCOVER_SECTION.callInMain.emit(lambda: self.loadingProgressBar.hide())
         DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.packageList.setEnabled(True))
-                
-            
-
-
-
 
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
