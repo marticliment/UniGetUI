@@ -369,7 +369,7 @@
   "Update found!" : "به روز رسانی پیدا شد!",
   "update(noun)" : "بروزرسانی",
   "Update packages automatically" : "بروزرسانی خودکار بسته ها",
-  "Updates" : null,
+  "Updates" : "بروزرسانی ها",
   "Update selected packages" : null,
   "Update selected packages with administrator privileges" : null,
   "Updates found!" : "به روز رسانی پیدا شد!",
@@ -390,7 +390,7 @@
   "Version to install:" : null,
   "View WingetUI on GitHub" : null,
   "View WingetUI's source code. From there, you can report bugs or suggest features, or even contribute direcly to The WingetUI Project" : null,
-  "Wait!" : null,
+  "Wait!" : "صبر کنید!",
   "Waiting for other installations to finish..." : "در انتظار پایان نصب های دیگر...",
   "Warning" : "هشدار",
   "We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the installer." : null,
@@ -419,7 +419,7 @@
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI بدون کمک مشارکت کنندگان عزیز ما امکان پذیر نبود. پروفایل هایGitHub آنها را بررسی کنید، WingetUI بدون آنها امکان پذیر نمی بود!",
   "Yes" : "بله",
   "You may now choose your weapons" : "اکنون می توانید سلاح های خود را انتخاب کنید\n",
-  "You may restart your computer later if you wish" : null,
+  "You may restart your computer later if you wish" : "در صورت تمایل می توانید بعداً رایانه خود را مجدداً راه اندازی کنید",
   "You will be prompted only once, and administrator rights will be granted to packages that request them." : null,
   "You will be prompted only once, and every future installation will be elevated automatically." : null
 }

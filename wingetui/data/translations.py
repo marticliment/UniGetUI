@@ -8,13 +8,10 @@ untranslatedPercentage = {
   "da": "34%",
   "de": "99%",
   "es": "99%",
-  "fa": "82%",
-  "it": "99%",
+  "fa": "83%",
   "ja": "77%",
   "ko": "85%",
   "nb": "92%",
-  "pt_BR": "84%",
-  "pt_PT": "84%",
   "ru": "99%",
   "sr": "12%",
   "th": "32%"
@@ -164,6 +161,10 @@ languageCredits = {
     }
   ],
   "it": [
+    {
+      "name": "Alberto Franzin (@mrfranza)",
+      "link": ""
+    },
     {
       "name": "GiacoBot",
       "link": ""
