@@ -974,7 +974,7 @@ class PackageManagersSlide(BasicNavWidget):
 
 
         self.managers = DynamicScrollArea()
-        winget = WelcomeWizardPackageManager("Winget", _("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</p>"), getMedia("winget_color"))
+        winget = WelcomeWizardPackageManager("Winget", _("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"), getMedia("winget_color"))
         scoop = WelcomeWizardPackageManager("Scoop", _("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"), getMedia("scoop_color"))
         choco = WelcomeWizardPackageManager("Chocolatey", _("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"), getMedia("choco_color"))
         pip = WelcomeWizardPackageManager("Pip", _("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"), getMedia("pip_color"))
