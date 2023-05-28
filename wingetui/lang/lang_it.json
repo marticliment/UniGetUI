@@ -1,5 +1,5 @@
 {
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "GiacoBot,Maicol Battistini (@maicol07),Rosario Di Mauro",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "GiacoBot, Maicol Battistini (@maicol07), Rosario Di Mauro, Alberto Franzin (@mrfranza)",
   "{0} {1} failed" : "{0} {1} non riuscito\n",
   "{0} aborted" : "{0} annullato",
   "{0} can be updated" : "{0} può essere aggiornato",
@@ -75,10 +75,10 @@
   "Checking for updates..." : "Controllo degli aggiornamenti...",
   "Checking found instace(s)..." : "Controllo dell'/e istanza/e trovate...",
   "Check out my {0} and my {1}!" : "Guarda il mio {0} e il mio {1}!",
-  "Check out some WingetUI overviews" : null,
+  "Check out some WingetUI overviews" : "Dai un'occhiata ad alcune panoramiche di WingetUI",
   "Chocolatey packages are being loaded. Since this is the first time, it might take a while, and they will show here once loaded." : "I pacchetti di Chocolatey sono in fase di caricamento. Poiché è la prima volta, potrebbe volerci un po' di tempo; una volta caricati, verranno visualizzati qui.",
   "Clearing Scoop cache..." : "Pulizia della cache di Scoop...",
-  "Clear package selection" : null,
+  "Clear package selection" : "Pulisci la selezione dei pacchetti",
   "Clear selection" : "Azzera selezione",
   "Close" : "Chiudi",
   "Close WingetUI to the notification area" : "Chiudi WingetUI nell'area di notifica",
@@ -140,7 +140,7 @@
   "Homepage" : "Sito internet",
   "Homepage URL:" : "URL sito internet:",
   "Hooray! No updates were found!" : "Urrà! Non sono stati trovati aggiornamenti!",
-  "How should installations that require administrator privileges be treated?" : null,
+  "How should installations that require administrator privileges be treated?" : "Come dovrebbero essere trattate le installazioni che richiedono privilegi amministrativi?",
   "Icons" : "Icone",
   "Ignored updates" : "Aggiornamenti ignorati",
   "Ignored version" : "Versione ignorata",
@@ -226,7 +226,7 @@
   "OK" : "OK",
   "Open" : "Apri",
   "Open GitHub" : "Apri GitHub",
-  "Open the welcome wizard" : null,
+  "Open the welcome wizard" : "Apri la guida di benvenuto",
   "Package details" : "Dettagli pacchetto",
   "Package ID" : "ID pacchetto",
   "Package manager preferences" : "Preferenze del gestore di pacchetti",
@@ -421,5 +421,5 @@
   "You may now choose your weapons" : "Puoi ora scegliere le tue armi",
   "You may restart your computer later if you wish" : "Puoi riavviare il computer dopo se lo desideri",
   "You will be prompted only once, and administrator rights will be granted to packages that request them." : "Visualizzerai i privilegi di amministratore solo una volta e saranno approvati ai pacchetti che lo richiedano.",
-  "You will be prompted only once, and every future installation will be elevated automatically." : null
+  "You will be prompted only once, and every future installation will be elevated automatically." : "Ti verrà chiesto solo una volta e ogni futura installazione sarà automaticamente elevata"
 }
