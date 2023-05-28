@@ -1050,7 +1050,7 @@ class AdministratorPreferences(BasicNavWidget):
         self.askNever = ClickableButtonLabelWithBiggerIcon(64)
         self.askNever.setText(f"""
             <h3>{_("Cache administrator rights and elevate installers by default")}</h3>
-            {_("You will be prompted only once, and every future installation will be elevated automatically. ")+" "+_("Select only <b>if you know what you are doing</b>.")}""")
+            {_("You will be prompted only once, and every future installation will be elevated automatically.")+" "+_("Select only <b>if you know what you are doing</b>.")}""")
         self.askNever.setIcon("shield_red.png")
         self.askNever.clicked.connect(lambda: self.toggleClockMode("elevate", shouldChangePrefs=True))
 
