@@ -227,7 +227,7 @@
   "Not found" : "Nenalezeno",
   "Notification tray options" : "Volby notifikační lišty",
   "No updates are available" : "Žádné dostupné aktualizace",
-  "(Number {0} in the queue)" : null,
+  "(Number {0} in the queue)" : "(Pořadí ve frontě: {0})",
   "Ok" : "Ok",
   "OK" : "OK",
   "Open" : "Otevřít",
