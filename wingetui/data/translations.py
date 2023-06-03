@@ -4,7 +4,7 @@ untranslatedPercentage = {
   "ar": "95%",
   "bg": "53%",
   "bn": "15%",
-  "cs": "91%",
+  "cs": "92%",
   "da": "33%",
   "de": "99%",
   "es": "97%",
@@ -155,14 +155,6 @@ languageCredits = {
     {
       "name": "gidano",
       "link": "https://github.com/gidano"
-    },
-    {
-      "name": "marticliment",
-      "link": "https://github.com/marticliment"
-    },
-    {
-      "name": "ppvnf",
-      "link": "https://github.com/ppvnf"
     }
   ],
   "id": [
