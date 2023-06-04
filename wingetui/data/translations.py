@@ -17,7 +17,6 @@ untranslatedPercentage = {
   "ja": "76%",
   "ko": "83%",
   "nb": "90%",
-  "pl": "98%",
   "ru": "97%",
   "sr": "11%",
   "th": "31%",
@@ -120,6 +119,10 @@ languageCredits = {
     }
   ],
   "fa": [
+    {
+      "name": "itsarian",
+      "link": "https://github.com/itsarian"
+    },
     {
       "name": "smsi2001",
       "link": "https://github.com/smsi2001"
