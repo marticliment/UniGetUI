@@ -11560,7 +11560,7 @@
         "hwinfo": {
             "icon": "https://community.chocolatey.org/content/packageimages/hwinfo.portable.7.40.png",
             "images": [
-                "https://www.hwinfo.com/wp-content/uploads/2018/10/hwinfo-screen-1024x728.png"
+                "https://www.sqlskills.com/blogs/glenn/wp-content/uploads/2016/12/image_thumb.png"
             ]
         },
         "uranossoftphone": {
@@ -37747,7 +37747,9 @@
         },
         "hwinfo32": {
             "icon": "https://community.chocolatey.org/content/packageimages/HWiNFO32.4.18.1930.1.png",
-            "images": []
+            "images": [
+                "https://www.sqlskills.com/blogs/glenn/wp-content/uploads/2016/12/image_thumb.png"
+            ]
         },
         "prettypaste": {
             "icon": "https://community.chocolatey.org/content/packageimages/prettypaste.1.8.8.png",
@@ -48203,7 +48205,9 @@
         },
         "jabra-direct": {
             "icon": "https://community.chocolatey.org/content/packageimages/jabra-direct.6.6.03101.png",
-            "images": []
+            "images": [
+                "https://www.jabra.com/-/media/Images/Products/Jabra-Direct/v2/direct_screens_v2.png"
+            ]
         },
         "amd-ryzen-chipset": {
             "icon": "https://community.chocolatey.org/content/packageimages/amd-ryzen-chipset.2022.11.21.png",
