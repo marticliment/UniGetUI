@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-EnvironmentVariableNames([System.EnvironmentVariableTarget] $Scope) {
-<#
+    <#
 .SYNOPSIS
 Gets all environment variable names.
 
@@ -47,22 +47,30 @@ Get-EnvironmentVariable
 Set-EnvironmentVariable
 #>
 
-  # Do not log function call
+    # Do not log function call
 
-  # HKCU:\Environment may not exist in all Windows OSes (such as Server Core).
-  switch ($Scope) {
-    'User' { Get-Item 'HKCU:\Environment' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Property }
-    'Machine' { Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' | Select-Object -ExpandProperty Property }
-    'Process' { Get-ChildItem Env:\ | Select-Object -ExpandProperty Key }
-    default { throw "Unsupported environment scope: $Scope" }
-  }
+    # HKCU:\Environment may not exist in all Windows OSes (such as Server Core).
+    switch ($Scope) {
+        'User' {
+            Get-Item 'HKCU:\Environment' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Property
+        }
+        'Machine' {
+            Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' | Select-Object -ExpandProperty Property
+        }
+        'Process' {
+            Get-ChildItem Env:\ | Select-Object -ExpandProperty Key
+        }
+        default {
+            throw "Unsupported environment scope: $Scope"
+        }
+    }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBecUGTysbNDYFf
-# RwG0ylBnaFecCz7wpP4j+BHLrNKTNqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAjLpes7qRLZYPU
+# k0lAMgbDTUkWmbblbAB93PaWhMVotKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -225,28 +233,28 @@ Set-EnvironmentVariable
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgzq9uInuWuSwOILuzQii38bKIKLghwaz3mWbaOX5Wz7kwDQYJ
-# KoZIhvcNAQEBBQAEggEAisbyfVqTk5lv7dAg1IKneokE/q1obXXYOLUGxeVjzUuu
-# i8Jqr5CyOXsZBrYA+cZgTHCWPdG5Qwj0L1KABT/5EBS2pCVepK+83JxCq0AKOxt5
-# Rh2FImHW4lKvpdA3NNSf/AsZ2lHftZ7mCFVNTE0lH4IeKcVf38PyFwaUjiGwWqe1
-# vdDOU3KlAjy1VydDtVKIwaWJj03nTXF7/ym46B5MrEAreFI/DIhlGWPlIZvE+Po6
-# 569bRHm2I/SpxDFKaZVlMCVFAwIZi1YC1wydUa0ewgMB1Zd89KleRL7Ah5LIdpUF
-# YxP5HewehiAPUIBYv7PGnBCo+WmcDdtRSCIMgIcj3qGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQguXmfkQxwXe5oCY4a0d6rwmMqodmuUi96CAC5Xrm2R70wDQYJ
+# KoZIhvcNAQEBBQAEggEABZCBCDUtFNbXPtZV/7YA0O70WuicMn+rzkeq3Kav31yg
+# TVQqI9GT3g/Rdvso5T+lXKHWspmthy5+74dmUpmPdmVsBJfDlAoNRJk7r9D7RUl6
+# e+oVuD2miF48dxxTRWhrjeeYMEyVlubAMvdVGYV4eJAkRrNr/jkDdEw/6dMdMvLX
+# kOX826isDjfwmTotaa9VFb/d4/E2Xf/B/vwOFAca4DC8gOzTv0Vhqim/Lp2dqY8d
+# qtmQtwoEsKVUHdhGekV1rGbIwZ4+//2AqZCrOJnJJFN3d6WRPL9RtNJM7g1prNAt
+# wa6fZ/KbMlIPcLAaqryNfjb82+T3bwzECLVENp7XsaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCDX/pUGyKazYFhyiNlrP3cF
-# AThPujtuz4NlWtOITKZESDANBgkqhkiG9w0BAQEFAASCAgCBiKUOooH03nonkzbF
-# MotceF50Y7GmVI4W2yR7KaM9Zd512xSOFbA6XfAQGfLPtdSDR13ojvvxvzK4l4YO
-# QyFuqCGUDpr0T7DvSfzyu1qA0dVJuL4TtzLYb7R107bQSJb9HvL6j+tEh8HLyyLk
-# lbkudcqPceBHLCbFBKm/MP7aFjOHCFXTjmMDjVsZpQNinxNCy8m4/AJLhcs1tvo/
-# LUz3z00gLKHOI+sXWLWKH540wvbUXSKBf0Cwqfy0aiioqQGQsYk8mG9pYhH2780A
-# n/FsSJkIA+hM14gV4m0alrxI+XY9Sgr4NYAtxaJhl6mVrapBhMTb09mdVEBVjJN7
-# goe0+15l+tGEa0fcpzBdYkIMQDY1V9MFepPZAmFyfA14D795RNduXgv0qnIrXQXA
-# h3q16F+FEfs11/xhLqBTa/iEdiOxM102ehV0rnfRX+GJTOvydqjF/B1IySoUD3+h
-# b/9xEVGdPgmnTSKMiwkqWK21LynD6m2C9idyksNcfnVYYxixnHwUdbANG/MYSLvZ
-# Wwv1XH6MCX/dss5xtb6PD2IVe19Ql9voXuQ5Igfjuqu8Zb9Vj8fneG+prVej+Egu
-# SLOKfx/joHTdHh1cxqp4kPs93N0n9hmZGCGiTqta9kO7y+0xd70N2F0Z9Jl9r0AF
-# B1wqtDqfO/QjFQ8DKMOyXo7vPQ==
+# Fw0yMzA1MzAxNjQ4NTVaMC8GCSqGSIb3DQEJBDEiBCB1H55utCpdzeIQbcjDgpkB
+# 9AEP7Nfe0hbq0eDzh/63gjANBgkqhkiG9w0BAQEFAASCAgATyBpGLLCqiRR+vGI4
+# Du3q2cGZ+TFMiMzRUGoAmKoA6PD2mVseLOVcS7MAehj0ukTJQmCa9S9VmZU6fdY3
+# bwHM+ONcJKC/55i+JMZdZKryMYTnVEDF9cOlG+if1z3m3O3ZuhQT/c65PF46rLga
+# 83HNitM0/s+UfAooNzFbeWSFlqBINylbR9I0W2g+x87Mg4C/xqlKINAsDZGzres5
+# 3osYYysqjouEJO9Fs2GNJk25swyYLb9ItmxcTV/fUEbcVphjVBEjs51vPv8ilLM/
+# d7Gtg4sRolymBSwA25L4PuE8JGtK5lV4IFvhROL9WgG6bzSP4N3Leh4VpdlQn7AU
+# 6sUYi951a0qrhLUKoKNkVuH5CrTdyzz4bETsqhEqAqrmuUY7/+00WwmrClWRKw+5
+# Kj8clDsu97RWTygLg7rJE96vjuWmsOPLIUoRNIT7tRH/t3NFbvRDcCdXzhqFZBGK
+# 94VwcMWlVsT+bZ19FX0kd5gujsWdqx506kueKzJcB5phdozkCK9LPN1xKHD5IBMv
+# Ull8O8loD6PiEZPkYggVIT/ChFwXOOf/N85Sd2Nq4b1E0h+E8g/1me1sQloiwNkm
+# ldV4TRxE+cGD56Dwvy7vuQw+EzLgjxHOYLN1ZpNek/xwLB2JMozfT4rC8ui+O3aC
+# 60DLow1dTqoNx9D6eeKgEAVjvA==
 # SIG # End signature block

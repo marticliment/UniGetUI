@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyEnvironmentVariable {
-<#
+    <#
 .SYNOPSIS
 **NOTE:** Administrative Access Required when `-VariableType 'Machine'.`
 
@@ -87,45 +87,49 @@ Set-EnvironmentVariable
 .LINK
 Install-ChocolateyPath
 #>
-param(
-  [parameter(Mandatory=$false, Position=0)][string] $variableName,
-  [parameter(Mandatory=$false, Position=1)][string] $variableValue,
-  [parameter(Mandatory=$false, Position=2)]
-  [System.EnvironmentVariableTarget] $variableType = [System.EnvironmentVariableTarget]::User,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [parameter(Mandatory = $false, Position = 0)][string] $variableName,
+        [parameter(Mandatory = $false, Position = 1)][string] $variableValue,
+        [parameter(Mandatory = $false, Position = 2)]
+        [System.EnvironmentVariableTarget] $variableType = [System.EnvironmentVariableTarget]::User,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
-  ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
 
-  if ($variableType -eq [System.EnvironmentVariableTarget]::Machine) {
-    if (Test-ProcessAdminRights) {
-      Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope $variableType
-    } else {
-      $psArgs = "Install-ChocolateyEnvironmentVariable -variableName `'$variableName`' -variableValue `'$variableValue`' -variableType `'$variableType`'"
-      Start-ChocolateyProcessAsAdmin "$psArgs"
+    if ($variableType -eq [System.EnvironmentVariableTarget]::Machine) {
+        if (Test-ProcessAdminRights) {
+            Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope $variableType
+        }
+        else {
+            $psArgs = "Install-ChocolateyEnvironmentVariable -variableName `'$variableName`' -variableValue `'$variableValue`' -variableType `'$variableType`'"
+            Start-ChocolateyProcessAsAdmin "$psArgs"
+        }
     }
-  } else {
-    try {
-      Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope $variableType
-    } catch {
-      if (Test-ProcessAdminRights) {
-        # HKCU:\Environment may not exist, which happens sometimes with Server Core
-        Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope Machine
-      } else {
-        throw $_.Exception
-      }
+    else {
+        try {
+            Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope $variableType
+        }
+        catch {
+            if (Test-ProcessAdminRights) {
+                # HKCU:\Environment may not exist, which happens sometimes with Server Core
+                Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope Machine
+            }
+            else {
+                throw $_.Exception
+            }
+        }
     }
-  }
 
-  Set-Content env:\$variableName $variableValue
+    Set-Content env:\$variableName $variableValue
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC/lgwBuz/IONK/
-# 7v81ebK65e0UlCqGBecQNzmPWxo1GqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDE5dMephuomiqs
+# 6Yz9kjlPZLUUQa4+nMuQIhWkKS3PTqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -288,28 +292,28 @@ param(
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQggqyD4uyudLwMV8/BLMNZoLcJyssPSeIPNJiHIeu3LsQwDQYJ
-# KoZIhvcNAQEBBQAEggEALESbo7EMqKbyPbX70ypuJVYJuZ25JtbXbYoE9Y0bjoTs
-# j7sPBLOYMrE4ezFNqZc+FEh8ji8z3q3xnR9RNJ9kH8GM2LLjv6IRQjke5bEMkqSi
-# lFupz0fu2uNso/KXbMTIpNBlMoPj1mdaDik/odYVxyZmnWLzcCEjh/ORWyLx8iF2
-# 2D+6N9o4orpTLeoeciS0i31td3Uf0sliHPvimHsWQETnOAV5Ir2MyQ99VkJwvPbF
-# rKTgAamRFsg2cgQnunWXrx/SKl7ST3wC65ylEFF/fvZTEgcxx/4JGjcC60Ys7Ju/
-# fAY19cnwEuTTtDL+FhAlkg6Jl2ZoZEHhiUgxATIYa6GCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgwMMqZ62pb/o9Zb9P2BqSXqogg1YiX6jB6SLM5n9eleowDQYJ
+# KoZIhvcNAQEBBQAEggEANjv0Qy2dbgg5awrUAxv3CttIE4i9tpOxueHAyIOK6XqL
+# ouP3KBanWtSsc1KrkK5D/VLYBWI5YkSzbcFA0rpRDNvBBQXloda8Av2wORYhn/yk
+# z6fOkwvDRNjN33UOoumBu8GI+fUbf5bjnC3jDJNyeSDKLYzKoJlyFntNu/VkNlms
+# uk0TvYMVHlnjE+Y5nWGMunzC5vDzkgkbYgKVnaZKbdcPXUgqZJBjfPVyoKqMD1a5
+# y0FuPrNnt3guaUMVK5TW+L3oX/ZGAQnb8lnQCz4vFtmarVDyiavVke8q4Ns11Pjs
+# ZQn6H6F0GYC83FjGprD7bavy//8tIV4lkIdiKKflQaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCCNnahmIz7PLMHTulVTUgYU
-# qZs9Fcj9/LaGdCg+8W4v1DANBgkqhkiG9w0BAQEFAASCAgAE/PC4FocjDw9Xd6DI
-# MMixbZhI1KmJeynCfpzq3p8JJzcbzNwi0SlfrZybCYDUEDRoFE0IRnUfgwHvuSXe
-# cTsgpQWPZ+JZa37D1NwTR7myh7hrg4qbeVBsfwK98IfnX3ECUGZ+MPdUDdRnozdw
-# ktjuKbUbI1BsnreIiZcTd1BUWPSqb+O5DFC/iYTvqXcxYSxbNQVmbhoto/icXIPC
-# VokwLvuHsWuoKoCiVwIkCRPOiIQWx3Ydnt7R/k5ZcFxDXEsKwYiymCiknuD+Z/iA
-# eUaHFZlPKF/oGHkpVCGVdzPRwnq00UBgm9zlkg1FD+uI+HtzrzBjPvaGijvdwGPs
-# QZeU0js3n6P9luCvoLceut4B5qzN9JwkOrxxj9lITZHLXnHrjm7ATi0l1uDERCvk
-# 0Su6i50FFuJ6/+706XwF6PkUvqNdxvu0K0TKtg9b9x9ynrYqkBpNMzaXie+93xjK
-# J29T0BuYOhkFSbCQLlWXflqNr/hzNpB49/IaVxYPfHEPpPX615YGDwTDeOJoXc4b
-# evyI1B2tDTtmYerFtMrHLsI7PLpW7olmfy7a/2ydUr22cMeseip0xqwo1/PnyxiU
-# e/iQXlFQ07IZ5J7nuA0PaGkZNBHHzWoT5CvvkIaa4VMyhs5qkmJfyWKR3PXZcUBm
-# /JTgSc0LLaziOYqhCk4UEprbxg==
+# Fw0yMzA1MzAxNjQ4NTdaMC8GCSqGSIb3DQEJBDEiBCB80G4FYQf/ts0Q/YyMaicb
+# QKSXNO2uZVW4e4xoYWcFPTANBgkqhkiG9w0BAQEFAASCAgAkgr2z6XzAmHf+k3Ca
+# L052+/sATtG/q3T+LNgA1fKGV+JANr/6HuH4DzyuK0CL627+4XZ0c4L1SdApO0UY
+# b0BWSX45n0NLZ8eIieaJh0gqzeBVqHwANzC/rCjQGRWJfeyp1vIwwB3uuREV9SSB
+# 628+Q43WsFpLny1YgUZZ8vPUhItoRG1l8Ocvr8kQCN2RsbMmI52MpxSlND5M/pGE
+# I3bKsGJa8nXaQahSy9kwAbi0Tug6OlOp0hVosQmI/U50b8v0BoxEsn/SBp2KFDNj
+# Txxxnivc9wTQk7Wfwq1HOk5wo1ai6KNDl6VRFXTvCCemMBw1QukiliTFJ/281n1G
+# nYXkWleayg5Ieb7MJ3a1twqbYssQBg7uK+WQDj687Hy4h5n2yEhfLIQIdpvo+4Tv
+# vV+r/8qZrOYyIuLBYMVtmMiPhRKaRVWgzrBtt/ZDu9k13vALh43NkgKeFNX/tUpU
+# cewm1JzGsnFse1AM2sz1J0dkoswWYihEQnRJanRQQL8JZxRytJ37mzrqNLA0CFhw
+# p+pLWfeesXv1Uzn7i9QqH000XQy8H3eSHFOvLH6ofwyklm5AhnkkntAwsW0sTd4L
+# vOLRB8Mmp/ViBs1rQWfBI0nJOedbg97R4z9YyTx7Dw5sEreySKhBRLPWS4OE09E8
+# Hex9YoBT6jtwlQfe+aizVoiWZg==
 # SIG # End signature block

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyPowershellCommand {
-<#
+    <#
 .SYNOPSIS
 Installs a PowerShell Script as a command
 
@@ -49,7 +49,7 @@ Full file path to PowerShell file to turn into a command. If embedding
 it in the package next to the install script, the path will be like
 `"$(Split-Path -parent $MyInvocation.MyCommand.Definition)\\Script.ps1"`
 
-In 0.10.6+, `File` and `FileFullPath` are aliases for PsFileFullPath.
+`File` and `FileFullPath` are aliases for PsFileFullPath.
 
 .PARAMETER Url
 This is the 32 bit url to download the resource from. This resource can
@@ -134,7 +134,7 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers. Available in 0.9.10+.
+OPTIONAL - Specify custom headers.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
@@ -176,47 +176,46 @@ Install-ChocolateyPackage
 .LINK
 Install-ChocolateyZipPackage
 #>
-param(
-  [parameter(Mandatory=$false, Position=0)][string] $packageName,
-  [alias("file","fileFullPath")][parameter(Mandatory=$true, Position=1)][string] $psFileFullPath,
-  [parameter(Mandatory=$false, Position=2)][string] $url ='',
-  [parameter(Mandatory=$false, Position=3)]
-  [alias("url64")][string] $url64bit = '',
-  [parameter(Mandatory=$false)][string] $checksum = '',
-  [parameter(Mandatory=$false)][string] $checksumType = '',
-  [parameter(Mandatory=$false)][string] $checksum64 = '',
-  [parameter(Mandatory=$false)][string] $checksumType64 = '',
-  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [parameter(Mandatory = $false, Position = 0)][string] $packageName,
+        [alias("file", "fileFullPath")][parameter(Mandatory = $true, Position = 1)][string] $psFileFullPath,
+        [parameter(Mandatory = $false, Position = 2)][string] $url = '',
+        [parameter(Mandatory = $false, Position = 3)]
+        [alias("url64")][string] $url64bit = '',
+        [parameter(Mandatory = $false)][string] $checksum = '',
+        [parameter(Mandatory = $false)][string] $checksumType = '',
+        [parameter(Mandatory = $false)][string] $checksum64 = '',
+        [parameter(Mandatory = $false)][string] $checksumType64 = '',
+        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  if ($url -ne '') {
-    Get-ChocolateyWebFile $packageName $psFileFullPath $url $url64bit -checksum $checksum -checksumType $checksumType -checksum64 $checksum64 -checksumType64 $checksumType64 -Options $options
-  }
+    if ($url -ne '') {
+        Get-ChocolateyWebFile $packageName $psFileFullPath $url $url64bit -checksum $checksum -checksumType $checksumType -checksum64 $checksum64 -checksumType64 $checksumType64 -Options $options
+    }
 
-  if ($env:chocolateyPackageName -ne $null -and $env:chocolateyPackageName -eq $env:ChocolateyInstallDirectoryPackage) {
-    Write-Warning "Install Directory override not available for PowerShell command packages."
-  }
+    if ($env:chocolateyPackageName -ne $null -and $env:chocolateyPackageName -eq $env:ChocolateyInstallDirectoryPackage) {
+        Write-Warning "Install Directory override not available for PowerShell command packages."
+    }
 
-  $nugetPath = $(Split-Path -parent $helpersPath)
-  $nugetExePath = Join-Path $nuGetPath 'bin'
+    $nugetPath = $(Split-Path -Parent $helpersPath)
+    $nugetExePath = Join-Path $nuGetPath 'bin'
 
-  $cmdName = [System.IO.Path]::GetFileNameWithoutExtension($psFileFullPath)
-  $packageBatchFileName = Join-Path $nugetExePath "$($cmdName).bat"
+    $cmdName = [System.IO.Path]::GetFileNameWithoutExtension($psFileFullPath)
+    $packageBatchFileName = Join-Path $nugetExePath "$($cmdName).bat"
 
-  Write-Host "Adding $packageBatchFileName and pointing it to powershell command $psFileFullPath"
-"@echo off
-powershell -NoProfile -ExecutionPolicy unrestricted -Command ""& `'$psFileFullPath`'  %*"""| Out-File $packageBatchFileName -encoding ASCII
-
+    Write-Host "Adding $packageBatchFileName and pointing it to powershell command $psFileFullPath"
+    "@echo off
+powershell -NoProfile -ExecutionPolicy unrestricted -Command ""& `'$psFileFullPath`'  %*"""| Out-File $packageBatchFileName -Encoding ASCII
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBQQbpCuJ4ynOBb
-# +cL0r/3jmO4n9hO0sWLZXNYi9XeicqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCByFd8T1xR8XrS5
+# xLco3Xoc9XFJ4obOkd+eiJyOJCv/JaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -379,28 +378,28 @@ powershell -NoProfile -ExecutionPolicy unrestricted -Command ""& `'$psFileFullPa
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgtNm0QLuM03o7XhkS7KvdvMFUyKv43EL0IQV/fyn+D1gwDQYJ
-# KoZIhvcNAQEBBQAEggEAeOIVQIbSIrwEK7+1+VP0k31EVG5hpr4nBTThLjg/Rc9u
-# k5U7USgjeemmbHJaju9a2j/A5Bo5asDKuBya4jW/M99I9lsE2y3mifA3ghd7Kfm8
-# GN50ZEdUr4jXTQyfwTGAN/5lnY6pYL44DQZb32rlBMlMgEeEAY7vwxtTXrSS/WMM
-# 0aoDBt9LHPeS/Birwz2hMoxRJvy+YPHucHxsSe9n/E2taj1ycEct8Go5W75tJH6D
-# n1CZfiajnaiQnGB+CYsSniIUZ8Kfc88mTg9G3gRp9L2FnhjfbqaCFrdHRrb/vRQ6
-# 41SFbYRpLIqQNn1w6uvWvlwf5r+/32GmsDrWusUYdKGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgLDxnHwjmRn8R+b5lUQdti21cmahogDtBcq5HBuNDK2QwDQYJ
+# KoZIhvcNAQEBBQAEggEAP5H3K4FcKquRMh38wzG3UZow08IapSOzDBbr7VTFlClA
+# 876AlT5/rq5HPH5Heh3rR8hWmSo7qFqdZ6tN+ls1HJ7pFR9SL/Mqb3rLJ6w/lhZg
+# +lH+lZ7fLrYsYjnZJF2JgmIXYQ7P473xVMb7R23u4qGLB9fENlAzPQPZBFZY4jIW
+# XftVdbcV937nWYLf12qt3laa5ILMuq2SyaIgoaTErVF8FGalVoilN3MCLD+0t8Dn
+# hyIMnk9w2qKcBaU8zjabeE9dYkCp53z25RlS5Iic4E2eb05prH//oQXB2kIFZD2N
+# NxopIr9pZvukTHK8DMzSpMJsBXKxC//0XnnF1HEaS6GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCBYwF2QlvONKx9K3UHWczRx
-# dpUYT8GQMY43vgHwixDSnDANBgkqhkiG9w0BAQEFAASCAgCHAAU9jL07YG/EQ15Q
-# tK2aSuw0mc2vp1E76EjVlNXbTFOf45mYyy1E7Jqh01ceqRuw/YLFwY0ouWVW5sqF
-# x8haIccLKGunaXfBvGjFiojNNo15dAC91+rj7nt7qHE1uGMwyCJ2NnwZUc2RWyx6
-# oL/n4IlvmrynyBQwUn6zl++PFqacQeKW4Oy/e2Y2kwI8ELOqb8MTpZ64ygp8LZkE
-# MyatFkijseLK2TUfeuOtXBA0nPgu6z2MQKZgbRkoBDeQXP9HCTxrEifx9oZOrif2
-# gYhz3Cr2+n/r7CyI5mVXTcfvy3D38DzBCO0LUfba8xVuS2f+DlNYyIW5Lje3C5qI
-# TYwEjWqcEd/l92A/2TXckbr0zVuQvDuhzLIe2B4Iy3jTF7NpRF7ZF9UEeTSZoavd
-# 5NMgfOZblnUtaQNKeMDUM1G6KpN9M0y/Vh3IP65JtF0IV8312zuYkvmoBP6StaU3
-# UJ0B4OVgTiiw2/ehBOFC4HLoivRf6w66xHW3B6jfuNEMhxII6XkmVwBcc3qLquCQ
-# XNItsVDxVL7kV2oGMLJJZdWAb+wPoJqjaTTloD3QBGo/kMOZ2rqH42JWEqy28UIC
-# r0hPaugC2ZO2cEoOmLDLaSHJVUcf9XoDdrlVq3fNYH5j+gBNrE3tb7HDJV3f4mib
-# mLOWxWv8laN/Oc6aREgajUJuPg==
+# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCCjTKusSjRVXz0Jva5ZCtJy
+# V8b5x4KWuJOW8B4hzPZb2zANBgkqhkiG9w0BAQEFAASCAgB6+4ZhsHwwwqtBXAww
+# mrH0CGwJbtZjAbUPpIHkFDV1qAr+z6QO2C6HkSEn3llbWPOtgqFTOFmiDiC5ditT
+# JAZDcXpgeXIDkcltKRTDZN+E2KpPekTbTg+kqAG47qdaKZa4kbGMRZWYvA31oAX7
+# PHzn88NuoIwRSGonhYP1G5/pHB8eUOeLLAdJ8e5P6D5chNhPcyrX1CAa5+o85ToP
+# lHh4P80dpYBGeo+n8D9hAlxWZPLrhawBGYDz5rfc5nrh334idTCshuqipXkYd3q/
+# h2iqz4km1AIdncigtVjcgL983mbn1sDvKQ3a3tgte7G3iigxXcHVKyBqA5jjSDPD
+# 1Bier8MguOu6QEse9wTNgZP0DeSJJUUuhbAkTh8FQfmPXH7zRUlz4FsbmukkmrvL
+# wjEBAVyvqGUJoNh848cAB0SnV+nkOeIVvduK/z0O8U5JcemAOMaD/K7Pj8rpPG89
+# N2/aQqdrYi3JgR23P2EXnYnexVc/zhHp++ILLb70kPIIn+8PC1iVJdXgDJ/Xut/d
+# rA3scGLSUkI5b3uyEgLnLIHAVLaCzW93IVhQeGqjaYDTJd4GfISO4L2zgk1qIqPx
+# iNrSi9Yd44CiaONDgQdsIo7KpHJLx+FE5uW5hbUj947AUvcb7QYEfXFrErmKIUk6
+# PQwUAhTmE+j/jctUQ9WoWCYjVQ==
 # SIG # End signature block

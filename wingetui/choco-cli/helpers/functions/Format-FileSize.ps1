@@ -15,7 +15,7 @@
 # limitations under the License.
 
 Function Format-FileSize {
-<#
+    <#
 .SYNOPSIS
 DO NOT USE. Not part of the public API.
 
@@ -23,8 +23,6 @@ DO NOT USE. Not part of the public API.
 Formats file size into a human readable format.
 
 .NOTES
-Available in 0.9.10+.
-
 This function is not part of the API.
 
 .INPUTS
@@ -46,28 +44,28 @@ Format-FileSize -Size $fileSizeBytes
 .LINK
 Get-WebFile
 #>
-param (
-  [Parameter(Mandatory=$true, Position=0)][double] $size,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param (
+        [Parameter(Mandatory = $true, Position = 0)][double] $size,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  # Do not log function call, it interrupts the single line download progress output.
+    # Do not log function call, it interrupts the single line download progress output.
 
-  Foreach ($unit in @('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB')) {
-    If ($size -lt 1024) {
-      return [string]::Format("{0:0.##} {1}", $size, $unit)
+    Foreach ($unit in @('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB')) {
+        If ($size -lt 1024) {
+            return [string]::Format("{0:0.##} {1}", $size, $unit)
+        }
+        $size /= 1024
     }
-    $size /= 1024
-  }
 
-  return [string]::Format("{0:0.##} YB", $size)
+    return [string]::Format("{0:0.##} YB", $size)
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCMAzo8hdKAoFfx
-# zljXdtiI1QSxOKUopbYt0idGXxIpcaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB8WmB66cZF2sNK
+# elJsU0aUBPtLFfLjt61aqg5edHmrHKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -230,28 +228,28 @@ param (
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgzBlbS5lf+J7YwwRSorKZ5QAuazDstSI2Lrg+BrpU7XYwDQYJ
-# KoZIhvcNAQEBBQAEggEAY5dbfyYxVvXyZqqhxNVoqoFpRuZm0RiEp0V0lHu+0l23
-# IK6+rBTD0+BGX8aX77VUQT2ibdCxY5bUBUGzEleZhz5bEW+HU4BoVsBzPd6cH5SY
-# 4aiCw2ishLv2lBJvolBOHU/C4dp/YS+Zf3LVaOdtDLoWjf8o31NDDmI9LcsdliMb
-# vikliWvWaWqNxQGNAFJnYv4Zwvu8jblBA1HDVjAd7Ds11gy/o/7lwCKKUrKUcATC
-# KJLMOuVxuikKD6RRKJfduwkE/a/iWmP5dx9cmgwBC+A2BrNzcefuIHsHosI0eXQM
-# ch5IMx9rp0vmFuQ6O7x5TPtqpiBlGAwlMM2eHG/B8aGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgc87vMV2Av2abRHta0qCrNTWDy5ZyCaKI51d5tXV0PCcwDQYJ
+# KoZIhvcNAQEBBQAEggEAIBbLXBgvpXJb4d4G/Cd6UP7M7zwZg56cvQsOFSaIPdvx
+# jgOrEWkEdU/TPX7PElygqTxkKu8X3omZt35rqNfPkD7ZgGLnfzVClVBNo/7MthG7
+# 4HaRW/0LtWJG+Z1P6XRVLvMVkCJRLqI2OmFr1ZyBkxYsS0RjD/jGqx82ppQL9KKP
+# LzvcHBiuZIZzpzvuOP7pfHuHT2BQsV2rMmS/n0cAjOA3+GA+I8jzalQdtvIK3Fka
+# YYxLjV5lIsJLrET+YGOtX4sy4Ey9dlnj7exjOBf1boJXU66OFHT/+v8LVw4vDl9R
+# LxQ7Zz5mCJh/GkGi/VkxOLhtn/9kU6U57FfDYP0066GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCAhgkHZbKowZEgYeI8/naKF
-# Bb700oLjof+8/+GSNEh4BDANBgkqhkiG9w0BAQEFAASCAgBilACiMeL3H9girLRP
-# Y+RCuR8xGH/DCvp+Y6bcjjFLFUHJ2i2YcCHcu0Yhf+IhtE7ByH1Bzwdkkk0RSaQa
-# PCFll4+YOJXJ1xvDk3Qk4nhr9TalSN6xwu3KTXxOX4ocw4RX3Poz6iNjLRcnIYO8
-# Tx79CK1A9t4lvrZYgXWv/Rdio/ITmybjCLL1VbXUHPa5nlRqAwlYhmyeSO8OKsmb
-# oXH9lOvyautM1KN0w0Fs3Uza+g7E8hB5r54rEqby0qNUSrADBGhl3pk3ZNAgCfbS
-# icMiTRUMbflgnZa3yi+W6x+W8v3IxrwRx5IUP6rFkZr2xhrdf8Ct82SGwWAUi18z
-# qgew15lg6F4gk8PtYgA2L+uE54nFtVzBclAu9BC/9RnQnrpNtcxbpek2Eyyv8J06
-# sDAdxjNAyQlgz7U+83CGAAhkiOy1VWXPttlNRTiiFamAntxlVGlvUOH4O+qyIeeO
-# bJO9u7ispER0ZkZx/kOLxMEGkLQ+6d068cT6OOZhOurmuYWKxBtVQhPcGeztjkWs
-# u2paMmBEWdZC59r7rCDnpeAaa7/+Y9ZmEntaDzoCWprTQzH31JTdzIUICRT5VX4d
-# kJlZ2frJyanZerGooGyDyDi2QHtm6d5EY5ZWgsZ6FEAviyloNNRTrePP4NWJqZ1l
-# Q8AqQVoqSuqt0Z9I68FAbH+dpQ==
+# Fw0yMzA1MzAxNjQ4NTRaMC8GCSqGSIb3DQEJBDEiBCBkF7lNJaTtxi0txVAfdbV5
+# pyR4nwIbyTgkb/JNyec2gzANBgkqhkiG9w0BAQEFAASCAgCQF5xSG9xxlAnCBzgB
+# kc8h4HXaUWgxyhEY4lmuSz4G8uX5FUDfuy6Q3y20r8SzC025jMttSP5+RRzlEJob
+# CxkfLo3o+hR5V8sUIhiMjhUb1Kn/qHvwfDvcHKCH2IQJYzFXAWlRTNEKtRFwYnOD
+# MnUvu+wFX5bwaE0W2zcAITKjdNPNf48PwGtLUE/V9nmOGYtX5XRFMnmdnHHHm/dF
+# sjqr7uWTiON5Zeh36iMlTUp3NNixFTpd7K9AH/+0pT9FbPt80VeLsfFA/cJ0lmq7
+# fYFlUwKVzzzh4A8Bo4ADLUQ+fkVqFOi+Le4Bng6iQQZkLeiiUe8ZPLg2Beds99mK
+# qdUHRkwDkT882TxFb4Ve+U6rZoSgZCUpZqs5HfUrtq7f/4J3NWGoLcIrVmJGzuj3
+# iKl5cF3rcoGagrRgvShyvztO8XI9YU/uEomV1FxF61+r9kAC/EUgR0beIhkTcfLZ
+# eKpZL4PVNlDyXUHmQN8psvu+1RVHJysUoKpXql+l3a/2YrKF3LtiKkODMQ43nqMB
+# D2fvMY60L5/9ptfNp1hZCy8YP32kJJIAXpIVkxNG0o/cPuQWjZbJxKF9mo/6FyVB
+# MMnIMTUlzJ56cy+nJA/G1aK0SlTsWmxCRO9yQMUUqJhmZCCLbUN4zDiqvcbXqqDb
+# 7r9jIK4xX/uSDW0muB1d707Fjw==
 # SIG # End signature block

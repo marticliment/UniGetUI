@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Update-SessionEnvironment {
-<#
+    <#
 .SYNOPSIS
 Updates the environment variables of the current powershell session with
 any environment variable changes that may have occurred during a
@@ -38,7 +38,7 @@ This method is also added to the user's PowerShell profile as
 `refreshenv`. When called as `refreshenv`, the method will provide
 additional output.
 
-Preserves `PSModulePath` as set by the process starting in 0.9.10.
+Preserves `PSModulePath` as set by the process.
 
 .INPUTS
 None
@@ -47,55 +47,60 @@ None
 None
 #>
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  $refreshEnv = $false
-  $invocation = $MyInvocation
-  if ($invocation.InvocationName -eq 'refreshenv') {
-    $refreshEnv = $true
-  }
+    $refreshEnv = $false
+    $invocation = $MyInvocation
+    if ($invocation.InvocationName -eq 'refreshenv') {
+        $refreshEnv = $true
+    }
 
-  if ($refreshEnv) {
-    Write-Output 'Refreshing environment variables from the registry for powershell.exe. Please wait...'
-  } else {
-    Write-Verbose 'Refreshing environment variables from the registry.'
-  }
+    if ($refreshEnv) {
+        Write-Output 'Refreshing environment variables from the registry for powershell.exe. Please wait...'
+    }
+    else {
+        Write-Verbose 'Refreshing environment variables from the registry.'
+    }
 
-  $userName = $env:USERNAME
-  $architecture = $env:PROCESSOR_ARCHITECTURE
-  $psModulePath = $env:PSModulePath
+    $userName = $env:USERNAME
+    $architecture = $env:PROCESSOR_ARCHITECTURE
+    $psModulePath = $env:PSModulePath
 
-  #ordering is important here, $user should override $machine...
-  $ScopeList = 'Process', 'Machine'
-  if ('SYSTEM', "${env:COMPUTERNAME}`$" -notcontains $userName) {
-    # but only if not running as the SYSTEM/machine in which case user can be ignored.
-    $ScopeList += 'User'
-  }
-  foreach ($Scope in $ScopeList) {
-    Get-EnvironmentVariableNames -Scope $Scope |
+    #ordering is important here, $user should override $machine...
+    $ScopeList = 'Process', 'Machine'
+    if ('SYSTEM', "${env:COMPUTERNAME}`$" -notcontains $userName) {
+        # but only if not running as the SYSTEM/machine in which case user can be ignored.
+        $ScopeList += 'User'
+    }
+    foreach ($Scope in $ScopeList) {
+        Get-EnvironmentVariableNames -Scope $Scope |
+            ForEach-Object {
+                Set-Item "Env:$_" -Value (Get-EnvironmentVariable -Scope $Scope -Name $_)
+            }
+    }
+
+    #Path gets special treatment b/c it munges the two together
+    $paths = 'Machine', 'User' |
         ForEach-Object {
-          Set-Item "Env:$_" -Value (Get-EnvironmentVariable -Scope $Scope -Name $_)
-        }
-  }
-
-  #Path gets special treatment b/c it munges the two together
-  $paths = 'Machine', 'User' |
-    ForEach-Object {
       (Get-EnvironmentVariable -Name 'PATH' -Scope $_) -split ';'
-    } |
-    Select-Object -Unique
-  $Env:PATH = $paths -join ';'
+        } |
+        Select-Object -Unique
+    $Env:PATH = $paths -join ';'
 
-  # PSModulePath is almost always updated by process, so we want to preserve it.
-  $env:PSModulePath = $psModulePath
+    # PSModulePath is almost always updated by process, so we want to preserve it.
+    $env:PSModulePath = $psModulePath
 
-  # reset user and architecture
-  if ($userName) { $env:USERNAME = $userName; }
-  if ($architecture) { $env:PROCESSOR_ARCHITECTURE = $architecture; }
+    # reset user and architecture
+    if ($userName) {
+        $env:USERNAME = $userName;
+    }
+    if ($architecture) {
+        $env:PROCESSOR_ARCHITECTURE = $architecture;
+    }
 
-  if ($refreshEnv) {
-    Write-Output 'Finished'
-  }
+    if ($refreshEnv) {
+        Write-Output 'Finished'
+    }
 }
 
 Set-Alias refreshenv Update-SessionEnvironment
@@ -103,8 +108,8 @@ Set-Alias refreshenv Update-SessionEnvironment
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAkrzoe/SNsW1uK
-# 3YAIPwx901N/DrXkdSSPGPrjAufNGqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCD5/RFzaOhm0x0b
+# z1A/0EhtNvspeG0kMbMPNfRQBUzivKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -267,28 +272,28 @@ Set-Alias refreshenv Update-SessionEnvironment
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgMX5X0aGr7Wzvcsaix1Tyb0Gmh070C6Th8e7PHGTSdLIwDQYJ
-# KoZIhvcNAQEBBQAEggEAGqPeB5/VK4a6aGWNHS+Uqg2cnE+PgYxDg17awG4OME3s
-# qHfn1DgHBA4v3TWeSa7qiIHBfYQlt3Xddnu2kXl7iHuebOA1DX9tsa0FZ0E9Dz+S
-# 3RvSOoWgR79K9ESamaxUQOh0y+Vi4cXUmnVfWq+qog4sTopsDz9RtSc2zzFd4riR
-# mxb9N/FlL9LnOF6UKHczanhDAkzwJWXAKoOzT2G3k8F+ysd183PXN1JtOyIBEvmZ
-# 3mV/FC9CAtBDgJ4UoE/rg6ozFrPL2nXAFAU1bJNWgNWuE1EYESysiWiK9Y1gPtcO
-# VVsOOblgRvIFJkHoH23CS9HK26MyEuB9wrZhYYLngqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgzVpWVqp4hBOZ8/oS2hW0gf9d2LkAUKBFszfK3XcwkqUwDQYJ
+# KoZIhvcNAQEBBQAEggEAJnMX9LJmZfKrgyRT3l+NW98GxYCSwclw4ZUxhSwL3/eR
+# uRbvpjP/d8QZ9FGN6e2nere2fr8ATXWE/I7Uxxvd8QajIHU/LPnlZZ8HPnGxQX3W
+# lzBvoRfoy9VhI90ldZTP/pwo4DYu3FRaGKJLzhM3nL75hSH6mPeZWE4ndkXIXCVF
+# 4DNBRTztHoQQJ9lw2QKZMYOTSD9CSZyvFul2BkKb5RCtQEKELhVVxqbxBKqMW3rL
+# /97XreAvU9T8KysLFXfXpZFmnrJkTKgAbM8DeiVD4EIYfHWmVmm8UzTsoeniokBl
+# gq7YpnyY368An9aDgGfST+6UjdZ5n8LnOkk5P2eFBKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjNaMC8GCSqGSIb3DQEJBDEiBCCmStfYL/k3sbvbjvOVlvNz
-# 4CjOVmhl2wM/bUlfQNJWYzANBgkqhkiG9w0BAQEFAASCAgBLN5ANqZw+WdInqDQ3
-# EJwvwfzioUrUhQ1hDyK5fGjowv5/WzUXbOVSXgkdb0xiU0II0jg11spm1ubZfUaF
-# FOEZmJovcGQXG8EUXoYOdJBszrhw3UWkJQSGlslpw97tQKfuZLfmaXaSOWlnvhNC
-# TTeid5v9eygvNZCb0jhICEWu3BrVJunuIeRKnm8y8D/3a9k+pS8GueU8A7TxC/Mu
-# hYrL1I+gSoOpfkqHuHee9WW5Oe9QOCzPLnD0eIBAkkSdBRC95HOF3DoghAoUsyYF
-# XfdfL6j1M1YQEPfLEVikfdXk0rE2Ffno6tkYngshpr2Qf7V90JhwacIvNFgMC7Fy
-# lKh7i2AIU+xM6lRt0dTvCgKZN7QICi6m0M4hYLT+RY7xDPhdYX94ATze0BBT14J1
-# LjU2zFo2W6O2CEoUit8gajX8pFQSiPSUVXCvX8QoJWX+1bgiV2A1E3E4p+/gDrpp
-# uVQXQptK2swMH1wFVr1dBfuZ7MfcRwqG2TSgfDOoGFcBCa8sBefooNjZc0SdwCor
-# v7gossN3cGm1G8y6zROnjp3f8rWba8Z8uehTxAllhOFzfsRiTfU/9DkW3hGfOKJw
-# UzKqTGibWm0k0Wv7vYWYIJFmMts6C4BY8eP8bcmTgcUtsWJCsh5XfZYgCmYPh4Cg
-# f57hlUcGyRnihgzQOIrSrfzovQ==
+# Fw0yMzA1MzAxNjQ5MDBaMC8GCSqGSIb3DQEJBDEiBCBsl97QZJuw41nM+5Jy2MLg
+# S8c94lL+El7+CZDG0Hg3zDANBgkqhkiG9w0BAQEFAASCAgCzHoLRUEAqq1kDHqKm
+# V/Aah/548iW/sLnI78cR15njnKF49vCRX11eOz2MGaniZ/B+vMZ9TiOS2Cix2OnD
+# oNiTxPJUOEVIBWq3ABh13gUh3B21y9Vhz7j2ZzU7izKLG3AmgRdXfHDYNH3OPIWN
+# AvD0wfN6AIiy/GJ0KuC1P5hKrCjI+pv8/eZsqU25XclYXEdpIKZLO0ZrkGmXPLEL
+# 2opY03Enm2NU1ImE4eUtNkklPUsN++csqZmDCTKCDvutHCXaysxqwj1+aHAn1pM4
+# TaK3BPXI61uZYKznd4A4om7LWhWpqyKlgPSx0l1jxGnRBiX3p2RcTQnig/BgJ9Xc
+# KXmBY5FMbO1ZlTSJMkp0kml7eLN3JYYgx5NEs30VLsPigWbc17k1g5UYg5M0oX9j
+# 7S4iNmy/RgPxsKeA5CTejO6sZOHgnyihSWDwsvx9co++zPg1z1mZLF21lxUtRCMz
+# IWNzx548tKt61EAv5oeNIvKgCsjyqO6F1IPM7BVFegHvBBZiEXlRoDKvqLlXp022
+# TrG4scseDN6DoZvrYdxIw61VzwbSEsRibPpFwVyA6TqT6zkyD6WMWI5i0QqriqVY
+# xfbDh0PJqPY2Az9ZljR+ehb6aE21nGt3hZKBA6EFJR6fFor9FrLZfhkzadtJSCnH
+# us/0tTLuOXeSldIDik88buD+Qg==
 # SIG # End signature block

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyPackage {
-<#
+    <#
 .SYNOPSIS
 **NOTE:** Administrative Access Required.
 
@@ -191,28 +191,28 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers. Available in 0.9.10+.
+OPTIONAL - Specify custom headers.
 
 .PARAMETER File
-Will be used for Url if Url is empty. Available in 0.10.7+.
+Will be used for Url if Url is empty.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER File64
-Will be used for Url64bit if Url64bit is empty. Available in 0.10.7+.
+Will be used for Url64bit if Url64bit is empty.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER UseOnlyPackageSilentArguments
 Do not allow choco to provide/merge additional silent arguments and only
-use the ones available with the package. Available in 0.9.10+.
+use the ones available with the package.
 
 .PARAMETER UseOriginalLocation
 Do not download the resources. This is typically passed if Url/Url64bit
 are pointed to local files or files on a share and those files should
-be used in place. Available in 0.10.1+.
+be used in place.
 
 NOTE: You can also use `Install-ChocolateyInstallPackage` for the same
 functionality (see links).
@@ -222,9 +222,8 @@ Allows splatting with arguments that do not apply. Do not use directly.
 
 .PARAMETER BeforeInstall Script
 Specifies the commands to run after download has completed but before install steps have begun.
-Available in 0.11.0+.
 
-Use this for starting an auxiliary process such as AutoHotkey, so that any timeouts are not 
+Use this for starting an auxiliary process such as AutoHotkey, so that any timeouts are not
 affected by the time to download.
 
 .EXAMPLE
@@ -345,89 +344,95 @@ Get-UninstallRegistryKey
 .LINK
 Install-ChocolateyZipPackage
 #>
-param(
-  [parameter(Mandatory=$true, Position=0)][string] $packageName,
-  [parameter(Mandatory=$false, Position=1)]
-  [alias("installerType","installType")][string] $fileType = 'exe',
-  [parameter(Mandatory=$false, Position=2)][string[]] $silentArgs = '',
-  [parameter(Mandatory=$false, Position=3)][string] $url = '',
-  [parameter(Mandatory=$false, Position=4)]
-  [alias("url64")][string] $url64bit = '',
-  [parameter(Mandatory=$false)] $validExitCodes = @(0),
-  [parameter(Mandatory=$false)][string] $checksum = '',
-  [parameter(Mandatory=$false)][string] $checksumType = '',
-  [parameter(Mandatory=$false)][string] $checksum64 = '',
-  [parameter(Mandatory=$false)][string] $checksumType64 = '',
-  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
-  [alias("fileFullPath")][parameter(Mandatory=$false)][string] $file = '',
-  [alias("fileFullPath64")][parameter(Mandatory=$false)][string] $file64 = '',
-  [parameter(Mandatory=$false)]
-  [alias("useOnlyPackageSilentArgs")][switch] $useOnlyPackageSilentArguments = $false,
-  [parameter(Mandatory=$false)][switch]$useOriginalLocation,
-  [parameter(Mandatory=$false)][scriptblock] $beforeInstall,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
-  [string]$silentArgs = $silentArgs -join ' '
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $packageName,
+        [parameter(Mandatory = $false, Position = 1)]
+        [alias("installerType", "installType")][string] $fileType = 'exe',
+        [parameter(Mandatory = $false, Position = 2)][string[]] $silentArgs = '',
+        [parameter(Mandatory = $false, Position = 3)][string] $url = '',
+        [parameter(Mandatory = $false, Position = 4)]
+        [alias("url64")][string] $url64bit = '',
+        [parameter(Mandatory = $false)] $validExitCodes = @(0),
+        [parameter(Mandatory = $false)][string] $checksum = '',
+        [parameter(Mandatory = $false)][string] $checksumType = '',
+        [parameter(Mandatory = $false)][string] $checksum64 = '',
+        [parameter(Mandatory = $false)][string] $checksumType64 = '',
+        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
+        [alias("fileFullPath")][parameter(Mandatory = $false)][string] $file = '',
+        [alias("fileFullPath64")][parameter(Mandatory = $false)][string] $file64 = '',
+        [parameter(Mandatory = $false)]
+        [alias("useOnlyPackageSilentArgs")][switch] $useOnlyPackageSilentArguments = $false,
+        [parameter(Mandatory = $false)][switch]$useOriginalLocation,
+        [parameter(Mandatory = $false)][scriptblock] $beforeInstall,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
+    [string]$silentArgs = $silentArgs -join ' '
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  $chocoTempDir = $env:TEMP
-  $tempDir = Join-Path $chocoTempDir "$($env:chocolateyPackageName)"
-  if ($env:chocolateyPackageVersion -ne $null) { $tempDir = Join-Path $tempDir "$($env:chocolateyPackageVersion)"; }
-  $tempDir = $tempDir -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
-  if (![System.IO.Directory]::Exists($tempDir)) { [System.IO.Directory]::CreateDirectory($tempDir) | Out-Null }
-  $downloadFilePath = Join-Path $tempDir "$($packageName)Install.$fileType"
-
-  if ($url -eq '' -or $url -eq $null) {
-    $url = $file
-  }
-  if ($url64bit -eq '' -or $url64bit -eq $null) {
-    $url64bit = $file64
-  }
-
-  [string]$filePath = $downloadFilePath
-  if ($useOriginalLocation) {
-    $filePath = $url
-    if (Get-OSArchitectureWidth 64) {
-      $forceX86 = $env:chocolateyForceX86
-      if ($forceX86) {
-        Write-Debug "User specified '-x86' so forcing 32-bit"
-      } else {
-        if ($url64bit -ne $null -and $url64bit -ne '') {
-          $filePath = $url64bit
-        }
-      }
+    $chocoTempDir = $env:TEMP
+    $tempDir = Join-Path $chocoTempDir "$($env:chocolateyPackageName)"
+    if ($env:chocolateyPackageVersion -ne $null) {
+        $tempDir = Join-Path $tempDir "$($env:chocolateyPackageVersion)";
     }
-  } else {
-    $filePath = Get-ChocolateyWebFile -PackageName $packageName `
-                                      -FileFullPath $downloadFilePath `
-                                      -Url $url `
-                                      -Url64bit $url64bit `
-                                      -Checksum $checksum `
-                                      -ChecksumType $checksumType `
-                                      -Checksum64 $checksum64 `
-                                      -ChecksumType64 $checksumType64 `
-                                      -Options $options `
-                                      -GetOriginalFileName
-  }
+    $tempDir = $tempDir -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
+    if (![System.IO.Directory]::Exists($tempDir)) {
+        [System.IO.Directory]::CreateDirectory($tempDir) | Out-Null
+    }
+    $downloadFilePath = Join-Path $tempDir "$($packageName)Install.$fileType"
 
-  if ($beforeInstall) {
-    & $beforeInstall
-  }
+    if ($url -eq '' -or $url -eq $null) {
+        $url = $file
+    }
+    if ($url64bit -eq '' -or $url64bit -eq $null) {
+        $url64bit = $file64
+    }
 
-  Install-ChocolateyInstallPackage -PackageName $packageName `
-                                   -FileType $fileType `
-                                   -SilentArgs $silentArgs `
-                                   -File $filePath `
-                                   -ValidExitCodes $validExitCodes `
-                                   -UseOnlyPackageSilentArguments:$useOnlyPackageSilentArguments
+    [string]$filePath = $downloadFilePath
+    if ($useOriginalLocation) {
+        $filePath = $url
+        if (Get-OSArchitectureWidth 64) {
+            $forceX86 = $env:chocolateyForceX86
+            if ($forceX86) {
+                Write-Debug "User specified '-x86' so forcing 32-bit"
+            }
+            else {
+                if ($url64bit -ne $null -and $url64bit -ne '') {
+                    $filePath = $url64bit
+                }
+            }
+        }
+    }
+    else {
+        $filePath = Get-ChocolateyWebFile -PackageName $packageName `
+            -FileFullPath $downloadFilePath `
+            -Url $url `
+            -Url64bit $url64bit `
+            -Checksum $checksum `
+            -ChecksumType $checksumType `
+            -Checksum64 $checksum64 `
+            -ChecksumType64 $checksumType64 `
+            -Options $options `
+            -GetOriginalFileName
+    }
+
+    if ($beforeInstall) {
+        & $beforeInstall
+    }
+
+    Install-ChocolateyInstallPackage -packageName $packageName `
+        -fileType $fileType `
+        -silentArgs $silentArgs `
+        -file $filePath `
+        -validExitCodes $validExitCodes `
+        -UseOnlyPackageSilentArguments:$useOnlyPackageSilentArguments
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBsCdjL9jCfkeFQ
-# P5ANAb19l6fPhKzek2bBeG0Q6lvyzKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCr5worPIXRCnmJ
+# fBd03cqX9I783zWUienpJqyJQ+/OFqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -590,28 +595,28 @@ param(
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgwAuZpRaJVSl1O8hufOVKElU6mtCaW+PBihAvEELJ450wDQYJ
-# KoZIhvcNAQEBBQAEggEAOMpQDxBANh8G9xbsxF37lHFl3/h4Wu88rxNuCLlWtkOc
-# 1CnOupPfEW0nb8GQwnGHRkM1vsxKJp3gBHOfEkYHcLOsAXU209CyJ7eOlM/f1caZ
-# sNCDyA+yddHCeSv+lCJ4V+VTLN4a3wnIsryzXBjuIc+yYvKd1XG1iE/Pz5hUDZ8U
-# qEvzZvDfwzEgta7hw4NYFgSih6hK7fYD5M35/CrjaP9XcksvgReqvgBcO3UTI5bA
-# ZEk+hgzu2QmD0zZZ0BRVSaI8yM6vgndOV4qc1pZx+JK3EBebR3R1/c7U2XxjXyIl
-# kdvUwtMZU8RbXw1Wy+vwfGyQnq4yFA1YFKBJqN9xfKGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgXXG9nKrCINBISouhrjpGOKRTU98QokVvynqOf8Dq5LgwDQYJ
+# KoZIhvcNAQEBBQAEggEAlFye9g1yLHvZ9IXDVabzQKI2I7+UfbRpxiWzCPAoVobw
+# sgh3NO9tWBEfZQdVY6mNo37OcecW2kvR4hdZX04x4IATu3/OW/nBOyiQo/Qqkbrc
+# urqW0N4jwGl3J8na9SaBwib57k04Nh9GcLcVFoE9m1rM90GefwvoMt2AO+4DrkZy
+# BsEFRMu32m9UABlmPchhuC1lTmmAT/+eS1cECEt8PfNYtlX/D4wt+5bEjc4M8R2S
+# V5IxLISd1/cxh8WSk50LgkXA8VYJSZjVhrvElHQZK2aP4s1sBAoulZzIHqsyCldq
+# T0RYL46Qc8LjEfeDNJFDFI2Mw1qjcFEsLldYVn21oKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCDYcVRgTIPMYnHvWJB0nNuw
-# CiSIvKIvsTsfg+O4uBeC5zANBgkqhkiG9w0BAQEFAASCAgAS4t7H9S+9s6hZgFzh
-# QFtogZ1bGITxb/za3Z05R8i8RKee8qdBsLvI3W4mtBjJoZ7mtNT3OkK4K2E1hPJR
-# SWQ0k5zjN0Y5c1FKsPSkbGJrDFKX0B0eyI6faZfvBPYMlem7b/c8pJXOX6Wj/TbJ
-# n1fUwZQyZX1fLRL7ka9O4jOkX9FGyD/0+ag9JLHZJf0svMFNWFZ2YUOi9sxgPw52
-# kbkRlcdtAv+7NEKauFOlBYXlYfMp7EaIbL1Xm8+nXPkZVSXe1jyCg0F0dyHCoYYV
-# HeMESfNbFYfDiKb6MaeQV6NXJTG6TD4JYzCDMrvxVzIdeKhGgSwqCBYei7uzV5aD
-# 3YbJFw8MpY2yFK2z2/ZrTUiUUV/ICQ0JHbyaHNnU75XBu5NS1lI4zFD1iHwp/Tp3
-# 1nA6ASvGUl6K1oJdp+xYGkNgS6im3zohRaB/ptXtl04uVq6/IVZz5QJZHevA7wBI
-# IH2dRELSEuKtkhCt+tr6HphhirQUJmLz3KLBkVkyuDTE4tiKwbBxlJJZihudfZwR
-# frSKMSKCkxYYNbjPQyz/c+eD9b/YxpUYe0z163cQrXJfnjuHpWoWuLnKIJQPhZrR
-# CMW4s0Jih6eWoG3feIKWsc42Or58ic0Lf66r23AYGVc3n/QZvm/WdlyOGBtIRd0k
-# Z7OmXoNigL3ncv73a/aIa9LIng==
+# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCBgE1uhY1OcNCV9R27x7TiA
+# 72WUPyo+D4NaNE0ZXNy31zANBgkqhkiG9w0BAQEFAASCAgBX6LvCtjluk3SGvO4y
+# 61D71AFSkDMSeh2KfmBhxEllvrvuYVRgom60cgtiNcNZWSxgujSAqc2s+GWOiL6P
+# 4KfcuRBIXvwUEkWlFAL4vOLa74KpZgeFRLU6RKp1Slh0GMh7hn0upDevYWcD4pvD
+# jAAi7i2OEcehe1lYiKaBqgMCdjr/5dvQK2YQONBy3fd4JgWLo/UlJsgNnXSBf+iQ
+# nW9esTOlkRChdNLCa1W+FyC/WRz8uo+2a4gAWH0QDlOuq0+vsRVCl/357LOoxncO
+# uazIYFxRbegl2ACpYRMCIY621gVg2i6zmKaE8Bjtv9TBsvXzQDTlSVOKHUZ39ecu
+# MOQdnI4FB1fvhEGzVq0j2yVu7+QwFdw+ZY3w8lhnXJzWAifYHLciaAuLFiYW5Apw
+# Ln+1WpZEXZ/73zTumIQVHRkta4tpX52qr7cDtJBn18S+LadvLpUfP3JNnTZ1WlCg
+# DndNxAAQ5qvSxOCgDGOebgOvvPuBhlWJ9soPuwfMDry7zXGAuCG2qVRs08CRM1cA
+# 0QBRTdDGI9pG9CxyoCbOi1ntoy2iUj0jCVRSMM6gJAwxg5Y6MD5CSUAc6CWPY6EL
+# YG7L//DMokXp21iBCv8qnTjZJvluUlhwxmZuzva9VJ2j2wBQ1whRefWJ3GM3Dw6T
+# pTXARsf6mCjm2/RVp0OBQh5R6A==
 # SIG # End signature block

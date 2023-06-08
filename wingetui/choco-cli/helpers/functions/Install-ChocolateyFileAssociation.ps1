@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyFileAssociation {
-<#
+    <#
 .SYNOPSIS
 **NOTE:** Administrative Access Required.
 
@@ -54,40 +54,40 @@ $sublimeExe = "$sublimeDir\tools\sublime_text.exe"
 Install-ChocolateyFileAssociation ".txt" $sublimeExe
 
 #>
-param(
-  [parameter(Mandatory=$true, Position=0)][string] $extension,
-  [parameter(Mandatory=$true, Position=1)][string] $executable,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $extension,
+        [parameter(Mandatory = $true, Position = 1)][string] $executable,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  if(-not(Test-Path $executable)){
-    $errorMessage = "`'$executable`' does not exist, not able to create association"
-    Write-Error $errorMessage
-    throw $errorMessage
-  }
-  $extension=$extension.trim()
-  if(-not($extension.StartsWith("."))) {
-      $extension = ".$extension"
-  }
-  $fileType = Split-Path $executable -leaf
-  $fileType = $fileType.Replace(" ","_")
-  $elevated = @"
+    if (-not(Test-Path $executable)) {
+        $errorMessage = "`'$executable`' does not exist, not able to create association"
+        Write-Error $errorMessage
+        throw $errorMessage
+    }
+    $extension = $extension.trim()
+    if (-not($extension.StartsWith("."))) {
+        $extension = ".$extension"
+    }
+    $fileType = Split-Path $executable -Leaf
+    $fileType = $fileType.Replace(" ", "_")
+    $elevated = @"
     cmd /c "assoc $extension=$fileType"
     cmd /c 'ftype $fileType="$executable" "%1" "%*"'
     New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
     Set-ItemProperty -Path "HKCR:\$fileType" -Name "(Default)" -Value "$fileType file" -ErrorAction Stop
 "@
-  Start-ChocolateyProcessAsAdmin $elevated
-  Write-Host "`'$extension`' has been associated with `'$executable`'"
+    Start-ChocolateyProcessAsAdmin $elevated
+    Write-Host "`'$extension`' has been associated with `'$executable`'"
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDTFHhJHNMQ+Pu+
-# PnYfJMh4HDjnGmxsihs/+yyaWZsaa6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBWRS19K2cNmt1M
+# 0+s+Kj3EjAVNYBpO/t0p1E5eMZ+4fqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -250,28 +250,28 @@ param(
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgbpAN6EQOBk1WH3a0C+cyRKSvPTJ4VS2Kf3y7Yw5mdccwDQYJ
-# KoZIhvcNAQEBBQAEggEAYXC9Irdh8OK2CPtL/zv45V1FtJeO+wkfUqIxZSRfHW2t
-# EgxINae3SZ0joWQODUuzZcMLpkZcBCiuOZfbZsskGMTuIAAIde0EfT7/DHL43Ud5
-# dKE9v6fMQWUz6o9mJs4AD503QBymZHjvtv3lX9fY7HKC+8d71skbIZjUCaTtCZfX
-# s694Oq+n8IrZcmSOI6sYxbCuUtEobY867RzmdL4OqMeXEF2djelpddjvrGvYLuFg
-# XVKbewGyZyhmKEutWZ1ZYYgke3e7oBzQ95CxTyr5UtYFhE4Zo4uflHzXpnISxHPk
-# pPFXpAWOGEH2rjqhEczq+s74tY3CuNcCqUO7OFBwI6GCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgIUOOB610HCSjYa36BpxqujpIB54LF6SdScCTGwifQ0YwDQYJ
+# KoZIhvcNAQEBBQAEggEAFDnbiYqHndriEhIGZquHMrfn7OSFsEySUQzqXkOoqpfD
+# zDnpS6oMV9iaE/57sSU0YjifW3C/4RqzxR0kY9T0Mf/cf+UyAloWKUYA0LsQoqqp
+# X7VJzTJoiOAhv18/BLlgx2ooEzTT2b5kuLQhVvZ01WndAkuYFPb9VNXvre6ScZxF
+# fUlix95GsOXMKJ6DhJTYNvubsTBUlGgjsU+btJ4ooqy4Yl+GnI+fdMrPSS4xxnbb
+# 8doRow5i9+paTNo0hz5j68QuBaMpFXoYxOekNpoYzlpNkYpCaMg/hwABUUPKtiaZ
+# AhCWsX1rm3/OVLNwaH2Knk8C17gFrPzET5OcMwtBiqGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCAzTE73chisT4s4pHBtJR/h
-# rejKaR03X1Nak6tJ+GyVvzANBgkqhkiG9w0BAQEFAASCAgALqpbReYEBffWDzStX
-# S/LXPTlT7rzXx/NEhTcFTFF5JoRKXJgZsvPyFrX40qs14q4fBqV12lmtWDB1Y6eL
-# 4JXwIWX/vScXfGEZPJYHT56OLP135Urk20WXB4GOja1pPn21FQd4pa4cP0Lt3nVS
-# U8/Cj8i6kTyjkpmU1HNNeX8QfWFwq6GbH6f8cJ+HaKozppfFdfdU1/EyhpJojvR7
-# a3Og+TWOZ9o7dtLYulFq/DGDgNs/uMo5u78VpDqyHBoWf7Soz6P12PIAH1L1Qwb1
-# +wOuDgJ/lvCP2zHFpEFv+pm0wJkTimSTW/eBRidOD7q4l99a5a+2PBCjMiwtRB14
-# oIV14GMwq6edELMeVj3vBewTbmfP4MMsokYVIEmHn71NwJ6drALPY7OOrhqoAUpz
-# 6O2Rq5LWah1LjyZjLx7yCsM0aYViD1c7Jgi7NSH8VZNo6k/XpI89TXpbYRRRK1Ej
-# 3/BLoqNRjMTRLCNl28KwTmooZAXUvvaIRbYIoNy3D44zS5x/YiLdR3tHExFCKKXz
-# u7+eoUuZTzUAkZxgQq7d58urGFPZ2K6lWJy6Yx0GG4goWr1p/OnLst9devMiCcjF
-# ON7qQV8wTgmjkW2FIpX/3Qdwoat9kbG0+5PQMG/L3kyg3cwjrFCUsDvR1l+aq8yH
-# IXOD3GdpGJ/wxUKyMVehAb3J5Q==
+# Fw0yMzA1MzAxNjQ4NTdaMC8GCSqGSIb3DQEJBDEiBCAdHe46jlbcUeoGd57CabTv
+# Qm6aDQy3oIgNpzQckal/wjANBgkqhkiG9w0BAQEFAASCAgCm2A9J6v/OrfrybShw
+# CORHu+aKnKLi8qXSq/Kp2INT3HXuIMnmo1bkRQuWoJZXRKkzC6HaVk39Ze+743jN
+# nP4kAR7aaQJhePQPiSNeAV5ySa8oxpFG9P9BMK7rIVgfx9qXPXEbBXcERsQuVCz3
+# ChoRaGubOQu+knZKzba5weuRxWnW2KU1icUpHTAxOrmFe2EZZQNAV3fl5yF1Cw16
+# Z9VJ8t7fvgIkNsvY81vWLigJwGGKpfydMYJZserJ8tUJpBDxzlqtMjPsXx7jjmCm
+# 5a7Q6fwRDSyqzz7oHurm1z1TMc8ula6Y0fTY1uTCp+mkAs5IYpDWdCmpFDHQcFOf
+# wbFsFCx8tTiBZ9KAxyjsqtIl2iqdilUCerVxoHcu5/jvy2P/tnnt1lxKyXTsUDLo
+# SblvaElJ2IGUmn6mhFxtu2xiUvuRN8A+MkmyqRkc80OY/tgWOP377xYzI7kpyKwp
+# FAFxyNAV1Yr1ArkVsMuK5AW/g5sq20Js6mk9xu+rG2+1uhLLLuFMzaAhOsMuN98c
+# GFYOJf0HOjJdNbclTUhsOQoI6Mln4mXF2LrE/I7YxP6gbG0GObB1pL8NiSKuPXoh
+# aMTIdpsJswFnA7W1Zt9wAPQITdoA58iB23byn02wI2QrM3OCBb57WmFehQABrCOc
+# 4k15MJ7HZGkYfKuLODwW9PrMig==
 # SIG # End signature block

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-OSArchitectureWidth {
-<#
+    <#
 .SYNOPSIS
 Get the operating system architecture address width.
 
@@ -28,10 +28,7 @@ of {`32`|`64`}.
 When your installation script has to know what architecture it is run
 on, this simple function comes in handy.
 
-Available as `Get-OSArchitectureWidth` in 0.9.10+. If you need
-compatibility with pre 0.9.10, please use the alias `Get-ProcessorBits`.
-
-As of 0.10.14+, ARM64 architecture will automatically select 32bit width as
+ARM64 architecture will automatically select 32bit width as
 there is an emulator for 32 bit and there are no current plans by Microsoft to
 ship 64 bit x86 emulation for ARM64. For more details, see
 https://github.com/chocolatey/choco/issues/1800#issuecomment-484293844.
@@ -46,40 +43,43 @@ None
 This optional parameter causes the function to return $true or $false,
 depending on whether or not the bit width matches.
 #>
-param(
-  $compare
-)
+    param(
+        $compare
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  $bits = 64
-  if (([System.IntPtr]::Size -eq 4) -and (Test-Path env:\PROCESSOR_ARCHITEW6432)) {
     $bits = 64
-  } elseif ([System.IntPtr]::Size -eq 4) {
-    $bits = 32
-  } 
+    if (([System.IntPtr]::Size -eq 4) -and (Test-Path env:\PROCESSOR_ARCHITEW6432)) {
+        $bits = 64
+    }
+    elseif ([System.IntPtr]::Size -eq 4) {
+        $bits = 32
+    }
 
-  # ARM64 has a x86 32bit emulator, so we need to select 32 bit if we detect 
-  # ARM64 - According to Microsoft on 2019 APR 18 (jkunkee), there are no 
-  # current plans to ship 64-bit emulation for ARM64.
-  $processorArchitecture = $env:PROCESSOR_ARCHITECTURE
-  if ($processorArchitecture -and $processorArchitecture -eq 'ARM64') {
-    $bits = 32
-  }
+    # ARM64 has a x86 32bit emulator, so we need to select 32 bit if we detect
+    # ARM64 - According to Microsoft on 2019 APR 18 (jkunkee), there are no
+    # current plans to ship 64-bit emulation for ARM64.
+    $processorArchitecture = $env:PROCESSOR_ARCHITECTURE
+    if ($processorArchitecture -and $processorArchitecture -eq 'ARM64') {
+        $bits = 32
+    }
 
-  $processorArchiteW6432 = $env:PROCESSOR_ARCHITEW6432
-  if ($processorArchiteW6432 -and $processorArchiteW6432 -eq 'ARM64') {
-    $bits = 32
-  }
+    $processorArchiteW6432 = $env:PROCESSOR_ARCHITEW6432
+    if ($processorArchiteW6432 -and $processorArchiteW6432 -eq 'ARM64') {
+        $bits = 32
+    }
 
-  # Return bool|int
-  if ("$compare" -ne '' -and $compare -eq $bits) {
-    return $true
-  } elseif ("$compare" -ne '') {
-    return $false
-  } else {
-    return $bits
-  }
+    # Return bool|int
+    if ("$compare" -ne '' -and $compare -eq $bits) {
+        return $true
+    }
+    elseif ("$compare" -ne '') {
+        return $false
+    }
+    else {
+        return $bits
+    }
 }
 
 Set-Alias Get-ProcessorBits Get-OSArchitectureWidth
@@ -88,8 +88,8 @@ Set-Alias Get-OSBitness Get-OSArchitectureWidth
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAN6jeYywgDOlqT
-# 6F5bxBpNriNUa3bt40oGBfop//TAA6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB+L1AGG7qroX0+
+# A1B0yS7LttNN6HXUXRua0CLG4jPKdqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -252,28 +252,28 @@ Set-Alias Get-OSBitness Get-OSArchitectureWidth
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgmt8xpH3JS6TON/vPXZmIVgddYDIZiODMFHG4GvJSP9QwDQYJ
-# KoZIhvcNAQEBBQAEggEAj7VaIeUXmnnneAS3mPSSASv94cudlZCzvY4bCVnfTOEu
-# vWCP/xlTrNfuBxTNA3gZx11sFGrlfn/Tzr3PF655bBts1szfaTNPComLAnPnFD8P
-# lGnkXy5UUimPdVbKgeY2hWcfgOiMFX2QjWFMyJXrizxHhVWd7tDfUDA+bLIhhjOw
-# oWCg17zbBLIq2BHC1csptv+RDKeriCWsLxi+Y8NvDSf/oeDH6Iv5ID/hFKayVOOW
-# 24qydOFQn2sw+xVV7mzDA2FqRUKXuRJDq0wAADXA8CDgtAC/CEVMR2esDmMZtEFY
-# 1fOM4197ukfiodvTXCxF5hAAPW2kE2h+aJh2p8Us96GCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgfkRZmWfxJqzMl6+nonE7CwmZC6wkwwyIXq30YArQu6MwDQYJ
+# KoZIhvcNAQEBBQAEggEADiTyOel2PrnoOWfs+WU/LZKS1GUuV27ZHZ0zqTj2Qc50
+# GVM+EEo0t3C1q3Xf6gGo8SM0Q62OHbbjlBpkjabJh5RWKk4ni1z46Wsf2iEQy59z
+# 5f+Juo857trvXMWawRq7tdW0AtrHtPtH6kUtREmj6iTDWPwl7kej1QHygozfs0/K
+# h0sukN2X+asuaXFiPjJSyBmFeblezvyuplrKQGKNvO8yBqfur5N5WN8frcIf/VU2
+# /u6cI+zxah99+VoLfoO2cwmwNAM3UN4OXbAudoRACIQjQF8/si21XgXBdE5WxREY
+# G6wj1mebHtcwY0z89gqY1UM42WSCTrr9DCJ53r37PKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCB3CmaZjy3SHg7ixMCVqXYN
-# E7euM3+9M/X0tasoSfamFzANBgkqhkiG9w0BAQEFAASCAgC9jHvIhdtYASmT2mGA
-# sOTyQqksyB45++7hIvDoObA6PBXZ8FDEl+azB8+phCOqljJaDBDXn10u54kC5HA5
-# 4d8/PxG/IUo1bD1NUnlrX1I+Cb676isMwtB0Ln8zEUnRUm+KfLoXlRhKoFSGEZwl
-# gztmPr6mmfO7uVoZYIBZGQelrtcbEb9RQLHCD1FXXzBosaaa2tjyezRnRIm72c0K
-# SQABZ6UFdYXVgNPjtSadli+gik1gFPs1oB6b2d11gTj+d/WGwtvOnzg5LwVB8CoA
-# AqobG6pFnVQJUNDJwTEEvpB+PNeTPio2jWQk/xxg/DNyPralL+aQOGxAxD2YLFAO
-# oCbtT9aTgkJsW9BkhRNMEwPo3ZWMM2Kh3jcjOGpnnNvcm2+6/QC5VYTadkls0xEU
-# ZrY3UkQJCm2bAs4MlNzMnTDQG3x2IRaNxZuz9r52x8u4kHNkv1a/YPYIg7PS8mOk
-# 6eR3JZnj4VtKvF4DZQa+kpSsnv6sJwOtROms2p0EtH8GOma4RfQZktoq50YfRtX7
-# lgFNebdx2oCGnMyt4KDxkOWWw5lIWF/3S2A5ncXjiSLlJ/l7WQ4sNazrsMOsBO7W
-# s4oOYdhI/LGs02iSraUTnzctZQrfkZ/1PRao7ctjPXR0yPgoWDvxk+3Q9MFOvdU1
-# twfK45uyUF5tPRCHY31h9MEjbA==
+# Fw0yMzA1MzAxNjQ4NTZaMC8GCSqGSIb3DQEJBDEiBCCINo+hF27qUgF61teeWFCo
+# hhDrt2GiPOg51Qn0Kq1koTANBgkqhkiG9w0BAQEFAASCAgBuU4OTY1id2b/m4VEw
+# YZEP5RaO1ydxA/1poqNjN+bKlnd6IqYm5F9hOQPUIBBiDZ1Y1cjuQ7Mz1d+5w25N
+# 801tFeuxek1lrFxR4MYwEd3MnU+S2m47ObT2VfRZqwLogauRQENoyuGrQPfL+Tgc
+# qYong3tuHwH6C5djvjKU96gt/R6ng4jubd4/x9sOElAly/ZiBzK3aZejzOQ1MHlP
+# TFeC5t+LTLJT5vYjd7hEa9VkNmJrzZjMalpZS0ICPD+RMqfXUYhqskZdDH/XVNZ1
+# atxG6aeI/kKJC+vzDLL+cozmWFiOZw3e/E2sP83luc4It8Z+MvV5tLDzoL40vLpQ
+# fAcOALvMfuxDFLDEWFkV0+b4LzCkvlmm9NKhlxYFLXEsB9Ihk4EoaZFl8DIvjpUw
+# ZBNeKxze9nOYaNeADLhvhgmzNnx2m/EndVRA3p8jEtqZqP3kmNSGt4+bNyB6PrEr
+# ZV2KJ36TsrPdyER2yiBt3EHN/MArK36iDca8k1MuOSLbpDivlWV4TRFH4Xlb12Nz
+# p8MqPlcIJ2ktECmd6guTQXup/+8xZhpnGNq3fc3kBnfT+G+4aKonrPQUdW3i9Ibq
+# eacbtqlrfzw3W8sTiZQImFr8h8hlJQSOovvgdYLYR1a2nujr42qaZ00AAnFUC+fP
+# 0L0fga8E0ljb9HgVUEs2mgslGw==
 # SIG # End signature block

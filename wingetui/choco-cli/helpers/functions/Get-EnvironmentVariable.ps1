@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-EnvironmentVariable {
-<#
+    <#
 .SYNOPSIS
 Gets an Environment Variable.
 
@@ -38,7 +38,7 @@ The environment variable target scope. This is `Process`, `User`, or
 
 .PARAMETER PreserveVariables
 A switch parameter stating whether you want to expand the variables or
-not. Defaults to false. Available in 0.9.10+.
+not. Defaults to false.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
@@ -55,62 +55,65 @@ Get-EnvironmentVariableNames
 .LINK
 Set-EnvironmentVariable
 #>
-[CmdletBinding()]
-[OutputType([string])]
-param(
-  [Parameter(Mandatory=$true)][string] $Name,
-  [Parameter(Mandatory=$true)][System.EnvironmentVariableTarget] $Scope,
-  [Parameter(Mandatory=$false)][switch] $PreserveVariables = $false,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true)][string] $Name,
+        [Parameter(Mandatory = $true)][System.EnvironmentVariableTarget] $Scope,
+        [Parameter(Mandatory = $false)][switch] $PreserveVariables = $false,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  # Do not log function call, it may expose variable names
-  ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
+    # Do not log function call, it may expose variable names
+    ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
 
-  [string] $MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME = "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\";
-  [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME)
-  if ($Scope -eq [System.EnvironmentVariableTarget]::User) {
-    [string] $USER_ENVIRONMENT_REGISTRY_KEY_NAME = "Environment";
-    [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($USER_ENVIRONMENT_REGISTRY_KEY_NAME)
-  } elseif ($Scope -eq [System.EnvironmentVariableTarget]::Process) {
-    return [Environment]::GetEnvironmentVariable($Name, $Scope)
-  }
-
-  [Microsoft.Win32.RegistryValueOptions] $registryValueOptions = [Microsoft.Win32.RegistryValueOptions]::None
-
-  if ($PreserveVariables) {
-    Write-Verbose "Choosing not to expand environment names"
-    $registryValueOptions = [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames
-  }
-
-  [string] $environmentVariableValue = [string]::Empty
-
-  try {
-    #Write-Verbose "Getting environment variable $Name"
-    if ($win32RegistryKey -ne $null) {
-      # Some versions of Windows do not have HKCU:\Environment
-      $environmentVariableValue = $win32RegistryKey.GetValue($Name, [string]::Empty, $registryValueOptions)
+    [string] $MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME = "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\";
+    [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME)
+    if ($Scope -eq [System.EnvironmentVariableTarget]::User) {
+        [string] $USER_ENVIRONMENT_REGISTRY_KEY_NAME = "Environment";
+        [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($USER_ENVIRONMENT_REGISTRY_KEY_NAME)
     }
-  } catch {
-    Write-Debug "Unable to retrieve the $Name environment variable. Details: $_"
-  } finally {
-    if ($win32RegistryKey -ne $null) {
-      $win32RegistryKey.Close()
+    elseif ($Scope -eq [System.EnvironmentVariableTarget]::Process) {
+        return [Environment]::GetEnvironmentVariable($Name, $Scope)
     }
-  }
 
-  if ($environmentVariableValue -eq $null -or $environmentVariableValue -eq '') {
-    $environmentVariableValue = [Environment]::GetEnvironmentVariable($Name, $Scope)
-  }
+    [Microsoft.Win32.RegistryValueOptions] $registryValueOptions = [Microsoft.Win32.RegistryValueOptions]::None
 
-  return $environmentVariableValue
+    if ($PreserveVariables) {
+        Write-Verbose "Choosing not to expand environment names"
+        $registryValueOptions = [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames
+    }
+
+    [string] $environmentVariableValue = [string]::Empty
+
+    try {
+        #Write-Verbose "Getting environment variable $Name"
+        if ($win32RegistryKey -ne $null) {
+            # Some versions of Windows do not have HKCU:\Environment
+            $environmentVariableValue = $win32RegistryKey.GetValue($Name, [string]::Empty, $registryValueOptions)
+        }
+    }
+    catch {
+        Write-Debug "Unable to retrieve the $Name environment variable. Details: $_"
+    }
+    finally {
+        if ($win32RegistryKey -ne $null) {
+            $win32RegistryKey.Close()
+        }
+    }
+
+    if ($environmentVariableValue -eq $null -or $environmentVariableValue -eq '') {
+        $environmentVariableValue = [Environment]::GetEnvironmentVariable($Name, $Scope)
+    }
+
+    return $environmentVariableValue
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBSJPFD5yUjvcVM
-# +Jd1qDGYsByn87ejLWqUYqoZknAyD6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB9Qfj9olJseG+H
+# BaZcC/4CnnBSGfF/XwAHL3FQVwzI+qCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -273,28 +276,28 @@ param(
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgYYsmJWq9R8qEsY1EPAW0Kvyec1SPk1UGzHdcGELtny4wDQYJ
-# KoZIhvcNAQEBBQAEggEAWotelgla0chuchPNnz2w0if4oMx35bCSmjW7g2+otaLF
-# 60Y7iX+6f1jQy3jhPPyN63xo2qpULEiP1wieg646IjZr8KEaQY2UBrgvHVc7JxSb
-# QUh/Jal257XSlFdD5eklTWCpY5BIzMbXXDk99r5U/StkNprix3kRe7o36s3D0vnn
-# g547ePg90wPZC8Ncj3zVF3MEJKW7Han0J7rbdNw0HzvIdYiqMqv3RLbmiIUZ019p
-# 7IDh019QKTfXqakehqdjMmn8NUEqXnnRmIAEZ98CzvQGnjgcDj3fiXJXIwDiVgZ1
-# jCPl5Cv2WD6XydAaQUsdAOx+n3PERqwyBJCFADaKx6GCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQguKNgnRH3w+lFy0rh6/KiH17okn2B2c3Murv1Cmg1bQ8wDQYJ
+# KoZIhvcNAQEBBQAEggEALJyRCTWAEUkSxSCitsVXjV1xsBNJBpNLcvOwvtz3Y0cE
+# 5bxxpXfTc2j5fh1Q5qkugSOOVMzw97tM0r8loIfrEh5r3WM72efAa4nJKqY77Keh
+# yfPV4vh9cuG6lIVaTNzun4ipla0IYhi7sRZtOUYswzr1wj+ncKLknsK8+VT2HEb6
+# /gtjbkO5aaUEyyTWp9SrX4hWD0sSuIWRbaeOYLFHWhwaJx4xGrW9A8mHf/VvMck7
+# IvnfmAOGxl+scxDu/vrXCUEPxpTeTZcrH+67LGKHyaDgKKAeMJh2oDx94FXlhWde
+# yxeWFmX5LNvJw9oTNTjEHAc8bdKryaggVTL+eAcsoKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCBvSe+spk42B+FLKzeO3cp+
-# pPKJH4Hu2QKC5hpOlJyR5DANBgkqhkiG9w0BAQEFAASCAgADAvsrl6utnLdsRQ9n
-# 8nZyEkZFjBWhY/2pHdoJkDPgnUnLU7NwYYhdELGY8EMxIlzNOsVhwGX7PkwFVpW+
-# zbpRN22mIysSmGktVNLXFPNDEQ+AjzKFe99sb0S0DSsQvZegycVTyFXCUaX+W6MM
-# duoEJxUIteikWSG3dS2qzq0/DiWL86jkwIY7cZjTFJ/0NcRVJreD6NU0t6rXWKlu
-# VtbAHWDkNlzeyQuVN8luVcfZK71UA49+yyiouL7T6gPFg5CqZdZMI3GUG2xZsPUT
-# daTpQvXqwjtpXlB59fLbVmWIHwuTRU5f+7Hpxuj+8kAP7U8V7cSLNhs8EsPr7Uiw
-# B2yT7pr6Zdz3cRdd5QpCgR62u5KJdJbCWlYck/bRN4qTd0usYTqFO+OcLKi00rJm
-# Fa54DqW/UauIKiob+AA/LFjpbv9M3UF+afD+EYPd0Z8FGwjl2tUeui/ipVNHEfDo
-# Z3ZQllnD1Y+iYW52gkU6qmmWKvxqITdtezLxLOCduOxDAQ/JNHJFgVrRr+mgOuqZ
-# HSjPXI3lFNAkJv8Tgp2zVJ+CkHGesyBM2njqSFUjPXMmfzueQKXA07UMOTuZ6TiS
-# 1U0imO6XrFrOka+HnvhHPKfSXtvPKFfeZeLanyeGyBjRzxTv8kAQNaOG2ar2wGZr
-# FhlKleokYFBBcnUCfTqrS9+0uA==
+# Fw0yMzA1MzAxNjQ4NTVaMC8GCSqGSIb3DQEJBDEiBCBwduFIc4qwAnGkBn39V9zy
+# CB6axDWUVij5wN6WCiuU0zANBgkqhkiG9w0BAQEFAASCAgBZJFwlvs/dt3jl+XUB
+# 5e1PhCkJVIQojB95sfjNikb22EjZ555Og34L0ODOyqKP+IjqYab1pU80RgRMaNph
+# sOaMV/4qlhTElZrK/y6drTbYTgzaosvpOFMVS0qpS1dJt76QaC2PtjaY6GskrAYN
+# NFhGaPiO+sZCILNg/JgCI14PFpAYMTCeO9dI0mu+ArWrfckiXMia+wYWwJLTWhP1
+# eeXL7Nhta78zLWo8oANk0xQnsRgxNjiocxiRUOSQUgsnemFKct+w2l3E2ia30uPY
+# f4UJ+Dpx4qBpIFeRLMqC6lXrhKAq1SYd658BouiBw5ZkE1OXyoffAYUQMUwHN+u7
+# CwF8zQiaUPRKAsAmdoZ8NMz2z8Em4SNpjyyFcSsG+zj+4Nialhs7foWxp6uqiRzm
+# KFgXKz4G8QtnqFPtoRCF1X2XvS1kIqiBmrWBeqQL/6Ll0WQrfZOTkRBHYVapviDc
+# 4ZrbfpiMFw8vqFqS2fa81akSJA3p2zWfeL1yPAylfmg8iH66mXM6GSMwN9DK074y
+# Dyr9Kj8wt6UIi+y6XbIpyLHMhk8jzl5GIBFneX27VbUlVFXECmPdVq3yyAaTnSX8
+# yvCWBAnq7LJPlKrPbGn+hArUOoi4RC+A1S+Z0H2XHrNjGUP6ZEydpTArir8FWqcS
+# xnlyZeu12PBggkbQT+kx90eKVA==
 # SIG # End signature block

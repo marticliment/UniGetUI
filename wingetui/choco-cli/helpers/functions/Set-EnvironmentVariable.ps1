@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Set-EnvironmentVariable {
-<#
+    <#
 .SYNOPSIS
 **NOTE:** Administrative Access Required when `-Scope 'Machine'.`
 
@@ -55,82 +55,83 @@ Install-ChocolateyPath
 .LINK
 Get-EnvironmentVariable
 #>
-param (
-  [parameter(Mandatory=$true, Position=0)][string] $Name,
-  [parameter(Mandatory=$false, Position=1)][string] $Value,
-  [parameter(Mandatory=$false, Position=2)]
-  [System.EnvironmentVariableTarget] $Scope,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param (
+        [parameter(Mandatory = $true, Position = 0)][string] $Name,
+        [parameter(Mandatory = $false, Position = 1)][string] $Value,
+        [parameter(Mandatory = $false, Position = 2)]
+        [System.EnvironmentVariableTarget] $Scope,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  if ($Scope -eq [System.EnvironmentVariableTarget]::Process -or $Value -eq $null -or $Value -eq '') {
-    return [Environment]::SetEnvironmentVariable($Name, $Value, $Scope)
-  }
-
-  [string]$keyHive = 'HKEY_LOCAL_MACHINE'
-  [string]$registryKey = "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"
-  [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($registryKey)
-  if ($Scope -eq [System.EnvironmentVariableTarget]::User) {
-    $keyHive = 'HKEY_CURRENT_USER'
-    $registryKey = "Environment"
-    [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($registryKey)
-  }
-
-  [Microsoft.Win32.RegistryValueKind]$registryType = [Microsoft.Win32.RegistryValueKind]::String
-  try {
-    if ($win32RegistryKey.GetValueNames() -contains $Name)
-    {
-      $registryType = $win32RegistryKey.GetValueKind($Name)
+    if ($Scope -eq [System.EnvironmentVariableTarget]::Process -or $Value -eq $null -or $Value -eq '') {
+        return [Environment]::SetEnvironmentVariable($Name, $Value, $Scope)
     }
-  } catch {
-    # the value doesn't yet exist
-    # move along, nothing to see here
-  }
-  Write-Debug "Registry type for $Name is/will be $registryType"
 
-  if ($Name -eq 'PATH') {
-    $registryType = [Microsoft.Win32.RegistryValueKind]::ExpandString
-  }
+    [string]$keyHive = 'HKEY_LOCAL_MACHINE'
+    [string]$registryKey = "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"
+    [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($registryKey)
+    if ($Scope -eq [System.EnvironmentVariableTarget]::User) {
+        $keyHive = 'HKEY_CURRENT_USER'
+        $registryKey = "Environment"
+        [Microsoft.Win32.RegistryKey] $win32RegistryKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($registryKey)
+    }
 
-  [Microsoft.Win32.Registry]::SetValue($keyHive + "\" + $registryKey, $Name, $Value, $registryType)
+    [Microsoft.Win32.RegistryValueKind]$registryType = [Microsoft.Win32.RegistryValueKind]::String
+    try {
+        if ($win32RegistryKey.GetValueNames() -contains $Name) {
+            $registryType = $win32RegistryKey.GetValueKind($Name)
+        }
+    }
+    catch {
+        # the value doesn't yet exist
+        # move along, nothing to see here
+    }
+    Write-Debug "Registry type for $Name is/will be $registryType"
 
-  try {
-    # make everything refresh
-    # because sometimes explorer.exe just doesn't get the message that things were updated.
-    if (-not ("win32.nativemethods" -as [type])) {
-        # import sendmessagetimeout from win32
-        add-type -Namespace Win32 -Name NativeMethods -MemberDefinition @"
+    if ($Name -eq 'PATH') {
+        $registryType = [Microsoft.Win32.RegistryValueKind]::ExpandString
+    }
+
+    [Microsoft.Win32.Registry]::SetValue($keyHive + "\" + $registryKey, $Name, $Value, $registryType)
+
+    try {
+        # make everything refresh
+        # because sometimes explorer.exe just doesn't get the message that things were updated.
+        if (-not ("win32.nativemethods" -as [type])) {
+            # import sendmessagetimeout from win32
+            Add-Type -Namespace Win32 -Name NativeMethods -MemberDefinition @"
 [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 public static extern IntPtr SendMessageTimeout(
     IntPtr hWnd, uint Msg, UIntPtr wParam, string lParam,
     uint fuFlags, uint uTimeout, out UIntPtr lpdwResult);
 "@
+        }
+
+        $HWND_BROADCAST = [intptr]0xffff;
+        $WM_SETTINGCHANGE = 0x1a;
+        $result = [uintptr]::zero
+
+        # notify all windows of environment block change
+        [win32.nativemethods]::SendMessageTimeout($HWND_BROADCAST, $WM_SETTINGCHANGE, [uintptr]::Zero, "Environment", 2, 5000, [ref]$result) | Out-Null
+
+        # Set a user environment variable making the system refresh
+        $setx = "$($env:SystemRoot)\System32\setx.exe"
+        & "$setx" ChocolateyLastPathUpdate `"$((Get-Date).ToFileTime())`" | Out-Null
+    }
+    catch {
+        Write-Warning "Failure attempting to let Explorer know about updated environment settings.`n  $($_.Exception.Message)"
     }
 
-    $HWND_BROADCAST = [intptr]0xffff;
-    $WM_SETTINGCHANGE = 0x1a;
-    $result = [uintptr]::zero
-
-    # notify all windows of environment block change
-    [win32.nativemethods]::SendMessageTimeout($HWND_BROADCAST, $WM_SETTINGCHANGE,  [uintptr]::Zero, "Environment", 2, 5000, [ref]$result) | Out-Null
-
-    # Set a user environment variable making the system refresh
-    $setx = "$($env:SystemRoot)\System32\setx.exe"
-    & "$setx" ChocolateyLastPathUpdate `"$((Get-Date).ToFileTime())`" | Out-Null
-  } catch {
-    Write-Warning "Failure attempting to let Explorer know about updated environment settings.`n  $($_.Exception.Message)"
-  }
-
-  Update-SessionEnvironment
+    Update-SessionEnvironment
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA71V8qHSfbMiUY
-# pGGCCIvaAzVNL1wibBxzpz0GwFMheKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCBkgOQ4Avnj1iK
+# H7oaZfnNGQVkYLA6zfCUaBqhOLwzBaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -293,28 +294,28 @@ public static extern IntPtr SendMessageTimeout(
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgr4CPXY/O58gylVBpyvHx22cjrnB+xMCuqZ8qU7S9LwkwDQYJ
-# KoZIhvcNAQEBBQAEggEAGcmvPz4E++yH7R41lqFCmbm4uZ8Mr8nZ/7H91ndoujGu
-# 5rDTOkOYa+3C4NDv3WImFYCSjya8PxrjlVH7Il4ePRv92aR9/cl3kiDNWQ7OWMgZ
-# Z1WvNBwEdxuZGY9KCGD4goNttM5IC2oEbicb7wHY5i+d2hKS+jJbcAVevI9CYp37
-# bAsE+hITDrxPivjDML2rzIuMGW0h9ZqUZxHUYZeXkhtrrdevIIHrz6BgG+0XmPRM
-# Q1S5zr3FH1Gza+x9OLHIsC+iBwOXOF7xBiDZs80V6QyY3rMLpyC1YjSzLCV67SxG
-# MzW/AuJwlwoRmTh/euCLMiLzQyjgNfsRFrOUZjpiVaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgZInfV8ERZIPTiKyEIqC4CS/I0qMrpUqX9ayvJcRdqBEwDQYJ
+# KoZIhvcNAQEBBQAEggEAnyNG2bk+ovl9XaHrz1dypkY8QZ+uMnwlWuunN5Kh47M0
+# MryHux01rMLocmjme6DtdDc5hKpQRL5sFh0OskjkNqZKYjP9qPkBXWIOBdoZoKpM
+# rrPYR5+VHeTCHdxscNw4A/GYlOon5vcGs+zA/WW7PMZ+TAyJBy6JkwTAZX0C4n5K
+# rid9OBdzWqCG8s8ncEwfbtj0EOi5CsAzKh4KCH8GeX89Fwwlu4f3CR/IBDgeHqrg
+# 8/H3qSN0g4jMHknQRjF7T9o0FcbI4rMqtfZDVZlNl7DnDdsis1Bgzr+tqImdxXOz
+# AdtQ+E1N1+k6bfB1jw+DijKRnGQ/gagZMxGsWZmDg6GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCAD1tZD6vH3Bq8ernxNHvcJ
-# RwwfglU5XN+FC1vdaAdwGjANBgkqhkiG9w0BAQEFAASCAgAmEHlsDDkJWIkXrd8h
-# lMnFgDyc5rib9UmOqdNq3Emdv8huc91qHtS1ZMOgyrIux4VGwHgU+YFw+iECerIr
-# 5D/b4hUIMiDWS0Rgp3SSwJOknTXzLAOGYkKmADLupS+md0vxoMe0UPLGNBv8vv6c
-# Jkyatzp4RBsGJFm42WdYbfzKgSOrHXtG2es2WhDepIG3Pc7ltBdZsuDeT4RjM+OW
-# w+VJJ/v395thqg5HzV0lxXfrue1nBpvRO7r3F41rtbcjS+mlpr4Scqy4pnF0cEqy
-# kgZep2ffnFiufJEB1UzSX09SW7pE8FGlrNjP8kwxYafw3eikqv7OOw31CT6EbFwS
-# /5Wwg6VfcN/O0XzBqizCF54PSo1/sFxSULZ1Z4qATNAy/Y/U6hS3GjHjToS4E+kx
-# JaTuJDQG5ENLTF6kUHzRduay+PZIHFBe5hhAwSh17rAr4ijRfd47APte/QiSQWfd
-# JrDXMXpcRbyXniFeR1LajpVLaZRygvQwJBzCz4eqtcJFRmXrteL5ajk95azKasyk
-# +PU8WEqaagzcxofqydkZ8nNeyjirmnNlsIkGRnH3GJV08Ed8KSzZw21pnSR2PCjU
-# 1JVRyE7muMDQFdqVcLQjgJ3UU/qJVdGtOyoLAqaLeSveM2HscfDFrR9I9R6/Xwpy
-# pfqthV/XsWJ96MRnPv9ofe/FXg==
+# Fw0yMzA1MzAxNjQ4NTlaMC8GCSqGSIb3DQEJBDEiBCBPGLP+zB7BpM21r8gkTDvx
+# +J5uwdeZLEKXOnzG7u4OWjANBgkqhkiG9w0BAQEFAASCAgCWhmLiPPSCq/7/8XyA
+# l94xpEjJbLeJE6BTaXloYRu2sb6ewe9ewyoAdBSZIx14NbVi32gvsWAuw6ieFWcu
+# hkBvUtOUwuJyIV7FCdLJav2NoZrt4Lr9Jh/7sXzCZ3pUKlinAzHFUinNRmOOdyXF
+# JmNXCZIo99H2EkGAb+kYiwVjtFxkzIvYbq/4RsFjXm787HOxeYUBA6myeW4gkuyD
+# ONAJOyhTgVLqRqW3yZZrsTXxT61Jc9OJWqjJn5TKYCRvE6dzh8mBs7wIMTNo6ak1
+# Ap9tguu4xNNqRZwJ2iEP/y3VFfENaxuELL0OyLA8Jn8e2WwrQgcdloM5i18QuGVR
+# 88XIrdMZhh5aRuOX4WmKkSo9XuRVqRXIdoIJyPG+Iyqx55ylBiBU8+P4VtvlFtZx
+# Yde2ZxffcRGKs0lPzGLeqxc2YMaH1tuqsq2QCU80XSh7yQULECRgFuiAEiNQn9/D
+# znCAyTpN0wMkgd2rdmxmnYrxycPOzLMxSjBOObJ1Hx+h391e8Rdu5Ui9MEnMPE59
+# +GIndTl1WDWtVvrdy9DItrAwjRAHDxzps0KyTPibbO3Pb8dQX5Kaqv30jEahLmU2
+# 0lQC3x2BXSz280uNMiDEdJge+pIC1gF6PjIEwXlYm6UVd0iRG6DELTbvbc66zrxm
+# Erosr1jC7C4qOUYkwhJmNVRHiQ==
 # SIG # End signature block

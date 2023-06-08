@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyPinnedTaskBarItem {
-<#
+    <#
 .SYNOPSIS
 Creates an item in the task bar linking to the provided path.
 
@@ -47,44 +47,47 @@ Install-ChocolateyShortcut
 .LINK
 Install-ChocolateyExplorerMenuItem
 #>
-param(
-  [parameter(Mandatory=$true, Position=0)][string] $targetFilePath,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]]$ignoredArguments
-)
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $targetFilePath,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]]$ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
- 
-  try{
-	if (test-path($targetFilePath)) {
-		$verb = "Pin To Taskbar"
-		$path= split-path $targetFilePath
-		$shell=new-object -com "Shell.Application"
-		$folder=$shell.Namespace($path)
-		$item = $folder.Parsename((split-path $targetFilePath -leaf))
-		$itemVerb = $item.Verbs() | Where-Object {$_.Name.Replace("&","") -eq $verb}
-		if($itemVerb -eq $null){
-			Write-Host "TaskBar verb not found for $item. It may have already been pinned"
-		} else {
-			$itemVerb.DoIt()
-		}
-		Write-Host "`'$targetFilePath`' has been pinned to the task bar on your desktop"
-	} else {
-		$errorMessage = "`'$targetFilePath`' does not exist, not able to pin to task bar"
-	}
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-	if ($errorMessage) {
-		Write-Warning $errorMessage
-	}
-  } catch {
-	 Write-Warning "Unable to create pin. Error captured was $($_.Exception.Message)."
-  }
+    try {
+        if (Test-Path($targetFilePath)) {
+            $verb = "Pin To Taskbar"
+            $path = Split-Path $targetFilePath
+            $shell = New-Object -com "Shell.Application"
+            $folder = $shell.Namespace($path)
+            $item = $folder.Parsename((Split-Path $targetFilePath -Leaf))
+            $itemVerb = $item.Verbs() | Where-Object { $_.Name.Replace("&", "") -eq $verb }
+            if ($itemVerb -eq $null) {
+                Write-Host "TaskBar verb not found for $item. It may have already been pinned"
+            }
+            else {
+                $itemVerb.DoIt()
+            }
+            Write-Host "`'$targetFilePath`' has been pinned to the task bar on your desktop"
+        }
+        else {
+            $errorMessage = "`'$targetFilePath`' does not exist, not able to pin to task bar"
+        }
+
+        if ($errorMessage) {
+            Write-Warning $errorMessage
+        }
+    }
+    catch {
+        Write-Warning "Unable to create pin. Error captured was $($_.Exception.Message)."
+    }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCh6MNWfYg9KrKG
-# AM2td6lvKFb/BjXAu5KiG8LrFWxnR6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCACPNT8H8lk6G+z
+# J5mz3jzyUCC6QP631eSzsXMvk6y786CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -247,28 +250,28 @@ param(
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgQyNo8oNzC+hJUmuKVCZMkly/yV4Ft9mvZi6A+YqwnwQwDQYJ
-# KoZIhvcNAQEBBQAEggEATFJDXUmtpUmYnGHSwP04I48MHeb+yaBNsrk0f9YQzpYx
-# CMRWj/ocXGeYzNaGdgaHVGZY4X8xm8J+WQDPu3BxsfPnSr+aB58XiWh+y7awH1Iv
-# +qKheoKr5GX8GxW9nVTuATD5KrkJrwjRY+2mMKmWWjprZMSZjLin7ItOL5qzOdVk
-# Pperz+iexiND2SBPk62gChZpHSrB+vgP3VDcnJiZD9fY/3xtf1LJYi7KRL3hPj8A
-# C2npVjpNt/zInijNMDuPTHwZGZoTRdD9U273C7HFrbq8P0Ff/EirPtLs4x5PVsi4
-# eVySlQcAM9UBmuuMTf45nuaAm9clCABXe2HHFSU4j6GCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgcs2eIScqtI1/2CZrmdUzNZquMnDTRhz012J2tOzddfYwDQYJ
+# KoZIhvcNAQEBBQAEggEAATBOZwzWSfa932ve1eLYRhGbk8N1DcMlgjKFW5G/OfgT
+# t1ufUkUr3cGqgTmTLouEJF6D70ryqRLxhFk4vtjWCwYhzgW27v8etIlKuJgzkOGK
+# oa67i2pAvCCM0GSIrKQtDriMXu8fN5qVCK6UM9ls6wNCQrGAUQKtFsldME1zamTf
+# 8CgDbycNcEotwgP3x8gXGV9efJLOZJW/TNuVJqrdUpBvOnzOKZmazydI9N0MDkHm
+# 29rpqOp/LwC6nkUcF1gW+BHnbAwY9+yCZhJsYVS6mKb0dw5IvY1piP18REOtafjO
+# FkPwVNpcgLpsv2A/DE9vmYz2bhLn3mMUm0wCBu0Y0qGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCAVcPvi65ixUmd7xaI2OYv6
-# I8sK3Y6nKuR/4jn34OmDljANBgkqhkiG9w0BAQEFAASCAgAc3IssHhnyY3q9qy7w
-# VeB1ZWOFvpR43n5hs4v2SkjBLSaYKD/LhfXVxROQ5kkg9pxneFyLnlkHhQIVKvmy
-# k9kTcXCB6KeRcpRkrrmbelGX7mwNvatZMpwZ1+Ak3Fal5HMiQERQRRSASJzC/NJ6
-# ocOpCd1gTYGl4nTJLmdpbiidLFVjui2LibZEb49G1JGj6SRsZQ639sFpN90H0mPv
-# mZFvo3eDKiv+reqDaHi7VR/iDLc3qOn/0Xy8dSMEfI1DkrT6TDot5hnzHMigGoH9
-# /VjpsgsxfOfjeH2aDOFm4SO64XATd+0ZfyC8IX0bnIlw70VwhSgouu12+t3nrWa3
-# oW/8JcHS/FQVoOIHvlMbLbkvvHp/KEhVAHQyfZK8eaM5YdXKsn+TW1bftn2SXhZK
-# XTVnMcVCBsTr18ulX/+A80Ti14fvtpYIlFiMPOGeF52x5NHzpU9DV0gpXgNwUxeu
-# yj9m8imfHTpM7U3pZIPTzvcxtm74xLwRlfQUMsLIsJp6k5YkuN0hk1aMfvLQYymv
-# M740aka+8+eDNphJ8BvXfVsO/9fbMdpQrvT8M+dht5hd8L93t8NqQn+AE8qFVyyO
-# EOXlb7ry3/NR5xuKE3aPL9loKxg3DKQqWUWu6YxzgmAW7hoArmxrockJu8rXTuqD
-# r0PXGXOWXF9wk9cBSCUmxdCegA==
+# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCDKt4k8lH/T7lXxCAPguMmR
+# EeuOZWyp6kxb1Xr+iP6J8jANBgkqhkiG9w0BAQEFAASCAgBOdTVt36OR6Sueh7S+
+# d3x0qgJHwE47Q/pZSueep6uE+a1Djd1EVpKiBQulGubc0ggjn3RvtnWP2/doafEj
+# p3xH3G+xGloMrVtBwFU+Zcdd5PrkI/nj8O2Mdg/LT5owsgvBPac2TZcZIZf8HfRt
+# HtFcRKgiACcSjLMQilEf4HCQJ0oVH9oP4YeK5woGqx3WbgWo6e0o9NfBt54hU1X9
+# dpPH6JlpbRiFPWx6h5EudBLY2J1zs4ZmyBjveYJTu4tzTXMpQwH0ODq5wxDVnUEB
+# s2u/dfx2/miqpaJj3gLi8BBbyVgyiWAFkoOcY5/mnnHdaZyHGIClPJ/qOPw91B+K
+# DVK97kvamvKTN1ky20oqOzVSQ1f5aeqrl41pyQErFK94yzRh+pa4uQC3q+JjAycP
+# kf8VUhGm1SVhajYgWNzGCnEdD2DfpA1mYZ+zFu9BA1+nl/+zmCSmAGP8Nc4iyrFH
+# rjCrJP8SeqI5OOzWnsFOT5hjDg5qs1iBRnSp96Qc4AQdvbG3mVkveVGIrsydR0ZU
+# WhsoE7jkCovDZ87VRnpXjwtkhkrWiy2MeLueO8TjMD926VLVLrjRk+fjeSZzhfQu
+# YS/PhZNMr++zTGzLQEfOiRberLsrkIUid8zdojofZZcqdZKyoDfyu1J1V0Qfvq3V
+# 3SF6yXFP3Ste3ex79czWpISQrA==
 # SIG # End signature block

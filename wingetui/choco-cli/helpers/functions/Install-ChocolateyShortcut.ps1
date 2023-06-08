@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyShortcut {
-<#
+    <#
 .SYNOPSIS
 Creates a shortcut
 
@@ -45,8 +45,8 @@ The full absolute path to the target for new shortcut.
 OPTIONAL - The full absolute path of the Working Directory that will be
 used by the new shortcut.
 
-As of v0.10.12, the directory will be created unless it contains environment
-variable expansion like `%AppData%\FooBar`.
+The directory will be created unless it contains environment variable
+expansion like `%AppData%\FooBar`.
 
 .PARAMETER Arguments
 OPTIONAL - Additional arguments that should be passed along to the new
@@ -61,16 +61,17 @@ OPTIONAL - A text description to be associated with the new description.
 
 .PARAMETER WindowStyle
 OPTIONAL - Type of windows target application should open with.
-Available in 0.9.10+.
+
 0 = Hidden, 1 = Normal Size, 3 = Maximized, 7 - Minimized.
+
 Full list table 3.9 here: https://technet.microsoft.com/en-us/library/ee156605.aspx
 
 .PARAMETER RunAsAdmin
 OPTIONAL - Set "Run As Administrator" checkbox for the created the
-shortcut. Available in 0.9.10+.
+shortcut.
 
 .PARAMETER PinToTaskbar
-OPTIONAL - Pin the new shortcut to the taskbar. Available in 0.9.10+.
+OPTIONAL - Pin the new shortcut to the taskbar.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
@@ -101,7 +102,6 @@ Install-ChocolateyShortcut `
 >
 # Creates a new notepad shortcut on the root of c: that starts
 # notepad.exe as Administrator. Shortcut is also pinned to taskbar.
-# These parameters are available in 0.9.10+.
 
 Install-ChocolateyShortcut `
   -ShortcutFilePath "C:\notepad.lnk" `
@@ -116,118 +116,122 @@ Install-ChocolateyExplorerMenuItem
 .LINK
 Install-ChocolateyPinnedTaskBarItem
 #>
-	param(
-    [parameter(Mandatory=$true, Position=0)][string] $shortcutFilePath,
-    [parameter(Mandatory=$true, Position=1)][string] $targetPath,
-    [parameter(Mandatory=$false, Position=2)][string] $workingDirectory,
-    [parameter(Mandatory=$false, Position=3)][string] $arguments,
-    [parameter(Mandatory=$false, Position=4)][string] $iconLocation,
-    [parameter(Mandatory=$false, Position=5)][string] $description,
-    [parameter(Mandatory=$false, Position=6)][int] $windowStyle,
-    [parameter(Mandatory=$false)][switch] $runAsAdmin,
-    [parameter(Mandatory=$false)][switch] $pinToTaskbar,
-    [parameter(ValueFromRemainingArguments = $true)][Object[]]$ignoredArguments
-	)
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $shortcutFilePath,
+        [parameter(Mandatory = $true, Position = 1)][string] $targetPath,
+        [parameter(Mandatory = $false, Position = 2)][string] $workingDirectory,
+        [parameter(Mandatory = $false, Position = 3)][string] $arguments,
+        [parameter(Mandatory = $false, Position = 4)][string] $iconLocation,
+        [parameter(Mandatory = $false, Position = 5)][string] $description,
+        [parameter(Mandatory = $false, Position = 6)][int] $windowStyle,
+        [parameter(Mandatory = $false)][switch] $runAsAdmin,
+        [parameter(Mandatory = $false)][switch] $pinToTaskbar,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]]$ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-	# http://powershell.com/cs/blogs/tips/archive/2009/02/05/validating-a-url.aspx
-	function isURIWeb($address) {
-	  $uri = $address -as [System.URI]
-	  $uri.AbsoluteURI -ne $null -and $uri.Scheme -match '[http|https]'
-	}
-
-  if (!$shortcutFilePath) {
-    # shortcut file path could be null if someone is trying to get special
-    # paths for LocalSystem (SYSTEM).
-    Write-Warning "Unable to create shortcut. `$shortcutFilePath can not be null."
-    return
-  }
-
-	$shortcutDirectory = $([System.IO.Path]::GetDirectoryName($shortcutFilePath))
-  if (!(Test-Path($shortcutDirectory))) {
-    [System.IO.Directory]::CreateDirectory($shortcutDirectory) | Out-Null
-  }
-
-	if (!$targetPath) {
-	  throw "Install-ChocolateyShortcut - `$targetPath can not be null."
-	}
-
-	if(!(Test-Path($targetPath)) -and !(IsURIWeb($targetPath))) {
-	  Write-Warning "'$targetPath' does not exist. If it is not created the shortcut will not be valid."
-	}
-
-	if($iconLocation) {
-		if(!(Test-Path($iconLocation))) {
-		  Write-Warning "'$iconLocation' does not exist. A default icon will be used."
-		}
-	}
-
-  if ($workingDirectory) {
-    if ($workingDirectory -notmatch '%\w+%' -and !(Test-Path($workingDirectory))) {
-      [System.IO.Directory]::CreateDirectory($workingDirectory) | Out-Null
-    }
-	}
-
-	Write-Debug "Creating Shortcut..."
-	try {
-		$global:WshShell = New-Object -com "WScript.Shell"
-	    $lnk = $global:WshShell.CreateShortcut($shortcutFilePath)
-	    $lnk.TargetPath = $targetPath
-		$lnk.WorkingDirectory = $workingDirectory
-	    $lnk.Arguments = $arguments
-	    if($iconLocation) {
-	      $lnk.IconLocation = $iconLocation
-	    }
-		if ($description) {
-		  $lnk.Description = $description
-		}
-
-    if ($windowStyle) {
-      $lnk.WindowStyle = $windowStyle
+    # http://powershell.com/cs/blogs/tips/archive/2009/02/05/validating-a-url.aspx
+    function isURIWeb($address) {
+        $uri = $address -as [System.URI]
+        $uri.AbsoluteURI -ne $null -and $uri.Scheme -match '[http|https]'
     }
 
-    $lnk.Save()
+    if (!$shortcutFilePath) {
+        # shortcut file path could be null if someone is trying to get special
+        # paths for LocalSystem (SYSTEM).
+        Write-Warning "Unable to create shortcut. `$shortcutFilePath can not be null."
+        return
+    }
 
-		Write-Debug "Shortcut created."
+    $shortcutDirectory = $([System.IO.Path]::GetDirectoryName($shortcutFilePath))
+    if (!(Test-Path($shortcutDirectory))) {
+        [System.IO.Directory]::CreateDirectory($shortcutDirectory) | Out-Null
+    }
 
-    [System.IO.FileInfo]$Path = $shortcutFilePath
-    If ($runAsAdmin) {
-      #In order to enable the "Run as Admin" checkbox, this code reads the .LNK as a stream
-      #  and flips a specific bit while writing a new copy.  It then replaces the original
-      #  .LNK with the copy, similar to this example: http://poshcode.org/2513
-      $TempFileName = [IO.Path]::GetRandomFileName()
-      $TempFile = [IO.FileInfo][IO.Path]::Combine($Path.Directory, $TempFileName)
-      $Writer = New-Object System.IO.FileStream $TempFile, ([System.IO.FileMode]::Create)
-      $Reader = $Path.OpenRead()
-      While ($Reader.Position -lt $Reader.Length) {
-        $Byte = $Reader.ReadByte()
-        If ($Reader.Position -eq 22) {$Byte = 34}
-        $Writer.WriteByte($Byte)
+    if (!$targetPath) {
+        throw "Install-ChocolateyShortcut - `$targetPath can not be null."
+    }
+
+    if (!(Test-Path($targetPath)) -and !(IsURIWeb($targetPath))) {
+        Write-Warning "'$targetPath' does not exist. If it is not created the shortcut will not be valid."
+    }
+
+    if ($iconLocation) {
+        if (!(Test-Path($iconLocation))) {
+            Write-Warning "'$iconLocation' does not exist. A default icon will be used."
         }
-      $Reader.Close()
-      $Writer.Close()
-      $Path.Delete()
-      Rename-Item -Path $TempFile -NewName $Path.Name | Out-Null
     }
 
-    If ($pinToTaskbar) {
-      $scfilename = $Path.FullName
-      $pinverb = (new-object -com "shell.application").namespace($(split-path -parent $Path.FullName)).Parsename($(split-path -leaf $Path.FullName)).verbs() | 
-        Where-Object{$_.Name -eq 'Pin to Tas&kbar'}
-      If ($pinverb) { $pinverb.doit() }
+    if ($workingDirectory) {
+        if ($workingDirectory -notmatch '%\w+%' -and !(Test-Path($workingDirectory))) {
+            [System.IO.Directory]::CreateDirectory($workingDirectory) | Out-Null
+        }
     }
-	}
-	catch {
-		Write-Warning "Unable to create shortcut. Error captured was $($_.Exception.Message)."
-	}
+
+    Write-Debug "Creating Shortcut..."
+    try {
+        $global:WshShell = New-Object -com "WScript.Shell"
+        $lnk = $global:WshShell.CreateShortcut($shortcutFilePath)
+        $lnk.TargetPath = $targetPath
+        $lnk.WorkingDirectory = $workingDirectory
+        $lnk.Arguments = $arguments
+        if ($iconLocation) {
+            $lnk.IconLocation = $iconLocation
+        }
+        if ($description) {
+            $lnk.Description = $description
+        }
+
+        if ($windowStyle) {
+            $lnk.WindowStyle = $windowStyle
+        }
+
+        $lnk.Save()
+
+        Write-Debug "Shortcut created."
+
+        [System.IO.FileInfo]$Path = $shortcutFilePath
+        If ($runAsAdmin) {
+            #In order to enable the "Run as Admin" checkbox, this code reads the .LNK as a stream
+            #  and flips a specific bit while writing a new copy.  It then replaces the original
+            #  .LNK with the copy, similar to this example: http://poshcode.org/2513
+            $TempFileName = [IO.Path]::GetRandomFileName()
+            $TempFile = [IO.FileInfo][IO.Path]::Combine($Path.Directory, $TempFileName)
+            $Writer = New-Object System.IO.FileStream $TempFile, ([System.IO.FileMode]::Create)
+            $Reader = $Path.OpenRead()
+            While ($Reader.Position -lt $Reader.Length) {
+                $Byte = $Reader.ReadByte()
+                If ($Reader.Position -eq 22) {
+                    $Byte = 34
+                }
+                $Writer.WriteByte($Byte)
+            }
+            $Reader.Close()
+            $Writer.Close()
+            $Path.Delete()
+            Rename-Item -Path $TempFile -NewName $Path.Name | Out-Null
+        }
+
+        If ($pinToTaskbar) {
+            $scfilename = $Path.FullName
+            $pinverb = (New-Object -com "shell.application").namespace($(Split-Path -Parent $Path.FullName)).Parsename($(Split-Path -Leaf $Path.FullName)).verbs() |
+                Where-Object { $_.Name -eq 'Pin to Tas&kbar' }
+            If ($pinverb) {
+                $pinverb.doit()
+            }
+        }
+    }
+    catch {
+        Write-Warning "Unable to create shortcut. Error captured was $($_.Exception.Message)."
+    }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDk0cWQxqJIXQ5C
-# xF+kcyLXOM5zsaZ3iOud5Q9Q9dVWraCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBFpWm+N2Mljr+b
+# rOl3sHa2biRgJkri6s88vLvASyFsFqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -390,28 +394,28 @@ Install-ChocolateyPinnedTaskBarItem
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgmSVUtfXn2DTgNmu7MqmJtbTYjuX0u1JMTmgJjB6ya5QwDQYJ
-# KoZIhvcNAQEBBQAEggEAi8h49RmRSYKR/T0cUwj8z7nYI3vGsowNXlKolJQ1KKtU
-# J6HCuAUI3W7QZx15Y/g/Ahs738/JX0NBTBJik/Z/8b3edItLTgpdLEMHP0WxSWDT
-# Fcg2vPcbFSRZKTPN7uTfKKv6vdzPvxfA2wzLtvj1vvlpJqKkvWCbWKaKHV1tsJy5
-# XmSKZNTL2MJJqR4lB2sQNa5u1Dw5eg11dAFX+y3zF0gWTB5L3qOao6Z0rqqbaVPh
-# gMQHRLZJ70I3J9RqjXbI/YVRP4vtKWTIxiloRfSlfpI5nb3cz8Qzm8Ck93bVm0S+
-# NdsCmZgaUQ+kydDrancYHAwOXsVnFb7CWmK5muJQYKGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgZHEhAzkbl2xDw1092MMhBBO+PcATFf1XHmqLqp42wsQwDQYJ
+# KoZIhvcNAQEBBQAEggEAlHH6hU4iFlCsp4WJgeX/SsEcoxxiYnLiIVQV9NaYHkWe
+# Zm9Mnbf2Axzv8Wx4DELJlKN7E7tlS1ZRBLAS/M6kyh28/0tnqGFCZUm1UzKu21Zy
+# TIQUCjx65DvE1eQC6+jdkX0+fXW+p4jrzNtBpdnV9p5Ngnjkp+Byn7abs7ZoehTa
+# Lr3LXn/5jysCYM4Lf9C7d7DTWQFWZJCclkYteLQxOVJ1mHtV+q6k3HAfNxWfbwTh
+# AWDNxHu5HA3EEUoNBgxhEVXGcP+TO/rfPOSc1TwxEpQnDjfqh0tgGl0ty02+UB2+
+# O56IPQ+6RlzbTkZ2KDF3zMxuauotxeNV8rTRjkYVS6GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCAATgmNYxXYP9pqKQp8XszO
-# aC4wmg8vckRhkTnK04MCfTANBgkqhkiG9w0BAQEFAASCAgAXJTR7WYNN9uYU4qjy
-# 7dJXW315SHBQdAmzGl21juMOlnS6K7xBJogHdoESTJy2eahu1YrnjyV7r/kvku8C
-# tJi5aoqfIfiHgHMx0Kc8pQwfv1In9jCvNGk+1jWmU6WnG4/3QGNoIRLJM3BLBIFt
-# oVKB18M0CXLkjC6cQyk86zL58OiUWOavayVece9FSmGUf4joyjZmZ4mULUb0KtFl
-# x7Lv9hQWhxSRxIafQFk9xcpK9Hxb+LKSqNnXykIUmzgguzqtJlcBP1yzPeNARQRk
-# no7bAdHKrbjtwdEPQze6JT/faNC0RFvcbWu7M5cH6bNH4jU+q+nopuHQMFHcGu3z
-# tksukLNwzM0eSPAvqACdI01tWIcwh9Kcd7C//ksy2f39tiuUgbBE1bKbhxMIbCcY
-# aK3RyuTlJg0I0/NiN7l34iyJAddk+l5XrWXtb3mGcRTl015eNFYOesP1jNiTKk1V
-# w/MI7boLIhwx9A5SiYpqlhnMtFsrCmMyyANQ9swuLlZadSbX0jWFcLcNp66vgGOh
-# ZIDcm3GN66FSrDE+XZOsgfbD/1c7B5GYtc7+54ebX+6+isV11mA/9tnOLdpWBuan
-# k0TGyb0/NaazeUFhgyDY2BGMiMzeQkgQyN5+H9AEkP2pPGt3CW5Dt8YTsN50xNHu
-# Oe5FkXqbYEtpQ/yEcEYjkx+XPA==
+# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCBfcnarOG7bespezECsqVub
+# nOVvDDlprocBToVcwk8jNTANBgkqhkiG9w0BAQEFAASCAgBvmnztiw1zKh4nluZi
+# 8XSaeabqefoGoH3GijCeJMlUIFBjBAKRhCV0HwoaBbvxyMXl1TZGXveW6WvIK8xZ
+# W+SLW5e/djVToD3WFj85z0eTUQBAZL4OpFCMjQfoOS6XW8zw5pTxiOgMM/uTYBcM
+# jUNXaeP8Mssw+deBSAimOGv9qn0Yoq5oh7AYunyT1qL2MvA0Z17dhcqAR8bXNe2b
+# 2CGfHsZ4IaI9kiBtChgW7z3+yeGmH45k2/PfLGm6wScpf4Gvc6dj+VaAXJNRSvt8
+# b1jrby1GX9UNNtfY6NvgfHZxb0YjoY9lO4A3IUkg4vei4fpFCJWPOS/2lOLuGhkH
+# bkiR/XrqzgojpttH9ko5kMtpVDf3t7Iei1v6koufSajHpihVbM0miuDh7pXwnvYJ
+# n2HeH/VmHMzK3GOExxejdukYXjfSgzE162KP15nxSjn+G7ghFy/UHj8OmroXLNQi
+# khk5GV6Oe5gpW7tPt7riXv53DkjyqO+AdaFn2ZVNLTwJnUrXl1J8b5C+PI9RFAMQ
+# h7vx5hQe078hiQUTgo6w3l9uKtE47+ix7UGwonDV9D4041VkUcTJ+nOuD9CnZo6g
+# LyQ1kjCheYV6FBN2is8/XgohiPB1Lbvmb77nEWVnQR/x6x8pEU3fm5B6V0FQye5D
+# VGV+YcYB0iNU33sbYBmY58dJKg==
 # SIG # End signature block
