@@ -246,6 +246,7 @@ class ChocoPackageManager(SamplePackageManager):
         print(f"🔵 Starting {package} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
+        return p
         
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         Command = [self.EXECUTABLE, "upgrade", package.Id, "-y"] + self.getParameters(options)
@@ -254,6 +255,7 @@ class ChocoPackageManager(SamplePackageManager):
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
+        return p
 
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
@@ -283,6 +285,7 @@ class ChocoPackageManager(SamplePackageManager):
         print(f"🔵 Starting {package} uninstall with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstalling {package.Name}").start()
+        return p
 
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         outputCode = RETURNCODE_OPERATION_SUCCEEDED

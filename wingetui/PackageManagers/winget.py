@@ -585,7 +585,7 @@ class WingetPackageManager(DynamicPackageManager):
             Parameters.append("--ignore-security-hash")
         if options.Version:
             Parameters += ["--version", options.Version, "--force"]
-        Parameters += ["--accept-package-agreements"] # TODO: --disable-interactivity
+        Parameters += ["--disable-interactivity"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
@@ -597,6 +597,7 @@ class WingetPackageManager(DynamicPackageManager):
         print(f"🔵 Starting {package} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
+        return p
     
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
@@ -607,6 +608,7 @@ class WingetPackageManager(DynamicPackageManager):
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
+        return p
 
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
@@ -626,7 +628,7 @@ class WingetPackageManager(DynamicPackageManager):
                 outputCode = RETURNCODE_NEEDS_RESTART
             case other:
                 outputCode = p.returncode
-        if "No applicable upgrade found" in output:
+        if "No applicable upgrade found" in output or "No newer package versions are available from the configured sources" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
         
@@ -640,6 +642,7 @@ class WingetPackageManager(DynamicPackageManager):
         print(f"🔵 Starting {package} uninstall with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
+        return p
 
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         counter = RETURNCODE_OPERATION_SUCCEEDED
