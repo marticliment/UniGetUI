@@ -188,7 +188,7 @@ class ScoopPackageManager(SamplePackageManager):
         details = PackageDetails(package)
         try:
             unknownStr = _("Not available")
-            bucket = "main" if len(package.Id.split("/")) == 1 else package.Id.split('/')[0]
+            bucket = "main" if len(package.Source.split(": ")) == 1 else package.Source.split(': ')[-1]
             if bucket in globals.scoopBuckets:
                 bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
             else:
