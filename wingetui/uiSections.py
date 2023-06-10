@@ -638,10 +638,10 @@ class UpdateSoftwareSection(SoftwareSection):
                 if globals.ENABLE_UPDATES_NOTIFICATIONS:
                     t.show()
                     
-            globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
             self.packageList.label.setText("")
         else:
-            globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
+            globals.tray_is_available_updates = False
+            update_tray_icon()
         self.updatePackageNumber()
         self.filter()
         if not getSettings("DisableAutoCheckforUpdates"):
@@ -782,7 +782,6 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.updatesAction.setIcon(QIcon(getMedia("alert_laptop")))
             globals.app.uaAction.setEnabled(True)
             globals.trayMenuUpdatesList.menuAction().setEnabled(True)
-            globals.trayIcon.setIcon(QIcon(getMedia("greenicon")))
         else:
             trayIconToolTip = _("WingetUI - Everything is up to date")
             trayMenuText = _("No updates are available")
@@ -791,7 +790,6 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.app.uaAction.setEnabled(False)
             globals.trayMenuUpdatesList.menuAction().setEnabled(False)
             globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
-            globals.trayIcon.setIcon(QIcon(getMedia("greyicon")))
             self.SectionImage.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
         globals.trayIcon.setToolTip(trayIconToolTip)
         globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)

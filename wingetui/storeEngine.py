@@ -178,6 +178,8 @@ class PackageInstallerWidget(QWidget):
         self.progressbar.setStyleSheet(f"QProgressBar::chunk{{border-top-left-radius: 0px;border-top-right-radius: 0px;margin-right: 2px;margin-left: 2px;background-color: {color}}}")
 
     def runInstallation(self) -> None:
+        globals.tray_is_installing = True
+        self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
         self.addInfoLine.emit(_("Running the installer..."))
@@ -245,6 +247,8 @@ class PackageInstallerWidget(QWidget):
             subprocess.run([GSUDO_EXECUTABLE, Winget.EXECUTABLE, "settings", "--enable", "InstallerHashOverride"], shell=True)
             self.runInstallation()
             return
+        globals.tray_is_installing = False
+        update_tray_icon()
         self.finishedInstallation = True
         self.cancelButton.setEnabled(True)
         removeProgram(self.installId)
@@ -279,6 +283,8 @@ class PackageInstallerWidget(QWidget):
                     t.show()
                 self.cancelButton.setIcon(QIcon(getMedia("restart_color", autoIconMode = False)))
                 self.liveOutputButton.setText(_("Restart your PC to finish installation"))
+                globals.tray_is_needs_restart = True
+                update_tray_icon()
             if type(self) == PackageInstallerWidget:
                 self.Package.PackageItem.setCheckState(0, Qt.CheckState.Unchecked)
                 if not self.Package.Id in globals.uninstall.IdPackageReference.keys():    
@@ -286,8 +292,9 @@ class PackageInstallerWidget(QWidget):
                     globals.uninstall.addItem(self.Package)
                     globals.uninstall.updatePackageNumber()
         else:
+            globals.tray_is_error = True
+            update_tray_icon()
             self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
-            globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
             self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
             self.err = CustomMessageBox(self.window())
             warnIcon = QIcon(getMedia("notif_warn"))
@@ -400,12 +407,16 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.label.setText(_("{0} update").format(package.Name))
 
     def runInstallation(self) -> None:
+        globals.tray_is_installing = True
+        globals.tray_is_available_updates = False
+        self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.addInfoLine.emit(_("Running the updater..."))
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
         self.leftSlow.start()
         self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startUpdate(self.Package, self.Options, self)
+        AddOperationToLog("update", self.Package, '"'+' '.join(self.p.args)+'"')
 
     def finish(self, returncode: int, output: str = "") -> None:
         if returncode in (RETURNCODE_NEEDS_ELEVATION, RETURNCODE_NEEDS_SCOOP_ELEVATION):
@@ -417,6 +428,8 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.runInstallation()
             return
         else:
+            globals.tray_is_installing = False
+            update_tray_icon()
             self.leftSlow.stop()
             self.leftFast.stop()
             self.rightSlow.stop()
@@ -467,12 +480,15 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.label.setText(_("{0} Uninstallation").format(package.Name))
 
     def runInstallation(self) -> None:
+        globals.tray_is_installing = True
+        self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
         self.leftSlow.start()
         self.addInfoLine.emit(_("Running the uninstaller..."))
         self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startUninstallation(self.Package, self.Options, self)
+        AddOperationToLog("installation", self.Package, '"'+' '.join(self.p.args)+'"')
 
     def counter(self, line: int) -> None:
         if(line == 1):
@@ -523,6 +539,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.runInstallation()
             return
         else:
+            globals.tray_is_installing = False
+            update_tray_icon()
             self.leftSlow.stop()
             self.leftFast.stop()
             self.rightSlow.stop()
@@ -580,8 +598,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     if globals.ENABLE_SUCCESS_NOTIFICATIONS:
                         t.show()
                 else:
+                    globals.tray_is_error = True
+                    update_tray_icon()
                     self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
-                    globals.trayIcon.setIcon(QIcon(getMedia("yellowicon")))
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("warn", autoIconMode = False)))
                     self.cancelButton.clicked.connect(self.close)

@@ -73,3 +73,8 @@ ENABLE_WINGETUI_NOTIFICATIONS = True
 ENABLE_SUCCESS_NOTIFICATIONS = True
 ENABLE_ERROR_NOTIFICATIONS = True
 ENABLE_UPDATES_NOTIFICATIONS = True
+
+tray_is_installing: bool = False
+tray_is_error: bool = False
+tray_is_available_updates: bool = False
+tray_is_needs_restart: bool = False

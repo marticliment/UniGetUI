@@ -358,8 +358,8 @@ try:
                 try:
                     globals.trayIcon = QSystemTrayIcon()
                     self.trayIcon = globals.trayIcon
+                    update_tray_icon()
                     globals.app = self
-                    self.trayIcon.setIcon(QIcon(getMedia("icon", autoIconMode = False)))
                     self.trayIcon.setToolTip(_("Initializing WingetUI..."))
                     self.trayIcon.setVisible(True)
 

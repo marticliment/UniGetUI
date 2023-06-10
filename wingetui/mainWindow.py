@@ -255,7 +255,7 @@ class RootWindow(QMainWindow):
         self.hide()
         if globals.updatesAvailable:
             globals.canUpdate = True
-            if ENABLE_WINGETUI_NOTIFICATIONS:
+            if globals.ENABLE_WINGETUI_NOTIFICATIONS:
                 globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
         else:
             globals.lastFocusedWindow = 0

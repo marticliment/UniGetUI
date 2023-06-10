@@ -327,7 +327,6 @@ class DynamicScrollArea(QWidget):
         self.rss()
         self.itemCount = self.vlayout.count()
         if self.itemCount <= 0 and self.resizeBar:
-            globals.trayIcon.setIcon(QIcon(getMedia("greyicon"))) 
             self.resizeBar.hide()
 
     def addItem(self, item: QWidget):
@@ -341,7 +340,6 @@ class DynamicScrollArea(QWidget):
         item.setEnabled(True)
         if self.resizeBar:
             self.resizeBar.show()
-            globals.trayIcon.setIcon(QIcon(getMedia("icon")))
 
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction

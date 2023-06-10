@@ -201,6 +201,25 @@ def checkQueue():
             except IndexError:
                 pass
         time.sleep(0.2)
+        
+def AddOperationToLog(operation: str, package, commandline: str):
+    currentInstallations = getSettingsValue("OperationHistory").split("\n--------------------------------\n")
+    stringToAdd =  f" Operation: {operation} the {str(datetime.now())}\n"
+    stringToAdd += f" Package: {str(package)}\n"
+    stringToAdd += f" Command-line call: {commandline}"
+    setSettingsValue("OperationHistory", "\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
+
+def update_tray_icon():
+    if globals.tray_is_error:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_orange")))
+    elif globals.tray_is_needs_restart:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_turquoise")))
+    elif globals.tray_is_installing:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
+    elif globals.tray_is_available_updates:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_green")))
+    else:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_empty")))
 
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
@@ -236,10 +255,21 @@ def getPath(s: str) -> str:
 def getIconMode() -> str:
     return "white" if isDark() else "black"
 
+def getTaskbarIconMode() -> str:
+    return "white" if isTaskbarDark() else "black"
+
 def getMedia(m: str, autoIconMode = True) -> str:
     filename = ""
     if autoIconMode == True:
         filename = getPath(f"{m}_{getIconMode()}.png")
+    if not filename or not os.path.exists(filename):
+        filename = getPath(f"{m}.png")
+    return filename
+
+def getTaskbarMedia(m: str, autoIconMode = True) -> str:
+    filename = ""
+    if autoIconMode == True:
+        filename = getPath(f"{m}_{getTaskbarIconMode()}.png")
     if not filename or not os.path.exists(filename):
         filename = getPath(f"{m}.png")
     return filename

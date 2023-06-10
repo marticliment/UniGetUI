@@ -213,6 +213,8 @@ class CustomMessageBox(QMainWindow):
             if self.isQuestion:
                 self.qanswer = 1
                 self.close()
+            globals.tray_is_error = False
+            update_tray_icon()
                 
         def returnFalse():
             if self.isQuestion:
