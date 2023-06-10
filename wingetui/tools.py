@@ -11,6 +11,7 @@ from versions import *
 from languages import *
 from external.blurwindow import GlobalBlur
 from pathlib import Path
+from datetime import datetime
 
 import globals
 
@@ -180,6 +181,9 @@ def isDark() -> bool:
             return False      
     return SYSTEM_THEME_ON_LAUNCH == 0
 
+def isTaskbarDark() -> bool:
+    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 1) == 0
+
 def queueProgram(id: str):
     globals.pending_programs.append(id)
 
@@ -207,6 +211,12 @@ def AddOperationToLog(operation: str, package, commandline: str):
     stringToAdd =  f" Operation: {operation} the {str(datetime.now())}\n"
     stringToAdd += f" Package: {str(package)}\n"
     stringToAdd += f" Command-line call: {commandline}"
+    setSettingsValue("OperationHistory", "\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
+    
+def AddResultToLog(operation: str, package, result: int):
+    currentInstallations = getSettingsValue("OperationHistory").split("\n--------------------------------\n")
+    stringToAdd =  f" Report for: {operation} of: {package}\n"
+    stringToAdd += f" Output code: {result}"
     setSettingsValue("OperationHistory", "\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
 
 def update_tray_icon():

@@ -602,6 +602,8 @@ class UpdateSoftwareSection(SoftwareSection):
                 count += 1
                 lastVisibleItem = item
         if count > 0:
+            globals.tray_is_available_updates = True
+            update_tray_icon()
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
                 self.updateAllPackageItems()
                 t = ToastNotification(self, self.callInMain.emit)
@@ -1780,26 +1782,27 @@ class SettingsSection(SmoothScrollArea):
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
 
-class DebuggingSection(QWidget):
+class BaseLogSection(QWidget):
     def __init__(self):
         super().__init__()
+        
         class QPlainTextEditWithFluentMenu(QPlainTextEdit):
-            def __init__(self):
+            def __init__(selftext):
                 super().__init__()
 
-            def contextMenuEvent(self, e: QContextMenuEvent) -> None:
-                menu = self.createStandardContextMenu()
+            def contextMenuEvent(selftext, e: QContextMenuEvent) -> None:
+                menu = selftext.createStandardContextMenu()
                 menu.addSeparator()
 
                 a = QAction()
-                a.setText(_("Reload log"))
-                a.triggered.connect(lambda: (print("🔵 Reloading log..."), self.setPlainText(stdout_buffer.getvalue()), self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())))
+                a.setText(_("Reload"))
+                a.triggered.connect(self.loadData)
                 menu.addAction(a)
 
                 
                 a4 = QAction()
                 a4.setText(_("Show missing translation strings"))
-                a4.triggered.connect(lambda: self.setPlainText('\n'.join(MissingTranslationList)))#buffer.getvalue()))
+                a4.triggered.connect(lambda: selftext.setPlainText('\n'.join(MissingTranslationList)))#buffer.getvalue()))
                 menu.addAction(a4)
 
 
@@ -1809,7 +1812,7 @@ class DebuggingSection(QWidget):
                 menu.addAction(a2)
 
                 a3 = QAction()
-                a3.setText(_("Copy log to clipboard"))
+                a3.setText(_("Copy to clipboard"))
                 a3.triggered.connect(lambda: copyLog())
                 menu.addAction(a3)
 
@@ -1832,12 +1835,12 @@ class DebuggingSection(QWidget):
 
         reloadButton = QPushButton(_("Reload log"))
         reloadButton.setFixedWidth(200)        
-        reloadButton.clicked.connect(lambda: (print("🔵 Reloading log..."), self.textEdit.setPlainText(stdout_buffer.getvalue()), self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())))
+        reloadButton.clicked.connect(self.loadData)
 
         def saveLog():
             try:
                 print("🔵 Saving log...")
-                f = QFileDialog.getSaveFileName(None, _("Export log"), os.path.expanduser("~"), f"{_('Text file')} (*.txt)")
+                f = QFileDialog.getSaveFileName(None, _("Export"), os.path.expanduser("~"), f"{_('Text file')} (*.txt)")
                 if f[0]:
                     fpath = f[0]
                     if not ".txt" in fpath.lower():
@@ -1855,7 +1858,7 @@ class DebuggingSection(QWidget):
                 report(e)
                 self.textEdit.setPlainText(stdout_buffer.getvalue())
 
-        exportButtom = QPushButton(_("Export log as a file"))
+        exportButtom = QPushButton(_("Export to a file"))
         exportButtom.setFixedWidth(200)
         exportButtom.clicked.connect(saveLog)
 
@@ -1869,7 +1872,7 @@ class DebuggingSection(QWidget):
                 report(e)
                 self.textEdit.setPlainText(stdout_buffer.getvalue())
 
-        copyButton = QPushButton(_("Copy log to clipboard"))
+        copyButton = QPushButton(_("Copy to clipboard"))
         copyButton.setFixedWidth(200)
         copyButton.clicked.connect(lambda: copyLog())
 
@@ -1888,9 +1891,34 @@ class DebuggingSection(QWidget):
 
         self.setAutoFillBackground(True)
 
+    def loadData(self):
+        raise NotImplementedError("Needs replacing")
+
     def showEvent(self, event: QShowEvent) -> None:
-        self.textEdit.setPlainText(stdout_buffer.getvalue())
+        self.loadData()
         return super().showEvent(event)
+
+
+class OperationHistorySection(BaseLogSection):
+
+    def loadData(self):
+        print("🔵 Loading operation log...")
+        self.textEdit.setPlainText(getSettingsValue("OperationHistory"))
+        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
+
+class LogSection(BaseLogSection):
+
+    def loadData(self):
+        print("🔵 Loading log...")
+        self.textEdit.setPlainText(stdout_buffer.getvalue())
+        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
+
+class PackageManagerLogSection(BaseLogSection):
+
+    def loadData(self):
+        print("🔵 Reloading Package Manager logs...")
+        self.textEdit.setPlainText(stdout_buffer.getvalue())
+        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
 
 class PackageInfoPopupWindow(QWidget):
     onClose = Signal()
