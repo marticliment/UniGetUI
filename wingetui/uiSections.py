@@ -242,7 +242,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
         
     def finishFiltering(self, text: str) -> None:
-        if len(text) >= 3:
+        if len(text) >= 3 or getSettings("AlwaysListPackages"):
             if text != self.LastQueryDynamicallyLoaded:
                 self.LastQueryDynamicallyLoaded = text
                 self.startLoadingDyamicPackages(text)
@@ -1572,6 +1572,10 @@ class SettingsSection(SmoothScrollArea):
         
         self.UITitle = CollapsableSection(_("User interface preferences"), getMedia("interactive"), _("Action when double-clicking packages, hide successful installations"))
         self.layout.addWidget(self.UITitle)
+        enableListingallPackages = SectionCheckBox(_("List packages if the query is empty on the Discover tab"))
+        enableListingallPackages.setChecked(getSettings("AlwaysListPackages"))
+        enableListingallPackages.stateChanged.connect(lambda v: setSettings("AlwaysListPackages", bool(v)))
+        self.UITitle.addWidget(enableListingallPackages)
         changeDefaultInstallAction = SectionCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
         changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
         changeDefaultInstallAction.stateChanged.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
