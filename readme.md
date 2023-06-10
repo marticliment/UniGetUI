@@ -64,7 +64,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 
 ## Features
 
- - WingetUI has the ability to install, update and uninstall packages from Winget, Scoop and Chocolatey. WingetUI will also detect if your manually-installed apps can be updated!
+ - WingetUI has the ability to install, update and uninstall packages from Winget (including Microsoft Store), Scoop, Chocolatey, pip and npm. WingetUI will also detect if your manually-installed apps can be updated!
  - It can also upgrade and uninstall previously installed packages — as well as uninstall built-in Windows apps!
  - WingetUI has the ability to both import and export the packages of your choice, so that you can easily install them in the future.
  - WingetUI supports managing Scoop buckets with an interface.
@@ -75,7 +75,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
  - The ability to queue installations in order to prevent conflicts.
  - A dark theme is available to prevent you from burning your eyes. :sunglasses:
  - WingetUI has the ability to show package-related information (like its license, SHA256 hash, homepage, etc.) before installation.
- - There are more than 14000 packages available (if winget, scoop and chocolatey are enabled)!
+ - There are more than 14000 packages available (if Winget, Scoop and Chocolatey are enabled)!
  - More features coming in the future!
 
 # Translating WingetUI to other languages
