@@ -17,8 +17,8 @@ class WingetPackageManager(DynamicPackageManager):
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
     BLACKLISTED_PACKAGE_NAMES = [""]
-    BLACKLISTED_PACKAGE_IDS = ["", "have"]
-    BLACKLISTED_PACKAGE_VERSIONS = ["have", "an"]
+    BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
+    BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
     
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
