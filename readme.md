@@ -12,7 +12,7 @@ With this app, you'll be able to easily download, install, update and uninstall 
 
 **Disclaimer:** This project has no connection with Winget, Chocolatey or Scoop — it's completely unofficial. Be aware of the fact that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI are responsible for the downloaded apps.
 
-<[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()>
+[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 <!--[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Temporarily%20Paused%20(I%20have%20final%20exams)-yellow?style=for-the-badge)]()-->
  
 ## Table of contents
