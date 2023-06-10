@@ -178,14 +178,6 @@ Since WingetUI is open source and safe to use, simply whitelist the app in the s
 
 #
 
-**Q: Can I add "msstore" as a source for Winget in the app?**<br>
-
-A: This is not possible, nor is it planned for the near future. 
-
-See more details in issue https://github.com/marticliment/WingetUI/issues/87.<br>
-
-#
-
 **Q: Are Winget/Scoop packages safe?**<br>
 
 A: WingetUI, Microsoft and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
