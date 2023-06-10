@@ -1191,7 +1191,7 @@ class AboutSection(SmoothScrollArea):
             table.setEnabled(False)
             table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             table.setShowGrid(False)
-            table.setHorizontalHeaderLabels([("" if isDark() else "   ")+_("Status"), _("Version")])
+            table.setHorizontalHeaderLabels([_("Status"), _("Version")])
             table.setColumnWidth(1, 500)
             table.setColumnWidth(0, 150)
             table.verticalHeader().setFixedWidth(100)
