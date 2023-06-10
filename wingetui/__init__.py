@@ -107,7 +107,7 @@ try:
                     text = QLabel("WingetUI")
                     text.setFixedWidth(0)
                     text.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-                    text.setStyleSheet(f"font-family: \"{globals.dispfont}\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
+                    text.setStyleSheet(f"font-family: \"Segoe UI Variable Display\";font-weight: bold; color: {'white' if isDark() else 'black'};font-size: 50pt;")
                     titlewidget.addWidget(icon)
                     titlewidget.addWidget(text)
                     titlewidget.addStretch()
