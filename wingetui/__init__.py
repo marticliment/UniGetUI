@@ -441,7 +441,7 @@ try:
                                 sy = s.geometry().y()+s.geometry().height()
                                 sx = s.geometry().x()+s.geometry().width()
                                 pos.setY(sy-menu.height()-54) # Show the context menu a little bit over the taskbar
-                                pos.setX(sx-menu.width()-6) # Show the context menu a little bit over the taskbar
+                                pos.setX(sx-menu.width()-6 if sx-menu.width()-6 < pos.x() else pos.x()) # Show the context menu a little bit over the taskbar
                                 menu.move(pos)
                         else:
                             menu.exec(pos)
