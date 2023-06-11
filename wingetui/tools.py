@@ -110,7 +110,7 @@ def getSettingsValue(s: str) -> str:
         try:
             return str(globals.settingsCache[s+"Value"])
         except KeyError:
-            with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r") as sf:
+            with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r", encoding="utf-8", errors="ignore") as sf:
                 v: str = sf.read()
                 globals.settingsCache[s+"Value"] = v
                 return v
@@ -127,7 +127,7 @@ def setSettingsValue(s: str, v: str) -> None:
     globals.settingsCache
     try:
         globals.settingsCache = {}
-        with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w") as sf:
+        with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w", encoding="utf-8", errors="ignore") as sf:
             sf.write(v)
     except Exception as e:
         print(e)
@@ -205,19 +205,30 @@ def checkQueue():
             except IndexError:
                 pass
         time.sleep(0.2)
-        
+
+operationsToAdd: dict[object:str] = {}
+
 def AddOperationToLog(operation: str, package, commandline: str):
-    currentInstallations = getSettingsValue("OperationHistory").split("\n--------------------------------\n")
-    stringToAdd =  f" Operation: {operation} the {str(datetime.now())}\n"
+    global operationsToAdd
+    stringToAdd =  f" Operation: {operation} - Perform date {str(datetime.now())}\n"
     stringToAdd += f" Package: {str(package)}\n"
     stringToAdd += f" Command-line call: {commandline}"
-    setSettingsValue("OperationHistory", "\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
+    operationsToAdd[package] = stringToAdd 
     
-def AddResultToLog(operation: str, package, result: int):
-    currentInstallations = getSettingsValue("OperationHistory").split("\n--------------------------------\n")
-    stringToAdd =  f" Report for: {operation} of: {package}\n"
-    stringToAdd += f" Output code: {result}"
-    setSettingsValue("OperationHistory", "\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
+def AddResultToLog(output: list, package, result: int):
+    print(output)
+    global operationsToAdd
+    try:
+        currentInstallations = getSettingsValue("OperationHistory").split("\n\n--------------------------------\n")
+        stringToAdd =  operationsToAdd[package]
+        stringToAdd += f" Output code: {result}\n"
+        stringToAdd += f" Console output:\n"
+        for line in output:
+            for subline in line.split("\r"):
+                stringToAdd += f"   | {subline}\n"
+        setSettingsValue("OperationHistory", "\n\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
+    except Exception as e:
+        report(e)
 
 def update_tray_icon():
     if globals.tray_is_error:

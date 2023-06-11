@@ -228,7 +228,7 @@ class PackageInstallerWidget(QWidget):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
-        AddResultToLog("install", self.Package, returncode)
+        AddResultToLog(output.split("\n"), self.Package, returncode)
         self.leftSlow.stop()
         self.leftFast.stop()
         self.rightSlow.stop()
@@ -532,7 +532,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         except: pass
 
     def finish(self, returncode: int, output: str = "") -> None:
-        AddResultToLog("uninstall", self.Package, returncode)
+        AddResultToLog(output.split("\n"), self.Package, returncode)
         if returncode in (RETURNCODE_NEEDS_ELEVATION, RETURNCODE_NEEDS_SCOOP_ELEVATION):
             self.Options.RunAsAdministrator = True
             self.adminBadge.setVisible(self.Options.RunAsAdministrator)
