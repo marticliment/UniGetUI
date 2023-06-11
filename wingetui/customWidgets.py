@@ -276,7 +276,7 @@ class CustomMessageBox(QMainWindow):
                 self.resize(s)
                 self.setMinimumWidth(450)
                 self.setMinimumHeight(self.bgw1.sizeHint().height())
-                self.setMaximumHeight(2048)
+                self.setMaximumHeight(-1)
             else:
                 # Hide textedit
                 s = self.size()
@@ -290,11 +290,13 @@ class CustomMessageBox(QMainWindow):
                 self.setMaximumHeight(self.fHeight+1)
             
     def paintEvent(self, event: QPaintEvent) -> None:
-        self.bgw1.setFixedHeight(self.bgw1.sizeHint().height())
-        self.setFixedHeight(self.bgw1.sizeHint().height() + 70 + ((10+self.moreInfoTextArea.height()) if self.moreInfoTextArea.isVisible() else 0))
+        if not self.moreInfoTextArea.isVisible():
+            self.bgw1.setFixedHeight(self.bgw1.sizeHint().height())
+            self.setFixedHeight(self.bgw1.sizeHint().height() + 80)
+        else:
+            self.setMinimumHeight(self.bgw1.sizeHint().height() + 70 + self.moreInfoTextArea.height() + 10)
         return super().paintEvent(event)
 
-    
     def showErrorMessage(self, data: dict, showNotification = True):
         self.isQuestion = False
         self.showerr.emit(data, showNotification)
