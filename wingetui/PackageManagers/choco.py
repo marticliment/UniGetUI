@@ -1,5 +1,5 @@
 from PySide6.QtCore import *
-import subprocess, time, os, sys
+import subprocess, time, os, sys, re
 from tools import *
 from tools import _
 from .PackageClasses import *
@@ -180,11 +180,26 @@ class ChocoPackageManager(SamplePackageManager):
             output: list[str] = []
             details.ManifestUrl = f"https://community.chocolatey.org/packages/{package.Id}"
             details.Architectures = ["x86"]
+            isReadingDescription = False
             while p.poll() is None:
-                line = p.stdout.readline().strip()
+                line = p.stdout.readline()
                 if line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
+                if isReadingDescription:
+                    if line.startswith("  "):
+                        details.Description += "<br>"+line
+                    else:
+                        isReadingDescription = False
+                        for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", details.Description):
+                            details.Description = details.Description.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
+
+                        for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", details.Description):
+                            details.Description = details.Description.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[0][1:-1]}">{match.split("]")[0][1:]}</a>')
+                        
+                        for match in re.findall("#{2,4}[^\>\<]*<br>", details.Description):
+                            details.Description = details.Description.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
+                        
                 if "Title:" in line:
                     details.Name = line.split("|")[0].replace("Title:", "").strip()
                     details.UpdateDate = line.split("|")[1].replace("Published:", "").strip()
@@ -198,6 +213,7 @@ class ChocoPackageManager(SamplePackageManager):
                     details.InstallerHash = "<br>"+(line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", ""))
                 elif "Description:" in line:
                     details.Description = line.replace("Description:", "").strip()
+                    isReadingDescription = True
                 elif "Release Notes" in line:
                     details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
                 elif "Tags" in line:
