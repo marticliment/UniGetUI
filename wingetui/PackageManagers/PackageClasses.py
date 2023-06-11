@@ -78,7 +78,7 @@ class PackageDetails(Package):
     LicenseURL: str = ""
     InstallerURL: str = _("Not available")
     InstallerHash: str = _("Not available")
-    InstallerSize: int = 0
+    InstallerSize: int = 0 # In Megabytes
     InstallerType: str = _("Not available")
     ManifestUrl: str = _("Not available")
     UpdateDate: str = _("Not available")

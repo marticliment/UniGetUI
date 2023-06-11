@@ -144,30 +144,45 @@ class PipPackageManager(DynamicLoadPackageManager):
             details.Scopes = [_("User")]
             details.InstallerType = "Pip"
         
-            p = subprocess.Popen(f"{self.EXECUTABLE} show {package.Id} -v", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-            output: list[str] = []
-            while p.poll() is None:
-                line = p.stdout.readline()
-                if line:
-                    output.append(str(line, encoding='utf-8', errors="ignore"))
-            for line in output:
-                if "Name:" in line:
-                    details.Name = formatPackageIdAsName(line.replace("Name:", "").strip()) if "-" in line else line.replace("Name:", "").strip()
-                elif "Author:" in line:
-                    details.Author = line.replace("Author:", "").strip()
-                elif "Home-page:" in line:
-                    details.HomepageURL = line.replace("Home-page:", "").strip()
-                elif "License:" in line:
-                    details.License = line.replace("License:", "").strip()
-                elif "License ::" in line:
-                    details.License = line.split("::")[-1].strip()
-                elif "Summary:" in line:
-                    details.Description = line.replace("Summary:", "").strip()
-                elif "Release Notes" in line:
-                    details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
-                elif "Topic ::" in line:
-                    if line.split("::")[-1].strip() not in details.Tags:
-                        details.Tags.append(line.split("::")[-1].strip())
+            rawcontent = urlopen(f"https://pypi.org/pypi/{package.Id}/json").read().decode("utf-8", errors="ignore")
+            basejson = json.loads(rawcontent)
+            content = basejson["info"]
+            
+            if "author" in content:
+                details.Author = content["author"]
+            if "home_page" in content:
+                details.HomepageURL = content["home_page"]
+            if "package_url" in content:
+                details.ManifestUrl = content["package_url"]
+            if "summary" in content:
+                details.Description = content["summary"]
+            if "classifiers" in content:
+                for line in content["classifiers"]:
+                    if "License ::" in line:
+                        details.License = line.split("::")[-1].strip()
+                    elif "Topic ::" in line:
+                        if line.split("::")[-1].strip() not in details.Tags:
+                            details.Tags.append(line.split("::")[-1].strip())
+            if "license" in content:
+                if content["license"]:
+                    details.License = content["license"]
+            if "maintainer" in content:
+                if content["maintainer"]:
+                    details.Publisher = content["maintainer"]
+            
+            url = basejson["urls"][0]
+            
+            if "upload_time" in url:
+                details.UpdateDate = url["upload_time"]
+            if "url" in url:
+                details.InstallerURL = url["url"]
+                details.InstallerType = url["url"].split(".")[-1].capitalize().replace("Whl", "Wheel")
+            if "size" in url:
+                details.InstallerSize = int(url["size"])/1000
+            if "digests" in url:
+                if "sha256" in url["digests"]:
+                    details.InstallerHash = url["digests"]["sha256"]
+                
                         
             p = subprocess.Popen(f"{self.EXECUTABLE} index versions {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
