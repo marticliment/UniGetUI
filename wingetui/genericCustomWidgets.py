@@ -352,9 +352,10 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def action(self) -> QAction:
         return self.itemAction
 
-    def setHidden(self, hide: bool) -> None:
-        if self.itemAction != QAction:
-            self.itemAction.setVisible(not hide)
+    def setHidden(self, hide: bool, forceShowAction: bool = False) -> None:
+        if not forceShowAction:
+            if self.itemAction != QAction:
+                self.itemAction.setVisible(not hide)
         try:
             return super().setHidden(hide)
         except RuntimeError:

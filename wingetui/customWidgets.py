@@ -644,7 +644,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
                 self.addItem(id, version, store.capitalize(), BlacklistMethod.SpecificVersion)
         
     def addItem(self, id: str, version: str, store: str, blacklistMethod: BlacklistMethod):
-        item = QTreeWidgetItem()
+        item = TreeWidgetItemWithQAction()
         item.setText(0, id)
         item.setText(1, version)
         item.setText(2, store)
@@ -684,12 +684,12 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.close()
         globals.updates.startLoadingPackages(force=True)
         
-    def unBlackistLegacy(self, id: str, item: QTreeWidgetItem):
+    def unBlackistLegacy(self, id: str, item: TreeWidgetItemWithQAction):
         setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
         del i
         
-    def unBlackistAllVersions(self, id: str, store: str, item: QTreeWidgetItem):
+    def unBlackistAllVersions(self, id: str, store: str, item: TreeWidgetItemWithQAction):
         originalList: list[list[str]] = GetIgnoredPackageUpdates_Permanent()
         setSettingsValue("PermanentlyIgnoredPackageUpdates", "")
         for ignoredPackage in originalList:
@@ -699,7 +699,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
         del i
 
-    def unBlackistSingleVersion(self, id: str, version: str, store: str, item: QTreeWidgetItem):
+    def unBlackistSingleVersion(self, id: str, version: str, store: str, item: TreeWidgetItemWithQAction):
         originalList: list[list[str]] = GetIgnoredPackageUpdates_SpecificVersion()
         setSettingsValue("SingleVersionIgnoredPackageUpdates", "")
         for ignoredPackage in originalList:
@@ -735,10 +735,10 @@ class SoftwareSection(QWidget):
     ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
     IdPackageReference: dict[str:Package] = {}
     sectionName: str = ""
-    packageItems: list[QTreeWidgetItem] = []
-    showableItems: list[QTreeWidgetItem] = []
-    addedItems: list[QTreeWidgetItem] = []
-    shownItems: list[QTreeWidgetItem] = []
+    packageItems: list[TreeWidgetItemWithQAction] = []
+    showableItems: list[TreeWidgetItemWithQAction] = []
+    addedItems: list[TreeWidgetItemWithQAction] = []
+    shownItems: list[TreeWidgetItemWithQAction] = []
     nextItemToShow: int = 0
 
     PackageManagers: list[PackageManagerModule] = PackageManagersList
@@ -979,7 +979,7 @@ class SoftwareSection(QWidget):
     def getToolbar(self) -> QToolBar:
         raise NotImplementedError("This function requires being reimplemented")
         
-    def sharePackage(self, package: QTreeWidgetItem):
+    def sharePackage(self, package: TreeWidgetItemWithQAction):
         url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
         nativeWindowsShare(package.text(2), url, self.window())
 
@@ -996,7 +996,7 @@ class SoftwareSection(QWidget):
     def addItemsToTreeWidget(self, reset: bool = False):
         if reset:
             for item in self.shownItems:
-                item.setHidden(True)
+                item.setHidden(True, forceShowAction=True)
             self.nextItemToShow = 0
             self.shownItems = []
         addedItems = 0
@@ -1017,19 +1017,19 @@ class SoftwareSection(QWidget):
         print(f"🟢 Searching for string \"{self.query.text()}\"")
         Thread(target=lambda: (time.sleep(0.1), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
         
-    def containsQuery(self, item: QTreeWidgetItem, querytext: str) -> bool:
+    def containsQuery(self, item: TreeWidgetItemWithQAction, querytext: str) -> bool:
         return querytext in item.text(1).lower().replace("-", "").replace(" ", "") or querytext in item.text(2).lower().replace("-", "").replace(" ", "")
     
     def finishFiltering(self, text: str):
-        def getChecked(item: QTreeWidgetItem) -> str:
+        def getChecked(item: TreeWidgetItemWithQAction) -> str:
             return "" if item.checkState(0) == Qt.CheckState.Checked else " "
-        def getTitle(item: QTreeWidgetItem) -> str:
+        def getTitle(item: TreeWidgetItemWithQAction) -> str:
             return item.text(1)
-        def getID(item: QTreeWidgetItem) -> str:
+        def getID(item: TreeWidgetItemWithQAction) -> str:
             return item.text(2)
-        def getVersion(item: QTreeWidgetItem) -> str:
+        def getVersion(item: TreeWidgetItemWithQAction) -> str:
             return item.text(3)
-        def getSource(item: QTreeWidgetItem) -> str:
+        def getSource(item: TreeWidgetItemWithQAction) -> str:
             return item.text(4)
         
         if self.query.text() != text:
@@ -1075,7 +1075,7 @@ class SoftwareSection(QWidget):
         self.programbox.show()
         self.infobox.hide()
 
-    def openInfo(self, item: QTreeWidgetItem, update: bool = False, uninstall: bool = False, installedVersion: str = "") -> None:
+    def openInfo(self, item: TreeWidgetItemWithQAction, update: bool = False, uninstall: bool = False, installedVersion: str = "") -> None:
         self.infobox.showPackageDetails(self.ItemPackageReference[item], update, uninstall, installedVersion)
         self.infobox.show()
     
@@ -1468,7 +1468,7 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
     
-    pendingPackages: dict[str:QTreeWidgetItem] = {}
+    pendingPackages: dict[str:TreeWidgetItemWithQAction] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
@@ -1599,7 +1599,7 @@ class PackageImporter(MovableFramelessWindow):
                     except KeyError as e:
                         print(f"🟠 Invalid {manager} section")
                 for packageId in packageList:
-                    item = QTreeWidgetItem()
+                    item = TreeWidgetItemWithQAction()
                     unknownIcon = QIcon(getMedia("question"))
                     self.treewidget.addTopLevelItem(item)
                     if packageId in DISCOVER_SECTION.IdPackageReference:
@@ -1626,7 +1626,7 @@ class PackageImporter(MovableFramelessWindow):
         except Exception as e:
             report(e)
             
-    def addItemFromPackage(self, package: Package, item: QTreeWidgetItem) -> None:                        
+    def addItemFromPackage(self, package: Package, item: TreeWidgetItemWithQAction) -> None:                        
         item.setText(0, package.Name)
         item.setText(1, package.Id)
         item.setText(2, package.Version)

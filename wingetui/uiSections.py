@@ -308,9 +308,9 @@ class DiscoverSoftwareSection(SoftwareSection):
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
                 
-    def installPackageItem(self, item: QTreeWidgetItem, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+    def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
-        Initialize the install procedure for the given package, passed as a QTreeWidgetItem. Switches: admin, interactive, skiphash
+        Initialize the install procedure for the given package, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
         """
         package: Package = self.ItemPackageReference[item]
         options = InstallationOptions()
@@ -712,17 +712,17 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.trayMenuUpdatesList.addAction(action)
 
     def finishFiltering(self, text: str):
-        def getChecked(item: QTreeWidgetItem) -> str:
+        def getChecked(item: TreeWidgetItemWithQAction) -> str:
             return "" if item.checkState(0) == Qt.CheckState.Checked else " "
-        def getTitle(item: QTreeWidgetItem) -> str:
+        def getTitle(item: TreeWidgetItemWithQAction) -> str:
             return item.text(1)
-        def getID(item: QTreeWidgetItem) -> str:
+        def getID(item: TreeWidgetItemWithQAction) -> str:
             return item.text(2)
-        def getVersion(item: QTreeWidgetItem) -> str:
+        def getVersion(item: TreeWidgetItemWithQAction) -> str:
             return item.text(3)
-        def getNewVersion(item: QTreeWidgetItem) -> str:
+        def getNewVersion(item: TreeWidgetItemWithQAction) -> str:
             return item.text(4)
-        def getSource(item: QTreeWidgetItem) -> str:
+        def getSource(item: TreeWidgetItemWithQAction) -> str:
             return item.text(5)
         
         if self.query.text() != text:
