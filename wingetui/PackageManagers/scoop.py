@@ -98,7 +98,10 @@ class ScoopPackageManager(SamplePackageManager):
                         name = formatPackageIdAsName(package[0])
                         id = package[0]
                         version = package[1]
-                        source = f"Scoop: {package[2].strip()}"
+                        try:
+                            source = f"Scoop: {package[2].strip()}"
+                        except IndexError:
+                            source = "Scoop"
                         if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                             ContentsToCache += f"{name},{id},{version},{source}\n"
             AlreadyCachedPackages = ""
