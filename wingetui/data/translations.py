@@ -13,7 +13,7 @@ untranslatedPercentage = {
   "hr": "98%",
   "hu": "98%",
   "id": "98%",
-  "it": "98%",
+  "it": "99%",
   "ja": "76%",
   "ko": "83%",
   "nb": "90%",
@@ -173,6 +173,10 @@ languageCredits = {
   "it": [
     {
       "name": "Alberto Franzin (@mrfranza)",
+      "link": ""
+    },
+    {
+      "name": "David Senoner",
       "link": ""
     },
     {
