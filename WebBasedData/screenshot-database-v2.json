@@ -1662,8 +1662,13 @@
             ]
         },
         "eagle": {
-            "icon": "https://www.logolynx.com/images/logolynx/38/384353c7d320c8c409fd75fd9200037d.png",
-            "images": []
+            "icon": "https://file.notion.so/f/s/57a94bd2-72f4-4e2c-bfd4-3722aec63d08/App_icon2x.png?id=a0767f65-6d49-41bb-83af-e2f7d9f8a449&table=block&spaceId=e28893ab-ca65-405a-a390-f6c1f240bb0a&expirationTimestamp=1686564255238&signature=vb95tH7m38oSH6sWYoccpC9MLMIJ0aXTcs9pxB91Mms&downloadName=App+icon%402x.png",
+            "images": [
+                "https://file.notion.so/f/s/cde8f5f8-be64-41e1-ba14-19dc974785af/screenshot_-_graphic_design.png?id=8fbd2746-ed23-4d37-8269-2513dbd7efd7&table=block&spaceId=e28893ab-ca65-405a-a390-f6c1f240bb0a&expirationTimestamp=1686564342509&signature=KDh6D-ZCK3gsbavx87f3uAwZoF-lC6g4x5UPxkrpvxc&downloadName=screenshot+-+graphic+design.png",
+                "https://file.notion.so/f/s/2cfb83ba-f12c-4681-bc39-b43270593ded/screenshot_-_motion.png?id=88cbe91f-ada0-417f-9e69-5da03856a108&table=block&spaceId=e28893ab-ca65-405a-a390-f6c1f240bb0a&expirationTimestamp=1686564366665&signature=AO4Fj1WYc9LksdctM2fjYOHd1HB78hWuHYpPZC5s3io&downloadName=screenshot+-+motion.png",
+                "https://file.notion.so/f/s/668eb372-24fe-4a5a-adc3-07865b160217/screenshot_-_interior_design.png?id=b7c6831b-0e34-48f9-95e3-dacab45c0f37&table=block&spaceId=e28893ab-ca65-405a-a390-f6c1f240bb0a&expirationTimestamp=1686564392823&signature=g9ncgLwW_nSYxGkppiJD6cCg0omjonO1sda0Sg-wR6w&downloadName=screenshot+-+interior+design.png",
+                "https://file.notion.so/f/s/2b92b05f-b6ba-47ea-b086-61cc41c26c6e/screenshot_-_icon.png?id=6601686f-fd62-410e-adbb-a10e88f91f0d&table=block&spaceId=e28893ab-ca65-405a-a390-f6c1f240bb0a&expirationTimestamp=1686564430038&signature=qb82SinkJ-P5uPPsIAno5M7pOc0gKU2s4v04UwBykxE&downloadName=screenshot+-+icon.png"
+            ]
         },
         "sketchbook": {
             "icon": "https://www.logolynx.com/images/logolynx/38/384353c7d320c8c409fd75fd9200037d.png",
