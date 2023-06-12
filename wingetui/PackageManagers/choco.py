@@ -217,8 +217,7 @@ class ChocoPackageManager(SamplePackageManager):
                         if details.ReleaseNotes != "":
                             if details.ReleaseNotes != "":
                                 details.ReleaseNotesUrl = _("Not available")
-                        
-                        
+
                 if "Title:" in line:
                     details.Name = line.split("|")[0].replace("Title:", "").strip()
                     details.UpdateDate = line.split("|")[1].replace("Published:", "").strip()

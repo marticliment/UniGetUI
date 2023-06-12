@@ -278,13 +278,14 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def finishDynamicLoadingIfNeeded(self) -> None:
         self.finishFiltering(self.query.text())
-        for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
-            if not self.DynamicPackagesLoaded[manager] and manager.isEnabled():
-                return
         if len(self.showableItems) == 0 and len(self.query.text())>=3:
             self.packageList.label.setText(_("No packages found matching the input criteria"))
         else:
             self.packageList.label.setText(_(""))
+            
+        for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
+            if not self.DynamicPackagesLoaded[manager] and manager.isEnabled():
+                return
         self.isLoadingDynamic = False
         self.loadingProgressBar.hide()
 
