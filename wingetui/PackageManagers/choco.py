@@ -181,6 +181,7 @@ class ChocoPackageManager(SamplePackageManager):
             details.ManifestUrl = f"https://community.chocolatey.org/packages/{package.Id}"
             details.Architectures = ["x86"]
             isReadingDescription = False
+            isReadingReleaseNotes = False
             while p.poll() is None:
                 line = p.stdout.readline()
                 if line:
@@ -200,6 +201,24 @@ class ChocoPackageManager(SamplePackageManager):
                         for match in re.findall("#{2,4}[^\>\<]*<br>", details.Description):
                             details.Description = details.Description.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
                         
+                if isReadingReleaseNotes:
+                    if line.startswith("  "):
+                        details.ReleaseNotes += "<br>"+line
+                    else:
+                        isReadingReleaseNotes = False
+                        for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", details.ReleaseNotes):
+                            details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
+
+                        for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", details.ReleaseNotes):
+                            details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[0][1:-1]}">{match.split("]")[0][1:]}</a>')
+                        
+                        for match in re.findall("#{2,4}[^\>\<]*<br>", details.ReleaseNotes):
+                            details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
+                        if details.ReleaseNotes != "":
+                            if details.ReleaseNotes != "":
+                                details.ReleaseNotesUrl = _("Not available")
+                        
+                        
                 if "Title:" in line:
                     details.Name = line.split("|")[0].replace("Title:", "").strip()
                     details.UpdateDate = line.split("|")[1].replace("Published:", "").strip()
@@ -216,6 +235,8 @@ class ChocoPackageManager(SamplePackageManager):
                     isReadingDescription = True
                 elif "Release Notes" in line:
                     details.ReleaseNotesUrl = line.replace("Release Notes:", "").strip()
+                    details.ReleaseNotes = ""
+                    isReadingReleaseNotes = True
                 elif "Tags" in line:
                     details.Tags = [tag for tag in line.replace("Tags:", "").strip().split(" ") if tag != ""]
             details.Versions = []
