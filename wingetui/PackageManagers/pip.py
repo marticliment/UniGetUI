@@ -178,7 +178,7 @@ class PipPackageManager(DynamicLoadPackageManager):
                 details.InstallerURL = url["url"]
                 details.InstallerType = url["url"].split(".")[-1].capitalize().replace("Whl", "Wheel")
             if "size" in url:
-                details.InstallerSize = int(url["size"])/1000
+                details.InstallerSize = int(url["size"])/1000000
             if "digests" in url:
                 if "sha256" in url["digests"]:
                     details.InstallerHash = url["digests"]["sha256"]
