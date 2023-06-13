@@ -74,7 +74,7 @@ class WelcomeWindow(QMainWindow):
                 #BackgroundWidget {{
                     border: 0 solid rgba(80, 80, 80, 25%);
                     padding: 20px;
-                    background-color: transparent;
+                    background-color: {'transparent' if sys.getwindowsversion().build >= 22000 else '#202020'};
                     border-radius: 0;
                     padding-left: 30px;
                     padding-right: 30px;
@@ -247,7 +247,7 @@ class WelcomeWindow(QMainWindow):
                 #BackgroundWidget {{
                     border: 0 solid #eeeeee;
                     padding: 20px;
-                    background-color: transparent;
+                    background-color: {'transparent' if sys.getwindowsversion().build >= 22000 else '#f5f5f5'};
                     border-radius: 0;
                     padding-left: 30px;
                     padding-right: 30px;
