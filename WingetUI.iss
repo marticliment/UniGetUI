@@ -40,6 +40,7 @@ DisableWelcomePage=no
 UsePreviousTasks=yes
 ChangesEnvironment=yes
 RestartIfNeededByRun=no
+Uninstallable=IsTaskSelected('regularinstall')
 
 
 [Languages]
@@ -151,7 +152,7 @@ Name: "regularinstall\startmenuicon"; Description: "Create a shortcut on the sta
 Name: "regularinstall\desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked;
 
 [Registry]
-Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
 Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
