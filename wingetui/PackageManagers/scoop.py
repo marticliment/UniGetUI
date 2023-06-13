@@ -169,12 +169,13 @@ class ScoopPackageManager(SamplePackageManager):
                         if "----" in line:
                             DashesPassed = True
                     else:
+                        globalscoop = "Global" in line
                         package = list(filter(None, line.split(" ")))
                         if len(package) >= 2:
                             name = formatPackageIdAsName(package[0])
                             id = package[0]
                             version = package[1]
-                            source = f"Scoop: {package[2].strip()}"
+                            source = f"Scoop{' (Global)' if globalscoop else ''}: {package[2].strip()}"
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
