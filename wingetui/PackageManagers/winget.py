@@ -402,7 +402,7 @@ class WingetPackageManager(DynamicPackageManager):
                             iOffset + 1
                             id = verElement.split(" ")[iOffset+0]
                             ver = verElement.split(" ")[iOffset+1]
-                        if ver.strip() in ("<", "-"):
+                        if ver.strip() in ("<", "-", ">"):
                             iOffset += 1
                             ver = verElement.split(" ")[iOffset+1]
                         name = element[0:idPosition].strip()
@@ -591,7 +591,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
-        Command = [self.EXECUTABLE, "install", "--exact", "--id", package.Id] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -602,7 +602,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
-        Command = [self.EXECUTABLE, "upgrade", "--exact", "--id", package.Id, "--include-unknown"] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + ["--include-unknown"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -635,7 +635,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
-        Command = [self.EXECUTABLE, "uninstall", "--exact", "--id", package.Id] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)

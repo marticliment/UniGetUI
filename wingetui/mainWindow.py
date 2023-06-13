@@ -107,9 +107,9 @@ class RootWindow(QMainWindow):
         self.widgets[self.historySection] = self.addTab(self.historySection, _("Operation history"), addToMenu=True, actionIcon="list")
         self.extrasMenu.addSeparator()
         self.logSection = LogSection()
-        self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
-        self.clilogSection = PackageManagerLogSection()
-        self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
+        #self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
+        #self.clilogSection = PackageManagerLogSection()
+        #self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
 
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
