@@ -686,7 +686,8 @@ class WingetPackageManager(DynamicPackageManager):
             signal.emit()
         
     def updateSources(self, signal: Signal = None) -> None:
-        subprocess.run(f"{self.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
+        print(f"🔵 Reloading {self.NAME} sources...")
+        subprocess.run(f"{self.EXECUTABLE} source update", shell=True, stdout=subprocess.PIPE)
         if signal:
             signal.emit()
 

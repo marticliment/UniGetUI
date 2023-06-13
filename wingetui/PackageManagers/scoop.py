@@ -447,6 +447,7 @@ class ScoopPackageManager(SamplePackageManager):
             signal.emit()
         
     def updateSources(self, signal: Signal = None) -> None:
+        print(f"🔵 Reloading {self.NAME} sources...")
         subprocess.run(f"{self.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)
         if signal:
             signal.emit()

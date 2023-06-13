@@ -820,19 +820,22 @@ class UpdateSoftwareSection(SoftwareSection):
         options.SkipHashCheck = skiphash
         self.addInstallation(PackageUpdaterWidget(package, options))
      
-    def reloadSources(self):
-        print("Reloading sources...")
+    def reloadSources(self, asyncroutine: bool = False):
+        print("🔵 Reloading sources...")
         try:
-            o1 = subprocess.run(f"powershell -Command scoop update", shell=True, stdout=subprocess.PIPE)
-            print("Updated scoop packages with result", o1.returncode)
-            o2 = subprocess.run(f"{Winget.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
-            print("Updated Winget packages with result", o2.returncode)
-            o2 = subprocess.run(f"{Choco.EXECUTABLE} source update --name winget", shell=True, stdout=subprocess.PIPE)
+            for manager in PackageManagersList:
+                manager.updateSources()
         except Exception as e:
             report(e)
-        self.callInMain.emit(self.startLoadingPackages)
+        if not asyncroutine:
+            self.callInMain.emit(self.startLoadingPackages)
     
     def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
+        t = Thread(target=lambda: self.reloadSources(asyncroutine = True), daemon=True)
+        t.start()
+        t0 = int(time.time())
+        while t.is_alive() and (int(time.time())-t0 < 10): # Timeout of 10 seconds for the reloadSources function 
+            time.sleep(0.2)
         packages = manager.getAvailableUpdates()
         for package in packages:
             self.addProgram.emit(package)
