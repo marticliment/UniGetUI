@@ -193,4 +193,5 @@ To mitigate the risks of downloading malware, Microsoft has implemented a few ch
 
 ### Installer command-line parameters:
 The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it does also support the following ones:
-`/NoAutoStart`: Will not launch WingetUI after installing it.
+ <br>`/NoAutoStart`: Will not launch WingetUI after installing it.
+<br> `/NoVCRedist`: Skip <b>Microsoft Visual C++ Redistributables (x64)</b> installation
