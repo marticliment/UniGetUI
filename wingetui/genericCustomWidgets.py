@@ -1115,6 +1115,7 @@ class DraggableWindow(QWidget):
     pressed = False
     oldPos = QPoint(0, 0)
     def __init__(self, parent = None) -> None:
+        self.FixLag = False
         super().__init__(parent)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -1131,6 +1132,11 @@ class DraggableWindow(QWidget):
         self.pressed = False
         self.oldPos = event.pos()
         return super().mouseReleaseEvent(event)
+    
+    def moveEvent(self, event) -> None:
+        if self.FixLag:
+            time.sleep(0.02)
+        return super().moveEvent(event)
 
 class MovableFramelessWindow(DraggableWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:

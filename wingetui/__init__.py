@@ -95,6 +95,7 @@ try:
                     super().__init__(sys.argv)
                     self.isDaemon: bool = "--daemon" in sys.argv
                     self.popup = DraggableWindow()
+                    self.popup.FixLag = sys.getwindowsversion().build < 22000
                     self.popup.setFixedSize(QSize(600, 400))
                     self.popup.setWindowFlag(Qt.FramelessWindowHint)
                     self.popup.setLayout(QVBoxLayout())
