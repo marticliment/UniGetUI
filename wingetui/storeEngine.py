@@ -396,7 +396,6 @@ class PackageInstallerWidget(QWidget):
         self.progressbar.move(pos)
         self.progressbar.setFixedWidth(self.liveOutputButton.width())
 
-
 class PackageUpdaterWidget(PackageInstallerWidget):
 
     def __init__(self, package: UpgradablePackage, options: InstallationOptions):
@@ -634,6 +633,87 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         super().close()
         super().destroy()
 
+class CustomInstallerWidget(PackageInstallerWidget):
+    onCancel = Signal()
+    killSubprocess = Signal()
+    addInfoLine = Signal(str)
+    finishInstallation = Signal(int, str)
+    counterSignal = Signal(int)
+    callInMain = Signal(object)
+    changeBarOrientation = Signal()
+    def __init__(self, name: str, command: list, packageManager: PackageManagerModule):
+        self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
+        self.Package.PackageItem = QTreeWidgetItem()
+        self.Options = InstallationOptions()
+        self.command = command
+        super().__init__(self.Package, self.Options)
+
+    def runInstallation(self) -> None:
+        globals.tray_is_installing = True
+        self.callInMain.emit(update_tray_icon)
+        self.finishedInstallation = False
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
+        self.addInfoLine.emit(_("Running the installer..."))
+        self.leftSlow.start()
+        self.setProgressbarColor(blueColor)
+        Command = self.command
+        if self.Options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {self.Package} installation with Command", Command)
+        self.p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(self.p, self.Options,), name=f"{self.Package.PackageManager.NAME} installation thread: installing {self.Package.Name}").start()
+        AddOperationToLog("installation", self.Package, '"'+' '.join(self.p.args)+'"')
+
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions):
+        output = ""
+        while p.poll() is None:
+            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            if line:
+                output += line+"\n"
+                self.addInfoLine.emit(line)
+        self.finishInstallation.emit(p.returncode, output)
+
+class CustomUninstallerWidget(PackageUninstallerWidget):
+    onCancel = Signal()
+    killSubprocess = Signal()
+    addInfoLine = Signal(str)
+    finishInstallation = Signal(int, str)
+    counterSignal = Signal(int)
+    callInMain = Signal(object)
+    changeBarOrientation = Signal()
+    def __init__(self, name: str, command: list, packageManager: PackageManagerModule):
+        self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
+        self.Package.PackageItem = QTreeWidgetItem()
+        self.Options = InstallationOptions()
+        self.command = command
+        super().__init__(self.Package, self.Options)
+
+    def runInstallation(self) -> None:
+        globals.tray_is_installing = True
+        self.callInMain.emit(update_tray_icon)
+        self.finishedInstallation = False
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
+        self.addInfoLine.emit(_("Running the uninstaller..."))
+        self.leftSlow.start()
+        self.setProgressbarColor(blueColor)
+        Command = self.command
+        if self.Options.RunAsAdministrator:
+            Command = [GSUDO_EXECUTABLE] + Command
+        print(f"🔵 Starting {self.Package} uninstallation with Command", Command)
+        self.p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.installationThread, args=(self.p, self.Options,), name=f"{self.Package.PackageManager.NAME} uninstallation thread: uninstalling {self.Package.Name}").start()
+        AddOperationToLog("uninstall", self.Package, '"'+' '.join(self.p.args)+'"')
+
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions):
+        output = ""
+        while p.poll() is None:
+            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            if line:
+                output += line+"\n"
+                self.addInfoLine.emit(line)
+        self.finishInstallation.emit(p.returncode, output)
+   
+
 class ScoopBucketManager(QWidget):
     addBucketsignal = Signal(str, str, str, str)
     finishLoading = Signal()
@@ -769,21 +849,21 @@ class ScoopBucketManager(QWidget):
     def scoopAddExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another bucket")), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", _("Another bucket")], 1, editable=False)
         if r[1]:
+            bName = r[0]
             if r[0] == _("Another bucket"):
                 r2 = QInputDialog.getText(self, _("Scoop bucket manager"), _("Type here the name and the URL of the bucket you want to add, separated by a space."), text="extras https://github.com/ScoopInstaller/Extras")
                 if r2[1]:
                     bName = r2[0].split(" ")[0]
-                    p = PackageInstallerWidget(f"{bName} Scoop bucket", "custom", customCommand=f"scoop bucket add {r2[0]}")
+                    p = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r2[0]}", Scoop)
                     globals.installersWidget.addItem(p)
                     p.finishInstallation.connect(self.loadBuckets)
-
             else:
-                p = PackageInstallerWidget(f"{r[0]} Scoop bucket", "custom", customCommand=f"scoop bucket add {r[0]}")
+                p = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r[0]}", Scoop)
                 globals.installersWidget.addItem(p)
                 p.finishInstallation.connect(self.loadBuckets)
             
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
-        globals.installersWidget.addItem(PackageUninstallerWidget(f"{bucket} Scoop bucket", "custom", customCommand=f"scoop bucket rm {bucket}"))
+        globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
 
 
 
