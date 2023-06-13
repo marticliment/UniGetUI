@@ -100,7 +100,7 @@ class WingetPackageManager(DynamicPackageManager):
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
                     if not hasShownId:
-                        if "Id" in line:
+                        if " Id " in line:
                             line = line.replace("\x08-\x08\\\x08|\x08 \r","")
                             for char in ("\r", "/", "|", "\\", "-"):
                                 line = line.split(char)[-1].strip()
@@ -180,7 +180,7 @@ class WingetPackageManager(DynamicPackageManager):
                 print(line)
                 if line:
                     if not hasShownId:
-                        if "Id" in line:
+                        if " Id " in line:
                             line = line.replace("\x08-\x08\\\x08|\x08 \r","")
                             for char in ("\r", "/", "|", "\\", "-"):
                                 line = line.split(char)[-1].strip()
@@ -253,7 +253,7 @@ class WingetPackageManager(DynamicPackageManager):
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if not hasShownId:
-                    if "Id" in line:
+                    if " Id " in line:
                         line = line.replace("\x08-\x08\\\x08|\x08 \r","")
                         for char in ("\r", "/", "|", "\\", "-"):
                             line = line.split(char)[-1].strip()
@@ -372,7 +372,7 @@ class WingetPackageManager(DynamicPackageManager):
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if not hasShownId:
-                    if "Id" in line:
+                    if " Id " in line:
                         line = line.replace("\x08-\x08\\\x08|\x08 \r","")
                         for char in ("\r", "/", "|", "\\", "-"):
                             line = line.split(char)[-1].strip()
@@ -673,7 +673,7 @@ class WingetPackageManager(DynamicPackageManager):
                         return str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
                 else:
                     l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","").split("\r")[-1]
-                    if("Id" in l):
+                    if(" Id " in l):
                         idSeparator = len(l.split("Id")[0])
         print("🟡 Better id not found!")
         return id
