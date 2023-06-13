@@ -86,7 +86,7 @@ class ChocoPackageManager(SamplePackageManager):
         """
         print(f"🔵 Starting {self.NAME} package caching")
         try:
-            p = subprocess.Popen([self.EXECUTABLE, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, env=os.environ.copy())
             ContentsToCache = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
