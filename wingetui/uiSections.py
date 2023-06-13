@@ -614,7 +614,7 @@ class UpdateSoftwareSection(SoftwareSection):
                 t = ToastNotification(self, self.callInMain.emit)
                 if count > 1:
                     t.setTitle(_("Updates found!"))
-                    t.setDescription(_("{0} packages are being updated").format(count))
+                    t.setDescription(_("{0} packages are being updated").format(count)+":")
                     packageList = ""
                     for item in self.packageItems:
                         packageList += item.text(1)+", "

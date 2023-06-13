@@ -1057,9 +1057,11 @@ class ToastNotification(QObject):
             template = windows_toasts.toast_types.ToastText4()
         else:
             template = windows_toasts.toast_types.ToastText2()
-        template.SetFirstLine(self.title)
+        template.SetHeadline(self.title)
         if self.description:
-            template.SetSecondLine(self.description)
+            template.SetFirstLine(self.description)
+        if self.smallText:
+            template.SetSecondLine(self.smallText)
         #template.SetDuration(self.showTime)
         for action in self.actionsReference.keys():
             actionText = self.actionsReference[action]
@@ -1108,7 +1110,7 @@ class ToastNotification(QObject):
                 self.signalCaller(self.onClickFun)
             else:
                 self.onClickFun()
-       
+                
 class DraggableWindow(QWidget):
     pressed = False
     oldPos = QPoint(0, 0)
