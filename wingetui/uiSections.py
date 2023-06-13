@@ -37,7 +37,9 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.SectionImage.setPixmap(QIcon(getMedia("desktop_download")).pixmap(QSize(64, 64)))
 
         self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Version"), _("Source")])
-        self.packageList.setColumnCount(5)
+        self.packageList.setColumnCount(7)
+        self.packageList.setColumnHidden(5, True)
+        self.packageList.setColumnHidden(6, True)
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.openInfo(item) if not getSettings("InstallOnDoubleClick") else self.installPackageItem(item))
@@ -301,6 +303,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
+            item.setText(6, package.getFloatVersion())
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package
@@ -379,7 +382,6 @@ class UpdateSoftwareSection(SoftwareSection):
         self.SectionImage.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
         self.discoverLabel.setText(_("Software Updates"))
 
-        self.packageList.setColumnCount(6)
         self.packageList.setHeaderLabels(["", _("Package Name"), _("Package ID"), _("Installed Version"), _("New Version"), _("Source")])
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
@@ -389,6 +391,8 @@ class UpdateSoftwareSection(SoftwareSection):
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.setStretchLastSection(False)
+        self.packageList.setColumnCount(7)
+        self.packageList.setColumnHidden(6, True)
         header.setSectionResizeMode(0, QHeaderView.Fixed)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(2, QHeaderView.Stretch)
@@ -686,6 +690,7 @@ class UpdateSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.NewVersion)
             item.setIcon(4, self.newVersionIcon)
+            item.setText(6, package.getFloatVersion())
             package.PackageItem = item
             if package.isManager(Scoop):
                 try:
@@ -720,7 +725,7 @@ class UpdateSoftwareSection(SoftwareSection):
         def getID(item: TreeWidgetItemWithQAction) -> str:
             return item.text(2)
         def getVersion(item: TreeWidgetItemWithQAction) -> str:
-            return item.text(3)
+            return item.text(6)
         def getNewVersion(item: TreeWidgetItemWithQAction) -> str:
             return item.text(4)
         def getSource(item: TreeWidgetItemWithQAction) -> str:
@@ -852,9 +857,11 @@ class UninstallSoftwareSection(SoftwareSection):
         self.SectionImage.setPixmap(QIcon(getMedia("workstation")).pixmap(QSize(64, 64)))
         self.discoverLabel.setText(_("Installed Packages"))
 
-        self.headers = ["", _("Package Name"), _("Package ID"), _("Installed Version"), _("Source")] # empty header added for checkbox
+        self.headers = ["", _("Package Name"), _("Package ID"), _("Installed Version"), _("Source"), "", ""] # empty header added for checkbox
         self.packageList.setHeaderLabels(self.headers)
-        self.packageList.setColumnCount(5)
+        self.packageList.setColumnCount(7)
+        self.packageList.setColumnHidden(5, True)
+        self.packageList.setColumnHidden(6, True)
         self.packageList.setSortingEnabled(True)
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -1094,6 +1101,7 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
+            item.setText(6, package.getFloatVersion())
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package

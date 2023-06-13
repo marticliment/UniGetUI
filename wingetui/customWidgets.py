@@ -1,8 +1,11 @@
 from datetime import datetime
 from functools import partial
+from typing import Optional
 from PySide6.QtCore import *
+import PySide6.QtCore
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+import PySide6.QtWidgets
 from win32mica import *
 from tools import *
 from tools import _
@@ -839,7 +842,20 @@ class SoftwareSection(QWidget):
         self.packageListScrollBar.setOrientation(Qt.Vertical)
         self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v>=(self.packageListScrollBar.maximum()-20) else None)
 
+        class HeaderView(QHeaderView):
+            sortOrder = Qt.SortOrder.DescendingOrder
+            def __init__(self, orientation: Qt.Orientation, parent: TreeWidget) -> None:
+                super().__init__(orientation, parent)
+                self.treewidget = parent
+                self.sectionClicked.connect(self.clickNewSection)
+                
+            def clickNewSection(self, s: int):
+                if s==3:
+                    self.sortOrder = Qt.SortOrder.AscendingOrder if self.sortOrder == Qt.SortOrder.DescendingOrder else Qt.SortOrder.DescendingOrder
+                    self.treewidget.sortByColumn(6, self.sortOrder)
+
         self.packageList = TreeWidget("")
+        self.packageList.setHeader(HeaderView(Qt.Orientation.Horizontal, self.packageList))
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
@@ -1028,7 +1044,7 @@ class SoftwareSection(QWidget):
         def getID(item: TreeWidgetItemWithQAction) -> str:
             return item.text(2)
         def getVersion(item: TreeWidgetItemWithQAction) -> str:
-            return item.text(3)
+            return item.text(6)
         def getSource(item: TreeWidgetItemWithQAction) -> str:
             return item.text(4)
         

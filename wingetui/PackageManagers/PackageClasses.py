@@ -51,6 +51,22 @@ class Package():
         """
         return manager == self.PackageManager
     
+    def getFloatVersion(self) -> float:
+        newver = ""
+        dotAdded = False
+        for char in self.Version:
+            if char in "0123456789":
+                newver += char
+            elif char == ".":
+                if not dotAdded:
+                    newver += "."
+                    dotAdded = True
+        if newver and newver != ".":
+            strver = "{:040.10f}".format(float(newver))
+        else:
+            strver = "{:040.10f}".format(0.0)
+        return strver
+        
     def __str__(self) -> str:
         return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
         

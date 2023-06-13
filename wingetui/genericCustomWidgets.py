@@ -231,6 +231,13 @@ class TreeWidget(QTreeWidget):
                 event.ignore()
                 return
         return super().keyPressEvent(event)
+    
+class PackageListSortingModel(QAbstractItemModel):
+    
+    def sort(self, column: int, order: Qt.SortOrder = ...) -> None:
+        if column == 2:
+            column = 6
+        return super().sort(column, order)
 
 class ScrollWidget(QWidget):
     def __init__(self, scroller: QWidget) -> None:
