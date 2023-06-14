@@ -101,3 +101,16 @@ wingetui/choco-cli/extensions/chocolatey-windowsupdate/Get-WindowsUpdateErrorDes
 wingetui/choco-cli/extensions/chocolatey-windowsupdate/Get-NativeInstallerExitCode.ps1
 wingetui/choco-cli/extensions/chocolatey-windowsupdate/chocolatey-windowsupdate.psm1
 wingetui/choco-cli/extensions/chocolatey-windowsupdate/Set-PowerShellExitCode.ps1
+wingetui/choco-cli/bin/chocolatey.exe
+wingetui/choco-cli/redirects/chocolatey.exe
+wingetui/choco-cli/redirects/chocolatey.exe.ignore
+wingetui/choco-cli/redirects/cinst.exe
+wingetui/choco-cli/redirects/cinst.exe.ignore
+wingetui/choco-cli/redirects/clist.exe
+wingetui/choco-cli/redirects/clist.exe.ignore
+wingetui/choco-cli/redirects/cpush.exe
+wingetui/choco-cli/redirects/cpush.exe.ignore
+wingetui/choco-cli/redirects/cuninst.exe
+wingetui/choco-cli/redirects/cuninst.exe.ignore
+wingetui/choco-cli/redirects/cup.exe
+wingetui/choco-cli/redirects/cup.exe.ignore

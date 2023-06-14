@@ -863,6 +863,7 @@ class ScoopBucketManager(QWidget):
                 p.finishInstallation.connect(self.loadBuckets)
             
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
+        os.remove(Scoop.CACHE_FILE)
         globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
 
 if(__name__=="__main__"):
