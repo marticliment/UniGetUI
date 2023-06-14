@@ -352,7 +352,7 @@
   "This wizard will help you configure and customize WingetUI!" : null,
   "Translators" : null,
   "Type here the name and the URL of the bucket you want to add, separated by a space." : null,
-  "Unable to find package" : "Unable to find the package\n",
+  "Unable to find package" : "Unable to find the package",
   "Unable to load informarion" : "Unable to load information",
   "uninstall" : null,
   "Uninstall" : null,
