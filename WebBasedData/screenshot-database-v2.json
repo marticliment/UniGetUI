@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14018,
-        "done": 7558
+        "done": 7560
     },
     "icons_and_screenshots": {
         "115": {
@@ -2646,8 +2646,10 @@
             "images": []
         },
         "bluestacks": {
-            "icon": "https://i.imgur.com/mOS8BWh.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/Fileover/Assets/main/Others/WingetUI/Bluestacks/bluestacks-icon.png",
+            "images": [
+                "https://raw.githubusercontent.com/Fileover/Assets/main/Others/WingetUI/Bluestacks/bluestacks-screen01.png"
+            ]
         },
         "revu-21": {
             "icon": "",
@@ -10284,8 +10286,11 @@
             "images": []
         },
         "obsidian": {
-            "icon": "https://community.chocolatey.org/content/packageimages/obsidian.1.1.15.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/Fileover/Assets/main/Others/WingetUI/Obsidian/obsidian-icon.png",
+            "images": [
+                "https://raw.githubusercontent.com/Fileover/Assets/main/Others/WingetUI/Obsidian/obsidian-screen01.png",
+                "https://raw.githubusercontent.com/Fileover/Assets/main/Others/WingetUI/Obsidian/obsidian-screen02.png"
+            ]
         },
         "ocenaudio": {
             "icon": "https://community.chocolatey.org/content/packageimages/ocenaudio.install.3.11.22.png",
