@@ -882,7 +882,7 @@ class SectionComboBox(QWidget):
         self.buttonOn = buttonEnabled
         self.setAttribute(Qt.WA_StyledBackground)
         self.combobox = CustomComboBox(self)
-        self.combobox.setMinimumWidth(250)
+        self.combobox.setFixedWidth(250)
         self.setObjectName("stBtn")
         self.restartButton = QPushButton("Restart ElevenClock", self)
         self.restartButton.hide()
