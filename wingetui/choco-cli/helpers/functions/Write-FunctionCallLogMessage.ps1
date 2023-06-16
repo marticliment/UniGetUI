@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Write-FunctionCallLogMessage {
-    <#
+<#
 .SYNOPSIS
 DO NOT USE. Not part of the public API.
 
@@ -23,6 +23,8 @@ DO NOT USE. Not part of the public API.
 Writes function call as a debug message.
 
 .NOTES
+Available in 0.10.2+.
+
 This function is not part of the API.
 
 .INPUTS
@@ -46,34 +48,32 @@ Allows splatting with arguments that do not apply. Do not use directly.
 Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
 #>
-    param (
-        $invocation,
-        $parameters,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param (
+  $invocation,
+  $parameters,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    # do not log function call - recursion?
+  # do not log function call - recursion?
 
-    $argumentsPassed = ''
-    foreach ($param in $parameters.GetEnumerator()) {
-        if ($param.Key -eq 'ignoredArguments') {
-            continue;
-        }
-        $paramValue = $param.Value -Join ' '
-        if ($param.Key -eq 'sensitiveStatements' -or $param.Key -eq 'password') {
-            $paramValue = '[REDACTED]'
-        }
-        $argumentsPassed += "-$($param.Key) '$paramValue' "
+  $argumentsPassed = ''
+  foreach ($param in $parameters.GetEnumerator()) {
+    if ($param.Key -eq 'ignoredArguments') { continue; }
+    $paramValue = $param.Value -Join ' '
+    if ($param.Key -eq 'sensitiveStatements' -or $param.Key -eq 'password') {
+      $paramValue = '[REDACTED]'
     }
+    $argumentsPassed += "-$($param.Key) '$paramValue' "
+  }
 
-    Write-Debug "Running $($invocation.InvocationName) $argumentsPassed"
+  Write-Debug "Running $($invocation.InvocationName) $argumentsPassed"
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBmZ9hx8t9mbor1
-# 2HZLgl2t3ra4kkPVN3xJvHZiNfftoKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC/ZTIWKjl4xNOF
+# 9eFvOl15JCkFjuCy8GuId3fx6r6KR6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -236,28 +236,28 @@ Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParam
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgvlZ75wMbMKkIUcG14PM0lUAKYxNa1smTLbhwYMWAXYowDQYJ
-# KoZIhvcNAQEBBQAEggEAhKHwhEjCknMgjv+197Vz2t1deW6s5noWRMwHTAoR5mmd
-# 4GlJHee+xMPFTA8tWyPQY7piX0GS4hf37BNr53MMX50wHru/oJlxqmAqwDVKiggt
-# W2Gq2jhpHvwbrLpsC0MUmSnFS8MrHdYDfPfRSeB1q5wW5a8OiaHtZpcvFiBjB91m
-# j037NgAOmmZEUZA37Aa0hK9iB0kkRu1g6elTyXK70poTSyTdJg5OXA2KG82W4FAo
-# Ts/j/Eo1+kXidvaMLsQPErG8OZGkZfFdNXyrUXPgxvLvp7qXcHiyAuTYyopRBdDC
-# GLaIxZoSqaEp/fXLLkRL8viV35tqZRoQymKJPu6n96GCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQguIju8ZV6haESAMsBaIFhO5VjFq1VP2/zc8UwzvsS6Q8wDQYJ
+# KoZIhvcNAQEBBQAEggEAE8pwmCJBiLStzc80g4Rgqtg6Z/fNLTm7BAidJtDjfKzb
+# H7jDpzot2ZamA7JM7C+lBpWXWwDfBqrTcC449YfQQtQQGRVJ8AfgPMtRKF/Z/jND
+# EA/vglkX1brN9WVCKrcgJevZXaA1fTdWNIl1eIeGaVXrQbabIK/wyhOBc4TcKmc1
+# eON9qcZB7LCsgjttzhjbrFePOrNZ59Ri3x1c+p8UgqVUGEhcpgErsowgHSm2qbJY
+# 6gqRD6roRpIGLHZVp/MhDUaIaExfrnX42gppZb3ypPid+okSCgVwJ4yyfUUjk4oM
+# eb2r+IuO0/avPWR72T7MDuibhKqjwFkC9Ml5IslyBaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ5MDBaMC8GCSqGSIb3DQEJBDEiBCAprjObq9w7/r91YqfrBZs1
-# TZRLMtJZyfflYhbx/0IaiTANBgkqhkiG9w0BAQEFAASCAgCxckSPyAEw48g4OFLH
-# hB4+fElH8SM6aRRf50ihaVDuc8usdIpN24z5ywCWvXvBHycYHbOlD0Mmt9vhH/Hy
-# uDHFhtHEQBV0h0EBTOEW3Eej8aWV1/NG7LXBdGPYQ6XuA0zv1Bf2TJ4q0Rqyte6h
-# EKOzAlujD6hqs0G8RJ3Bx2Hlm+jpoAEaUNdU8BKeWlz1Bfe0CfklE8JM/0iF1W3A
-# s/+iIuF0aJftfS8p/9Rk192bvFYIhsTcApXmaHSt/nz/lbPUeqH6/NTXDWiMNG+Q
-# wMalDLqDW2zH689+hbKdVfu5bjJXIiCu/ys9yZNLi4ZCSlh7KUDA+g45kETtv74g
-# AAEta8ms25u0BPP1TmZ8QhjSWws6ubMbtJD+bOhC+BCFD9T+yX2DwEYh67lqs8Ka
-# iwD+gOq7AS9uyxLSRfSNaj5sobffYrf4spEaLxljJeJsHnKsHyBCTn5cjgiqFu6/
-# 8siYBfyW/7wWm8WhBZLQLN5F7NZP3GbjNe4YcbldbYd2AEcyxdYhkzsdk9A3iJrG
-# INZvHYdIGgPu+TgJCfzswyXe1NOixbNL/+bb+PC2zLrz2idhsV+i/Z5n6XBtrAId
-# Q8r5qEh5VNMOowhOTqEfGFqHzNfJ3s/d9syIWc+vlQGqdL9709DAM0totAhVnEWW
-# 8wI3x49njTm012d/XRXukiiViw==
+# Fw0yMzA1MTAxMDUzMjNaMC8GCSqGSIb3DQEJBDEiBCDQ3ZmzAfygyYcKUER2ljPH
+# +mZN6MJaAgK1FuDxPfBR8TANBgkqhkiG9w0BAQEFAASCAgBwth6rXX68Q/uEblgD
+# HE8gh6iA6OYhPqqToDL4OG5bXxA/Lh/UH0qZ4nba4pBG6f8j+SNWMMcyr5a062kv
+# R+47nG+opnIiIxJboFbTeM43eMN5O+80tXtT3JCI+LjD/LPgeZdkMSQkp0Hg/6h2
+# s4J40VwUsSAIakkCAyErYQIUeW3eY95mb1pCg/7mNIwppFq4a/IlgRN4ciPSdcNF
+# Ube0HNYEPy3K7IOhGMtt1gTzHSykswTo+N5Shcxu7a53wJuO79S9ruobJRC1ihFj
+# QCvzu5YwG6Z53zX9vx+BIresnIMvcmHBX0yn8GzRGpm83RRuCrE+H8RHHc0MSsJw
+# tzHlYoM33p3pKcEzLTl1LIGz2o/8Zw/BkPEmv0FRIV0VkxYy6gvND6EHohurLOUR
+# PQKKLxax5VLTlVuNB732kZ9MBaj9FWs7Yg8tAya+Xkw9dPuzodvxFkTeJfNHtaeH
+# hs1BTExxo42vCAlC1offbhuY/MvZy4TFKy2f6jzeZlaY7SO3RrRgEVIrc3uLrXJz
+# iPQGXWTba3KBR/bGe2+wPZnf1s189Ft1tjn4byHlxD08Rq2UWqaSlUP+WL/z1p/o
+# RL/czHZTa8x98cIkNCrk9FBHQMgQWEXxpwHObIeHfsrCLns6cv+DCr5/YGq9FV9d
+# fFR8zEF0uL6BHDJpXX85smicPw==
 # SIG # End signature block

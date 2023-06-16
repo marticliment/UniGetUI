@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-BinFile {
-    <#
+<#
 .SYNOPSIS
 Creates a shim (or batch redirect) for a file that is on the PATH.
 
@@ -75,103 +75,98 @@ Install-ChocolateyShortcut
 .LINK
 Install-ChocolateyPath
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $name,
-        [parameter(Mandatory = $true, Position = 1)][string] $path,
-        [parameter(Mandatory = $false)]
-        [alias("isGui")][switch] $useStart,
-        [parameter(Mandatory = $false)][string] $command = '',
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $name,
+  [parameter(Mandatory=$true, Position=1)][string] $path,
+  [parameter(Mandatory=$false)]
+  [alias("isGui")][switch] $useStart,
+  [parameter(Mandatory=$false)][string] $command = '',
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    $nugetPath = [System.IO.Path]::GetFullPath((Join-Path "$helpersPath" '..\'))
-    $nugetExePath = Join-Path "$nugetPath" 'bin'
-    $packageBatchFileName = Join-Path $nugetExePath "$name.bat"
-    $packageBashFileName = Join-Path $nugetExePath "$name"
-    $packageShimFileName = Join-Path $nugetExePath "$name.exe"
+  $nugetPath = [System.IO.Path]::GetFullPath((Join-Path "$helpersPath" '..\'))
+  $nugetExePath = Join-Path "$nugetPath" 'bin'
+  $packageBatchFileName = Join-Path $nugetExePath "$name.bat"
+  $packageBashFileName = Join-Path $nugetExePath "$name"
+  $packageShimFileName = Join-Path $nugetExePath "$name.exe"
 
-    if (Test-Path ($packageBatchFileName)) {
-        Remove-Item $packageBatchFileName -Force
-    }
-    if (Test-Path ($packageBashFileName)) {
-        Remove-Item $packageBashFileName -Force
-    }
-    $originalPath = $path
-    $path = $path.ToLower().Replace($nugetPath.ToLower(), "..\").Replace("\\", "\")
+  if (Test-Path ($packageBatchFileName)) {Remove-Item $packageBatchFileName -force}
+  if (Test-Path ($packageBashFileName)) {Remove-Item $packageBashFileName -force}
+  $originalPath = $path
+  $path = $path.ToLower().Replace($nugetPath.ToLower(), "..\").Replace("\\","\")
 
-    $ShimGenArgs = "-o `"$packageShimFileName`" -p `"$path`" -i `"$originalPath`""
-    if ($command -ne $null -and $command -ne '') {
-        $ShimGenArgs += " -c $command"
-    }
+  $ShimGenArgs = "-o `"$packageShimFileName`" -p `"$path`" -i `"$originalPath`""
+  if ($command -ne $null -and $command -ne '') {
+    $ShimGenArgs +=" -c $command"
+  }
 
+  if ($useStart) {
+    $ShimGenArgs +=" -gui"
+  }
+
+  if ($debug) {
+    $ShimGenArgs +=" -debug"
+  }
+
+  $ShimGen = Join-Path "$helpersPath" '..\tools\shimgen.exe'
+  if (!([System.IO.File]::Exists($ShimGen))) {
+	  Update-SessionEnvironment
+	  $ShimGen = Join-Path "$env:ChocolateyInstall" 'tools\shimgen.exe'
+  }
+
+  $ShimGen = [System.IO.Path]::GetFullPath($ShimGen)
+  Write-Debug "ShimGen found at `'$ShimGen`'"
+
+  Write-Debug "Calling $ShimGen $ShimGenArgs"
+
+  if (Test-Path ("$ShimGen")) {
+    #Start-Process "$ShimGen" -ArgumentList "$ShimGenArgs" -Wait -WindowStyle Hidden
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = new-object System.Diagnostics.ProcessStartInfo($ShimGen, $ShimGenArgs)
+    $process.StartInfo.RedirectStandardOutput = $true
+    $process.StartInfo.RedirectStandardError = $true
+    $process.StartInfo.UseShellExecute = $false
+    $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+
+    $process.Start() | Out-Null
+    $process.WaitForExit()
+  }
+
+  if (Test-Path ($packageShimFileName)) {
+    Write-Host "Added $packageShimFileName shim pointed to `'$path`'."
+  } else {
+    Write-Warning "An error occurred generating shim, using old method."
+
+    $path = "%DIR%$($path)"
+    $pathBash = $path.Replace("%DIR%..\","`$DIR/../").Replace("\","/")
+    Write-Host "Adding $packageBatchFileName and pointing to `'$path`'."
+    Write-Host "Adding $packageBashFileName and pointing to `'$path`'."
     if ($useStart) {
-        $ShimGenArgs += " -gui"
-    }
-
-    if ($debug) {
-        $ShimGenArgs += " -debug"
-    }
-
-    $ShimGen = Join-Path "$helpersPath" '..\tools\shimgen.exe'
-    if (!([System.IO.File]::Exists($ShimGen))) {
-        Update-SessionEnvironment
-        $ShimGen = Join-Path "$env:ChocolateyInstall" 'tools\shimgen.exe'
-    }
-
-    $ShimGen = [System.IO.Path]::GetFullPath($ShimGen)
-    Write-Debug "ShimGen found at `'$ShimGen`'"
-
-    Write-Debug "Calling $ShimGen $ShimGenArgs"
-
-    if (Test-Path ("$ShimGen")) {
-        #Start-Process "$ShimGen" -ArgumentList "$ShimGenArgs" -Wait -WindowStyle Hidden
-        $process = New-Object System.Diagnostics.Process
-        $process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($ShimGen, $ShimGenArgs)
-        $process.StartInfo.RedirectStandardOutput = $true
-        $process.StartInfo.RedirectStandardError = $true
-        $process.StartInfo.UseShellExecute = $false
-        $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
-
-        $process.Start() | Out-Null
-        $process.WaitForExit()
-    }
-
-    if (Test-Path ($packageShimFileName)) {
-        Write-Host "Added $packageShimFileName shim pointed to `'$path`'."
-    }
-    else {
-        Write-Warning "An error occurred generating shim, using old method."
-
-        $path = "%DIR%$($path)"
-        $pathBash = $path.Replace("%DIR%..\", "`$DIR/../").Replace("\", "/")
-        Write-Host "Adding $packageBatchFileName and pointing to `'$path`'."
-        Write-Host "Adding $packageBashFileName and pointing to `'$path`'."
-        if ($useStart) {
-            Write-Host "Setting up $name as a non-command line application."
-            "@echo off
+      Write-Host "Setting up $name as a non-command line application."
+"@echo off
 SET DIR=%~dp0%
-start """" ""$path"" %*" | Out-File $packageBatchFileName -Encoding ASCII
+start """" ""$path"" %*" | Out-File $packageBatchFileName -encoding ASCII
 
-            $sw = New-Object IO.StreamWriter "$packageBashFileName"
-            $sw.Write("#!/bin/sh`nDIR=`${0%/*}`n""$pathBash"" ""`$@"" &`n")
-            $sw.Close()
-            $sw.Dispose()
-        }
-        else {
+      $sw = New-Object IO.StreamWriter "$packageBashFileName"
+      $sw.Write("#!/bin/sh`nDIR=`${0%/*}`n""$pathBash"" ""`$@"" &`n")
+      $sw.Close()
+      $sw.Dispose()
+    } else {
 
-            "@echo off
+"@echo off
 SET DIR=%~dp0%
 cmd /c """"$path"" %*""
-exit /b %ERRORLEVEL%" | Out-File $packageBatchFileName -Encoding ASCII
+exit /b %ERRORLEVEL%" | Out-File $packageBatchFileName -encoding ASCII
 
-            $sw = New-Object IO.StreamWriter "$packageBashFileName"
-            $sw.Write("#!/bin/sh`nDIR=`${0%/*}`n""$pathBash"" ""`$@""`nexit `$?`n")
-            $sw.Close()
-            $sw.Dispose()
-        }
+      $sw = New-Object IO.StreamWriter "$packageBashFileName"
+      $sw.Write("#!/bin/sh`nDIR=`${0%/*}`n""$pathBash"" ""`$@""`nexit `$?`n")
+      $sw.Close()
+      $sw.Dispose()
+
     }
+  }
 }
 
 Set-Alias Generate-BinFile Install-BinFile
@@ -180,8 +175,8 @@ Set-Alias Add-BinFile Install-BinFile
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDGT2WwFVwN4W09
-# /EM11/hMvWPr+Dj5ahXiacNu7k+zc6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDDt4U3vg8g8NKF
+# MXVjVcL6OY5ybm6js5CAnI0JoOiwUaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -344,28 +339,28 @@ Set-Alias Add-BinFile Install-BinFile
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgGmRVsLq/R737SAr7GSgtFHRFOLSYwhK5ePHvksMZkV0wDQYJ
-# KoZIhvcNAQEBBQAEggEALVsrS4fYDPSK7LND7ax+ppP/vPTjcJodL6Aynx4hxroV
-# FGgbmeuU6/88NlZtc7fiiqZG6hBXSBfxkNgCHbS+c6IFisTDor2o2YrNJCNRlgBS
-# jUUYSVdDhXu18sPMBp9+Cy+4KFTEhUQBavDf0sUdhUycrXI9Z6EyUsrJ08131lbV
-# LKd+WeV0/rkXeXP53pqvM9pYqoNe6UwUDuFIdM8a02MWlTcbq6GvbgpD32+UaaHr
-# f5DA5v4cxUQqHxKnHjoFwJP0Gm14LTeivdFzsZ/O4qF4dUqTLYmmTSIiK3X3SfdR
-# AL8k9DasT6PUDiI1hoyh4cY/H5163uYL4L4LTNJbpaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQghfdTkNcDIXoEQ6KhSDVyRz9am4BB+3zEIYVbx6P4af8wDQYJ
+# KoZIhvcNAQEBBQAEggEAgIq8NtlNGqsxNheV6106xdrty/NY7ns1YmJZkOKSA/yW
+# zrub7bAjNNhKTOsYEn1JckYOBx412dXF1QTCTuRRIfBoIcBElthn/NmKExCQMSgd
+# 0qgjfiIgIIW37gJamKRD2iHdftVfFQ2BhPiop+ByZxnx4J0TKOtSxAvJIubYASf1
+# bLJz9w3ZsSPBcEiQm+YUYFWjWpYs+JkN6hiZlOvAMTRCKGDoG+qz/GxP9irbY/8j
+# LPSgOlHmy/lEoj149GOQYRRAOF5nnW//SOx/dNwjawrZHG1P7fBTcAIbRE5ICWuZ
+# jE/E6k/bpEnEo4JpZpdKccCzniobLdfltxpDUxH44aGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTdaMC8GCSqGSIb3DQEJBDEiBCDTe4lL1uL0T3ClhW62ROhn
-# b0OACHl6IMJ1LhfzVyxlETANBgkqhkiG9w0BAQEFAASCAgBWzDhg0EX+dFpb6rqQ
-# G+bvbqGPK85oQeWhm69kd7YIodNc652XNR+hDnpV9/1zM6HYQ59w16Qjfy6G8W5i
-# XENPce5aBkvbS9s39AcBpBSPB75u1dv8OiCuNgUP3e27caabOXrDO4kbD/L/8fwm
-# hav3mUTxS6tmmuYm7aoZo+Rcv+1VAkaXhyqetGYpgtJo4dcfE/iopZiyXhb22MLv
-# uY4dsb4Uj/iJjfvdE4eHGRbGhUtj0NuEyCB072d6dVLBjS84gCW1JuD/h3hW9dYw
-# XWVecizewI6JHSNf+cND6QgzetuVX3PWU1bs9QdP/qCksi9ynTpUKtNmgvPK7F35
-# y+DWfmGTLncjRijcgilZCUlL87sEVLXzjT1Wo2DnIRh0C3DDkhHlsouRAtKs0uRx
-# txa4PQtj1QY8huGKP+IxURJ4eBHLdMO1gcWiLgcLLpaRBKc63zewzcfBy8tSor2E
-# uEYqTHqtwVtYW7zeK+gC6SN7gTr7FWdiX/nPP5t2pZvXYa8XoHH4tfk2eLe0Llgf
-# ng/Q7oxcI9FuGxfE8qCMnA2s6vFGx64vgQ860v4DKX997a4amlgPU3Z7AXKB6OBB
-# 4OYLUmJr2VnIkkbMrBQffXCMIjnCm8QAHYJAU2ltatWPeFby0qHckaABhYmuiSBH
-# mn5g64Kpc81qXx7iwsmN6MDd/A==
+# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCDrXrUlJQlZt+iRAZmf/cbU
+# AWV+fth5O3naO/LpkxMlpjANBgkqhkiG9w0BAQEFAASCAgBu/WjFZ04D6B3h2pNt
+# EV4mAOE4rjeNm0EPePR10ndpmfDHQ0J7kjGqmaBIHFKOgnnMbR5v/jGFjMCVw8li
+# lPQXQSaMHUqMQL17Qn69vqZR5fetfmyRzjoDJVhvma+zZEf4ZrH+3WUBkXusca4k
+# Jgd0F30dK9hcU5mG9fqUe3iQuquBpjyVmqe9LNEJcZKgttUG5eC2/Pwg0VBJGXsI
+# OdwtgJXzWLmwWu948dayachSb4PdIqEvyyR0rqO2b9yJuU9tM//RKKgW4xeTjkNb
+# 3904wt48hIfZ06NgocVoPJjbXvFfl8U5TV6k3ikxyzY6GekxqaxPcT84s4O3wEGN
+# hC/+cqidX+1SptMi+XYMvoHg6cIOtSbbhfd0Dq+JvNBVHAb87kBzMpkNKF3Uaj89
+# E185/T/BcDC37uIonyfqoZtMu8gNkLcSqXgwZ68xRC29J6QNrxc5ZiTRF/TWHXMj
+# ZZj/5LgatBWPFMBDEI5131cBefsSN+WwCSQfLvIHHlCYEYs8C0qyuL8lWO5/C71m
+# eh7QWJ+rX6iGjnQMSOgWVgzCPaw4eO3fGtgocxuGy4Bl61y+N/QDCLTAsR8Nz63Q
+# dmH/Z4AG9/iPHScr/CB96q/4DbSx0k3TR1uWhkiuAui6TNk5er6EXFIPr6p/1z+0
+# LotypVq3w3kTlchVfCFAYjMGjw==
 # SIG # End signature block

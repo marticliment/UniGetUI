@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyExplorerMenuItem {
-    <#
+<#
 .SYNOPSIS
 **NOTE:** Administrative Access Required.
 
@@ -81,28 +81,20 @@ Install-ChocolateyExplorerMenuItem "sublime" "Open with Sublime Text 2" $sublime
 .LINK
 Install-ChocolateyShortcut
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $menuKey,
-        [parameter(Mandatory = $false, Position = 1)][string] $menuLabel,
-        [parameter(Mandatory = $false, Position = 2)][string] $command,
-        [parameter(Mandatory = $false, Position = 3)]
-        [ValidateSet('file', 'directory')][string] $type = "file",
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
-    try {
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $menuKey,
+  [parameter(Mandatory=$false, Position=1)][string] $menuLabel,
+  [parameter(Mandatory=$false, Position=2)][string] $command,
+  [parameter(Mandatory=$false, Position=3)]
+  [ValidateSet('file','directory')][string] $type = "file",
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
+try {
 
-        Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-        if ($type -eq "file") {
-            $key = "*"
-        }
-        elseif ($type -eq "directory") {
-            $key = "directory"
-        }
-        else {
-            return 1
-        }
-        $elevated = "`
+  if($type -eq "file") {$key = "*"} elseif($type -eq "directory") {$key="directory"} else{ return 1}
+  $elevated = "`
     if( -not (Test-Path -path HKCR:) ) {New-PSDrive -Name HKCR -PSProvider registry -Root Hkey_Classes_Root};`
     if(!(test-path -LiteralPath 'HKCR:\$key\shell\$menuKey')) { new-item -Path 'HKCR:\$key\shell\$menuKey' };`
     Set-ItemProperty -LiteralPath 'HKCR:\$key\shell\$menuKey' -Name '(Default)'  -Value '$menuLabel';`
@@ -110,20 +102,20 @@ Install-ChocolateyShortcut
     Set-ItemProperty -LiteralPath 'HKCR:\$key\shell\$menuKey\command' -Name '(Default)' -Value '$command \`"%1\`"';`
     return 0;"
 
-        Start-ChocolateyProcessAsAdmin $elevated
-        Write-Host "'$menuKey' explorer menu item has been created"
-    }
-    catch {
-        $errorMessage = "'$menuKey' explorer menu item was not created - $($_.Exception.Message)"
-        Write-Warning $errorMessage
-    }
+  Start-ChocolateyProcessAsAdmin $elevated
+  Write-Host "'$menuKey' explorer menu item has been created"
+}
+catch {
+    $errorMessage = "'$menuKey' explorer menu item was not created - $($_.Exception.Message)"
+	Write-Warning $errorMessage
+  }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBHFlPUVrtPNjxT
-# dGHCRmZ6x9Qp5K+rK/IwIoIkiqiILKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDPpBGPKJ/2kQ3E
+# TdNGNMk10lj6cgeEN3Zn9PL8V0c8yqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -286,28 +278,28 @@ Install-ChocolateyShortcut
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQggx7TkTBNpw17RJ3Gi1Z1JXBpk3hJ3dSy03ddc4WLMt0wDQYJ
-# KoZIhvcNAQEBBQAEggEARxeF3SYpicXM5GtAVD9WtA0LFxNvkxRWeL+IgAGo5Vy9
-# 08xBcU3M9q/YnZsCbXe0+Mw4YhgUtNSSTW2tpuG0199r2CKCk94EXdrcMrp93utk
-# q+JXGnF1l9upTz+8i7TftAIUK07mqQtUAr3wSKyuvsBmVSjhkI3En7EOUxnMjuBu
-# N2ygUo4qvsZdwzenbhBwutSOkrwRziy/0cKXH1GZa7mzJEF066G/qzDqz/DOJmQb
-# VKICHbg3e0ZmBjMxFDy2Qdie7VobViz0v7NhOmlMFFPul3t60oonrphrzSABzJdg
-# Qy2kCW7+nKPmxIyuYcU+zwOmwMW+btAbu3zKjeC/EqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgykamaiv4gMYKB6IM2FuM85DU2J+y/0NrcTecxZVk4C4wDQYJ
+# KoZIhvcNAQEBBQAEggEAiSPGJLFZkjVpoBp89lTW+iGXuSLlm9dGN4psAoH/Nx1C
+# enwF7nVdNRMHKqY9giniZGxwKpH7VSmax8nXZIY89l4TT5Iw5q6ml+NoK48HgJZQ
+# yxHP9O8UTz7RbgLQHjRZ2ACAlq5TjoReO5CVd2bTTw5LttTFEa8Y8HfVt4/qJfms
+# fDqyZue4/OVATY0lQHHgYZpCn0zF3zjj9zMFrgqwKEHmprS3ayPAGDw7/zLaNN6u
+# jKnATwr2eJEoK7Q368neAhX4BS829ZmosDS0x9Hp3otQnfw00wT+HdGGQtnyq9fW
+# tOcuTyx9gnmF39qQBx3844bevoj8Hk35lArzqo6mpaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTdaMC8GCSqGSIb3DQEJBDEiBCDDg/OpYZt7TMJ4N7gcH9Kw
-# oMdWo/dWW7+POBjzeAA4LTANBgkqhkiG9w0BAQEFAASCAgDC9m1/+oh9Fj8obZa5
-# WGcxw8kc+8bM8vco2g3kYzwmGRx9cy8FXgPgGQVE94t8C0jJRor/GrG0+qXUqme+
-# tkKlj6p2u2pboFx2p+MmQWOdVo+SE8tQNYi0wdJ8ByoeDB5Y+P23zdkOV6atfrPt
-# Ol/mg++ySb+YK93N2D80Ny8JA3AarLPK4CayzXfARy59nK4GfRhg7+IHxwEw3iYJ
-# iBa5NyJiefXG89DwK0MssLR+mLUYlUrcqvydUwoiMDOaHaXpxBb7+u+IfQyycxBx
-# RHjWlZeEl+HvDKL27V2Pp6u9TTYQU1s5s5vTdlfLHxvUYlJ+VJ/KM+oBt7qOnrjZ
-# 7J0SYUH6YM0yUm63o8U7RV2DACVItK7ieRBvADlINNB9DHbgnLAKZFVrcFJcfhzU
-# Fw69AZZPAIYeeMDMgcxtDjUG/OUosZSXWUE/HefAAK3CeY9nBD33V5iY+z6HSrQ8
-# JVrE89h37H9Jl7nmCdfXOC3GtUZbVaetlSKnaESpsfRgwwcIXgmveqxtCeHYGL3G
-# 8WDb4vdWo3kzsqtkoj+OeVQxlqW7Jv6vdrBJsSIr2qRLbDoiHuRje8WXR68yTTZ1
-# aOaoA0XI9H2yINXP9TD1uGbq5pts49Rk4EkJsYjASgotFr9vilmO+ykESLFLCxJG
-# K9grwqPWrz5KxVWBDIRhgBQHgA==
+# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCAKF5kXJ0c+Q3wJw1XSysIN
+# 5Ri7QKia3uq3yD4J5XQ4ijANBgkqhkiG9w0BAQEFAASCAgBd5oQq7mUncm5LP3mR
+# pSfl7umUf6oGbjrLi4zXvIbBgK4UkhD2pwSlKjDdbMZj4cVOdNWwajbO2NyWCFAX
+# rJzedUvfqZzYSH+G8Gn5tbNUeJ+/0tZccEwbNHaD87pnhhZVNtbvr+ClIdLRyBRT
+# NSF17stfVYvuqwMpdw90qSsqGFYypD43krVk5qP9UWoMvXaVWnwMA+fdvWFLwASm
+# VrkV/KKnjZyocXa7er2j3xs7sFf68d+uEj8MOPwn0z3LQo/CU0MeNmPXs1HB3QB6
+# VC/7oqeiI6JM6g2ekJ8Wgv4aeUoRxIQWzh54X26YknhuDK3iuwFCMd9h0yYgIUF1
+# PwS4CilQHJyz6sD8BFtmUPoLA+R7yR3BLZjLUit8fDUD0EgMhGPhtVPXtbDO/Fgh
+# Rse+y708gOUoUP6Ad7o5guLsqDbBXlH7sdAy1GYJe4EIi7NyuuH3TVTlkjrCOyUA
+# HJqFxq3/HrneTETOBbcRI78Tx/xxzXBnRjiMQvB8qE3C4W1sXxTpreYxeWDBl6Og
+# yhTTpVc2waNlMbmDOK0qn9Xf185J1d0RMmBnDEQRoMhrO4mN/ENhiGGvg5knKO4U
+# n0S9pdaEpFe45MxZR/88+jFH7VbMXz242j2rHE5wuYafRbJOK1pgSvjUAeTsBnfz
+# WVvTO3mAICx1Z7P+6doNCnmASA==
 # SIG # End signature block

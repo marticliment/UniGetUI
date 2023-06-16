@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Uninstall-ChocolateyEnvironmentVariable {
-    <#
+<#
 .SYNOPSIS
 **NOTE:** Administrative Access Required when `-VariableType 'Machine'.`
 
@@ -28,6 +28,9 @@ the User or to the Machine. If Machine level scoping is specified, the
 command is elevated to an administrative session.
 
 .NOTES
+Available in 0.9.10+. If you need compatibility with older versions,
+use Install-ChocolateyEnvironmentVariable and set `-VariableValue $null`
+
 This command will assert UAC/Admin privileges on the machine when
 `-VariableType Machine`.
 
@@ -68,36 +71,34 @@ Set-EnvironmentVariable
 .LINK
 Install-ChocolateyPath
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $variableName,
-        [parameter(Mandatory = $false, Position = 1)]
-        [System.EnvironmentVariableTarget] $variableType = [System.EnvironmentVariableTarget]::User,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $variableName,
+  [parameter(Mandatory=$false, Position=1)]
+  [System.EnvironmentVariableTarget] $variableType = [System.EnvironmentVariableTarget]::User,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($variableType -eq [System.EnvironmentVariableTarget]::Machine) {
-        if (Test-ProcessAdminRights) {
-            Set-EnvironmentVariable -Name $variableName -Value $null -Scope $variableType
-        }
-        else {
-            $psArgs = "Install-ChocolateyEnvironmentVariable -variableName `'$variableName`' -variableValue $null -variableType `'$variableType`'"
-            Start-ChocolateyProcessAsAdmin "$psArgs"
-        }
+  if ($variableType -eq [System.EnvironmentVariableTarget]::Machine) {
+    if (Test-ProcessAdminRights) {
+      Set-EnvironmentVariable -Name $variableName -Value $null -Scope $variableType
+    } else {
+      $psArgs = "Install-ChocolateyEnvironmentVariable -variableName `'$variableName`' -variableValue $null -variableType `'$variableType`'"
+      Start-ChocolateyProcessAsAdmin "$psArgs"
     }
-    else {
-        Set-EnvironmentVariable -Name $variableName -Value $null -Scope $variableType
-    }
+  } else {
+    Set-EnvironmentVariable -Name $variableName -Value $null -Scope $variableType
+  }
 
-    Set-Content env:\$variableName $null
+  Set-Content env:\$variableName $null
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCmEta6wcrW7tAh
-# P9RCrI/077TRcWw6AlM+OlCIPvFQSqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAcXH9yGpeCCBfF
+# 8gC1YZAkQn9EqZ5jkmkyZI+4DFiDuqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -260,28 +261,28 @@ Install-ChocolateyPath
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQglRiJA130+5iU+azLR3CNhdJZdXZXvlRuciK8WLQTHiswDQYJ
-# KoZIhvcNAQEBBQAEggEAWTB3Mn41MOS2TFKqJFYBSect1jzWruAquT4+EtHZ4bxe
-# 9kIoGGlxVRodMJlkp8r87ccF1LR9M+cOiTEP+Hmo23uJ6qhYK0kPEldMo1wQrjEr
-# qSTkobNDlUxBNpCXlaK0280nUkClG4RkYRsvSTOB9SQMukn/c/6Zy783n5L54fYC
-# K7Jl1cl0OZRNpl8R6kJ/SWxfrDzJ/VYT/76kyUpCy344nIMzx8n1OXnvBPzinsEW
-# Q03oKvbYPqSb7AfYZiB8aP/Tx412Iad3T7eQwSQLDXXjtbQ6+kEJOXJOozCDXzMh
-# jzB8yTuMBrH9PA0BxS1PxOeUk0pOeWELx3wQlrUjLqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgja0isICSWFmL1tydpyg6YPb4iW1Fnwhfzp8xSFNxH9QwDQYJ
+# KoZIhvcNAQEBBQAEggEAN2lRANbwaC7U5CoO44Wwn6M2vwn5NeDk9Exgqrz3TTnj
+# zZVqDB/AH6kTB8Yxj//bxsNc4d7KiKJ/qjuDeDn1dsqGb33DdWwmaM/lq8ZcQO9I
+# 2sa+3RTLXKSYiMsSEXDvr5YmXfiIb7Bti3BsICoaXOVNZ1fkuGmBDrmOjdPea6Bt
+# BpIDndUZBmcn7vjT1G4nkik5hf+Fc7DYzRBKq73x5OgzrYEYDSkLuf/+wOSL8CoK
+# NWh3jY6/ENZBSEHkY+FTos7KIjToONFepHbHbVW+CK9mAB4upw9mxn78S8kIIv8g
+# QmfaVHAEJWEf4WJNHO595r1KsNuqx0TLb5BIrw9j66GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTlaMC8GCSqGSIb3DQEJBDEiBCDX3XYxSvq5vMx1vVt1ZKNO
-# kkQjSI8W+ppBBezy9xQ48zANBgkqhkiG9w0BAQEFAASCAgAWPd7P8vf/qAEMyIb+
-# gnTdxhXeEf9VtwWoaXBNpp3TSaph3o0PXTMfKRNbDVFfCeDHnzZwe2hYXEEuFYcI
-# xyJJcAUoURBIMib59g3ul6qvkRLkwtOneBpLKPyCdYRK+ttZAxT31vgOX2y0OfkG
-# 5jJwBbP2LWXEbByBNabdbz0GpSZhwzkzt8vhgn9G5DYyNi4ObWLd3mpFS476M3A7
-# Juxm1s86bjDeJr4nPT7yJGul2GaTCh2yP+zZHGMtjiJteIQ3K1XRz8QRUIW2zQ5/
-# jIHsIK3p4aemGFV6MScc5NhEF5BRLh9Y3IcUh9wEDGEdcE2XOp2XnaSKZP3uP6r9
-# I+31P0oZzTAYYdKA5Gkb9m684xmrOp9y9/6qGEuR/evaFT0cFnpCEJeYsFPRFFq/
-# NrHrIIJk5r+Pi6280ODr3KbnlsufK7T2QW9IZZ/JH2KbgEWwZFP26dxws0LowZfC
-# +UrwKAYxwHGLyzYJrMosaf0AM7kaoJEQog0BYJXnvHOulWp59K9Xvg4rLNOOon9b
-# Y2mp6G5j9V6r4Vc36JDo7QHhpZD5OPGRK0CaB8P9scbo3h7976KRP1Mzdbnbl6qO
-# lXzbsSOoc9H3BmXVEGfc9gpI0aixU+SlycOc9XyOKzzFahNfEq5pI2RNVFcSb4OK
-# qjJflOg0wjH4m41cjZAmazeRMA==
+# Fw0yMzA1MTAxMDUzMjNaMC8GCSqGSIb3DQEJBDEiBCAqODJ2vajE6g9pf7rg8x6Y
+# pgCPrGB0fC4woICQeszK3jANBgkqhkiG9w0BAQEFAASCAgC9cwHlv+s9Io97mPVU
+# wgaR/l79Ra6do60d9PJHdoV0qSnNBj+aeARlaY86NyI3En1A/L4gGYvWBXTSUAjw
+# MLkNFq3jmccJKKEl2O4NgIlUJzPubrvDHzQ4wxxs9ECzXh/2QqNLt32E4IjiZkYO
+# 6yj7hKTvr6G5jDzPGsBcOcPQVscahZGnh6fyQ5KksTumbL8tpChe7M74TMbnzsth
+# xcMYgGKoYfyUGkbCeoxuWpWvKvXdPi9fV3DHyE4VGV3CUytI678PuxvNRayL2ask
+# fdUW0s58bTCS48YIdhsbXlDglpb48bTFTDD6RIZSTPjsgBH/NNefdIrdTowmMVTU
+# Xe17BxslXfK47qz9jdKFF+QcbC0qN4ZkOWFZw6wXx6S3ufM+TKWbLNt1I0f9HBw6
+# A6nN7NOV8zwRepNoyycdZHuq+OIQepaNt8RfqsbBD8geZ7yNAGhzvQf0sRe1GU1g
+# nK8reIdLJqV1N5kkcoZQQMGkZnL2snOY99+ikHt2q8v+jA5ogx5aMzBb4qTRA7wr
+# OYtsO9ivdwaF8tKyhnZQ1Eu53XUFCZ6PYqOx11c32pRZTpDEsXCzdNcnIzC9XGwP
+# 2+TL/Mfaa22OGl/lMm8GfFTd8lyBjL1iiBiDp81yqc+mJ3zQriDPsUbC5YmQMrvQ
+# zZEHii2LU5om60jRNj0PBpiH6Q==
 # SIG # End signature block

@@ -3,22 +3,20 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
-
+# 
 # You may obtain a copy of the License at
-
+# 
 #   http://www.apache.org/licenses/LICENSE-2.0
-
+# 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if (Get-Module chocolateyProfile) {
-    return
-}
+if (Get-Module chocolateyProfile) { return }
 
-$thisDirectory = (Split-Path -Parent $MyInvocation.MyCommand.Definition)
+$thisDirectory = (Split-Path -parent $MyInvocation.MyCommand.Definition)
 
 . $thisDirectory\functions\Write-FunctionCallLogMessage.ps1
 . $thisDirectory\functions\Get-EnvironmentVariable.ps1
@@ -31,8 +29,8 @@ Export-ModuleMember -Alias refreshenv -Function 'Update-SessionEnvironment', 'Ta
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB800FZAxDXJSK7
-# g4Tehbxc27RGt2o1cNVtzBPdo/HU7qCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCu6M8KL/VhRO5F
+# 6YzDGdnO0N3M1dZ/wRPGbYTAvVEHI6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -195,28 +193,28 @@ Export-ModuleMember -Alias refreshenv -Function 'Update-SessionEnvironment', 'Ta
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgM88reVJxeBFpuTPoR34dhbnxS8ga8s3JKRKJlBy1shkwDQYJ
-# KoZIhvcNAQEBBQAEggEAhQ4QyVH3XCrVqNZwVq69KKD/dth+/K/6DJHJYRoGL4f7
-# TyneHv49uAmZfuK9W/wytbtxsfMF17BGiyS7cDbyW7sbxZ+pOLtByyiisAhqF4N+
-# OttStto7H0VddL9XoVmNymd9SJPC4diHjLyjMLYb7x99A02n+A32YppfQfXZ4fSg
-# lI3lMtJCWxpxpDLpYo7NmOh001i+imud82KzSz9WAXxdnMxBawukm02szwI8nkkC
-# ryi/7HQPijmQ6SQY/UVS9v1Is3+R7JEbt6mZ2cHH8Fm9csIpXlG60HuLlRD5AiRe
-# 9TTqtOUK2gbawRFKZiOOTMVOdu2bK1w8xpCZCWWu9aGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQg7epjUal8yi5CDPrfIIvahuwnkR7LAowv0R2fFbRhCjIwDQYJ
+# KoZIhvcNAQEBBQAEggEAZV4oX2uwC9y+rp2uvkUhhrBE+z9nenvbeMnRqLESlMiI
+# 1FZcMkGCcuY7XkYp2KsHik/ukd1CZyo5beUsU8USf/vEsrx7LnFxE2MXNxkrnZUt
+# luz/1SQkF9FnTDFjRQMv0XdO+5b+VGpoXDVUvkCD4vhJ+/7SYDfrSsn+Mn8hBYdE
+# bmXXlb4/LO2GD7k+OpOJV7/yYtJE+WjwhHDBG46lsq9kP7fFmNzQyEGy3ZAZdXBN
+# cdAZuS/X9Yo910SgGDvpUYskA9DljrX/t78D8F+MsJpfaBzYnvv+rqs+gBKTB0S5
+# 5Jw0tmDSd0rJdbgn+xuogPvSHxlcA2F4goZVGlJ9XaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTRaMC8GCSqGSIb3DQEJBDEiBCCEqKLx74/FAHIMGd8Y2C/r
-# eyDkOn4Kg0OUHDnI8sn4UDANBgkqhkiG9w0BAQEFAASCAgDBmLL6LBfLdDJ4sRGM
-# ZiWGxRut84YRMzPKExJGQ8ENRy3n4gkYOpf13RyNowpDv1j4shQ6h8o7tSx3Kt6f
-# I+4rtxTSx3XMxxasYkDWq6YCEOJ/kXBaR4pzlIXxHxOQi3/mKRLIMN/KBjiyqRVr
-# LLHLi7UbjgcS4X+AU6M2nulpopLFcU+RGXTqkOuli0RpiFHEaCYZ+C+3pYn7r4lD
-# HMBt12XgMuyra/qp7fixRpcKewM7+B+mk5bjNUbSjn8UcIl+nSyFOwCoS39lFh8t
-# QMXZiU/L/zeHWWlXqHQm8xfJ1boX54EXkzILHniLaU66s+4bVVEBGn8FA9wD4Tkj
-# r5qYJ+tISYPjMIE5wfx70Nq8Pj5sYi5VmAQi5NOqb4HbcI34EhXJZ1esKB5WJ6db
-# 1FSf7a8V8C8me2AEF768VctnfDBxhN6L/d8NwxTUAcrXyYS5KugbTBSwFyvZIXgq
-# QJJ47M8mw9kNK5PWjouhbWvlYTlkPvZTOeLLzSHLmHqDEfw6rQW9DbYGeRCP80cj
-# 9sxh00qghex2nipnNObxC6Fz6mFzcSOcYU2N7U/oWArAbVLPm3GYLdtkiWHvpM0I
-# a76sY1u2iT7SMyBVJOHqqk1bhsATR4XqXVhSc0aOgDwNLaHM8O0G3xRZ7aq8pKgd
-# +fMUEaA8kJglJVprAuKv/hy42w==
+# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCD/8FvBo8uDKBijwfVOAEPp
+# GlfFZDee9xrkLE2mfU1kbTANBgkqhkiG9w0BAQEFAASCAgB/yOekAsL591fuqOKu
+# A4u+1w+kayhCjWgEiD2OPdGees9jXyVcHxN3uZQyOKqSlVKYgdvyWpfzUAP5STtw
+# G+E+ieX2c30jO7dzHNnvSyj8C8f+ryg/Kk2BAgfP9TKlVVNINmmR4vGhe4NmJObo
+# fWa639Lo859jayrWs2b9srUnMgSyA6TZNPe5rpcNOwitZunTJIl8/m5vDdgXaS3e
+# Plem2VuAdOe1vh0QkObMql+wq8QUP5xyvXCdo4akn+g/mMZe1A3QUynYcBXysVNa
+# oFVAoPNSM+AXhsLsEIZMcsjf8payjsN2xRU7MQFO+qdHN9OK5QcsCKxt1dOzoz1m
+# oFlpAyHdYeBj4oFrMhTKLmfufKq8wnkAlhqC9qSG9ChtX2UYpc6VHpmVZx4zVpiG
+# nU5Ob8YCAoh+K9SpmjAMqJDdOo6oep/KI2oE4Prs6HEcpiXCJvnHxgtcsTrnKuM+
+# oMEWxp7vWADMRSXaPXAjgZV2pQzY9+HHtZFvJLqjm+/pcRDHzeKzygUWinkF3xJ4
+# m79kQQOg4qurBz6NnC/gbQ3QIrXjIW5w5qUGhTGFdbJAMdq021ohDUr9jRMACf6P
+# g4eg2RMnGm6ZgVK9O3T9HsvudPKmErAK6Aq2WRCQnRB8kG0x6/lvs13NUCKh45rg
+# oER7wiOjZYDEvH5TGQb1gnI7sQ==
 # SIG # End signature block

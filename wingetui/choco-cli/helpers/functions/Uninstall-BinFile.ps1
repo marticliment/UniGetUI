@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Uninstall-BinFile {
-    <#
+<#
 .SYNOPSIS
 Removes a shim (or batch redirect) for a file.
 
@@ -52,48 +52,48 @@ Allows splatting with arguments that do not apply. Do not use directly.
 .LINK
 Install-BinFile
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $name,
-        [parameter(Mandatory = $false, Position = 1)][string] $path,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $name,
+  [parameter(Mandatory=$false, Position=1)][string] $path,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    $nugetPath = [System.IO.Path]::GetFullPath((Join-Path "$helpersPath" '..\'))
-    $nugetExePath = Join-Path "$nugetPath" 'bin'
-    $packageBatchFileName = Join-Path $nugetExePath "$name.bat"
-    $packageBashFileName = Join-Path $nugetExePath "$name"
-    $packageShimFileName = Join-Path $nugetExePath "$name.exe"
-    $path = $path.ToLower().Replace($nugetPath.ToLower(), "%DIR%..\").Replace("\\", "\")
-    $pathBash = $path.Replace("%DIR%..\", "`$DIR/../").Replace("\", "/")
+  $nugetPath = [System.IO.Path]::GetFullPath((Join-Path "$helpersPath" '..\'))
+  $nugetExePath = Join-Path "$nugetPath" 'bin'
+  $packageBatchFileName = Join-Path $nugetExePath "$name.bat"
+  $packageBashFileName = Join-Path $nugetExePath "$name"
+  $packageShimFileName = Join-Path $nugetExePath "$name.exe"
+  $path = $path.ToLower().Replace($nugetPath.ToLower(), "%DIR%..\").Replace("\\","\")
+  $pathBash = $path.Replace("%DIR%..\","`$DIR/../").Replace("\","/")
 
-    Write-Debug "Attempting to remove the batch and bash shortcuts: $packageBatchFileName and $packageBashFileName"
+  Write-Debug "Attempting to remove the batch and bash shortcuts: $packageBatchFileName and $packageBashFileName"
 
-    if (Test-Path $packageBatchFileName) {
-        Write-Host "Removing batch file $packageBatchFileName which pointed to `'$path`'."
-        Remove-Item $packageBatchFileName
-    }
-    else {
-        Write-Debug "Tried to remove batch file $packageBatchFileName but it was already removed."
-    }
+  if (Test-Path $packageBatchFileName) {
+    Write-Host "Removing batch file $packageBatchFileName which pointed to `'$path`'."
+    Remove-Item $packageBatchFileName
+  }
+  else {
+    Write-Debug "Tried to remove batch file $packageBatchFileName but it was already removed."
+  }
 
-    if (Test-Path $packageBashFileName) {
-        Write-Host "Removing bash file $packageBashFileName which pointed to `'$path`'."
-        Remove-Item $packageBashFileName
-    }
-    else {
-        Write-Debug "Tried to remove bash file $packageBashFileName but it was already removed."
-    }
+  if (Test-Path $packageBashFileName) {
+    Write-Host "Removing bash file $packageBashFileName which pointed to `'$path`'."
+    Remove-Item $packageBashFileName
+  }
+  else {
+    Write-Debug "Tried to remove bash file $packageBashFileName but it was already removed."
+  }
 
-    Write-Debug "Attempting to remove the shim: $packageShimFileName"
-    if (Test-Path $packageShimFileName) {
-        Write-Host "Removing shim $packageShimFileName which pointed to `'$path`'."
-        Remove-Item $packageShimFileName
-    }
-    else {
-        Write-Debug "Tried to remove shim $packageShimFileName but it was already removed."
-    }
+  Write-Debug "Attempting to remove the shim: $packageShimFileName"
+  if (Test-Path $packageShimFileName) {
+    Write-Host "Removing shim $packageShimFileName which pointed to `'$path`'."
+    Remove-Item $packageShimFileName
+  }
+  else {
+    Write-Debug "Tried to remove shim $packageShimFileName but it was already removed."
+  }
 }
 
 Set-Alias Remove-BinFile Uninstall-BinFile
@@ -101,8 +101,8 @@ Set-Alias Remove-BinFile Uninstall-BinFile
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCGCanYHehFEq7f
-# dP288JBYcbhuKT5nFifnBVi+2jbtjaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCABclkE6u/od9pV
+# JYpcljxkM1mAZjo3npQlmv29XYbqPqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -265,28 +265,28 @@ Set-Alias Remove-BinFile Uninstall-BinFile
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQglQDejqT1qnWIC8Jx9cLd2LCzp3y3Uzh0xrqULMsURxgwDQYJ
-# KoZIhvcNAQEBBQAEggEAPlbX4V9ymEJsGKTiV65rhHvkLGaezTtT9VV+6cEPcXD+
-# wysHTfYreWK+w5PyqwSBKNSg3h4i99wO31DT15NDqM6f43HfsCcsay51n3q6fKlY
-# Ych5IoDh4O5PBBab7u02mAeOkiL50u4VC7X7dM4iUbsJiF4nSP5FdszEZ2dKWRGT
-# nJbx4/I+MZtCIgDyrXsuigKdFMwhfdEeRgMy9GcZUK6O0f4qtiDa/7kQ2NHYKJ9L
-# T/NhU9nWezHAKJH1s2m9vnMdOK3Bcx8OjlsKAu9qwmh2iO+vmbckrUDjSBA1Lm5g
-# Vmqvqc2f0vdRa6o2X1XZLpkO74qXlk4m8J67Uc0mcaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgVnhqe6s4UxVaQEOQe1Wf3+l484kElw9eB9YQpWWDSMIwDQYJ
+# KoZIhvcNAQEBBQAEggEAI9ZzTtiTSGJ0erivsK6x3PZBeBZ5de0RO523VFtlFS2q
+# y4D12l5hkCA48og1aJxRAw8aFTyNFBBOLpO7Ea4XFKs4hFHCbCZYKZycvtYCvYNK
+# SZ6pYQr+ZrsKOeSulwFnQaq5lgXPp71J9NnhQss93yNk12NclordoFLSYbJciipH
+# zFuX63Z6HhvHfWkAXxGUHG85/5wLdFZIY6KBsBDFAHj6aaEsPDboaX783h3DxjMH
+# YKocZxqsPl03lCY9zsVKUnViPHUtW+5aKF2QTVpSexaoJ5w1b6iV3QQ9YnRdkY1h
+# vVjrgZ3UjxpNOrHC/cUMJ3ZW/B+94WJbD1cQLlge4aGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTlaMC8GCSqGSIb3DQEJBDEiBCDYIstjG11medf6eUT0amxo
-# jlpbvLYCvHBEKasjKY4JVDANBgkqhkiG9w0BAQEFAASCAgA+WLYPd/rjT2O19NkD
-# R1+ZhhC6TZQxEg3M3LmOhIi26/+/Oh/cHDc5Z8MsyZ4kV7t/JxAx3FGd6l2rKEYY
-# 7CgLeylPsqwLCazCk9DW2zAi14Um6GS99sgpY+UdAbK/hdP8P8cBomES8jnpM5wL
-# 5hzuB1vWBC6mcFS8RkELU9HwxTip74B/b4/HcKtVIP4y0KwUdsR+XmWpPnOY/1OT
-# 9ryZvobEB2ZkeaqidIYQJTVMv6/4sTK5NhBrVtJcHjfxXfRP2zgF5QRT46ti1wen
-# 6W1zJ+4miu9oE6LQnscT7z1tkIA+wG1DgHeblYRNw1fET9u6gZWLgkiGVxyAEY16
-# KytkevxMh80nIWPJesxBKpLo5IpA0RbdVGEzkkdo+pmusvD5stkDH/JRexBanR3t
-# Z+U4Lrz4Mw2e6MDMmSKbFf9TTCfDLtBqJyPGsPk1pJRkiIKA9tAwgBlW8L+OQhem
-# +H4kHLM7e3wWIBhLCHVbVH3y118z4T1bSw5mbGv6iSt43UX2K0Oh+3MKvPkmikAH
-# LT/F1t63x4k8p3Dv9unXUozseWyROdVTtZ0cNDEGABzSIKM4etgcdqauOWWPRY01
-# +J/3XtOxhKirsuCeLOra5T7iz/UfTwGnFpftkbuyQ6iv1OmApjiihgKWFQzDW/Nx
-# 8977q+VDLoebx8JTp7Qk4KyNgw==
+# Fw0yMzA1MTAxMDUzMjNaMC8GCSqGSIb3DQEJBDEiBCDULqTdEV5EeVH6qu8bx8Oo
+# IoWu5NKCVrGu9YeNaLipYTANBgkqhkiG9w0BAQEFAASCAgCCt4bkqRuLD5qoU6qT
+# lV2zvUFFTW7HLuzTrc/JrJSNNRATdvyus1G7kanZSCQJsKHmHgzXT1PFDTVGUoPS
+# Stw4xuX9jS7CIGYXzIFT2XKKt6rMaOnnXd0rkjfmMRFZCxzX9AdlxTjJmgMsPLDk
+# ykPuAtT8cDo0PHqe2tVXjsZR7C1bySx9qaChC56ezIzWH20/0A6RcqfczPGO0YTb
+# 6T5veoIhjXmwqZj5zaedhzryG33iJUu9hJtd3bxs78W7AzHXxnZFMH2gvDsOnQGJ
+# zrCUnoTtESmFSTanOHpCOJ9AMBdh5q5i19wJ7XvKNc0lYEf/1f2g9Mbe+y5RX7Rz
+# cv6SUYAVbKI3MGjFAFbCwkH79BZRTFAFvWoFmBmkt0u0e1OJiEbeTMMcnCKdCN5Z
+# v0rK7KVGN3vcVAa0tz6AsU8ZY5oVaIx7FLZqtnyX9aOsuitGEOYLreB2Sz+GPzuU
+# PLGfD/e/iu1F7TeOy2hDfsFAq8U57D+5amR1oDCY8xF6ah1MSnJFIg8/yGzDyLbu
+# 2a1KDyI+f+kabkRFQC5j+sPaCLgzO5+33m4AT8ezfl8Lpv10q5fJfRrnS9OlFDS1
+# NEaHdzSoPYxRuGtAbYwmyj3Zgsk4CYqHCOdTyoWjQx3NH5TBIDPbJ3bn1rTpKjCl
+# BrZjv47O662NFU1KkFJwzYNUpg==
 # SIG # End signature block

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 Function Set-PowerShellExitCode {
-    <#
+<#
 .SYNOPSIS
 Sets the exit code for the PowerShell scripts.
 
@@ -41,33 +41,32 @@ Allows splatting with arguments that do not apply. Do not use directly.
 .EXAMPLE
 Set-PowerShellExitCode 3010
 #>
-    param (
-        [parameter(Mandatory = $false, Position = 0)][int] $exitCode,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param (
+  [parameter(Mandatory=$false, Position=0)][int] $exitCode,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    # Do not log function call - can mess things up
+  # Do not log function call - can mess things up
 
-    if ($exitCode -eq $null -or $exitCode -eq '') {
-        Write-Debug '$exitCode was passed null'
-        return
-    }
+  if ($exitCode -eq $null -or $exitCode -eq '') {
+    Write-Debug '$exitCode was passed null'
+    return
+  }
 
-    try {
-        $host.SetShouldExit($exitCode);
-    }
-    catch {
-        Write-Warning "Unable to set host exit code"
-    }
+  try {
+    $host.SetShouldExit($exitCode);
+  } catch {
+    Write-Warning "Unable to set host exit code"
+  }
 
-    $env:ChocolateyExitCode = $exitCode;
+  $env:ChocolateyExitCode = $exitCode;
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCGyfPjf4S7AHcj
-# +EisqFe9/JCNyD63YRevfh+V0hWsg6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCFIn+/dk0B4/tS
+# M+JYowWebUPnUT6YJ16vvGZpulp2hKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -230,28 +229,28 @@ Set-PowerShellExitCode 3010
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgxRPvnSWWhD6vLnqQIwjWWiwNIdVO8g4tU1TTix1qCSowDQYJ
-# KoZIhvcNAQEBBQAEggEAUL3AzaCfiz0L7IAjmfcNiAQF2yQtlFqmy3BlK7pNUwde
-# 6eABouiLRK0Cd5C/CRZACcRpZoozJXSa8Hnvd8sR6BfRtw6vus0ARQFu6EzS6GDp
-# zzhXJFOvPTR9Pg3nlAMh71ajNf5sO9cL1awjNgTwr9XROwxpZa9pzZ9t+jB7nbku
-# 4OwAgyXfKSxEKKMKTrmzM0OhFV4d60eMCXcsXzKwIotvEyrDY/XIkprdMgrh645u
-# EbEfVzL/LojiVSHtzx8XAfXPnNFMXxv6n0aBRScwMy9P911NrXzIAFJJdZj/h2xl
-# FcQXCPzFhyRtl1lX7+3DfrxGUOF0ZD8YuvYM9uaimKGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgcMsv5qg65aT+pj7dvbjWXA1WqxE28y5ZXL2x1Gc4BzwwDQYJ
+# KoZIhvcNAQEBBQAEggEAUbLt75IfkBPeFwkWxzjPLmgzgNxBc+iw4ZfWaWnNoPfr
+# XKd/YnNCDRo8uIdf1clGXtGp2UxSW9yL9I2txyxFBQTMBgYd0rQQdJ5b7PssK2Zk
+# +f9+IDudRZ2iTWIcpTr3vjabUhLUSRt49IfbOkNbHKszQaszfU+xfEX+N/zWGn0H
+# yTn3b76qfBxQhR/muzdESV1zPH+9il4hVNhXnbbkp1vlJsel3moWKyq2pBPI3qLN
+# 5pEf9LfXySIE5qOzZocTAjOxmGZYApqILLrdCNns2ZdIvK4zgXTI8NPxLaHJMCLF
+# hRmkIdlDOeQA/GPJFAzaHuTj9rzBRIOfSrmMyduWCaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTlaMC8GCSqGSIb3DQEJBDEiBCAUXe5zIdfXaNJeAJo+cVev
-# UmfzvuTh617HtfUoYwgN/DANBgkqhkiG9w0BAQEFAASCAgACSuxc/3NYBB42eofa
-# TFgADx+mqfRGtd5d1QmfhXfsqVSjW5TOF/HVIyE/fy9lr3fNtRcRWYEhxh2NsIyl
-# fHZM3JZanwjIaIqm5OlRLl8j+b/46z8XE9MsE+ew1cCZ0p+CP9Io3Xs1YRhRHP96
-# dSLDpd/HYUFiRJiBSTMfmgCNgobGTOj6XdGk4LMUibGXaobqHzDv7ep3NKfnoOa1
-# j07hjZ62iHb+0pMiecDOstlhvzyy+6yEzUO3MJGg7j9DMrNKPgHK5S+hCo6IMbkR
-# Pv75b5BG3WuVpr/xo1KqOhexMORhysk+dD9YdYoqbRRhBZabK8F+qPJao1sMMKS8
-# dbyDOBYkmFja+puvCg3PXsMYLN6IaareBtNDDintchsh7Fna1DKF+qxC5B5uay4r
-# SiV+quhZTpbX4L5EgZ4iHxC1BOagdD+c0CZsyrGebT/9Igru0z9OXqVcwjgP5OSD
-# ugBfVuN9IgQtWIk7QbDq5O0KZQ5DfovEjB5YzhXKx2AjbMYDSoUqlzhpszZsoKp9
-# eaZdwD63vqPWy6A1GBBN+ab/MvaoY5uBFGUnA13PGPLf1RP4FJDhqw5RqFRIfdt0
-# YbqoVrkmmNva3O3zIUDYVsH2gAyaVvLXGPF70vXcIIoMuCmtJ+rXDfKDccI1N2wV
-# i059pfFVCyIFEf9UH9Feeo3gQg==
+# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCAQiRj02Ejfsgk9wSTatj4s
+# OqKF3oV4QHZVv2aDpNT8szANBgkqhkiG9w0BAQEFAASCAgBnyCaoxVqExtxPmJeK
+# ASLYweV2RSkXRG5VX4mQMqf85FfxvrkV6i9IuT9x8FVcLSuXsfgCHk9lY7QXWATo
+# 9SznRWg+XsKzOFnbx+kVP5Ep8R7PaLjPPdZ1q0eTq9/uo29OAu+FjK0DXC+6O0Wn
+# XBQatrkQPLUJRO2czvvYHjsLfAJAtx4e7ERSRqkaZbk7x6fLyTVYBaDqFoiyGArS
+# PEAX6Q66nBLm++b1CGuDHlg8FObImAoo2lB/xbprAAvJoLE45/PnTZq8mQpRV7j1
+# z5M9717f1xlXYLxoWKhefjAVvNpv35sQXdyDMuxSjPAuSh5bZd/JTVl4O7RtIM3Y
+# pAEwwYVk/vzlnM1LWzWHnudlFdAx0rBjMXEltGcOfiNyFPlQJo8NlBTknu6eM43W
+# QDDQqyLpzUVBrzIK6hXe7m4PU/sMJ7E7PlkF58EKATa2xop0amRvVlvZi1qjKtEv
+# QVKYA8VNHVUtE1RsG/MyzasNg4Bcbv/ZAhVB/o6g6ni8QSEr4OQf2FsV7/odxJUF
+# BYs2zBfgYaz7glPf/Ruy31k619GG2HrFDPXDkN0cEekCuyq3AY9dxAINnLCZBVSx
+# ncSMVOoRxTUYyZ1SmOWiOm64sBl9QYYmTlpefRXfbr5Vv3pMjdQlRYdhR7u0/V0R
+# moXMm9VQpED+kvbimTahjXkBhg==
 # SIG # End signature block

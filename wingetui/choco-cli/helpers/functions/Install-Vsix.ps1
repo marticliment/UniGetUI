@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-Vsix {
-    <#
+<#
 .SYNOPSIS
 DO NOT USE. Not part of the public API.
 
@@ -44,33 +44,33 @@ Allows splatting with arguments that do not apply. Do not use directly.
 .LINK
 Install-ChocolateyVsixPackage
 #>
-    param (
-        [parameter(Mandatory = $true, Position = 0)][string] $installer,
-        [parameter(Mandatory = $true, Position = 1)][string] $installFile,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param (
+  [parameter(Mandatory=$true, Position=0)][string] $installer,
+  [parameter(Mandatory=$true, Position=1)][string] $installFile,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($env:chocolateyPackageName -ne $null -and $env:chocolateyPackageName -eq $env:ChocolateyInstallDirectoryPackage) {
-        Write-Warning "Install Directory override not available for VSIX packages."
-    }
+  if ($env:chocolateyPackageName -ne $null -and $env:chocolateyPackageName -eq $env:ChocolateyInstallDirectoryPackage) {
+    Write-Warning "Install Directory override not available for VSIX packages."
+  }
 
-    Write-Host "Installing $installFile using $installer"
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = $installer
-    $psi.Arguments = "/q $installFile"
-    $s = [System.Diagnostics.Process]::Start($psi)
-    $s.WaitForExit()
+  Write-Host "Installing $installFile using $installer"
+  $psi = New-Object System.Diagnostics.ProcessStartInfo
+  $psi.FileName=$installer
+  $psi.Arguments="/q $installFile"
+  $s = [System.Diagnostics.Process]::Start($psi)
+  $s.WaitForExit()
 
-    return $s.ExitCode
+  return $s.ExitCode
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCiROvWtF7IgbZv
-# jubDiROu0XfHW0zmhNtN/WDSHo8uq6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCiCFhJEtM8Gq9k
+# gFz6eVXxS4cLJ+xr9icoAMHYrwORM6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -233,28 +233,28 @@ Install-ChocolateyVsixPackage
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgKHZiuhM0QN1EKoN08zeqFSNLwR8+eZ2pbVY3wlbnc+AwDQYJ
-# KoZIhvcNAQEBBQAEggEAeR4+hz3kLlYd8LDgF7gN5iBpsknvf4bEiV6YPTCbgkNU
-# O7ZjtEpTNYOO2qLmsvdt7RsWyUmbna4HRMWF6UPd0hiZwBIuiIPdXSdlMhl7VEjY
-# DtZJ1Eyn+FglTY32vnYzOc/LuC+6Fzp4R9oPcd1U8RyIrQJ+mwxCsPp0fnrWb8BZ
-# kXGSzoDOIuKepjfnwNA4I1BzEXIK7yqLt4G/tF5506O1uQkSEjKyUAUeKRoWbqrA
-# xeq9AXO3cn8B0ybjd+WIx0uNpKNeL6OmFvqYHRHatDZv0a5u6MekOI3oXN1XI9CF
-# lPn92XN9VK5UOMahVBnx8inL1jJGaUK/lQN2TNNGeaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQguNRSZaV1SGvpHhbSyeuAMG/49K+X8pBTK32ZdPN38LowDQYJ
+# KoZIhvcNAQEBBQAEggEALuHa/eK8VbSM8yDyAK9IG4/FreXDKNWrzRJs4AKmb1W6
+# vf9Fc4+VkQyTrUF1uOo0gqwaUBuL3dZY5od+eGz2Iz2+vJ5PunX3Sl4jtZuIAo2m
+# XjY8NLFKF1d9t1ZisRRRZBrrLfDP6Z2XlfdjaueAnuXM3t5n8Jx9KTa7CYq3pKnd
+# l1iBq2+vA1Upysx96iQNBcDqvcPYUYgaeWkqwXL6LRsELTQ7AKKr0tqyQDmeGw8q
+# 3E/LjpqJ1FhErvGveM/bEDvZTpSvdbpCpY+KAFt+wHOilQphtLfXZetPgdT6YU+g
+# TAH9Ltaj7DaJgfCMM3HnZae9YQPKRwefFHiHI2vv2aGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTlaMC8GCSqGSIb3DQEJBDEiBCBc2GGf1pseagN6FO9eIj3e
-# v4u7QwW3yrBUjAKTqQUj+DANBgkqhkiG9w0BAQEFAASCAgA/p6han61/I9nQvU7i
-# McPFtp3CrWIIGljITYAUBR2jSCk46lDguSsMg5FVVLs7liUEehwmwDdQBdVMAfzI
-# PD7KmZZseikldM3JOOy8Zt6O1MTvforq7+d6g60Dog6pjlRydIGqj5cO053PlLcJ
-# ryJOBaShmw/7IOXNzqVE6wuwO35gE3pHgrUdtv/YDxWdn+zxgdCbbZ7sxbB6LDC4
-# BWsrwMOvwMlHncYVSJPvl8D11Xh/R+YYk5Lm83UOY8x2BieQu8JVRWqMpFdhpEjA
-# UpMD3kqXB11zugc0wqenMbyM0X8oRiXUZX1raznZLYHyMFtKo4/ww6+HoqvSXUMC
-# CFNIj+KnFjfqv5KvOlFJYnlqgnvKa3IqnZzIWGfIh05pFQ0f/XOd2akCIMkuSuL6
-# Wv2lVNuuSAowZwthr2eptYUNKrPrAVnIntYxQuWHQRNOWp1Evg6qi+8B3A52S+jM
-# W6qv5zXfehYnONZ5aSLTovejHFckw7ODt2B1clZvHPH+Eh5ZKNzrHVEkFj8qPmVo
-# 1rFTLWn6+9wp2Z5v2v7PgUD0LNJbxIPXPVtbvMMpPDC+n72y5eyRwGCIsfT4vfc0
-# T30hogZsMs24tndXsanZYWzg0Q3JrDQtMpDCaDdtNjfZxfWrQgz6gyXfku+ePeTs
-# DRcsuhq6MTHxcUsgkBREj8HhAg==
+# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCD/X1OzbpRCjVAWKtwIzynH
+# fA1KcibDWNVC9tO5k4YokTANBgkqhkiG9w0BAQEFAASCAgCHFzMHsBpaPgNgbrGv
+# ZuIIi1ybq2mLVtiK4hl4RuHEhr+DGERDWqUGs52eFZHyIGZOgTwH2M+KG3dOGaNZ
+# zyxOctrM9RtQ1cdznbAuHtDkPBwt/JRwL/9+S4l+/Sqaz4k4scdclDUZ/4CkET2r
+# 5M04B5+zfN/RgOW4k4Akh7dgR1jP6A7g7keEn066KdFT9oH12xAjqXHTYWNZGtKk
+# XPRj1NizHGmK30aGd6OifWLE/QdAR1YWnuE9iEvwOFaRa+f/8sFX8wc/+COhRa+f
+# 0ijZILcxOIJSHXLaxBsXgO1R/Q4/nyAwoC2ZkuHWRJQW5V0UvvK50/pa1PmTvuoc
+# WSaCUuxuE/yxAel8aBewr5pHVUCx38L/KTdsJ2h05KQuYqvjIztyr692XWbMqae4
+# gH3Kp4AqLKdgiEHbzaPVr9aPsTMYWdNQiOnjEUH8GK6nu3nq8N9OT4e6ax9wKBl8
+# j8Y4ezOPu7qyIThRE9peXh6Dqoljd7f7NsFGKnYMMu05i7oGbILMpMsVHlSadxEO
+# vy0n3lqro9RdxPK67W3qej4uHzQn0fcv0njP8JEHJXqxvnV8cF54PPE/1gmM19yN
+# swwYXOnGaDZtjte7Qa/af95zTxFybE9pCA524iM07DvIhmLsn6tR1HRuy4iY8RgA
+# UHe2AUKIYVfuKivZgCBG1TwusQ==
 # SIG # End signature block

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyVsixPackage {
-    <#
+<#
 .SYNOPSIS
 Downloads and installs a VSIX package for Visual Studio
 
@@ -45,14 +45,14 @@ None
 The name of the package - while this is an arbitrary value, it's
 recommended that it matches the package id.
 
-`Name` is an alias for PackageName.
+In 0.10.4+, `Name` is an alias for PackageName.
 
 .PARAMETER VsixUrl
 The URL of the package to be installed.
 
 Prefer HTTPS when available. Can be HTTP, FTP, or File URIs.
 
-`Url` is an alias for VsixUrl.
+In 0.10.4+, `Url` is an alias for VsixUrl.
 
 .PARAMETER VsVersion
 The major version number of Visual Studio where the
@@ -63,7 +63,7 @@ will be targeted.
 NOTE: For Visual Studio 2015, the VsVersion is 14. It can be determined
 by looking at the folders under Program Files / Program Files (x86).
 
-`VisualStudioVersion` is an alias for VsVersion.
+In 0.10.4+, `VisualStudioVersion` is an alias for VsVersion.
 
 .PARAMETER Checksum
 The checksum hash value of the Url resource. This allows a checksum to
@@ -99,10 +99,10 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers.
+OPTIONAL - Specify custom headers. Available in 0.9.10+.
 
 .PARAMETER File
-Will be used for VsixUrl if VsixUrl is empty.
+Will be used for VsixUrl if VsixUrl is empty. Available in 0.10.7+.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
@@ -136,16 +136,16 @@ Install-ChocolateyInstallPackage
 .LINK
 Install-ChocolateyZipPackage
 #>
-    param(
-        [alias("name")][parameter(Mandatory = $true, Position = 0)][string] $packageName,
-        [alias("url")][parameter(Mandatory = $false, Position = 1)][string] $vsixUrl,
-        [alias("visualStudioVersion")][parameter(Mandatory = $false, Position = 2)][int] $vsVersion = 0,
-        [parameter(Mandatory = $false)][string] $checksum = '',
-        [parameter(Mandatory = $false)][string] $checksumType = '',
-        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
-        [alias("fileFullPath")][parameter(Mandatory = $false)][string] $file = '',
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [alias("name")][parameter(Mandatory=$true, Position=0)][string] $packageName,
+  [alias("url")][parameter(Mandatory=$false, Position=1)][string] $vsixUrl,
+  [alias("visualStudioVersion")][parameter(Mandatory=$false, Position=2)][int] $vsVersion = 0,
+  [parameter(Mandatory=$false)][string] $checksum = '',
+  [parameter(Mandatory=$false)][string] $checksumType = '',
+  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
+  [alias("fileFullPath")][parameter(Mandatory=$false)][string] $file = '',
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
     Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
@@ -153,46 +153,49 @@ Install-ChocolateyZipPackage
         $vsixUrl = $file
     }
 
-    if ($vsVersion -eq 0) {
-        if ([System.IntPtr]::Size -eq 4) {
+    if($vsVersion -eq 0) {
+        if ([System.IntPtr]::Size -eq 4)
+        {
             <# 32bits system case #>
             $versions = Get-ChildItem HKLM:SOFTWARE\Microsoft\VisualStudio -ErrorAction SilentlyContinue |
-                Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } |
-                Where-Object { $_.property -contains "InstallDir" } |
-                Sort-Object { [int]($_.PSChildName) } -Descending
+              Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } |
+              Where-Object { $_.property -contains "InstallDir" } |
+              Sort-Object { [int]($_.PSChildName) } -descending
         }
-        else {
-            $versions = (Get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } | Where-Object { $_.property -contains "InstallDir" } | Sort-Object { [int]($_.PSChildName) } -Descending)
+        else
+        {
+            $versions=(get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } | Where-Object {$_.property -contains "InstallDir"} | Sort-Object {[int]($_.PSChildName)} -descending)
         }
-        if ($versions -and $versions.Length) {
+        if($versions -and $versions.Length){
             $version = $versions[0]
-        }
-        elseif ($versions) {
+        }elseif($versions){
             $version = $versions
         }
     }
     else {
-        if ([System.IntPtr]::Size -eq 4) {
+        if ([System.IntPtr]::Size -eq 4)
+        {
             <# 32bits system case #>
-            $versions = (Get-ChildItem HKLM:SOFTWARE\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object { $_.property -contains "InstallDir" })
+            $versions=(get-ChildItem HKLM:SOFTWARE\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object {$_.property -contains "InstallDir"})
         }
-        else {
-            $version = (Get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object { $_.property -contains "InstallDir" })
+        else
+        {
+            $version=(get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object {$_.property -contains "InstallDir"})
         }
     }
 
     if ($version) {
-        $vnum = $version.PSPath.Substring($version.PSPath.LastIndexOf('\') + 1)
-        if ($vnum -as [int] -lt 10) {
+        $vnum=$version.PSPath.Substring($version.PSPath.LastIndexOf('\')+1)
+        if($vnum -as [int] -lt 10) {
             throw "This installed VS version, $vnum, does not support installing VSIX packages. Version 10 is the minimum acceptable version."
         }
-        $dir = (Get-ItemProperty $version.PSPath "InstallDir").InstallDir
+        $dir=(get-itemProperty $version.PSPath "InstallDir").InstallDir
         $installer = Join-Path $dir "VsixInstaller.exe"
     }
 
     if ($installer) {
-        $download = "$env:TEMP\$($packageName.Replace(' ','')).vsix"
-        try {
+        $download="$env:TEMP\$($packageName.Replace(' ','')).vsix"
+        try{
             Get-ChocolateyWebFile $packageName $download $vsixUrl -checksum $checksum -checksumType $checksumType -Options $options
         }
         catch {
@@ -201,9 +204,8 @@ Install-ChocolateyZipPackage
 
         Write-Debug "Installing VSIX using $installer"
         $exitCode = Install-Vsix "$installer" "$download"
-        if ($exitCode -gt 0 -and $exitCode -ne 1001) {
-            #1001: Already installed
-            throw "There was an error installing '$packageName'. The exit code returned was $exitCode."
+        if($exitCode -gt 0 -and $exitCode -ne 1001) { #1001: Already installed
+           throw "There was an error installing '$packageName'. The exit code returned was $exitCode."
         }
     }
     else {
@@ -214,8 +216,8 @@ Install-ChocolateyZipPackage
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCARxBv/xHQHXbkT
-# 7dQTV7L4szTwnriUbpDBbD904aH946CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCb9v+X9fcDfKTL
+# ++O91eqGb9TQL/6cAjhx+zviZ6qbyqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -378,28 +380,28 @@ Install-ChocolateyZipPackage
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgWjKDLx7IlEsHm9Eal2ewN751K/4TG4hH9AJdddW5XHgwDQYJ
-# KoZIhvcNAQEBBQAEggEACOWpuvghXy7/sq/PxS6NA23G4shWD5sjmhnqCVOenJrZ
-# Mhl7CydKP5aQnci0CoCgsX6uM0PQXqGTUOJTDe/+daa7xnRNJNbqxnWMFSal559f
-# de6qY2+SVZsPikz0PMGu/wj5DIkcQu0rIL7oRerRGNjEoS6gzoFUVHAVpS3UuBM5
-# DGY16PlDwuirLUmPATYTt1GkbuIsrXbgreFM8d5aVqfs/fiu6pi6aiea/IUHBCUW
-# NIRhVaofPf/CiR/Mx/EAfkM0DmN9taYKbfwN0Uk/QQnmNNOjvbrDgQvPnMr6Nvdt
-# VaYM51UQJdbqnKS4X4quer2n+ffnxUj0bvpFHqTj9qGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgM0A2UTv7NAawFKCA1xfCYaWtX5Vui24vZLB9fTI4r4MwDQYJ
+# KoZIhvcNAQEBBQAEggEAOVEN6NvlI/FFwScq6yhzmp2Q5VnSZKo2D/lsC0oQJ35o
+# f/7EYijzDKkjCFpPmt7QcZo9fmbPbDKKsO/PVDM5NZ3hd4cGHsZXnaTx5+SWbD2N
+# w/Ivyjr+lbw1uocEKm+O6GXxZWcblVb7jkMnGiAU0P45EXDa2qRI/iPis4QhF3Ao
+# eU6IbXzSJp5A6XHeAZOdIgu9464l/gxLd0ECKmPJzkT6D5vi5sZu4ElCjJHNPoBJ
+# Pz60ibHalljP2My8aB6K0YYX4e3RxUXNgGc7wCVBpGf/93P208+LEXBqd9mRE4vl
+# 6lrrl5acaAdD4+GOyAe2MIVUrHK89j7ABsPQ+I8PPKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCClyHVYBX4ydUh+LiIA8Baa
-# iRNhiRL/OVnQ5JEKQ0HBoTANBgkqhkiG9w0BAQEFAASCAgBKH0QFr1ae3YJ2Lhok
-# Ko9X/0QIVydywIkbVfD6t7Slt9ZhWW0ekPBMxGfugXsJjgUsrLIqmOzjYQa/+cSs
-# P9w5VdubCOah7TG+6fQwoFE6ZCBMJFoT/LbcvfHEPlzZzrQ+GrGRnHy1IN2/qohw
-# 1noWrFC7UlJCsEn8LtvCUnRCDsRcUxb5skvL4M2PTtID+ZyGNt60bTBxT1qz7F6D
-# fxM5OLvQAkPYvTZsPPNA5S1PLnz/uO1fWHr+upN/5b6xyLAU+nU8AmLyQvfuJmXM
-# s0XhHhIyNOcQJkW69TUtxMQqZCfRNUjdZzGzpTioZu+veDZ4lUn4N35H+oCxXTuq
-# I5qiGgc/Bn5NCGRKCB4Hf2SabNXoWJGp88dz9qZveZYxvgHNeOjQddOR1GPfOOn5
-# /G2x91uwkilhpU1nDE5UHllLwZ0ZqJna24cOeBgpnHlthlwnrDv6+MPPNlLioUQk
-# iWi26J82WW91acA6ZxpdmYNClsSm+mbd/UqWILY92T7EKigCXAeFE9ufzucUMdDU
-# RCjbmWomIqG5VSmnuLgsU1Kkd/y3RUhU1Lczj+rZZ3fmwVXpph0m3//hG6JaZLpi
-# R950Ekfg++xzEOBVjynHdVwn3FzUvJ4xx0WRT2BzpfvBSUEZLqh35KN8m2uz/LnX
-# VN+5EIiPZKf/uglVVNGn7M3G7A==
+# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCDqsXKfLyvZFB/6tOybMQgI
+# xyQR8fIRsjN9rGoT9DZ/bTANBgkqhkiG9w0BAQEFAASCAgCIhV0qc0QeChIDpUGE
+# t2w9+BiT+XOgQw+v2jByGaK1GbcLHlWrEzks8e5v1jD4m25oh12MY2vj9HUGRQEX
+# ydmh07eSOhti+oPBzz3+6tRDm9ZcemuWuI65rrptJ5zYwpor9XhZYirgSHjE+x/o
+# WUdF9zWWVRJMSKQ9hl1cbsKiMsnjNNQ9qQLl8k/L1Ign26hKtOvFMhWGiB86IpQQ
+# In2XdPn44puqO9sLOhq/7n/FGpQoaHSJAwgZ94YxczrbOGQso7iplPB9pCuImXSY
+# HwcGm+5SpDHOku68F7qizAEj0nBRPDHI9WWvPcenn9dv6bEwhKAVeR6NDjRPqEws
+# fQ/2acQRggNLxhk8hVNwKjplsMR36Svyp4wmeTD+0TaPcQsNaYnNxMRhw+wTN1TN
+# R/ARO0098ZGBAPiQBGcygvtASPFlLMcHWRWoXm5uBv8V9dZY9TMzEL54shpbZ3+O
+# bATW3xFwyjLij8QydrDZAYwjz+WTj5EfE04WHBPMTWSB+ioNvgjjlClBVH14pWFL
+# v1g8vfsnleSGdQ+3+WjiUNgys7h5EHgmiqOO6Sm7WBzItJvOY3G3LFl9booZmm0C
+# racEAn7nOQOqSiEuWyllY2PZvvKDO+45KpaZNlMreF3WNgzLKn1t0KcrCwkJnqjV
+# wNM1svb528dDfHwas8GnaVdEzQ==
 # SIG # End signature block

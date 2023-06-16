@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Uninstall-ChocolateyPackage {
-    <#
+<#
 .SYNOPSIS
 Uninstalls software from "Programs and Features".
 
@@ -23,7 +23,7 @@ Uninstalls software from "Programs and Features".
 This will uninstall software from your machine (in Programs and
 Features). This may not be necessary if Auto Uninstaller is turned on.
 
-Chocolatey CLI automatically tracks registry changes for "Programs and
+Choco 0.9.9+ automatically tracks registry changes for "Programs and
 Features" of the underlying software's native installers when
 installing packages. The "Automatic Uninstaller" (auto uninstaller)
 service is a feature that can use that information to automatically
@@ -38,8 +38,8 @@ Chocolatey but does not remove the software from your system without
 auto uninstaller.
 
 .NOTES
-May not be required. The Automatic Uninstaller (AutoUninstaller) is
-turned on by default.
+May not be required. Starting in 0.9.10+, the Automatic Uninstaller
+(AutoUninstaller) is turned on by default.
 
 .INPUTS
 None
@@ -54,7 +54,8 @@ recommended that it matches the package id.
 .PARAMETER FileType
 This is the extension of the file. This should be either exe or msi.
 
-If what is provided is empty or null, Chocolatey will use 'exe'.
+If what is provided is empty or null, Chocolatey will use 'exe'
+starting in 0.10.1.
 
 .PARAMETER SilentArgs
 OPTIONAL - These are the parameters to pass to the native uninstaller,
@@ -105,67 +106,61 @@ Uninstall-ChocolateyZipPackage
 .LINK
 Get-UninstallRegistryKey
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $packageName,
-        [parameter(Mandatory = $false, Position = 1)]
-        [alias("installerType")][string] $fileType = 'exe',
-        [parameter(Mandatory = $false, Position = 2)][string[]] $silentArgs = '',
-        [parameter(Mandatory = $false, Position = 3)][string] $file,
-        [parameter(Mandatory = $false)] $validExitCodes = @(0),
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
-    [string]$silentArgs = $silentArgs -join ' '
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $packageName,
+  [parameter(Mandatory=$false, Position=1)]
+  [alias("installerType")][string] $fileType = 'exe',
+  [parameter(Mandatory=$false, Position=2)][string[]] $silentArgs = '',
+  [parameter(Mandatory=$false, Position=3)][string] $file,
+  [parameter(Mandatory=$false)] $validExitCodes = @(0),
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
+  [string]$silentArgs = $silentArgs -join ' '
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    $installMessage = "Uninstalling $packageName..."
-    Write-Host $installMessage
+  $installMessage = "Uninstalling $packageName..."
+  write-host $installMessage
 
-    $additionalInstallArgs = $env:chocolateyInstallArguments;
-    if ($additionalInstallArgs -eq $null) {
-        $additionalInstallArgs = '';
-    }
-    $overrideArguments = $env:chocolateyInstallOverride;
+  $additionalInstallArgs = $env:chocolateyInstallArguments;
+  if ($additionalInstallArgs -eq $null) { $additionalInstallArgs = ''; }
+  $overrideArguments = $env:chocolateyInstallOverride;
 
-    if ($fileType -eq $null) {
-        $fileType = ''
-    }
-    $installerTypeLower = $fileType.ToLower()
-    if ($installerTypeLower -ne 'msi' -and $installerTypeLower -ne 'exe') {
-        Write-Warning "FileType '$fileType' is unrecognized, using 'exe' instead."
-        $fileType = 'exe'
-    }
+  if ($fileType -eq $null) { $fileType = '' }
+  $installerTypeLower = $fileType.ToLower()
+  if ($installerTypeLower -ne 'msi' -and $installerTypeLower -ne 'exe') {
+    Write-Warning "FileType '$fileType' is unrecognized, using 'exe' instead."
+    $fileType = 'exe'
+  }
 
-    if ($fileType -like 'msi') {
-        $msiArgs = "/x"
-        if ($overrideArguments) {
-            $msiArgs = "$msiArgs $additionalInstallArgs";
-            Write-Host "Overriding package arguments with `'$additionalInstallArgs`'";
-        }
-        else {
-            $msiArgs = "$msiArgs $silentArgs $additionalInstallArgs";
-        }
-
-        Start-ChocolateyProcessAsAdmin "$msiArgs" "$($env:SystemRoot)\System32\msiexec.exe" -validExitCodes $validExitCodes
-    }
-    if ($fileType -like 'exe') {
-        if ($overrideArguments) {
-            Write-Host "Overriding package arguments with `'$additionalInstallArgs`'";
-            Start-ChocolateyProcessAsAdmin "$additionalInstallArgs" $file -validExitCodes $validExitCodes
-        }
-        else {
-            Start-ChocolateyProcessAsAdmin "$silentArgs $additionalInstallArgs" $file -validExitCodes $validExitCodes
-        }
+  if ($fileType -like 'msi') {
+    $msiArgs = "/x"
+    if ($overrideArguments) {
+      $msiArgs = "$msiArgs $additionalInstallArgs";
+      write-host "Overriding package arguments with `'$additionalInstallArgs`'";
+    } else {
+      $msiArgs = "$msiArgs $silentArgs $additionalInstallArgs";
     }
 
-    Write-Host "$packageName has been uninstalled."
+    Start-ChocolateyProcessAsAdmin "$msiArgs" "$($env:SystemRoot)\System32\msiexec.exe" -validExitCodes $validExitCodes
+  }
+  if ($fileType -like 'exe') {
+    if ($overrideArguments) {
+      Write-Host "Overriding package arguments with `'$additionalInstallArgs`'";
+      Start-ChocolateyProcessAsAdmin "$additionalInstallArgs" $file -validExitCodes $validExitCodes
+    } else {
+      Start-ChocolateyProcessAsAdmin "$silentArgs $additionalInstallArgs" $file -validExitCodes $validExitCodes
+    }
+  }
+
+  Write-Host "$packageName has been uninstalled."
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB1uX+OOmFNr9PE
-# k9P0x2cnNka8iJvVqmP126Dwy1hSs6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBtXHYd0uhLHMyB
+# isoMYZ+ggtM9itIU/aW7yig/2G6VCqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -328,28 +323,28 @@ Get-UninstallRegistryKey
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgTnj04Gy+7PaoufkEM2fiJCNhGr54aF5UCc2K84Dw0aAwDQYJ
-# KoZIhvcNAQEBBQAEggEAnW60KTAAdxrm4nnLlqqoJPpXBYhTgudZIDJqAqNggddU
-# SHlfLw4IMDw2LHaz1ZMNhULMq9xiVOKeLI7s05o5BP06nmAdc5bBtxJuMR/rAXCK
-# EBshHm6LQzKyXK77FjEl30GN9WVIHm3tthqhiP/JSELlSHGHsgAiFlqzbthOmDz9
-# AMVzXWqI9Qg+SY6nawv/kKWEPGKy+7BzHI9eK55RIoqGULEmp6Gg5vtX0VdoUVHI
-# O+3TtR6g/UeQ2iaA7gXyZ6Jj2AWp4wfU+ehxwgIRTHzG9ZrXNynhCHC4LshiRfuf
-# 43WPCxr1K12pYd5RRJszQqcGKT4BnDun7uCUgR17GqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgyJvmLHGPnxYeeFeaTqvpmWiys1r8lMIxUTTs8kdsH2wwDQYJ
+# KoZIhvcNAQEBBQAEggEAHJDpEydFaYP3Qz7qqtPq2+jFgYfkvYf/ikmqksQzTTc1
+# Rikucdl26xZ0TSZ1dMMwmuFFFR7a5FTXI8/l5fgWNu80JwNbpmOhpI5z4PPSStiO
+# YR+YUAmlEQomXur+5QYTl3Xb7tOCrqsyTHHso3RxqvlnESdXEg1Pw3wLd0bVqqSP
+# LwSGY/hiI9q8jjN9wx6dd9iBsIBf0l85nzqS8lpAr2b6OCeLw3A8KBCkJyanEBqC
+# XoHZmgIFepIZpLTx8UIvlboOSCFNWbnIbQ+Py/Gc+zQUdigwLMvp+Yn/69YprjC/
+# aEahV67eyowBuqi08GC7Kaom6Kr8DqKDoWqXBVHKYKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ5MDBaMC8GCSqGSIb3DQEJBDEiBCCUm/5QkyCQg8f9ouPVjW/I
-# 5dcgpWnvNfcFfTUeDfW25TANBgkqhkiG9w0BAQEFAASCAgBrSalUBrWAfvFLZWxy
-# Vwn2cdmVpAx4nhmRyqd779Kwd+wdf/JJ13pYRq1Auqw8F2EMs13vUW4kGsKcnOkN
-# HZB7lXsH83DExpOv20uj6YP9UyooB5FdjKHjQuH9gdREHGL+AISgjW64A6FzKvTG
-# rj/dpVwu6ZaHjuM8NxKU1e1vqjdf5lDkcSrV2QYioIvJ+MHo+YlWCzR7yRRnhOSY
-# SwvRKZzs6cZ2TtuL1DymE8GEPRXGVX7mwNVpHLL7CXYsAIvUUnVRHwcAs5Cx7c1+
-# CWYy/WqYnRpsIl+JMlzPM+jVYVCdAUNKQlySbC/5Jpm2otc+eL58BVNDcHraK7tN
-# J5Cqth9ulq/5xPIIAKPDNn0LpPCpbdL4HCeQH079xpDk9KEB3+AHVnzMoakThjjN
-# EAfBUsidV7yJ+riJnUQy76d3VNq84gbuZh+4zftmsEdDIJz7dVKseMIQ+9MUcRcg
-# 5gtX7TCTF1MqYFX6orULqaojKZgUKJstqtCRBZ59EaEGbFmLB36JkURLeLjXTffu
-# Wzvz4OaRAwWQNBYnFsBF3mPaFki0pH5VFCnz5TXwmg/X3gRLVvAW+xhwFLLwsIPk
-# TjNKnKaKS5DQ+8ZTZZJjAu99gy25FWy2kmU0HJZR4qfR3X3qsaw5E6BR18Jdop5w
-# TQkj1Koyoc/vVf/yXcVk1InUFw==
+# Fw0yMzA1MTAxMDUzMjNaMC8GCSqGSIb3DQEJBDEiBCApuDOuSy3XxtE6EcKbwd8t
+# /JdIN3lOkfzFE7xnB07VKjANBgkqhkiG9w0BAQEFAASCAgAyIlZFoq3NT08KDKXY
+# FCy5j3Lnwa2RNWNkZ438OvUkzvFQJRS8Mi+POTkT1b+pYSEPfa8ZzJUwVqOdNW8y
+# lqq7EiIIwUGyVfhEuTzXcNxvw/369x1+OTUs4KG0jv/cDXMo575Dc96tKICexB8f
+# xZEXD2cZjfwsK+psX+q0jiXx+8tbBjy2zibqNu9Hw0kQJBpUfEpahv4gjyAfk27L
+# Kb3xOkyOEw6HB6jHh/3dvnGjzmIg31UreynOK20+qLOMBvbBOd8TQH4sDVvbYxMj
+# t83dP1VXxnjU/K/6x2OuUJcU6qETCEU863ZTxxk7rp1A83NB1198W0T2wHJ2iRFo
+# Dyho1ZXjE4GxV4LhQQmEzmZm+QC1FSPHjtMJljvDZFnhmKg/GBqn8T5QWEnOuMxi
+# RcH2AK49yLHCukNPBDS7UAx44gIVUiRhSWkocs8T0fmyQdpZUtGpX+GZ1ueeGSkH
+# Kv1xMnnHQZlbeSqKUR23sharpuvb/MVGlYHzSWorhKCB0cEhmGgiNL5Cf6Tlbw00
+# A8qdimvQhIeT2Gp8MI34++XF16sAkMR3cagQMWsgRb0W+fuF8fSlcOicCgr8EedZ
+# uRB/ILs2DQowXB95TihJZFiyMI/8XAMkqirndZYtfnJOSI9smizD/xp4xoyuPR8f
+# Jpo96AvrSMaI8X01iydjXkLAYA==
 # SIG # End signature block

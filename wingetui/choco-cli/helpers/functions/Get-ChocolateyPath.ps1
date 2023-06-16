@@ -14,7 +14,7 @@
 # limitations under the License.
 
 function Get-ChocolateyPath {
-    <#
+<#
 .SYNOPSIS
 Retrieve the paths available to be used by maintainers of packages.
 
@@ -46,7 +46,7 @@ Allows splatting with arguments that do not apply. Do not use directly.
 $path = Get-ChocolateyPath -PathType 'PackagePath'
 #>
     param(
-        [parameter(Mandatory = $true)]
+        [parameter(Mandatory=$true)]
         [alias('type')] [string] $pathType
     )
 
@@ -56,11 +56,9 @@ $path = Get-ChocolateyPath -PathType 'PackagePath'
         'PackagePath' {
             if (Test-Path Env:\ChocolateyPackagePath) {
                 $result = "$env:ChocolateyPackagePath"
-            }
-            elseif (Test-Path Env:\PackagePath) {
+            } elseif (Test-Path Env:\PackagePath) {
                 $result = "$env:PackagePath"
-            }
-            else {
+            } else {
                 $installPath = Get-ChocolateyPath -pathType 'InstallPath'
                 $result = "$installPath\lib\$env:ChocolateyPackageName"
             }
@@ -68,11 +66,9 @@ $path = Get-ChocolateyPath -PathType 'PackagePath'
         'InstallPath' {
             if (Test-Path Env:\ChocolateyInstall) {
                 $result = "$env:ChocolateyInstall"
-            }
-            elseif (Test-Path Env:\ProgramData) {
+            } elseif (Test-Path Env:\ProgramData) {
                 $result = "$env:ProgramData\chocolatey"
-            }
-            else {
+            } else {
                 $result = "$env:SystemDrive\ProgramData\chocolatey"
             }
         }
@@ -88,8 +84,8 @@ $path = Get-ChocolateyPath -PathType 'PackagePath'
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDYvxRtvsa3Gl7F
-# 8VMi+o2S/Zsn9Sd+kCoXj9+uTrO9oKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB5COUwBo4ayxn2
+# o5SeYL4+gL1sIuTWbgHZTsbOJ8dBAKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -252,28 +248,28 @@ $path = Get-ChocolateyPath -PathType 'PackagePath'
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgWVDy8TAreeCpS3dpbf8Yirjss/W3DqNes5iUH7Lw+1swDQYJ
-# KoZIhvcNAQEBBQAEggEAUVI4PdGXTAUmV938OcJjQrpuXlpYtLTJq59N3xWGQytw
-# wJ+3WW1oNBmxB2wGvfrydO2tmNzoHuv9rD9a16Rd+EenmpOITZJg/V7/yVXO6CrK
-# yp4cz5pneTCARzTwzJQwlwtxRRel4bYD3UswUsWU79clcac1qDDa5EQWplvGPOue
-# ooA1RwJqE3eKsxV5+b3iTFchApxbLx9tRSvlXYArGHv+LwK/zckl2e0NFuViIhlU
-# /LLd2RQqr0h2UZMYG/5MwKh1sokp+w5i7bgz7SK9va3FV9erTT1XImUMg/ftZfEK
-# a/j3LRAkRDeJcwAQxPKa2voHuAv16CpyTjNz6GD++qGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgh3tzQYA8hx2T86aFeF/B76wn1hIXOOyXUCztcx7oVnMwDQYJ
+# KoZIhvcNAQEBBQAEggEACwg0QlPmmgYCXX8W3nr1lZju5HfLSA2oTM4qiRi/8ZXN
+# fZ2wvYwI0YtCVE8SKuOloy7oEhDRrwc7AgqfjzsUCyIqFQ1jNR9fGP3TIKdtCwol
+# +UBO5m9cRL7zvS6h/pSsAn/yu6cvKtQwlAOEqr22t//rVVMz7QnWqUr+MVHuDPy8
+# yhvjZxneOQlQ3WXkunPBK/UngthUilThZ4T6qQfa4rQ96t0sfnuYjTEb2tmsqEI9
+# D4EG3lm/AKVPHkbwx0K9OSIDxvVii65sjpTqDrL3KmPT5V+arzTlRRE/H8LWioKa
+# wxCWN8c5CyBaONPvM4LEWbtFuhw22u1Kauk6PGI7PqGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTVaMC8GCSqGSIb3DQEJBDEiBCAlN1jtdSi1pUeiTPOaHXlr
-# LiNxpp/e3OXEBdRgR0avtjANBgkqhkiG9w0BAQEFAASCAgCx6CQYzJib1uQDucj0
-# L7UmUhDqUTdWMvlrz6dP8tG9XmJWR+bEHsJmGJubXyXfmrR0l+jSY3XczUKqDor9
-# muSeguJvRvkv60PuRLYJZpRB8MWrRRAtTHgvVvHYiwlcPUzdxy6LGgdXDo5AV1gG
-# SQ98I1aQwOox89vPkcfpKkJ6fIfim5K4+9MKkm1WNN7vIOVaF2DUFg6E27Jo+QyK
-# rSSWorR2HUEbHuhgqnIIDaF1XE2wbb+/zmCbZ6NZP3ULSF7rYs9oeMfKAefb3lKk
-# wGclNQlheRs9SLxBdsXdRjQZDq0YF/uMilmAe+dJlCdd6zDukcRAii54bm0ob3vA
-# 9i0RtWcdz4CNnuAE+Y0OE16/Qn/y62Pgxo7Eua+DhovZowhVaLp6ehpjPyA0rEO0
-# hauQPNBAmrFvTZ3GtZa3ZU21J7/SnQHkail34aWJH5r0p4lyK9kZkUpMNQICnntf
-# dxhgFzxhnnh6ogUZGDh0rp0UOfXWDTxDIRgNMjisKFihjQ2Y627ripvzVmyG6G0t
-# DEVDhNnfUjBwpcZudfD6+FI62KAhslCpy2p8wqGtWKnNV3rIRXhAFpinPme0A94a
-# AEe1hpDTylopnxGX8Ejr+ysN9huRi4pUv1ZTkYdt1VlHyIuqiehNUExJht5RnXNd
-# 1LuTzg6XMBnNzcVQjzlvU6Pwzw==
+# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCBj4lMrAIy3dU27FCOy0+Nr
+# VIALJVdI7/gWpFH+SxmdGDANBgkqhkiG9w0BAQEFAASCAgDIXxCxVUEdfWBohlXV
+# gCo6riPYNt3+94kEsQPWFqn5t/lmnK3YQK4TNFo/ri99kcUwI1in3zV1ghuQn/Mf
+# 6JPErQ2+b3oPeqfayCyn4Oas8HIduWB3pXx5aXcsw+3zEsBhF5m2zHybdgcHn1wb
+# BVTpMU7xHb/wwuTA569vKqDwaA8QXvYpZNmR5fn1uAuPQWtAiIfhQSG8CBYChvUf
+# 0pzpvSJ52V13niVjL9nZPSsuumxCBJccGXbyOAN0ST3IPSC4zHBEiGo72z+SDm5o
+# 6Dp9Ewkfzh+lcSf8sHaFb/bhjBSLfHAy5KnVYb7IYCtirbcjyljxhn6RU+4l270k
+# ixamVNMttTnXgmYpASAgvH/lCq/vvTAD2n2gHD5fWp61EIz2ZfRvHi7Z16AuUeYb
+# vYqhTHtL6Y0SzCI7Au2OHEsq2MTml1It2ltosyOJJI8POFeSzjVCw6my5GxtGvEm
+# DVfWsxWtvfyINS+GGcpr3It7RKuJUn9LWI4/Z5gzaw09SdPpw9MIaLIS7/IRmJkQ
+# PvTKKBVqyDJDIp9yyvrEPS86+lDqUUWcNyV56U5qL5IXpDlaFyThtVrGbopOhOt6
+# 0BNrjZbuJoQCQqJoHVxFdpgOIm4bZhzqOZiCgKth78wagzmK89k4WKQIPOXYuAi4
+# B68+LGoVSdBt/zz82WslRXzdsw==
 # SIG # End signature block

@@ -14,7 +14,7 @@
 ##  - Request / ReadWriteResponse Timeouts
 ##############################################################################################################
 function Get-FtpFile {
-    <#
+<#
 .SYNOPSIS
 Downloads a file from a File Transfer Protocol (FTP) location.
 
@@ -26,8 +26,8 @@ FileName location specified.
 This is a low-level function and not recommended for use in package
 scripts. It is recommended you call `Get-ChocolateyWebFile` instead.
 
-Will automatically call Set-PowerShellExitCode to set the package
-exit code to 404 if the resource is not found.
+Starting in 0.9.10, will automatically call Set-PowerShellExitCode to
+set the package exit code to 404 if the resource is not found.
 
 .INPUTS
 None
@@ -61,183 +61,164 @@ Get-ChocolateyWebFile
 .LINK
 Get-WebFile
 #>
-    param(
-        [parameter(Mandatory = $false, Position = 0)][string] $url = '',
-        [parameter(Mandatory = $true, Position = 1)][string] $fileName = $null,
-        [parameter(Mandatory = $false, Position = 2)][string] $username = $null,
-        [parameter(Mandatory = $false, Position = 3)][string] $password = $null,
-        [parameter(Mandatory = $false)][switch] $quiet,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$false, Position=0)][string] $url = '',
+  [parameter(Mandatory=$true, Position=1)][string] $fileName = $null,
+  [parameter(Mandatory=$false, Position=2)][string] $username = $null,
+  [parameter(Mandatory=$false, Position=3)][string] $password = $null,
+  [parameter(Mandatory=$false)][switch] $quiet,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($url -eq $null -or $url -eq '') {
-        Write-Warning "Url parameter is empty, Get-FtpFile has nothing to do."
-        return
+  if ($url -eq $null -or $url -eq '') {
+    Write-Warning "Url parameter is empty, Get-FtpFile has nothing to do."
+    return
+  }
+
+  if ($fileName -eq $null -or $fileName -eq '') {
+    Write-Warning "FileName parameter is empty, Get-FtpFile cannot save the output."
+    return
+  }
+
+  try {
+    $uri = [System.Uri]$url
+    if ($uri.IsFile()) {
+      Write-Debug "Url is local file, setting destination"
+      if ($url.LocalPath -ne $fileName) {
+        Copy-Item $uri.LocalPath -Destination $fileName -Force
+      }
+
+      return
     }
+  } catch {
+    #continue on
+  }
 
-    if ($fileName -eq $null -or $fileName -eq '') {
-        Write-Warning "FileName parameter is empty, Get-FtpFile cannot save the output."
-        return
+  # Create a FTPWebRequest object to handle the connection to the ftp server
+  $ftprequest = [System.Net.FtpWebRequest]::create($url)
+
+  # check if a proxy is required
+  $explicitProxy = $env:chocolateyProxyLocation
+  $explicitProxyUser = $env:chocolateyProxyUser
+  $explicitProxyPassword = $env:chocolateyProxyPassword
+  $explicitProxyBypassList = $env:chocolateyProxyBypassList
+  $explicitProxyBypassOnLocal = $env:chocolateyProxyBypassOnLocal
+  if ($explicitProxy -ne $null) {
+    # explicit proxy
+	  $proxy = New-Object System.Net.WebProxy($explicitProxy, $true)
+	  if ($explicitProxyPassword -ne $null) {
+	    $passwd = ConvertTo-SecureString $explicitProxyPassword -AsPlainText -Force
+	    $proxy.Credentials = New-Object System.Management.Automation.PSCredential ($explicitProxyUser, $passwd)
+	  }
+
+    if ($explicitProxyBypassList -ne $null -and $explicitProxyBypassList -ne '') {
+      $proxy.BypassList =  $explicitProxyBypassList.Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)
     }
+    if ($explicitProxyBypassOnLocal -eq 'true') { $proxy.BypassProxyOnLocal = $true; }
 
+  	Write-Host "Using explicit proxy server '$explicitProxy'."
+    $ftprequest.Proxy = $proxy
+  }
+
+  # set the request's network credentials for an authenticated connection
+  $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)
+
+  $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::DownloadFile
+  $ftprequest.UseBinary = $true
+  $ftprequest.KeepAlive = $false
+
+  # use the default request timeout of 100000
+  if ($env:chocolateyRequestTimeout -ne $null -and $env:chocolateyRequestTimeout -ne '') {
+    $ftprequest.Timeout =  $env:chocolateyRequestTimeout
+  }
+  if ($env:chocolateyResponseTimeout -ne $null -and $env:chocolateyResponseTimeout -ne '') {
+    $ftprequest.ReadWriteTimeout =  $env:chocolateyResponseTimeout
+  }
+
+  try {
+    # send the ftp request to the server
+    $ftpresponse = $ftprequest.GetResponse()
+    [long]$goal = $ftpresponse.ContentLength
+    $goalFormatted = Format-FileSize $goal
+
+    # get a download stream from the server response
+    $reader = $ftpresponse.GetResponseStream()
+
+    # create the target file on the local system and the download buffer
+    $writer = New-Object IO.FileStream ($fileName,[IO.FileMode]::Create)
+    [byte[]]$buffer = New-Object byte[] 1048576
+    [long]$total = [long]$count = 0
+
+    $originalEAP = $ErrorActionPreference
+    $ErrorActionPreference = 'Stop'
     try {
-        $uri = [System.Uri]$url
-        if ($uri.IsFile()) {
-            Write-Debug "Url is local file, setting destination"
-            if ($url.LocalPath -ne $fileName) {
-                Copy-Item $uri.LocalPath -Destination $fileName -Force
-            }
-
-            return
+      # loop through the download stream and send the data to the target file
+      do {
+        $count = $reader.Read($buffer, 0, $buffer.Length);
+        $writer.Write($buffer, 0, $count);
+        if(!$quiet) {
+          $total += $count
+          $totalFormatted = Format-FileSize $total
+          if($goal -gt 0) {
+            $percentComplete = [Math]::Truncate(($total/$goal)*100)
+            Write-Progress "Downloading $url to $fileName" "Saving $totalFormatted of $goalFormatted ($total/$goal)" -id 0 -percentComplete $percentComplete
+          } else {
+            Write-Progress "Downloading $url to $fileName" "Saving $total bytes..." -id 0 -Completed
+          }
+          if ($total -eq $goal -and $count -eq 0) {
+            Write-Progress "Completed download of $url." "Completed a total of $total bytes of $fileName" -id 0 -Completed -PercentComplete 100
+          }
         }
-    }
-    catch {
-        #continue on
-    }
-
-    # Create a FTPWebRequest object to handle the connection to the ftp server
-    $ftprequest = [System.Net.FtpWebRequest]::create($url)
-
-    # check if a proxy is required
-    $explicitProxy = $env:chocolateyProxyLocation
-    $explicitProxyUser = $env:chocolateyProxyUser
-    $explicitProxyPassword = $env:chocolateyProxyPassword
-    $explicitProxyBypassList = $env:chocolateyProxyBypassList
-    $explicitProxyBypassOnLocal = $env:chocolateyProxyBypassOnLocal
-    if ($explicitProxy -ne $null) {
-        # explicit proxy
-        $proxy = New-Object System.Net.WebProxy($explicitProxy, $true)
-        if ($explicitProxyPassword -ne $null) {
-            $passwd = ConvertTo-SecureString $explicitProxyPassword -AsPlainText -Force
-            $proxy.Credentials = New-Object System.Management.Automation.PSCredential ($explicitProxyUser, $passwd)
-        }
-
-        if ($explicitProxyBypassList -ne $null -and $explicitProxyBypassList -ne '') {
-            $proxy.BypassList = $explicitProxyBypassList.Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)
-        }
-        if ($explicitProxyBypassOnLocal -eq 'true') {
-            $proxy.BypassProxyOnLocal = $true;
-        }
-
-        Write-Host "Using explicit proxy server '$explicitProxy'."
-        $ftprequest.Proxy = $proxy
+      } while ($count -ne 0)
+      Write-Host ""
+      Write-Host "Download of $([System.IO.Path]::GetFileName($fileName)) ($goalFormatted) completed."
+    } finally {
+        $ErrorActionPreference = $originalEAP
     }
 
-    # set the request's network credentials for an authenticated connection
-    $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)
+    $writer.Flush() # closed in finally block
 
-    $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::DownloadFile
-    $ftprequest.UseBinary = $true
-    $ftprequest.KeepAlive = $false
-
-    # use the default request timeout of 100000
-    if ($env:chocolateyRequestTimeout -ne $null -and $env:chocolateyRequestTimeout -ne '') {
-        $ftprequest.Timeout = $env:chocolateyRequestTimeout
-    }
-    if ($env:chocolateyResponseTimeout -ne $null -and $env:chocolateyResponseTimeout -ne '') {
-        $ftprequest.ReadWriteTimeout = $env:chocolateyResponseTimeout
+  } catch {
+    if ($ftprequest -ne $null) {
+      $ftprequest.ServicePoint.MaxIdleTime = 0
+      $ftprequest.Abort();
+      # ruthlessly remove $ftprequest to ensure it isn't reused
+      Remove-Variable ftprequest
+      Start-Sleep 1
+      [GC]::Collect()
     }
 
-    try {
-        # send the ftp request to the server
-        $ftpresponse = $ftprequest.GetResponse()
-        [long]$goal = $ftpresponse.ContentLength
-        $goalFormatted = Format-FileSize $goal
-
-        # get a download stream from the server response
-        $reader = $ftpresponse.GetResponseStream()
-
-        # create the target file on the local system and the download buffer
-        $writer = New-Object IO.FileStream ($fileName, [IO.FileMode]::Create)
-        [byte[]]$buffer = New-Object byte[] 1048576
-        [long]$total = [long]$count = 0
-
-        $originalEAP = $ErrorActionPreference
-        $ErrorActionPreference = 'Stop'
-        try {
-            # loop through the download stream and send the data to the target file
-            do {
-                $count = $reader.Read($buffer, 0, $buffer.Length);
-                $writer.Write($buffer, 0, $count);
-                if (!$quiet) {
-                    $total += $count
-                    $totalFormatted = Format-FileSize $total
-                    if ($goal -gt 0) {
-                        $percentComplete = [Math]::Truncate(($total / $goal) * 100)
-                        Write-Progress "Downloading $url to $fileName" "Saving $totalFormatted of $goalFormatted ($total/$goal)" -Id 0 -PercentComplete $percentComplete
-                    }
-                    else {
-                        Write-Progress "Downloading $url to $fileName" "Saving $total bytes..." -Id 0 -Completed
-                    }
-                    if ($total -eq $goal -and $count -eq 0) {
-                        Write-Progress "Completed download of $url." "Completed a total of $total bytes of $fileName" -Id 0 -Completed -PercentComplete 100
-                    }
-                }
-            } while ($count -ne 0)
-            Write-Host ""
-            Write-Host "Download of $([System.IO.Path]::GetFileName($fileName)) ($goalFormatted) completed."
-        }
-        finally {
-            $ErrorActionPreference = $originalEAP
-        }
-
-        $writer.Flush() # closed in finally block
+    Set-PowerShellExitCode 404
+    if ($env:DownloadCacheAvailable -eq 'true') {
+       throw "The remote file either doesn't exist, is unauthorized, or is forbidden for url '$url'. $($_.Exception.Message) `nThis package is likely not broken for licensed users - see https://docs.chocolatey.org/en-us/features/private-cdn."
+    } else {
+       throw "The remote file either doesn't exist, is unauthorized, or is forbidden for url '$url'. $($_.Exception.Message)"
     }
-    catch {
-        if ($ftprequest -ne $null) {
-            $ftprequest.ServicePoint.MaxIdleTime = 0
-            $ftprequest.Abort();
-            # ruthlessly remove $ftprequest to ensure it isn't reused
-            Remove-Variable ftprequest
-            Start-Sleep 1
-            [GC]::Collect()
-        }
+  } finally {
 
-        Set-PowerShellExitCode 404
-        if ($env:DownloadCacheAvailable -eq 'true') {
-            throw "The remote file either doesn't exist, is unauthorized, or is forbidden for url '$url'. $($_.Exception.Message) `nThis package is likely not broken for licensed users - see https://docs.chocolatey.org/en-us/features/private-cdn."
-        }
-        else {
-            throw "The remote file either doesn't exist, is unauthorized, or is forbidden for url '$url'. $($_.Exception.Message)"
-        }
+    if ($reader -ne $null) {
+      try { $reader.Close(); } catch {}
     }
-    finally {
 
-        if ($reader -ne $null) {
-            try {
-                $reader.Close();
-            }
-            catch {
-            }
-        }
-
-        if ($writer -ne $null) {
-            try {
-                $writer.Close();
-            }
-            catch {
-            }
-        }
-
-        if ($ftpresponse -ne $null) {
-            try {
-                $ftpresponse.Close();
-            }
-            catch {
-            }
-        }
-
-        Start-Sleep 1
+    if ($writer -ne $null) {
+      try { $writer.Close(); } catch {}
     }
+
+    if ($ftpresponse -ne $null) {
+      try { $ftpresponse.Close(); } catch {}
+    }
+
+    Start-Sleep 1
+  }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBslYH+Nw8c8SKa
-# HFPtEtR93jc2V00j6iGK6N7Y0qYYXaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCClKBIpEtcZikH3
+# MiG+9MaWhG1XH5wnPGgXAoA7E6LZjqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -400,28 +381,28 @@ Get-WebFile
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQg+djZjzKe9buquHMvQ42ydMA5dW11+riCj/APGqMEe+cwDQYJ
-# KoZIhvcNAQEBBQAEggEAU8oLIcwl093SGPdx6m+//5cPCySDGxmmjz7pOvN6npnz
-# m6UEY/s7YceIC15HikvbJDgAaNfdyXRp5IzsqLOD7bSi3VgzPCVEvfBYpkTWaLKl
-# YWzqWxs4aJ55CIUbVGhTQ1QCQ5AdkqIgMKwVyaxmveNmqfqSRyfXoj995eQX9po/
-# icIM2lbUHSmVZFsUA11Q/0lbtj062NS/aXREWI/xYakvBomMeYuwGzNiEtMU63IB
-# B1MHRAFpFh6plwGzKHzbgHKBZjGearkmam6VJXHmMp+eGVgdSwJ7JBNEsfyGnbUI
-# t18Gm7P7fZnXANpNLySKBLJfKZsSdhRu96IneLKfoqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgk8ncAdKt2P0dg3NrY6mhDPAHt7/nisMnAr1uFp0Y4EIwDQYJ
+# KoZIhvcNAQEBBQAEggEAYcO8OAaTbDu+c7AOqc5p2MWusgsyhWwUcO+GotY3kUwU
+# +RDPpGgVoIwtVCdi5OYcJZikTAngk0AAjElb4mO/M6cR/jRZ90DEWXkSKUEqV/O5
+# bqG0Rla1RpMvkbDEJ32JP2yg5M3ujq+fR4iR4yThteYLAn9cFldFK0WElogMJHcA
+# ZH5X6ETxm6tUxoIHd2YTxti7twY+twLra0nX5Vn89lnhXhiLMsdM9KvVHNvfwyl5
+# MgsaWxqj22rXmV4KxiCI/7+wc8w7P/ZEeKb8TqH3YD0W4dmp70CSasF4Up7kvMrl
+# YtGhnN0GAainWoCcnG1ON/NKr/h3X5pBAQnlDoO7o6GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTZaMC8GCSqGSIb3DQEJBDEiBCCX8rKh8Y0bLF7L7zQMpBYM
-# BwmvANOjUIH7Tn7lm1pm3DANBgkqhkiG9w0BAQEFAASCAgBaX7Pu86aPbWCcGoMB
-# 9Ub9e++aCPGU3hKMHD/nCirTzyZ3zWtCmvHEtke5Krfw1SMdBDE3BoiLlNz8j5GI
-# Ksx8SVZgNuUV7QRhtl/WRKkm71oLlnHEIUJyXxdt1xrDRxP1wkePZ1AoXP76VmUS
-# xGRGOeXHWN0zUJABitXpaAalInzbSfVhdWIWeTQYirv4/XRSqXcEhwV66ethT6mL
-# BdLeWgqX9y2MEs15XAq5EEeLfdE7QfOmy8vN7fL5btGe+qeipxtA/4w+uk7AQ06g
-# bkUUBIE7mDxe0IUoWIZz48gVG+UeSLmFlaADv8aKcDw7iAaeMYP0XsnDa/ayi5mg
-# l11zO5lqPWw8e/h4wazyDEf25UNhuzvASwJ2NN6JTR0wKQWMTLQ2jemvcNuKgMR8
-# 0R1TKBa8x1jdPqJgcnooHxnOWvA9Vlwpj3tbl1breur+WpsTALRy6TqqO+GAlb8+
-# 9EjB19VZ0/WND8dNXZ30duu+ui22CpS7z5sXzBlt0MnmRn4pKdL6BMhK2dW+XNcG
-# SKgQKJoYb6Ob0fwRT/7OZB+0sYKxp/MK5C+bMnzO6hdtiJxn7XQ/N6eBAYszv211
-# KoTuwEwkArigY6Y7BXb6lMaCW75lM3PpbM0uX3hlDNQp+iILZK2zxLqYJ5Y4O/BU
-# 3U0Bw3GyKpxEMXqVLwKHA6PW8A==
+# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCBkRL/ctiATcOk6rsEI2mYz
+# F0nL1FRmZ32zyODPTARQ8zANBgkqhkiG9w0BAQEFAASCAgCS/BUH8gQ+ACaAIZgN
+# yLlGLNxeLhuIMRdDidKCCYCjY80IP50VEnWYEmnXLzOsnk0zUASNtyu6jPP/TQuy
+# mVpfNj8iqQB5jMPr2Mw46TdKsNzwyHiz3fpcEmQ7F17NuApG0biOD1b/JIAP61SJ
+# etj/3DCiz/JvegTNGtip7YrBL5ouHhSvJBFGyEFtKqQWFXYLXU6t4mP0JiUrThiT
+# WUx0asynwp+AT1bQmVHulUVhoLosm0fFgEijuNTg1v4EHr1tdNQqwVNoBKn0jZQV
+# 63dIl584uiDwp8Pn1Jl5GG6MkMkVIj6E0NiGromiCm7yEKb6AuuksNL57Rwkp31y
+# Ex7Ug64q7L2kMrJ0ucPLXfS0cHCzeID7ug9VhkgIO4ZEPjyy4veTjEnwXTDuaP+5
+# dc3XP+iJpYWgUWVJt1p1dzZ1/N5x0/oekIJYS/WFFC9RYYJfScevQUNj43DDWWs/
+# bSVC6cBqEAoJhCkqqSPYcCfXcyaUKbSFfF/pz7s+iROp2TxNtKA/LlDC5y8/t+cm
+# pRjYAyvWdp5D89SyXSyL5TGyJnEsym2RAHB234pJqx0DyuDYPuXgYQNkMEXyBVyQ
+# rSRfX8GwBvDZiRv+cLJ1rpcdAOWcZVYNlFwT0Ubq0+QAqhd5iHbuCe1FMXfk8BZc
+# TIp/BzSwTkjD6hUEqxrB2QSieA==
 # SIG # End signature block

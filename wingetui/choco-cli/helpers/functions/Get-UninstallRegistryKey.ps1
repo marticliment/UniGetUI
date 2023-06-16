@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-UninstallRegistryKey {
-    <#
+<#
 .SYNOPSIS
 Retrieve registry key(s) for system-installed applications from an
 exact or wildcard search.
@@ -27,6 +27,17 @@ chocolateyUninstall.ps1 automation script.
 
 The function also prevents `Get-ItemProperty` from failing when
 handling wrongly encoded registry keys.
+
+.NOTES
+Available in 0.9.10+. If you need to maintain compatibility with pre
+0.9.10, please add the following to your nuspec (check for minimum
+version):
+
+~~~xml
+<dependencies>
+  <dependency id="chocolatey-core.extension" version="1.1.0" />
+</dependencies>
+~~~
 
 .INPUTS
 String
@@ -94,69 +105,65 @@ Install-ChocolateyInstallPackage
 .LINK
 Uninstall-ChocolateyPackage
 #>
-    [CmdletBinding()]
-    param(
-        [parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [string] $softwareName,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+[CmdletBinding()]
+param(
+  [parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+  [string] $softwareName,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($softwareName -eq $null -or $softwareName -eq '') {
-        throw "$SoftwareName cannot be empty for Get-UninstallRegistryKey"
-    }
+  if ($softwareName -eq $null -or $softwareName -eq '') {
+    throw "$SoftwareName cannot be empty for Get-UninstallRegistryKey"
+  }
 
-    $ErrorActionPreference = 'Stop'
-    $local_key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
-    $machine_key = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
-    $machine_key6432 = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
+  $ErrorActionPreference = 'Stop'
+  $local_key       = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
+  $machine_key     = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+  $machine_key6432 = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
 
-    Write-Verbose "Retrieving all uninstall registry keys"
-    [array]$keys = Get-ChildItem -Path @($machine_key6432, $machine_key, $local_key) -ErrorAction SilentlyContinue
-    Write-Debug "Registry uninstall keys on system: $($keys.Count)"
+  Write-Verbose "Retrieving all uninstall registry keys"
+  [array]$keys = Get-ChildItem -Path @($machine_key6432, $machine_key, $local_key) -ErrorAction SilentlyContinue
+  Write-Debug "Registry uninstall keys on system: $($keys.Count)"
 
-    Write-Debug "Error handling check: `'Get-ItemProperty`' fails if a registry key is encoded incorrectly."
-    [int]$maxAttempts = $keys.Count
-    for ([int]$attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-        [bool]$success = $false
+  Write-Debug "Error handling check: `'Get-ItemProperty`' fails if a registry key is encoded incorrectly."
+  [int]$maxAttempts = $keys.Count
+  for ([int]$attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+    [bool]$success = $false
 
-        $keyPaths = $keys | Select-Object -ExpandProperty PSPath
+    $keyPaths = $keys | Select-Object -ExpandProperty PSPath
+    try {
+      [array]$foundKey = Get-ItemProperty -LiteralPath $keyPaths -ErrorAction Stop | Where-Object { $_.DisplayName -like $softwareName }
+      $success = $true
+    } catch {
+      Write-Debug "Found bad key."
+      foreach ($key in $keys){
         try {
-            [array]$foundKey = Get-ItemProperty -LiteralPath $keyPaths -ErrorAction Stop | Where-Object { $_.DisplayName -like $softwareName }
-            $success = $true
+          Get-ItemProperty -LiteralPath $key.PsPath > $null
+        } catch {
+          $badKey = $key.PsPath
         }
-        catch {
-            Write-Debug "Found bad key."
-            foreach ($key in $keys) {
-                try {
-                    Get-ItemProperty -LiteralPath $key.PsPath > $null
-                }
-                catch {
-                    $badKey = $key.PsPath
-                }
-            }
-            Write-Verbose "Skipping bad key: $badKey"
-            [array]$keys = $keys | Where-Object { $badKey -NotContains $_.PsPath }
-        }
-
-        if ($success) {
-            break;
-        }
-
-        if ($attempt -ge 10) {
-            Write-Warning "Found 10 or more bad registry keys. Run command again with `'--verbose --debug`' for more info."
-            Write-Debug "Each key searched should correspond to an installed program. It is very unlikely to have more than a few programs with incorrectly encoded keys, if any at all. This may be indicative of one or more corrupted registry branches."
-        }
+      }
+      Write-Verbose "Skipping bad key: $badKey"
+      [array]$keys = $keys | Where-Object { $badKey -NotContains $_.PsPath }
     }
 
-    if ($foundKey -eq $null -or $foundkey.Count -eq 0) {
-        Write-Warning "No registry key found based on  '$softwareName'"
+    if ($success) { break; }
+
+    if ($attempt -ge 10) {
+      Write-Warning "Found 10 or more bad registry keys. Run command again with `'--verbose --debug`' for more info."
+      Write-Debug "Each key searched should correspond to an installed program. It is very unlikely to have more than a few programs with incorrectly encoded keys, if any at all. This may be indicative of one or more corrupted registry branches."
     }
+  }
 
-    Write-Debug "Found $($foundKey.Count) uninstall registry key(s) with SoftwareName:`'$SoftwareName`'";
+  if ($foundKey -eq $null -or $foundkey.Count -eq 0) {
+    Write-Warning "No registry key found based on  '$softwareName'"
+  }
 
-    return $foundKey
+  Write-Debug "Found $($foundKey.Count) uninstall registry key(s) with SoftwareName:`'$SoftwareName`'";
+
+  return $foundKey
 }
 
 Set-Alias Get-InstallRegistryKey Get-UninstallRegistryKey
@@ -164,8 +171,8 @@ Set-Alias Get-InstallRegistryKey Get-UninstallRegistryKey
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAr7rSv15BEVAdd
-# Hi9DFdA/R4f9zSgZHYO+xkt+mPq16qCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBdLU7HfmsT9lS+
+# MXb0xNK+Xc4FA9KOO8pYFVpwMmW52KCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -328,28 +335,28 @@ Set-Alias Get-InstallRegistryKey Get-UninstallRegistryKey
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgLPoj722TtPpVLPbDD3fJGVEJDPJbWsh523bCR1YoR54wDQYJ
-# KoZIhvcNAQEBBQAEggEAIjRNzrcJoEWWgma8pCprr1n55GTNpLeDcZ9iWi6ksgyx
-# FAX3SYjL4oGi0F5qpkM6QYFDl4YLfhkWThyFL63EfC9o+gc3/JfZgiNAizOl003+
-# Vzzv3Y5pkKxBakXhcg31VOHVxumsigOzAsg+4JiEjx3y5vLMDR824q6b13zkbpq2
-# Wd8a6Pafqccdg1OoIzL7P8WsTaeVANl+3V0+Bl7+WwpWEiz9qkuHljZwhTypeEyl
-# v6/ljL7iS+hk9Q2GbJZd6SytferSpbXoOAL89qz2SpQHWIhm9urFq9CEAAYfqQey
-# gtzztv4TmUA6uNGgDid4UJ9nxxWXdS9tsWZd771f7aGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQg51ETGafDiV2zTXT6BMq/m2rh8VpY6BBl4K45tM0zIR0wDQYJ
+# KoZIhvcNAQEBBQAEggEAlGwbWhLvhaCG7SlPDvR7IFuPB3pOPuLrwZbyphpHLJPc
+# jfCyj8sKbq26OVbPrfJQXu32S8TCRLIFlMIsro0zEn94ucDT3Sk65gpPXow6QO0g
+# ajEJVJKoO6FHuTvonDAOtQTT1TXA1xKxdf2TzPbOZBDruJ1RtrAzok1ZAIQSOBV5
+# xZ0VL5hwrxa6ZbhUZmA8fZCfuKT27O3T9OLoO9VKE9+AxglCQIEzA3uVIwMcO50a
+# JOJeoqkxWMMnsnQFIr4rhfygwjk7EC9Qi+RW7UlcdoUKtt78eBy/kS46Nbptr5Il
+# zHV3ZaH+aywAq3SaBqDQCT5Fd/DOcJzijBdDKYsT4qGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTZaMC8GCSqGSIb3DQEJBDEiBCDYCyC15QL+h+6ftedNEDKX
-# KI1MMR1MJr7bUeoDDWCWHzANBgkqhkiG9w0BAQEFAASCAgCikjlRJ4zO+aelsFea
-# vtz7rrsXudVs4h1GhQgXyBdrK6kag+u78PJja7RT4djA6jiQqS0BPYyIySMLpoUd
-# IARpJiaSrNwyo7+dPlbBe17dx5xFowuhD7eh/jl7vMAQKvVhha9lfBrKxzw6qDST
-# wgid8itLVLDtScUOkKZinxf949pH1UkbrYx8OYfkrUcxKWhnTLAeSrD1RWaqgLHh
-# /YC65frVQRolnl/BMWpYLZOZxf8Zi/oi/oH4dG4ArghSjlI40wU0dcB6VxsB0kHM
-# rs7Q1B62KYGObQk7tSZQttFDSyRb24f6NXJPNfOLgM57mKcH6DLWv4Oe00wpYQ5E
-# CvbmeVv/ZZgCUmG5YVKntoipSLMn/Hfs0JSbqgyROC9unMaPUTJYE2ypvgBmBi0x
-# pTKNPkwiLNPnszSKldHkRNokNpd+xj8gqVlp+w9xY2feEJJue8i/YagMa/rgNbIm
-# RCJD0RQ9KqM2PGNnPJ3KiuRBn9RdbrMPkTAT4mcGpLA2F92AsOkeRcvvv1n0MlUL
-# pkvOkGgLW2j+LMY+5ksGnO/YT3cmRgweKmhAzuJjI4fYw2kt5/yMfILgIIrg5EsA
-# YbfKcJWftoZ8ADVWRUDtiLnB8vGbe7uomBaOfYUIO+yDFwk73nvMaIpzVEpFxT22
-# WBgWxcm1tjjNnnbn+szrFm5IHA==
+# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCB2kPWvB9ni5zddnFBVMq4+
+# aPrbbMuzMxM6K6Z+zbiI/jANBgkqhkiG9w0BAQEFAASCAgC5dvxcZYp4kZMzqkQT
+# +AsJ5odGLaTqes9EXTQg8rX/yloGqOz6gYXqmaaMavtUsHSe6JlDfT4FaIiybzto
+# fTXQXRz584+9Ko2WnRVpQTrwH8exPduErQ6v8vV6qp/sv4NeOyALVTXBcNHOYbGZ
+# cRERPi5rQqD8MrZydghdUQL36cogJcLdfd116GftnDlxpw6A6f6oO+wuE62EZ8pU
+# U2mSfk6HvsUE2Rz3Ffx3i72uepZdb9mBDj+cqUeFgD0sJhkxUH4/uqAT0ghfqvDL
+# fiMorOWkFo9u7rTa0rCI3m7Mkc2yzlEXA6m/39t4PEKSTqvLJ+22LHBqhtWZ79ne
+# OYu68q17e7YZunAKutZJKLeZnTo5zNADI4oaDa2zIBLCEpBmbGK549SV8sQgs0Xq
+# j/TWHamlV9K+Afib0N5YVks4SrDyvBtXVlT/fbIJqTZtRJN2AVQp8ApgsjGet3f6
+# 6i6uPmFDHaL5IVsw4FP0g+A1TU3BCz2qyn3aesw2k2lt4UHyyq+Cekv+EQn0bbNH
+# DhwSChtdhwjj/DuTTlQwPafCJPVjVZ93WKMwHupMNb6HAL9RYd6E/j98v1rGKMMU
+# 9SuCXSczCgGZZhSl8RTbo+N+96GSjMwF+/bqg2EP4++BoG4gqVkaw9NPNT/YO0O/
+# J7VR6lwUIgQL5/etpNPPXCRVkw==
 # SIG # End signature block

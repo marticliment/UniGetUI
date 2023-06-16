@@ -155,7 +155,7 @@ class ChocoPackageManager(SamplePackageManager):
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen([self.EXECUTABLE, "list"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "list" "--local-only"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -253,8 +253,7 @@ class ChocoPackageManager(SamplePackageManager):
                 if line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
-                if "[Approved]" in line:
-                    details.Versions.append(line.split(" ")[1])
+                details.Versions.append(line.split(" ")[1])
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:

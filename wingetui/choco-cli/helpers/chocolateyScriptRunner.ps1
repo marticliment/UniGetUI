@@ -1,22 +1,18 @@
 ﻿param(
-    [alias("ia", "installArgs")][string] $installArguments = '',
-    [alias("o", "override", "overrideArguments", "notSilent")]
-    [switch] $overrideArgs = $false,
-    [alias("x86")][switch] $forceX86 = $false,
-    [alias("params", "parameters", "pkgParams")][string]$packageParameters = '',
-    [string]$packageScript,
-    [string[]]$preRunHookScripts,
-    [string[]]$postRunHookScripts
+  [alias("ia","installArgs")][string] $installArguments = '',
+  [alias("o","override","overrideArguments","notSilent")]
+  [switch] $overrideArgs = $false,
+  [alias("x86")][switch] $forceX86 = $false,
+  [alias("params","parameters","pkgParams")][string]$packageParameters = '',
+  [string]$packageScript,
+  [string[]]$preRunHookScripts,
+  [string[]]$postRunHookScripts
 )
 
 $global:DebugPreference = "SilentlyContinue"
-if ($env:ChocolateyEnvironmentDebug -eq 'true') {
-    $global:DebugPreference = "Continue";
-}
+if ($env:ChocolateyEnvironmentDebug -eq 'true') { $global:DebugPreference = "Continue"; }
 $global:VerbosePreference = "SilentlyContinue"
-if ($env:ChocolateyEnvironmentVerbose -eq 'true') {
-    $global:VerbosePreference = "Continue"; $verbosity = $true
-}
+if ($env:ChocolateyEnvironmentVerbose -eq 'true') { $global:VerbosePreference = "Continue"; $verbosity = $true }
 
 Write-Debug '---------------------------Script Execution---------------------------'
 Write-Debug "Running 'ChocolateyScriptRunner' for $($env:packageName) v$($env:packageVersion) with packageScript '$packageScript', packageFolder:'$($env:packageFolder)', installArguments: '$installArguments', packageParameters: '$packageParameters', preRunHookScripts: '$preRunHookScripts', postRunHookScripts: '$postRunHookScripts',"
@@ -37,8 +33,8 @@ $packageName = $env:packageName
 $packageVersion = $env:packageVersion
 $packageFolder = $env:packageFolder
 
-$helpersPath = (Split-Path -Parent $MyInvocation.MyCommand.Definition);
-$nugetChocolateyPath = (Split-Path -Parent $helpersPath)
+$helpersPath = (Split-Path -parent $MyInvocation.MyCommand.Definition);
+$nugetChocolateyPath = (Split-Path -parent $helpersPath)
 $nugetPath = $nugetChocolateyPath
 $nugetExePath = Join-Path $nuGetPath 'bin'
 $nugetLibPath = Join-Path $nuGetPath 'lib'
@@ -66,24 +62,24 @@ $scriptSuccess = $?
 $lastExecutableExitCode = $LASTEXITCODE
 
 if ($lastExecutableExitCode -ne $null -and $lastExecutableExitCode -ne '') {
-    Write-Debug "The last executable that ran had an exit code of '$lastExecutableExitCode'."
+  Write-Debug "The last executable that ran had an exit code of '$lastExecutableExitCode'."
 }
 
 if (-not $scriptSuccess) {
-    Write-Debug "The script exited with a failure."
+ Write-Debug "The script exited with a failure."
 }
 
 $exitCode = 0
 if ($exitCode -eq 0 -and -not $scriptSuccess) {
-    $exitCode = 1
+  $exitCode = 1
 }
 
 if ($env:ChocolateyExitCode -ne $null -and $env:ChocolateyExitCode -ne '') {
-    $exitCode = $env:ChocolateyExitCode
+ $exitCode = $env:ChocolateyExitCode
 }
 
 if ($exitCode -ne $null -and $exitCode -ne '' -and $exitCode -ne 0) {
-    Set-PowerShellExitCode $exitCode
+  Set-PowerShellExitCode $exitCode
 }
 
 if ($postRunHookScripts) {
@@ -100,8 +96,8 @@ Exit $exitCode
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBZkqyAq0588YCM
-# CqS+BQmwyVX37JNeifgFHtCHeHOm0aCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBcnguO4tu2+C/z
+# d6ClbNIDmWpnDcflYQTOs2cPCDLM7qCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -264,28 +260,28 @@ Exit $exitCode
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgNM8DW6EceOcP0isvyydFRC4Jb3JFaWJHBihU/pp+p8MwDQYJ
-# KoZIhvcNAQEBBQAEggEAEf3mB/BicPycfRkgMJA6r0sxqhYIEUgChqLN8BGzxkBI
-# PbYec2F8PxyTm1AbnuhL69F2XJXKS06Qsa0vd5c+rdB7ej8S5ETkjjg/RYAZgg/i
-# +dl77S2vMhMQiD5Nu2FKr8ddlUblS6AtBMDB2mKlV2Bp5EK9GHH3rxQ9/Jd1V5kX
-# i+g3ftwA+jvpI0ZQH5ieUFNG3JP252rc9HPYrhEKeG9HQOaOSqV+dUDtZjgDw8Iq
-# 8uXaV0cR5rP91ekMUGUZTzL7NHfPC+16P5djLhEXa63rVci+4MFdosTr2s4+pwZM
-# cdnp2ZJRgLlioBl331mKWBv+U6U9iI1/xq6ErCu60aGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQg9Qwc9PPtRX3ZTUYX3/psKalgP9c0vL8YGnubofD4PiswDQYJ
+# KoZIhvcNAQEBBQAEggEAN9rqqOaKYDDuBrQHI8SRMRurq6VbxQNVHWkGyjoAI++Q
+# L1lrO5HDn1u9f/3xrBB+RiAQvf1V10KrA0sThRDJzlPp6VtdSF/55YRkXsiuXZpO
+# Sd/oeKBwIaqIHFyevcEmEu7WIyTS6jmxRkoaDyYTzdDfxwQn1b0t1GkWYIKwKWSR
+# 2RW5YVUquA4x+VNXOye00PXxqngEIJ+CfE1O3AIPzHxTKA/HO/c6QwG3qltnyjQt
+# lqVtlH0xMQ64SZ14mjj6FAWtalGAjmOEVW+EoMW96CkCxaxQNilnpnZwDVvlSkBe
+# QgpWcoJszMGhDNzSLDaNHLIhHYEQO7LEyfcuLt68CqGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTRaMC8GCSqGSIb3DQEJBDEiBCDusA8pa4txDSVouT0aHOPW
-# 9K3Tf5VnjHmOu842+ZkcdDANBgkqhkiG9w0BAQEFAASCAgBW006Fda/nS3vxPVBK
-# T+SbzMb7szSmGQBdNo5711ky+5toVKTe8TK3FbhLiTc+Jc4fsB6TpT5KL1cUSpzX
-# uJjzgXt0Z5hRxi+Y+pyS5dsLs6a6fyUYM+7FhMavpUqZD1mKZoa0VbqLgQi09+wZ
-# aNwtvSZxLKxo+ACjJ3a0dmviSXzmfFsAgB0JR7DCiyL9MDbGWFgkYk3rHHeiIqAr
-# iG3FEzxNhJkjkwUMQoSEdtTXMVJQbXLaq2T0JKUBu6im7wWCQ+Ddd1hD5QcLoy1w
-# IJIloqyNYsWBlJ3z3zMgYKunzR0/JHMsTWj4NVk87VWSI8m/Iri6RdlWPEBfrwRL
-# HDtbtgOtMZ7SA7cWqaG29p0irma1aFvKvwhAGHkqNdU4jGh0r7XlH3VHB9L6+x+s
-# TDkGcE7aDuYF+NnhX7/Wt6k8dGpDDNo2XQTHeNs96gii6ewqvA3KgLnI8ScjkaCH
-# 4A8Lr7m61tUts4BWYi1fKtTWT5JF7EiJVeBgqFa6yy51nYIOJdma8g1SOg+y6XHg
-# eoCFrJ0EYiQmBkFUFTTjfMZY2cWHFde9EymETZputlDAQ+FFHCw5uiwVU4Jx2WEz
-# Ht3EwCcqdxCIt61Nyj6rgo9yHHrhMCYpyZz8nfKeEqc/uOp8xv6WnQ0ysGfScrxS
-# OTxjZBzlaFb4iCr6jVky2zfYzA==
+# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCBCQp5Q2gVV4DMDHXPe56YG
+# kKQOm+qqTnWh62QENCVdfTANBgkqhkiG9w0BAQEFAASCAgCg6yatb+8dOV1hceoo
+# cFgU6HouXYlBWwRhGzysEIrwdwXuMbi+g6RIwc6tQz3ZsoSLYb8cKPo4bqXEjEv3
+# 71n1jo+jzYnj/0ht4Z8L2mkhDN/+P9pxJZqIbUJcsCmN5Q3TyBEFm05bmlMIpdR6
+# MIAJ8Y6OnhfKqDaVOMiFTe531oVe5WmHNVnqO1UIAALE2evdDMrBfP7LDx61uoeh
+# xelo2RUUJDbD1TANPMZYira+oFKoXXRWej8BtP8u2wxfJGubjLaisWvyoCUXgnLx
+# N4HswMh2uXTRLu+11QklRuw0fYvN0/GUIOsNFB0KQLJSBA8/FdYVrJTa9FY8RaPt
+# EvSFhM+BXK603X9sJPHZ5xh3XFX31LQfw2dHbhGjux7oMy2+KsPcKiX0I/iJB1JO
+# Zlhz/KRZ/djE5YwciY67VX2zKQPgY8MWO05djYYLa7WxJoBNqszhjDU5OoUx9Ywa
+# Tzl/zuTSIgpaIlKvjovN5rF0HcOojvKXtfPVEcZmKDa1NpYsjORbZt+hlUsLYgjO
+# yCeanNu6LNrFbC8dJJ0l3wzdAEXX1Dwasn20LKJLzTF68bNkQ+Xeuv/uxy15Usth
+# lTy1uK/PlVW4EjTUN+b5fajQth984SUTjJmGU9Dx1hm3gvBiKK3EDwyCsEbQEpgg
+# pyeRRu50SsxiXC2slIydu7a/HQ==
 # SIG # End signature block

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-UACEnabled {
-    <#
+<#
 .SYNOPSIS
 Determines if UAC (User Account Control) is turned on or off.
 
@@ -34,35 +34,36 @@ None
 System.Boolean
 #>
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    $uacRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
-    $uacRegValue = "EnableLUA"
-    $uacEnabled = $false
+  $uacRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+  $uacRegValue = "EnableLUA"
+  $uacEnabled = $false
 
-    # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
-    $osVersion = [Environment]::OSVersion.Version
-    if ($osVersion -ge [Version]'6.0') {
-        $uacRegSetting = Get-ItemProperty -Path $uacRegPath
-        try {
-            $uacValue = $uacRegSetting.EnableLUA
-            if ($uacValue -eq 1) {
-                $uacEnabled = $true
-            }
-        }
-        catch {
-            #regkey doesn't exist, so proceed with false
-        }
+  # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
+  $osVersion = [Environment]::OSVersion.Version
+  if ($osVersion -ge [Version]'6.0')
+  {
+    $uacRegSetting = Get-ItemProperty -Path $uacRegPath
+    try {
+      $uacValue = $uacRegSetting.EnableLUA
+      if ($uacValue -eq 1) {
+        $uacEnabled = $true
+      }
+    } catch {
+      #regkey doesn't exist, so proceed with false
+
     }
+  }
 
-    return $uacEnabled
+ return $uacEnabled
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBfnkAX1xa4ujrT
-# pCSNxfBGNOCUu+JxbrgALkAS4BAJOqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCq0FT/5glOFTC9
+# KHQlN1ezE+KdOiLwUzON9SdN2XT+LaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -225,28 +226,28 @@ System.Boolean
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQg4JL4g8uiB/Ad5gISFthKMDisn2tQatJ9XIU0Vni+OuswDQYJ
-# KoZIhvcNAQEBBQAEggEAMp3uC57W023XPLzkx67Dmo+F++ajLDhdwsmYjLBE/XBK
-# f8RLEwWO8ePkuOrxFiPLpFg6XJfeeySSHVFyZnhQvH3rEmcwScCw2/Nbknjmk6jM
-# mTP+ICOvQvQzAhZGeD2eSqzUkA2HoGNLAZ12ROk2PVom8JJHbZX561i6X1gYeWJK
-# wQzKMlMsAru4OENiQQhb0v1t0q0NKWlzYzlpvL9kStpEP0adTuB392jHrVV+3/Vi
-# Ibc08m0EsT7I54HL7zVGllKz6hJW6Z5TMGyyD3isSUDVBwvHtN1Yp1snRPL96fgD
-# QqCCtFMQY7cSNz/ZH23TT2q2/7ltyuAeWAyx/o6kHaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgr5n1aK6PNQCdTrPJbxK5n/pHgEi532wC6n7XaH9xE8YwDQYJ
+# KoZIhvcNAQEBBQAEggEAnU7tKDyOU93pqRMMmJMUSnPO3iHQhvj8JAoECUCN8Cnt
+# p1yiM907+JsT0WR6bjuR4DDKpSuxMM/KPt19yv1AXGtNMbpOYjOFfMk5HvVi/0ti
+# Ua83k4zk9FTNmbNkLr26QFHmLpr8rPLOf2S3cb1mQKM3MEbUCBuOzpr5qbtL/yz1
+# VNr9tDvE8ZtsnEMPM8zEM/C2TumkZyRgEVCtEmxiBx/jp9huu83W0sahXLgjcYw0
+# 44PpE8tmwk7XEyIbW45HiaBNK5VcMelT44kA5VIwW2/C4nrIYpMQnB7tcl8qe43i
+# lGM6NcFBo62scqahW8H9g4lgwaQTENZuv3sbXtRdBqGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTZaMC8GCSqGSIb3DQEJBDEiBCBfTGdOwVJwa003xSA3qWYj
-# 33q5B5EHnNImhBtsIXu7tzANBgkqhkiG9w0BAQEFAASCAgBxtc1B/+Vk2bCCYQSt
-# em9Xt3yWGWnjs+j4aP1zla5YNhZZcFPeKsmIj8hp35KSDZIzUjjez99hDaofXXAp
-# vnrQ4iFtrqFnqLvDbdQ2nUG+HFu/PrJm2M+pW59NddB/LIGFjdFI2iWOAppHvPpV
-# jqzplfKdWgKIvDp3JtLE6hlprCUEjlfdj+HDR8zuVESkAlXoaNDwYIllIu1FNRh0
-# kqW1GGngz8/63AQYeS0HUF3yfKv9lIsDvTKSmbVUfGXdZu9062/W0/1orRgY7Own
-# /wojZ+ZiBlAhoMm7BxFPvuuGJ62u420oFSYVRJLvkx28oZqn6gpJXy95IPc5jTT6
-# Djk8+FYhm8dnu9pUxKhJzcJmKjBWNfIlqqMwkitasNjJr1l0Zrn/zKXazocvK39X
-# VHRyyA76f8EGkPHxwFW62IJBk1nvF7JuKJecvK+u4qImANFe2QcRiboMEFN7e2Ue
-# uE/l4kiE2Re2NtpLytJSrn1KOfJyIcH7htmjxnpbkme3iqeCdx/CZ6DTV8T9byWR
-# nIdg/hrQTYGjcqWxMeiNBN8mVnBfEYUI4M/CCt638PUwUlyuZC6bCOL9E8lM3ZV+
-# W/C0JutwFRU5jfAsqRUaDJk4U0qIK1cCJTUe6rPYNjYmxOp4AMxdh7OA1LaZFLIp
-# A5FTAQiisAp/nshnjptZ8b6abA==
+# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCB2Xa32B7rW7lWZmUcp+pn9
+# npSQ21Z8vDBIpRYoSrWMjzANBgkqhkiG9w0BAQEFAASCAgChn1crbnJ9jj95TTDY
+# xL/tTi4wwNBKYkC1qNZyn1tODAoXFlZob8M6ewBUAROMnErptA/4RQMaUk+aLWtP
+# bVVbnkp7SUUSh7X9yycU5gZkkCXBOT5S28s/R45d2hHOOc0hLWtQChiApU1arGmW
+# rAerenwkgUsNKnM6GzOjEH5JUKI4iURdHJFI5ldetuLVSQ45RpfVHhVCseb9WRbu
+# YvBZf/TNaUeLLJsIRy6/TG7yXWREnuoATMriCRkv8QFrXqs6Kd0Id+1YJrSJ8Gfg
+# WoSAdjGqRRiN2utkRekId8x6/Vsly4fPsi63h/PaCIg9lqgBjLrbmPBrUM4X2yIV
+# 31i9t1D/ZOE2I9GFW15zcN4F8vwghLJk9uMcgpmmFptiRvFiTF09WUWPytMr3opj
+# C4PHo1GlBnU5OTa8Jw5XYB5TAL3/o0OqNk5hOfiNUFNoLmGU+eFCKTmcR/+Q65/j
+# CzdROKV1pXT2zoVFzX2Hti10e+lcCkZ7VSdKrBzL3Hxjojor5irw8M4irxDsy0kO
+# eLC84vPzHz0ZQrTuSJaUbT37m7Z/afCEoocR468DCK6TNJgmdY1veHjTCA/IaC2w
+# M/uyu8rtq5fpk+0Vu/IwvX27+rDbiFRJrqCvn5JkOqgN3GxvdJbGlUVoPOwicntP
+# M+dBuP5vdRPwu4heFBo3yfDuoQ==
 # SIG # End signature block

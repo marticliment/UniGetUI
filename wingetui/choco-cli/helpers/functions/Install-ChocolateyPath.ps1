@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyPath {
-    <#
+<#
 .SYNOPSIS
 **NOTE:** Administrative Access Required when `-PathType 'Machine'.`
 
@@ -66,59 +66,53 @@ Set-EnvironmentVariable
 .LINK
 Get-ToolsLocation
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $pathToInstall,
-        [parameter(Mandatory = $false, Position = 1)][System.EnvironmentVariableTarget] $pathType = [System.EnvironmentVariableTarget]::User,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $pathToInstall,
+  [parameter(Mandatory=$false, Position=1)][System.EnvironmentVariableTarget] $pathType = [System.EnvironmentVariableTarget]::User,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
-    ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
 
-    $originalPathToInstall = $pathToInstall
+  $originalPathToInstall = $pathToInstall
 
-    #get the PATH variable
-    Update-SessionEnvironment
-    $envPath = $env:PATH
-    if (!$envPath.ToLower().Contains($pathToInstall.ToLower())) {
-        try {
-            Write-Host "PATH environment variable does not have $pathToInstall in it. Adding..."
-        }
-        catch {
-            Write-Verbose "PATH environment variable does not have $pathToInstall in it. Adding..."
-        }
-
-        $actualPath = Get-EnvironmentVariable -Name 'Path' -Scope $pathType -PreserveVariables
-
-        $statementTerminator = ";"
-        #does the path end in ';'?
-        $hasStatementTerminator = $actualPath -ne $null -and $actualPath.EndsWith($statementTerminator)
-        # if the last digit is not ;, then we are adding it
-        If (!$hasStatementTerminator -and $actualPath -ne $null) {
-            $pathToInstall = $statementTerminator + $pathToInstall
-        }
-        if (!$pathToInstall.EndsWith($statementTerminator)) {
-            $pathToInstall = $pathToInstall + $statementTerminator
-        }
-        $actualPath = $actualPath + $pathToInstall
-
-        if ($pathType -eq [System.EnvironmentVariableTarget]::Machine) {
-            if (Test-ProcessAdminRights) {
-                Set-EnvironmentVariable -Name 'Path' -Value $actualPath -Scope $pathType
-            }
-            else {
-                $psArgs = "Install-ChocolateyPath -pathToInstall `'$originalPathToInstall`' -pathType `'$pathType`'"
-                Start-ChocolateyProcessAsAdmin "$psArgs"
-            }
-        }
-        else {
-            Set-EnvironmentVariable -Name 'Path' -Value $actualPath -Scope $pathType
-        }
-
-        #add it to the local path as well so users will be off and running
-        $envPSPath = $env:PATH
-        $env:Path = $envPSPath + $statementTerminator + $pathToInstall
+  #get the PATH variable
+  Update-SessionEnvironment
+  $envPath = $env:PATH
+  if (!$envPath.ToLower().Contains($pathToInstall.ToLower()))
+  {
+    try {
+      Write-Host "PATH environment variable does not have $pathToInstall in it. Adding..."
+    } catch {
+      Write-Verbose "PATH environment variable does not have $pathToInstall in it. Adding..."
     }
+
+    $actualPath = Get-EnvironmentVariable -Name 'Path' -Scope $pathType -PreserveVariables
+
+    $statementTerminator = ";"
+    #does the path end in ';'?
+    $hasStatementTerminator = $actualPath -ne $null -and $actualPath.EndsWith($statementTerminator)
+    # if the last digit is not ;, then we are adding it
+    If (!$hasStatementTerminator -and $actualPath -ne $null) {$pathToInstall = $statementTerminator + $pathToInstall}
+    if (!$pathToInstall.EndsWith($statementTerminator)) {$pathToInstall = $pathToInstall + $statementTerminator}
+    $actualPath = $actualPath + $pathToInstall
+
+    if ($pathType -eq [System.EnvironmentVariableTarget]::Machine) {
+      if (Test-ProcessAdminRights) {
+        Set-EnvironmentVariable -Name 'Path' -Value $actualPath -Scope $pathType
+      } else {
+        $psArgs = "Install-ChocolateyPath -pathToInstall `'$originalPathToInstall`' -pathType `'$pathType`'"
+        Start-ChocolateyProcessAsAdmin "$psArgs"
+      }
+    } else {
+      Set-EnvironmentVariable -Name 'Path' -Value $actualPath -Scope $pathType
+    }
+
+    #add it to the local path as well so users will be off and running
+    $envPSPath = $env:PATH
+    $env:Path = $envPSPath + $statementTerminator + $pathToInstall
+  }
 }
 
 # [System.Text.RegularExpressions.Regex]::Match($Path,[System.Text.RegularExpressions.Regex]::Escape('locationtoMatch') + '(?>;)?', '', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
@@ -126,8 +120,8 @@ Get-ToolsLocation
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB13/9RBBrszjJO
-# Cug4VHdEezFFfFOvHkseTFzWw/UU5KCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC9ePc1v8ArEdp3
+# pV63JAOLGyf0pLfb7edEA+0c4GGiGaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -290,28 +284,28 @@ Get-ToolsLocation
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgctv3SEmaMrE/9s7Y8JRcJjnrZA/a81PP+3qZpJ2MCkgwDQYJ
-# KoZIhvcNAQEBBQAEggEAQOx+eX4Nv0+bwEo2nboRdfYKaipe71Ip0Uscz9w1MK34
-# IA3rHTZTlM7fgp2ooz1EjwIYH8nBn+pFlk/ssiHPmvzZuw2VFISY/XksodWjlBFs
-# IjTH3UDgxTna8pGHh9xmnD7muCF1wwLAbylXIJiskAI7ek8KzPIlfWJYIDePdilC
-# v4HiF2K6ygf8Kbo2DjzRLsBDaVfBbmhtTzqKnh2LaesFOkWPrgi7iDdme02UEIKH
-# qKAw0wHmlm7MxYB1K2bvMoQSIC6TgLHPrCaoIrqaq90Po3oaoUESVr9LmirdDP/J
-# y2He/XveSU2SFzS7R668lxaEP+lULQl0v4MDwRD13qGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgIDWnoHa04weW9ag6dQiilxR3Z8ZLmYlD8pzAFkG29NEwDQYJ
+# KoZIhvcNAQEBBQAEggEAMP3aoE6Q4zbkgMhm5mZfXjuKsgDD/IfZOCWD7kyz5ff9
+# QfGe8iCEBDtLwEPaEkxboG2/SayjbGM+slzKiLJyN+aIBZ/wjMAp02P7JAO03S2A
+# LnG04+D1x0BSQWeDUiHc3iti0MXrjRjX7Vw8w0xWTjHArPMI1pyKPalEeFr2Mh8v
+# BtNbVHwl2AlD5HeGuMp1zx0r2xSRCb1kxcoUfsY2APJw+ERn6l8OqRn4qL3u6iJZ
+# Zu5zDskmf8iTBcl+xYlcMpJfQtUYdzVDDYKqnVuV2Dtfq0E0RBzee14LHxs9r2H+
+# mkd3Q3C5OX2Xyi4cuse5RuC2a9shavimrBcoOs+9RaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCBKoD1DM+0WfHJQ2VXrTjt6
-# xBvLzGokzD1Jh2s0pmaNQTANBgkqhkiG9w0BAQEFAASCAgBH965v08/Zg4B7rrqD
-# IUIsK4AQAiwvYK/I3N8VI1lT5WUEF8mXwycq88Q5NafzxlGobQw0jsKhBJksVZkr
-# pig/2XthhN2k5Wq7FlbWjDaPRnT1wQ86pVJgyukaKL1n9BsYwkNtxXO5otS6mpQB
-# vfqkvTEJ/CslPEN0bthV2sbXedJzC8czdBk5xExIbaqANXr1AQlyYxvPWK8oqVqk
-# x8KpNU5qOYD7wr5fRZh+RWpfXFff2g9LXDJNlqVS2t+82WAK394gUV+aUL687xz3
-# bgGI6slV/J/nKx2SZ4TEeFTBp4c2KC0FENamiNucXA2Ww/0Eo22YlmuZMe+/kUy8
-# uwDs5tzFv+BAoM65IUT7m2ynW3H+ER0CldyyfA0wto/wOuNRvwyxRN55cnQEoNEF
-# fhs/qGrWKi9UmdyuUvQH7KQ3rCs+FAVQOpdyBANTK9BHUVyfVVjBbE8tBS+vIn2H
-# e+eyR8aSm+a6/066/IXUJu/PKaRVuHD2+IQmpd5XRLuvglgznHx2acTxwLFO8Xn0
-# /IVA4VNPwc2lhRZb4rINa5i7cphWCLoPgcnhIjNhDND8cQv24pHjnd11NJMIfw8E
-# iQ6hXHwwR2c723iNi9naTnVyXa3m3uAzRH241skIejgC2Lwr21yFrX+0SU2fqZ/J
-# 9dHHyZsLtAnxH28jy93aIUi/FA==
+# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCBmVwM8HvPH09sdZJkURI9s
+# bpg2Hez+uhOtc3wSUBdtyjANBgkqhkiG9w0BAQEFAASCAgAy8mugwOOJfydjMsDL
+# f5r9XOBS1ySj8eJKr6sm9wqrNNBvqXsDpHoYDZCWA1G03TWmSc962bp5WD/CHCIB
+# tp0WqxTMbD/Skk0qvbMHPfIaIRa78BQsmQBYcU1WhoCX4r0TU3y4qLSAstSYw9JL
+# wlxpcJOjG023NRK9Uau2xUCfKrRnHKVqvZ2FQ/W74w680Uiu4S/MvW9iD91Vyrlm
+# kYe/AUtWUJRxgDomQeHNY2AR4o7TcuB396Nq2H9j5qs6mGr0TTYZBayGCOfb/gom
+# yCZHZ5jBzOKXIcSev6JviHweUDlZB4GMdaQeuKLBI2C0UwBHSzg9gDwUXsinUQFF
+# Hklw3JVs4ALMI/sUjvMAs4rIQLlqBiA4x4LCaDHqSBhSacBrLNNHySBV/rKL5JcW
+# zajZiLMC8kJ/Mh7Yg4VN7jlZbm3DQM3DM7B0v7m3xwI3nrQjPbvH2pSGk9VtUXD9
+# KFRSkeTt1sU+e7WVEEpfDlzHnzY7+8LbtaJcEnls3/vtSiIjFNvGXXu4ZApcA6k8
+# znh0d0zJaIYlNcZcOfgM6GEb4m/Kv421Gn2txuhV5Vv/P8w+/VKd/rjbgcha2Xd/
+# 0wIuRlNRc2eCK9W3bjMecnAct5ssoANmID87rqAryVedyQETcOF/k+1dxTFXY3vI
+# 04c7pNqe6IApVwvn3hcNe1ACag==
 # SIG # End signature block

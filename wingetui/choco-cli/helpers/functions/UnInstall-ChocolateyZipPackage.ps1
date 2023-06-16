@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Uninstall-ChocolateyZipPackage {
-    <#
+<#
 .SYNOPSIS
 Uninstalls a previous installed zip package, may not be necessary.
 
@@ -55,39 +55,39 @@ Install-ChocolateyZipPackage
 .LINK
 Uninstall-ChocolateyPackage
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $packageName,
-        [parameter(Mandatory = $true, Position = 1)][string] $zipFileName,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $packageName,
+  [parameter(Mandatory=$true, Position=1)][string] $zipFileName,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    $packagelibPath = $env:chocolateyPackageFolder
-    $zipContentFile = (Join-Path $packagelibPath $zipFileName) + "Install.txt"
+  $packagelibPath=$env:chocolateyPackageFolder
+  $zipContentFile=(join-path $packagelibPath $zipFileName) + "Install.txt"
 
-    # The Zip Content File may have previously existed under a different
-    # name.  If *Install.txt doesn't exist, check for the old name
-    if (-Not (Test-Path -Path $zipContentFile)) {
-        $zipContentFile = (Join-Path $packagelibPath -ChildPath $zipFileName) + ".txt"
+  # The Zip Content File may have previously existed under a different
+  # name.  If *Install.txt doesn't exist, check for the old name
+  if(-Not (Test-Path -Path $zipContentFile)) {
+    $zipContentFile=(Join-Path $packagelibPath -ChildPath $zipFileName) + ".txt"
+  }
+
+  if ((Test-Path -path $zipContentFile)) {
+    $zipContentFile
+    $zipContents=get-content $zipContentFile
+    foreach ($fileInZip in $zipContents) {
+      if ($fileInZip -ne $null -and $fileInZip.Trim() -ne '') {
+        Remove-Item -Path "$fileInZip" -ErrorAction SilentlyContinue -Recurse -Force
+      }
     }
-
-    if ((Test-Path -Path $zipContentFile)) {
-        $zipContentFile
-        $zipContents = Get-Content $zipContentFile
-        foreach ($fileInZip in $zipContents) {
-            if ($fileInZip -ne $null -and $fileInZip.Trim() -ne '') {
-                Remove-Item -Path "$fileInZip" -ErrorAction SilentlyContinue -Recurse -Force
-            }
-        }
-    }
+  }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBPZKamtW7HD6i5
-# 97suMw/lPh2b2Mnl7j1kGntpT+0fb6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDom5wxRmDNaiKg
+# rHCDmVJQ20OQVG3+IoInJXd0rRaOIaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -250,28 +250,28 @@ Uninstall-ChocolateyPackage
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgA9PCEGN28QxnYcZQNE96pIdQUgdF2ykRscDGFFccEO4wDQYJ
-# KoZIhvcNAQEBBQAEggEAcNk0ZxPHqN+ucWLuJ9+XOJ2o+PU7lrZX53fIZjI0ras0
-# Ae5AtyY0zceDbTbvypVqobyZWHSh/++yTx4Pg6XTDkilqyQeZWB6Px7JPPOqErHO
-# Pkz5vdRWHsX6J4Md9rOtGH2vwsN9DQXbKzMJfIsT2k2FS5rmgkJ8fl01bEiIS1Eh
-# FYEKiJG17IqnP1Um2/XCIPduvRDCi/EXcisxKTMNFni6Uu1tfkEReDshhmwdT+xr
-# tNkwxiH1hjclc6vAy8SNMrJUvVtC98fEYC+Wo19T7kcivgvH1q3ZZj8EQKPqJzqi
-# dalgktJLqglmksjbc8subOXiEFXYndpg+FDo+xHi6aGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgiXzVRmrsLCkBoSKIPWkrvYC/uRfCZrNGGNyh6KJYDdAwDQYJ
+# KoZIhvcNAQEBBQAEggEAU/bJ8S0U02A+rjl7Fqv5RPrf7BSxsVVBhTyUw0p20/Sl
+# m15uetmFkuHHNBljd1aT8K+LFdAjD6SAmdrYVOtUv62q1VNMrvUF8wQUgD1P2V0Y
+# ve90BqN9cVRnuicfcWhi+/l9q2sQLNgCkydIgYB6JylFCje8WliMNegyZblsMWUd
+# DBsHuiz72rm7sQ0qGmk0Q/5Ij1ceYdc1RlV1LMysCmsfs6wpZcQcO821/6CMkdu9
+# nhq3LdVqPIUXghuibIdtV+O9fFa1h+qsWp84mK1yF8xIb+XqQHMfAkDroU44AzYW
+# jBtnxBrAhhlTNUo14TgylgjCOq7Xb06RxuJbVLWkdaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ5MDBaMC8GCSqGSIb3DQEJBDEiBCCKcdVMkufLXOf4cF69zu30
-# SYF/4s3RdVZodcQSHTHv9jANBgkqhkiG9w0BAQEFAASCAgCjRa7rOChHV6nJLJ7E
-# uet33cDUKcHwZGqYIs5fNNuLpBvn3CWck60IisUSUEItw7Uh5lxaYtPah6qCgtUc
-# 5ualFGa4wyyTqjK0AFf8/7XHygwXzWoS5Qncy7GIS5N1m8w7BZy2DNQfStRXVlDh
-# 8xXiY1kaCMoLSCjlWhxMzZKFCNVcp6UQLRz+MpIRTGmNotTybvaqXHD+MWACeoLB
-# pLy8SdLsjcivCmQ4dIEw2W5JhWSzdeF+ys3U9nbWkLKQOZTQnz64+UcKAnhIhiWF
-# BBoEjTtdPo0czu6RXQvWw7qmLVa0yqHaeE5yto5I7UIcupcN3iJokriG2uF3rYXZ
-# /Slmt2EJ1FzvOG80x9MzD9O1CKSfV8+55bGXvlqpLAOgdH2H+kDoZnMP9eRI1waj
-# t3AJB13Dw2NE+J1BuUNI60BZ0mapaLWgNOCnutux2d1WgEEmTaIu6M4t5gG1ACjY
-# VJVhlC31+eZZIE3/YNxehjahWZg6yQ2W1Q7GqN0zuhsPT93o8zS+9gvQqpf3TgLm
-# qRH8wzIZQ1G9a3PkU05GAvYcMI+rlbLMEy4vvUqeEz0UobKHIjiEX54UGzX6P5pJ
-# WwSyH0DumgdEW7JvU5JzyhjM99UGWSulnapJ7ICZvow+zhr8jSpAKmx5BYZMlQp+
-# 0Xz4wU305Our5L87TjZjZmAF8w==
+# Fw0yMzA1MTAxMDUzMjNaMC8GCSqGSIb3DQEJBDEiBCBB0khvRBxkUxeZHGhi891v
+# e6mJeJE01O4NdEQBIp611zANBgkqhkiG9w0BAQEFAASCAgB2A5Ki2dBJFMvpsTiZ
+# 3lgsPCs/+hO7m91wBA7iQJo77ql2j4IOml/SMjv+uIHheFIiyGhYTdF3EpQ/WUnd
+# FiJ6zD5hs1y+3VZRL9/j352tqnKeEKsD77+FP2FAA14IoeeX3J3GhSBVekNUGQ9g
+# feH7RivSJMTEvgQeNmtYW8FDaemkHqieDiThL46Yoerggh4EIi+NZ1g1/HAvVJKE
+# J2lwY6j8uSAvVXQaGhFPqiL/2V1CYLkYqRHyhjnwttL7sqxiqaakOCouhMaaL7ZF
+# rOZadPRy0WrsqQ+IdV2ezF2pOSQV4DHpRHWlgd4e+7gRMhDQrG0DQ1PE91L5ATfS
+# YHKVbOTxr8jwpgAHrPrdfVIIEs9CVZ92tXP3BwU0isrPoCBmKXGIsbkgr3ypkzCa
+# 4Hc+hrxcoS/SAntFUsBEPlXzhv6fOlTNjMUczgWGVkOds6a1iXiyvF2dSYk+SO3x
+# s/Wb5XNSLA1FeF2P9rp+uJGjWIu/8GCiT6CFOgWMQ8zIEQBQzEqM/HWmEgPOKQZE
+# A5sm+6sk80Pv2Cm9aFlJixap66++jMMmzTgXuDe02+b8f55VP5oKkNmARRKsFSH5
+# UojnTH/kKOzyFjrJAUhrmo6wbyDYNcY0qXD8l8a4zoa5yyFYH5tOkF+zTS8qayze
+# Rp6cBskeP4Cy5+vU/2FrJXhaEw==
 # SIG # End signature block

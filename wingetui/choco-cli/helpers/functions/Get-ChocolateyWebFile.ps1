@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-ChocolateyWebFile {
-    <#
+<#
 .SYNOPSIS
 Downloads a file from the internet.
 
@@ -60,7 +60,7 @@ remove this parameter.
 
 Prefer HTTPS when available. Can be HTTP, FTP, or File URIs.
 
-`Url64` is an alias for Url64bit.
+In 0.10.1+, `Url64` is an alias for Url64bit.
 
 .PARAMETER Checksum
 The checksum hash value of the Url resource. This allows a checksum to
@@ -124,15 +124,17 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers.
+OPTIONAL - Specify custom headers. Available in 0.9.10+.
 
 .PARAMETER GetOriginalFileName
 OPTIONAL switch to allow Chocolatey to determine the original file name
-from the url resource.
+from the url resource. Available in 0.9.10+.
 
 .PARAMETER ForceDownload
 OPTIONAL switch to force download of file every time, even if the file
 already exists.
+
+Available in 0.10.1+.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
@@ -185,250 +187,212 @@ Get-WebFileName
 .LINK
 Get-FtpFile
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $packageName,
-        [parameter(Mandatory = $true, Position = 1)][string] $fileFullPath,
-        [parameter(Mandatory = $false, Position = 2)][string] $url = '',
-        [parameter(Mandatory = $false, Position = 3)]
-        [alias("url64")][string] $url64bit = '',
-        [parameter(Mandatory = $false)][string] $checksum = '',
-        [parameter(Mandatory = $false)][string] $checksumType = '',
-        [parameter(Mandatory = $false)][string] $checksum64 = '',
-        [parameter(Mandatory = $false)][string] $checksumType64 = $checksumType,
-        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
-        [parameter(Mandatory = $false)][switch] $getOriginalFileName,
-        [parameter(Mandatory = $false)][switch] $forceDownload,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $packageName,
+  [parameter(Mandatory=$true, Position=1)][string] $fileFullPath,
+  [parameter(Mandatory=$false, Position=2)][string] $url = '',
+  [parameter(Mandatory=$false, Position=3)]
+  [alias("url64")][string] $url64bit = '',
+  [parameter(Mandatory=$false)][string] $checksum = '',
+  [parameter(Mandatory=$false)][string] $checksumType = '',
+  [parameter(Mandatory=$false)][string] $checksum64 = '',
+  [parameter(Mandatory=$false)][string] $checksumType64 = $checksumType,
+  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
+  [parameter(Mandatory=$false)][switch] $getOriginalFileName,
+  [parameter(Mandatory=$false)][switch] $forceDownload,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    # url overrides
-    $urlOverride = $env:ChocolateyUrlOverride
-    $url64bitOverride = $env:ChocolateyUrl64bitOverride
-    if ($urlOverride -ne $null -and $urlOverride -ne '') {
-        $url = $urlOverride
-    }
-    if ($url64bitOverride -ne $null -and $url64bitOverride -ne '') {
-        $url64bit = $url64bitOverride
-    }
+  # url overrides
+  $urlOverride = $env:ChocolateyUrlOverride
+  $url64bitOverride = $env:ChocolateyUrl64bitOverride
+  if ($urlOverride -ne $null -and $urlOverride -ne '') { $url = $urlOverride }
+  if ($url64bitOverride -ne $null -and $url64bitOverride -ne '') { $url64bit = $url64bitOverride }
 
-    if ($url -ne $null) {
-        $url = $url.Replace("//", "/").Replace(":/", "://")
-    }
-    if ($url64bit -ne $null) {
-        $url64bit = $url64bit.Replace("//", "/").Replace(":/", "://")
-    }
+  if ($url -ne $null) { $url = $url.Replace("//","/").Replace(":/","://") }
+  if ($url64bit -ne $null) { $url64bit = $url64bit.Replace("//","/").Replace(":/","://") }
 
-    $url32bit = $url
+  $url32bit = $url
 
-    # allow user provided values for checksumming
-    $checksum32Override = $env:chocolateyChecksum32
-    $checksumType32Override = $env:chocolateyChecksumType32
-    $checksum64Override = $env:chocolateyChecksum64
-    $checksumType64Override = $env:chocolateyChecksumType64
-    if ($checksum32Override -ne $null -and $checksum32Override -ne '') {
-        $checksum = $checksum32Override
-    }
-    if ($checksumType32Override -ne $null -and $checksumType32Override -ne '') {
-        $checksumType = $checksumType32Override
-    }
-    if ($checksum64Override -ne $null -and $checksum64Override -ne '') {
-        $checksum64 = $checksum64Override
-    }
-    if ($checksumType64Override -ne $null -and $checksumType64Override -ne '') {
-        $checksumType64 = $checksumType64Override
-    }
+  # allow user provided values for checksumming
+  $checksum32Override = $env:chocolateyChecksum32
+  $checksumType32Override = $env:chocolateyChecksumType32
+  $checksum64Override = $env:chocolateyChecksum64
+  $checksumType64Override = $env:chocolateyChecksumType64
+  if ($checksum32Override -ne $null -and $checksum32Override -ne '') { $checksum = $checksum32Override }
+  if ($checksumType32Override -ne $null -and $checksumType32Override -ne '') { $checksumType = $checksumType32Override }
+  if ($checksum64Override -ne $null -and $checksum64Override -ne '') { $checksum64 = $checksum64Override }
+  if ($checksumType64Override -ne $null -and $checksumType64Override -ne '') { $checksumType64 = $checksumType64Override }
 
-    $checksum32 = $checksum
-    $checksumType32 = $checksumType
-    $bitWidth = 32
-    if (Get-OSArchitectureWidth 64) {
-        $bitWidth = 64
-    }
-    Write-Debug "CPU is $bitWidth bit"
+  $checksum32 = $checksum
+  $checksumType32 = $checksumType
+  $bitWidth = 32
+  if (Get-OSArchitectureWidth 64) {
+    $bitWidth = 64
+  }
+  Write-Debug "CPU is $bitWidth bit"
 
-    $bitPackage = ''
-    if ($url32bit -ne $url64bit -and $url64bit -ne $null -and $url64bit -ne '') {
-        $bitPackage = '32 bit'
-    }
+  $bitPackage = ''
+  if ($url32bit -ne $url64bit -and $url64bit -ne $null -and $url64bit -ne '') { $bitPackage = '32 bit' }
 
-    if ($bitWidth -eq 64 -and $url64bit -ne $null -and $url64bit -ne '') {
-        Write-Debug "Setting url to '$url64bit' and bitPackage to $bitWidth"
-        $bitPackage = '64 bit'
-        $url = $url64bit
-        # only set if urls are different
-        if ($url32bit -ne $url64bit) {
-            $checksum = $checksum64
-            if ($checkSumType64 -ne '') {
-                $checksumType = $checksumType64
-            }
-        }
+  if ($bitWidth -eq 64 -and $url64bit -ne $null -and $url64bit -ne '') {
+    Write-Debug "Setting url to '$url64bit' and bitPackage to $bitWidth"
+    $bitPackage = '64 bit'
+    $url = $url64bit
+    # only set if urls are different
+    if ($url32bit -ne $url64bit) {
+      $checksum = $checksum64
+      if ($checkSumType64 -ne '') {
+        $checksumType = $checksumType64
+      }
     }
+  }
 
-    $forceX86 = $env:chocolateyForceX86;
-    if ($forceX86) {
-        Write-Debug "User specified -x86 so forcing 32 bit"
-        if ($url32bit -ne $url64bit) {
-            $bitPackage = '32 bit'
-        }
-        $url = $url32bit
-        $checksum = $checksum32
-        $checksumType = $checksumType32
-    }
+  $forceX86 = $env:chocolateyForceX86;
+  if ($forceX86) {
+    Write-Debug "User specified -x86 so forcing 32 bit"
+    if ($url32bit -ne $url64bit) { $bitPackage = '32 bit' }
+    $url = $url32bit
+    $checksum =  $checksum32
+    $checksumType = $checksumType32
+  }
 
-    # If we're on 32 bit or attempting to force 32 bit and there is no
-    # 32 bit url, we need to throw an error.
-    if ($url -eq $null -or $url -eq '') {
-        throw "This package does not support $bitPackage architecture."
-    }
+  # If we're on 32 bit or attempting to force 32 bit and there is no
+  # 32 bit url, we need to throw an error.
+  if ($url -eq $null -or $url -eq '') {
+    throw "This package does not support $bitPackage architecture."
+  }
 
-    # determine if the url can be SSL/TLS
-    if ($url.StartsWith('http:')) {
-        try {
-            $httpsUrl = $url.Replace("http://", "https://")
-            Get-WebHeaders -Url $httpsUrl -ErrorAction "Stop" | Out-Null
-            $url = $httpsUrl
-            Write-Warning "Url has SSL/TLS available, switching to HTTPS for download"
-        }
-        catch {
-            Write-Debug "Url does not have HTTPS available"
-        }
-    }
-
-    if ($getOriginalFileName) {
-        try {
-            $fileFullPath = $fileFullPath -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
-            $fileDirectory = [System.IO.Path]::GetDirectoryName($fileFullPath)
-            $originalFileName = [System.IO.Path]::GetFileName($fileFullPath)
-            $fileFullPath = Get-WebFileName -Url $url -DefaultName $originalFileName
-            $fileFullPath = Join-Path $fileDirectory $fileFullPath
-            $fileFullPath = [System.IO.Path]::GetFullPath($fileFullPath)
-        }
-        catch {
-            Write-Host "Attempt to use original download file name failed for '$url'."
-        }
-    }
-
+  # determine if the url can be SSL/TLS
+  if ($url.StartsWith('http:')) {
     try {
-        $fileDirectory = $([System.IO.Path]::GetDirectoryName($fileFullPath))
-        if (!(Test-Path($fileDirectory))) {
-            [System.IO.Directory]::CreateDirectory($fileDirectory) | Out-Null
-        }
+      $httpsUrl = $url.Replace("http://", "https://")
+      Get-WebHeaders -Url $httpsUrl -ErrorAction "Stop" | Out-Null
+      $url = $httpsUrl
+      Write-Warning "Url has SSL/TLS available, switching to HTTPS for download"
+    } catch {
+      Write-Debug "Url does not have HTTPS available"
     }
-    catch {
-        Write-Host "Attempt to create directory failed for '$fileFullPath'."
-    }
+  }
 
-    $urlIsRemote = $true
-    $headers = @{}
-    if ($url.StartsWith('http')) {
+  if ($getOriginalFileName) {
+    try {
+      $fileFullPath = $fileFullPath -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
+      $fileDirectory = [System.IO.Path]::GetDirectoryName($fileFullPath)
+      $originalFileName = [System.IO.Path]::GetFileName($fileFullPath)
+      $fileFullPath = Get-WebFileName -Url $url -DefaultName $originalFileName
+      $fileFullPath = Join-Path $fileDirectory $fileFullPath
+      $fileFullPath = [System.IO.Path]::GetFullPath($fileFullPath)
+    } catch {
+      Write-Host "Attempt to use original download file name failed for '$url'."
+    }
+  }
+
+  try {
+    $fileDirectory = $([System.IO.Path]::GetDirectoryName($fileFullPath))
+    if (!(Test-Path($fileDirectory))) {
+      [System.IO.Directory]::CreateDirectory($fileDirectory) | Out-Null
+    }
+  } catch {
+    Write-Host "Attempt to create directory failed for '$fileFullPath'."
+  }
+
+  $urlIsRemote = $true
+  $headers = @{}
+  if ($url.StartsWith('http')) {
+    try {
+      $headers = Get-WebHeaders -Url $url -ErrorAction "Stop"
+    } catch {
+      if ($PSVersionTable.PSVersion -lt (New-Object 'Version' 3,0)) {
+        Write-Debug "Converting Security Protocol to SSL3 only for PowerShell v2"
+        # this should last for the entire duration
+        $originalProtocol = [System.Net.ServicePointManager]::SecurityProtocol
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Ssl3
         try {
-            $headers = Get-WebHeaders -Url $url -ErrorAction "Stop"
+          $headers = Get-WebHeaders -Url $url -ErrorAction "Stop"
+        } catch {
+          Write-Host "Attempt to get headers for $url failed.`n  $($_.Exception.Message)"
+          [System.Net.ServicePointManager]::SecurityProtocol = $originalProtocol
         }
-        catch {
-            if ($PSVersionTable.PSVersion -lt (New-Object 'Version' 3, 0)) {
-                Write-Debug "Converting Security Protocol to SSL3 only for PowerShell v2"
-                # this should last for the entire duration
-                $originalProtocol = [System.Net.ServicePointManager]::SecurityProtocol
-                [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Ssl3
-                try {
-                    $headers = Get-WebHeaders -Url $url -ErrorAction "Stop"
-                }
-                catch {
-                    Write-Host "Attempt to get headers for $url failed.`n  $($_.Exception.Message)"
-                    [System.Net.ServicePointManager]::SecurityProtocol = $originalProtocol
-                }
-            }
-            else {
-                Write-Host "Attempt to get headers for $url failed.`n  $($_.Exception.Message)"
-            }
-        }
+      } else {
+        Write-Host "Attempt to get headers for $url failed.`n  $($_.Exception.Message)"
+      }
+    }
 
-        $needsDownload = $true
-        $fiCached = New-Object System.IO.FileInfo($fileFullPath)
-        if ($fiCached.Exists -and -not ($forceDownload)) {
-            if ($checksum -ne $null -and $checksum -ne '') {
-                try {
-                    Write-Host "File appears to be downloaded already. Verifying with package checksum to determine if it needs to be redownloaded."
-                    Get-ChecksumValid -file $fileFullPath -checkSum $checksum -checksumType $checksumType -originalUrl $url -ErrorAction "Stop"
-                    $needsDownload = $false
-                }
-                catch {
-                    Write-Debug "Existing file failed checksum. Will be redownloaded from url."
-                }
-            }
-            elseif ($headers.Count -ne 0 -and $headers.ContainsKey("Content-Length")) {
-                # if the file already exists there is no reason to download it again.
-                if ($fiCached.Length -eq $headers["Content-Length"]) {
-                    $needsDownload = $false
-                }
-            }
-        }
+    $needsDownload = $true
+    $fiCached = New-Object System.IO.FileInfo($fileFullPath)
+    if ($fiCached.Exists -and -not ($forceDownload)) {
+      if ($checksum -ne $null -and $checksum -ne '') {
+          try {
+            Write-Host "File appears to be downloaded already. Verifying with package checksum to determine if it needs to be redownloaded."
+            Get-ChecksumValid -file $fileFullPath -checkSum $checksum -checksumType $checksumType -originalUrl $url -ErrorAction "Stop"
+            $needsDownload = $false
+          } catch {
+            Write-Debug "Existing file failed checksum. Will be redownloaded from url."
+          }
+      }
+      elseif ($headers.Count -ne 0 -and $headers.ContainsKey("Content-Length")) {
+        # if the file already exists there is no reason to download it again.
+        if ($fiCached.Length -eq $headers["Content-Length"]) { $needsDownload = $false }
+      }
+    }
 
-        if ($needsDownload) {
-            Write-Host "Downloading $packageName $bitPackage
+    if ($needsDownload) {
+      Write-Host "Downloading $packageName $bitPackage
   from `'$url`'"
-            Get-WebFile -Url $url -FileName $fileFullPath -Options $options
-        }
-        else {
-            Write-Debug "$($packageName)'s requested file has already been downloaded. Using cached copy at
+      Get-WebFile -Url $url -FileName $fileFullPath -Options $options
+    } else {
+      Write-Debug "$($packageName)'s requested file has already been downloaded. Using cached copy at
  '$fileFullPath'."
-        }
     }
-    elseif ($url.StartsWith('ftp')) {
-        Write-Host "Ftp-ing $packageName
+  } elseif ($url.StartsWith('ftp')) {
+    Write-Host "Ftp-ing $packageName
   from '$url'"
-        Get-FtpFile -Url $url -FileName $fileFullPath
-    }
-    else {
-        if ($url.StartsWith('file:')) {
-            $url = ([uri] $url).LocalPath
-        }
-        Write-Host "Copying $packageName
+    Get-FtpFile -Url $url -FileName $fileFullPath
+  } else {
+    if ($url.StartsWith('file:')) { $url = ([uri] $url).LocalPath }
+    Write-Host "Copying $packageName
   from `'$url`'"
-        Copy-Item $url -Destination $fileFullPath -Force
-        $urlIsRemote = $false
+    Copy-Item $url -Destination $fileFullPath -Force
+    $urlIsRemote = $false
+  }
+
+  Start-Sleep 2 #give it a sec or two to finish up copying
+
+  $fi = New-Object System.IO.FileInfo($fileFullPath)
+  # validate file exists
+  if (!($fi.Exists)) { throw "Chocolatey expected a file to be downloaded to `'$fileFullPath`' but nothing exists at that location." }
+
+  Get-VirusCheckValid -Location $url -File $fileFullPath
+
+  if ($headers.Count -ne 0 -and ($checksum -eq $null -or $checksum -eq '')) {
+    # validate length is what we expected
+    Write-Debug "Checking that '$fileFullPath' is the size we expect it to be."
+    if ($headers.ContainsKey("Content-Length") -and ($fi.Length -ne $headers["Content-Length"]))  { throw "Chocolatey expected a file at '$fileFullPath' to be of length '$($headers["Content-Length"])' but the length was '$($fi.Length)'." }
+
+    if ($headers.ContainsKey("X-Checksum-Sha1")) {
+      $remoteChecksum = $headers["X-Checksum-Sha1"]
+      Write-Debug "Verifying remote checksum of '$remoteChecksum' for '$fileFullPath'."
+      Get-ChecksumValid -File $fileFullPath -Checksum $remoteChecksum -ChecksumType 'sha1' -OriginalUrl $url
     }
+  }
 
-    Start-Sleep 2 #give it a sec or two to finish up copying
+  #skip requirement for embedded files if checksum is not provided
+  if ($urlIsRemote -or ($checksum -ne $null -and $checksum -ne '')) {
+    Write-Debug "Verifying package provided checksum of '$checksum' for '$fileFullPath'."
+    Get-ChecksumValid -File $fileFullPath -Checksum $checksum -ChecksumType $checksumType -OriginalUrl $url
+  }
 
-    $fi = New-Object System.IO.FileInfo($fileFullPath)
-    # validate file exists
-    if (!($fi.Exists)) {
-        throw "Chocolatey expected a file to be downloaded to `'$fileFullPath`' but nothing exists at that location."
-    }
-
-    Get-VirusCheckValid -Location $url -File $fileFullPath
-
-    if ($headers.Count -ne 0 -and ($checksum -eq $null -or $checksum -eq '')) {
-        # validate length is what we expected
-        Write-Debug "Checking that '$fileFullPath' is the size we expect it to be."
-        if ($headers.ContainsKey("Content-Length") -and ($fi.Length -ne $headers["Content-Length"])) {
-            throw "Chocolatey expected a file at '$fileFullPath' to be of length '$($headers["Content-Length"])' but the length was '$($fi.Length)'."
-        }
-
-        if ($headers.ContainsKey("X-Checksum-Sha1")) {
-            $remoteChecksum = $headers["X-Checksum-Sha1"]
-            Write-Debug "Verifying remote checksum of '$remoteChecksum' for '$fileFullPath'."
-            Get-ChecksumValid -File $fileFullPath -Checksum $remoteChecksum -ChecksumType 'sha1' -OriginalUrl $url
-        }
-    }
-
-    #skip requirement for embedded files if checksum is not provided
-    if ($urlIsRemote -or ($checksum -ne $null -and $checksum -ne '')) {
-        Write-Debug "Verifying package provided checksum of '$checksum' for '$fileFullPath'."
-        Get-ChecksumValid -File $fileFullPath -Checksum $checksum -ChecksumType $checksumType -OriginalUrl $url
-    }
-
-    return $fileFullPath
+  return $fileFullPath
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAhzUcxvXikvKn9
-# 5n0YtdLoV+7kdoMqsZbXJjND9uqSDaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAlsns28SIsOL8z
+# oK/rTJjrSFpT9mNzTj2A1a7+cUn+lqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -591,28 +555,28 @@ Get-FtpFile
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgdc1k2CJCComcLIiVo1NbJbTAyGsqRpX3bcVNtNSzTu0wDQYJ
-# KoZIhvcNAQEBBQAEggEAGWBdJk210ZhNKbudjPRGq8mFH58gu+ZOBKCEjG0TgGfI
-# dISPM7nWx+cAUW3QL6ZNVHYolgq4fEBDwcfnmQGVeMJWMLcDinTB7evmMcNtYxxS
-# wgHpQjP5C8So4AFc9D+s7++cpucd2T6CiazJ8R2od+tTjEAJDxI4c/RWwhCECw1P
-# WXDZ8LNsNZ1/A4jQtz00fmUcPy1v1QL2Wrf+8spp6ew7wEf4Y8wpsJ/7QdfI+O8J
-# KUsdB2yq3lzR5EuIklcQMcVc4dg+Y2PRHDB3rbm3f6KCmMl6mnM09aoKipxEj5Py
-# geaioW8MHboGQqK44Zsc1CBKCdE0N4A44NcOaAVtkqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgjpPCKwO54hfZ3boAazk+8N9EBVXc71MoMfgF3D4RWGcwDQYJ
+# KoZIhvcNAQEBBQAEggEAQTxszcJtsyswkmBjUv2OaME4wrg9PeteVy/FxFd+OfaW
+# GLH2kH7n3shxGGsuwoDog1CRkCILJFqQScDsPVF1ECjN54JGwQgsqRh7s5+cHqAq
+# fyW+ExEsc6gjA+WkZq4D3FrGlIn/4D7ADW+vdTCsE8HQgQtLDda+Z2ctEOkJbTjX
+# BPTjjwr2zp7rf4se0/UNgV2/RPiUJfeiLag2gVZyVclYpFMIGWPQe7k0YCdYsqWb
+# 7mwaMP3EbgotK8EoFfVk/IZDLAOz+OUoe6yCUX19gBMm5suwSnqEPAZJg+NVMW15
+# fBCH4K12Le0PV1eA9o90C6PEOengzQMKmGA4XVue1KGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTVaMC8GCSqGSIb3DQEJBDEiBCBuYGQIlrqhu0Nx/lY8QeAV
-# i+dE/autM2ZRBEkaPOcGajANBgkqhkiG9w0BAQEFAASCAgCv4nwqvRVU24hEvQUp
-# Azj6BhF6d+jr3sJqpzIZf8eUrWe6JNDFaZJHWpP4D+f3aPWMY00iGmxuTHZs27q5
-# Pv6gJ1HquW4cCFy2RIrVcs96KAwQgI7lsjEV97KzYoKSrKOzTOdkhNEsXpB1YTHG
-# l2Mx4K+AaL32UMKZuou14f18rQnYv4L+XtLtJxmj1pP3MzR8I3f0aZ2zay9A2vFa
-# h/3/nOn6KVM69YMXvkYMa9vASyfUmHB69dk0XSNuzlsk4YJIiocEG5n12SU2gBh1
-# 7AThQCETnW7TSMPkuevKWv0y05XXCjEGFzRPE0re3cb2Yw5bvO9FoDhEy3z+s2p5
-# ibyZzbBVX3JOQxUPJg9xBs4LJfZ9VB2upvuAxq3OU6nHofop+fLZYI15ooD/vGTh
-# tX6eS+ScU4JtXIYNq98XCcr5tMwKn4JD18lFWgz5wivHXCu75VYgFPlpsbNvVFl0
-# bTUWg5TJd51jBUxOtosYh7w8mEXZ+9lPkaaKuoB0rcV8mGR1OdBCmr77qzvFZImm
-# WYKz+k54lzXprjWZgJ6kbuPFA43FDEBirnhQ4ZzZl9OZ7cD2Go6FdN/ScljAXmGt
-# C/mHVwhNZ5YjJGKhQegbdP2MX73qeknqi1q5k79YxkNeoRV2RiHtGE5ehSGuw9tk
-# ewlM7+3l9RLO7iS3cQIBFNuHfQ==
+# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCB7Bz4nV0egPDPxREmvsfd5
+# qESlzKwzNLHiiWwE8j2QvDANBgkqhkiG9w0BAQEFAASCAgBFvpOiRNO+7pjXqhV9
+# ovjnXgwPeibEQOeBVQD9m/V9LlbpwGUh/sHtcpK6nxu5PEuFqGjNJc9A1P8VzsPJ
+# 3KDs3XaPtdhwbIo/Vs/17g86uGH+Dkp1+tjbSLc/j3lKxtUXz5BEo1vSKzRqDrAa
+# iMZ5NWQId685hp1MMMnVgaGuOBeY2lkSWsaPkVC4FkW3EEpbjMUymbr2db1uswCz
+# SDbCTnuj1BCmnrCP5j2aRBsrK09ieBKDqvoZYhK77ZWd5Rd5BdKhgP+rIVDTeDmp
+# UUXdG2UB6cvJEOsZUNjRGwHe7KNbBYs+UjzspH+kCCqgBCzDuiqyuqDZfhdYvdTD
+# zsls+Cyt2Bb2eMyn54ZABY4x/Ed/7B9NXsoVC/6dQJXCKvzVXF7Q0siu44oTdO3e
+# mIHa0BktGRKf3ZFrQjpPE3TwgZSLmzmEBq9OrxNJWoaXGSQQIT2TBfrxnJdhF3kO
+# xvMPbOCd0ORdg/GDpqUaaUeJGI+8obQ/eIVvKpskVSLZIkt/jM5tBIsi5BvlWoOz
+# nkepxKqFg/ZJ8MuHlN2Q9AntwZ0PYsT4YZq9iD85jLxT+1suVZ2rtJm1rEQndKC4
+# fmM5W/HtfcwtVwwgWIb9cSpS0+QIDA79X21fhLQZhXjLdGYSM7GjGt3gZiQmL3Od
+# 8MqbFb8eXSnK5iJgwE6WSc1PWQ==
 # SIG # End signature block

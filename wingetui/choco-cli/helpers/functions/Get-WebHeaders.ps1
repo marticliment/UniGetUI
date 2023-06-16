@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-WebHeaders {
-    <#
+<#
 .SYNOPSIS
 Gets the request/response headers for a url.
 
@@ -49,139 +49,132 @@ Get-WebFileName
 .LINK
 Get-WebFile
 #>
-    param(
-        [parameter(Mandatory = $false, Position = 0)][string] $url = '',
-        [parameter(Mandatory = $false, Position = 1)][string] $userAgent = 'chocolatey command line',
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$false, Position=0)][string] $url = '',
+  [parameter(Mandatory=$false, Position=1)][string] $userAgent = 'chocolatey command line',
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($url -eq '') {
-        return @{}
+  if ($url -eq '') { return @{} }
+
+  $request = [System.Net.HttpWebRequest]::Create($url);
+  $defaultCreds = [System.Net.CredentialCache]::DefaultCredentials
+  if ($defaultCreds -ne $null) {
+    $request.Credentials = $defaultCreds
+  }
+
+  #$request.Method = "HEAD"
+  $client = New-Object System.Net.WebClient
+  if ($defaultCreds -ne $null) {
+    $client.Credentials = $defaultCreds
+  }
+
+  # check if a proxy is required
+  $explicitProxy = $env:chocolateyProxyLocation
+  $explicitProxyUser = $env:chocolateyProxyUser
+  $explicitProxyPassword = $env:chocolateyProxyPassword
+  $explicitProxyBypassList = $env:chocolateyProxyBypassList
+  $explicitProxyBypassOnLocal = $env:chocolateyProxyBypassOnLocal
+  if ($explicitProxy -ne $null) {
+    # explicit proxy
+    $proxy = New-Object System.Net.WebProxy($explicitProxy, $true)
+    if ($explicitProxyPassword -ne $null) {
+      $passwd = ConvertTo-SecureString $explicitProxyPassword -AsPlainText -Force
+      $proxy.Credentials = New-Object System.Management.Automation.PSCredential ($explicitProxyUser, $passwd)
     }
 
-    $request = [System.Net.HttpWebRequest]::Create($url);
-    $defaultCreds = [System.Net.CredentialCache]::DefaultCredentials
-    if ($defaultCreds -ne $null) {
-        $request.Credentials = $defaultCreds
+    if ($explicitProxyBypassList -ne $null -and $explicitProxyBypassList -ne '') {
+      $proxy.BypassList =  $explicitProxyBypassList.Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)
+    }
+    if ($explicitProxyBypassOnLocal -eq 'true') { $proxy.BypassProxyOnLocal = $true; }
+
+    Write-Host "Using explicit proxy server '$explicitProxy'."
+    $request.Proxy = $proxy
+
+  } elseif ($client.Proxy -and !$client.Proxy.IsBypassed($url)) {
+    # system proxy (pass through)
+    $creds = [Net.CredentialCache]::DefaultCredentials
+    if ($creds -eq $null) {
+      Write-Debug "Default credentials were null. Attempting backup method"
+      $cred = Get-Credential
+      $creds = $cred.GetNetworkCredential();
+    }
+    $proxyAddress = $client.Proxy.GetProxy($url).Authority
+    Write-Host "Using system proxy server '$proxyaddress'."
+    $proxy = New-Object System.Net.WebProxy($proxyAddress)
+    $proxy.Credentials = $creds
+    $proxy.BypassProxyOnLocal = $true
+    $request.Proxy = $proxy
+  }
+
+  $request.Accept = '*/*'
+  $request.AllowAutoRedirect = $true
+  $request.MaximumAutomaticRedirections = 20
+  #$request.KeepAlive = $true
+  $request.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
+  $request.Timeout = 30000
+  if ($env:chocolateyRequestTimeout -ne $null -and $env:chocolateyRequestTimeout -ne '') {
+    $request.Timeout =  $env:chocolateyRequestTimeout
+  }
+  if ($env:chocolateyResponseTimeout -ne $null -and $env:chocolateyResponseTimeout -ne '') {
+    $request.ReadWriteTimeout =  $env:chocolateyResponseTimeout
+  }
+
+  #http://stackoverflow.com/questions/518181/too-many-automatic-redirections-were-attempted-error-message-when-using-a-httpw
+  $request.CookieContainer = New-Object System.Net.CookieContainer
+  if ($userAgent -ne $null) {
+    Write-Debug "Setting the UserAgent to `'$userAgent`'"
+    $request.UserAgent = $userAgent
+  }
+
+  Write-Debug "Request Headers:"
+  foreach ($key in $request.Headers) {
+    $value = $request.Headers[$key];
+    if ($value) {
+      Write-Debug "  `'$key`':`'$value`'"
+    } else {
+      Write-Debug "  `'$key`'"
+    }
+  }
+
+  $headers = @{}
+  try {
+    $response = $request.GetResponse();
+    Write-Debug "Response Headers:"
+    foreach ($key in $response.Headers) {
+      $value = $response.Headers[$key];
+      if ($value) {
+        $headers.Add("$key","$value")
+        Write-Debug "  `'$key`':`'$value`'"
+      }
+    }
+  } catch {
+    if ($request -ne $null) {
+      $request.ServicePoint.MaxIdleTime = 0
+      $request.Abort();
+      # ruthlessly remove $request to ensure it isn't reused
+      Remove-Variable request
+      Start-Sleep 1
+      [GC]::Collect()
     }
 
-    #$request.Method = "HEAD"
-    $client = New-Object System.Net.WebClient
-    if ($defaultCreds -ne $null) {
-        $client.Credentials = $defaultCreds
+    throw "The remote file either doesn't exist, is unauthorized, or is forbidden for url '$url'. $($_.Exception.Message)"
+  } finally {
+   if ($response -ne $null) {
+      $response.Close();
     }
+  }
 
-    # check if a proxy is required
-    $explicitProxy = $env:chocolateyProxyLocation
-    $explicitProxyUser = $env:chocolateyProxyUser
-    $explicitProxyPassword = $env:chocolateyProxyPassword
-    $explicitProxyBypassList = $env:chocolateyProxyBypassList
-    $explicitProxyBypassOnLocal = $env:chocolateyProxyBypassOnLocal
-    if ($explicitProxy -ne $null) {
-        # explicit proxy
-        $proxy = New-Object System.Net.WebProxy($explicitProxy, $true)
-        if ($explicitProxyPassword -ne $null) {
-            $passwd = ConvertTo-SecureString $explicitProxyPassword -AsPlainText -Force
-            $proxy.Credentials = New-Object System.Management.Automation.PSCredential ($explicitProxyUser, $passwd)
-        }
-
-        if ($explicitProxyBypassList -ne $null -and $explicitProxyBypassList -ne '') {
-            $proxy.BypassList = $explicitProxyBypassList.Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)
-        }
-        if ($explicitProxyBypassOnLocal -eq 'true') {
-            $proxy.BypassProxyOnLocal = $true;
-        }
-
-        Write-Host "Using explicit proxy server '$explicitProxy'."
-        $request.Proxy = $proxy
-    }
-    elseif ($client.Proxy -and !$client.Proxy.IsBypassed($url)) {
-        # system proxy (pass through)
-        $creds = [Net.CredentialCache]::DefaultCredentials
-        if ($creds -eq $null) {
-            Write-Debug "Default credentials were null. Attempting backup method"
-            $cred = Get-Credential
-            $creds = $cred.GetNetworkCredential();
-        }
-        $proxyAddress = $client.Proxy.GetProxy($url).Authority
-        Write-Host "Using system proxy server '$proxyaddress'."
-        $proxy = New-Object System.Net.WebProxy($proxyAddress)
-        $proxy.Credentials = $creds
-        $proxy.BypassProxyOnLocal = $true
-        $request.Proxy = $proxy
-    }
-
-    $request.Accept = '*/*'
-    $request.AllowAutoRedirect = $true
-    $request.MaximumAutomaticRedirections = 20
-    #$request.KeepAlive = $true
-    $request.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-    $request.Timeout = 30000
-    if ($env:chocolateyRequestTimeout -ne $null -and $env:chocolateyRequestTimeout -ne '') {
-        $request.Timeout = $env:chocolateyRequestTimeout
-    }
-    if ($env:chocolateyResponseTimeout -ne $null -and $env:chocolateyResponseTimeout -ne '') {
-        $request.ReadWriteTimeout = $env:chocolateyResponseTimeout
-    }
-
-    #http://stackoverflow.com/questions/518181/too-many-automatic-redirections-were-attempted-error-message-when-using-a-httpw
-    $request.CookieContainer = New-Object System.Net.CookieContainer
-    if ($userAgent -ne $null) {
-        Write-Debug "Setting the UserAgent to `'$userAgent`'"
-        $request.UserAgent = $userAgent
-    }
-
-    Write-Debug "Request Headers:"
-    foreach ($key in $request.Headers) {
-        $value = $request.Headers[$key];
-        if ($value) {
-            Write-Debug "  `'$key`':`'$value`'"
-        }
-        else {
-            Write-Debug "  `'$key`'"
-        }
-    }
-
-    $headers = @{}
-    try {
-        $response = $request.GetResponse();
-        Write-Debug "Response Headers:"
-        foreach ($key in $response.Headers) {
-            $value = $response.Headers[$key];
-            if ($value) {
-                $headers.Add("$key", "$value")
-                Write-Debug "  `'$key`':`'$value`'"
-            }
-        }
-    }
-    catch {
-        if ($request -ne $null) {
-            $request.ServicePoint.MaxIdleTime = 0
-            $request.Abort();
-            # ruthlessly remove $request to ensure it isn't reused
-            Remove-Variable request
-            Start-Sleep 1
-            [GC]::Collect()
-        }
-
-        throw "The remote file either doesn't exist, is unauthorized, or is forbidden for url '$url'. $($_.Exception.Message)"
-    }
-    finally {
-        if ($response -ne $null) {
-            $response.Close();
-        }
-    }
-
-    $headers
+  $headers
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA5cZuAxttY+XGb
-# LEUw2Nj5ed/VeNgis9fwk5pQwKM1X6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDeqLlQO4fAKR1A
+# JuYNpSyN8ESU+DNqV+5nuqCUkRFmsKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -344,28 +337,28 @@ Get-WebFile
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQg6RIwhE2fxdQFDvrr4N/jMS0LiSK40Io/u73Vmbec70cwDQYJ
-# KoZIhvcNAQEBBQAEggEAFGhybPANQxpxER3/U+1LKw19Gh9BlQo48pPoe+Gt3qrK
-# K5KD9n/OulILQn64OPNXGoIaZXK+5sz/B+FdLBYNKvJVT7nmvEjEcxwXwNUEYd6z
-# GqeXL0ZQ59M4kmdtbGM5ZgoQPKG1eBsjPBWV+QzwcHPmtkIrBkcYCVLTWIsyzOPA
-# YmifLMppUV//AKz1JQE8dg6Qn0WU7ryNgM62RQOck0hamoT+cqnmUOXKzFGhLvju
-# sGzj0UVRD0sEH9c2BqKvvQMZP6sCeaSeKdZdejHbWReAwpQvLEZnY+hoEkP/Bpsu
-# DODsiDWcOFDfDI+7Uq5QbNR3zu4QSzLIP6RPbbQG0KGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgM9iLWd+pE88y3VOcwGP4wnSGpkIGEgynpRFUzYag3hwwDQYJ
+# KoZIhvcNAQEBBQAEggEAjmWQ8cd8Jb9WqEPRlRe9+GMO/dJTebCn+v7jTpAGktOw
+# Bsm4GWWQmjhE2A64Gv90WJsao1ajhxFv/zw3ihKOU7DuiUgnaA8Hd30QxJY5PAzT
+# U6GwVqU8IBSY7MxwN96W2t4mvQMOZeyguOrtxZ6furxmHyH5XiBfNxD0yPnp/MZK
+# CXmvPTUSWGbF3xlITchSbunPntrx3wrDkF8XpLYkL4Syumk7c1zDw+Q9JJtpxgQB
+# 5O3/T/2DNnigZusED7XUuItLZO1VHSBxtEfGOd+H4GtBM6t5G6+y/Sq/27T8tdAh
+# QD0Dg1l7oJ9STAEtT+uPMQoT/yOqiBGihpg81vyWFKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTdaMC8GCSqGSIb3DQEJBDEiBCAfu3tH8CCajIbhvS33hTok
-# CX51pEmuBKoliuvEf8V6OTANBgkqhkiG9w0BAQEFAASCAgANGPY8Ew/8lQRbYDYc
-# mXIktPLTYxYx+UMi5Oevm4DBVNbGnE/PKxdTBJ7Kdzur7suAnX5QuAwUQCrHJpMg
-# qF7kjaQlvjDv7TMgSB/As2ukCrMLaNSrcKhbiapdoIvtMZ4dn+T4IPKd6/79qz5H
-# 7Du0u7R14sgEkgkWv7IwNfuIlU085Ezifaxt7CYV+SY8OTla/35HdCnRebsLHpU9
-# Kevfqllp7H1e89n5UrARkVsRTZoHJAbrGaV6TjAXZW9REyfEqYJr8w+xMWmfKHlP
-# YUIA9iX853XpCn/SpcRJLuFUtxs48RUoBqL9AELiTmH0QBzP/3TfWap/ZS4l8Ey7
-# HiEnRuPaP6PpX3nkEVBcfAlGe3sigOIsYxNTyQ+n0c3q6Uy7wMvKRnZxOhmlCfIJ
-# svz5LzEiJgBmqW/tqBI5RjN1BnFv2dANrvgwJfDunte7psqAFjcXOzX1bzC1QwfC
-# FJOZs7c4PlCoqFXgUqnNKqoIHPTcoO0zT3DcLAGwqzjKH8K5TkrvN0fYP1TeYNOR
-# 0o81p4eVXSiIPYDM4ait8YeYtj1yx6Y1gqSQedSZn1n5X31HcfGGQ9Gz2dQaytTg
-# PCKOfhjG97lNOty2rPB2iJVA05d9gK1aY2Aj8DP8lGMIY0aMZFw8SGpBwpuiBeVq
-# TSQzf7AF/fFZ5cQDuF7rU5KHlA==
+# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCDTP2m8SZglL1GB69afNP0b
+# Q9QolJ1zRaD4pjPBlBpM4TANBgkqhkiG9w0BAQEFAASCAgAuNYbAY91uCWLAJDtf
+# pyRwe1f6dzDsubFjVl7RI3/PXy8SxxGuEDhRO/0Vve80VFBblGMn+1zMzfKkAKzC
+# qQNkOCCX7yBliyIt3ecJmmAvqWtfjU/JzKMKuTXyKLyI/q6fhoIAQoOSe0PAL6Vq
+# Y/1ERYXG6D0XKIEaEu/3trzE80ZI2YO0yHIDxU0FbZUcGtn3nSpcJ+yssSNkfqnM
+# M2/uQcxKR4BFH/EPhPlak3m7AA6L3LWT/ZFkWafe8BnFL0TnN1HoORTLeEQmPQyE
+# OrEU7/ApCsJe6jq02tRyi5KWGp1zhTjfcBhyYcq44r0aJhYiOzJVCQCrDxC/E9N5
+# AUm5vy6Mt9kGLGCozQTEZmg0BEfHwO217UOJ+8gJOe+7zJg6Pm5c2I8boFXuDBU8
+# f++ck18uulY5xc7GILIlJ5bPcxeH9ltLKnb9OMPgECOpprCMvG/+eA7ZT0sMMOel
+# Q8HOW31feTA8QZxXhBjHFP3Ubqm2gp8r1S2gJ9exCN1iZ62OouuDXr3Ayymun6ES
+# qvNTKT8HA5hKm9J0WziSt3uHrPbWuegfxdtukCQ8PSXfLQ3BFn6bwN8uObouN2p/
+# 00m79eF3E5osbXYfJo2Uiz8uhE/S6OwhPUtot+UdS1y5Q2AC0YFN7Qe/TMNyQhWS
+# 23eAGcRUu2XK7F5o3cGJBJzQ7Q==
 # SIG # End signature block

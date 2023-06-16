@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyZipPackage {
-    <#
+<#
 .SYNOPSIS
 Downloads file from a url and unzips it on your machine. Use
 Get-ChocolateyUnzip when local or embedded file.
@@ -137,23 +137,23 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers.
+OPTIONAL - Specify custom headers. Available in 0.9.10+.
 
 .PARAMETER File
-Will be used for Url if Url is empty.
+Will be used for Url if Url is empty. Available in 0.10.7+.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER File64
-Will be used for Url64bit if Url64bit is empty.
+Will be used for Url64bit if Url64bit is empty. Available in 0.10.7+.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER DisableLogging
 OPTIONAL - This disables logging of the extracted items. It speeds up
-extraction of archives with many files.
+extraction of archives with many files. 
 
 Usage of this parameter will prevent Uninstall-ChocolateyZipPackage
 from working, extracted files will have to be cleaned up with
@@ -184,56 +184,52 @@ Get-ChocolateyWebFile
 .LINK
 Get-ChocolateyUnzip
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $packageName,
-        [parameter(Mandatory = $false, Position = 1)][string] $url = '',
-        [parameter(Mandatory = $true, Position = 2)]
-        [alias("destination")][string] $unzipLocation,
-        [parameter(Mandatory = $false, Position = 3)]
-        [alias("url64")][string] $url64bit = '',
-        [parameter(Mandatory = $false)][string] $specificFolder = '',
-        [parameter(Mandatory = $false)][string] $checksum = '',
-        [parameter(Mandatory = $false)][string] $checksumType = '',
-        [parameter(Mandatory = $false)][string] $checksum64 = '',
-        [parameter(Mandatory = $false)][string] $checksumType64 = '',
-        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
-        [alias("fileFullPath")][parameter(Mandatory = $false)][string] $file = '',
-        [alias("fileFullPath64")][parameter(Mandatory = $false)][string] $file64 = '',
-        [parameter(Mandatory = $false)][switch] $disableLogging,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $packageName,
+  [parameter(Mandatory=$false, Position=1)][string] $url = '',
+  [parameter(Mandatory=$true, Position=2)]
+  [alias("destination")][string] $unzipLocation,
+  [parameter(Mandatory=$false, Position=3)]
+  [alias("url64")][string] $url64bit = '',
+  [parameter(Mandatory=$false)][string] $specificFolder ='',
+  [parameter(Mandatory=$false)][string] $checksum = '',
+  [parameter(Mandatory=$false)][string] $checksumType = '',
+  [parameter(Mandatory=$false)][string] $checksum64 = '',
+  [parameter(Mandatory=$false)][string] $checksumType64 = '',
+  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
+  [alias("fileFullPath")][parameter(Mandatory=$false)][string] $file = '',
+  [alias("fileFullPath64")][parameter(Mandatory=$false)][string] $file64 = '',
+  [parameter(Mandatory=$false)][switch] $disableLogging,
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    $fileType = 'zip'
+  $fileType = 'zip'
 
-    $chocoTempDir = $env:TEMP
-    $tempDir = Join-Path $chocoTempDir "$($env:chocolateyPackageName)"
-    if ($env:chocolateyPackageVersion -ne $null) {
-        $tempDir = Join-Path $tempDir "$($env:chocolateyPackageVersion)";
-    }
-    $tempDir = $tempDir -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
-    if (![System.IO.Directory]::Exists($tempDir)) {
-        [System.IO.Directory]::CreateDirectory($tempDir) | Out-Null
-    }
-    $downloadFilePath = Join-Path $tempDir "$($packageName)Install.$fileType"
+  $chocoTempDir = $env:TEMP
+  $tempDir = Join-Path $chocoTempDir "$($env:chocolateyPackageName)"
+  if ($env:chocolateyPackageVersion -ne $null) { $tempDir = Join-Path $tempDir "$($env:chocolateyPackageVersion)"; }
+  $tempDir = $tempDir -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
+  if (![System.IO.Directory]::Exists($tempDir)) { [System.IO.Directory]::CreateDirectory($tempDir) | Out-Null }
+  $downloadFilePath = Join-Path $tempDir "$($packageName)Install.$fileType"
 
-    if ($url -eq '' -or $url -eq $null) {
-        $url = $file
-    }
-    if ($url64bit -eq '' -or $url64bit -eq $null) {
-        $url64bit = $file64
-    }
+  if ($url -eq '' -or $url -eq $null) {
+    $url = $file
+  }
+  if ($url64bit -eq '' -or $url64bit -eq $null) {
+    $url64bit = $file64
+  }
 
-    $filePath = Get-ChocolateyWebFile $packageName $downloadFilePath $url $url64bit -checkSum $checkSum -checksumType $checksumType -checkSum64 $checkSum64 -checksumType64 $checksumType64 -options $options -getOriginalFileName
-    Get-ChocolateyUnzip "$filePath" $unzipLocation $specificFolder $packageName -disableLogging:$disableLogging
+  $filePath = Get-ChocolateyWebFile $packageName $downloadFilePath $url $url64bit -checkSum $checkSum -checksumType $checksumType -checkSum64 $checkSum64 -checksumType64 $checksumType64 -options $options -getOriginalFileName
+  Get-ChocolateyUnzip "$filePath" $unzipLocation $specificFolder $packageName -disableLogging:$disableLogging
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDKQVBTDy7pxVkV
-# M29VOlaRW9UA29hkVL8a7C5Kjnz+T6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCD2GX164RkCii3h
+# sesdGKF6V4hWul6brq6Rz84Jl7+h76CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -396,28 +392,28 @@ Get-ChocolateyUnzip
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgr1nBQ9XWz1HILV+QccCmk3WkEI7a1MzkKarPxsGkPKcwDQYJ
-# KoZIhvcNAQEBBQAEggEASCRWcNUVFy019QVN+EULyn5N+DnizkjCoc2y0BVFnOlO
-# u5BVR84mikGD57VPCG5nUZdxLf7t9A7LZmVEyZTZ+3BXzl++L5/lBKkQpq2jA2UX
-# 5QYNhBdR3309EnZZF62uj1NtziOs3GUIUUOqjqhB7Q+1bf6ZW4dXZzWA6PVcx7EL
-# O2fXLgpJsiFkOltFhK1izuPkFlZZ5RmpwLEmw7fxsHMfN/5uup9ppK+07ipIiy24
-# +JExb0e/BDJUrgZ2d20d4fB40mBNQQm5msPZbuNFEakxfxDbm5SKrtreh+M+uAQS
-# 2HXP0cGnuQhuKM/JDtZ5fH1FrEiVORlidAoJP45VjaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQget5jGs/BgNKvk9OxtCM6qdUxKAfEBbIcVhbhet2FF3UwDQYJ
+# KoZIhvcNAQEBBQAEggEAcIM8PbiBym/TeqbttY3d9TrPGgzg3IRywFgMZuxsmyBb
+# EAytQfxeRNWJ5fhur3IhOhc1Lfvo1h3oqkbB7lR+0guZcDUKEqoofrz1GPPXTfh2
+# ihZt2EPCOoIuJUAxnCyUMAfcUOxRbMYDrPXDVpXdRdKkNUNLnQin+lC9bl8bwXMR
+# MPpqXo04N0ltdzGahOltGI0h8zdJibJrRVjnyZayReNCkfdDHmaKh4EniGldczop
+# Qq3vZOqITK7UZMqwJ41vfy2eyNUB3Mvv7hJaIDNmfwuJ5heAdL6ZLvyKFuWYP/Cl
+# JCOJV0JPZK5gXB8SBEnpNIyq38WCXOU3tgiVQuNhS6GCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NThaMC8GCSqGSIb3DQEJBDEiBCDjIIvmVI0S4AH+YH4mO8OO
-# FHWN5xsQtAduEV8DtnuV9TANBgkqhkiG9w0BAQEFAASCAgAPTcCmM36fdOt6B2Tv
-# b3RwfaNPIwPTR757dFt6KQrKRJF4HO6fHnq3AshHaul78bg+tR0R1+D16oSssHx1
-# sKtpWP4sQGsIGfW8cFS11Tn6/0uxlHFF1vH3RQQzANgngr4x3TQOju7ybdEbelG7
-# Mb3/NftWbERkCjqP5LsQt3AVCEIBkhyDKEvCA38Yfqfo1xvxYOkK47ayWIqxPqT2
-# +gweoTvoZr+5S0vCyiV7pTjdTbHga7bxXlVSE7a9HEJ/VqwaY4ulbQf3cQJ7/n/H
-# SRuqP51j+NGnj75GlThxgeWIgkmS1I59sYTAArNoDbGAvBzlAufnHrqnejpS4waz
-# MrYTEf6jtGpQJsFofVgaDXZC7SRxlOc1cMtjOkUCsL2iAoayBknGZ6MU4MP0bX8h
-# 8dK/fV9PMd6ZahNUzeweJehudKfYIKo8ewnHpSHhlrbNAMruBs7MjGa+fXm2VZJM
-# foc7GITQcJooC9DmhYwWdsMngcsSQwOO/a2Rka6UcRG58wuCT6aiftd6q/pi2I+T
-# uVZWBO4ZGUP4QTPR+d25C4cPosOJMEXQf///9CkshImH+F/X1kThiWCRwQjMIPgf
-# gPDMVexYtTMbgSTGwdZYsja/3z33QZPqkKlFse8zH2tQetiyGuPYJSdsDi5/ZM01
-# KBSD4w91N6hBZJVb356MxtO/pw==
+# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCBQarqoFyx0DBLLSeRZIrVD
+# 6qOZfKwEE6ZLDGgu1Ho3KDANBgkqhkiG9w0BAQEFAASCAgBBavCyKf7MDylIEC60
+# Q+QOI2DnfZVXSZ3czhwvEDbCF8+FhgaV065p34uzOKAamr8fub4UlmCpXR2DQ7qA
+# nGOzFMJ9TaxOlIB3Bo7/U9gtjZ0/vFRQ8rUlYZRwQajeN9He39BCgeaGgskVloQC
+# jAWJ0CV+b0ibnl9ALScV/tMMgWsu011YQ9O+bCLRyuei7+/+Gmax03l2dBOfMc/k
+# xcmjGRBw67R6SW2WSkVVD9ChbSy/OeqYJiOdYBrbHB7H3CbAU8tzSp7fUg8cAUcZ
+# PvFb7ya1+zJFaDpX03HBOTgihJixXd/emN0E3lbyquL8wr4rDSECRydMCVPBsmdB
+# EfLT+aCV1h/O2OAO59SNuF9t4qw/My7piSUOQD7bkbf6vUnbdagUCJaWN6zsEiQ2
+# G6YaKWvbfYqSg/Z2n2RjwtNWT4J0p5QUug4Ffxq7IMYceyce+YmdiZIF50zFH/Nl
+# XICnmz4qBogIABS7UJSTcK/tk1/d0upVyu0+ODNEVF/bOVnp6DyvcG104DDj3T2U
+# 7mSTugri2Y3qmrzFRvudBXcXX7/5pVwciqne9KYQ+AeBYDCTcjuEOQCJHkt4QzRx
+# vizzipMp0+GjGVW06dVQhIOW2ma69k33+RDgox14mBeB1Mz1zLNQrAsSd4HTN4E4
+# enNGCtoLKndw7bIaKDlC389tog==
 # SIG # End signature block

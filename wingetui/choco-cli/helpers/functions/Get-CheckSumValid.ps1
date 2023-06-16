@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-ChecksumValid {
-    <#
+<#
 .SYNOPSIS
 Checks a file's checksum versus a passed checksum and checksum type.
 
@@ -116,116 +116,111 @@ Get-ChocolateyWebFile
 .LINK
 Install-ChocolateyPackage
 #>
-    param(
-        [parameter(Mandatory = $true, Position = 0)][string] $file,
-        [parameter(Mandatory = $false, Position = 1)][string] $checksum = '',
-        [parameter(Mandatory = $false, Position = 2)][string] $checksumType = 'md5',
-        [parameter(Mandatory = $false, Position = 3)][string] $originalUrl = '',
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
+param(
+  [parameter(Mandatory=$true, Position=0)][string] $file,
+  [parameter(Mandatory=$false, Position=1)][string] $checksum = '',
+  [parameter(Mandatory=$false, Position=2)][string] $checksumType = 'md5',
+  [parameter(Mandatory=$false, Position=3)][string] $originalUrl = '',
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($env:ChocolateyIgnoreChecksums -eq 'true') {
-        Write-Warning "Ignoring checksums due to feature checksumFiles turned off or option --ignore-checksums set."
-        return
+  if ($env:ChocolateyIgnoreChecksums -eq 'true') {
+    Write-Warning "Ignoring checksums due to feature checksumFiles turned off or option --ignore-checksums set."
+    return
+  }
+
+  if ($checksum -eq '' -or $checksum -eq $null) {
+    $allowEmptyChecksums = $env:ChocolateyAllowEmptyChecksums
+    $allowEmptyChecksumsSecure = $env:ChocolateyAllowEmptyChecksumsSecure
+    if ($allowEmptyChecksums -eq 'true') {
+      Write-Debug "Empty checksums are allowed due to allowEmptyChecksums feature or option."
+      return
     }
 
-    if ($checksum -eq '' -or $checksum -eq $null) {
-        $allowEmptyChecksums = $env:ChocolateyAllowEmptyChecksums
-        $allowEmptyChecksumsSecure = $env:ChocolateyAllowEmptyChecksumsSecure
-        if ($allowEmptyChecksums -eq 'true') {
-            Write-Debug "Empty checksums are allowed due to allowEmptyChecksums feature or option."
-            return
-        }
-
-        if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https") -and $allowEmptyChecksumsSecure -eq 'true') {
-            Write-Debug "Download from HTTPS source with feature 'allowEmptyChecksumsSecure' enabled."
-            return
-        }
-
-        Write-Warning "Missing package checksums are not allowed (by default for HTTP/FTP, `n HTTPS when feature 'allowEmptyChecksumsSecure' is disabled) for `n safety and security reasons. Although we strongly advise against it, `n if you need this functionality, please set the feature `n 'allowEmptyChecksums' ('choco feature enable -n `n allowEmptyChecksums') `n or pass in the option '--allow-empty-checksums'. You can also pass `n checksums at runtime (recommended). See `choco install -?` for details."
-        Write-Debug "If you are a maintainer attempting to determine the checksum for packaging purposes, please run `n 'choco install checksum' and run 'checksum -t sha256 -f $file' `n Ensure you do this for all remote resources."
-        if ($PSVersionTable.PSVersion.Major -ge 4) {
-            Write-Debug "Because you are running PowerShell with a major version of v4 or greater, you could also opt to run `n '(Get-FileHash -Path $file -Algorithm SHA256).Hash' `n rather than install a separate tool."
-        }
-
-        if ($env:ChocolateyPowerShellHost -eq 'true') {
-            $statement = "The integrity of the file '$([System.IO.Path]::GetFileName($file))'"
-            if ($originalUrl -ne $null -and $originalUrl -ne '') {
-                $statement += " from '$originalUrl'"
-            }
-            $statement += " has not been verified by a checksum in the package scripts."
-            $question = 'Do you wish to allow the install to continue (not recommended)?'
-            $choices = New-Object System.Collections.ObjectModel.Collection[System.Management.Automation.Host.ChoiceDescription]
-            $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
-            $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
-
-            $selection = $Host.UI.PromptForChoice($statement, $question, $choices, 1)
-
-            if ($selection -eq 0) {
-                return
-            }
-        }
-
-        if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https")) {
-            throw "This package downloads over HTTPS but does not yet have package checksums to verify the package. We recommend asking the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksumsSecure, provide the runtime switch '--allow-empty-checksums-secure', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details)."
-        }
-        else {
-            throw "Empty checksums are no longer allowed by default for non-secure sources. Please ask the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksums, provide the runtime switch '--allow-empty-checksums', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details). It is strongly advised against allowing empty checksums for non-internal HTTP/FTP sources."
-        }
+    if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https") -and $allowEmptyChecksumsSecure -eq 'true') {
+      Write-Debug "Download from HTTPS source with feature 'allowEmptyChecksumsSecure' enabled."
+      return
     }
 
-    if (!([System.IO.File]::Exists($file))) {
-        throw "Unable to checksum a file that doesn't exist - Could not find file `'$file`'"
+    Write-Warning "Missing package checksums are not allowed (by default for HTTP/FTP, `n HTTPS when feature 'allowEmptyChecksumsSecure' is disabled) for `n safety and security reasons. Although we strongly advise against it, `n if you need this functionality, please set the feature `n 'allowEmptyChecksums' ('choco feature enable -n `n allowEmptyChecksums') `n or pass in the option '--allow-empty-checksums'. You can also pass `n checksums at runtime (recommended). See `choco install -?` for details."
+    Write-Debug "If you are a maintainer attempting to determine the checksum for packaging purposes, please run `n 'choco install checksum' and run 'checksum -t sha256 -f $file' `n Ensure you do this for all remote resources."
+    if ($PSVersionTable.PSVersion.Major -ge 4){
+      Write-Debug "Because you are running PowerShell with a major version of v4 or greater, you could also opt to run `n '(Get-FileHash -Path $file -Algorithm SHA256).Hash' `n rather than install a separate tool."
     }
 
-    if ($checksumType -eq $null -or $checksumType -eq '') {
-        $checksumType = 'md5'
+    if ($env:ChocolateyPowerShellHost -eq 'true') {
+      $statement = "The integrity of the file '$([System.IO.Path]::GetFileName($file))'"
+      if ($originalUrl -ne $null -and $originalUrl -ne '') {
+        $statement += " from '$originalUrl'"
+      }
+      $statement += " has not been verified by a checksum in the package scripts."
+      $question = 'Do you wish to allow the install to continue (not recommended)?'
+      $choices = New-Object System.Collections.ObjectModel.Collection[System.Management.Automation.Host.ChoiceDescription]
+      $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
+      $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
+
+      $selection = $Host.UI.PromptForChoice($statement, $question, $choices, 1)
+
+      if ($selection -eq 0) { return }
     }
 
-    if ($checksumType -ne 'sha1' -and $checksumType -ne 'sha256' -and $checksumType -ne 'sha512' -and $checksumType -ne 'md5') {
-        Write-Debug 'Setting checksumType to md5 due to non-set value or type is not specified correctly.'
-        throw "Checksum type '$checksumType' is unsupported. This type may be supported in a newer version of Chocolatey."
+    if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https")) {
+      throw "This package downloads over HTTPS but does not yet have package checksums to verify the package. We recommend asking the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksumsSecure, provide the runtime switch '--allow-empty-checksums-secure', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details)."
+    } else {
+      throw "Empty checksums are no longer allowed by default for non-secure sources. Please ask the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksums, provide the runtime switch '--allow-empty-checksums', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details). It is strongly advised against allowing empty checksums for non-internal HTTP/FTP sources."
     }
+  }
 
-    $checksumExe = Join-Path "$helpersPath" '..\tools\checksum.exe'
-    if (!([System.IO.File]::Exists($checksumExe))) {
-        Update-SessionEnvironment
-        $checksumExe = Join-Path "$env:ChocolateyInstall" 'tools\checksum.exe'
-    }
-    Write-Debug "checksum.exe found at `'$checksumExe`'"
+  if (!([System.IO.File]::Exists($file))) { throw "Unable to checksum a file that doesn't exist - Could not find file `'$file`'" }
 
-    $params = "-c=`"$checksum`" -t=`"$checksumType`" -f=`"$file`""
+  if ($checksumType -eq $null -or $checksumType -eq ''){
+    $checksumType = 'md5'
+  }
 
-    Write-Debug "Executing command ['$checksumExe' $params]"
-    $process = New-Object System.Diagnostics.Process
-    $process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($checksumExe, $params)
-    $process.StartInfo.UseShellExecute = $false
-    $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+  if ($checksumType -ne 'sha1' -and $checksumType -ne 'sha256' -and $checksumType -ne 'sha512' -and $checksumType -ne 'md5') {
+    Write-Debug 'Setting checksumType to md5 due to non-set value or type is not specified correctly.'
+    throw "Checksum type '$checksumType' is unsupported. This type may be supported in a newer version of Chocolatey."
+  }
 
-    $process.Start() | Out-Null
-    $process.WaitForExit()
-    $exitCode = $process.ExitCode
-    $process.Dispose()
+  $checksumExe = Join-Path "$helpersPath" '..\tools\checksum.exe'
+  if (!([System.IO.File]::Exists($checksumExe))) {
+    Update-SessionEnvironment
+    $checksumExe = Join-Path "$env:ChocolateyInstall" 'tools\checksum.exe'
+  }
+  Write-Debug "checksum.exe found at `'$checksumExe`'"
 
-    Write-Debug "Command [`'$checksumExe`' $params] exited with `'$exitCode`'."
+  $params = "-c=`"$checksum`" -t=`"$checksumType`" -f=`"$file`""
 
-    if ($exitCode -ne 0) {
-        throw "Checksum for '$file' did not meet '$checksum' for checksum type '$checksumType'. Consider passing the actual checksums through with `--checksum --checksum64` once you validate the checksums are appropriate. A less secure option is to pass `--ignore-checksums` if necessary."
-    }
+  Write-Debug "Executing command ['$checksumExe' $params]"
+  $process = New-Object System.Diagnostics.Process
+  $process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($checksumExe, $params)
+  $process.StartInfo.UseShellExecute = $false
+  $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
 
-    #$fileCheckSumActual = $md5Output.Split(' ')[0]
-    # if ($fileCheckSumActual -ne $checkSum) {
-    #   throw "CheckSum for `'$file'` did not meet `'$checkSum`'."
-    # }
+  $process.Start() | Out-Null
+  $process.WaitForExit()
+  $exitCode = $process.ExitCode
+  $process.Dispose()
+
+  Write-Debug "Command [`'$checksumExe`' $params] exited with `'$exitCode`'."
+
+  if ($exitCode -ne 0) {
+    throw "Checksum for '$file' did not meet '$checksum' for checksum type '$checksumType'. Consider passing the actual checksums through with `--checksum --checksum64` once you validate the checksums are appropriate. A less secure option is to pass `--ignore-checksums` if necessary."
+  }
+
+  #$fileCheckSumActual = $md5Output.Split(' ')[0]
+  # if ($fileCheckSumActual -ne $checkSum) {
+  #   throw "CheckSum for `'$file'` did not meet `'$checkSum`'."
+  # }
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB2C8DV+23E5keM
-# 058E9c67jcShgUMIAFLVjBdLSTJE5aCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAwa9JoM762ljj4
+# LXP3Y/xwfoXIJm56EVwwNCNYTIIXcKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -388,28 +383,28 @@ Install-ChocolateyPackage
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgBwFgzrFXK/n+aEV0KH2pqDNUjRU2kDFX8Q2iGtm+8NAwDQYJ
-# KoZIhvcNAQEBBQAEggEAlhKQIcYW4yWulylZX3n/6AR9ch1/mBjMl3eWrE98FPgn
-# L9hwyHvjOuy760JGXp63P4o89ui1lnY8RxBUBugS8aNvQQeCW4N6HZeYG2pylb/7
-# P+wa7TjLpM1wUfuApH3Kh5kHn95ShatrdRhclRCkqIgFcTIS3okQi0I7PcRra3sT
-# FeEY8YTgOgNpn1t5gSChtbeyvFjXaf3J+76cEnN+tJ5ZOMqEO2hrh9C9Bf+YhinO
-# GM+JFwGxcQVcde3UJomBheL4CZ12UXRZ86YaICZY+MFCfc7didokTCCe4lBzlSRg
-# g9QmjgjgDenCy7PRsF7/3D1fA/P7ode99htv/ui8BaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgB+ubPnJpOpVsLqeoOYIx0E5hAZDyK4xr2LAJDLRkUQ0wDQYJ
+# KoZIhvcNAQEBBQAEggEAbrENb/PeeyaaQqxgMBv1G/9MDelj8JCswLgki2462M8F
+# zKpmksrSyCkdVJI6PM/PKE96Tz/maHAsMCwe90HbMKb1mOdk51WegQBcyOtPpwDS
+# 2MSLRJcwSD+7yqdpIj6dqSRkoDKvs+o0KfLxl9nUMGU0V2swaxhk5EMQPUrhcEdW
+# cySSDTpu8Ex6qlJLKEUveBAhOZ9mTdm/qUdQtqmpmpJ6+RWpy0wARERxDOPc9hWV
+# hF9DOFD1qpCYIqLFdkx487GuONwDyuXIKpJ+Id5esu0tyrdEH1uIUIS6n330AAvR
+# Xw634TvM8H3IK8q8cgqZfGaK8vwwQ1BACheLR29SJKGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTVaMC8GCSqGSIb3DQEJBDEiBCAApuBEQDcPwMnzsICISCNg
-# bXKAyxXIBklG3hnjCgr5zDANBgkqhkiG9w0BAQEFAASCAgA40dB0bnjUtcYOKbec
-# TFDUlK1aQfYFb1q6OLM/B8fakmWN8dC7kOrma1boW97pX0BhPpCBU1zb/sl4LTT2
-# eZwhstUJIYxbAHtKqWw1IBYaPu9oz2dhyS+cTYFCa2lxi9r1rQfmyrEsAA4PiOk+
-# cd36lF2f6+3p1mlpywv5ZkAmcI0ynyuaPSdC70j7YSUjEUcalUHphvOhE1oNyrO/
-# tUagEv4kK/TKv7+UmZkTsVtvdAfZ1VOmXpnlJTELj9S0so7mWsYrEGwG/smcoBG/
-# KhVyzViA2Yqjci5ObSrqOrKk+jhQ1qEjzTIL1jGEM78TCkZ6S4TBYu8hR1u1//M9
-# RJvXCxuZvWn2ZZrGyGV8AUssSyDrVqAyzeOEJp3hvLWxxbXcgvD+tp5QcNNZcnrI
-# 7cW+sT91nBHzi2zF4HuXZfwRJCKMYJWSNy9zcInyjsm6LSbRTZTzHV2js1P1sp43
-# Qu9eMS4Wr1gZ2LW/9mo2ZqSVTHoWvXvL3dWHq3N5ZYZaNGgTXF0qxlBjYJ24aeCv
-# jM0t7wY6lD1RK+5HiP1+ajWPW5wXgcBD/m8Ne91+ri003bEPbjFdI9OFCxdCIcSE
-# DMXPfdEeBaJ/sR/WZmzyz9GV+jLAucd/5cuqbi0Yf/ubvOoqKr2m4NDd7JQ1xbN4
-# vS2bxfBWcciREx0JeMn8qbYcZg==
+# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCBOT5fPfZPoy3q/XpHGTyDs
+# 1H2bVnYCd0HdHS0dlZ8muzANBgkqhkiG9w0BAQEFAASCAgCR+Nd93WfErfsU/6kg
+# v99fZdn01htPJDTW3xhMfrCaTi0vk2pFA7O+JlvO+XPpTYHWe8JR+wMSE4S0iVGu
+# XlFY6EDC7JfknyTolnOS9/XvIeV2UpwM8wNufkrcsLYUb0lZqXq+ndYS0G5LJh3R
+# okYOzJuGNjndplFPkLmP58WkvFBLZLnfAAxvBkELPXoeB6Kg187/G8vIkkaaW2ME
+# 6eGh6i8QQj0o5UgL6hT63JqaTMe/tRoXQ145Vcdv36YAnYiUSJoYxG9LNiGvkJOj
+# FcU4FtKRAm54DB3VMZQHxPL1+FLfzXlcmq593wIShEeaO2pOAQwbQq7XpBrne4e4
+# FJjMWpyk/u0Twuds0dvYKNwvalr9+nG+6MZNVYH+lb8DX4O5ubiKx9wbJ1GEL4X3
+# Jz6JR2knCTE6GLJmSr7P4aLnaFm8BmPqQ7coG+xPC0n2USXWoId6DMt+WmLxKCJh
+# cHVrZGH06liufsyxxi0j2diqiUMnfZKaEP35N6NjiJPsRzhaqwzdwEkeKv03aOLj
+# CPQ4uJ7dVp+utWvsHVoJ+i+UqIzfwdQR07uOIOzof/G+Bvx5BUy8mqMEqbP1uiyU
+# n8Xf9sPc3jy0lEQVSneVU3bu9xt2ICSaJAcWYTEoZWIPmxEYWJSmd8jJxrkyDuJw
+# pnYBlGQ+aboX5XIq7zLcKU5Z/g==
 # SIG # End signature block

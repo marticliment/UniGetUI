@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Start-ChocolateyProcessAsAdmin {
-    <#
+<#
 .SYNOPSIS
 **NOTE:** Administrative Access Required.
 
@@ -25,13 +25,14 @@ specified, it is run with PowerShell.
 .NOTES
 This command will assert UAC/Admin privileges on the machine.
 
-Will automatically call Set-PowerShellExitCode to set the package exit
-code in the following ways:
+Starting in 0.9.10, will automatically call Set-PowerShellExitCode to
+set the package exit code in the following ways:
 
 - 4 if the binary turns out to be a text file.
 - The same exit code returned from the process that is run. If a 3010 is returned, it will set 3010 for the package.
 
-Aliases `Start-ChocolateyProcess` and `Invoke-ChocolateyProcess`.
+Aliases `Start-ChocolateyProcess` and `Invoke-ChocolateyProcess`
+available in 0.10.2+.
 
 .INPUTS
 None
@@ -49,6 +50,8 @@ The executable/application/installer to run. Defaults to `'powershell'`.
 .PARAMETER Elevated
 Indicate whether the process should run elevated.
 
+Available in 0.10.2+.
+
 .PARAMETER Minimized
 Switch indicating if a Windows pops up (if not called with a silent
 argument) that it should be minimized.
@@ -63,7 +66,9 @@ Array of exit codes indicating success. Defaults to `@(0)`.
 .PARAMETER WorkingDirectory
 The working directory for the running process. Defaults to
 `Get-Location`. If current location is a UNC path, uses
-`$env:TEMP` for default.
+`$env:TEMP` for default as of 0.10.14.
+
+Available in 0.10.1+.
 
 .PARAMETER SensitiveStatements
 Arguments to pass to  `ExeToRun` that are not logged.
@@ -71,6 +76,8 @@ Arguments to pass to  `ExeToRun` that are not logged.
 Note that only licensed versions of Chocolatey provide a way to pass
 those values completely through without having them in the install
 script or on the system in some way.
+
+Available in 0.10.1+.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
@@ -104,64 +111,57 @@ Install-ChocolateyPackage
 .LINK
 Install-ChocolateyInstallPackage
 #>
-    param(
-        [parameter(Mandatory = $false, Position = 0)][string[]] $statements,
-        [parameter(Mandatory = $false, Position = 1)][string] $exeToRun = 'powershell',
-        [parameter(Mandatory = $false)][switch] $elevated = $true,
-        [parameter(Mandatory = $false)][switch] $minimized,
-        [parameter(Mandatory = $false)][switch] $noSleep,
-        [parameter(Mandatory = $false)] $validExitCodes = @(0),
-        [parameter(Mandatory = $false)][string] $workingDirectory = $null,
-        [parameter(Mandatory = $false)][string] $sensitiveStatements = '',
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
-    [string]$statements = $statements -join ' '
+param(
+  [parameter(Mandatory=$false, Position=0)][string[]] $statements,
+  [parameter(Mandatory=$false, Position=1)][string] $exeToRun = 'powershell',
+  [parameter(Mandatory=$false)][switch] $elevated = $true,
+  [parameter(Mandatory=$false)][switch] $minimized,
+  [parameter(Mandatory=$false)][switch] $noSleep,
+  [parameter(Mandatory=$false)] $validExitCodes = @(0),
+  [parameter(Mandatory=$false)][string] $workingDirectory = $null,
+  [parameter(Mandatory=$false)][string] $sensitiveStatements = '',
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
+  [string]$statements = $statements -join ' '
 
-    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-    if ($workingDirectory -eq $null) {
-        $pwd = $(Get-Location -PSProvider 'FileSystem')
-        if ($pwd -eq $null -or $pwd.ProviderPath -eq $null) {
-            Write-Debug "Unable to use current location for Working Directory. Using Cache Location instead."
-            $workingDirectory = $env:TEMP
-        }
-        $workingDirectory = $pwd.ProviderPath
+  if ($workingDirectory -eq $null) {
+    $pwd = $(Get-Location -PSProvider 'FileSystem')
+    if ($pwd -eq $null -or $pwd.ProviderPath -eq $null) {
+      Write-Debug "Unable to use current location for Working Directory. Using Cache Location instead."
+      $workingDirectory = $env:TEMP
     }
-    $alreadyElevated = $false
-    if (Test-ProcessAdminRights) {
-        $alreadyElevated = $true
-    }
+    $workingDirectory = $pwd.ProviderPath
+  }
+  $alreadyElevated = $false
+  if (Test-ProcessAdminRights) {
+    $alreadyElevated = $true
+  }
 
-    $dbMessagePrepend = "Elevating permissions and running"
-    if (!$elevated) {
-        $dbMessagePrepend = "Running"
-    }
+  $dbMessagePrepend = "Elevating permissions and running"
+  if (!$elevated) {
+    $dbMessagePrepend = "Running"
+  }
 
-    try {
-        if ($exeToRun -ne $null) {
-            $exeToRun = $exeToRun -replace "`0", ""
-        }
-        if ($statements -ne $null) {
-            $statements = $statements -replace "`0", ""
-        }
-    }
-    catch {
-        Write-Debug "Removing null characters resulted in an error - $($_.Exception.Message)"
-    }
+  try {
+    if ($exeToRun -ne $null) { $exeToRun = $exeToRun -replace "`0", "" }
+    if ($statements -ne $null) { $statements = $statements -replace "`0", "" }
+  } catch {
+    Write-Debug "Removing null characters resulted in an error - $($_.Exception.Message)"
+  }
 
-    if ($exeToRun -ne $null) {
-        $exeToRun = $exeToRun.Trim().Trim("'").Trim('"')
-    }
+  if ($exeToRun -ne $null) {
+    $exeToRun = $exeToRun.Trim().Trim("'").Trim('"')
+  }
 
-    $wrappedStatements = $statements
-    if ($wrappedStatements -eq $null) {
-        $wrappedStatements = ''
-    }
+  $wrappedStatements = $statements
+  if ($wrappedStatements -eq $null) { $wrappedStatements = ''}
 
-    if ($exeToRun -eq 'powershell') {
-        $exeToRun = "$($env:SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe"
-        $importChocolateyHelpers = "& import-module -name '$helpersPath\chocolateyInstaller.psm1' -Verbose:`$false | Out-Null;"
-        $block = @"
+  if ($exeToRun -eq 'powershell') {
+    $exeToRun = "$($env:SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe"
+    $importChocolateyHelpers = "& import-module -name '$helpersPath\chocolateyInstaller.psm1' -Verbose:`$false | Out-Null;"
+    $block = @"
       `$noSleep = `$$noSleep
       #`$env:ChocolateyEnvironmentDebug='false'
       #`$env:ChocolateyEnvironmentVerbose='false'
@@ -176,219 +176,165 @@ Install-ChocolateyInstallPackage
         throw
       }
 "@
-        $encoded = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($block))
-        $wrappedStatements = "-NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -InputFormat Text -OutputFormat Text -EncodedCommand $encoded"
-        $dbgMessage = @"
+    $encoded = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($block))
+    $wrappedStatements = "-NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -InputFormat Text -OutputFormat Text -EncodedCommand $encoded"
+    $dbgMessage = @"
 $dbMessagePrepend powershell block:
 $block
 This may take a while, depending on the statements.
 "@
-    }
-    else {
-        $dbgMessage = @"
+
+  }
+  else
+  {
+    $dbgMessage = @"
 $dbMessagePrepend [`"$exeToRun`" $wrappedStatements]. This may take a while, depending on the statements.
 "@
+  }
+
+  Write-Debug $dbgMessage
+
+  $exeIsTextFile = [System.IO.Path]::GetFullPath($exeToRun) + ".istext"
+  if ([System.IO.File]::Exists($exeIsTextFile)) {
+    Set-PowerShellExitCode 4
+    throw "The file was a text file but is attempting to be run as an executable - '$exeToRun'"
+  }
+
+  if ($exeToRun -eq 'msiexec' -or $exeToRun -eq 'msiexec.exe') {
+    $exeToRun = "$($env:SystemRoot)\System32\msiexec.exe"
+  }
+
+  if (!([System.IO.File]::Exists($exeToRun)) -and $exeToRun -notmatch 'msiexec') {
+    Write-Warning "May not be able to find '$exeToRun'. Please use full path for executables."
+    # until we have search paths enabled, let's just pass a warning
+    #Set-PowerShellExitCode 2
+    #throw "Could not find '$exeToRun'"
+  }
+
+  # Redirecting output slows things down a bit.
+  $writeOutput = {
+    if ($EventArgs.Data -ne $null) {
+      Write-Verbose "$($EventArgs.Data)"
     }
+  }
 
-    Write-Debug $dbgMessage
-
-    $exeIsTextFile = [System.IO.Path]::GetFullPath($exeToRun) + ".istext"
-    if ([System.IO.File]::Exists($exeIsTextFile)) {
-        Set-PowerShellExitCode 4
-        throw "The file was a text file but is attempting to be run as an executable - '$exeToRun'"
+  $writeError = {
+    if ($EventArgs.Data -ne $null) {
+      Write-Error "$($EventArgs.Data)"
     }
+  }
 
-    if ($exeToRun -eq 'msiexec' -or $exeToRun -eq 'msiexec.exe') {
-        $exeToRun = "$($env:SystemRoot)\System32\msiexec.exe"
+  $process = New-Object System.Diagnostics.Process
+  $process.EnableRaisingEvents = $true
+  Register-ObjectEvent -InputObject $process -SourceIdentifier "LogOutput_ChocolateyProc" -EventName OutputDataReceived -Action $writeOutput | Out-Null
+  Register-ObjectEvent -InputObject $process -SourceIdentifier "LogErrors_ChocolateyProc" -EventName ErrorDataReceived -Action  $writeError | Out-Null
+
+  #$process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($exeToRun, $wrappedStatements)
+  # in case empty args makes a difference, try to be compatible with the older
+  # version
+  $psi = New-Object System.Diagnostics.ProcessStartInfo
+
+  $psi.FileName = $exeToRun
+  if ($wrappedStatements -ne '') {
+    $psi.Arguments = "$wrappedStatements"
+  }
+  if ($sensitiveStatements -ne $null -and $sensitiveStatements -ne '') {
+    Write-Host "Sensitive arguments have been passed. Adding to arguments."
+    $psi.Arguments += " $sensitiveStatements"
+  }
+  $process.StartInfo =  $psi
+
+  # process start info
+  $process.StartInfo.RedirectStandardOutput = $true
+  $process.StartInfo.RedirectStandardError = $true
+  $process.StartInfo.UseShellExecute = $false
+  $process.StartInfo.WorkingDirectory = $workingDirectory
+
+  if ($elevated -and -not $alreadyElevated -and [Environment]::OSVersion.Version -ge (New-Object 'Version' 6,0)){
+    # this doesn't actually currently work - because we are not running under shell execute
+    Write-Debug "Setting RunAs for elevation"
+    $process.StartInfo.Verb = "RunAs"
+  }
+  if ($minimized) {
+    $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Minimized
+  }
+
+  $process.Start() | Out-Null
+  if ($process.StartInfo.RedirectStandardOutput) { $process.BeginOutputReadLine() }
+  if ($process.StartInfo.RedirectStandardError) { $process.BeginErrorReadLine() }
+  $process.WaitForExit()
+
+  # For some reason this forces the jobs to finish and waits for
+  # them to do so. Without this it never finishes.
+  Unregister-Event -SourceIdentifier "LogOutput_ChocolateyProc"
+  Unregister-Event -SourceIdentifier "LogErrors_ChocolateyProc"
+
+  # sometimes the process hasn't fully exited yet.
+  for ($loopCount=1; $loopCount -le 15; $loopCount++) {
+    if ($process.HasExited) { break; }
+    Write-Debug "Waiting for process to exit - $loopCount/15 seconds";
+    Start-Sleep 1;
+  }
+
+  $exitCode = $process.ExitCode
+  $process.Dispose()
+
+  Write-Debug "Command [`"$exeToRun`" $wrappedStatements] exited with `'$exitCode`'."
+
+  $exitErrorMessage = ''
+  $errorMessageAddendum = " This is most likely an issue with the '$env:chocolateyPackageName' package and not with Chocolatey itself. Please follow up with the package maintainer(s) directly."
+
+  switch ($exitCode) {
+    0 { break }
+    1 { break }
+    3010 { break }
+    # NSIS - http://nsis.sourceforge.net/Docs/AppendixD.html
+    # InnoSetup - http://www.jrsoftware.org/ishelp/index.php?topic=setupexitcodes
+    2 { $exitErrorMessage = 'Setup was cancelled.'; break }
+    3 { $exitErrorMessage = 'A fatal error occurred when preparing or moving to next install phase. Check to be sure you have enough memory to perform an installation and try again.'; break }
+    4 { $exitErrorMessage = 'A fatal error occurred during installation process.' + $errorMessageAddendum; break }
+    5 { $exitErrorMessage = 'User (you) cancelled the installation.'; break }
+    6 { $exitErrorMessage = 'Setup process was forcefully terminated by the debugger.'; break }
+    7 { $exitErrorMessage = 'While preparing to install, it was determined setup cannot proceed with the installation. Please be sure the software can be installed on your system.'; break }
+    8 { $exitErrorMessage = 'While preparing to install, it was determined setup cannot proceed with the installation until you restart the system. Please reboot and try again.'; break }
+    # MSI - https://msdn.microsoft.com/en-us/library/windows/desktop/aa376931.aspx
+    1602 { $exitErrorMessage = 'User (you) cancelled the installation.'; break }
+    1603 { $exitErrorMessage = "Generic MSI Error. This is a local environment error, not an issue with a package or the MSI itself - it could mean a pending reboot is necessary prior to install or something else (like the same version is already installed). Please see MSI log if available. If not, try again adding `'--install-arguments=`"`'/l*v c:\$($env:chocolateyPackageName)_msi_install.log`'`"`'. Then search the MSI Log for `"Return Value 3`" and look above that for the error."; break }
+    1618 { $exitErrorMessage = 'Another installation currently in progress. Try again later.'; break }
+    1619 { $exitErrorMessage = 'MSI could not be found - it is possibly corrupt or not an MSI at all. If it was downloaded and the MSI is less than 30K, try opening it in an editor like Notepad++ as it is likely HTML.' + $errorMessageAddendum; break }
+    1620 { $exitErrorMessage = 'MSI could not be opened - it is possibly corrupt or not an MSI at all. If it was downloaded and the MSI is less than 30K, try opening it in an editor like Notepad++ as it is likely HTML.' + $errorMessageAddendum; break }
+    1622 { $exitErrorMessage = 'Something is wrong with the install log location specified. Please fix this in the package silent arguments (or in install arguments you specified). The directory specified as part of the log file path must exist for an MSI to be able to log to that directory.' + $errorMessageAddendum; break }
+    1623 { $exitErrorMessage = 'This MSI has a language that is not supported by your system. Contact package maintainer(s) if there is an install available in your language and you would like it added to the packaging.'; break }
+    1625 { $exitErrorMessage = 'Installation of this MSI is forbidden by system policy. Please contact your system administrators.'; break }
+    1632 { $exitErrorMessage = 'Installation of this MSI is not supported on this platform. Contact package maintainer(s) if you feel this is in error or if you need an architecture that is not available with the current packaging.'; break }
+    1633 { $exitErrorMessage = 'Installation of this MSI is not supported on this platform. Contact package maintainer(s) if you feel this is in error or if you need an architecture that is not available with the current packaging.'; break }
+    1638 { $exitErrorMessage = 'This MSI requires uninstall prior to installing a different version. Please ask the package maintainer(s) to add a check in the chocolateyInstall.ps1 script and uninstall if the software is installed.' + $errorMessageAddendum; break }
+    1639 { $exitErrorMessage = 'The command line arguments passed to the MSI are incorrect. If you passed in additional arguments, please adjust. Otherwise followup with the package maintainer(s) to get this fixed.' + $errorMessageAddendum; break }
+    1640 { $exitErrorMessage = 'Cannot install MSI when running from remote desktop (terminal services). This should automatically be handled in licensed editions. For open source editions, you may need to run change.exe prior to running Chocolatey or not use terminal services.'; break }
+    1645 { $exitErrorMessage = 'Cannot install MSI when running from remote desktop (terminal services). This should automatically be handled in licensed editions. For open source editions, you may need to run change.exe prior to running Chocolatey or not use terminal services.'; break }
+  }
+
+  if ($exitErrorMessage) {
+    $errorMessageSpecific = "Exit code indicates the following: $exitErrorMessage."
+    Write-Warning $exitErrorMessage
+  } else {
+    $errorMessageSpecific = 'See log for possible error messages.'
+  }
+
+  if ($validExitCodes -notcontains $exitCode) {
+    Set-PowerShellExitCode $exitCode
+    throw "Running [`"$exeToRun`" $wrappedStatements] was not successful. Exit code was '$exitCode'. $($errorMessageSpecific)"
+  } else {
+    $chocoSuccessCodes = @(0, 1605, 1614, 1641, 3010)
+    if ($chocoSuccessCodes -notcontains $exitCode) {
+      Write-Warning "Exit code '$exitCode' was considered valid by script, but not as a Chocolatey success code. Returning '0'."
+      $exitCode = 0
     }
+  }
 
-    if (!([System.IO.File]::Exists($exeToRun)) -and $exeToRun -notmatch 'msiexec') {
-        Write-Warning "May not be able to find '$exeToRun'. Please use full path for executables."
-        # until we have search paths enabled, let's just pass a warning
-        #Set-PowerShellExitCode 2
-        #throw "Could not find '$exeToRun'"
-    }
+  Write-Debug "Finishing '$($MyInvocation.InvocationName)'"
 
-    # Redirecting output slows things down a bit.
-    $writeOutput = {
-        if ($EventArgs.Data -ne $null) {
-            Write-Verbose "$($EventArgs.Data)"
-        }
-    }
-
-    $writeError = {
-        if ($EventArgs.Data -ne $null) {
-            Write-Error "$($EventArgs.Data)"
-        }
-    }
-
-    $process = New-Object System.Diagnostics.Process
-    $process.EnableRaisingEvents = $true
-    Register-ObjectEvent -InputObject $process -SourceIdentifier "LogOutput_ChocolateyProc" -EventName OutputDataReceived -Action $writeOutput | Out-Null
-    Register-ObjectEvent -InputObject $process -SourceIdentifier "LogErrors_ChocolateyProc" -EventName ErrorDataReceived -Action  $writeError | Out-Null
-
-    #$process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($exeToRun, $wrappedStatements)
-    # in case empty args makes a difference, try to be compatible with the older
-    # version
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-
-    $psi.FileName = $exeToRun
-    if ($wrappedStatements -ne '') {
-        $psi.Arguments = "$wrappedStatements"
-    }
-    if ($sensitiveStatements -ne $null -and $sensitiveStatements -ne '') {
-        Write-Host "Sensitive arguments have been passed. Adding to arguments."
-        $psi.Arguments += " $sensitiveStatements"
-    }
-    $process.StartInfo = $psi
-
-    # process start info
-    $process.StartInfo.RedirectStandardOutput = $true
-    $process.StartInfo.RedirectStandardError = $true
-    $process.StartInfo.UseShellExecute = $false
-    $process.StartInfo.WorkingDirectory = $workingDirectory
-
-    if ($elevated -and -not $alreadyElevated -and [Environment]::OSVersion.Version -ge (New-Object 'Version' 6, 0)) {
-        # this doesn't actually currently work - because we are not running under shell execute
-        Write-Debug "Setting RunAs for elevation"
-        $process.StartInfo.Verb = "RunAs"
-    }
-    if ($minimized) {
-        $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Minimized
-    }
-
-    $process.Start() | Out-Null
-    if ($process.StartInfo.RedirectStandardOutput) {
-        $process.BeginOutputReadLine()
-    }
-    if ($process.StartInfo.RedirectStandardError) {
-        $process.BeginErrorReadLine()
-    }
-    $process.WaitForExit()
-
-    # For some reason this forces the jobs to finish and waits for
-    # them to do so. Without this it never finishes.
-    Unregister-Event -SourceIdentifier "LogOutput_ChocolateyProc"
-    Unregister-Event -SourceIdentifier "LogErrors_ChocolateyProc"
-
-    # sometimes the process hasn't fully exited yet.
-    for ($loopCount = 1; $loopCount -le 15; $loopCount++) {
-        if ($process.HasExited) {
-            break;
-        }
-        Write-Debug "Waiting for process to exit - $loopCount/15 seconds";
-        Start-Sleep 1;
-    }
-
-    $exitCode = $process.ExitCode
-    $process.Dispose()
-
-    Write-Debug "Command [`"$exeToRun`" $wrappedStatements] exited with `'$exitCode`'."
-
-    $exitErrorMessage = ''
-    $errorMessageAddendum = " This is most likely an issue with the '$env:chocolateyPackageName' package and not with Chocolatey itself. Please follow up with the package maintainer(s) directly."
-
-    switch ($exitCode) {
-        0 {
-            break
-        }
-        1 {
-            break
-        }
-        3010 {
-            break
-        }
-        # NSIS - http://nsis.sourceforge.net/Docs/AppendixD.html
-        # InnoSetup - http://www.jrsoftware.org/ishelp/index.php?topic=setupexitcodes
-        2 {
-            $exitErrorMessage = 'Setup was cancelled.'; break
-        }
-        3 {
-            $exitErrorMessage = 'A fatal error occurred when preparing or moving to next install phase. Check to be sure you have enough memory to perform an installation and try again.'; break
-        }
-        4 {
-            $exitErrorMessage = 'A fatal error occurred during installation process.' + $errorMessageAddendum; break
-        }
-        5 {
-            $exitErrorMessage = 'User (you) cancelled the installation.'; break
-        }
-        6 {
-            $exitErrorMessage = 'Setup process was forcefully terminated by the debugger.'; break
-        }
-        7 {
-            $exitErrorMessage = 'While preparing to install, it was determined setup cannot proceed with the installation. Please be sure the software can be installed on your system.'; break
-        }
-        8 {
-            $exitErrorMessage = 'While preparing to install, it was determined setup cannot proceed with the installation until you restart the system. Please reboot and try again.'; break
-        }
-        # MSI - https://msdn.microsoft.com/en-us/library/windows/desktop/aa376931.aspx
-        1602 {
-            $exitErrorMessage = 'User (you) cancelled the installation.'; break
-        }
-        1603 {
-            $exitErrorMessage = "Generic MSI Error. This is a local environment error, not an issue with a package or the MSI itself - it could mean a pending reboot is necessary prior to install or something else (like the same version is already installed). Please see MSI log if available. If not, try again adding `'--install-arguments=`"`'/l*v c:\$($env:chocolateyPackageName)_msi_install.log`'`"`'. Then search the MSI Log for `"Return Value 3`" and look above that for the error."; break
-        }
-        1618 {
-            $exitErrorMessage = 'Another installation currently in progress. Try again later.'; break
-        }
-        1619 {
-            $exitErrorMessage = 'MSI could not be found - it is possibly corrupt or not an MSI at all. If it was downloaded and the MSI is less than 30K, try opening it in an editor like Notepad++ as it is likely HTML.' + $errorMessageAddendum; break
-        }
-        1620 {
-            $exitErrorMessage = 'MSI could not be opened - it is possibly corrupt or not an MSI at all. If it was downloaded and the MSI is less than 30K, try opening it in an editor like Notepad++ as it is likely HTML.' + $errorMessageAddendum; break
-        }
-        1622 {
-            $exitErrorMessage = 'Something is wrong with the install log location specified. Please fix this in the package silent arguments (or in install arguments you specified). The directory specified as part of the log file path must exist for an MSI to be able to log to that directory.' + $errorMessageAddendum; break
-        }
-        1623 {
-            $exitErrorMessage = 'This MSI has a language that is not supported by your system. Contact package maintainer(s) if there is an install available in your language and you would like it added to the packaging.'; break
-        }
-        1625 {
-            $exitErrorMessage = 'Installation of this MSI is forbidden by system policy. Please contact your system administrators.'; break
-        }
-        1632 {
-            $exitErrorMessage = 'Installation of this MSI is not supported on this platform. Contact package maintainer(s) if you feel this is in error or if you need an architecture that is not available with the current packaging.'; break
-        }
-        1633 {
-            $exitErrorMessage = 'Installation of this MSI is not supported on this platform. Contact package maintainer(s) if you feel this is in error or if you need an architecture that is not available with the current packaging.'; break
-        }
-        1638 {
-            $exitErrorMessage = 'This MSI requires uninstall prior to installing a different version. Please ask the package maintainer(s) to add a check in the chocolateyInstall.ps1 script and uninstall if the software is installed.' + $errorMessageAddendum; break
-        }
-        1639 {
-            $exitErrorMessage = 'The command line arguments passed to the MSI are incorrect. If you passed in additional arguments, please adjust. Otherwise followup with the package maintainer(s) to get this fixed.' + $errorMessageAddendum; break
-        }
-        1640 {
-            $exitErrorMessage = 'Cannot install MSI when running from remote desktop (terminal services). This should automatically be handled in licensed editions. For open source editions, you may need to run change.exe prior to running Chocolatey or not use terminal services.'; break
-        }
-        1645 {
-            $exitErrorMessage = 'Cannot install MSI when running from remote desktop (terminal services). This should automatically be handled in licensed editions. For open source editions, you may need to run change.exe prior to running Chocolatey or not use terminal services.'; break
-        }
-    }
-
-    if ($exitErrorMessage) {
-        $errorMessageSpecific = "Exit code indicates the following: $exitErrorMessage."
-        Write-Warning $exitErrorMessage
-    }
-    else {
-        $errorMessageSpecific = 'See log for possible error messages.'
-    }
-
-    if ($validExitCodes -notcontains $exitCode) {
-        Set-PowerShellExitCode $exitCode
-        throw "Running [`"$exeToRun`" $wrappedStatements] was not successful. Exit code was '$exitCode'. $($errorMessageSpecific)"
-    }
-    else {
-        $chocoSuccessCodes = @(0, 1605, 1614, 1641, 3010)
-        if ($chocoSuccessCodes -notcontains $exitCode) {
-            Write-Warning "Exit code '$exitCode' was considered valid by script, but not as a Chocolatey success code. Returning '0'."
-            $exitCode = 0
-        }
-    }
-
-    Write-Debug "Finishing '$($MyInvocation.InvocationName)'"
-
-    return $exitCode
+  return $exitCode
 }
 
 Set-Alias Start-ChocolateyProcess Start-ChocolateyProcessAsAdmin
@@ -397,8 +343,8 @@ Set-Alias Invoke-ChocolateyProcess Start-ChocolateyProcessAsAdmin
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBID/oa6qDKquPa
-# PyvE/CeWNxrn149wpnf3dmnexrEeq6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAwKXYkKTO0i7XN
+# czYNahL5klmQZ3d0XBusQK2SGbHGA6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -561,28 +507,28 @@ Set-Alias Invoke-ChocolateyProcess Start-ChocolateyProcessAsAdmin
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgpq556moZx5qpgHn/gEtd+8ebSNrzP1wNRFHSlqfr3oMwDQYJ
-# KoZIhvcNAQEBBQAEggEAUqhJet6hvvxztmKHwbTIpipwOLnFCqBoxvKo/PTtJaNU
-# NG88r+/Puo21hPwZOWrS4HaL5klHemjaUC59/qKPLH1cPjAG3bCwn7POpLPOdNE/
-# itcfekJ8HJW6+kRSTsQPm4YtD1DtJJ18XgZ95ZuAyuVXQZv3JzyAKj2CoJaoQfEU
-# iPqgWWI4/KAflD9MI9+qPeDJV01VjEcNAFs50kvFcLlbbNn5UgCs4exN4V0mSddM
-# Ow7Y7T2G98q+0lSFc+EgaXoZbQDNF4yJbpHPYWRo0eEHlbjIRSNB7HffyIR5OXvk
-# 8bpIebwqGJw8/e0PqBmGe/t/zOO0hLCnVXTupENQqKGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQg+S9AHNnTl0J/f0v7bSz1OM9T3EeyztXJn5U7fYJlfvswDQYJ
+# KoZIhvcNAQEBBQAEggEAUKZ+5F8yVXqZhnyTJIi7ZnHeN/LkTpCYZ9PY1fyirWFS
+# 7nfje02kynXjP+7hTh8OaAQ/C/DNPpuiHBqa3jq8yVZz/x7kmx2X2GsuymX1SVrz
+# vi12T1C7JjIPQ/xQ6nw1VzehIRsKvcv1XhTIuRjyaBfARjWfPVkFL94D6XH7L9s8
+# R3E2m+E0nLoHv1dyFix9b0vyAuuF7TjTIpy0ZlJiCdczi4Lk8f3wWTFn1xvlxF3C
+# S83MDadkcHCxsLQZtMyWpmOEw3qcysuvJFEAODhBZRrsEtYWVSewQY+Afm7HsnWh
+# GX9/MOWFDSfoMWD+L85zzHgLWwtaOhE+kgaWxGL/DaGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTlaMC8GCSqGSIb3DQEJBDEiBCA+sbFa0olh0SRQsmCalgDW
-# sj8fae04DUCwyonIRcMpGTANBgkqhkiG9w0BAQEFAASCAgDKHNY3fKTDRCJnk+JQ
-# kzNC/8JIQnCD+VxwMcqYB8xkR6bE3eYOLoDvWEAzQSxZTLcf/Sc+CsOiBdA5ckJU
-# mH3/iLF6SLivbV1M7n3h0eIjHjm+UTCBIfExy5QFNgeDoj3m3yvhzew/Vc6CbOHx
-# dVWaWiRieagN4giacS7ry0FymLQtH3CL0bEmgUKXi1RV3znXsuBYd3QpDaIEV09z
-# cOgakxtJ9s6m3uhZKsHTDy+vF5ukbBOFXmcorawRoxufvI2omg9SpN5L2clAa+AL
-# ZaUHOlalScdfxLMC7Vq7lh1zYhlHJOqcYkSsRcDJDpjotXD61wXVK1OC8E38PY2q
-# jGCWYawmxwhA24KcPdWFJ3KinYSEJ26CXqZCSr6MN+DQw6qw88Vs0OyJnDVtS2AB
-# B/Q6c0vrB9HO2LMESGq6T9G7MZth9IsIh/e+fLXqEeK2PaDbe5jSb6UkSYHgS8Ba
-# 2mZRQa+aHKDtbAp4sfKkYghK+bj5Me6c67bLepysFZsEE+btO0MtYa15cdqIysm/
-# FZLd9iYIxI+w0PO6w6uJQG923HXN58zlFE14ho9lVQFtsPDrGKVlzeagt3mT2a5M
-# O9/8MzbxDJmflBjMTTwRgob+WV27mw99g0gG1lDHaWaa3f7GlAu16A+XW9iQBQ4B
-# RM9c9nHWyf5k+6KrTXJuLzKXzg==
+# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCBTDLqp1I04ncDW9YLtrje1
+# 3eGYffT5HfR7kRdSShWwMDANBgkqhkiG9w0BAQEFAASCAgAzXK7JgMTX+FBb6dpv
+# 2hTSlxJ/7kdxh0mhIT+BTiQ0EuNSsHB1NR04xqy3XRHyHS6IHxI/4FEiIneYZNvR
+# V8V3LKKETzymi7ej++o4pe4fYVNfaIk2JipaGbCe0E4N3PJGgZJ9PI/9SuqjFTf1
+# 39HxIOu/p6TXjVO/FjY7CR5Ipb3Uxwv24wuyYgLog+RdWiX4ZFq1+Qf0QVb3LcKB
+# NVa+gv1QiV1ggNlnN4A3lRMbri2GqhQdapW6BlvMHsuPgefdDx/WDxpiuY7fhASQ
+# CpYNq6xMr4xxmBNN9TBAQFosI/NzGskXYdv0WJExzeuPNlAo5KrpkM7sVvEnxs9N
+# oebsRomdZDcYE95QQaD8twX2AJ7prdVAz0HSKGATdf0SH91vTw+GIz3yvJ6hVOKf
+# NW1553ZvYe+Gn3l+i586sk6gcIva+AhCjCQUhXlm8ve6G9wkGJHwmWqcvnEb/AO9
+# ajS75a+Ablbw1FGz4CLqNlSyn3griIjxNjMuSGlhDcl2Q953+aNt1rK7sXlbIrdb
+# 03Q+wyK8xoXBgiAtoQvnfOePFFgnsaVDtor5S/Eta4K0o/w5/s8GI5ethuE7Uy/I
+# IJMMw7nmRQgOTyC63NUbqIa/wtdHIDZ/s/kvWJ0Iidv43Yf6Gee8201EiB2bappk
+# XpklvQwhj1jq/L3Wcn17JXbUzA==
 # SIG # End signature block

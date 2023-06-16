@@ -14,7 +14,7 @@
 # limitations under the License.
 
 function Get-ToolsLocation {
-    <#
+<#
 .SYNOPSIS
 Gets the top level location for tools/software installed outside of
 package folders.
@@ -30,6 +30,10 @@ into the same directory as the tool. Having that all combined in the
 same package directory could get tricky.
 
 .NOTES
+This is the successor to the poorly named `Get-BinRoot`. Available as
+`Get-ToolsLocation` in 0.9.10+. The Alias `Get-BinRoot` will be removed
+in version 2.0.0.
+
 Sets an environment variable called `ChocolateyToolsLocation`. If the
 older `ChocolateyBinRoot` is set, it uses the value from that and
 removes the older variable.
@@ -41,59 +45,62 @@ None
 None
 #>
 
-    $invocation = $MyInvocation
-    Write-FunctionCallLogMessage -Invocation $invocation -Parameters $PSBoundParameters
+  $invocation = $MyInvocation
+  Write-FunctionCallLogMessage -Invocation $invocation -Parameters $PSBoundParameters
 
-    $toolsLocation = $env:ChocolateyToolsLocation
+  if ($invocation -ne $null -and $invocation.InvocationName -ne $null -and $invocation.InvocationName.ToLower() -eq 'get-binroot') {
+    Write-Warning "Get-BinRoot was deprecated in v1 and will be removed in v2. It has been replaced with Get-ToolsLocation (starting with v0.9.10), however many packages no longer require a special separate directory since package folders no longer have versions on them. Some do though and should continue to use Get-ToolsLocation."
+  }
 
-    if ($toolsLocation -eq $null) {
-        $binRoot = $env:ChocolateyBinRoot
-        $olderRoot = $env:chocolatey_bin_root
+  $toolsLocation = $env:ChocolateyToolsLocation
 
-        if ($binRoot -eq $null -and $olderRoot -eq $null) {
-            $toolsLocation = Join-Path $env:systemdrive 'tools'
+  if ($toolsLocation -eq $null) {
+    $binRoot = $env:ChocolateyBinRoot
+    $olderRoot = $env:chocolatey_bin_root
+
+    if ($binRoot -eq $null -and $olderRoot -eq $null) {
+      $toolsLocation = Join-Path $env:systemdrive 'tools'
+    } else {
+      if ($olderRoot -ne $null) {
+        if ($binRoot -eq $null) {
+          $binRoot = $olderRoot
         }
-        else {
-            if ($olderRoot -ne $null) {
-                if ($binRoot -eq $null) {
-                    $binRoot = $olderRoot
-                }
-                Set-EnvironmentVariable -Name "chocolatey_bin_root" -Value '' -Scope User -ErrorAction SilentlyContinue
-            }
+        Set-EnvironmentVariable -Name "chocolatey_bin_root" -Value '' -Scope User -ErrorAction SilentlyContinue
+      }
 
-            $toolsLocation = $binRoot
-            Set-EnvironmentVariable -Name "ChocolateyBinRoot" -Value '' -Scope User -ErrorAction SilentlyContinue
-        }
+      $toolsLocation = $binRoot
+      Set-EnvironmentVariable -Name "ChocolateyBinRoot" -Value '' -Scope User -ErrorAction SilentlyContinue
     }
+  }
 
-    # Add a drive letter if one doesn't exist
-    if (-not($toolsLocation -imatch "^\w:")) {
-        $toolsLocation = Join-Path $env:systemdrive $toolsLocation
+  # Add a drive letter if one doesn't exist
+  if (-not($toolsLocation -imatch "^\w:")) {
+    $toolsLocation = Join-Path $env:systemdrive $toolsLocation
+  }
+
+  if (-not($env:ChocolateyToolsLocation -eq $toolsLocation)) {
+    try {
+      Set-EnvironmentVariable -Name "ChocolateyToolsLocation" -Value $toolsLocation -Scope User
+    } catch {
+      if (Test-ProcessAdminRights) {
+        # sometimes User scope may not exist (such as with core)
+        Set-EnvironmentVariable -Name "ChocolateyToolsLocation" -Value $toolsLocation -Scope Machine
+      } else {
+        throw $_.Exception
+      }
     }
+  }
 
-    if (-not($env:ChocolateyToolsLocation -eq $toolsLocation)) {
-        try {
-            Set-EnvironmentVariable -Name "ChocolateyToolsLocation" -Value $toolsLocation -Scope User
-        }
-        catch {
-            if (Test-ProcessAdminRights) {
-                # sometimes User scope may not exist (such as with core)
-                Set-EnvironmentVariable -Name "ChocolateyToolsLocation" -Value $toolsLocation -Scope Machine
-            }
-            else {
-                throw $_.Exception
-            }
-        }
-    }
-
-    return $toolsLocation
+  return $toolsLocation
 }
+
+Set-Alias Get-BinRoot Get-ToolsLocation -Force -Scope Global -Option AllScope
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCD7YOB77SCF0ab5
-# 1YsRZvowpdaYfaxYyj/ER84/aPknf6CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBiDuccRS6JG/lN
+# //nKj2+JgxypZu/ChXEJ6fwRMsgGdaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -256,28 +263,28 @@ None
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQge66KnXxSa/jwrbwe84Is3iS2KYyo73cLATuPJoc84SEwDQYJ
-# KoZIhvcNAQEBBQAEggEACLJeL1xCf86HmOuBjfcoFfCHT8lwCkoxLm70YbL7JFa/
-# ODOPwxd2gr1Rxku0ebj0KTHSpNZioco2SAb6EDDiNbhPvRambkD+BloIk8/YlBvT
-# 48fvr4Eql8khxPCrVRZwItnKuy+NJvWob8uTn2XNItyjz0iX5vdZ/AyNQNeQbDYV
-# MDbR1hvtdlUY/3o4SBJNAjatO6sMpmfxtpXuQlTU9UqKvY+21EwD0evMoPOXDR/t
-# iyzQ1m2aS/b0CtuWUxE3EdlPABE1yHDcTYIMbcJxvhCulwTedshvLgpDp3TtHUWC
-# +j24KophZKUqBJrxDR2Iw+jFvHU/V2ztzffB6DfQtaGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQgvnplBByU15NUq+QbmTDbpwwBgtyhgztvOUx4ezFHQR8wDQYJ
+# KoZIhvcNAQEBBQAEggEAa3J//JpjrmpZD0gF8i+171OxpOYJGt7vslS8iDoQcWHT
+# MfH9/vLrzf91iMP9lAufD/GlD32lbiegb+SbGcSdGdWaaUFZ7wR+TQSX93AIcskc
+# myFdut2zG7DVLygE8o5H960eB2LaP64q5+9RnugmjZ+S7hI0JvyPZZfh5/FdsW9q
+# gwYfBiUsWRQkPk+fmKY5TuBHvFtKQ8OIpzhSkA+8pESOtFdWdwJ8thAxmgZ13a9V
+# 7+Ih7u/XZyq9xXu5+tybumey40Bqne8+O225AsinA/jyysAwp9PGDwbIc5OlLbq+
+# o3QfhPB+bdeCQ/fv05/X/LAZ/3+HdGIUl5Kp7UNoFqGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTZaMC8GCSqGSIb3DQEJBDEiBCDIAXMqp9LgEF44uxvFvFP4
-# SC/84Lpg/HcoEWphRXuNYDANBgkqhkiG9w0BAQEFAASCAgCEHHKEtx5vGJgWbU+f
-# Lk5KYdze5xCIe7WoAXbi319Hf7Zi+c/OAhc9V+3Bjl3SiV7h81AM7JPFNuWT7v2N
-# ASDvbyq7k8/tqKA3G+OCOCJwbeoNt7F0oQSYhEnL1OtCUWdMkBDB5STikjd1J6oo
-# LnrmIEepnK08QO4bOf2/6JUVR/r+FOyj2wSuR/w9pP30nUWcUR+T3Mt5SIf3nDXS
-# dFBERsuSbxIO90nNhYEBEsVYPdRev7BuUnDJSe02HPrFRzTsQQU+T+/skMzqZ76g
-# oS+O5uQjyg/piwws5tycncHT9k6+WgM4YJ+SMsFkCz94gRmSttt01mhvjm5Jkz+M
-# fbVlwkiarBoXXDXdEJd17QJMCQdN7oZ6LIKFM3AcfLrJ0X2hFVCDHcH/xtbv9t1f
-# eQKkdt4cpoxUVTPw0wrWvlD2soiKFhrP8ys4MFgPqjtqAnlVLmXFE7R6rMkAOT5E
-# 6sYMx21HKr7gKPRhtTQ5WKTJQUMsNdTBU/7aNA4mBA+wdkNWgnoE+IH5rr6XAwn3
-# OQx6r3XA1zvELEw4uRS5Z7/eheu5F6YLaXAR2qXvmONseL36S2xbJyRXqjIlUsA3
-# nwQXNgfW/J2fpehDqpXdLAlkwWmdEK45AlqYEmFnaALtQlkgltFuVKg6st7rganW
-# SdTpdnaI1lswpfnCdrFv7v2Uvg==
+# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCCj6XjbIoF+6fMMyaqUY3Yw
+# 8xq8YRzTscghguDG+bs9MDANBgkqhkiG9w0BAQEFAASCAgASCZwG3EN2iZNJ7QK6
+# rMkox7pDOndoWeYoE6j1Ynk+PHvGMSXoahhQfMo0q64Dq6pzlymXx05xPL5Bjyb0
+# ctbEvOaOp6tbDhg/k5oAkol6MYwhgWDfBZx6VvxJNYYaUxo+9pvqmFZ1yiyJKItA
+# PzOkbd2YSl4Zfni0fMuNDrPawloYOuiVvRQolk4DY5N85tmGHEuLq2lhDMj9b5ZS
+# 9ifqkuBxqcl8QQ8ND1ztuiHK4lbBlb07lgdRpetQECaIvDHJSRb46egpBgBE3bKE
+# S2DI/RrQLbJ22Uq6Sa0RAhVmAuVEnfvSwVaiCa1NtgG6fNPMRlWsFKuvYVmZEPOE
+# OJMK0syrcRW4yQZlYFJP1D+ipdswpCc+KyBjRe3j+GUW8xhVzs/ywsE7Wv7sMUl5
+# ibSGCd0+kz7UUg/ba93YUcoy/8zdunvaU9GusvQVXBIDo5Q6sDMsBXbIGfjqwIJZ
+# mc8CA34PGnJhZ7uli4u0ACuX2UKyZ/FGkPgexMSUNrVmLlnRo6Kl5qMIOetSXRgp
+# n+cWnI5AlUtK8D8i/0XZJl9XmUeQyufskgK7hQEqBaM+66jMK2Ubtfnq5iUE3hYU
+# ce4fs+RJLi2CUUXj0z31LeP5K1CxcNfcV2KVBuw3G1jRrfoM1r0vk61xDbhF/RT9
+# RxFJAxsb1ZgecxoXE/aZwinomA==
 # SIG # End signature block

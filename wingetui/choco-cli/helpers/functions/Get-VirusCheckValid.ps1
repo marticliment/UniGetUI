@@ -15,14 +15,14 @@
 # limitations under the License.
 
 function Get-VirusCheckValid {
-    <#
+<#
 .SYNOPSIS
 Used in Pro/Business editions. Runtime virus check against downloaded
 resources.
 
 .DESCRIPTION
 Run a runtime malware check against downloaded resources prior to
-allowing Chocolatey to execute a file. This is only available
+allowing Chocolatey to execute a file. This is available in 0.9.10+ only
 in Pro / Business editions.
 
 .NOTES
@@ -43,19 +43,19 @@ The full file path to the file to verify against anti-virus scanners.
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
 #>
-    param(
-        [parameter(Mandatory = $false, Position = 0)][string] $url,
-        [parameter(Mandatory = $false, Position = 1)][string] $file = '',
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-    )
-    Write-Debug "No runtime virus checking built into FOSS Chocolatey. Check out Pro/Business - https://chocolatey.org/compare"
+param(
+  [parameter(Mandatory=$false, Position=0)][string] $url,
+  [parameter(Mandatory=$false, Position=1)][string] $file = '',
+  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+)
+  Write-Debug "No runtime virus checking built into FOSS Chocolatey. Check out Pro/Business - https://chocolatey.org/compare"
 }
 
 # SIG # Begin signature block
 # MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDG1/ZcTQ8Fw0wX
-# xC0a6tre8EyI2lMxa3ectF95/hpiCKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAEZHOk54B5rN01
+# zvMdCMoD987fwsnnxxuW9bge8sRJ96CCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -218,28 +218,28 @@ Allows splatting with arguments that do not apply. Do not use directly.
 # ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
 # BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
 # DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgPYK/SPZpAs1gOZfw5LvM9TNMK7QM3labsr1i+Qk0/bQwDQYJ
-# KoZIhvcNAQEBBQAEggEAZ1+KBgC8/GvvGRwCJMLvjaQpXn0QrUu39ymDrPgf+84L
-# h4fu31u/xQieCHDLK2pAXHlApZ1lb5s8kIe/d20pODDKbYnrsRU3F8jdE49txhvd
-# HkWoSiNUkls1HvVn7YVC7ZVT/pLPQ2n6sxIUuLnHjKc9BHOKa+B/phxU7rLfu0qa
-# eFsjIJ08SoQwUsNTDkLRqOs/03DEPWuyPayCYJBKPs7oPTLoB0eaKk0AYDmWlDr7
-# /6vLllMBHfy7I6PLQdzoaF5KJbYbryszyiSigatNTpoium4v7svANM0kb6B98vrA
-# vzQzaahPQZt5dkr+a0y6AwUeCDqPyS9Mo6FK623MYqGCAyAwggMcBgkqhkiG9w0B
+# hkiG9w0BCQQxIgQg2cTVfcy3Yg8NxpAZyijM//CgXVnV7QoeX+skNiMryh4wDQYJ
+# KoZIhvcNAQEBBQAEggEAEfMW8srRN+aOVAAdzImg/DKiGPXYaSbWq5jrVmjMhF3p
+# 5D5nRSbWFtdRCjpBx7PF1TZjuQi59pWjB05ZIiNQ2qrNRYMEMWHxERJ7W9OLY6ly
+# ciOdivKe/2RlCA9JYc/WSNion1q5MXigOpETXOPyufknCwblAGbmWcCehCtDgmkm
+# C9WolWx+u5dLaK8FKTvmXBIjlAGKtcJJjeoADIfibnegRmEjOAweMJvrRqseSo/L
+# NjSSmrDvPbSCZBso8GsTA8/Qx59ntVmrBSrgZVrbBI2V5Dm8yqrWmOrrh5eA29eE
+# u8ejQ95T/K+BynonN+zTz90urK39MHod+8x0G2Xn+KGCAyAwggMcBgkqhkiG9w0B
 # CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
 # dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
 # QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
 # BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MzAxNjQ4NTZaMC8GCSqGSIb3DQEJBDEiBCAMVZ78F16QSpU/RdvxAyft
-# ed94LBKTH7taDA+o7IqZkTANBgkqhkiG9w0BAQEFAASCAgBLi3wSxnaaAyespttz
-# w/S8cC5dmf/F4rC90eVeW8PpKBC2xBODEkIB+ad3kj0043QYdUjc/Jij3VGqF2N/
-# 8ptZyH+d1lzvzSUNQne34p/4QUq1bBqUOZqH8zBV2WXI+AwOqn7Cq9TOEMqSM2uM
-# z5vtXnAxc1Xl/5cIh2QEWbvk7Rk9UPl2dLcHgsKi6/QDIiFoZMAbeGpSWTa1lPr3
-# DVuUIdKIGaTzaW4gjcRLlHw6Z3JzPvF7OCf3DZ+IBPon+aClA+ZsbSJv3BPXPYQp
-# RRDvE9EBb7kJgDcW5YpO7lB2LNXxmBw5w5V61nO3QHjxnspGBmy/UVVy0ZRrznOn
-# mtjrQYhAeIfM8CoTcsSsWUT9y4EhLj600AX9m2ROMPHAf/Ummv+uryMAAdbPB1la
-# Yw/y0ETdInludppmlkC+gmLyA2cqTD1W5gZKhkIQc5sQJSpTNqYOpR6acugVqth9
-# cZJ03Py00nWAKYorigt0nGswnZ2SfLJkuA7lONx3w/UU5PzFcoElEbKha3/HiZkZ
-# X24HOszLJw9gkAzFIaujiSIqQW1rlLpv7n5aC+uL1170rhPDvBMvBRZGYOsA9gnJ
-# iBZQK5WEngfHNwmwDf82FhgZ92nOJYO0eKquouzapotQB/l44BZRAjSVz74hj/+L
-# R4Gq7Yl66S7JSDLXv6Iqv4OjCg==
+# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCC3PGjyMRqt93nwtjOSstPM
+# dCGRaInCPqLo0x3tzbDEdzANBgkqhkiG9w0BAQEFAASCAgCuIjdYsXyI+hAsM0S6
+# +1IyeW7RKvGyY/zhErzCo3eJd8R+LJ4GLy1qcmnN8fEdzwpE+nMolowW6K76yPvK
+# tsdMBQi7u278K1vEn3DhhZpNggY0HaaYHhbBqgR2aHybevz6k5JufP17V0NZi3cT
+# dKaZjWH/limQNSQ6XLXT/9ZDF2VsTIjEeIsPcB7VLXdycX7IBVeVKwvsr6+w3Ufy
+# 5vru8uD8vxK3Ty/Jfu7I44b0mhLtmFcsH6RGwuvwjU/RQHJtW8sOmKJY71NSAxPt
+# herI86Vmb9t/W3ua0qMZGljlDyitRuV9g8CBFGa+ITR8l14qy4qvr42DI4wfRjij
+# b0LvSmq9CbarLUHtONxnT0j2Dd7tx059kJga0Gh5PiBIWsAUXyuHJLp5gdS17I1o
+# 8rJ7IzYH9mBDtGi0WjiZ3ipnBuhgI/RV1DaDpa9tFhsMSnRbnyb1MiUacSUdzv62
+# iPFAqVt7q2uGuNlZyJ7BnGAtYTFZwlsnv8XoCX9aytuC3ictp3tfdocihQY3bGT6
+# gkZpsCRco8OPby2OviDcYW30pUWF7dJEyXUOiUYpsVurlg+xP3RwTQdlNcn+a4mh
+# XNN6+WXZU1XDuddoTrEtV3dKU3oXlkgPwXcdo99w0EIWXS+bsaeTm9L5dqac3HvA
+# 42Qm1Wu2Gxh3JPGz3rVRh1Botg==
 # SIG # End signature block
