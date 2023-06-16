@@ -1168,7 +1168,7 @@ class UpdatesPreferences(BasicNavWidget):
         self.askNever = ClickableButtonLabelWithBiggerIcon(64)
         self.askNever.setText(f"""
             <h3>{_("Install updates automatically")}</h3>
-            {_("Check for updates regulary, and automatically install available ones.")}""")
+            {_("Check for updates regularly, and automatically install available ones.")}""")
         self.askNever.setIcon("shield_reload.png")
         self.askNever.clicked.connect(lambda: self.toggleClockMode("installupdates", shouldChangePrefs=True))
 
