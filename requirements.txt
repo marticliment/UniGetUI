@@ -1,6 +1,6 @@
 PySide6>=6.5.1.1
 win32mica>=1.9
-PyInstaller==5.11.0
+PyInstaller>=5.11.0
 pywin32
 Flask
 flask-cors
