@@ -10,6 +10,7 @@ contributors = [
   "MisterEvans78",
   "rumplin",
   "sklart",
+  "aaronliu0130",
   "vedantmgoyal2009",
   "candrapersada",
   "elliot-100",
@@ -27,7 +28,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1605
+    "contributions": 1611
   },
   {
     "name": "ppvnf",
@@ -68,6 +69,11 @@ contributorsInfo = [
     "name": "sklart",
     "link": "https://github.com/sklart",
     "contributions": 3
+  },
+  {
+    "name": "aaronliu0130",
+    "link": "https://github.com/aaronliu0130",
+    "contributions": 2
   },
   {
     "name": "vedantmgoyal2009",
