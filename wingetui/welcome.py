@@ -924,7 +924,7 @@ class LastSlide(BasicNavWidget):
         donate.setIcon("kofi.png")
         donate.setText(f"""
              <h3>{_("Suport the developer")}</h3>
-             {_("Developing is hard, and this aplication is free. But if you liked the application, you can always <b>buy me a coffee</b> :)")}""")
+             {_("Developing is hard, and this application is free. But if you liked the application, you can always <b>buy me a coffee</b> :)")}""")
         donate.setButtonText(_("Donate"))
         donate.clicked.connect(lambda: os.startfile("https://ko-fi.com/martinet101"))
 
