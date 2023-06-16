@@ -244,22 +244,35 @@ class DiscoverSoftwareSection(SoftwareSection):
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
         
     def finishFiltering(self, text: str) -> None:
-        if len(text) >= 3 or getSettings("AlwaysListPackages"):
+        if len(text) >= 2 or getSettings("AlwaysListPackages"):
             if text != self.LastQueryDynamicallyLoaded:
                 self.LastQueryDynamicallyLoaded = text
                 self.startLoadingDyamicPackages(text)
             super().finishFiltering(text)
             if len(self.showableItems) == 0 and self.isLoadingDynamic:
                 self.packageList.label.setText(_("Looking for packages..."))
+        elif len(text) == 0:
+            self.showableItems = []
+            for item in self.packageItems:
+                try:
+                    if item.checkState(0) == Qt.CheckState.Checked:
+                        self.showableItems.append(item)
+                except RuntimeError:
+                    print("🟠 RuntimeError on DiscoverSoftwareSection.finishFiltering")
+            self.addItemsToTreeWidget(reset = True)
+            self.packageList.scrollToItem(self.packageList.currentItem())
+            
+            if len(self.showableItems) == 0:
+                self.addItemsToTreeWidget(reset=True)
+                self.loadingProgressBar.hide()
+                self.packageList.label.show()
+                self.packageList.label.setText(_("Search for packages to start"))
         else:
             self.showableItems = []
             self.addItemsToTreeWidget(reset=True)
             self.loadingProgressBar.hide()
             self.packageList.label.show()
-            if len(text) == 0:
-                self.packageList.label.setText(_("Search for packages to start"))
-            else:
-                self.packageList.label.setText(_("Please type at least three characters"))
+            self.packageList.label.setText(_("Please type at least two characters"))
 
     def finishLoadingIfNeeded(self) -> None:
         itemCount = len(self.packageItems)
