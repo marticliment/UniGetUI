@@ -44,6 +44,7 @@ pushd dist\wingetuiBin\PySide6
 del opengl32sw.dll
 del Qt6Quick.dll
 del Qt6Qml.dll
+del Qt6Pdf.dll
 del Qt6OpenGL.dll
 del Qt6QmlModels.dll
 del Qt6Network.dll
