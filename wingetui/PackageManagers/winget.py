@@ -250,8 +250,10 @@ class WingetPackageManager(DynamicPackageManager):
             idPosition: int = 0
             versionPosition: int = 0
             newVerPosition: int = 0
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if not hasShownId:
                     if " Id " in line:
                         line = line.replace("\x08-\x08\\\x08|\x08 \r","")
@@ -305,6 +307,7 @@ class WingetPackageManager(DynamicPackageManager):
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -369,8 +372,10 @@ class WingetPackageManager(DynamicPackageManager):
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if not hasShownId:
                     if " Id " in line:
                         line = line.replace("\x08-\x08\\\x08|\x08 \r","")
@@ -426,6 +431,7 @@ class WingetPackageManager(DynamicPackageManager):
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -461,6 +467,8 @@ class WingetPackageManager(DynamicPackageManager):
                         if b"No package found matching input criteria." in line:
                             return details
                         output.append(str(line, encoding='utf-8', errors="ignore"))
+                        
+                globals.PackageManagerOutput += "\n--------"+"\n".join(output)
                         
                 for line in output:
                     if line[0] == " " and outputIsDescribing:

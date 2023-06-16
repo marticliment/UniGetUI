@@ -1925,7 +1925,6 @@ class OperationHistorySection(BaseLogSection):
     def loadData(self):
         print("🔵 Loading operation log...")
         self.textEdit.setPlainText(getSettingsValue("OperationHistory"))
-        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
 
 class LogSection(BaseLogSection):
 
@@ -1938,7 +1937,7 @@ class PackageManagerLogSection(BaseLogSection):
 
     def loadData(self):
         print("🔵 Reloading Package Manager logs...")
-        self.textEdit.setPlainText(stdout_buffer.getvalue())
+        self.textEdit.setPlainText(globals.PackageManagerOutput.replace("\n\n\n", ""))
         self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
 
 class PackageInfoPopupWindow(QWidget):

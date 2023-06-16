@@ -123,8 +123,10 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen([self.EXECUTABLE, "outdated"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     
                     if len(line.split("|")) >= 3:
@@ -140,6 +142,7 @@ class ChocoPackageManager(SamplePackageManager):
                     if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(name, id, version, newVersion, source, Choco))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -153,8 +156,10 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             packages: list[Package] = []
             p = subprocess.Popen([self.EXECUTABLE, "list"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     if len(line.split(" ")) >= 2:
                         name = formatPackageIdAsName(line.split(" ")[0])
@@ -164,6 +169,7 @@ class ChocoPackageManager(SamplePackageManager):
                         if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                             packages.append(Package(name, id, version, source, Choco))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)

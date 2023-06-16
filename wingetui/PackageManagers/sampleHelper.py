@@ -120,8 +120,10 @@ class SamplePackageManager(PackageManagerModule):
         try:
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen([self.EXECUTABLE, "outdated"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     
                     if len(line.split("|")) >= 3:
@@ -137,6 +139,7 @@ class SamplePackageManager(PackageManagerModule):
                     if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(self.NAME, id, version, newVersion, source, self))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -150,8 +153,10 @@ class SamplePackageManager(PackageManagerModule):
         try:
             packages: list[Package] = []
             p = subprocess.Popen([self.EXECUTABLE, "list", "--local-only"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     
                     if len(line.split("|")) >= 3:
@@ -166,6 +171,7 @@ class SamplePackageManager(PackageManagerModule):
                     if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(Package(self.NAME, id, version, source, self))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)

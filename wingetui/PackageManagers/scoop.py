@@ -130,8 +130,10 @@ class ScoopPackageManager(SamplePackageManager):
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} status", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             DashesPassed = False
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     if not DashesPassed:
                         if "----" in line:
@@ -147,6 +149,7 @@ class ScoopPackageManager(SamplePackageManager):
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -162,8 +165,10 @@ class ScoopPackageManager(SamplePackageManager):
             packages: list[Package] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             DashesPassed = False
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     if not DashesPassed:
                         if "----" in line:
@@ -179,6 +184,7 @@ class ScoopPackageManager(SamplePackageManager):
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)

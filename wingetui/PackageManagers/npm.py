@@ -76,8 +76,10 @@ class NPMPackageManager(DynamicLoadPackageManager):
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} outdated", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line:
                     if not DashesPassed:
                         if "Package" in line:
@@ -92,6 +94,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             source = self.NAME
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
+            globals.PackageManagerOutput += rawoutput
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             return packages
         except Exception as e:
@@ -107,8 +110,10 @@ class NPMPackageManager(DynamicLoadPackageManager):
             packages: list[Package] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             currentScope = ""
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line and len(line) > 4:
                     if line[1:3] in ("--", "──"):
                         line = line[3:]
@@ -123,9 +128,12 @@ class NPMPackageManager(DynamicLoadPackageManager):
                     elif "@" in line.split(" ")[0]:
                         currentScope = "@"+line.split(" ")[0][:-1]
                         print("🔵 NPM changed scope to", currentScope)
+            globals.PackageManagerOutput += rawoutput
             p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
                 if line and len(line) > 4:
                     if line[1:3] in ("--", "──"):
                         line = line[3:]
@@ -138,6 +146,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME+"@global", Npm))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
