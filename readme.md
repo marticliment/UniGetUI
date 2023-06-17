@@ -147,6 +147,8 @@ Last updated: Fri Jun 16 20:34:01 2023
 
 ![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_8.png)
 
+![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_9.png)
+
 
 # Frequently asked questions
 
