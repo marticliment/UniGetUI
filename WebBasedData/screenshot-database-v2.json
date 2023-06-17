@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14018,
-        "done": 7560
+        "total": 14019,
+        "done": 7566
     },
     "icons_and_screenshots": {
         "115": {
@@ -2748,19 +2748,19 @@
             "images": []
         },
         "brave": {
-            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
+            "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
             "images": []
         },
         "brave-beta": {
-            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
+            "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
             "images": []
         },
         "brave-dev": {
-            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
+            "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
             "images": []
         },
         "brave-nightly": {
-            "icon": "https://img.icons8.com/color/48/null/brave-web-browser.png",
+            "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
             "images": []
         },
         "sizer": {
@@ -4796,7 +4796,7 @@
             "images": []
         },
         "tabby": {
-            "icon": "https://community.chocolatey.org/content/packageimages/tabby.1.0.189.png",
+            "icon": "https://images2.imgbox.com/2a/52/v1amOUOt_o.png",
             "images": []
         },
         "elm": {
@@ -6692,8 +6692,10 @@
             "images": []
         },
         "insync": {
-            "icon": "https://community.chocolatey.org/content/packageimages/InSync.3.7.14.50440.png",
-            "images": []
+            "icon": "\"https://images2.imgbox.com/d4/d8/0gMfRUTK_o.png",
+            "images": [
+                "https://i.ibb.co/8D4W4Lv/Insync-Vy-QWYJC469.png\""
+            ]
         },
         "inteldriverandsupportassista\u2026": {
             "icon": "",
@@ -9278,7 +9280,7 @@
             ]
         },
         "visualstudiocode-insiders": {
-            "icon": "",
+            "icon": "https://images2.imgbox.com/6f/c2/Rqjtunak_o.png",
             "images": [
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118"
             ]
@@ -20942,12 +20944,16 @@
             "images": []
         },
         "foxit-pdf-reader": {
-            "icon": "",
-            "images": []
+            "icon": "https://images2.imgbox.com/20/60/DRe5tHGN_o.png",
+            "images": [
+                "https://i.ibb.co/WtYDb60/NJ1-E9-Pf7d-T.png"
+            ]
         },
         "foxit-reader": {
-            "icon": "",
-            "images": []
+            "icon": "https://images2.imgbox.com/20/60/DRe5tHGN_o.png",
+            "images": [
+                "https://i.ibb.co/WtYDb60/NJ1-E9-Pf7d-T.png"
+            ]
         },
         "fq": {
             "icon": "",
@@ -46850,7 +46856,7 @@
             "images": []
         },
         "office365homepremium": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Office365HomePremium.2016.20160728.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Microsoft_365_%282022%29.svg/931px-Microsoft_365_%282022%29.svg.png",
             "images": []
         },
         "nant": {
@@ -48682,6 +48688,10 @@
                 "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/example.png",
                 "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/light.png"
             ]
+        },
+        "binggpt": {
+            "icon": "https://images2.imgbox.com/9a/db/4veBjoAH_o.png",
+            "images": []
         }
     }
 }
