@@ -5,12 +5,12 @@
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
 
-The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/) and [Chocolatey](https://chocolatey.org/).  
+The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/) and [Npm](https://www.npmjs.com/)
 With this app, you'll be able to easily download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
 **This is WingetUI's official repository. If you are searching for WingetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)**
 
-**Disclaimer:** This project has no connection with Winget, Chocolatey or Scoop — it's completely unofficial. Be aware of the fact that neither Microsoft, Chocolatey, Scoop nor the creators of WingetUI are responsible for the downloaded apps.
+**Disclaimer:** This project has no connection with none of the supported package managers — it's completely unofficial. Be aware of the fact that I, the developer of WingetUI, am NOT responsible for the downloaded apps.
 
 [![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
 <!--[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Temporarily%20Paused%20(I%20have%20final%20exams)-yellow?style=for-the-badge)]()-->
@@ -48,7 +48,7 @@ scoop bucket add extras
 scoop install extras/wingetui
 ```
 
-_Available soon on Chocolatey._
+_Available soon on Chocolatey (hopefully)._
 
 ## Update WingetUI
 
