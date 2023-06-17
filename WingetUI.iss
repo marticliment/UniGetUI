@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "2.0.0"
+#define MyAppVersion "2.0.1"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=2.0.0.0
+VersionInfoVersion=2.0.1.0
 DefaultDirName="{autopf}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -142,6 +142,20 @@ begin
     begin
       Result := True;
       Exit;
+    end;
+end;
+
+var CustomExitCode: integer;
+
+procedure ExitProcess(exitCode:integer);
+    external 'ExitProcess@kernel32.dll stdcall';
+
+procedure DeinitializeSetup();
+begin
+    if (CustomExitCode <> 0) then
+    begin
+        DelTree(ExpandConstant('{tmp}'), True, True, True);
+        ExitProcess(0);
     end;
 end;
 
