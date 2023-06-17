@@ -599,7 +599,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
-        Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options)
+        Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
