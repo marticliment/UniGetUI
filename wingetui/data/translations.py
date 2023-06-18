@@ -9,19 +9,13 @@ untranslatedPercentage = {
   "de": "97%",
   "es": "94%",
   "fa": "77%",
-  "fr": "97%",
   "hi": "95%",
   "hr": "95%",
-  "hu": "97%",
   "id": "97%",
   "it": "97%",
   "ja": "72%",
-  "ko": "84%",
+  "ko": "85%",
   "nb": "86%",
-  "nl": "97%",
-  "pl": "97%",
-  "pt_BR": "97%",
-  "pt_PT": "97%",
   "ru": "95%",
   "sl": "97%",
   "sr": "11%",
@@ -252,7 +246,7 @@ languageCredits = {
     },
     {
       "name": "RegularGvy13",
-      "link": ""
+      "link": "https://github.com/RegularGvy13"
     }
   ],
   "pt_BR": [
