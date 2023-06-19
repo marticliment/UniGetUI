@@ -13,7 +13,7 @@ from .sampleHelper import *
 
 
 class ChocoPackageManager(SamplePackageManager):
-    
+
     if getSettings("UseSystemChocolatey"):
         EXECUTABLE = "choco.exe"
     else:
@@ -38,10 +38,10 @@ class ChocoPackageManager(SamplePackageManager):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = False
-    
+
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
-        
+
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
 
@@ -84,7 +84,7 @@ class ChocoPackageManager(SamplePackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def cacheAvailablePackages(self) -> None:
         """
         INTERNAL METHOD
@@ -101,7 +101,7 @@ class ChocoPackageManager(SamplePackageManager):
                         name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
-                        
+
                         if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                             ContentsToCache += f"{name},{id},{version}\n"
             AlreadyCachedPackages = ""
@@ -120,7 +120,7 @@ class ChocoPackageManager(SamplePackageManager):
             print(f"🟢 {self.NAME} packages cached successfuly")
         except Exception as e:
             report(e)
-            
+
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
@@ -134,7 +134,7 @@ class ChocoPackageManager(SamplePackageManager):
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
                 if line:
-                    
+
                     if len(line.split("|")) >= 3:
                         #Replace these lines with the parse mechanism
                         name = formatPackageIdAsName(line.split("|")[0])
@@ -144,7 +144,7 @@ class ChocoPackageManager(SamplePackageManager):
                         source = self.NAME
                     else:
                         continue
-                    
+
                     if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(name, id, version, newVersion, source, Choco))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
@@ -180,7 +180,7 @@ class ChocoPackageManager(SamplePackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
@@ -209,10 +209,10 @@ class ChocoPackageManager(SamplePackageManager):
 
                         for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", details.Description):
                             details.Description = details.Description.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[0][1:-1]}">{match.split("]")[0][1:]}</a>')
-                        
+
                         for match in re.findall("#{2,4}[^\>\<]*<br>", details.Description):
                             details.Description = details.Description.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
-                        
+
                 if isReadingReleaseNotes:
                     if line.startswith("  "):
                         details.ReleaseNotes += "<br>"+line
@@ -223,7 +223,7 @@ class ChocoPackageManager(SamplePackageManager):
 
                         for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", details.ReleaseNotes):
                             details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[0][1:-1]}">{match.split("]")[0][1:]}</a>')
-                        
+
                         for match in re.findall("#{2,4}[^\>\<]*<br>", details.ReleaseNotes):
                             details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
                         if details.ReleaseNotes != "":
@@ -265,12 +265,12 @@ class ChocoPackageManager(SamplePackageManager):
         except Exception as e:
             report(e)
             return details
-    
+
     def getIcon(self, source: str) -> QIcon:
         if not self.icon:
             self.icon = QIcon(getMedia("choco"))
         return self.icon
-    
+
     def getParameters(self, options: InstallationOptions) -> list[str]:
         Parameters: list[str] = []
         if options.Architecture:
@@ -294,7 +294,7 @@ class ChocoPackageManager(SamplePackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ.copy())
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
-        
+
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         Command = [self.EXECUTABLE, "upgrade", package.Id, "-y"] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -357,14 +357,14 @@ class ChocoPackageManager(SamplePackageManager):
         elif "Run as administrator" in output or "The requested operation requires elevation" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
-        
+
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
         globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
-        
+
     def updateSources(self, signal: Signal = None) -> None:
         pass # Handled by the package manager, no need to manually reload
         if signal:

@@ -26,7 +26,7 @@ for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./compon
         bytes = f.read() # read entire file as bytes
         readable_hash = hashlib.sha256(bytes).hexdigest()
         HASHES[file] = readable_hash
-        
+
 print(f"Elapsed {time.time()-time0} seconds")
 
 parsed_dict = "HASHES: dict[str:str] = " + json.dumps(HASHES, indent=4)

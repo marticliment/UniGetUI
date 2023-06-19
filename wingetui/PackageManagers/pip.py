@@ -33,7 +33,7 @@ class PipPackageManager(DynamicLoadPackageManager):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
-    
+
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
@@ -79,7 +79,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         except Exception as e:
             report(e)
             return []
-           
+
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
@@ -142,7 +142,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
@@ -155,11 +155,11 @@ class PipPackageManager(DynamicLoadPackageManager):
             details.InstallerURL = f"https://pypi.org/project/{package.Id}/#files"
             details.Scopes = [_("User")]
             details.InstallerType = "Pip"
-        
+
             rawcontent = urlopen(f"https://pypi.org/pypi/{package.Id}/json").read().decode("utf-8", errors="ignore")
             basejson = json.loads(rawcontent)
             content = basejson["info"]
-            
+
             if "author" in content:
                 details.Author = content["author"]
             if "home_page" in content:
@@ -181,9 +181,9 @@ class PipPackageManager(DynamicLoadPackageManager):
             if "maintainer" in content:
                 if content["maintainer"]:
                     details.Publisher = content["maintainer"]
-            
+
             url = basejson["urls"][0]
-            
+
             if "upload_time" in url:
                 details.UpdateDate = url["upload_time"]
             if "url" in url:
@@ -194,8 +194,8 @@ class PipPackageManager(DynamicLoadPackageManager):
             if "digests" in url:
                 if "sha256" in url["digests"]:
                     details.InstallerHash = url["digests"]["sha256"]
-                
-                        
+
+
             p = subprocess.Popen(f"{self.EXECUTABLE} index versions {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
             while p.poll() is None:
@@ -206,7 +206,7 @@ class PipPackageManager(DynamicLoadPackageManager):
                 if "Available versions:" in line:
                     details.Versions = [v.strip() for v in line.replace("Available versions:", "").split(",")]
                     break
-                    
+
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:
@@ -253,7 +253,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
-        
+
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
@@ -271,7 +271,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         if "--user" in output:
             outputCode = RETURNCODE_NEEDS_PIP_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
-        
+
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["uninstall", package.Id, "-y"] + self.getParameters(options, removeprogressbar=False)
         if options.RunAsAdministrator:
@@ -280,7 +280,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
-        
+
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         outputCode = 1
         output = ""
@@ -295,9 +295,9 @@ class PipPackageManager(DynamicLoadPackageManager):
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
-                outputCode = RETURNCODE_FAILED   
+                outputCode = RETURNCODE_FAILED
         if "--user" in output:
-            outputCode = RETURNCODE_NEEDS_PIP_ELEVATION     
+            outputCode = RETURNCODE_NEEDS_PIP_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
@@ -306,7 +306,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[0]
         if signal:
             signal.emit()
-        
+
     def updateSources(self, signal: Signal = None) -> None:
         pass # Handled by the package manager, no need to manually reload
         if signal:

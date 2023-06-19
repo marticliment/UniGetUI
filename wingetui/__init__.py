@@ -41,7 +41,7 @@ def CheckProgramIntegrity():
 
     root_dir = os.path.dirname(__file__)
     os.chdir(root_dir)
-    
+
     for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./components/**.exe") + glob.glob("./**/**.pyc") + glob.glob("./**.pyc"):
         if file in HASHES.keys():
             with open(file,"rb") as f:
@@ -53,9 +53,9 @@ def CheckProgramIntegrity():
                         raise ModuleNotFoundError(f"The file {file} has an invalid hash, meaning that it has been likely modified. Please reinstall WingetUI")
         else:
             print(f"File {file} not in hashing list")
-            
+
     print("Hash check passed, coninuing execution...")
-            
+
 
 
 try:
@@ -97,7 +97,7 @@ try:
             running = True
             finishedPreloadingStep: Signal = Signal()
             loadStatus: int = 0
-            
+
             def __init__(self):
                 try:
                     super().__init__(sys.argv)
@@ -126,33 +126,33 @@ try:
                     self.loadingText.setStyleSheet(f"font-family: \"{globals.textfont}\"; color: {'white' if isDark() else 'black'};font-size: 12px;")
                     self.popup.layout().addWidget(self.loadingText)
                     ApplyMenuBlur(self.popup.winId().__int__(), self.popup)
-                    
+
                     skipButton = QPushButton(_("Stuck here? Skip initialization"), self.popup)
                     skipButton.setFlat(True)
                     skipButton.move(280, 350)
                     skipButton.setStyleSheet(f"color: {'white' if isDark() else 'black'}; border-radius: 4px; background-color: rgba({'255, 255, 255, 7%' if isDark() else '0, 0, 0, 7%'}); border: 1px solid rgba({'255, 255, 255, 10%' if isDark() else '0, 0, 0, 10%'})")
                     skipButton.resize(300, 30)
                     skipButton.hide()
-                    
+
                     def forceContinue():
                         self.loadStatus = 1000 # Override loading status
-                    
+
                     skipButton.clicked.connect(forceContinue)
-                    
-                    
+
+
                     self.textEnterAnim = QVariantAnimation(self)
                     self.textEnterAnim.setStartValue(0)
                     self.textEnterAnim.setEndValue(300)
                     self.textEnterAnim.setEasingCurve(QEasingCurve.Type.OutQuart)
                     self.textEnterAnim.valueChanged.connect(lambda v: text.setFixedWidth(v))
                     self.textEnterAnim.setDuration(600)
-                    
+
                     op1 = QGraphicsOpacityEffect()
                     op1.setOpacity(0)
                     self.loadingText.setGraphicsEffect(op1)
                     op2 = QGraphicsOpacityEffect()
                     op2.setOpacity(0)
-                    
+
                     descriptionEnter = QVariantAnimation(self)
                     descriptionEnter.setStartValue(0)
                     descriptionEnter.setEndValue(100)
@@ -160,14 +160,14 @@ try:
                     descriptionEnter.valueChanged.connect(lambda v: (op1.setOpacity(v/100), op2.setOpacity(v/100)))
                     descriptionEnter.setDuration(100)
                     self.textEnterAnim.finished.connect(descriptionEnter.start)
-                    
-                    
+
+
                     self.showAnimation = QPropertyAnimation(self.popup, b"windowOpacity")
                     self.showAnimation.setEasingCurve(QEasingCurve.Type.OutCubic)
                     self.showAnimation.setStartValue(0)
                     self.showAnimation.setEndValue(1)
                     self.showAnimation.setDuration(250)
-                    
+
                     self.loadingProgressBar = QProgressBar(self.popup)
                     self.loadingProgressBar.setGraphicsEffect(op2)
                     self.loadingProgressBar.setStyleSheet(f"""QProgressBar {{border-radius: 2px;height: 4px;border: 0px;background-color: transparent;}}QProgressBar::chunk {{background-color: rgb({'18, 164, 199' if isDark() else '11, 100, 122'});border-radius: 2px;}}""")
@@ -179,20 +179,20 @@ try:
                     self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
                     self.startAnim.connect(lambda anim: anim.start())
                     self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-                
+
                     self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
                     self.leftSlow.setStartValue(0)
                     self.leftSlow.setEndValue(1000)
                     self.leftSlow.setDuration(700)
                     self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
                     descriptionEnter.finished.connect(self.leftSlow.start)
-                    
+
                     self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
                     self.rightSlow.setStartValue(1000)
                     self.rightSlow.setEndValue(0)
                     self.rightSlow.setDuration(700)
                     self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-                    
+
                     self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
                     self.leftFast.setStartValue(0)
                     self.leftFast.setEndValue(1000)
@@ -204,7 +204,7 @@ try:
                     self.rightFast.setEndValue(0)
                     self.rightFast.setDuration(300)
                     self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-                    
+
                     if not self.isDaemon:
                         self.textEnterAnim.start()
                         self.showAnimation.start()
@@ -213,9 +213,9 @@ try:
                     if not getSettings("AutoDisabledScoopCacheRemoval"):
                         getSettings("EnableScoopCleanup", False)
                         getSettings("AutoDisabledScoopCacheRemoval", True)
-                        
+
                     print("🔵 Starting main application...")
-                    os.chdir(os.path.expanduser("~"))                    
+                    os.chdir(os.path.expanduser("~"))
                     self.kill.connect(lambda: (self.popup.hide(), sys.exit(0)))
                     self.callInMain.connect(lambda f: f())
                     def increaseStep():
@@ -239,13 +239,13 @@ try:
             def loadPreUIComponents(self):
                 try:
                     self.loadStatus = 0
-                    
+
                     # Preparation threads
                     Thread(target=self.checkForRunningInstances, daemon=True).start()
                     Thread(target=self.downloadPackagesMetadata, daemon=True).start()
                     if not getSettings("DisableApi"):
                         Thread(target=runBackendApi, args=(self.showProgram,), daemon=True).start()
-                        
+
                     for manager in PackageManagersList:
                         if manager.isEnabled():
                             Thread(target=manager.detectManager, args=(self.finishedPreloadingStep,), daemon=True).start()
@@ -253,7 +253,7 @@ try:
                             self.loadStatus += 1
                             globals.componentStatus[f"{manager.NAME}Found"] = False
                             globals.componentStatus[f"{manager.NAME}Version"] = _("{0} is disabled").format(manager.NAME)
-                            
+
                     if not getSettings("DisableUpdateIndexes"):
                         for manager in PackageManagersList:
                             if manager.isEnabled():
@@ -262,14 +262,14 @@ try:
                                 self.loadStatus += 1
                     else:
                         self.loadStatus += len(PackageManagersList)
-                            
+
                     Thread(target=self.detectSudo, daemon=True).start()
                     Thread(target=self.removeScoopCache, daemon=True).start()
 
                     # Daemon threads
                     Thread(target=self.instanceThread, daemon=True).start()
                     Thread(target=self.updateIfPossible, daemon=True).start()
-                    
+
                     while self.loadStatus < 3 + len(PackageManagersList)*2:
                         time.sleep(0.01)
                 except Exception as e:
@@ -342,7 +342,7 @@ try:
                 self.loadStatus += 1
 
             def downloadPackagesMetadata(self):
-                try: 
+                try:
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
                     data = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json").read()
                     try:
@@ -378,42 +378,42 @@ try:
                     self.discoverPackages = QAction(_("Discover Packages"), menu)
                     menu.addAction(self.discoverPackages)
                     menu.addSeparator()
-                    
+
                     self.updatePackages = QAction(_("Software Updates"), menu)
                     globals.updatesAction = self.updatePackages
                     menu.addAction(self.updatePackages)
-                    
+
                     self.updatesMenu = menu.addMenu(_("0 updates found"))
                     self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
                     self.updatesMenu.setParent(menu)
                     globals.trayMenuUpdatesList = self.updatesMenu
                     menu.addMenu(self.updatesMenu)
-                    
+
                     globals.updatesHeader = QAction(f"{_('App Name')}  \t{_('Installed Version')} \t → \t {_('New version')}", menu)
                     globals.updatesHeader.setEnabled(False)
                     globals.updatesHeader.setIcon(QIcon(getMedia("version")))
                     self.updatesMenu.addAction(globals.updatesHeader)
-                    
+
                     self.uaAction = QAction(_("Update all"), menu)
                     self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
                     menu.addAction(self.uaAction)
                     menu.addSeparator()
-                    
+
                     self.uninstallPackages = QAction(_("Installed Packages"),menu)
                     menu.addAction(self.uninstallPackages)
-                    
+
                     self.installedMenu = menu.addMenu(_("0 packages found"))
                     self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
                     self.installedMenu.setParent(menu)
                     globals.trayMenuInstalledList = self.installedMenu
                     menu.addMenu(self.installedMenu)
                     menu.addSeparator()
-                    
+
                     globals.installedHeader = QAction(f"{_('App Name')}\t{_('Installed Version')}", menu)
                     globals.installedHeader.setIcon(QIcon(getMedia("version")))
                     globals.installedHeader.setEnabled(False)
                     self.installedMenu.addAction(globals.installedHeader)
-                    
+
                     self.infoAction = QAction(_("About WingetUI version {0}").format(versionName), menu)
                     self.infoAction.setIcon(QIcon(getMedia("info")))
                     menu.addAction(self.infoAction)
@@ -424,25 +424,25 @@ try:
 
                     self.settings = QAction(_("WingetUI Settings"), menu)
                     menu.addAction(self.settings)
-                    
+
 
                     self.quitAction = QAction(menu)
                     self.quitAction.setIcon(QIcon(getMedia("menu_close")))
                     self.quitAction.setText(_("Quit"))
                     self.quitAction.triggered.connect(lambda: self.quit())
                     menu.addAction(self.quitAction)
-                    
+
                     self.updatePackages.setIcon(QIcon(getMedia("alert_laptop")))
                     self.discoverPackages.setIcon(QIcon(getMedia("desktop_download")))
                     self.settings.setIcon(QIcon(getMedia("settings_gear")))
                     self.uninstallPackages.setIcon(QIcon(getMedia("workstation")))
-                    
+
                     def showWindow():
                         # This function will be defined when the mainWindow gets defined
                         pass
-                    
+
                     def showMenu():
-                        pos = QCursor.pos()   
+                        pos = QCursor.pos()
                         s = self.screenAt(pos)
                         if isW11 and (pos.y()+48) > (s.geometry().y() + s.geometry().height()):
                                 menu.move(pos)
@@ -455,7 +455,7 @@ try:
                         else:
                             menu.exec(pos)
                     self.trayIcon.activated.connect(lambda r: (applyMenuStyle(), showMenu()) if r == QSystemTrayIcon.Context else showWindow())
-                    
+
                     self.trayIcon.messageClicked.connect(lambda: showWindow())
                     self.installedMenu.aboutToShow.connect(lambda: applyMenuStyle())
                     self.updatesMenu.aboutToShow.connect(lambda: applyMenuStyle())
@@ -498,7 +498,7 @@ try:
                             if not getSettings("AlreadyWarnedAboutAdmin"):
                                 self.window.warnAboutAdmin()
                                 setSettings("AlreadyWarnedAboutAdmin", True)
-                                
+
                 except Exception as e:
                     import platform
                     import traceback
@@ -542,7 +542,7 @@ try:
                 globals.installedHeader.setIcon(QIcon(getMedia("version")))
                 self.quitAction.setIcon(QIcon(getMedia("menu_close")))
                 self.showAction.setIcon(QIcon(getMedia("menu_show")))
-                globals.themeChanged = True 
+                globals.themeChanged = True
                 globals.mainWindow.setAttribute(Qt.WA_DeleteOnClose, True)
                 globals.mainWindow.close()
                 globals.mainWindow.deleteLater()
@@ -613,7 +613,7 @@ try:
                                 while not globals.canUpdate:
                                     time.sleep(0.1)
                                 if not getSettings("DisableAutoUpdateWingetUI"):
-                                    subprocess.run('start /B "" "{0}" /silent'.format(filename), shell=True)
+                                    subprocess.run(f'start /B "" "{filename}" /silent', shell=True)
                             else:
                                 print("🟠 Hash not ok")
                                 print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
@@ -672,7 +672,7 @@ try:
             padding-left: 10px;
             border-radius: 4px;
             margin: 2px;
-        }} 
+        }}
         QMenu::item:disabled{{
             background: transparent;
             height: 30px;
@@ -689,7 +689,7 @@ try:
             padding-right: 10px;
             padding-left: 10px;
             border-radius: 4px;
-        }}  
+        }}
         QMenu::item:selected:disabled{{
             background: transparent;
             height: 30px;
@@ -1357,7 +1357,7 @@ try:
             padding-right: 10px;
             padding-left: 10px;
             border-radius: 4px;
-        }}  
+        }}
         QMenu::item:disabled{{
             background: transparent;
             height: 30px;
@@ -1428,7 +1428,7 @@ try:
             padding-right: 10px;
             padding-left: 10px;
             border-radius: 4px;
-        }}  
+        }}
         QMenu::item:selected:disabled{{
             background: transparent;
             height: 30px;
@@ -2102,7 +2102,7 @@ try:
             padding-right: 20px;
             padding-left: 0px;
             border-radius: 4px;
-        }}   
+        }}
         QMenu::item:selected:disabled{{
             background: transparent;
             height: 30px;
@@ -2111,9 +2111,9 @@ try:
             padding-right: 20px;
             padding-left: 0px;
             border-radius: 4px;
-        }}           
+        }}    
         """
-        
+
         if "--daemon" in sys.argv:
             if getSettings("DisableAutostart"):
                 sys.exit(0)

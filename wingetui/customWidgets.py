@@ -141,11 +141,11 @@ class CommandLineEdit(CustomLineEdit):
                     background-color: rgba(225, 225, 225, 100%);
                 }
                 """)
-            
+
     def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
         arg__1.ignore()
         return False
-        
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.copyButton.move(self.width()-46, 4)
         return super().resizeEvent(event)
@@ -211,19 +211,19 @@ class CustomMessageBox(QMainWindow):
         self.buttonLayout = QHBoxLayout()
         self.okButton = QPushButton(self)
         self.okButton.setFixedHeight(30)
-        
+
         def returnTrue():
             if self.isQuestion:
                 self.qanswer = 1
                 self.close()
             globals.tray_is_error = False
             update_tray_icon()
-                
+
         def returnFalse():
             if self.isQuestion:
                 self.close()
                 self.qanswer = 0
-                
+
         self.okButton.clicked.connect(returnTrue)
         self.okButton.clicked.connect(self.delete)
         try:
@@ -249,7 +249,7 @@ class CustomMessageBox(QMainWindow):
         l.setContentsMargins(10, 0, 10, 0)
         bglayout.addLayout(l, stretch=1)
         bglayout.addSpacing(10)
-        
+
         self.bgw2 = QWidget()
         self.bgw2.setObjectName("btnBackground")
         self.bgw2.setMinimumHeight(70)
@@ -291,7 +291,7 @@ class CustomMessageBox(QMainWindow):
                 self.setFixedHeight(self.fHeight)
                 self.setMinimumHeight(self.fHeight)
                 self.setMaximumHeight(self.fHeight+1)
-            
+
     def paintEvent(self, event: QPaintEvent) -> None:
         if not self.moreInfoTextArea.isVisible():
             self.bgw1.setFixedHeight(self.bgw1.sizeHint().height())
@@ -355,7 +355,7 @@ class CustomMessageBox(QMainWindow):
         else:
             self.show()
             globals.app.beep()
-            
+
     def askQuestion(self, data: dict):
         self.buttonLayout.setDirection(QBoxLayout.Direction.RightToLeft)
         self.isQuestion = True
@@ -383,7 +383,7 @@ class CustomMessageBox(QMainWindow):
         while self.qanswer == -1:
             time.sleep(0.05)
         return True if self.qanswer == 1 else False
-    
+
     def aq(self, questionData: dict):
         self.setWindowTitle(questionData["titlebarTitle"])
         self.titleLabel.setText(questionData["mainTitle"])
@@ -420,8 +420,8 @@ class CustomMessageBox(QMainWindow):
         else:
             self.show()
             globals.app.beep()
-            
-            
+
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = True
         self.oldpos = QCursor.pos()-self.window().pos()
@@ -432,11 +432,11 @@ class CustomMessageBox(QMainWindow):
             self.move(QCursor.pos()-self.oldpos)#(self.window().pos()+(QCursor.pos()-self.oldpos))
             self.oldpos = self.oldpos = QCursor.pos()-self.window().pos()
         return super().mouseMoveEvent(event)
-    
+
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = False
         return super().mouseReleaseEvent(event)
-   
+
 class QAnnouncements(QLabel):
     callInMain = Signal(object)
 
@@ -570,10 +570,10 @@ class WelcomeWizardPackageManager(QWidget):
             self.setStyleSheet("""#bgwidget{background-color: rgba(255, 255, 255, 5%); border: 1px solid #101010; padding: 8px; border-radius: 8px;}""")
         else:
             self.setStyleSheet("""#bgwidget{background-color: rgba(255, 255, 255, 50%); border: 1px solid #eeeeee; padding: 8px; border-radius: 8px;}""")
-        
+
     def setChecked(self, v: bool) -> None:
         self.checkbox.setChecked(v)
-        
+
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
 
@@ -633,7 +633,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.localIcon = QIcon(getMedia("localpc"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
 
-        
+
     def loadItems(self):
         self.treewidget.clear()
         for id in getSettingsValue("BlacklistedUpdates").split(","):
@@ -645,7 +645,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         for id, version, store in GetIgnoredPackageUpdates_SpecificVersion():
             if id and store:
                 self.addItem(id, version, store.capitalize(), BlacklistMethod.SpecificVersion)
-        
+
     def addItem(self, id: str, version: str, store: str, blacklistMethod: BlacklistMethod):
         item = TreeWidgetItemWithQAction()
         item.setText(0, id)
@@ -672,26 +672,26 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         match blacklistMethod:
             case BlacklistMethod.Legacy:
                 removeButton.clicked.connect(lambda: self.unBlackistLegacy(id, item))
-                
+
             case BlacklistMethod.SpecificVersion:
                 removeButton.clicked.connect(lambda: self.unBlackistSingleVersion(id, version, store, item))
-                
+
             case BlacklistMethod.AllVersions:
                 removeButton.clicked.connect(lambda: self.unBlackistAllVersions(id, store, item))
-                
+
         self.treewidget.setItemWidget(item, 3, removeButton)
-        
+
     def resetAll(self):
         for i in range(self.treewidget.topLevelItemCount()):
             self.treewidget.itemWidget(self.treewidget.topLevelItem(0), 3).click()
         self.close()
         globals.updates.startLoadingPackages(force=True)
-        
+
     def unBlackistLegacy(self, id: str, item: TreeWidgetItemWithQAction):
         setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
         del i
-        
+
     def unBlackistAllVersions(self, id: str, store: str, item: TreeWidgetItemWithQAction):
         originalList: list[list[str]] = GetIgnoredPackageUpdates_Permanent()
         setSettingsValue("PermanentlyIgnoredPackageUpdates", "")
@@ -711,10 +711,10 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
             IgnorePackageUpdates_SpecificVersion(ignoredPackage[0], ignoredPackage[1], ignoredPackage[2])
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
         del i
-        
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
-        
+
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
@@ -787,7 +787,7 @@ class SoftwareSection(QWidget):
         self.forceCheckBox.setChecked(True)
         self.forceCheckBox.setChecked(not getSettings(f"DisableInstantSearchOn{sectionName}"))
         self.forceCheckBox.clicked.connect(lambda v: setSettings(f"DisableInstantSearchOn{sectionName}", bool(not v)))
-         
+
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" PlaceholderText")
         self.query.returnPressed.connect(lambda: (self.filter()))
@@ -798,19 +798,19 @@ class SoftwareSection(QWidget):
         self.query.setMinimumWidth(100)
         self.query.setMaximumWidth(250)
         self.query.setBaseSize(250, 30)
-        
+
         sct = QShortcut(QKeySequence("Ctrl+F"), self)
         sct.activated.connect(lambda: (self.query.setFocus(), self.query.setSelection(0, len(self.query.text()))))
 
         sct = QShortcut(QKeySequence("Ctrl+R"), self)
         sct.activated.connect(self.startLoadingPackages)
-        
+
         sct = QShortcut(QKeySequence("F5"), self)
         sct.activated.connect(self.startLoadingPackages)
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
-        
+
 
         self.SectionImage = QLabel()
         self.SectionImage.setFixedWidth(80)
@@ -848,7 +848,7 @@ class SoftwareSection(QWidget):
                 super().__init__(orientation, parent)
                 self.treewidget = parent
                 self.sectionClicked.connect(self.clickNewSection)
-                
+
             def clickNewSection(self, s: int):
                 if s==3:
                     self.sortOrder = Qt.SortOrder.AscendingOrder if self.sortOrder == Qt.SortOrder.DescendingOrder else Qt.SortOrder.DescendingOrder
@@ -867,18 +867,18 @@ class SoftwareSection(QWidget):
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
 
-        
+
         def updateItemState(item: TreeWidgetItemWithQAction, column: int):
             if column == 0:
                 item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
                 if item.checkState(0) == Qt.CheckState.Checked:
                     self.packageList.setCurrentItem(item)
-            
+
         self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
 
         sct = QShortcut(Qt.Key.Key_Return, self.packageList)
         sct.activated.connect(lambda: self.filter() if self.query.hasFocus() else self.packageList.itemDoubleClicked.emit(self.packageList.currentItem(), 0))
-        
+
         def toggleItemState():
             item = self.packageList.currentItem()
             checked = item.checkState(0) == Qt.CheckState.Checked
@@ -886,14 +886,14 @@ class SoftwareSection(QWidget):
 
         sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
         sct.activated.connect(toggleItemState)
-        
+
         self.packageList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.packageList.customContextMenuRequested.connect(self.showContextMenu)
 
         header = self.packageList.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
-        
+
         self.loadingProgressBar = QProgressBar()
         self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
@@ -914,22 +914,22 @@ class SoftwareSection(QWidget):
         l.addWidget(ScrollWidget(self.packageList), stretch=0)
         l.addWidget(self.packageListScrollBar)
         self.bodyWidget.setLayout(l)
-        
+
         self.countLabel = QLabel(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
         self.countLabel.setObjectName("greyLabel")
-    
+
         v.addWidget(self.countLabel)
         layout.addLayout(headerLayout)
         self.toolbar = self.getToolbar()
         layout.addWidget(self.toolbar)
         layout.setContentsMargins(0, 0, 0, 0)
         v.addWidget(self.countLabel)
-        
+
         self.informationBanner = ClosableOpaqueMessage()
         self.informationBanner.image.hide()
         self.informationBanner.hide()
-        
+
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.informationBanner)
         hl2 = QHBoxLayout()
@@ -949,25 +949,25 @@ class SoftwareSection(QWidget):
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-        
+
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
-        
+
         g = self.packageList.geometry()
-        
+
         self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -979,7 +979,7 @@ class SoftwareSection(QWidget):
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
+
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")
         toolbarWidgets = [self.toolbar.widgetForAction(action) for action in self.toolbar.actions() if self.toolbar.widgetForAction(action) != None and type(self.toolbar.widgetForAction(action)) != TenPxSpacer]
@@ -991,10 +991,10 @@ class SoftwareSection(QWidget):
 
     def showContextMenu(self, pos: QPoint):
         raise NotImplementedError("This function requires being reimplemented")
-    
+
     def getToolbar(self) -> QToolBar:
         raise NotImplementedError("This function requires being reimplemented")
-        
+
     def sharePackage(self, package: TreeWidgetItemWithQAction):
         url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
         nativeWindowsShare(package.text(2), url, self.window())
@@ -1005,7 +1005,7 @@ class SoftwareSection(QWidget):
     def resizeEvent(self, event: QResizeEvent):
         self.adjustWidgetsSize()
         return super().resizeEvent(event)
-    
+
     def addItem(self, name: str, id: str, version: str, store: str) -> None:
         raise NotImplementedError("This function requires being reimplemented")
 
@@ -1028,14 +1028,14 @@ class SoftwareSection(QWidget):
             self.shownItems.append(itemToAdd)
             addedItems += 1
             self.nextItemToShow += 1
-    
+
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
         Thread(target=lambda: (time.sleep(0.1), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
-        
+
     def containsQuery(self, item: TreeWidgetItemWithQAction, querytext: str) -> bool:
         return querytext in item.text(1).lower().replace("-", "").replace(" ", "") or querytext in item.text(2).lower().replace("-", "").replace(" ", "")
-    
+
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
             return "" if item.checkState(0) == Qt.CheckState.Checked else " "
@@ -1047,11 +1047,11 @@ class SoftwareSection(QWidget):
             return item.text(6)
         def getSource(item: TreeWidgetItemWithQAction) -> str:
             return item.text(4)
-        
+
         if self.query.text() != text:
             return
         self.showableItems = []
-        
+
         sortColumn = self.packageList.sortColumn()
         descendingSort = self.packageList.header().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
         match sortColumn:
@@ -1065,7 +1065,7 @@ class SoftwareSection(QWidget):
                 self.packageItems.sort(key=getVersion, reverse=descendingSort)
             case 4:
                 self.packageItems.sort(key=getSource, reverse=descendingSort)
-        
+
         for item in self.packageItems:
             if text == "":
                 self.showableItems = self.packageItems.copy()
@@ -1086,7 +1086,7 @@ class SoftwareSection(QWidget):
                 self.packageList.label.setText("")
         self.addItemsToTreeWidget(reset = True)
         self.packageList.scrollToItem(self.packageList.currentItem())
-    
+
     def showQuery(self) -> None:
         self.programbox.show()
         self.infobox.hide()
@@ -1094,7 +1094,7 @@ class SoftwareSection(QWidget):
     def openInfo(self, item: TreeWidgetItemWithQAction, update: bool = False, uninstall: bool = False, installedVersion: str = "") -> None:
         self.infobox.showPackageDetails(self.ItemPackageReference[item], update, uninstall, installedVersion)
         self.infobox.show()
-    
+
     def loadPackages(self, manager) -> None:
         raise NotImplementedError("This function requires being reimplemented")
 
@@ -1107,7 +1107,7 @@ class SoftwareSection(QWidget):
             if item.checkState(0) == Qt.CheckState.Checked or all:
                 packagesToExport.append(self.ItemPackageReference[item])
         self.packageExporter.showExportUI(packagesToExport)
-        
+
     def setAllPackagesSelected(self, checked: bool) -> None:
         self.packageList.setSortingEnabled(False)
         for item in self.packageItems:
@@ -1133,18 +1133,18 @@ class SoftwareSection(QWidget):
         self.packageList.clear()
         self.query.setText("")
         self.packageList.label.setText(self.countLabel.text())
-        
+
         for manager in self.PackageManagers:
             if manager.isEnabled():
                 Thread(target=self.loadPackages, args=(manager,), daemon=True, name=f"{manager.NAME} available packages loader").start()
             else:
                 self.PackagesLoaded[manager] = True
-                
+
         self.finishLoadingIfNeeded()
-    
+
     def addInstallation(self, p) -> None:
         globals.installersWidget.addItem(p)
-    
+
     def destroyAnims(self) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
             anim: QVariantAnimation
@@ -1355,7 +1355,7 @@ class PackageExporter(MovableFramelessWindow):
         self.treewidget.setColumnWidth(2, 150)
         self.treewidget.setColumnWidth(3, 0)
         self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source"), ""])
-        
+
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
         hLayout.addStretch()
@@ -1369,7 +1369,7 @@ class PackageExporter(MovableFramelessWindow):
         exportButton.setObjectName("AccentButton")
         hLayout.addWidget(exportButton)
         self.layout().addLayout(hLayout)
-        
+
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
@@ -1399,7 +1399,7 @@ class PackageExporter(MovableFramelessWindow):
             self.treewidget.setItemWidget(item, 3, removeButton)
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
-        
+
     def exportPackages(self) -> None:
         wingetPackagesList = []
         scoopPackageList = []
@@ -1473,23 +1473,23 @@ class PackageExporter(MovableFramelessWindow):
 
         except Exception as e:
             report(e)
-                
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
-        
+
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 
 class PackageImporter(MovableFramelessWindow):
-    
+
     pendingPackages: dict[str:TreeWidgetItemWithQAction] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
 
-    
+
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
@@ -1514,7 +1514,7 @@ class PackageImporter(MovableFramelessWindow):
         self.setWindowTitle("\x20")
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages found"))
-        
+
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
@@ -1523,19 +1523,19 @@ class PackageImporter(MovableFramelessWindow):
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-    
+
         self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -1547,7 +1547,7 @@ class PackageImporter(MovableFramelessWindow):
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftSlow.start()
 
         self.layout().addWidget(self.loadingProgressBar)
@@ -1563,7 +1563,7 @@ class PackageImporter(MovableFramelessWindow):
         self.treewidget.setColumnWidth(3, 100)
         self.treewidget.setColumnWidth(4, 0)
         self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
-        
+
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
         hLayout.addStretch()
@@ -1577,12 +1577,12 @@ class PackageImporter(MovableFramelessWindow):
         installButton.setObjectName("AccentButton")
         hLayout.addWidget(installButton)
         self.layout().addLayout(hLayout)
-        
+
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
         self.versionIcon = QIcon(getMedia("version"))
-        
+
         self.showImportUI()
 
     def showImportUI(self):
@@ -1641,8 +1641,8 @@ class PackageImporter(MovableFramelessWindow):
                 self.loadingProgressBar.hide()
         except Exception as e:
             report(e)
-            
-    def addItemFromPackage(self, package: Package, item: TreeWidgetItemWithQAction) -> None:                        
+
+    def addItemFromPackage(self, package: Package, item: TreeWidgetItemWithQAction) -> None:
         item.setText(0, package.Name)
         item.setText(1, package.Id)
         item.setText(2, package.Version)
@@ -1691,7 +1691,7 @@ class PackageImporter(MovableFramelessWindow):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
-        
+
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
@@ -1807,7 +1807,7 @@ class FlowLayout(QLayout):
             line_height = max(line_height, item.sizeHint().height())
 
         return y + line_height - rect.y()
-    
+
     def clear(self):
         items = self._items.copy()
         for item in items:

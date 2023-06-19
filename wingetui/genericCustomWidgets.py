@@ -17,7 +17,7 @@ class MessageBox(QMessageBox):
         super().__init__(parent)
         ApplyMica(self.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
-        
+
 class SmoothScrollArea(QScrollArea):
     missingScroll = 0
     buttonVisible = False
@@ -40,13 +40,13 @@ class SmoothScrollArea(QScrollArea):
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
         self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
-        
+
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
         finalPos = currentPos - e.angleDelta().y()
         self.doSmoothScroll(currentPos, finalPos)
         e.ignore()
-        
+
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
             self.smoothScrollAnimation.stop()
@@ -62,7 +62,7 @@ class SmoothScrollArea(QScrollArea):
         self.smoothScrollAnimation.setStartValue(currentPos)
         self.smoothScrollAnimation.setEndValue(finalPos)
         self.smoothScrollAnimation.start()
-        
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         match event.key():
             case Qt.Key.Key_PageDown:
@@ -90,7 +90,7 @@ class SmoothScrollArea(QScrollArea):
                 event.ignore()
                 return
         return super().keyPressEvent(event)
-    
+
     def showTopButton(self):
         if not self.buttonVisible:
             self.buttonVisible = True
@@ -98,14 +98,14 @@ class SmoothScrollArea(QScrollArea):
             self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
             self.buttonAnimation.setEndValue(100)
             self.buttonAnimation.start()
-        
+
     def hideTopButton(self):
         if self.buttonVisible:
             self.buttonVisible = False
             self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
             self.buttonAnimation.setEndValue(0)
             self.buttonAnimation.start()
-            
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.goTopButton.move(self.width()-48, self.height()-48)
         return super().resizeEvent(event)
@@ -148,7 +148,7 @@ class TreeWidget(QTreeWidget):
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
         self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
-        
+
     def connectCustomScrollbar(self, scrollbar: QScrollBar):
         try:
             self.goTopButton.clicked.disconnect()
@@ -156,7 +156,7 @@ class TreeWidget(QTreeWidget):
             cprint("Can't disconnect")
         scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v>20 else self.hideTopButton())
         self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
-        
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.label.move((self.width()-self.label.width())//2, (self.height()-self.label.height())//2,)
         self.goTopButton.move(self.width()-24, self.height()-48)
@@ -165,7 +165,7 @@ class TreeWidget(QTreeWidget):
     def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
         self.label.setText("")
         return super().addTopLevelItem(item)
-    
+
     def showTopButton(self):
         if not self.buttonVisible:
             self.buttonVisible = True
@@ -173,24 +173,24 @@ class TreeWidget(QTreeWidget):
             self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
             self.buttonAnimation.setEndValue(100)
             self.buttonAnimation.start()
-        
+
     def hideTopButton(self):
         if self.buttonVisible:
             self.buttonVisible = False
             self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
             self.buttonAnimation.setEndValue(0)
             self.buttonAnimation.start()
-        
+
     def clear(self) -> None:
         self.label.show()
         return super().clear()
-    
+
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
         finalPos = currentPos - e.angleDelta().y()
         self.doSmoothScroll(currentPos, finalPos)
         e.ignore()
-        
+
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
             self.smoothScrollAnimation.stop()
@@ -205,7 +205,7 @@ class TreeWidget(QTreeWidget):
         self.smoothScrollAnimation.setStartValue(currentPos)
         self.smoothScrollAnimation.setEndValue(finalPos)
         self.smoothScrollAnimation.start()
-        
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         match event.key():
             case Qt.Key.Key_PageDown:
@@ -233,9 +233,9 @@ class TreeWidget(QTreeWidget):
                 event.ignore()
                 return
         return super().keyPressEvent(event)
-    
+
 class PackageListSortingModel(QAbstractItemModel):
-    
+
     def sort(self, column: int, order: Qt.SortOrder = ...) -> None:
         if column == 2:
             column = 6
@@ -281,7 +281,7 @@ class ResizableWidget(QWidget):
     resized = Signal(QResizeEvent)
     def __init__(self, parent = None) -> None:
         super().__init__(parent)
-        
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resized.emit(event)
         return super().resizeEvent(event)
@@ -314,7 +314,7 @@ class DynamicScrollArea(QWidget):
         Legacy code
         """
         self.calculateSize()
-        
+
     def calculateSize(self) -> None:
         """
         Recalculates minimum height
@@ -324,7 +324,7 @@ class DynamicScrollArea(QWidget):
                 self.setFixedHeight(self.maxHeight)
             else:
                 self.setFixedHeight(self.getFullHeight() if self.getFullHeight() > 20 else 4)
-            
+
     def getFullHeight(self) -> int:
         """
         Returns the full height of the widget
@@ -354,7 +354,7 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction
     def __init__(self, parent = None):
         super().__init__()
-        
+
     def setAction(self, action: QAction):
         self.itemAction = action
 
@@ -369,14 +369,14 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
             return super().setHidden(hide)
         except RuntimeError:
             return False
-    
+
     def setText(self, column: int, text: str) -> None:
         self.setToolTip(column, text)
         return super().setText(column, text)
 
     def treeWidget(self) -> TreeWidget:
         return super().treeWidget()
- 
+
 class PushButtonWithAction(QPushButton):
     action: QAction = None
     def __init__(self, text: str = ""):
@@ -414,14 +414,14 @@ class CustomPlainTextEdit(QPlainTextEdit):
         menu = self.createStandardContextMenu()
         ApplyMenuBlur(menu.winId(), menu)
         menu.exec(QCursor.pos())
-       
+
 class NotClosableWidget(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
         if event.spontaneous():
             event.ignore()
             return
         return super().closeEvent(event)
-   
+
 class ClosableOpaqueMessage(QWidget):
     def __init__(self, text: str = None) -> None:
         super().__init__()
@@ -487,13 +487,13 @@ class ClosableOpaqueMessage(QWidget):
                     background-color: rgba(225, 225, 225, 100%);
                 }}
                 """)
-        
+
     def setText(self, text: str) -> None:
         self.text.setText(text)
-        
+
     def setIcon(self, icon: QIcon) -> None:
         self.image.setPixmap(icon.pixmap(QSize(self.image.size())))
-      
+
 class TenPxSpacer(QWidget):
     def __init__(self) -> None:
         super().__init__()
@@ -726,7 +726,7 @@ class SmallCollapsableSection(CollapsableSection):
         self.baseHeight = 40
         super().__init__(text, icon, descText="")
         self.setFixedHeight(40)
-        
+
     def showHideChildren(self):
         self.hideChildren()
         self.showChildren()
@@ -831,12 +831,12 @@ class SectionHWidget(QWidget):
         self.setObjectName("stBtn")
         self.setFixedHeight(40)
         self.setContentsMargins(40, 0, 0, 0)
-        
+
     def addWidget(self, w: QWidget):
         self.layout().addWidget(w)
         if w.sizeHint().height()+20 > self.height():
             self.setFixedHeight(w.sizeHint().height()+20)
-            
+
     def addStretch(self):
         self.layout().addStretch()
 
@@ -1001,25 +1001,25 @@ class ToastNotification(QObject):
         self.addedActions = []
         self.actionsReference = {}
         self.callableActions = {}
-        
+
     def nullFunction(self):
         """
-        Internal private method, should never be called externally 
+        Internal private method, should never be called externally
         """
         pass
-            
+
     def setTitle(self, title: str):
         """
         Sets title of the notification
         """
         self.title = title
-        
+
     def setDescription(self, description: str):
         """
         Sets description text of the notification
         """
         self.description = description
-        
+
     def setDuration(self, msecs: int):
         """
         Sets the duration, in millseconds, of the notification
@@ -1038,19 +1038,19 @@ class ToastNotification(QObject):
         Add a button to the notification, by giving the text and the callback function of the button
         """
         self.actionsReference[callback] = text
-        
+
     def addOnClickCallback(self, function: object):
         """
         Set the function to be called when the notification is clicked
         """
         self.onClickFun = function
-     
+
     def addOnDismissCallback(self, function: object):
         """
         Set the function to be called when the notification gets dismissed
         """
         self.onDismissFun = function
-        
+
     def show(self):
         """
         Shows a toast notification with the given information
@@ -1077,10 +1077,10 @@ class ToastNotification(QObject):
         template.on_failed=lambda _1: self.reportException()
         self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable))
         self.toast.show_toast(template)
-        
+
     def reportException(self, id):
         """
-        Internal private method, should never be called externally 
+        Internal private method, should never be called externally
         """
         print(f"🔴 Notification {id} could not be shown")
 
@@ -1089,16 +1089,16 @@ class ToastNotification(QObject):
         Instantly closes the notification
         """
         self.close()
-        
+
     def close(self) -> None:
         """
         Instantly closes the notification
         """
         self.toast.clear_toasts()
-        
+
     def onAction(self, arguments: windows_toasts.ToastActivatedEventArgs = None, inputs: dict | None = None):
         """
-        Internal private method, should never be called externally 
+        Internal private method, should never be called externally
         """
         argument = arguments.arguments
         if argument in self.callableActions:
@@ -1112,7 +1112,7 @@ class ToastNotification(QObject):
                 self.signalCaller(self.onClickFun)
             else:
                 self.onClickFun()
-                
+
 class DraggableWindow(QWidget):
     pressed = False
     oldPos = QPoint(0, 0)
@@ -1134,7 +1134,7 @@ class DraggableWindow(QWidget):
         self.pressed = False
         self.oldPos = event.pos()
         return super().mouseReleaseEvent(event)
-    
+
     def moveEvent(self, event) -> None:
         if self.FixLag:
             time.sleep(0.02)
@@ -1166,12 +1166,12 @@ class MovableFramelessWindow(DraggableWindow):
 
 class ButtonWithResizeSignal(QPushButton):
     resized = Signal()
-    
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resized.emit()
         return super().resizeEvent(event)
-    
-         
+
+
 class VerticallyDraggableWidget(QLabel):
     pressed = False
     oldPos = QPoint(0, 0)
@@ -1184,16 +1184,16 @@ class VerticallyDraggableWidget(QLabel):
         self.pressed = True
         self.oldPos = QCursor.pos()
         return super().mousePressEvent(event)
-    
+
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.app.setOverrideCursor(QCursor(Qt.CursorShape.SizeVerCursor))
         return super().enterEvent(event)
-    
+
     def leaveEvent(self, event: QEvent) -> None:
         if not self.pressed:
             globals.app.restoreOverrideCursor()
         return super().leaveEvent(event)
-    
+
     def mouseMoveEvent(self, ev: QMouseEvent) -> None:
         if self.pressed:
             self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(QCursor.pos()).y()))
@@ -1206,7 +1206,7 @@ class VerticallyDraggableWidget(QLabel):
         globals.app.restoreOverrideCursor()
         self.oldPos = QCursor.pos()
         return super().mouseReleaseEvent(event)
-    
+
     def hideEvent(self, event: QHideEvent) -> None:
         globals.app.restoreOverrideCursor()
         return super().hideEvent(event)
@@ -1217,11 +1217,11 @@ class VerticallyDraggableWidget(QLabel):
 
 class ClickableLabel(QLabel):
     clicked = Signal()
-    
+
     def __init__(self, text: str = "", parent: QWidget = None):
         super().__init__(text, parent)
         self.setMouseTracking(True)
-    
+
     def mousePressEvent(self, ev: QMouseEvent) -> None:
         self.clicked.emit()
         return super().mousePressEvent(ev)

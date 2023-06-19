@@ -27,5 +27,5 @@ try:
     print("Job finished succuessfully! 😎")
 except Exception as e:
     print("FAILED:", e)
-        
+
 os.system("pause")

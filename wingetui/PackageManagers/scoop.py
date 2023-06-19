@@ -24,7 +24,7 @@ class ScoopPackageManager(SamplePackageManager):
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
-    
+
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = True
@@ -81,7 +81,7 @@ class ScoopPackageManager(SamplePackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def cacheAvailablePackages(self) -> None:
         """
         INTERNAL METHOD
@@ -125,7 +125,7 @@ class ScoopPackageManager(SamplePackageManager):
             print(f"🟢 {self.NAME} packages cached successfuly")
         except Exception as e:
             report(e)
-            
+
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
@@ -194,7 +194,7 @@ class ScoopPackageManager(SamplePackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
@@ -211,7 +211,7 @@ class ScoopPackageManager(SamplePackageManager):
             details.ManifestUrl = f"{bucketRoot}/blob/master/bucket/{package.Id.split('/')[-1]}.json"
             details.Scopes = [_("Local"), _("Global")]
             details.InstallerType = _("Scoop package")
-        
+
             rawOutput = b""
             p = subprocess.Popen(' '.join([self.EXECUTABLE, "cat", f"{package.Id}"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
             while p.poll() is None:
@@ -228,10 +228,10 @@ class ScoopPackageManager(SamplePackageManager):
             data: dict = json.load(mfest)
             if "description" in data.keys():
                 details.Description = data["description"]
-                
+
             if "version" in data.keys():
                 details.Versions.append(data["version"])
-                
+
             if "innosetup" in data.keys():
                 details.InstallerType = "Inno Setup"
 
@@ -244,7 +244,7 @@ class ScoopPackageManager(SamplePackageManager):
                     for e in ("https://", "http://", "www.", ".com", ".net", ".io", ".org", ".us", ".eu", ".es", ".tk", ".co.uk", ".in", ".it", ".fr", ".de", ".kde", ".microsoft"):
                         w = w.replace(e, "")
                     details.Author = w.split("/")[0].capitalize()
-                    
+
             if "notes" in data.keys():
                 if type(data["notes"]) == list:
                     details.ReleaseNotes = "\n".join(data["notes"])
@@ -272,21 +272,21 @@ class ScoopPackageManager(SamplePackageManager):
                     print("🟠 Can't get installer size:", type(e), str(e))
                 if type(data["architecture"]) == dict:
                     details.Architectures = list(data["architecture"].keys())
-            
+
             if "checkver" in data.keys():
                 if "url" in data["checkver"].keys():
                     url = data["checkver"]["url"]
                     details.ReleaseNotesUrl = url
-            
-            
+
+
             if details.ReleaseNotesUrl == unknownStr and "github.com" in details.InstallerURL:
                 try:
                     url = "/".join(details.InstallerURL.replace("/download/", "/tag/").split("/")[:-1])
                     details.ReleaseNotesUrl = url
                 except Exception as e:
                     report(e)
-                    
-            output: list[str] = []   
+
+            output: list[str] = []
             p = subprocess.Popen(' '.join([self.EXECUTABLE, "info", package.Id]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
             while p.poll() is None:
                 pass
@@ -300,7 +300,7 @@ class ScoopPackageManager(SamplePackageManager):
                         details.Publisher = line.replace("Updated by", "").strip()[1:].strip()
                     elif("Updated at" in line):
                         details.UpdateDate = line.replace("Updated at", "").strip()[1:].strip()
-                    
+
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:
@@ -355,7 +355,7 @@ class ScoopPackageManager(SamplePackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
-        
+
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         outputCode = 1
@@ -383,7 +383,7 @@ class ScoopPackageManager(SamplePackageManager):
         if "Latest versions for all apps are installed" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
-        
+
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":"))>1 and not "/" in package.Source:
@@ -395,7 +395,7 @@ class ScoopPackageManager(SamplePackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
-        
+
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         outputCode = 1
         output = ""
@@ -450,14 +450,14 @@ class ScoopPackageManager(SamplePackageManager):
 
         print("🟢 Scoop bucket search finished")
         finishSignal.emit()
-        
+
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
         globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") != None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[1]
         if signal:
             signal.emit()
-        
+
     def updateSources(self, signal: Signal = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")
         subprocess.run(f"{self.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)

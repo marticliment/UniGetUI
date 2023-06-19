@@ -115,7 +115,7 @@ for lang in downloadedLanguages:
         print("Can't get translator list!")
     langCredits[lang] = credits
     percNum = a / c
-    perc = "{:.0%}".format(percNum)
+    perc = f"{percNum:.0%}"
     if (perc == "100%" and percNum < 1):
         perc = "99%"
     if (perc == "100%" or lang == "en"):

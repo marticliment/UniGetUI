@@ -20,13 +20,12 @@ def show_package():
     except ValueError:
         return response
 
-        
-        
+
 def runBackendApi(signal: Signal):
     global globalsignal
     globalsignal = signal
 
     app.run(host="localhost", port=7058)
-    
+
 if __name__ == "__main__":
     import __init__
