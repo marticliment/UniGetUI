@@ -1043,7 +1043,7 @@ class UninstallSoftwareSection(SoftwareSection):
             runAsAdmin: _("Uninstall the selected packages with administrator privileges"),
             interactive: _("Do an interactive uninstall for the selected packages"),
             share: _("Share this package"),
-            self.selectNoneAction: _("Clear package selection"),
+            self.selectNoneAction: _("Clear selection"),
             self.selectAllAction: _("Select all packages"),
             self.exportSelectedAction: _("Export selected packages to a file")
         }
