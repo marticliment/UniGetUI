@@ -1,9 +1,15 @@
+import os
+import subprocess
+import sys
+import time
+
 from PySide6.QtCore import *
-import subprocess, time, os, sys
 from tools import *
 from tools import _
+
 from .PackageClasses import *
 from .sampleHelper import *
+
 
 class WingetPackageManager(DynamicPackageManager):
 

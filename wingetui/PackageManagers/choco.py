@@ -1,7 +1,13 @@
+import os
+import re
+import subprocess
+import sys
+import time
+
 from PySide6.QtCore import *
-import subprocess, time, os, sys, re
 from tools import *
 from tools import _
+
 from .PackageClasses import *
 from .sampleHelper import *
 

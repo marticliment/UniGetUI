@@ -1,11 +1,12 @@
 import subprocess
 from typing import Optional
+
 import PySide6.QtCore
 import PySide6.QtWidgets
-from tools import _, blueColor
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+from tools import _, blueColor
 
 
 class Package():

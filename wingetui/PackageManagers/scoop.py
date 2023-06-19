@@ -1,11 +1,16 @@
+import os
+import re
+import subprocess
+import sys
+
 from PySide6.QtCore import *
-import subprocess, os, sys, re
 from tools import *
 from tools import _
+
 from .PackageClasses import *
 from .sampleHelper import *
-    
-    
+
+
 class ScoopPackageManager(SamplePackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')

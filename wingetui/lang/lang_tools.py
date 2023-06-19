@@ -1,6 +1,5 @@
 import os
 
-
 languageReference = {
     "default": "System language",
     "ar"    : "Arabic - عربي‎",
@@ -78,7 +77,7 @@ languageFlagsRemap = {
 
 
 def getMarkdownSupportLangs():
-    from data.translations import untranslatedPercentage, languageCredits
+    from data.translations import languageCredits, untranslatedPercentage
 
     readmeLangs = [
         "| Language | Translated | Translator(s) |",
