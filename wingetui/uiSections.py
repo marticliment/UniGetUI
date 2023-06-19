@@ -1043,7 +1043,7 @@ class UninstallSoftwareSection(SoftwareSection):
             runAsAdmin: _("Uninstall the selected packages with administrator privileges"),
             interactive: _("Do an interactive uninstall for the selected packages"),
             share: _("Share this package"),
-            self.selectNoneAction: _("Clear package selection"),
+            self.selectNoneAction: _("Clear selection"),
             self.selectAllAction: _("Select all packages"),
             self.exportSelectedAction: _("Export selected packages to a file")
         }
@@ -1597,11 +1597,11 @@ class SettingsSection(SmoothScrollArea):
         
         self.UITitle = CollapsableSection(_("User interface preferences"), getMedia("interactive"), _("Action when double-clicking packages, hide successful installations"))
         self.layout.addWidget(self.UITitle)
-        enableListingallPackages = SectionCheckBox(_("List packages if the query is empty on the Discover tab"))
+        enableListingallPackages = SectionCheckBox(_("List packages if the query is empty on the \"{discoveryTab}\" tab").format(discoveryTab = _("Discover Packages")))
         enableListingallPackages.setChecked(getSettings("AlwaysListPackages"))
         enableListingallPackages.stateChanged.connect(lambda v: setSettings("AlwaysListPackages", bool(v)))
         self.UITitle.addWidget(enableListingallPackages)
-        changeDefaultInstallAction = SectionCheckBox(_("Directly install when double-clicking an item on the Discover Software tab (instead of showing the package info)"))
+        changeDefaultInstallAction = SectionCheckBox(_("Directly install when double-clicking an item on the \"{discoveryTab}\" tab (instead of showing the package info)").format(discoveryTab = _("Discover Packages")))
         changeDefaultInstallAction.setChecked(getSettings("InstallOnDoubleClick"))
         changeDefaultInstallAction.stateChanged.connect(lambda v: setSettings("InstallOnDoubleClick", bool(v)))
         self.UITitle.addWidget(changeDefaultInstallAction)
