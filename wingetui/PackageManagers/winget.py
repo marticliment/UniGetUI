@@ -1,9 +1,15 @@
+import os
+import subprocess
+import sys
+import time
+
 from PySide6.QtCore import *
-import subprocess, time, os, sys
 from tools import *
 from tools import _
+
 from .PackageClasses import *
 from .sampleHelper import *
+
 
 class WingetPackageManager(DynamicPackageManager):
 
@@ -19,7 +25,7 @@ class WingetPackageManager(DynamicPackageManager):
     BLACKLISTED_PACKAGE_NAMES = [""]
     BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
     BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
-    
+
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = True
@@ -39,7 +45,7 @@ class WingetPackageManager(DynamicPackageManager):
 
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
-        
+
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
 
@@ -83,7 +89,7 @@ class WingetPackageManager(DynamicPackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def cacheAvailablePackages(self) -> None:
         """
         Internal method, should not be called manually externally.
@@ -162,7 +168,7 @@ class WingetPackageManager(DynamicPackageManager):
             print(f"🟢 {self.NAME} packages cached successfuly")
         except Exception as e:
             report(e)
-    
+
     def getPackagesForQuery(self, query: str) -> list[Package]:
         if getSettings("DisableMicrosoftStore"):
             print("🟡 Microsoft Store source is disabled")
@@ -226,18 +232,18 @@ class WingetPackageManager(DynamicPackageManager):
                             ContentsToCache += f"{line[0:idPosition].strip()},{line[idPosition:versionPosition].strip()},{line[versionPosition:].strip()}\n"
                             if type(e) != IndexError:
                                 report(e)
-            
+
             for line in ContentsToCache.split("\n"):
                 package = line.split(",")
                 if len(package) >= 2:
                     packages.append(Package(package[0], package[1], package[2], "Winget: msstore", Winget))
-            
+
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s) (msstore)")
             return packages
-        
+
         except Exception as e:
             report(e)
-                       
+
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
@@ -317,7 +323,7 @@ class WingetPackageManager(DynamicPackageManager):
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
-        
+
         def getSource(id: str) -> str:
             id = id.strip()
             androidValid = True
@@ -338,7 +344,7 @@ class WingetPackageManager(DynamicPackageManager):
                         for letter in id:
                             if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                                 s = "Winget"
-                                break    
+                                break
             if s == _("Local PC"):
                 if id == "Steam":
                     s = "Steam"
@@ -357,14 +363,14 @@ class WingetPackageManager(DynamicPackageManager):
             if s == "Winget":
                 if len(id.split("_")[-1]) in (13, 14) and (len(id.split("_"))==2 or id == id.upper()):
                     s = "Microsoft Store"
-                elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages 
+                elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages
                     s = "Microsoft Store"
             if len(id) in (13, 14) and (id.upper() == id):
                 s = "Winget: msstore"
             if s == "Winget":
                 s = "Winget: winget"
             return s
-        
+
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
@@ -436,7 +442,7 @@ class WingetPackageManager(DynamicPackageManager):
         except Exception as e:
             report(e)
             return []
-    
+
     def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
@@ -467,9 +473,9 @@ class WingetPackageManager(DynamicPackageManager):
                         if b"No package found matching input criteria." in line:
                             return details
                         output.append(str(line, encoding='utf-8', errors="ignore"))
-                        
+
                 globals.PackageManagerOutput += "\n--------"+"\n".join(output)
-                        
+
                 for line in output:
                     if line[0] == " " and outputIsDescribing:
                         details.Description += "<br>"+line
@@ -482,7 +488,7 @@ class WingetPackageManager(DynamicPackageManager):
                     if line[0] == " " and outputIsShowingTags:
                         details.Tags.append(line.strip())
                     else:
-                        outputIsShowingTags = False 
+                        outputIsShowingTags = False
                     if "Publisher:" in line:
                         details.Publisher = line.replace("Publisher:", "").strip()
                         loadedInformationPieces += 1
@@ -528,7 +534,7 @@ class WingetPackageManager(DynamicPackageManager):
                         loadedInformationPieces += 1
                     elif "Installer Type:" in line:
                         details.InstallerType = line.replace("Installer Type:", "").strip()
-                        
+
             print(f"🔵 Loading versions for {package.Name}")
             currentIteration = 0
             versions = []
@@ -573,7 +579,7 @@ class WingetPackageManager(DynamicPackageManager):
             return self.wsaIcon
         else:
             return self.wingetIcon
-        
+
     def getParameters(self, options: InstallationOptions) -> list[str]:
         Parameters: list[str] = ["--accept-source-agreements"]
         if options.Architecture:
@@ -606,7 +612,7 @@ class WingetPackageManager(DynamicPackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
-    
+
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
@@ -639,7 +645,7 @@ class WingetPackageManager(DynamicPackageManager):
         if "No applicable upgrade found" in output or "No newer package versions are available from the configured sources" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
-        
+
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             package.Id = self.getFullPackageId(package.Id)
@@ -666,7 +672,7 @@ class WingetPackageManager(DynamicPackageManager):
         if "1603" in output or "0x80070005" in output or "Access is denied" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
-        
+
     def getFullPackageId(self, id: str) -> tuple[str, str]:
         p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--id", id.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         idSeparator = -1
@@ -692,7 +698,7 @@ class WingetPackageManager(DynamicPackageManager):
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
-        
+
     def updateSources(self, signal: Signal = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")
         subprocess.run(f"{self.EXECUTABLE} source update", shell=True, stdout=subprocess.PIPE)

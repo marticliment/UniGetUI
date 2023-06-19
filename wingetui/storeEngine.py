@@ -1,20 +1,25 @@
 from __future__ import annotations
-from functools import partial
+
+import json
+import os
 import signal
-import sys, subprocess, time, os, json
+import subprocess
+import sys
+import time
+from functools import partial
 from threading import Thread
+
+import globals
+import PySide6.QtGui
+from customWidgets import *
+from PackageManagers.PackageClasses import (Package, PackageDetails,
+                                            UpgradablePackage)
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-import PySide6.QtGui
 from PySide6.QtWidgets import *
 from tools import *
 from tools import _
 
-
-
-from customWidgets import *
-import globals
-from PackageManagers.PackageClasses import Package, UpgradablePackage, PackageDetails
 
 class PackageInstallerWidget(QWidget):
     onCancel = Signal()
@@ -44,7 +49,7 @@ class PackageInstallerWidget(QWidget):
         self.liveOutputWindowWindow.setWindowTitle(_("Live command-line output"))
         self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
         ApplyMica(self.liveOutputWindowWindow.winId(), MICAMODE.DARK)
-        
+
         for manager in PackageManagersList:
             if self.Package.isManager(manager) and getSettings(f"AlwaysElevate{manager.NAME}"):
                 print(f"🟡 {manager.NAME} installation automatically elevated!")
@@ -120,14 +125,14 @@ class PackageInstallerWidget(QWidget):
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(self.update)
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.rightSlow = QPropertyAnimation(self.progressbar, b"value")
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(self.update)
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftFast = QPropertyAnimation(self.progressbar, b"value")
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -161,7 +166,7 @@ class PackageInstallerWidget(QWidget):
             self.addInfoLine.emit(_("Waiting for other installations to finish...")+append)
         print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
-        
+
     def loadIconThread(self):
         iconPath = getPackageIcon(self.Package)
         if os.path.exists(iconPath):
@@ -172,7 +177,7 @@ class PackageInstallerWidget(QWidget):
                 print(f"🟠 Icon for {self.Package.Id} exists but is null")
         else:
             print(f"🟡 Icon for {self.Package.Id} does not exist")
-            
+
     def setProgressbarColor(self, color: str):
         self.progressbar.raise_()
         self.progressbar.setStyleSheet(f"QProgressBar::chunk{{border-top-left-radius: 0px;border-top-right-radius: 0px;margin-right: 2px;margin-left: 2px;background-color: {color}}}")
@@ -187,7 +192,7 @@ class PackageInstallerWidget(QWidget):
         self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startInstallation(self.Package, self.Options, self)
         AddOperationToLog("installation", self.Package, '"'+' '.join(self.p.args)+'"')
-        
+
     def counter(self, line: int) -> None:
         if(line == 1):
             self.progressbar.setValue(250)
@@ -289,7 +294,7 @@ class PackageInstallerWidget(QWidget):
                 update_tray_icon()
             if type(self) == PackageInstallerWidget:
                 self.Package.PackageItem.setCheckState(0, Qt.CheckState.Unchecked)
-                if not self.Package.Id in globals.uninstall.IdPackageReference.keys():    
+                if not self.Package.Id in globals.uninstall.IdPackageReference.keys():
                     print("🔵 Adding package to the uninstall section...")
                     globals.uninstall.addItem(self.Package)
                     globals.uninstall.updatePackageNumber()
@@ -381,15 +386,15 @@ class PackageInstallerWidget(QWidget):
         globals.installersWidget.removeItem(self)
         super().close()
         super().destroy()
-        
+
     def showEvent(self, event: QShowEvent) -> None:
         self.updateProgressbarSize()
         return super().showEvent(event)
-        
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.updateProgressbarSize()
         return super().resizeEvent(event)
-        
+
     def updateProgressbarSize(self):
         pos = self.liveOutputButton.pos()
         pos.setY(pos.y()+self.liveOutputButton.height()-2)
@@ -593,7 +598,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.liveOutputButton.setText(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                     self.progressbar.setValue(1000)
                     self.startCoolDown()
-                    t = ToastNotification(self, self.callInMain.emit)                    
+                    t = ToastNotification(self, self.callInMain.emit)
                     t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
                     t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
                     t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
@@ -608,9 +613,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     self.cancelButton.clicked.connect(self.close)
                     self.progressbar.setValue(1000)
                     self.err = CustomMessageBox(self.window())
-                    t = ToastNotification(self, self.callInMain.emit)                    
+                    t = ToastNotification(self, self.callInMain.emit)
                     t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
-                    t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.Package.Name))           
+                    t.setTitle(_("Can't {0} {1}").format(self.actionVerb, self.Package.Name))
                     t.setDescription(_("{0} {1} failed").format(self.Package.Name.capitalize(), self.actionName))
                     t.addAction(_("Retry"), lambda: (self.runInstallation(), self.cancelButton.setText(_("Cancel"))))
                     t.addAction(_("Show details"), lambda: (globals.mainWindow.showWindow(-1)))
@@ -712,7 +717,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
                 output += line+"\n"
                 self.addInfoLine.emit(line)
         self.finishInstallation.emit(p.returncode, output)
-   
+
 
 class ScoopBucketManager(QWidget):
     addBucketsignal = Signal(str, str, str, str)
@@ -720,7 +725,7 @@ class ScoopBucketManager(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
-    
+
     def __init__(self):
         super().__init__()
         self.setAttribute(Qt.WA_StyledBackground)
@@ -730,7 +735,7 @@ class ScoopBucketManager(QWidget):
         hLayout = QHBoxLayout()
         hLayout.addWidget(QLabel(_("Manage scoop buckets")))
         hLayout.addStretch()
-        
+
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
         self.loadingProgressBar.setValue(0)
@@ -741,7 +746,7 @@ class ScoopBucketManager(QWidget):
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
         self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
-        
+
         self.reloadButton = QPushButton()
         self.reloadButton.clicked.connect(self.loadBuckets)
         self.reloadButton.setFixedSize(30, 30)
@@ -779,21 +784,21 @@ class ScoopBucketManager(QWidget):
         layout.addWidget(self.bucketList)
         self.setLayout(layout)
         self.bucketIcon = QIcon(getMedia("bucket"))
-        
+
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
         self.leftSlow.setEndValue(1000)
         self.leftSlow.setDuration(700)
         self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.rightSlow = QVariantAnimation()
         self.rightSlow.setStartValue(1000)
         self.rightSlow.setEndValue(0)
         self.rightSlow.setDuration(700)
         self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftFast = QVariantAnimation()
         self.leftFast.setStartValue(0)
         self.leftFast.setEndValue(1000)
@@ -807,13 +812,13 @@ class ScoopBucketManager(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
+
         self.leftSlow.start()
-        
+
     def showEvent(self, event: QShowEvent) -> None:
         self.loadBuckets()
         return super().showEvent(event)
-        
+
     def loadBuckets(self):
         if getSettings("DisableScoop"):
             return
@@ -825,7 +830,7 @@ class ScoopBucketManager(QWidget):
         self.bucketList.label.show()
         self.bucketList.label.setText("Loading...")
         globals.scoopBuckets = {}
-        
+
     def addItem(self, name: str, source: str, updatedate: str, manifests: str):
         self.bucketList.label.hide()
         item = QTreeWidgetItem()
@@ -845,7 +850,7 @@ class ScoopBucketManager(QWidget):
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
         self.bucketList.setItemWidget(item, 4, btn)
         globals.scoopBuckets[name] = source
-        
+
     def scoopAddExtraBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another bucket")), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", _("Another bucket")], 1, editable=False)
         if r[1]:
@@ -861,11 +866,10 @@ class ScoopBucketManager(QWidget):
                 p = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r[0]}", Scoop)
                 globals.installersWidget.addItem(p)
                 p.finishInstallation.connect(self.loadBuckets)
-            
+
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
         os.remove(Scoop.CACHE_FILE)
         globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
 
 if(__name__=="__main__"):
     import __init__
-

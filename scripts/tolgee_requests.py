@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 try:
     import requests
 except ImportError:

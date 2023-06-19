@@ -1,4 +1,6 @@
-import os, glob, json
+import glob
+import json
+import os
 
 try:
     root_dir = os.path.join(os.path.dirname(__file__), "..")
@@ -25,5 +27,5 @@ try:
     print("Job finished succuessfully! 😎")
 except Exception as e:
     print("FAILED:", e)
-        
+
 os.system("pause")

@@ -1,9 +1,9 @@
 import argparse
-import tolgee_requests
-import translation_utils
 import json
 from time import sleep
 
+import tolgee_requests
+import translation_utils
 
 __parser = argparse.ArgumentParser()
 __group = __parser.add_mutually_exclusive_group(required=True)
@@ -41,7 +41,7 @@ def create(strs: list[str]):
     count = len(strs)
     i = 1
     for key in strs:
-        print("[{num}/{count}] Key: {key}".format(num=i, count=count, key=encode_str(key, strip=100)))
+        print(f"[{i}/{count}] Key: {encode_str(key, strip=100)}")
         i += 1
         if not __args.yes and __confirm("Create?", ["y", "n"], "y") != "y":
             continue
@@ -61,7 +61,7 @@ def delete(strs: list[str]):
     count = len(strs)
     i = 1
     for key in strs:
-        print("[{num}/{count}] Key: {key}".format(num=i, count=count, key=encode_str(key, strip=100)))
+        print(f"[{i}/{count}] Key: {encode_str(key, strip=100)}")
         i += 1
         if not __args.yes and __confirm("Delete?", ["y", "n"], "y") != "y":
             continue
@@ -91,7 +91,7 @@ def __delete(strs):
     key_name = "not_used"
     if key_name in strs:
         stringsFound = len(strs[key_name])
-        print("Found not used strings: {count}".format(count=stringsFound))
+        print(f"Found not used strings: {stringsFound}")
         if stringsFound > 0:
             sleep(1)
             delete(strs[key_name])
@@ -103,7 +103,7 @@ def __create(strs):
     key_name = "not_translated"
     if key_name in strs:
         stringsFound = len(strs[key_name])
-        print("Found not translated strings: {count}".format(count=stringsFound))
+        print(f"Found not translated strings: {stringsFound}")
         if stringsFound > 0:
             if __args.print:
                 __print(strs[key_name])

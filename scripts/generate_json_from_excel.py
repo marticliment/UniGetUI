@@ -1,5 +1,8 @@
-import os, xlrd, json
+import json
+import os
 from urllib.request import urlopen
+
+import xlrd
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(os.path.join(root_dir, "WebBasedData"))
@@ -22,7 +25,7 @@ except:
     os.system("python -m pip install xlrd==1.2.0")
     import xlrd
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
-    
+
 worksheet = workbook.sheet_by_index(0)
 
 jsoncontent = {
@@ -53,7 +56,7 @@ while not arrivedAtTheEnd:
         assert (type(data[2]) == list)
         if data[1] != "":
             doneCount += 1
-        
+
         if not data[0] in jsoncontent["icons_and_screenshots"].keys():
             jsoncontent["icons_and_screenshots"][data[0]] = {
                 "icon": data[1],
@@ -74,7 +77,7 @@ jsoncontent["package_count"]["done"] = doneCount
 
 with open("screenshot-database-v2.json", "w") as outfile:
     json.dump(jsoncontent, outfile, indent=4)
- 
+
 
 
 os.system("pause")

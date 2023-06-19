@@ -1,7 +1,8 @@
-import sys
 import json
 import os
+import sys
 import time
+
 import tolgee_requests
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
@@ -27,7 +28,8 @@ if len(sys.argv)>1:
         print(sys.argv[1])
 
 
-import glob, zipfile
+import glob
+import zipfile
 
 os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/lang")))
 
@@ -113,7 +115,7 @@ for lang in downloadedLanguages:
         print("Can't get translator list!")
     langCredits[lang] = credits
     percNum = a / c
-    perc = "{:.0%}".format(percNum)
+    perc = f"{percNum:.0%}"
     if (perc == "100%" and percNum < 1):
         perc = "99%"
     if (perc == "100%" or lang == "en"):

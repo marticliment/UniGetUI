@@ -1,7 +1,9 @@
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-from PySide6.QtGui import *
 from subprocess import Popen
+
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
 
 class DynamicScrollAreaType(QWidget):
     def __init__(self, parent = None) -> None:

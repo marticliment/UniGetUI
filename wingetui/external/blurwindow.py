@@ -1,11 +1,11 @@
 # source: https://github.com/Opticos/GWSL-Source/blob/master/blur.py , https://www.cnblogs.com/zhiyiYo/p/14659981.html , https://github.com/ifwe/digsby/blob/master/digsby/src/gui/vista.py
-import platform
 import ctypes
+import platform
 
 # Main code taken from https://pypi.org/project/BlurWindow/
 
 if platform.system() == 'Windows':
-    from ctypes.wintypes import  DWORD, BOOL, HRGN, HWND
+    from ctypes.wintypes import BOOL, DWORD, HRGN, HWND
     user32 = ctypes.windll.user32
     dwm = ctypes.windll.dwmapi
 

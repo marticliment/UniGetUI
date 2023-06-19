@@ -1,6 +1,5 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, Response, jsonify, request
 from flask_cors import CORS, cross_origin
-
 from PySide6.QtCore import Signal
 
 globalsignal: Signal = None
@@ -21,13 +20,12 @@ def show_package():
     except ValueError:
         return response
 
-        
-        
+
 def runBackendApi(signal: Signal):
     global globalsignal
     globalsignal = signal
 
     app.run(host="localhost", port=7058)
-    
+
 if __name__ == "__main__":
     import __init__

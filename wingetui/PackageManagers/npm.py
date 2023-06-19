@@ -1,11 +1,16 @@
+import os
+import re
+import subprocess
+import sys
+
 from PySide6.QtCore import *
-import subprocess, os, sys, re
 from tools import *
 from tools import _
+
 from .PackageClasses import *
 from .sampleHelper import *
-    
-    
+
+
 class NPMPackageManager(DynamicLoadPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
@@ -19,7 +24,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
-    
+
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = False
@@ -28,7 +33,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
-    
+
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
@@ -66,7 +71,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         except Exception as e:
             report(e)
             return []
-           
+
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
@@ -151,7 +156,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         except Exception as e:
             report(e)
             return []
-        
+
     def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
@@ -162,7 +167,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
             details.InstallerType = "Tarball"
             details.ManifestUrl = f"https://www.npmjs.com/package/{package.Id}"
             details.ReleaseNotesUrl = f"https://www.npmjs.com/package/{package.Id}?activeTab=versions"
-            details.Scopes = ["Global"]       
+            details.Scopes = ["Global"]
             p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
             while p.poll() is None:
@@ -243,7 +248,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.path.expanduser("~"), env=os.environ)
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
-        
+
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
@@ -257,10 +262,10 @@ class NPMPackageManager(DynamicLoadPackageManager):
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
-                outputCode = RETURNCODE_FAILED 
-                
+                outputCode = RETURNCODE_FAILED
+
         widget.finishInstallation.emit(outputCode, output)
-        
+
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
@@ -271,7 +276,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         p = subprocess.Popen(" ".join(Command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=os.path.expanduser("~"), env=os.environ)
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
-        
+
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         outputCode = 1
         output = ""
@@ -286,7 +291,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
-                outputCode = RETURNCODE_FAILED        
+                outputCode = RETURNCODE_FAILED
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
@@ -295,7 +300,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[0]
         if signal:
             signal.emit()
-        
+
     def updateSources(self, signal: Signal = None) -> None:
         pass # Handled by the package manager, no need to manually reload
         if signal:

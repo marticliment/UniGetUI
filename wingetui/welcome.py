@@ -1,21 +1,17 @@
-from threading import Thread
-
+import ctypes
 import os
 import time
-import ctypes
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-from customWidgets import *
+from threading import Thread
 
 import globals
-
+from customWidgets import *
 from languages import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from tools import *
 from tools import _
-
 from win32mica import *
-
 
 dwm = ctypes.windll.dwmapi
 
@@ -452,7 +448,7 @@ class WelcomeWindow(QMainWindow):
         self.currentIndex = len(self.widgetOrder)-1
         w: BasicNavWidget = self.widgetOrder[-1]
         self.setWidget(w)
-        
+
     def close(self) -> bool:
         if self.callback:
             self.callback()
@@ -526,7 +522,7 @@ class BasicNavWidget(QWidget):
 
     def nextWidget(self):
         self.outAnim(self.next.emit)
-        
+
     def lastWidget(self):
         self.outAnim(self.skipped.emit)
 
@@ -546,7 +542,7 @@ class BasicNavWidget(QWidget):
         anim.setEasingCurve(QEasingCurve.OutQuad)
         anim.setDuration(200)
         anim.start()
-        
+
         bgAnim = QPropertyAnimation(self.centralWidget, b"pos", self.centralWidget)
         pos = self.centralWidget.pos()
         pos.setX(pos.x()+(self.centralWidget.width()/20))
@@ -564,7 +560,7 @@ class BasicNavWidget(QWidget):
         anim.setEasingCurve(QEasingCurve.OutQuad)
         anim.setDuration(20)
         anim.start()
-        
+
         bgAnim = QPropertyAnimation(self.centralWidget, b"pos", self.centralWidget)
         pos = self.centralWidget.pos()
         pos.setX(self.centralWidget.x()-(self.centralWidget.width()/20))
@@ -583,7 +579,7 @@ class BasicNavWidget(QWidget):
         anim.setDuration(100)
         anim.start()
         anim.finished.connect(f)
-        
+
     def invertedOutAnim(self, f) -> None:
         anim = QVariantAnimation(self)
         anim.setStartValue(100)
@@ -593,7 +589,7 @@ class BasicNavWidget(QWidget):
         anim.setDuration(100)
         anim.start()
         anim.finished.connect(f)
-        
+
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
@@ -763,16 +759,16 @@ class ClickableButtonLabelWithBiggerIcon(QPushButton):
         self.layout().addWidget(self.textLabel, stretch=1)
         self.layout().addSpacing((40/96*self.iconSize))
         self.clicked.connect(self.mightClick)
-        
+
     def mightClick(self):
         if time.time() - self.lastClick > 1:
             self.lastClick = time.time()
             self.buttonClicked.emit()
-        
+
     def animateClick(self) -> None:
         self.mightClick()
         return super().animateClick()
-        
+
     def setText(self, text: str) -> None:
         self.textLabel.setText(text)
 
@@ -845,13 +841,13 @@ class FirstRunSlide(BasicNavWidget):
         label2.setText(f"""
              <h3>{_("This wizard will help you configure and customize WingetUI!")}</h3>
              {_("Please select how you want to configure WingetUI")}""")
-        
+
         self.defaultPrefs = ClickableButtonLabelWithBiggerIcon(64)
         self.defaultPrefs.setText(f"""
             <h3>{_("Default preferences - suitable for regular users")}</h3>
             {_("Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>")}""")
         self.defaultPrefs.setIcon("simple_user.png")
-        
+
         def loadDefaultsAndSkip():
             setSettings("DisableUpdatesNotifications", False)
             setSettings("DisableAutoCheckforUpdates", False)
@@ -860,25 +856,25 @@ class FirstRunSlide(BasicNavWidget):
             for manager in PackageManagersList:
                 setSettings(f"AlwaysElevate{manager.NAME}", False)
             setSettings("DoCacheAdminRights", False)
-            
+
             setSettings("DisableWinget", False)
             setSettings("DisableChocolatey", False)
             setSettings("DisableScoop", True)
             setSettings("DisablePip", True)
             setSettings("DisableNpm", True)
-            
+
             self.outAnim(self.skipped.emit)
-        
+
         self.defaultPrefs.buttonClicked.connect(lambda: loadDefaultsAndSkip())
-        
-        
+
+
         self.hacker = ClickableButtonLabelWithBiggerIcon(64)
         self.hacker.setText(f"""
             <h3>{_("Customize WingetUI - for hackers and advanced users only")}</h3>
             {_("Select which <b>package managers</b> to use ({0}), configure how packages are installed, manage how administrator rights are handled, etc.").format("Winget, Chocolatey, Scoop, Npm, Pip, etc.")}""")
         self.hacker.setIcon("hacker.png")
         self.hacker.buttonClicked.connect(lambda: (self.outAnim(self.next.emit)))
-        
+
         vl.addWidget(label1)
         #vl.addStretch()
         vl.addWidget(label2)
@@ -950,11 +946,11 @@ class LastSlide(BasicNavWidget):
 
     def get6px(self, i: int) -> int:
         return round(i*self.screen().devicePixelRatio())
-    
+
     def showEvent(self, event: QShowEvent) -> None:
         setSettings("ShownWelcomeWizard", True)
         return super().showEvent(event)
-    
+
 class PackageManagersSlide(BasicNavWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent)
@@ -979,19 +975,19 @@ class PackageManagersSlide(BasicNavWidget):
         choco = WelcomeWizardPackageManager("Chocolatey", _("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"), getMedia("choco_color"))
         pip = WelcomeWizardPackageManager("Pip", _("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"), getMedia("pip_color"))
         npm = WelcomeWizardPackageManager("Npm", _("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"), getMedia("node_color"))
-        
+
         managers = [winget, scoop, choco, pip, npm]
-        
+
         for manager in managers:
             self.managers.addItem(manager)
-            
+
         def enablePackageManagers():
             setSettings("DisableWinget", not winget.isChecked())
             setSettings("DisableChocolatey", not choco.isChecked())
             setSettings("DisableScoop", not scoop.isChecked())
             setSettings("DisablePip", not pip.isChecked())
             setSettings("DisableNpm", not npm.isChecked())
-            
+
         self.nextButton.clicked.connect(lambda: enablePackageManagers())
 
         winget.setChecked(True)
@@ -1038,8 +1034,8 @@ class AdministratorPreferences(BasicNavWidget):
             {_("WingetUI will show a UAC prompt every time a package requires elevation to be installed.")+" "+_("This is the <b>default choice</b>.")}""")
         self.default.setIcon("shield_green.png")
         self.default.clicked.connect(lambda: self.toggleClockMode("hide", shouldChangePrefs=True))
-        
-        
+
+
         self.askOnce = ClickableButtonLabelWithBiggerIcon(64)
         self.askOnce.setText(f"""
             <h3>{_("Cache administrator rights, but elevate installers only when required")}</h3>
@@ -1156,8 +1152,8 @@ class UpdatesPreferences(BasicNavWidget):
             {_("WingetUI will not check for updates periodically. They will still be checked at launch, but you won't be warned about them.")}""")
         self.default.setIcon("shield_yellow.png")
         self.default.clicked.connect(lambda: self.toggleClockMode("noupdates", shouldChangePrefs=True))
-        
-        
+
+
         self.askOnce = ClickableButtonLabelWithBiggerIcon(64)
         self.askOnce.setText(f"""
             <h3>{_("Check for updates periodically")}</h3>

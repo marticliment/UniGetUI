@@ -1,9 +1,14 @@
+import os
+import subprocess
+import sys
+import time
+
 from PySide6.QtCore import *
-import subprocess, time, os, sys
 from tools import *
 from tools import _
 
 from .PackageClasses import *
+
 
 class SamplePackageManager(PackageManagerModule):
 
@@ -15,7 +20,7 @@ class SamplePackageManager(PackageManagerModule):
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
-    
+
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = True
@@ -27,7 +32,7 @@ class SamplePackageManager(PackageManagerModule):
 
     if not os.path.exists(CAHCE_FILE_PATH):
         os.makedirs(CAHCE_FILE_PATH)
-        
+
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
 
@@ -70,7 +75,7 @@ class SamplePackageManager(PackageManagerModule):
         except Exception as e:
             report(e)
             return []
-        
+
     def cacheAvailablePackages(self) -> None:
         """
         INTERNAL METHOD
@@ -83,7 +88,7 @@ class SamplePackageManager(PackageManagerModule):
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
-                    
+
                     if len(line.split("|")) >= 3:
                         # Replace these lines with the parse mechanism
                         self.NAME = formatPackageIdAsName(line.split("|")[0])
@@ -92,7 +97,7 @@ class SamplePackageManager(PackageManagerModule):
                         source = self.NAME
                     else:
                         continue
-                    
+
                     if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         ContentsToCache += f"{self.NAME},{id},{version},{source}\n"
 
@@ -111,7 +116,7 @@ class SamplePackageManager(PackageManagerModule):
             print(f"🟢 {self.NAME} packages cached successfuly")
         except Exception as e:
             report(e)
-            
+
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
@@ -125,7 +130,7 @@ class SamplePackageManager(PackageManagerModule):
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
                 if line:
-                    
+
                     if len(line.split("|")) >= 3:
                         # Replace these lines with the parse mechanism
                         self.NAME = formatPackageIdAsName(line.split("|")[0])
@@ -135,7 +140,7 @@ class SamplePackageManager(PackageManagerModule):
                         source = self.NAME
                     else:
                         continue
-                    
+
                     if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(self.NAME, id, version, newVersion, source, self))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
@@ -158,7 +163,7 @@ class SamplePackageManager(PackageManagerModule):
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
                 if line:
-                    
+
                     if len(line.split("|")) >= 3:
                         # Replace these lines with the parse mechanism
                         self.NAME = formatPackageIdAsName(line.split("|")[0])
@@ -167,7 +172,7 @@ class SamplePackageManager(PackageManagerModule):
                         source = self.NAME
                     else:
                         continue
-                    
+
                     if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(Package(self.NAME, id, version, source, self))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
@@ -184,9 +189,9 @@ class SamplePackageManager(PackageManagerModule):
         print(f"🔵 Starting get info for {package.self.NAME} on {self.NAME}")
         details = PackageDetails(package)
         try:
-            
+
             # The code that loads the package details goes here
-                    
+
             print(f"🟢 Get info finished for {package.self.NAME} on {self.NAME}")
             return details
         except Exception as e:
@@ -195,7 +200,7 @@ class SamplePackageManager(PackageManagerModule):
 
     def getIcon(source: str = "") -> QIcon:
         return QIcon()
-    
+
     def getParameters(self, options: InstallationOptions) -> list[str]:
         Parameters: list[str] = []
         if options.Architecture:
@@ -213,7 +218,7 @@ class SamplePackageManager(PackageManagerModule):
         if options.Version:
             Parameters += ["--version", options.Version]
         return Parameters
-    
+
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
@@ -269,25 +274,25 @@ class SamplePackageManager(PackageManagerModule):
                     widget.counterSignal.emit(5)
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
-        
+
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
         globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
-        
+
     def updateSources(self, signal: Signal = None) -> None:
         subprocess.run(f"{self.EXECUTABLE} update self", shell=True, stdout=subprocess.PIPE)
         if signal:
             signal.emit()
-            
+
 class DynamicLoadPackageManager(SamplePackageManager):
-        
+
     def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
         print(f"🟠 Package manager {self.NAME} does not support listing available packages")
         return []
-    
+
     def cacheAvailablePackages(self) -> None:
         print(f"🟠 Package manager {self.NAME} does not support caching available packages")
 

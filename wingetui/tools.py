@@ -1,19 +1,24 @@
-import shutil
-import winreg
 import io
+import json
+import locale
+import os
+import shutil
+import subprocess
+import sys
+import time
+import winreg
+from datetime import datetime
+from pathlib import Path
 from threading import Thread
-import sys, time, subprocess, os, json, locale
+from urllib.request import urlopen
+
+import globals
+from external.blurwindow import GlobalBlur
+from languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from urllib.request import urlopen
 from versions import *
-from languages import *
-from external.blurwindow import GlobalBlur
-from pathlib import Path
-from datetime import datetime
-
-import globals
 
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr
@@ -99,11 +104,11 @@ def setSettings(s: str, v: bool) -> None:
         globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
         globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
         globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-        
+
 
 def getSettingsValue(s: str) -> str:
     """
-    Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned 
+    Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned
     """
     globals.settingsCache
     try:
@@ -122,7 +127,7 @@ def getSettingsValue(s: str) -> str:
 
 def setSettingsValue(s: str, v: str) -> None:
     """
-    Sets the stored value for the given setting. A string value is required. 
+    Sets the stored value for the given setting. A string value is required.
     """
     globals.settingsCache
     try:
@@ -171,14 +176,14 @@ def getColors() -> list:
         j += 1
         i += 4
     return colors
- 
+
 def isDark() -> bool:
     prefs = getSettingsValue("PreferredTheme")
     match prefs:
         case "dark":
             return True
         case "light":
-            return False      
+            return False
     return SYSTEM_THEME_ON_LAUNCH == 0
 
 def isTaskbarDark() -> bool:
@@ -213,8 +218,8 @@ def AddOperationToLog(operation: str, package, commandline: str):
     stringToAdd =  f" Operation: {operation} - Perform date {str(datetime.now())}\n"
     stringToAdd += f" Package: {str(package)}\n"
     stringToAdd += f" Command-line call: {commandline}"
-    operationsToAdd[package] = stringToAdd 
-    
+    operationsToAdd[package] = stringToAdd
+
 def AddResultToLog(output: list, package, result: int):
     print(output)
     global operationsToAdd
@@ -311,7 +316,7 @@ def blacklistUpdatesForPackage(id: str):
         raise Exception("This function has been deprecated, and shouldn't have been called")
     except Exception as e:
         report(e)
-        
+
 def IgnorePackageUpdates_Permanent(id: str, store: str):
     """
     With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
@@ -321,7 +326,7 @@ def IgnorePackageUpdates_Permanent(id: str, store: str):
     if not packageString in baseList:
         baseList.append(packageString)
     setSettingsValue("PermanentlyIgnoredPackageUpdates", ";".join(baseList))
-    
+
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
@@ -338,7 +343,7 @@ def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
     if not packageString in baseList:
         baseList.append(packageString)
     setSettingsValue("SingleVersionIgnoredPackageUpdates", ";".join(baseList))
-    
+
 def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """
     Returns a list in the following format [[packageId, skippedVersion, store], [packageId, skippedVersion, store], etc.] representing the packages that have a version skipped.
@@ -347,34 +352,34 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     return  [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
 class KillableThread(Thread):
-    def __init__(self, *args, **keywords): 
-        super(KillableThread, self).__init__(*args, **keywords) 
+    def __init__(self, *args, **keywords):
+        super(KillableThread, self).__init__(*args, **keywords)
         self.shouldBeRuning = True
 
-    def start(self): 
-        self._run = self.run 
+    def start(self):
+        self._run = self.run
         self.run = self.settrace_and_run
         Thread.start(self)
 
-    def settrace_and_run(self): 
-        sys.settrace(self.globaltrace) 
+    def settrace_and_run(self):
+        sys.settrace(self.globaltrace)
         self._run()
 
-    def globaltrace(self, frame, event, arg): 
+    def globaltrace(self, frame, event, arg):
         return self.localtrace if event == 'call' else None
 
     def kill(self) -> None:
         self.shouldBeRuning = False
-        
-    def localtrace(self, frame, event, arg): 
-        if not(self.shouldBeRuning) and event == 'line': 
+
+    def localtrace(self, frame, event, arg):
+        if not(self.shouldBeRuning) and event == 'line':
             raise SystemExit()
-        return self.localtrace 
+        return self.localtrace
 
 def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
     if globals.ENABLE_WINGETUI_NOTIFICATIONS:
         globals.trayIcon.showMessage(title, text, QIcon())
-        
+
 def foregroundWindowThread():
     """
     This thread will periodically get the window focused by the user every 10 secs, so the tray icon can monitor wether the app should be shown or not.
@@ -423,7 +428,7 @@ def updateLangFile(file: str):
                 print("🔵 Language file up-to-date")
     except Exception as e:
         report(e)
-        
+
 def formatPackageIdAsName(id: str):
     """
     Returns a more beautiful name for the given ID
@@ -493,7 +498,7 @@ if isDark():
     blueColor = f"rgb({getColors()[1]})"
 else:
     blueColor = f"rgb({getColors()[4]})"
-    
+
 t0 = time.time()
 
 if getSettingsValue("PreferredLanguage") == "":

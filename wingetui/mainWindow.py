@@ -1,15 +1,17 @@
+import ctypes
+import os
+import sys
+
+import globals
+import win32mica
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import os, ctypes, sys, win32mica
-
-
-import globals
-from tools import _
-
-from uiSections import *
 from storeEngine import *
 from tools import *
+from tools import _
+from uiSections import *
+
 
 class RootWindow(QMainWindow):
     callInMain = Signal(object)
@@ -60,7 +62,7 @@ class RootWindow(QMainWindow):
 
         globals.centralTextureImage = QLabel(self)
         globals.centralTextureImage.hide()
-        
+
         self.infobox = PackageInfoPopupWindow(self)
         globals.infobox = self.infobox
 
@@ -189,7 +191,7 @@ class RootWindow(QMainWindow):
             self.installationsWidget.setVisible(True)
             self.resizewidget.setVisible(False)
             self.adjustInstallationsSize()
-            
+
     def adjustInstallationsSize(self, offset: int = 0) -> None:
         if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():
             self.installationsWidget.maxHeight = self.installationsWidget.getFullHeight()
@@ -197,7 +199,7 @@ class RootWindow(QMainWindow):
         if self.installationsWidget.maxHeight < 4 and self.installationsWidget.itemCount > 0:
             self.installationsWidget.maxHeight = 4
         self.installationsWidget.calculateSize()
-        
+
     def addTab(self, widget: QWidget, label: str, addToMenu: bool = False, actionIcon: str = "") -> QPushButton:
         i = self.mainWidget.addWidget(widget)
         btn = PushButtonWithAction(label)
@@ -243,7 +245,7 @@ class RootWindow(QMainWindow):
             self.uninstall.destroyAnims()
         except Exception as e:
             report(e)
-                
+
     def closeEvent(self, event):
         event.ignore()
         self.closedpos = self.pos()
@@ -270,11 +272,11 @@ class RootWindow(QMainWindow):
                 event.accept()
                 globals.app.quit()
                 sys.exit(0)
-                
+
     def askRestart(self):
         e = CustomMessageBox(self)
         Thread(target=self.askRestart_threaded, args=(e,)).start()
-        
+
     def askRestart_threaded(self, e: CustomMessageBox):
         questionData = {
                 "titlebarTitle": _("Restart required"),
@@ -296,14 +298,14 @@ class RootWindow(QMainWindow):
         try:
             s = self.infobox.size()
             if self.height()-100 >= 650:
-                self.infobox.setFixedHeight(650)     
+                self.infobox.setFixedHeight(650)
                 self.infobox.move((self.width()-s.width())//2, (self.height()-650)//2)
             else:
                 self.infobox.setFixedHeight(self.height()-100)
                 self.infobox.move((self.width()-s.width())//2, 50)
-                
+
             self.infobox.iv.resize(self.width()-100, self.height()-100)
-        
+
             globals.centralTextureImage.move(0, 0)
             globals.centralTextureImage.resize(event.size())
 
@@ -353,7 +355,7 @@ class RootWindow(QMainWindow):
         else:
             self.hide()
             globals.lastFocusedWindow = 0
-        
+
 
     def showEvent(self, event: QShowEvent) -> None:
         if(not self.isWinDark):
@@ -361,7 +363,7 @@ class RootWindow(QMainWindow):
             print(r)
             if not self.appliedStyleSheet and globals.lightCSS != "":
                 self.appliedStyleSheet = True
-                self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f6f6f6")) 
+                self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f6f6f6"))
         else:
             r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.DARK)
             if not self.appliedStyleSheet and globals.darkCSS != "":
@@ -379,11 +381,11 @@ class RootWindow(QMainWindow):
 
     def loseFocusUpdate(self):
         globals.lastFocusedWindow = 0
-    
+
     def focusOutEvent(self, event: QEvent) -> None:
         Thread(target=lambda: (time.sleep(0.3), self.loseFocusUpdate())).start()
         return super().focusOutEvent(event)
-    
+
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
         return super().mouseReleaseEvent(event)

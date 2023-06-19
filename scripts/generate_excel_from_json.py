@@ -1,8 +1,9 @@
-import xlsxwriter
-import os
 import json
+import os
 import re
 import subprocess
+
+import xlsxwriter
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(os.path.join(root_dir, "WebBasedData"))
@@ -121,9 +122,9 @@ except PermissionError:
     input("PermissionError while deleting the old exe file.")
     import sys
     sys.exit(1)
-    
+
 workbook = xlsxwriter.Workbook('screenshot_database.xlsx', {'strings_to_urls': False})
- 
+
 worksheet = workbook.add_worksheet()
 
 boldformat = workbook.add_format({"bold": True})
@@ -205,7 +206,7 @@ for id in getwingetPackages():
     except KeyError:
         pass
     counter += 1
-    
+
 print("Generating Scoop packages...")
 
 scoopCount = 0
@@ -228,7 +229,7 @@ for id in getScoopPackages():
             pass
         counter += 1
 
-print("Generating Chocolatey packages...")        
+print("Generating Chocolatey packages...")
 
 chocoCount = 0
 chocoTotal = 0
