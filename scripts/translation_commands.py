@@ -1,9 +1,9 @@
 import argparse
-import tolgee_requests
-import translation_utils
 import json
 from time import sleep
 
+import tolgee_requests
+import translation_utils
 
 __parser = argparse.ArgumentParser()
 __group = __parser.add_mutually_exclusive_group(required=True)

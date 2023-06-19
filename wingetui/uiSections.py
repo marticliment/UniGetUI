@@ -1,19 +1,25 @@
 from __future__ import annotations
-import glob # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import sys, subprocess, time, os, json
+
+import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+import json
+import os
+import subprocess
+import sys
+import time
 from threading import Thread
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
-from tools import *
-from storeEngine import *
-from data.translations import untranslatedPercentage, languageCredits
-from data.contributors import contributorsInfo
 
 import globals
 from customWidgets import *
-from tools import _
+from data.contributors import contributorsInfo
+from data.translations import languageCredits, untranslatedPercentage
 from PackageManagers import PackageClasses
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+from storeEngine import *
+from tools import *
+from tools import _
+
 
 class DiscoverSoftwareSection(SoftwareSection):
     PackageManagers = StaticPackageManagersList.copy()

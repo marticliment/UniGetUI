@@ -1,8 +1,8 @@
-import sys
-import json
-import os
 import glob
 import hashlib
+import json
+import os
+import sys
 import time
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")

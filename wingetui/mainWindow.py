@@ -1,15 +1,17 @@
+import ctypes
+import os
+import sys
+
+import globals
+import win32mica
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import os, ctypes, sys, win32mica
-
-
-import globals
-from tools import _
-
-from uiSections import *
 from storeEngine import *
 from tools import *
+from tools import _
+from uiSections import *
+
 
 class RootWindow(QMainWindow):
     callInMain = Signal(object)

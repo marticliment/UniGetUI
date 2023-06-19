@@ -1,23 +1,23 @@
 from datetime import datetime
 from functools import partial
 from typing import Optional
-from PySide6.QtCore import *
+
 import PySide6.QtCore
+import PySide6.QtWidgets
+from genericCustomWidgets import *
+from PackageManagers import PackageClasses
+from PackageManagers.choco import Choco
+from PackageManagers.npm import Npm
+from PackageManagers.PackageClasses import *
+from PackageManagers.pip import Pip
+from PackageManagers.scoop import Scoop
+from PackageManagers.winget import Winget
+from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import PySide6.QtWidgets
-from win32mica import *
 from tools import *
 from tools import _
-from genericCustomWidgets import *
-from PackageManagers.PackageClasses import *
-
-from PackageManagers.winget import Winget
-from PackageManagers.scoop import Scoop
-from PackageManagers.choco import Choco
-from PackageManagers.pip import Pip
-from PackageManagers.npm import Npm
-from PackageManagers import PackageClasses
+from win32mica import *
 
 PackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Winget,

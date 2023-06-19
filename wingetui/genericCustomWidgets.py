@@ -1,14 +1,16 @@
 from typing import Optional
-from PySide6.QtCore import *
+
 import PySide6.QtCore
-from PySide6.QtGui import *
 import PySide6.QtGui
-from PySide6.QtWidgets import *
 import PySide6.QtWidgets
-from win32mica import *
+import windows_toasts
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from tools import *
 from tools import _
-import windows_toasts
+from win32mica import *
+
 
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:

@@ -1,19 +1,24 @@
-import shutil
-import winreg
 import io
+import json
+import locale
+import os
+import shutil
+import subprocess
+import sys
+import time
+import winreg
+from datetime import datetime
+from pathlib import Path
 from threading import Thread
-import sys, time, subprocess, os, json, locale
+from urllib.request import urlopen
+
+import globals
+from external.blurwindow import GlobalBlur
+from languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from urllib.request import urlopen
 from versions import *
-from languages import *
-from external.blurwindow import GlobalBlur
-from pathlib import Path
-from datetime import datetime
-
-import globals
 
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr

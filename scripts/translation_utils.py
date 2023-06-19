@@ -1,8 +1,8 @@
+import json
 import os
 import re
-import json
-import tolgee_requests
 
+import tolgee_requests
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(os.path.join(root_dir, "wingetui"))

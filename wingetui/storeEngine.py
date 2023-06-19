@@ -1,20 +1,25 @@
 from __future__ import annotations
-from functools import partial
+
+import json
+import os
 import signal
-import sys, subprocess, time, os, json
+import subprocess
+import sys
+import time
+from functools import partial
 from threading import Thread
+
+import globals
+import PySide6.QtGui
+from customWidgets import *
+from PackageManagers.PackageClasses import (Package, PackageDetails,
+                                            UpgradablePackage)
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-import PySide6.QtGui
 from PySide6.QtWidgets import *
 from tools import *
 from tools import _
 
-
-
-from customWidgets import *
-import globals
-from PackageManagers.PackageClasses import Package, UpgradablePackage, PackageDetails
 
 class PackageInstallerWidget(QWidget):
     onCancel = Signal()

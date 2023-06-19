@@ -1,21 +1,17 @@
-from threading import Thread
-
+import ctypes
 import os
 import time
-import ctypes
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-from customWidgets import *
+from threading import Thread
 
 import globals
-
+from customWidgets import *
 from languages import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from tools import *
 from tools import _
-
 from win32mica import *
-
 
 dwm = ctypes.windll.dwmapi
 

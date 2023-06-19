@@ -1,4 +1,6 @@
-import os, glob, json
+import glob
+import json
+import os
 
 try:
     root_dir = os.path.join(os.path.dirname(__file__), "..")

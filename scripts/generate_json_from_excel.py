@@ -1,5 +1,8 @@
-import os, xlrd, json
+import json
+import os
 from urllib.request import urlopen
+
+import xlrd
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(os.path.join(root_dir, "WebBasedData"))

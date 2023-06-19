@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 os.chdir(os.path.join(os.path.dirname(__file__), "..")) # move to root project
 

@@ -1,7 +1,8 @@
-import sys
 import json
 import os
+import sys
 import time
+
 import tolgee_requests
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
@@ -27,7 +28,8 @@ if len(sys.argv)>1:
         print(sys.argv[1])
 
 
-import glob, zipfile
+import glob
+import zipfile
 
 os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/lang")))
 

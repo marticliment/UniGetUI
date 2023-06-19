@@ -1,6 +1,5 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, Response, jsonify, request
 from flask_cors import CORS, cross_origin
-
 from PySide6.QtCore import Signal
 
 globalsignal: Signal = None
