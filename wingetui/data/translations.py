@@ -7,6 +7,7 @@ untranslatedPercentage = {
   "cs": "94%",
   "da": "33%",
   "de": "97%",
+  "el": "73%",
   "es": "94%",
   "fa": "77%",
   "hi": "95%",
@@ -22,7 +23,6 @@ untranslatedPercentage = {
   "th": "31%",
   "tr": "97%",
   "ua": "97%",
-  "zh_CN": "97%",
   "zh_TW": "97%"
 }
 
@@ -91,6 +91,12 @@ languageCredits = {
     {
       "name": "Seeloewen",
       "link": "https://github.com/Seeloewen"
+    }
+  ],
+  "el": [
+    {
+      "name": "antwnhsx",
+      "link": "https://github.com/antwnhsx"
     }
   ],
   "en": [
