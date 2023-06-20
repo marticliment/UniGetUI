@@ -4,11 +4,11 @@ untranslatedPercentage = {
   "ar": "92%",
   "bg": "51%",
   "bn": "15%",
-  "cs": "94%",
+  "cs": "99%",
   "da": "33%",
-  "de": "97%",
-  "el": "73%",
-  "es": "94%",
+  "de": "99%",
+  "el": "83%",
+  "es": "96%",
   "fa": "77%",
   "hi": "95%",
   "hr": "95%",
@@ -21,7 +21,6 @@ untranslatedPercentage = {
   "sl": "97%",
   "sr": "11%",
   "th": "31%",
-  "tr": "97%",
   "ua": "97%",
   "zh_TW": "97%"
 }
@@ -77,6 +76,10 @@ languageCredits = {
   ],
   "de": [
     {
+      "name": "CanePlayz",
+      "link": "https://github.com/CanePlayz"
+    },
+    {
       "name": "Datacra5H",
       "link": "https://github.com/Datacra5H"
     },
@@ -110,6 +113,10 @@ languageCredits = {
     }
   ],
   "es": [
+    {
+      "name": "apazga",
+      "link": "https://github.com/apazga"
+    },
     {
       "name": "dalbitresb12",
       "link": "https://github.com/dalbitresb12"
@@ -266,6 +273,10 @@ languageCredits = {
     }
   ],
   "pt_PT": [
+    {
+      "name": "PoetaGA",
+      "link": "https://github.com/PoetaGA"
+    },
     {
       "name": "ppvnf",
       "link": "https://github.com/ppvnf"
