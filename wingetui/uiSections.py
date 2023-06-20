@@ -1759,7 +1759,7 @@ class SettingsSection(SmoothScrollArea):
         bucketManager = ScoopBucketManager()
         bucketManager.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.scoopPreferences.addWidget(bucketManager)
-        installScoop = SectionButton(_("Clear Scoop's global cache"), _("Clear"))
+        installScoop = SectionButton(_("Reset {pm} cache").format(pm="Global Scoop App"), _("Reset"))
         installScoop.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         installScoop.clicked.connect(lambda: Thread(target=lambda: subprocess.Popen([GSUDO_EXECUTABLE, os.path.join(realpath, "resources", "scoop_cleanup.cmd")]), daemon=True).start())
         self.scoopPreferences.addWidget(installScoop)

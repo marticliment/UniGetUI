@@ -889,7 +889,7 @@ class SectionComboBox(QWidget):
         self.restartButton = QPushButton("Restart ElevenClock", self)
         self.restartButton.hide()
         self.restartButton.setFixedHeight(30)
-        self.restartButton.setFixedWidth(150)
+        self.restartButton.setFixedWidth(200)
         self.restartButton.setObjectName("AccentButton")
         self.label = QLabel(text, self)
 
