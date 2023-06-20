@@ -273,6 +273,8 @@ class WingetPackageManager(DynamicPackageManager):
                         pass
                 elif "---" in line:
                     pass
+                elif " upgrades available." in line:
+                    hasShownId = False
                 else:
                     element = line
                     try:
