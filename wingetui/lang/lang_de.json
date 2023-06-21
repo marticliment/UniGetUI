@@ -396,7 +396,7 @@
   "WingetUI log" : "WingetUI Protokoll",
   "WingetUI Settings" : "WingetUI Einstellungen",
   "WingetUI Settings File" : "WingetUI Einstellungs-Datei",
-  "WingetUI tray application preferences" : "WingetUI Benachrichtigungsleisten und Tray Einstellungen",
+  "WingetUI tray application preferences" : "WingetUI Benachrichtigungsleisten- und Tray-Einstellungen",
   "WingetUI will not check for updates periodically. They will still be checked at launch, but you won't be warned about them." : "WingetUI sucht nicht mehr regelmäßig nach Aktualisierungen. Beim Start werden sie immer noch geprüft, aber Sie werden nicht mehr gewarnt.",
   "WingetUI will show a UAC prompt every time a package requires elevation to be installed." : "WingetUI wird jedes Mal eine UAC-Eingabeaufforderung anzeigen, wenn für die Installation eines Pakets eine höhere Berechtigung erforderlich ist.",
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI wäre ohne die Hilfe unserer lieben Mitwirkenden nicht möglich gewesen. Schauen Sie sich ihr GitHub-Profil an, WingetUI wäre ohne sie nicht möglich!",
