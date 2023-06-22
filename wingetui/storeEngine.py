@@ -50,10 +50,9 @@ class PackageInstallerWidget(QWidget):
         self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
         ApplyMica(self.liveOutputWindowWindow.winId(), MICAMODE.DARK)
 
-        for manager in PackageManagersList:
-            if self.Package.isManager(manager) and getSettings(f"AlwaysElevate{manager.NAME}"):
-                print(f"🟡 {manager.NAME} installation automatically elevated!")
-                self.Options.RunAsAdministrator = True
+        if getSettings(f"AlwaysElevate{self.Package.PackageManager.NAME}"):
+            print(f"🟡 {self.Package.PackageManager.NAME} installation automatically elevated!")
+            self.Options.RunAsAdministrator = True
 
         if getSettings("DoCacheAdminRights"):
             if self.Options.RunAsAdministrator and not globals.adminRightsGranted:
