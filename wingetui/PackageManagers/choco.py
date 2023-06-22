@@ -201,31 +201,14 @@ class ChocoPackageManager(SamplePackageManager):
             for line in output:
                 if isReadingDescription:
                     if line.startswith("  "):
-                        details.Description += "<br>"+line
+                        details.Description += "<br>"+line[2:]
                     else:
                         isReadingDescription = False
-                        for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", details.Description):
-                            details.Description = details.Description.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
-
-                        for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", details.Description):
-                            details.Description = details.Description.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[0][1:-1]}">{match.split("]")[0][1:]}</a>')
-
-                        for match in re.findall("#{2,4}[^\>\<]*<br>", details.Description):
-                            details.Description = details.Description.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
-
                 if isReadingReleaseNotes:
                     if line.startswith("  "):
-                        details.ReleaseNotes += "<br>"+line
+                        details.ReleaseNotes += "<br>"+line[2:]
                     else:
                         isReadingReleaseNotes = False
-                        for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", details.ReleaseNotes):
-                            details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
-
-                        for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", details.ReleaseNotes):
-                            details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[0][1:-1]}">{match.split("]")[0][1:]}</a>')
-
-                        for match in re.findall("#{2,4}[^\>\<]*<br>", details.ReleaseNotes):
-                            details.ReleaseNotes = details.ReleaseNotes.replace(match, f'<b>{match.replace("#", "").strip()}</b>')
                         if details.ReleaseNotes != "":
                             if details.ReleaseNotes != "":
                                 details.ReleaseNotesUrl = _("Not available")
@@ -251,6 +234,10 @@ class ChocoPackageManager(SamplePackageManager):
                 elif "Tags" in line:
                     details.Tags = [tag for tag in line.replace("Tags:", "").strip().split(" ") if tag != ""]
             details.Versions = []
+            
+            details.Description = ConvertMarkdownToHtml(details.Description)
+            details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
+            
             p = subprocess.Popen([self.EXECUTABLE, "find", "-e", package.Id, "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             print(f"🟢 Starting get info for id {package.Id}")
             output = []

@@ -480,11 +480,11 @@ class WingetPackageManager(DynamicPackageManager):
 
                 for line in output:
                     if line[0] == " " and outputIsDescribing:
-                        details.Description += "<br>"+line
+                        details.Description += "<br>"+line[2:]
                     else:
                         outputIsDescribing = False
                     if line[0] == " " and outputIsShowingNotes:
-                        details.ReleaseNotes += line + "<br>"
+                        details.ReleaseNotes += line[2:] + "<br>"
                     else:
                         outputIsShowingNotes = False
                     if line[0] == " " and outputIsShowingTags:
@@ -536,6 +536,9 @@ class WingetPackageManager(DynamicPackageManager):
                         loadedInformationPieces += 1
                     elif "Installer Type:" in line:
                         details.InstallerType = line.replace("Installer Type:", "").strip()
+                        
+            details.Description = ConvertMarkdownToHtml(details.Description)
+            details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
 
             print(f"🔵 Loading versions for {package.Name}")
             currentIteration = 0

@@ -228,9 +228,11 @@ class ScoopPackageManager(SamplePackageManager):
             data: dict = json.load(mfest)
             if "description" in data.keys():
                 if type(data["description"]) == list:
-                    details.ReleaseNotes = "\n".join(data["description"])
+                    details.Description = "\n".join(data["description"])
                 else:
-                    details.ReleaseNotes = data["description"]
+                    details.Description = data["description"]
+                    
+            
 
             if "version" in data.keys():
                 details.Versions.append(data["version"])

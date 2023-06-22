@@ -2,6 +2,7 @@ import io
 import json
 import locale
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -27,6 +28,7 @@ stderr_buffer = io.StringIO()
 MissingTranslationList = []
 SYSTEM_THEME_ON_LAUNCH = 0
 realpath = 0
+blueColor = "blue"
 
 def cprint(*args) -> None:
     print(*args, file=OLD_STDOUT)
@@ -462,6 +464,65 @@ def getPackageIcon(package) -> str:
         except Exception as e:
             report(e)
         return ""
+
+def ConvertMarkdownToHtml(text: str) -> str:
+    text = text.replace("\n\r", "<br>")
+    text = text.replace("\n", "<br>")
+    firsttext = "<br>"+text
+    text = ""
+    for line in firsttext.split("<br>"):
+        if line:
+            text += line+"<br>"
+    text = "<br>"+text
+    
+    # Convert images to URLs
+    for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", text):
+        match: str
+        text = text.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
+
+    # Convert URLs to <a href=></a> tags
+    for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", text):
+        match: str
+        text = text.replace(match, f'<br><a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][1:]}</a>')
+
+    # Convert headers
+    for match in re.findall("<br>#{3,4}[^\>\<]*<br>", text):
+        match: str
+        text = text.replace(match, f'<br><b>{match.replace("#", "").strip()}</b>')
+      
+    for match in re.findall("<br>##[^\>\<]*<br>", text):
+        match: str
+        text = text.replace(match, f'<br><b style="font-size:12.5pt;">{match.replace("#", "").strip()}</b>')
+        
+    for match in re.findall("<br>#[^\>\<]*<br>", text):
+        match: str
+        text = text.replace(match, f'<br><b style="font-size:14pt;">{match.replace("#", "").strip()}</b>')
+    
+    text = text.replace("<br></b>", "</b><br>")
+    
+    # Convert unordered lists
+    text = text.replace("<br>- ", f"<br>{'&nbsp;'*4}● ")
+    text = text.replace("<br> - ", f"<br>{'&nbsp;'*4}● ")
+    text = text.replace("<br>  - ", f"<br>{'&nbsp;'*8}○ ")
+    text = text.replace("<br>   - ", f"<br>{'&nbsp;'*8}○ ")
+    text = text.replace("<br>    - ", f"<br>{'&nbsp;'*12}□ ")
+    text = text.replace("<br>     - ", f"<br>{'&nbsp;'*12}□ ")
+    text = text.replace("<br>* ", f"<br>{'&nbsp;'*4}● ")
+    text = text.replace("<br> * ", f"<br>{'&nbsp;'*4}● ")
+    text = text.replace("<br>  * ", f"<br>{'&nbsp;'*8}○ ")
+    text = text.replace("<br>   * ", f"<br>{'&nbsp;'*8}○ ")
+    text = text.replace("<br>    * ", f"<br>{'&nbsp;'*12}□ ")
+    text = text.replace("<br>     * ", f"<br>{'&nbsp;'*12}□ ")
+    
+    # Convert numbered lists
+    for number in range(0, 20):
+        text = text.replace(f"<br>{number}. ", f"<br>{'&nbsp;'*4}{number}. ")
+        text = text.replace(f"<br> {number}. ", f"<br>{'&nbsp;'*4}{number}. ")
+    
+    # Filter empty newlines
+    text = text.replace("<br><br>", "<br>").replace("<br><br>", "<br>")
+    print(text)
+    return text
 
 globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
 globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS

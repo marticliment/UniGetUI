@@ -200,6 +200,10 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 elif line.startswith("published"):
                     details.Publisher = line.split("by")[-1].split("<")[0].strip()
                     details.UpdateDate = line.split("by")[0].replace("published", "").strip()
+                    
+            details.Description = ConvertMarkdownToHtml(details.Description)
+            details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
+            
             p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id} versions --json", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
             while p.poll() is None:

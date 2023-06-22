@@ -194,7 +194,9 @@ class PipPackageManager(DynamicLoadPackageManager):
             if "digests" in url:
                 if "sha256" in url["digests"]:
                     details.InstallerHash = url["digests"]["sha256"]
-
+                    
+            details.Description = ConvertMarkdownToHtml(details.Description)
+            details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
 
             p = subprocess.Popen(f"{self.EXECUTABLE} index versions {package.Id}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
