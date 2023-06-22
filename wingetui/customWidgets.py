@@ -1038,7 +1038,7 @@ class SoftwareSection(QWidget):
 
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
-            return "" if item.checkState(0) == Qt.CheckState.Checked else " "
+            return " " if item.checkState(0) == Qt.CheckState.Checked else ""
         def getTitle(item: TreeWidgetItemWithQAction) -> str:
             return item.text(1)
         def getID(item: TreeWidgetItemWithQAction) -> str:
