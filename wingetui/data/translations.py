@@ -139,6 +139,10 @@ languageCredits = {
       "link": "https://github.com/itsarian"
     },
     {
+      "name": "Mahdi-Hazrati",
+      "link": "https://github.com/Mahdi-Hazrati"
+    },
+    {
       "name": "smsi2001",
       "link": "https://github.com/smsi2001"
     }

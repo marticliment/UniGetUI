@@ -1,8 +1,8 @@
 {
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@smsi2001, @itsarian",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : " @Mahdi-Hazrati, @smsi2001, @itsarian ",
   "{0} {1} failed" : "ناموفق بود {1} {0}",
   "{0} aborted" : null,
-  "{0} can be updated" : "میتواند بروز شود {0}",
+  "{0} can be updated" : "{0} را می توان به روز کرد\n",
   "{0} days" : "روزها {0}",
   "{0} failed" : "{0} ناموفق بود",
   "{0} hours" : "ساعت  {0}",
