@@ -979,6 +979,17 @@ class UninstallSoftwareSection(SoftwareSection):
         self.upgradeSelected.triggered.connect(lambda: self.uninstallSelected())
         toolbar.addAction(self.upgradeSelected)
 
+        def blacklistSelectedPackages():
+            for program in self.packageItems:
+                if not program.isHidden():
+                    try:
+                        if program.checkState(0) ==  Qt.CheckState.Checked:
+                            IgnorePackageUpdates_Permanent(program.text(2), program.text(4))
+                            # TODO: Needs labels
+                    except AttributeError:
+                        pass
+            self.updatePackageNumber()
+
         def showInfo():
             item = self.packageList.currentItem()
             if item.text(4) in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
@@ -1032,6 +1043,12 @@ class UninstallSoftwareSection(SoftwareSection):
         toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
 
         toolbar.addSeparator()
+        
+        self.blacklistAction = QAction(QIcon(getMedia("pin")), _("Ignore selected packages"), toolbar)
+        self.blacklistAction.triggered.connect(lambda: blacklistSelectedPackages())
+        toolbar.addAction(self.blacklistAction)
+        
+        toolbar.addSeparator()
 
         self.exportSelectedAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
         self.exportSelectedAction.triggered.connect(lambda: self.exportSelectedPackages())
@@ -1049,6 +1066,7 @@ class UninstallSoftwareSection(SoftwareSection):
             runAsAdmin: _("Uninstall the selected packages with administrator privileges"),
             interactive: _("Do an interactive uninstall for the selected packages"),
             share: _("Share this package"),
+            self.blacklistAction: _("Ignore updates for the selected packages"),
             self.selectNoneAction: _("Clear selection"),
             self.selectAllAction: _("Select all packages"),
             self.exportSelectedAction: _("Export selected packages to a file")
