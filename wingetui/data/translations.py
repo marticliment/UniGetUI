@@ -14,7 +14,7 @@ untranslatedPercentage = {
   "hr": "95%",
   "id": "97%",
   "it": "97%",
-  "ja": "72%",
+  "ja": "81%",
   "ko": "85%",
   "nb": "86%",
   "ru": "95%",
@@ -119,6 +119,10 @@ languageCredits = {
     {
       "name": "dalbitresb12",
       "link": "https://github.com/dalbitresb12"
+    },
+    {
+      "name": "evaneliasyoung",
+      "link": "https://github.com/evaneliasyoung"
     },
     {
       "name": "JMoreno97",
