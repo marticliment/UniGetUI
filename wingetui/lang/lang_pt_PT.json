@@ -313,7 +313,7 @@
   "Systems are now ready to go!" : "Os sistemas agora estão prontos para funcionar!",
   "Text file" : "Ficheiro de texto",
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : "A soma de verificação do instalador não coincide com o valor esperado e a autenticidade do instalador não pode ser verificada. Se confiares no editor, {0} o pacote novamente ignorará a verificação de hash.",
-  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "O gestor de pacotes clássico para o Windows. Vais encontrar de tudo lá. <br>Contém: <b>Software Geral</b>",
+  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "O gestor de pacotes clássico para Windows. Vais encontrar de tudo lá. <br>Contém: <b>Software Geral</b>",
   "The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved." : "Os seguintes pacotes serão exportados para um ficheiro JSON. Nenhum dado do utilizador ou binários serão guardados.",
   "The following packages are going to be installed on your system." : "Os seguintes pacotes serão instalados em teu sistema.",
   "The icons and screenshots are maintained by users like you!" : "Os ícones e as capturas de ecrã são mantidos por utilizadores como tu!",
