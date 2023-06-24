@@ -29,24 +29,24 @@ body:
   - type: textarea
     attributes:
       label: WingetUI Log
-      description: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
+      placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
     validations:
       required: true
   - type: textarea
     attributes:
       label: Psckage Managers Log
-      description: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package manager logs
+      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package manager logs
     validations:
       required: true
   - type: textarea
     attributes:
       label: Relevant information
-      description: Other relevant information about this issue. Perhaps if you have some special settings enabled, or any other detail that could be related.
+      placeholder: Other relevant information about this issue. Perhaps if you have some special settings enabled, or any other detail that could be related.
     validations:
       required: false
   - type: textarea
     attributes:
       label: Screenshots and videos
-      description: If applicable, please post here a video or a screenshot of the issue.
+      placeholder: If applicable, please post here a video or a screenshot of the issue.
     validations:
       required: false
