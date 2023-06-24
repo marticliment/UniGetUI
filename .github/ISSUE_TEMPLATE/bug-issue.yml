@@ -1,12 +1,8 @@
 name: 'Issues with the WingetUI program'
 description: Report issues and unexpected behaviour from the WingetUI interface or its components, not from the package managers
-title: "[BUG]: Package.Identifer"
-labels: ["Issue-Bug"]
+title: "[BUG] (Enter your description here)"
+labels: ["bug"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Please create issues related to the winget.exe client [here](https://github.com/microsoft/winget-cli/issues/new/choose)
   - type: checkboxes
     attributes:
       label: Please confirm these before moving forward
@@ -14,63 +10,43 @@ body:
       options:
         - label: I have searched for my issue and not found a work-in-progress/duplicate/resolved issue.
           required: true
-        - label: I have not been informed if the issue is resolved in a preview version of the winget client.
+        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
           required: true
-  - type: dropdown
+        - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions
+          required: true
+  - type: textarea
     attributes:
-      label: Category of the issue
-      description: What kind of issue are you running into?
-      options:
-        - Installation issue.
-        - Side-By-Side installation.
-        - No applicable update found.
-        - Different install technology.
-        - Multiple installed packages found.
-        - Installer hash mismatch.
-        - Other
+      label: Describe your issue
+      placeholder: Explain the issue you are experiencing, providing as much details as possible about it
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Brief description of your issue
-      placeholder: Briefly describe your issue here.
+      label: Steps to reproduce the issue
+      placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: WingetUI Log
+      description: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Steps to reproduce
-      placeholder: How to reproduce the issue?
+      label: Psckage Managers Log
+      description: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package manager logs
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Actual behavior
-      placeholder: What is currently happening?
+      label: Relevant information
+      description: Other relevant information about this issue. Perhaps if you have some special settings enabled, or any other detail that could be related.
     validations:
-      required: true
+      required: false
   - type: textarea
     attributes:
-      label: Expected behavior
-      placeholder: What did you expect to happen?
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Environment
-      description: Please copy and paste your `winget --info` output here.
-      placeholder: |
-        [winget --info]
-        Windows Package Manager <version>
-        Windows: Windows.Desktop <version>
-        Package: Microsoft.DesktopAppInstaller <version>
-
-        Any other software?
-      render: raw
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Screenshots and Logs
-      description: Please upload logs & screenshots since they will help us to find the root cause of the issue. You can find the location of the logs by running `winget --info`.
+      label: Screenshots and videos
+      description: If applicable, please post here a video or a screenshot of the issue.
     validations:
       required: false
