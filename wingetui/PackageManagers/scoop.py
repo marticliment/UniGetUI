@@ -279,9 +279,10 @@ class ScoopPackageManager(SamplePackageManager):
                     details.Architectures = list(data["architecture"].keys())
 
             if "checkver" in data.keys():
-                if "url" in data["checkver"].keys():
-                    url = data["checkver"]["url"]
-                    details.ReleaseNotesUrl = url
+                if type(data["checkver"]) == dict:
+                    if "url" in data["checkver"].keys():
+                        url = data["checkver"]["url"]
+                        details.ReleaseNotesUrl = url
 
 
             if details.ReleaseNotesUrl == unknownStr and "github.com" in details.InstallerURL:
