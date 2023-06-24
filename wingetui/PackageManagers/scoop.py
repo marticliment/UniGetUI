@@ -325,8 +325,6 @@ class ScoopPackageManager(SamplePackageManager):
             Parameters += options.CustomParameters
         if options.InstallationScope:
             Parameters += ["-s", options.InstallationScope]
-        if options.InteractiveInstallation:
-            Parameters.append("--interactive")
         if options.RemoveDataOnUninstall:
             Parameters.append("--remove-user-data")
         if options.SkipHashCheck:
