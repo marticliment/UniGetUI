@@ -30,12 +30,14 @@ body:
   - type: textarea
     attributes:
       label: WingetUI Log
+      render: "text"
       placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Psckage Managers Log
+      label: Package Managers Logs
+      render: "text"
       placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package manager logs
     validations:
       required: true
