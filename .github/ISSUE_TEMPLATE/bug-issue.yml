@@ -15,7 +15,7 @@ body:
           required: true
         - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions
           required: true
-        - label: This issue is NOT related to a package manager (if it is, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose))
+        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose))
           required: true
   - type: textarea
     attributes:
