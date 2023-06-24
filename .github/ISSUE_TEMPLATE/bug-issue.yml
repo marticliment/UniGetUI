@@ -1,0 +1,76 @@
+name: 'Issues with the WingetUI program'
+description: Report issues and unexpected behaviour from the WingetUI interface or its components, not from the package managers
+title: "[BUG]: Package.Identifer"
+labels: ["Issue-Bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please create issues related to the winget.exe client [here](https://github.com/microsoft/winget-cli/issues/new/choose)
+  - type: checkboxes
+    attributes:
+      label: Please confirm these before moving forward
+      description: Please confirm the following before posting your issue.
+      options:
+        - label: I have searched for my issue and not found a work-in-progress/duplicate/resolved issue.
+          required: true
+        - label: I have not been informed if the issue is resolved in a preview version of the winget client.
+          required: true
+  - type: dropdown
+    attributes:
+      label: Category of the issue
+      description: What kind of issue are you running into?
+      options:
+        - Installation issue.
+        - Side-By-Side installation.
+        - No applicable update found.
+        - Different install technology.
+        - Multiple installed packages found.
+        - Installer hash mismatch.
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Brief description of your issue
+      placeholder: Briefly describe your issue here.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      placeholder: How to reproduce the issue?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual behavior
+      placeholder: What is currently happening?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      placeholder: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Environment
+      description: Please copy and paste your `winget --info` output here.
+      placeholder: |
+        [winget --info]
+        Windows Package Manager <version>
+        Windows: Windows.Desktop <version>
+        Package: Microsoft.DesktopAppInstaller <version>
+
+        Any other software?
+      render: raw
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots and Logs
+      description: Please upload logs & screenshots since they will help us to find the root cause of the issue. You can find the location of the logs by running `winget --info`.
+    validations:
+      required: false
