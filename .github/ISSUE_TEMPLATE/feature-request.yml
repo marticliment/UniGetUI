@@ -24,4 +24,4 @@ body:
       label: Describe how this new feature could help users.
       placeholder: For what would it be useful?
     validations:
-      required: false
+      required: true
