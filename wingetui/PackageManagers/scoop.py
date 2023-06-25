@@ -321,17 +321,13 @@ class ScoopPackageManager(SamplePackageManager):
     def getParameters(self, options: InstallationOptions) -> list[str]:
         Parameters: list[str] = []
         if options.Architecture:
-            Parameters += ["-a", options.Architecture]
+            Parameters += ["--arch", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
-            Parameters += ["-s", options.InstallationScope]
-        if options.RemoveDataOnUninstall:
-            Parameters.append("--remove-user-data")
-        if options.SkipHashCheck:
-            Parameters += ["--skip-integrity-checks", "--force"]
-        if options.Version:
-            Parameters += ["--version", options.Version]
+            if options.InstallationScope.capitalize() in ("Global", _("Global")):
+                Parameters.append("--global")
+            Parameters.append("--skip")
         if options.RemoveDataOnUninstall:
             Parameters.append("--purge")
         return Parameters
