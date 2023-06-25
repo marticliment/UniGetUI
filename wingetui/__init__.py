@@ -1464,6 +1464,12 @@ try:
             font-size: 9pt;
             border-top: 0px solid rgba(255, 255, 255, 1%);
         }}
+        QToolTip {{
+            background-color: #f5f5f;
+            border: 1px solid #f0f0f0;
+            color: black;
+            border-radius: 0px;
+        }}
         QPushButton:hover {{
             background-color: rgba(255, 255, 255, 90%);
             border: 1px solid rgba(220, 220, 220, 65%);
