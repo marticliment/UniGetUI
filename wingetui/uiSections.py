@@ -389,6 +389,7 @@ class UpdateSoftwareSection(SoftwareSection):
     PackageItemReference: dict[UpgradablePackage:TreeWidgetItemWithQAction] = {}
     ItemPackageReference: dict[TreeWidgetItemWithQAction:UpgradablePackage] = {}
     IdPackageReference: dict[str:UpgradablePackage] = {}
+    UpdatesNotification: ToastNotification = None
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -628,41 +629,47 @@ class UpdateSoftwareSection(SoftwareSection):
         if count > 0:
             globals.tray_is_available_updates = True
             update_tray_icon()
+            try:
+                self.UpdatesNotification.close()
+            except AttributeError:
+                pass
+            except Exception as e:
+                report(e)
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
                 self.updateAllPackageItems()
-                t = ToastNotification(self, self.callInMain.emit)
+                self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
                 if count > 1:
-                    t.setTitle(_("Updates found!"))
-                    t.setDescription(_("{0} packages are being updated").format(count)+":")
+                    self.UpdatesNotification.setTitle(_("Updates found!"))
+                    self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count)+":")
                     packageList = ""
                     for item in self.packageItems:
                         packageList += item.text(1)+", "
-                    t.setSmallText(packageList[:-2])
+                    self.UpdatesNotification.setSmallText(packageList[:-2])
                 elif count == 1:
-                    t.setTitle(_("Update found!"))
-                    t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
-                t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    self.UpdatesNotification.setTitle(_("Update found!"))
+                    self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
+                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
                 if globals.ENABLE_UPDATES_NOTIFICATIONS:
-                    t.show()
+                    self.UpdatesNotification.show()
 
             else:
-                t = ToastNotification(self, self.callInMain.emit)
+                self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
                 if count > 1:
-                    t.setTitle(_("Updates found!"))
-                    t.setDescription(_("{0} packages can be updated").format(count)+":")
-                    t.addAction(_("Update all"), self.updateAllPackageItems)
+                    self.UpdatesNotification.setTitle(_("Updates found!"))
+                    self.UpdatesNotification.setDescription(_("{0} packages can be updated").format(count)+":")
+                    self.UpdatesNotification.addAction(_("Update all"), self.updateAllPackageItems)
                     packageList = ""
                     for item in self.packageItems:
                         packageList += item.text(1)+", "
-                    t.setSmallText(packageList[:-2])
+                    self.UpdatesNotification.setSmallText(packageList[:-2])
                 elif count == 1:
-                    t.setTitle(_("Update found!"))
-                    t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
-                    t.addAction(_("Update"), self.updateAllPackageItems)
-                t.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
-                t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    self.UpdatesNotification.setTitle(_("Update found!"))
+                    self.UpdatesNotification.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
+                    self.UpdatesNotification.addAction(_("Update"), self.updateAllPackageItems)
+                self.UpdatesNotification.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
+                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
                 if globals.ENABLE_UPDATES_NOTIFICATIONS:
-                    t.show()
+                    self.UpdatesNotification.show()
 
             self.packageList.label.setText("")
         else:
