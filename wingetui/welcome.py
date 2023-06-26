@@ -1144,7 +1144,7 @@ class UpdatesPreferences(BasicNavWidget):
         label1 = IconLabel(size=(96), frame=False)
         label1.setIcon("update_pc_color.png")
         label1.setText(f"""<h1>{_("Updates")}</h1>
-                       {_("WingetUI can check for updates and install them automatically")}""")
+                       {_("WingetUI can check if your software has available updates, and install them automatically if you want")}""")
 
         self.default = ClickableButtonLabelWithBiggerIcon(64)
         self.default.setText(f"""
