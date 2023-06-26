@@ -802,13 +802,8 @@ class UpdateSoftwareSection(SoftwareSection):
             if not item.isHidden():
                 self.availableUpdates += 1
         self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
-        trayIconToolTip = ""
         trayMenuText = ""
         if self.availableUpdates > 0:
-            if self.availableUpdates == 1:
-                trayIconToolTip = _("WingetUI - 1 update is available")
-            else:
-                trayIconToolTip = _("WingetUI - {0} updates are available").format(self.availableUpdates)
             trayMenuText = _("Available updates: {0}").format(self.availableUpdates)
             self.packageList.label.hide()
             self.packageList.label.setText("")
@@ -816,8 +811,8 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.updatesAction.setIcon(QIcon(getMedia("alert_laptop")))
             globals.app.uaAction.setEnabled(True)
             globals.trayMenuUpdatesList.menuAction().setEnabled(True)
+            globals.tray_is_available_updates = True
         else:
-            trayIconToolTip = _("WingetUI - Everything is up to date")
             trayMenuText = _("No updates are available")
             self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
@@ -825,8 +820,9 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.trayMenuUpdatesList.menuAction().setEnabled(False)
             globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
             self.SectionImage.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
-        globals.trayIcon.setToolTip(trayIconToolTip)
+            globals.tray_is_available_updates = False
         globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)
+        update_tray_icon()
 
     def updateAllPackageItems(self, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         for item in self.packageItems:

@@ -240,14 +240,27 @@ def AddResultToLog(output: list, package, result: int):
 def update_tray_icon():
     if globals.tray_is_error:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_orange")))
+        globals.trayIcon.setToolTip(f"{_('Attention required')} - WingetUI")
     elif globals.tray_is_needs_restart:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_turquoise")))
+        globals.trayIcon.setToolTip(f"{_('Restart required')} - WingetUI")
     elif globals.tray_is_installing:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
+        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
     elif globals.tray_is_available_updates:
+        try:
+            if globals.updates.availableUpdates == 1:
+                trayIconToolTip = _("WingetUI - 1 update is available").replace("WingetUI - ", "")
+            else:
+                trayIconToolTip = _("WingetUI - {0} updates are available").format(globals.updates.availableUpdates).replace("WingetUI - ", "")
+        except Exception as e:
+            report(e)
+            trayIconToolTip = _("Updates available!").replace('"', '')
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_green")))
+        globals.trayIcon.setToolTip(f"{trayIconToolTip} - WingetUI")
     else:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_empty")))
+        globals.trayIcon.setToolTip(f"{_('WingetUI - Everything is up to date').replace('WingetUI - ', '')} - WingetUI")
 
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)

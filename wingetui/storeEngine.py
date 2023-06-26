@@ -413,7 +413,6 @@ class PackageUpdaterWidget(PackageInstallerWidget):
 
     def runInstallation(self) -> None:
         globals.tray_is_installing = True
-        globals.tray_is_available_updates = False
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.addInfoLine.emit(_("Running the updater..."))
