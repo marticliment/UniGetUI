@@ -84,8 +84,8 @@ class WelcomeWindow(QMainWindow):
                     background-color: rgba(80, 80, 80, 7%);
                     padding: 20px;
                     border-radius: 8px;
-                    border: 1px solid rgba(100, 100, 100, 15%);
-                    border-top: 1px solid rgba(100, 100, 100, 15%);
+                    border: 0px solid rgba(100, 100, 100, 15%);
+                    border-top: 0px solid rgba(100, 100, 100, 15%);
                     height: 25px;
                 }}
                 #FramelessSampleItem {{
@@ -254,10 +254,10 @@ class WelcomeWindow(QMainWindow):
                 #SampleItem {{
                     font-family: "Segoe UI Variable Text";
                     width: 100px;
-                    background-color: rgba(255, 255, 255, 70%);
+                    background-color: rgba(255, 255, 255, 50%);
                     padding: 20px;
                     border-radius: 8px;
-                    border: 1px solid rgba(255, 255, 255, 70%);
+                    border: 1px solid rgba(255, 255, 255, 50%);
                     height: 25px;
                 }}
                 #FramelessSampleItem {{
@@ -1144,7 +1144,7 @@ class UpdatesPreferences(BasicNavWidget):
         label1 = IconLabel(size=(96), frame=False)
         label1.setIcon("update_pc_color.png")
         label1.setText(f"""<h1>{_("Updates")}</h1>
-                       {_("WingetUI can check if your software has available updates, and install them automatically if you want")}""")
+                       {_("WingetUI can check if your software has available updates, and install them automatically if you want to")}""")
 
         self.default = ClickableButtonLabelWithBiggerIcon(64)
         self.default.setText(f"""
