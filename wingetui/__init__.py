@@ -1093,8 +1093,10 @@ try:
             font-family: "Consolas";
         }}
         QToolTip {{
-            background-color: #303030;
+            background-color: #262626;
             border: 1px solid #202020;
+            border-radius: 6px;
+            padding: 4px;
             border-radius: 0px;
         }}
         QToolButton {{
@@ -1465,10 +1467,11 @@ try:
             border-top: 0px solid rgba(255, 255, 255, 1%);
         }}
         QToolTip {{
-            background-color: #f5f5f;
+            background-color: #ffffff;
             border: 1px solid #f0f0f0;
+            border-radius: 6px;
+            padding: 4px;
             color: black;
-            border-radius: 0px;
         }}
         QPushButton:hover {{
             background-color: rgba(255, 255, 255, 90%);

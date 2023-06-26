@@ -857,6 +857,7 @@ class SoftwareSection(QWidget):
         self.packageList = TreeWidget("")
         self.packageList.setHeader(HeaderView(Qt.Orientation.Horizontal, self.packageList))
         self.packageList.setSortingEnabled(True)
+        self.packageList.setUniformRowHeights(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.connectCustomScrollbar(self.packageListScrollBar)
