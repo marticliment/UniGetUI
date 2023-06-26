@@ -452,11 +452,17 @@ class ScoopPackageManager(SamplePackageManager):
         finishSignal.emit()
 
     def detectManager(self, signal: Signal = None) -> None:
-        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") != None
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[1]
-        if signal:
-            signal.emit()
+        try:
+            o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+            globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") != None
+            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").split("\n")[1]
+            if signal:
+                signal.emit()
+        except Exception as e:
+            globals.componentStatus[f"{self.NAME}Found"] = False
+            globals.componentStatus[f"{self.NAME}Version"] = str(e)
+            if signal:
+                signal.emit()
 
     def updateSources(self, signal: Signal = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")
