@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : "WingetUI - 1 個のアップデートがあります",
   "WingetUI autostart behaviour, application launch settings" : "WingetUIの自動起動の設定。アプリケーション起動設定",
   "WingetUI can check for updates and install them automatically" : null,
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : "WingetUI 表示言語:",
   "WingetUI - Everything is up to date" : null,
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUIは機械翻訳ではありません!以下のユーザーに翻訳していただきました:",

@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : "WingetUI  - 1 अपडेट उपलब्ध है",
   "WingetUI autostart behaviour, application launch settings" : "WingetUI  ऑटोस्टार्ट व्यवहार, एप्लिकेशन लॉन्च सेटिंग्स",
   "WingetUI can check for updates and install them automatically" : "WingetUI  अपडेट की जांच कर सकता है और उन्हें स्वचालित रूप से इंस्टॉल कर सकता है",
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : "WingetUI  की प्रदर्शन भाषा",
   "WingetUI - Everything is up to date" : "WingetUI  - सब कुछ अप टू डेट है",
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI  का मशीनी अनुवाद नहीं किया गया है। निम्नलिखित उपयोगकर्ता अनुवादों के प्रभारी रहे हैं:",

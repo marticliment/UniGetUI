@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : "WingetUI - 1 个项目可以更新",
   "WingetUI autostart behaviour, application launch settings" : "WingetUI 自动启动行为、应用程序启动设置",
   "WingetUI can check for updates and install them automatically" : "WingetUI 可以自动检查更新并安装",
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : "WingetUI 显示语言：",
   "WingetUI - Everything is up to date" : "WingetUI - 所有东西都是最新的",
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI 不是机翻的！以下用户承担了翻译：",
