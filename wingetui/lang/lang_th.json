@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : "WingetUI - 1 พบการอัพเดท",
   "WingetUI autostart behaviour, application launch settings" : null,
   "WingetUI can check for updates and install them automatically" : null,
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : "WingetUI ภาษาที่แสดง:",
   "WingetUI - Everything is up to date" : null,
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI ไม่ได้ถูกแปลด้วยเครื่องมือแปลภาษา แต่ถูกแปลโดย:",

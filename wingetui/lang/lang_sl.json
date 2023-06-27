@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : "WingetUI - Na voljo je 1 posodobitev",
   "WingetUI autostart behaviour, application launch settings" : "WingetUI vedenje samodejnega zagona, nastavitve zagona aplikacije",
   "WingetUI can check for updates and install them automatically" : "WingetUI lahko preveri posodobitve in jih samodejno namesti",
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : "Prikazni jezik v WingetUI:",
   "WingetUI - Everything is up to date" : "WingetUI - Vse je posodobljeno",
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI ni bil strojno preveden! Za prevode so bili zadolženi naslednji uporabniki:",
