@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : "WingetUI -  یک بروز رسانی موجود است ",
   "WingetUI autostart behaviour, application launch settings" : "رفتار شروع خودکار WingetUI, تنظیمات اجرای برنامه",
   "WingetUI can check for updates and install them automatically" : null,
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : "زبان نمایشی WingetUI:",
   "WingetUI - Everything is up to date" : "WingetUI - همه چیز به روز است\n",
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : "WingetUI با ماشین ترجمه نشده است! کاربران زیر مسئولیت ترجمه را بر عهده داشته اند:\n",

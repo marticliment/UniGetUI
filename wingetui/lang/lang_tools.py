@@ -9,6 +9,7 @@ languageReference = {
     "cs"    : "Czech - Čeština",
     "da"    : "Danish - Dansk",
     "de"    : "German - Deutsch",
+    "el"    : "Greek - Ελληνικά",
     "en"    : "English - English",
     "es"    : "Spanish - Castellano",
     "fa"    : "Persian - فارسی‎",

@@ -393,6 +393,7 @@
   "WingetUI - 1 update is available" : null,
   "WingetUI autostart behaviour, application launch settings" : null,
   "WingetUI can check for updates and install them automatically" : null,
+  "WingetUI can check if your software has available updates, and install them automatically if you want to" : null,
   "WingetUI display language:" : null,
   "WingetUI - Everything is up to date" : null,
   "WingetUI has not been machine translated. The following users have been in charge of the translations:" : null,
