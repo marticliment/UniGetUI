@@ -29,6 +29,7 @@ languageReference = {
     "ru"    : "Russian - Русский",
     "sr"    : "Serbian - Srpski",
     "sl"    : "Slovene - Slovenščina",
+    "tg"    : "Tagalog - Tagalog",
     "th"    : "Thai - ภาษาไทย",
     "tr"    : "Turkish - Türkçe",
     "ua"    : "Ukranian - Yкраї́нська",
