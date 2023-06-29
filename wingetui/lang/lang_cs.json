@@ -314,7 +314,7 @@
   "Status" : "Stav",
   "Stuck here? Skip initialization" : "Aplikace se zasekla? Přeskočit inicializaci",
   "Suport the developer" : "Podpořte vývojáře",
-  "Systems are now ready to go!" : "Systémy jsou nyní připraveny!",
+  "Systems are now ready to go!" : "Systémy jsou připraveny!",
   "Text file" : "wingetui_log",
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : "Kontrolní součet instalačního programu se neshoduje s očekávanou hodnotou a pravost instalačního programu nelze ověřit. Pokud vydavateli důvěřujete, opětovná {0} balíčku přeskočí kontrolní součet.",
   "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Klasický správce balíčků pro Windows. Najdete v něm vše. <br>Obsahuje: <b>Obecný software</b>",
