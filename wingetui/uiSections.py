@@ -1947,23 +1947,21 @@ class BaseLogSection(QWidget):
         def saveLog():
             try:
                 print("🔵 Saving log...")
+                self.loadData()
                 f = QFileDialog.getSaveFileName(None, _("Export"), os.path.expanduser("~"), f"{_('Text file')} (*.txt)")
                 if f[0]:
                     fpath = f[0]
                     if not ".txt" in fpath.lower():
                         fpath += ".txt"
                     with open(fpath, "wb") as fobj:
-                        fobj.write(stdout_buffer.getvalue().encode("utf-8"))
+                        fobj.write(self.textEdit.toPlainText().encode("utf-8", errors="ignore"))
                         fobj.close()
                     os.startfile(fpath)
                     print("🟢 log saved successfully")
-                    self.textEdit.setPlainText(stdout_buffer.getvalue())
                 else:
                     print("🟡 log save cancelled!")
-                    self.textEdit.setPlainText(stdout_buffer.getvalue())
             except Exception as e:
                 report(e)
-                self.textEdit.setPlainText(stdout_buffer.getvalue())
 
         exportButtom = QPushButton(_("Export to a file"))
         exportButtom.setFixedWidth(200)
@@ -1972,9 +1970,9 @@ class BaseLogSection(QWidget):
         def copyLog():
             try:
                 print("🔵 Copying log to the clipboard...")
-                globals.app.clipboard().setText(stdout_buffer.getvalue())
+                self.loadData()
+                globals.app.clipboard().setText(self.textEdit.toPlainText())
                 print("🟢 Log copied to the clipboard successfully!")
-                self.textEdit.setPlainText(stdout_buffer.getvalue())
             except Exception as e:
                 report(e)
                 self.textEdit.setPlainText(stdout_buffer.getvalue())
