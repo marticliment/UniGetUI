@@ -25,7 +25,7 @@ class Package():
         self.PackageManager = PackageManager
 
     def isWinget(self) -> bool:
-        return self.Source.lower() == "winget"
+        return "winget" in self.Source.lower() 
 
     def isScoop(self) -> bool:
         return "scoop" in self.Source.lower()
