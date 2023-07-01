@@ -29,7 +29,7 @@ def show_package():
 def v2_show_package():
     try:
         response = jsonify(status="success")
-        result = request.args.get('pid')+":"+request.args.get('psource')
+        result = request.args.get('pid')+"#"+request.args.get('psource')
         try:
             globalsignal.emit(result)
         except AttributeError:

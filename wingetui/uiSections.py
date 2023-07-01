@@ -198,18 +198,31 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         return toolbar
 
-    def loadShared(self, id: str, second_round: bool = False):
-        if id in self.IdPackageReference:
-            package = self.IdPackageReference[id]
-            self.infobox: PackageInfoPopupWindow
-            self.infobox.showPackageDetails(package)
-            self.infobox.show()
-            self.packageList.setEnabled(True)
+    def loadShared(self, argument: str, second_round: bool = False):
+        print(argument)
+        if "#" in argument:
+            id = argument.split("#")[0]
+            store = argument.split("#")[1]
+        else:
+            id = argument
+            store = "Unknown"
+        packageFound = False
+        for package in self.PackageItemReference.keys():
+            package: Package
+            if package.Id == id and (package.Source == store or store=="Unknown"):
+                self.infobox: PackageInfoPopupWindow
+                self.infobox.showPackageDetails(package)
+                self.infobox.show()
+                self.packageList.setEnabled(True)
+                packageFound = True
+                break
+        if packageFound:
+            pass
         elif not second_round:
             self.query.setText(id)
             self.finishFiltering(self.query.text())
             self.packageList.setEnabled(False)
-            Thread(target=self.loadSharedId, args=(id,), daemon=True).start()
+            Thread(target=self.loadSharedId, args=(argument,), daemon=True).start()
         else:
             self.packageList.setEnabled(True)
             self.err = CustomMessageBox(self.window())
@@ -218,15 +231,15 @@ class DiscoverSoftwareSection(SoftwareSection):
                     "mainTitle": _("Unable to find package"),
                     "mainText": _("We could not load detailed information about this package, because it was not found in any of your package sources"),
                     "buttonTitle": _("Ok"),
-                    "errorDetails": _("This is probably due to the fact that the package you were sent was removed, or published on a package manager that you don't have enabled. The received ID is {0}").format(id),
+                    "errorDetails": _("This is probably due to the fact that the package you were sent was removed, or published on a package manager that you don't have enabled. The received ID is {0}").format(argument),
                     "icon": QIcon(getMedia("notif_warn")),
                 }
             self.err.showErrorMessage(errorData, showNotification=False)
 
-    def loadSharedId(self, id: str):
+    def loadSharedId(self, argument: str):
         while self.isLoadingDynamic:
             time.sleep(0.1)
-        self.callInMain.emit(lambda: self.loadShared(id, second_round=True))
+        self.callInMain.emit(lambda: self.loadShared(argument, second_round=True))
 
     def installSelectedPackageItems(self, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         for package in self.packageItems:
@@ -871,6 +884,11 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.trayMenuUpdatesList.removeAction(action)
         globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
         return super().startLoadingPackages(force)
+    
+    def sharePackage(self, package: TreeWidgetItemWithQAction):
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}^&psource={package.text(5)}"
+        nativeWindowsShare(package.text(2), url, self.window())
+
 
 class UninstallSoftwareSection(SoftwareSection):
     allPkgSelected: bool = False
@@ -2298,7 +2316,7 @@ class PackageInfoPopupWindow(QWidget):
         self.shareButton.setFixedWidth(200)
         self.shareButton.setStyleSheet("border-radius: 8px;")
         self.shareButton.setFixedHeight(35)
-        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}", self.window()))
+        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}^&psource={self.currentPackage.Source}", self.window()))
         self.installButton = QPushButton()
         self.installButton.setText(_("Install"))
         self.installButton.setObjectName("AccentButton")

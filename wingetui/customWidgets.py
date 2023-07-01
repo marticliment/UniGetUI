@@ -997,7 +997,7 @@ class SoftwareSection(QWidget):
         raise NotImplementedError("This function requires being reimplemented")
 
     def sharePackage(self, package: TreeWidgetItemWithQAction):
-        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}^&psource={package.text(4)}"
         nativeWindowsShare(package.text(2), url, self.window())
 
     def finishLoadingIfNeeded(self, store: str) -> None:
