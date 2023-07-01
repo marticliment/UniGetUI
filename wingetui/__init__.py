@@ -641,6 +641,12 @@ try:
             font-family: "Segoe UI Variable Text";
             outline: none;
         }}
+        #InWindowNotification {{
+            background-color: #181818;
+            border-radius: 16px;
+            height: 32px;
+            border: 1px solid #101010;
+        }}
         *::disabled {{
             color: gray;
         }}
@@ -1389,6 +1395,12 @@ try:
         }}
         *::disabled {{
             color: gray;
+        }}
+        #InWindowNotification {{
+            background-color: #eeeeee;
+            border-radius: 16px;
+            height: 32px;
+            border: 1px solid #eeeeee;
         }}
         QInputDialog {{
             background-color: #f5f5f5;

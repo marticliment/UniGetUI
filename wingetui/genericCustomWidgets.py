@@ -1171,7 +1171,6 @@ class ButtonWithResizeSignal(QPushButton):
         self.resized.emit()
         return super().resizeEvent(event)
 
-
 class VerticallyDraggableWidget(QLabel):
     pressed = False
     oldPos = QPoint(0, 0)
@@ -1225,6 +1224,64 @@ class ClickableLabel(QLabel):
     def mousePressEvent(self, ev: QMouseEvent) -> None:
         self.clicked.emit()
         return super().mousePressEvent(ev)
+
+class InWindowNotification(QMainWindow):
+    callInMain = Signal(object)
+    def __init__(self, parent: QWidget, text: str):
+        super().__init__(parent.window())
+        self.callInMain.emit(lambda f: f())
+        if parent.window():
+            self.baseGeometry = parent.window().geometry()
+        else:
+            self.baseGeometry = QApplication.primaryScreen().geometry()
+        self.setWindowFlag(Qt.WindowType.Window, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.label = QLabel(text, self)
+        self.setCentralWidget(self.label)
+        self.label.setObjectName("InWindowNotification")
+        self.setObjectName("bg")
+        self.setStyleSheet("#bg{background-color: transparent;}")
+        self.setWindowOpacity(0)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.opacity = QGraphicsOpacityEffect()
+        self.opacity.setOpacity(0)
+        self.setGraphicsEffect(self.opacity)
+        self.setMouseTracking(True)
+        
+    def show(self, timeout: int = 5):
+        super().show()
+        self.update()
+        self.repaint()
+        self.setFixedHeight(34)
+        self.setFixedWidth(200)
+        self.move(self.baseGeometry.width()//2 - self.sizeHint().width()//2, self.baseGeometry.height()-100)
+        
+        self.hideAnim = QVariantAnimation()
+        self.hideAnim.setEasingCurve(QEasingCurve.Type.InOutQuart)
+        self.hideAnim.setStartValue(100)
+        self.hideAnim.setEndValue(0)
+        self.hideAnim.setDuration(300)
+        self.hideAnim.valueChanged.connect(lambda v: (self.opacity.setOpacity(v/100)))
+        self.hideAnim.finished.connect(lambda: self.hide())
+        
+        self.showAnim = QVariantAnimation()
+        self.showAnim.setEasingCurve(QEasingCurve.Type.InOutQuart)
+        self.showAnim.setStartValue(0)
+        self.showAnim.setEndValue(100)
+        self.showAnim.setDuration(300)
+        self.showAnim.valueChanged.connect(lambda v: self.opacity.setOpacity(v/100))
+        self.timer = QTimer(self)
+        self.timer.setInterval(timeout*1000)
+        self.timer.start()
+        self.timer.timeout.connect(lambda: (print(""), self.hideAnim.start(), self.timer.stop()))
+        self.showAnim.start()
+        
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        print("")
+        self.timer.stop()
+        self.hideAnim.start()
+        return super().mousePressEvent(event)
+        
 
 if __name__ == "__main__":
     import __init__
