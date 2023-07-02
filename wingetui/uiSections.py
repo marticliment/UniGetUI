@@ -473,6 +473,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.UninstallAction.triggered.connect(lambda: uninstallPackage())
         self.IgnoreUpdates = QAction(_("Ignore updates for this package"))
         self.IgnoreUpdates.setIcon(QIcon(getMedia("pin")))
+            
         self.IgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
         self.SkipVersionAction = QAction(_("Skip this version"))
         self.SkipVersionAction.setIcon(QIcon(getMedia("skip")))
@@ -1006,9 +1007,10 @@ class UninstallSoftwareSection(SoftwareSection):
                     try:
                         if program.checkState(0) ==  Qt.CheckState.Checked:
                             IgnorePackageUpdates_Permanent(program.text(2), program.text(4))
-                            # TODO: Needs labels
                     except AttributeError:
                         pass
+            self.notif = InWindowNotification(self, _("The selected packages have been blacklisted"))
+            self.notif.show()
             self.updatePackageNumber()
 
         def showInfo():
@@ -1736,7 +1738,7 @@ class SettingsSection(SmoothScrollArea):
 
         dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
         dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
-        dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        dontUseBuiltInGsudo.stateChanged.connect(lambda v: (setSettings("UseUserGSudo", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         dontUseBuiltInGsudo.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.advancedOptions.addWidget(dontUseBuiltInGsudo)
 
@@ -1744,7 +1746,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.advancedOptions)
         disableShareApi = SectionCheckBox(_("Disable new share API (port 7058)"))
         disableShareApi.setChecked(getSettings("DisableApi"))
-        disableShareApi.stateChanged.connect(lambda v: setSettings("DisableApi", bool(v)))
+        disableShareApi.stateChanged.connect(lambda v: (setSettings("DisableApi", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.advancedOptions.addWidget(disableShareApi)
         parallelInstalls = SectionCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
@@ -1753,14 +1755,14 @@ class SettingsSection(SmoothScrollArea):
 
         enableSystemWinget = SectionCheckBox(_("Use system Winget (Needs a restart)"))
         enableSystemWinget.setChecked(getSettings("UseSystemWinget"))
-        enableSystemWinget.stateChanged.connect(lambda v: setSettings("UseSystemWinget", bool(v)))
+        enableSystemWinget.stateChanged.connect(lambda v: (setSettings("UseSystemWinget", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.advancedOptions.addWidget(enableSystemWinget)
         disableLangUpdates = SectionCheckBox(_("Do not download new app translations from GitHub automatically"))
         disableLangUpdates.setChecked(getSettings("DisableLangAutoUpdater"))
         disableLangUpdates.stateChanged.connect(lambda v: setSettings("DisableLangAutoUpdater", bool(v)))
         self.advancedOptions.addWidget(disableLangUpdates)
         resetyWingetUICache = SectionButton(_("Reset WingetUI icon and screenshot cache"), _("Reset"))
-        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")), self.inform(_("Cache was reset successfully!"))))
         resetyWingetUICache.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.advancedOptions.addWidget(resetyWingetUICache)
 
@@ -1791,7 +1793,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.wingetPreferences)
         disableWinget = SectionCheckBox(_("Enable {pm}").format(pm = "Winget"))
         disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
-        disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v)))
+        disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.wingetPreferences.addWidget(disableWinget)
         disableWinget = SectionCheckBox(_("Enable Microsoft Store package source"))
         disableWinget.setChecked(not getSettings(f"DisableMicrosoftStore"))
@@ -1817,7 +1819,7 @@ class SettingsSection(SmoothScrollArea):
 
         disableScoop = SectionCheckBox(_("Enable {pm}").format(pm = "Scoop"))
         disableScoop.setChecked(not getSettings(f"Disable{Scoop.NAME}"))
-        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v)))
+        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.scoopPreferences.addWidget(disableScoop)
         scoopPreventCaps = SectionCheckBox(_("Show Scoop packages in lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
@@ -1840,7 +1842,6 @@ class SettingsSection(SmoothScrollArea):
         self.scoopPreferences.addWidget(uninstallScoop)
         uninstallScoop.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
 
-
         scoopPreventCaps.setEnabled(disableScoop.isChecked())
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
@@ -1853,7 +1854,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.chocoPreferences)
         disableChocolatey = SectionCheckBox(_("Enable {pm}").format(pm = "Chocolatey"))
         disableChocolatey.setChecked(not getSettings(f"Disable{Choco.NAME}"))
-        disableChocolatey.stateChanged.connect(lambda v: (setSettings(f"Disable{Choco.NAME}", not bool(v))))
+        disableChocolatey.stateChanged.connect(lambda v: (setSettings(f"Disable{Choco.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.chocoPreferences.addWidget(disableChocolatey)
         enableSystemChocolatey = SectionCheckBox(_("Use system Chocolatey (Needs a restart)"))
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
@@ -1863,12 +1864,11 @@ class SettingsSection(SmoothScrollArea):
         resetCache.clicked.connect(lambda: (os.remove(Choco.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetCache)
 
-
         self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Pip"), getMedia("python"), _("{pm} package manager specific preferences").format(pm = "Pip"))
         self.layout.addWidget(self.pipPreferences)
         disablePip = SectionCheckBox(_("Enable {pm}").format(pm = "Pip"))
         disablePip.setChecked(not getSettings(f"Disable{Pip.NAME}"))
-        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v))))
+        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.pipPreferences.addWidget(disablePip)
         disablePip.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
 
@@ -1876,7 +1876,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.npmPreferences)
         disableNpm = SectionCheckBox(_("Enable {pm}").format(pm = Npm.NAME))
         disableNpm.setChecked(not getSettings(f"Disable{Npm.NAME}"))
-        disableNpm.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v))))
+        disableNpm.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.npmPreferences.addWidget(disableNpm)
         disableNpm.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8pc;border-bottom: 1px;}")
 
@@ -1888,6 +1888,10 @@ class SettingsSection(SmoothScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
+    
+    def inform(self, text: str) -> None:
+        self.notif = InWindowNotification(self, text)
+        self.notif.show()
 
 class BaseLogSection(QWidget):
     def __init__(self):

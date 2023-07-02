@@ -1245,15 +1245,23 @@ class InWindowNotification(QMainWindow):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.opacity = QGraphicsOpacityEffect()
         self.opacity.setOpacity(0)
-        self.setGraphicsEffect(self.opacity)
+        self.label.setGraphicsEffect(self.opacity)
         self.setMouseTracking(True)
+        effect = QGraphicsDropShadowEffect()
+        effect.setBlurRadius(5)
+        effect.setXOffset(0)
+        effect.setYOffset(0)
+        effect.setColor(Qt.GlobalColor.black)
+
+        self.setGraphicsEffect(effect)
+
         
     def show(self, timeout: int = 5):
         super().show()
         self.update()
         self.repaint()
         self.setFixedHeight(34)
-        self.setFixedWidth(200)
+        self.setFixedWidth(self.sizeHint().width()+32)
         self.move(self.baseGeometry.width()//2 - self.sizeHint().width()//2, self.baseGeometry.height()-100)
         
         self.hideAnim = QVariantAnimation()
