@@ -8,7 +8,6 @@ untranslatedPercentage = {
   "el": "82%",
   "es": "96%",
   "fa": "76%",
-  "fr": "99%",
   "hi": "94%",
   "hu": "99%",
   "id": "96%",
@@ -23,7 +22,7 @@ untranslatedPercentage = {
   "tg": "0%",
   "th": "30%",
   "tr": "99%",
-  "ua": "96%",
+  "ua": "97%",
   "zh_TW": "96%"
 }
 

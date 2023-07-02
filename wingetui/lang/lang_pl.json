@@ -317,7 +317,7 @@
   "Systems are now ready to go!" : "Systemy są gotowe do działania!",
   "Text file" : "Plik tekstowy",
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : "Suma kontrolna instalatora nie pokrywa się z oczekiwaną wartością i autentyczność instalatora nie może być zweryfikowana. Jeśli ufasz wydawcy, {0} pakiet ponownie pomijając sprawdzanie hasha.",
-  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Klasyczny menedżer pakietów dla Windows. Znadziesz tam wszystko. <br>Zawiera: <b>Ogólne oprogramowanie</b>",
+  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Klasyczny menedżer pakietów dla Windows. Znajdziesz tam wszystko. <br>Zawiera: <b>Ogólne oprogramowanie</b>",
   "The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved." : "Następujące pakiety zostaną wyeksportowane do pliku JSON. Żadne dane użytkownika ani pliki binarne nie zostaną zapisane.",
   "The following packages are going to be installed on your system." : "W systemie zostaną zainstalowane następujące pakiety.",
   "The icons and screenshots are maintained by users like you!" : "Ikony oraz zrzuty ekranu są zarządzane przez użytkowników takich jak ty!",
