@@ -1809,7 +1809,7 @@ class SettingsSection(SmoothScrollArea):
         enableSystemWinget.setEnabled(disableWinget.isChecked())
 
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Winget.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Winget.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache.clicked.connect(lambda: (os.remove(Winget.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.wingetPreferences.addWidget(resetCache)
 
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
@@ -1846,7 +1846,7 @@ class SettingsSection(SmoothScrollArea):
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Scoop.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Scoop.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache.clicked.connect(lambda: (os.remove(Scoop.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.scoopPreferences.addWidget(resetCache)
 
         self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
@@ -1860,7 +1860,7 @@ class SettingsSection(SmoothScrollArea):
         enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         self.chocoPreferences.addWidget(enableSystemChocolatey)
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Choco.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache.clicked.connect(lambda: (os.remove(Choco.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetCache)
 
 
