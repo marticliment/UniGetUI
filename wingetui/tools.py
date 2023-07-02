@@ -545,7 +545,7 @@ globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotificati
 
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stdout = stdout_buffer = io.StringIO()
-    sys.stderr = stderr_buffer = io.StringIO()
+    sys.stderr = stdout_buffer
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
