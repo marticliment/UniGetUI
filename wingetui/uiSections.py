@@ -32,6 +32,8 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     finishDynamicLoading = Signal()
     isLoadingDynamic: bool = False
+    
+    ShouldHideGuideArrow: bool = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -101,6 +103,52 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.contextMenu.addAction(self.ShareAction)
         self.contextMenu.addAction(self.MenuDetailsAction)
         self.contextMenu.addSeparator()
+        
+        self.ArrowLabel = QLabel(self.query.parent())
+        self.ArrowLabelInAnimation = QVariantAnimation()
+        self.ArrowLabelOutAnimation = QVariantAnimation()
+        self.ArrowLabelOpacity = QGraphicsOpacityEffect()
+        
+        def hideArrow():
+            if self.ShouldHideGuideArrow:
+                self.ShouldHideGuideArrow = False
+                self.packageList.label.setStyleSheet("")
+                self.ArrowLabel.hide()
+                self.ArrowLabelInAnimation.stop()
+                self.ArrowLabelOutAnimation.stop()
+
+        if not getSettings("ShownSearchGuideArrow"):
+            
+            setSettings("ShownSearchGuideArrow", True)
+            self.packageList.label.setStyleSheet("color: red")
+            self.ShouldHideGuideArrow = True
+            self.query.textChanged.connect(hideArrow)
+            
+            self.ArrowLabel.show()
+            self.ArrowLabel.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            self.ArrowLabelPixmap = QPixmap(getMedia("red_arrow"))
+            self.ArrowLabel.resize(self.ArrowLabelPixmap.size())
+            self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())
+            self.ArrowLabel.setPixmap(self.ArrowLabelPixmap)
+            self.ArrowLabel.setGraphicsEffect(self.ArrowLabelOpacity)
+            
+            self.ArrowLabelInAnimation.setStartValue(250)
+            self.ArrowLabelInAnimation.setEndValue(750)
+            self.ArrowLabelInAnimation.setDuration(1000)
+            self.ArrowLabelInAnimation.setEasingCurve(QEasingCurve.Type.InOutCubic)
+            self.ArrowLabelInAnimation.valueChanged.connect(lambda v: (self.ArrowLabelOpacity.setOpacity(v/1000) if self.ArrowLabel.isVisible() else None, self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())))
+            self.ArrowLabelInAnimation.finished.connect(self.ArrowLabelOutAnimation.start)
+
+            self.ArrowLabelOutAnimation.setStartValue(750)
+            self.ArrowLabelOutAnimation.setEndValue(250)
+            self.ArrowLabelOutAnimation.setDuration(1000)
+            self.ArrowLabelOutAnimation.setEasingCurve(QEasingCurve.Type.InOutCubic)
+            self.ArrowLabelOutAnimation.valueChanged.connect(lambda v: (self.ArrowLabelOpacity.setOpacity(v/1000) if self.ArrowLabel.isVisible() else None, self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())))
+            self.ArrowLabelOutAnimation.finished.connect(self.ArrowLabelInAnimation.start)
+            
+            self.ArrowLabelOutAnimation.start()
+            
+        self.query.setFocus()
 
         self.finishInitialisation()
 
@@ -392,6 +440,16 @@ class DiscoverSoftwareSection(SoftwareSection):
                 self.PackagesLoaded[manager] = True
 
         self.finishDynamicLoadingIfNeeded()
+        
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        if self.ArrowLabel.isVisible():
+            self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())
+        return super().resizeEvent(event)
+    
+    def moveEvent(self, event: QMoveEvent) -> None:
+        if self.ArrowLabel.isVisible():
+            self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())
+        return super().moveEvent(event)
 
 class UpdateSoftwareSection(SoftwareSection):
 
