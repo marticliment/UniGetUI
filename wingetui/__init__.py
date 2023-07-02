@@ -1397,10 +1397,10 @@ try:
             color: gray;
         }}
         #InWindowNotification {{
-            background-color: #eeeeee;
+            background-color: #dddddd;
             border-radius: 16px;
             height: 32px;
-            border: 1px solid #eeeeee;
+            border: 1px solid #bbbbbb;
         }}
         QInputDialog {{
             background-color: #f5f5f5;
