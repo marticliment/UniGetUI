@@ -19,7 +19,7 @@ untranslatedPercentage = {
   "ru": "94%",
   "sl": "99%",
   "sr": "11%",
-  "tg": "0%",
+  "tg": "13%",
   "th": "30%",
   "tr": "99%",
   "ua": "97%",
@@ -161,6 +161,10 @@ languageCredits = {
     {
       "name": "Rémi Guerrero",
       "link": ""
+    },
+    {
+      "name": "W1L7dev",
+      "link": "https://github.com/W1L7dev"
     }
   ],
   "hi": [
@@ -321,7 +325,16 @@ languageCredits = {
       "link": ""
     }
   ],
-  "tg": [],
+  "tg": [
+    {
+      "name": "maaaring pakilagay ang inyong pangalan na gamit at gamitan ng kuwit kung marami upang kayo ay mabigyang karangalan",
+      "link": ""
+    },
+    {
+      "name": "Mga taga ambag",
+      "link": ""
+    }
+  ],
   "th": [
     {
       "name": "apaeisara",
