@@ -276,7 +276,7 @@
   "Search" : "Szukaj",
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Szukaj aplikacji, informuj mnie kiedy dostępne są aktualizacje i nie rób nerdowski rzeczy. Nie chcę, aby WingetUI nadmiernie komplikował, chcę tylko prostego <b>sklepu z oprogramowaniem</b>",
   "Search for packages" : "Wyszukaj pakiet",
-  "Search for packages to start" : "Szukaj pakietu na start",
+  "Search for packages to start" : "Żeby zacząć, wyszukaj pakiet",
   "Searching for installed packages..." : "Wyszukiwanie zainstalowanych pakietów...",
   "Searching for packages..." : "Wyszukiwanie pakietów...",
   "Searching for updates..." : "Wyszukiwanie aktualizacji...",
