@@ -113,7 +113,7 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 94% | [bropines](https://github.com/bropines), [flatron4eg](https://github.com/flatron4eg), Sergey, [sklart](https://github.com/sklart) |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 11% | Nemanja Djurcic |
 | <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 99% | [rumplin](https://github.com/rumplin) |
-| <img src='https://flagcdn.com/ph.svg' width=20> &nbsp; Tagalog - Tagalog | 13% | anonymous |
+| <img src='https://flagcdn.com/ph.svg' width=20> &nbsp; Tagalog - Tagalog | 13% | lasersPew |
 | <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 30% | [apaeisara](https://github.com/apaeisara) |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 99% | [ahmetozmtn](https://github.com/ahmetozmtn), [gokberkgs](https://github.com/gokberkgs) |
 | <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukranian - Yкраї́нська | 97% | Artem Moldovanenko, Operator404 |
