@@ -324,11 +324,7 @@ languageCredits = {
   ],
   "tg": [
     {
-      "name": "maaaring pakilagay ang inyong pangalan na gamit at gamitan ng kuwit kung marami upang kayo ay mabigyang karangalan",
-      "link": ""
-    },
-    {
-      "name": "Mga taga ambag",
+      "name": "lasersPew",
       "link": ""
     }
   ],
