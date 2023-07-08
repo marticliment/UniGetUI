@@ -453,11 +453,12 @@ class ScoopPackageManager(SamplePackageManager):
 
     def detectManager(self, signal: Signal = None) -> None:
         try:
-            o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
             globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") != None
-            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").split("\n")[1]
+            globals.componentStatus[f"{self.NAME}Version"] = _("Loading...")
             if signal:
                 signal.emit()
+            o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").split("\n")[1]
         except Exception as e:
             globals.componentStatus[f"{self.NAME}Found"] = False
             globals.componentStatus[f"{self.NAME}Version"] = str(e)
