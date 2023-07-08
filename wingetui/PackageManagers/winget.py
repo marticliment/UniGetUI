@@ -256,7 +256,7 @@ class WingetPackageManager(DynamicPackageManager):
             idPosition: int = 0
             versionPosition: int = 0
             newVerPosition: int = 0
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -376,11 +376,11 @@ class WingetPackageManager(DynamicPackageManager):
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "list", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen(executable=self.EXECUTABLE, args="list --accept-source-agreements", stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=False)
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
