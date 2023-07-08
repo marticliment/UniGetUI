@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14019,
-        "done": 7566
+        "total": 14020,
+        "done": 7567
     },
     "icons_and_screenshots": {
         "115": {
@@ -48691,6 +48691,10 @@
         },
         "binggpt": {
             "icon": "https://images2.imgbox.com/9a/db/4veBjoAH_o.png",
+            "images": []
+        },
+        "aliae": {
+            "icon": "https://github.githubassets.com/images/icons/emoji/unicode/1f331.png",
             "images": []
         }
     }
