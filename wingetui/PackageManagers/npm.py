@@ -299,13 +299,11 @@ class NPMPackageManager(DynamicLoadPackageManager):
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
-        self.EXECUTABLE = shutil.which(self.EXECUTABLE)
-        globals.componentStatus[f"{self.NAME}Version"] = _("Loading...")
+        o = subprocess.run(f"{self.EXECUTABLE} --version", shell=True, stdout=subprocess.PIPE)
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("npm") != None
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[0]
         if signal:
             signal.emit()
-        o = subprocess.run(f"{self.EXECUTABLE} --version", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').split("\n")[0]
 
     def updateSources(self, signal: Signal = None) -> None:
         pass # Handled by the package manager, no need to manually reload

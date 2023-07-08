@@ -346,13 +346,11 @@ class ChocoPackageManager(SamplePackageManager):
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
+        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
         globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
-        self.EXECUTABLE = shutil.which(self.EXECUTABLE)
-        globals.componentStatus[f"{self.NAME}Version"] = _("Loading...")
+        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
-        o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
 
     def updateSources(self, signal: Signal = None) -> None:
         pass # Handled by the package manager, no need to manually reload
