@@ -2148,7 +2148,7 @@ try:
         a.exec()
         a.running = False
         sys.exit(0)
-    except ModuleNotFoundError as e:
+    except (ModuleNotFoundError, ImportError) as e:
         # Yes, having nested try clauses is not the best, but I want to make sure this Except clause does not cause crashes.
         import traceback
 

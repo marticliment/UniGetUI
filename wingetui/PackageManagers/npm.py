@@ -81,7 +81,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} outdated", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -115,7 +115,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
             packages: list[Package] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             currentScope = ""
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -135,7 +135,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                         print("🔵 NPM changed scope to", currentScope)
             globals.PackageManagerOutput += rawoutput
             p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line

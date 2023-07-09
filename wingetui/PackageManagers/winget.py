@@ -256,7 +256,7 @@ class WingetPackageManager(DynamicPackageManager):
             idPosition: int = 0
             versionPosition: int = 0
             newVerPosition: int = 0
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -380,7 +380,7 @@ class WingetPackageManager(DynamicPackageManager):
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line

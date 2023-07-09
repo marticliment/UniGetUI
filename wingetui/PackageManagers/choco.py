@@ -129,7 +129,7 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen([self.EXECUTABLE, "outdated"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -162,7 +162,7 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             packages: list[Package] = []
             p = subprocess.Popen([self.EXECUTABLE, "list", "--local-only"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
