@@ -9,7 +9,6 @@ untranslatedPercentage = {
   "es": "96%",
   "fa": "76%",
   "hi": "94%",
-  "hu": "99%",
   "id": "96%",
   "ko": "96%",
   "nb": "85%",
@@ -324,11 +323,7 @@ languageCredits = {
   ],
   "tg": [
     {
-      "name": "maaaring pakilagay ang inyong pangalan na gamit at gamitan ng kuwit kung marami upang kayo ay mabigyang karangalan",
-      "link": ""
-    },
-    {
-      "name": "Mga taga ambag",
+      "name": "lasersPew",
       "link": ""
     }
   ],
