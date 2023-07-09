@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14020,
-        "done": 7567
+        "done": 7569
     },
     "icons_and_screenshots": {
         "115": {
@@ -1119,8 +1119,10 @@
             "images": []
         },
         "windjview": {
-            "icon": "https://community.chocolatey.org/content/packageimages/windjview.2.1.png",
-            "images": []
+            "icon": "https://i.imgur.com/8x1CTVD.png",
+            "images": [
+                "https://windjview.sourceforge.io/screenshot.png"
+            ]
         },
         "pdftkbuilder": {
             "icon": "",
@@ -1353,7 +1355,7 @@
             ]
         },
         "jdownloader": {
-            "icon": "https://community.chocolatey.org/content/packageimages/jdownloader.2.0.0.2023.png",
+            "icon": "https://jdownloader.org/_media/knowledge/wiki/jdownloader.png",
             "images": []
         },
         "koodoreader": {
@@ -48551,7 +48553,10 @@
         },
         "ubisoft-connect": {
             "icon": "https://community.chocolatey.org/content/packageimages/ubisoft-connect.138.3.0.10824.png",
-            "images": []
+            "images": [
+                "https://ubistatic-a.ubisoft.com/0123/PROD/_next/static/images/pc-launcher-a6cf12a5845261259bd87299a19446e7.png",
+                "https://ubistatic-a.ubisoft.com/0123/PROD/_next/static/images/devices-composition-d29dbea55ec3e0f0e5c2d7250be061d4.png"
+            ]
         },
         "webex-meetings": {
             "icon": "https://community.chocolatey.org/content/packageimages/webex-meetings.43.3.2.9.png",
