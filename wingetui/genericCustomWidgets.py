@@ -288,6 +288,7 @@ class ResizableWidget(QWidget):
 
 class DynamicScrollArea(QWidget):
     maxHeight = 200
+    items = []
     def __init__(self, resizeBar: QWidget = None, parent = None) -> None:
         super().__init__(parent)
         l = QVBoxLayout()
@@ -332,21 +333,30 @@ class DynamicScrollArea(QWidget):
         return self.w.sizeHint().height()+20
 
     def removeItem(self, item: QWidget):
+        try:
+            self.items.remove(item)
+        except ValueError as e:
+            report(e)
+        print(self.items)
+        item.setVisible(False)
         self.vlayout.removeWidget(item)
         self.rss()
-        self.itemCount = self.vlayout.count()
+        self.itemCount = len(self.items)
         if self.itemCount <= 0 and self.resizeBar:
             self.resizeBar.hide()
 
     def addItem(self, item: QWidget):
+        self.items.append(item)
+        print(self.items)
         self.vlayout.addWidget(item)
-        self.itemCount = self.vlayout.count()
-        self.calculateSize()
+        self.itemCount = len(self.items)
         self.setEnabled(True)
         self.w.setEnabled(True)
         self.scrollArea.setEnabled(True)
         self.coushinWidget.setEnabled(True)
         item.setEnabled(True)
+        item.setUpdatesEnabled(True)
+        self.calculateSize()
         if self.resizeBar:
             self.resizeBar.show()
 
