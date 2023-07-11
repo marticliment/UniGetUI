@@ -16,7 +16,12 @@ class WingetPackageManager(DynamicPackageManager):
     if getSettings("UseSystemWinget"):
         EXECUTABLE = "winget.exe"
     else:
-        EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli"), "winget.exe")
+        if getSettings("EnableArmWinget"):
+            print("🟠 USING ARM BUILT-In WINGET")
+            EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli_arm64"), "winget.exe")
+        else:
+            EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli_x64"), "winget.exe")
+
 
     NAME = "Winget"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
@@ -459,7 +464,7 @@ class WingetPackageManager(DynamicPackageManager):
         try:
             details.Scopes = [_("Current user"), _("Local machine")]
             details.ManifestUrl = f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{package.Id[0].lower()}/{'/'.join(package.Id.split('.'))}" if not (len(package.Id) == 14 and package.Id == package.Id.upper()) else f"https://apps.microsoft.com/store/detail/{package.Id}"
-            details.Architectures = ["x64", "x86", "arm64"]
+            details.Architectures = ["x64", "x86"] + (["arm64"] if getSettings("EnableArmWinget") else [])
             loadedInformationPieces = 0
             currentIteration = 0
             while loadedInformationPieces < 2 and currentIteration < 50:
