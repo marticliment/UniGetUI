@@ -77,7 +77,8 @@ Type: filesandordirs; Name: "{autopf}\WingetUI\pip-23.1.2.dist-info";
 Type: filesandordirs; Name: "{autopf}\WingetUI\setuptools-65.5.0.dist-info";   
 Type: filesandordirs; Name: "{autopf}\WingetUI\sudo";
 Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc";
-Type: filesandordirs; Name: "{autopf}\WingetUI\resources\*";      
+Type: filesandordirs; Name: "{autopf}\WingetUI\winget-cli\*";      
+Type: filesandordirs; Name: "{autopf}\WingetUI\resources\*";     
 Type: filesandordirs; Name: "{username}\WingetUI\resources\*";
 
 [UninstallDelete]
