@@ -16,7 +16,7 @@ from urllib.request import urlopen
 import globals
 import clr
 from external.blurwindow import GlobalBlur
-from languages import *
+from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
