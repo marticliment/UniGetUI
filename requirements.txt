@@ -5,3 +5,4 @@ pywin32
 Flask
 flask-cors
 windows_toasts
+pythonnet

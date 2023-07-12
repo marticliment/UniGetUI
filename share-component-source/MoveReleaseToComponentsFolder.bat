@@ -1,3 +1,4 @@
 cd Release
-copy WingetUIShareComponent.exe share.exe
-move share.exe ..\..\wingetui\components\
+copy WingetUIShareComponent.dll ShareLibrary.dll
+move ShareLibrary.dll ..\..\wingetui\components\
+pause

@@ -14,6 +14,7 @@ from threading import Thread
 from urllib.request import urlopen
 
 import globals
+import clr
 from external.blurwindow import GlobalBlur
 from languages import *
 from PySide6.QtCore import *
@@ -143,8 +144,13 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
-    cprint(globals.shareProcessHandler.args)
+    WingetUIShareComponent.Form1(["", text, url, coordinates])
+
+    #coordinates = ""
+    #if window:
+    #    coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
+    #globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
+    #cprint(globals.shareProcessHandler.args)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
@@ -565,7 +571,11 @@ try:
 except TypeError as e:
     report(e)
     GSUDO_EXE_LOCATION = os.path.expanduser("~")
-SHARE_EXE_PATH = os.path.join(os.path.join(realpath, "components"), "share.exe")
+SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrary.dll")
+
+clr.AddReference(SHARE_DLL_PATH)
+import WingetUIShareComponent
+
 
 SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
 if isDark():
