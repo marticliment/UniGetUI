@@ -407,6 +407,6 @@
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI 的诞生离不开我们亲爱的贡献者的帮助。请查看他们的 GitHub 个人页面，没有他们就无法成就 WingetUI！",
   "Yes" : "是",
   "You may restart your computer later if you wish" : "如果需要，您可以稍后重启您的电脑",
-  "You will be prompted only once, and administrator rights will be granted to packages that request them." : "当软件包需要管理员权限时，系统只会提示您一次",
-  "You will be prompted only once, and every future installation will be elevated automatically." : "软件包自动获取管理员权限，而系统只会提示您一次"
+  "You will be prompted only once, and administrator rights will be granted to packages that request them." : "系统只会提示您一次，且仅向要求权限的程序包授予管理员权限。",
+  "You will be prompted only once, and every future installation will be elevated automatically." : "系统只会提示您一次，以后的每次安装都会自动升级为管理员权限。"
 }
