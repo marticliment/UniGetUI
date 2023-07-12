@@ -18,7 +18,7 @@ def CheckProgramIntegrity():
         ".\\PackageManagers\\sampleHelper.py": "163a6266bdc83391fea541a0cfd593a830790d1b410e942c514ed75aacc5d4fc",
         ".\\PackageManagers\\scoop.py": "68d0842b20cfb37717770e6cb4b90fce1e55d824ccb94a35647548954d00ee5e",
         ".\\PackageManagers\\winget.py": "2aad64267e007cf4e281420a8dc6206535ede511f0d0867aa366d20b3c457c5e",
-        ".\\api_backend.py": "53d4a13bc7cd3326f1911d89bfddb36e03632c9c41fb668cafb16a3c2706308c",
+        ".\\apiBackend.py": "53d4a13bc7cd3326f1911d89bfddb36e03632c9c41fb668cafb16a3c2706308c",
         ".\\customWidgets.py": "0f2929eb2103de38c8287a244af38bb53b9d8b29cd34d75525293998ba0b56ac",
         ".\\genericCustomWidgets.py": "faa3fc2640ebf8e584bfe7e87f3df47d8581b05154f95701d3e39705a98b015c",
         ".\\globals.py": "ad32f47cdb03d40b1e2f9787e731fa07e3dea100da3d5883777164b20a3645bb",
@@ -74,7 +74,7 @@ try:
 
         import globals
         import win32mica
-        from api_backend import runBackendApi
+        from apiBackend import runBackendApi
         from customWidgets import *
         from external.blurwindow import ExtendFrameIntoClientArea, GlobalBlur
         from mainWindow import *
