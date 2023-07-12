@@ -573,9 +573,16 @@ except TypeError as e:
     GSUDO_EXE_LOCATION = os.path.expanduser("~")
 SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrary.dll")
 
+#
+# Begin Import C#.NET DLLs
+#
+ 
 clr.AddReference(SHARE_DLL_PATH)
 import WingetUIShareComponent
 
+#
+# End Import C#.NET DLLs
+#
 
 SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
 if isDark():

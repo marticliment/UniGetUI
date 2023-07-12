@@ -18,9 +18,9 @@ class WingetPackageManager(DynamicPackageManager):
     else:
         if getSettings("EnableArmWinget"):
             print("🟠 USING ARM BUILT-In WINGET")
-            EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli_arm64"), "winget.exe")
+            EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_arm64", "winget.exe")
         else:
-            EXECUTABLE = os.path.join(os.path.join(realpath, "winget-cli_x64"), "winget.exe")
+            EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_x64", "winget.exe")
 
 
     NAME = "Winget"
