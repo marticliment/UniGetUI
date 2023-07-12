@@ -20,7 +20,7 @@ from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from versions import *
+from data.versions import *
 
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr
