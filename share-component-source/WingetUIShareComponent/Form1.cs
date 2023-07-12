@@ -20,10 +20,21 @@ namespace WingetUIShareComponent
         int width = 800;
         int height = 600;
 
+        public Form1(string[] forcedargs)
+        {
+            InitializeComponent();
+            StartSharingProcess(forcedargs);
+        }
+
         public Form1()
         {
             InitializeComponent();
-            string[] args = Environment.GetCommandLineArgs();
+            StartSharingProcess(Environment.GetCommandLineArgs());
+        }
+
+        public void StartSharingProcess(string[] args)
+        { 
+            Console.WriteLine(args);
 
             // args[0]: executable file (default argument)
             // args[1]: Application share title
