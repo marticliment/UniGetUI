@@ -6,7 +6,7 @@ import PySide6.QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import _, blueColor
+from tools import _, blueColor, GetIgnoredPackageUpdates_Permanent
 
 
 class Package():
@@ -68,8 +68,14 @@ class Package():
             strver = f"{0.0:040.10f}"
         return strver
 
+    def isTheSameAs(self, package: 'Package'):
+        return self.Id == package.Id and self.Name == package.Name and package.Source == package.Source and package.PackageManager == package.PackageManager
+
     def __str__(self) -> str:
         return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
+    
+    def hasUpdatesIgnoredPermanently(self) -> bool:
+        return [self.Id, self.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent()
 
 class UpgradablePackage(Package):
     NewVersion = ""

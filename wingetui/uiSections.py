@@ -70,6 +70,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             setSettings("WarnedAboutPackages_v2", True)
             self.informationBanner.show()
         self.installIcon = QIcon(getMedia("install"))
+        self.installedIcon = QIcon(getMedia("installed"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
 
@@ -391,6 +392,18 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
+                
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            if package.Id in UNINSTALL.IdPackageReference.keys():
+                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedItem = installedPackage.PackageItem
+                if installedItem in UNINSTALL.packageItems:
+                    item.setIcon(1, self.installedIcon)
+                    item.setToolTip(1, _("This package is already installed")+" - "+package.Name)
+
+                
+
+                
 
     def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
@@ -499,6 +512,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.packageList.label.setText(self.countLabel.text())
 
         self.installIcon = QIcon(getMedia("install"))
+        self.updateIcon = QIcon(getMedia("update"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
@@ -814,6 +828,14 @@ class UpdateSoftwareSection(SoftwareSection):
             action.setShortcut(package.Version)
             item.setAction(action)
             globals.trayMenuUpdatesList.addAction(action)
+            
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            if package.Id in UNINSTALL.IdPackageReference.keys():
+                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedItem = installedPackage.PackageItem
+                if installedItem in UNINSTALL.packageItems:
+                    installedItem.setIcon(1, self.updateIcon)
+                    installedItem.setToolTip(1, _("This package can be updated to version {0}").format(package.NewVersion)+" - "+package.Name)
 
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
@@ -981,6 +1003,9 @@ class UninstallSoftwareSection(SoftwareSection):
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstallPackageItem(item))
 
         self.installIcon = QIcon(getMedia("install"))
+        self.pinnedIcon = QIcon(getMedia("pin_yellow"))
+        self.updateIcon = QIcon(getMedia("update"))
+        self.installedIcon = QIcon(getMedia("installed"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
 
@@ -1065,6 +1090,8 @@ class UninstallSoftwareSection(SoftwareSection):
                     try:
                         if program.checkState(0) ==  Qt.CheckState.Checked:
                             IgnorePackageUpdates_Permanent(program.text(2), program.text(4))
+                            program.setIcon(1, self.pinnedIcon)
+                            program.setToolTip(1, _("Updates for this package are ignored")+" - "+program.text(1))
                     except AttributeError:
                         pass
             self.notif = InWindowNotification(self, _("The selected packages have been blacklisted"))
@@ -1223,6 +1250,28 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
             item.setText(6, package.getFloatVersion())
+            
+            UPDATES: UpdateSoftwareSection = globals.updates
+            if package.hasUpdatesIgnoredPermanently():
+                item.setIcon(1, self.pinnedIcon)
+                item.setToolTip(1, _("Updates for this package are ignored")+" - "+package.Name)
+            elif package.Id in UPDATES.IdPackageReference.keys():
+                updatePackage: UpgradablePackage = UPDATES.IdPackageReference[package.Id]
+                updateItem = updatePackage.PackageItem
+                if updateItem in UPDATES.packageItems:
+                    item.setIcon(1, self.updateIcon)
+                    item.setToolTip(1, _("This package can be updated to version {0}").format(updatePackage.NewVersion)+" - "+package.Name)
+            
+            DISCOVER: UninstallSoftwareSection = globals.discover
+            if package.Id in DISCOVER.IdPackageReference.keys():
+                discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[package.Id]
+                discoverableItem = discoverablePackage.PackageItem
+                if discoverableItem in DISCOVER.packageItems:
+                    discoverableItem.setIcon(1, self.installedIcon)
+                    discoverableItem.setToolTip(1, _("This package is already installed")+" - "+package.Name)
+
+
+            
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package
