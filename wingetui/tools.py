@@ -14,12 +14,13 @@ from threading import Thread
 from urllib.request import urlopen
 
 import globals
+import clr
 from external.blurwindow import GlobalBlur
-from languages import *
+from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from versions import *
+from data.versions import *
 
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr
@@ -143,8 +144,13 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
-    cprint(globals.shareProcessHandler.args)
+    WingetUIShareComponent.Form1(["", text, url, coordinates])
+
+    #coordinates = ""
+    #if window:
+    #    coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
+    #globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
+    #cprint(globals.shareProcessHandler.args)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
@@ -240,14 +246,27 @@ def AddResultToLog(output: list, package, result: int):
 def update_tray_icon():
     if globals.tray_is_error:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_orange")))
+        globals.trayIcon.setToolTip(f"{_('Attention required')} - WingetUI")
     elif globals.tray_is_needs_restart:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_turquoise")))
+        globals.trayIcon.setToolTip(f"{_('Restart required')} - WingetUI")
     elif globals.tray_is_installing:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
+        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
     elif globals.tray_is_available_updates:
+        try:
+            if globals.updates.availableUpdates == 1:
+                trayIconToolTip = _("WingetUI - 1 update is available").replace("WingetUI - ", "")
+            else:
+                trayIconToolTip = _("WingetUI - {0} updates are available").format(globals.updates.availableUpdates).replace("WingetUI - ", "")
+        except Exception as e:
+            report(e)
+            trayIconToolTip = _("Updates available!").replace('"', '')
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_green")))
+        globals.trayIcon.setToolTip(f"{trayIconToolTip} - WingetUI")
     else:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_empty")))
+        globals.trayIcon.setToolTip(f"{_('WingetUI - Everything is up to date').replace('WingetUI - ', '')} - WingetUI")
 
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
@@ -532,7 +551,7 @@ globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotificati
 
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stdout = stdout_buffer = io.StringIO()
-    sys.stderr = stderr_buffer = io.StringIO()
+    sys.stderr = stdout_buffer
 
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
@@ -552,7 +571,18 @@ try:
 except TypeError as e:
     report(e)
     GSUDO_EXE_LOCATION = os.path.expanduser("~")
-SHARE_EXE_PATH = os.path.join(os.path.join(realpath, "components"), "share.exe")
+SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrary.dll")
+
+#
+# Begin Import C#.NET DLLs
+#
+ 
+clr.AddReference(SHARE_DLL_PATH)
+import WingetUIShareComponent
+
+#
+# End Import C#.NET DLLs
+#
 
 SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
 if isDark():

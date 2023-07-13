@@ -9,6 +9,7 @@ languageReference = {
     "cs"    : "Czech - Čeština",
     "da"    : "Danish - Dansk",
     "de"    : "German - Deutsch",
+    "el"    : "Greek - Ελληνικά",
     "en"    : "English - English",
     "es"    : "Spanish - Castellano",
     "fa"    : "Persian - فارسی‎",
@@ -28,6 +29,7 @@ languageReference = {
     "ru"    : "Russian - Русский",
     "sr"    : "Serbian - Srpski",
     "sl"    : "Slovene - Slovenščina",
+    "tg"    : "Tagalog - Tagalog",
     "th"    : "Thai - ภาษาไทย",
     "tr"    : "Turkish - Türkçe",
     "ua"    : "Ukranian - Yкраї́нська",
@@ -73,6 +75,7 @@ languageFlagsRemap = {
     "zh_TW": "tw",
     "zh": "cn",
     "bn": "bd",
+    "tg": "ph"
 }
 
 

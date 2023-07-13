@@ -4,33 +4,20 @@ untranslatedPercentage = {
   "ar": "91%",
   "bg": "50%",
   "bn": "14%",
-  "ca": "99%",
-  "cs": "98%",
   "da": "32%",
-  "de": "99%",
   "el": "82%",
-  "es": "96%",
+  "es": "97%",
   "fa": "76%",
-  "fr": "99%",
   "hi": "94%",
-  "hr": "94%",
-  "hu": "99%",
   "id": "96%",
-  "it": "96%",
-  "ja": "80%",
-  "ko": "84%",
+  "ko": "97%",
   "nb": "85%",
-  "nl": "99%",
-  "pl": "99%",
-  "pt_BR": "99%",
-  "pt_PT": "99%",
   "ru": "94%",
-  "sl": "99%",
   "sr": "11%",
-  "th": "31%",
+  "tg": "13%",
+  "th": "30%",
   "tr": "99%",
-  "ua": "96%",
-  "zh_CN": "99%",
+  "ua": "97%",
   "zh_TW": "96%"
 }
 
@@ -169,6 +156,10 @@ languageCredits = {
     {
       "name": "Rémi Guerrero",
       "link": ""
+    },
+    {
+      "name": "W1L7dev",
+      "link": "https://github.com/W1L7dev"
     }
   ],
   "hi": [
@@ -326,6 +317,12 @@ languageCredits = {
   "sr": [
     {
       "name": "Nemanja Djurcic",
+      "link": ""
+    }
+  ],
+  "tg": [
+    {
+      "name": "lasersPew",
       "link": ""
     }
   ],

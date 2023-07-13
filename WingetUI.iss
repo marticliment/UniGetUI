@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "2.0.1"
+#define MyAppVersion "2.0.2-beta"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=2.0.1.0
+VersionInfoVersion=2.0.2.0
 DefaultDirName="{autopf}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -77,7 +77,9 @@ Type: filesandordirs; Name: "{autopf}\WingetUI\pip-23.1.2.dist-info";
 Type: filesandordirs; Name: "{autopf}\WingetUI\setuptools-65.5.0.dist-info";   
 Type: filesandordirs; Name: "{autopf}\WingetUI\sudo";
 Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc";
-Type: filesandordirs; Name: "{autopf}\WingetUI\resources\*";
+Type: filesandordirs; Name: "{autopf}\WingetUI\winget-cli\*";      
+Type: filesandordirs; Name: "{autopf}\WingetUI\resources\*";     
+Type: filesandordirs; Name: "{username}\WingetUI\resources\*";
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');

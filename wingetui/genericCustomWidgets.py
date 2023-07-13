@@ -288,6 +288,7 @@ class ResizableWidget(QWidget):
 
 class DynamicScrollArea(QWidget):
     maxHeight = 200
+    items = []
     def __init__(self, resizeBar: QWidget = None, parent = None) -> None:
         super().__init__(parent)
         l = QVBoxLayout()
@@ -332,21 +333,30 @@ class DynamicScrollArea(QWidget):
         return self.w.sizeHint().height()+20
 
     def removeItem(self, item: QWidget):
+        try:
+            self.items.remove(item)
+        except ValueError as e:
+            report(e)
+        print(self.items)
+        item.setVisible(False)
         self.vlayout.removeWidget(item)
         self.rss()
-        self.itemCount = self.vlayout.count()
+        self.itemCount = len(self.items)
         if self.itemCount <= 0 and self.resizeBar:
             self.resizeBar.hide()
 
     def addItem(self, item: QWidget):
+        self.items.append(item)
+        print(self.items)
         self.vlayout.addWidget(item)
-        self.itemCount = self.vlayout.count()
-        self.calculateSize()
+        self.itemCount = len(self.items)
         self.setEnabled(True)
         self.w.setEnabled(True)
         self.scrollArea.setEnabled(True)
         self.coushinWidget.setEnabled(True)
         item.setEnabled(True)
+        item.setUpdatesEnabled(True)
+        self.calculateSize()
         if self.resizeBar:
             self.resizeBar.show()
 
@@ -1075,7 +1085,7 @@ class ToastNotification(QObject):
         template.on_activated=self.onAction
         template.on_dismissed=lambda _1: self.onDismissFun()
         template.on_failed=lambda _1: self.reportException()
-        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable))
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable) if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) else None)
         self.toast.show_toast(template)
 
     def reportException(self, id):
@@ -1171,7 +1181,6 @@ class ButtonWithResizeSignal(QPushButton):
         self.resized.emit()
         return super().resizeEvent(event)
 
-
 class VerticallyDraggableWidget(QLabel):
     pressed = False
     oldPos = QPoint(0, 0)
@@ -1225,6 +1234,72 @@ class ClickableLabel(QLabel):
     def mousePressEvent(self, ev: QMouseEvent) -> None:
         self.clicked.emit()
         return super().mousePressEvent(ev)
+
+class InWindowNotification(QMainWindow):
+    callInMain = Signal(object)
+    def __init__(self, parent: QWidget, text: str):
+        super().__init__(parent.window())
+        self.callInMain.emit(lambda f: f())
+        if parent.window():
+            self.baseGeometry = parent.window().geometry()
+        else:
+            self.baseGeometry = QApplication.primaryScreen().geometry()
+        self.setWindowFlag(Qt.WindowType.Window, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.label = QLabel(text, self)
+        self.setCentralWidget(self.label)
+        self.label.setObjectName("InWindowNotification")
+        self.setObjectName("bg")
+        self.setStyleSheet("#bg{background-color: transparent;}")
+        self.setWindowOpacity(0)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.opacity = QGraphicsOpacityEffect()
+        self.opacity.setOpacity(0)
+        self.label.setGraphicsEffect(self.opacity)
+        self.setMouseTracking(True)
+        effect = QGraphicsDropShadowEffect()
+        effect.setBlurRadius(5)
+        effect.setXOffset(0)
+        effect.setYOffset(0)
+        effect.setColor(Qt.GlobalColor.black)
+
+        self.setGraphicsEffect(effect)
+
+        
+    def show(self, timeout: int = 5):
+        super().show()
+        self.update()
+        self.repaint()
+        self.setFixedHeight(34)
+        self.setFixedWidth(self.sizeHint().width()+32)
+        self.move(self.baseGeometry.width()//2 - self.sizeHint().width()//2, self.baseGeometry.height()-100)
+        
+        self.hideAnim = QVariantAnimation()
+        self.hideAnim.setEasingCurve(QEasingCurve.Type.InOutQuart)
+        self.hideAnim.setStartValue(100)
+        self.hideAnim.setEndValue(0)
+        self.hideAnim.setDuration(300)
+        self.hideAnim.valueChanged.connect(lambda v: (self.opacity.setOpacity(v/100)))
+        self.hideAnim.finished.connect(lambda: self.hide())
+        
+        self.showAnim = QVariantAnimation()
+        self.showAnim.setEasingCurve(QEasingCurve.Type.InOutQuart)
+        self.showAnim.setStartValue(0)
+        self.showAnim.setEndValue(100)
+        self.showAnim.setDuration(300)
+        self.showAnim.valueChanged.connect(lambda v: self.opacity.setOpacity(v/100))
+        self.timer = QTimer(self)
+        self.timer.setInterval(timeout*1000)
+        self.timer.start()
+        self.timer.timeout.connect(lambda: (print(""), self.hideAnim.start(), self.timer.stop()))
+        self.showAnim.start()
+        
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        print("")
+        self.timer.stop()
+        self.hideAnim.start()
+        return super().mousePressEvent(event)
+        
 
 if __name__ == "__main__":
     import __init__

@@ -858,6 +858,7 @@ class SoftwareSection(QWidget):
         self.packageList.setUniformRowHeights(True)
         self.packageList.setHeader(HeaderView(Qt.Orientation.Horizontal, self.packageList))
         self.packageList.setSortingEnabled(True)
+        self.packageList.setUniformRowHeights(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.packageList.setVerticalScrollBar(self.packageListScrollBar)
         self.packageList.connectCustomScrollbar(self.packageListScrollBar)
@@ -997,7 +998,7 @@ class SoftwareSection(QWidget):
         raise NotImplementedError("This function requires being reimplemented")
 
     def sharePackage(self, package: TreeWidgetItemWithQAction):
-        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}"
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}^&psource={package.text(4)}"
         nativeWindowsShare(package.text(2), url, self.window())
 
     def finishLoadingIfNeeded(self, store: str) -> None:

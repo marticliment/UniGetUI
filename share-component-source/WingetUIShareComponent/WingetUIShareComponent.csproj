@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>WingetUIShareComponent</RootNamespace>
     <AssemblyName>WingetUIShareComponent</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>

@@ -101,9 +101,9 @@ class ChocoPackageManager(SamplePackageManager):
                         name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
-
                         if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                             ContentsToCache += f"{name},{id},{version}\n"
+
             AlreadyCachedPackages = ""
             try:
                 if os.path.exists(self.CACHE_FILE):
@@ -129,7 +129,7 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen([self.EXECUTABLE, "outdated"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -162,7 +162,7 @@ class ChocoPackageManager(SamplePackageManager):
         try:
             packages: list[Package] = []
             p = subprocess.Popen([self.EXECUTABLE, "list", "--local-only"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"
+            rawoutput = "\n\n---------"+self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -243,7 +243,7 @@ class ChocoPackageManager(SamplePackageManager):
             output = []
             while p.poll() is None:
                 line = p.stdout.readline().strip()
-                if line:
+                if " " in line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
                 details.Versions.append(line.split(" ")[1])

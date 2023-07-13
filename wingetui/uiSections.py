@@ -32,6 +32,8 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     finishDynamicLoading = Signal()
     isLoadingDynamic: bool = False
+    
+    ShouldHideGuideArrow: bool = False
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -102,6 +104,52 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.contextMenu.addAction(self.ShareAction)
         self.contextMenu.addAction(self.MenuDetailsAction)
         self.contextMenu.addSeparator()
+        
+        self.ArrowLabel = QLabel(self.query.parent())
+        self.ArrowLabelInAnimation = QVariantAnimation()
+        self.ArrowLabelOutAnimation = QVariantAnimation()
+        self.ArrowLabelOpacity = QGraphicsOpacityEffect()
+        
+        def hideArrow():
+            if self.ShouldHideGuideArrow:
+                self.ShouldHideGuideArrow = False
+                self.packageList.label.setStyleSheet("")
+                self.ArrowLabel.hide()
+                self.ArrowLabelInAnimation.stop()
+                self.ArrowLabelOutAnimation.stop()
+
+        if not getSettings("ShownSearchGuideArrow"):
+            
+            setSettings("ShownSearchGuideArrow", True)
+            self.packageList.label.setStyleSheet("color: red")
+            self.ShouldHideGuideArrow = True
+            self.query.textChanged.connect(hideArrow)
+            
+            self.ArrowLabel.show()
+            self.ArrowLabel.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            self.ArrowLabelPixmap = QPixmap(getMedia("red_arrow"))
+            self.ArrowLabel.resize(self.ArrowLabelPixmap.size())
+            self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())
+            self.ArrowLabel.setPixmap(self.ArrowLabelPixmap)
+            self.ArrowLabel.setGraphicsEffect(self.ArrowLabelOpacity)
+            
+            self.ArrowLabelInAnimation.setStartValue(250)
+            self.ArrowLabelInAnimation.setEndValue(750)
+            self.ArrowLabelInAnimation.setDuration(1000)
+            self.ArrowLabelInAnimation.setEasingCurve(QEasingCurve.Type.InOutCubic)
+            self.ArrowLabelInAnimation.valueChanged.connect(lambda v: (self.ArrowLabelOpacity.setOpacity(v/1000) if self.ArrowLabel.isVisible() else None, self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())))
+            self.ArrowLabelInAnimation.finished.connect(self.ArrowLabelOutAnimation.start)
+
+            self.ArrowLabelOutAnimation.setStartValue(750)
+            self.ArrowLabelOutAnimation.setEndValue(250)
+            self.ArrowLabelOutAnimation.setDuration(1000)
+            self.ArrowLabelOutAnimation.setEasingCurve(QEasingCurve.Type.InOutCubic)
+            self.ArrowLabelOutAnimation.valueChanged.connect(lambda v: (self.ArrowLabelOpacity.setOpacity(v/1000) if self.ArrowLabel.isVisible() else None, self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())))
+            self.ArrowLabelOutAnimation.finished.connect(self.ArrowLabelInAnimation.start)
+            
+            self.ArrowLabelOutAnimation.start()
+            
+        self.query.setFocus()
 
         self.finishInitialisation()
 
@@ -199,18 +247,31 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         return toolbar
 
-    def loadShared(self, id: str, second_round: bool = False):
-        if id in self.IdPackageReference:
-            package = self.IdPackageReference[id]
-            self.infobox: PackageInfoPopupWindow
-            self.infobox.showPackageDetails(package)
-            self.infobox.show()
-            self.packageList.setEnabled(True)
+    def loadShared(self, argument: str, second_round: bool = False):
+        print(argument)
+        if "#" in argument:
+            id = argument.split("#")[0]
+            store = argument.split("#")[1]
+        else:
+            id = argument
+            store = "Unknown"
+        packageFound = False
+        for package in self.PackageItemReference.keys():
+            package: Package
+            if package.Id == id and (package.Source == store or store=="Unknown"):
+                self.infobox: PackageInfoPopupWindow
+                self.infobox.showPackageDetails(package)
+                self.infobox.show()
+                self.packageList.setEnabled(True)
+                packageFound = True
+                break
+        if packageFound:
+            pass
         elif not second_round:
             self.query.setText(id)
             self.finishFiltering(self.query.text())
             self.packageList.setEnabled(False)
-            Thread(target=self.loadSharedId, args=(id,), daemon=True).start()
+            Thread(target=self.loadSharedId, args=(argument,), daemon=True).start()
         else:
             self.packageList.setEnabled(True)
             self.err = CustomMessageBox(self.window())
@@ -219,15 +280,15 @@ class DiscoverSoftwareSection(SoftwareSection):
                     "mainTitle": _("Unable to find package"),
                     "mainText": _("We could not load detailed information about this package, because it was not found in any of your package sources"),
                     "buttonTitle": _("Ok"),
-                    "errorDetails": _("This is probably due to the fact that the package you were sent was removed, or published on a package manager that you don't have enabled. The received ID is {0}").format(id),
+                    "errorDetails": _("This is probably due to the fact that the package you were sent was removed, or published on a package manager that you don't have enabled. The received ID is {0}").format(argument),
                     "icon": QIcon(getMedia("notif_warn")),
                 }
             self.err.showErrorMessage(errorData, showNotification=False)
 
-    def loadSharedId(self, id: str):
+    def loadSharedId(self, argument: str):
         while self.isLoadingDynamic:
             time.sleep(0.1)
-        self.callInMain.emit(lambda: self.loadShared(id, second_round=True))
+        self.callInMain.emit(lambda: self.loadShared(argument, second_round=True))
 
     def installSelectedPackageItems(self, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         for package in self.packageItems:
@@ -392,6 +453,16 @@ class DiscoverSoftwareSection(SoftwareSection):
                 self.PackagesLoaded[manager] = True
 
         self.finishDynamicLoadingIfNeeded()
+        
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        if self.ArrowLabel.isVisible():
+            self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())
+        return super().resizeEvent(event)
+    
+    def moveEvent(self, event: QMoveEvent) -> None:
+        if self.ArrowLabel.isVisible():
+            self.ArrowLabel.move(self.query.x() + self.query.width()//2 - self.ArrowLabel.width() + 80, self.query.y()+self.query.height())
+        return super().moveEvent(event)
 
 class UpdateSoftwareSection(SoftwareSection):
 
@@ -402,6 +473,7 @@ class UpdateSoftwareSection(SoftwareSection):
     PackageItemReference: dict[UpgradablePackage:TreeWidgetItemWithQAction] = {}
     ItemPackageReference: dict[TreeWidgetItemWithQAction:UpgradablePackage] = {}
     IdPackageReference: dict[str:UpgradablePackage] = {}
+    UpdatesNotification: ToastNotification = None
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -473,6 +545,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.UninstallAction.triggered.connect(lambda: uninstallPackage())
         self.IgnoreUpdates = QAction(_("Ignore updates for this package"))
         self.IgnoreUpdates.setIcon(QIcon(getMedia("pin")))
+            
         self.IgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
         self.SkipVersionAction = QAction(_("Skip this version"))
         self.SkipVersionAction.setIcon(QIcon(getMedia("skip")))
@@ -642,41 +715,47 @@ class UpdateSoftwareSection(SoftwareSection):
         if count > 0:
             globals.tray_is_available_updates = True
             update_tray_icon()
+            try:
+                self.UpdatesNotification.close()
+            except AttributeError:
+                pass
+            except Exception as e:
+                report(e)
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
                 self.updateAllPackageItems()
-                t = ToastNotification(self, self.callInMain.emit)
+                self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
                 if count > 1:
-                    t.setTitle(_("Updates found!"))
-                    t.setDescription(_("{0} packages are being updated").format(count)+":")
+                    self.UpdatesNotification.setTitle(_("Updates found!"))
+                    self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count)+":")
                     packageList = ""
                     for item in self.packageItems:
                         packageList += item.text(1)+", "
-                    t.setSmallText(packageList[:-2])
+                    self.UpdatesNotification.setSmallText(packageList[:-2])
                 elif count == 1:
-                    t.setTitle(_("Update found!"))
-                    t.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
-                t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    self.UpdatesNotification.setTitle(_("Update found!"))
+                    self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
+                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
                 if globals.ENABLE_UPDATES_NOTIFICATIONS:
-                    t.show()
+                    self.UpdatesNotification.show()
 
             else:
-                t = ToastNotification(self, self.callInMain.emit)
+                self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
                 if count > 1:
-                    t.setTitle(_("Updates found!"))
-                    t.setDescription(_("{0} packages can be updated").format(count)+":")
-                    t.addAction(_("Update all"), self.updateAllPackageItems)
+                    self.UpdatesNotification.setTitle(_("Updates found!"))
+                    self.UpdatesNotification.setDescription(_("{0} packages can be updated").format(count)+":")
+                    self.UpdatesNotification.addAction(_("Update all"), self.updateAllPackageItems)
                     packageList = ""
                     for item in self.packageItems:
                         packageList += item.text(1)+", "
-                    t.setSmallText(packageList[:-2])
+                    self.UpdatesNotification.setSmallText(packageList[:-2])
                 elif count == 1:
-                    t.setTitle(_("Update found!"))
-                    t.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
-                    t.addAction(_("Update"), self.updateAllPackageItems)
-                t.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
-                t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    self.UpdatesNotification.setTitle(_("Update found!"))
+                    self.UpdatesNotification.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
+                    self.UpdatesNotification.addAction(_("Update"), self.updateAllPackageItems)
+                self.UpdatesNotification.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
+                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
                 if globals.ENABLE_UPDATES_NOTIFICATIONS:
-                    t.show()
+                    self.UpdatesNotification.show()
 
             self.packageList.label.setText("")
         else:
@@ -817,13 +896,8 @@ class UpdateSoftwareSection(SoftwareSection):
             if not item.isHidden():
                 self.availableUpdates += 1
         self.countLabel.setText(_("Available updates: {0}").format(self.availableUpdates))
-        trayIconToolTip = ""
         trayMenuText = ""
         if self.availableUpdates > 0:
-            if self.availableUpdates == 1:
-                trayIconToolTip = _("WingetUI - 1 update is available")
-            else:
-                trayIconToolTip = _("WingetUI - {0} updates are available").format(self.availableUpdates)
             trayMenuText = _("Available updates: {0}").format(self.availableUpdates)
             self.packageList.label.hide()
             self.packageList.label.setText("")
@@ -831,8 +905,8 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.updatesAction.setIcon(QIcon(getMedia("alert_laptop")))
             globals.app.uaAction.setEnabled(True)
             globals.trayMenuUpdatesList.menuAction().setEnabled(True)
+            globals.tray_is_available_updates = True
         else:
-            trayIconToolTip = _("WingetUI - Everything is up to date")
             trayMenuText = _("No updates are available")
             self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
@@ -840,8 +914,9 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.trayMenuUpdatesList.menuAction().setEnabled(False)
             globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
             self.SectionImage.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
-        globals.trayIcon.setToolTip(trayIconToolTip)
+            globals.tray_is_available_updates = False
         globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)
+        update_tray_icon()
 
     def updateAllPackageItems(self, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         for item in self.packageItems:
@@ -890,6 +965,11 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.trayMenuUpdatesList.removeAction(action)
         globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
         return super().startLoadingPackages(force)
+    
+    def sharePackage(self, package: TreeWidgetItemWithQAction):
+        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}^&psource={package.text(5)}"
+        nativeWindowsShare(package.text(2), url, self.window())
+
 
 class UninstallSoftwareSection(SoftwareSection):
     allPkgSelected: bool = False
@@ -1014,6 +1094,8 @@ class UninstallSoftwareSection(SoftwareSection):
                             program.setToolTip(1, _("Updates for this package are ignored")+" - "+program.text(1))
                     except AttributeError:
                         pass
+            self.notif = InWindowNotification(self, _("The selected packages have been blacklisted"))
+            self.notif.show()
             self.updatePackageNumber()
 
         def showInfo():
@@ -1763,7 +1845,7 @@ class SettingsSection(SmoothScrollArea):
 
         dontUseBuiltInGsudo = SectionCheckBox(_("Use installed GSudo instead of the bundled one (requires app restart)"))
         dontUseBuiltInGsudo.setChecked(getSettings("UseUserGSudo"))
-        dontUseBuiltInGsudo.stateChanged.connect(lambda v: setSettings("UseUserGSudo", bool(v)))
+        dontUseBuiltInGsudo.stateChanged.connect(lambda v: (setSettings("UseUserGSudo", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         dontUseBuiltInGsudo.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.advancedOptions.addWidget(dontUseBuiltInGsudo)
 
@@ -1771,7 +1853,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.advancedOptions)
         disableShareApi = SectionCheckBox(_("Disable new share API (port 7058)"))
         disableShareApi.setChecked(getSettings("DisableApi"))
-        disableShareApi.stateChanged.connect(lambda v: setSettings("DisableApi", bool(v)))
+        disableShareApi.stateChanged.connect(lambda v: (setSettings("DisableApi", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.advancedOptions.addWidget(disableShareApi)
         parallelInstalls = SectionCheckBox(_("Allow parallel installs (NOT RECOMMENDED)"))
         parallelInstalls.setChecked(getSettings("AllowParallelInstalls"))
@@ -1780,14 +1862,18 @@ class SettingsSection(SmoothScrollArea):
 
         enableSystemWinget = SectionCheckBox(_("Use system Winget (Needs a restart)"))
         enableSystemWinget.setChecked(getSettings("UseSystemWinget"))
-        enableSystemWinget.stateChanged.connect(lambda v: setSettings("UseSystemWinget", bool(v)))
+        enableSystemWinget.stateChanged.connect(lambda v: (setSettings("UseSystemWinget", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
+        self.advancedOptions.addWidget(enableSystemWinget)
+        enableSystemWinget = SectionCheckBox(_("Use ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"))
+        enableSystemWinget.setChecked(getSettings("EnableArmWinget"))
+        enableSystemWinget.stateChanged.connect(lambda v: (setSettings("EnableArmWinget", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.advancedOptions.addWidget(enableSystemWinget)
         disableLangUpdates = SectionCheckBox(_("Do not download new app translations from GitHub automatically"))
         disableLangUpdates.setChecked(getSettings("DisableLangAutoUpdater"))
         disableLangUpdates.stateChanged.connect(lambda v: setSettings("DisableLangAutoUpdater", bool(v)))
         self.advancedOptions.addWidget(disableLangUpdates)
         resetyWingetUICache = SectionButton(_("Reset WingetUI icon and screenshot cache"), _("Reset"))
-        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")), self.inform(_("Cache was reset successfully!"))))
         resetyWingetUICache.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.advancedOptions.addWidget(resetyWingetUICache)
 
@@ -1818,7 +1904,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.wingetPreferences)
         disableWinget = SectionCheckBox(_("Enable {pm}").format(pm = "Winget"))
         disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
-        disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v)))
+        disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.wingetPreferences.addWidget(disableWinget)
         disableWinget = SectionCheckBox(_("Enable Microsoft Store package source"))
         disableWinget.setChecked(not getSettings(f"DisableMicrosoftStore"))
@@ -1836,7 +1922,7 @@ class SettingsSection(SmoothScrollArea):
         enableSystemWinget.setEnabled(disableWinget.isChecked())
 
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Winget.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Winget.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache.clicked.connect(lambda: (os.remove(Winget.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.wingetPreferences.addWidget(resetCache)
 
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
@@ -1844,7 +1930,7 @@ class SettingsSection(SmoothScrollArea):
 
         disableScoop = SectionCheckBox(_("Enable {pm}").format(pm = "Scoop"))
         disableScoop.setChecked(not getSettings(f"Disable{Scoop.NAME}"))
-        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v)))
+        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.scoopPreferences.addWidget(disableScoop)
         scoopPreventCaps = SectionCheckBox(_("Show Scoop packages in lowercase"))
         scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
@@ -1867,35 +1953,33 @@ class SettingsSection(SmoothScrollArea):
         self.scoopPreferences.addWidget(uninstallScoop)
         uninstallScoop.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
 
-
         scoopPreventCaps.setEnabled(disableScoop.isChecked())
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Scoop.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Scoop.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache.clicked.connect(lambda: (os.remove(Scoop.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.scoopPreferences.addWidget(resetCache)
 
         self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
         self.layout.addWidget(self.chocoPreferences)
         disableChocolatey = SectionCheckBox(_("Enable {pm}").format(pm = "Chocolatey"))
         disableChocolatey.setChecked(not getSettings(f"Disable{Choco.NAME}"))
-        disableChocolatey.stateChanged.connect(lambda v: (setSettings(f"Disable{Choco.NAME}", not bool(v))))
+        disableChocolatey.stateChanged.connect(lambda v: (setSettings(f"Disable{Choco.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.chocoPreferences.addWidget(disableChocolatey)
         enableSystemChocolatey = SectionCheckBox(_("Use system Chocolatey (Needs a restart)"))
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
         enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         self.chocoPreferences.addWidget(enableSystemChocolatey)
         resetCache = SectionButton(_("Reset {pm} cache").format(pm=Choco.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Choco.CAHCE_FILE), notify("WingetUI", _("Cache was reset successfully!"))))
+        resetCache.clicked.connect(lambda: (os.remove(Choco.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
         self.chocoPreferences.addWidget(resetCache)
-
 
         self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Pip"), getMedia("python"), _("{pm} package manager specific preferences").format(pm = "Pip"))
         self.layout.addWidget(self.pipPreferences)
         disablePip = SectionCheckBox(_("Enable {pm}").format(pm = "Pip"))
         disablePip.setChecked(not getSettings(f"Disable{Pip.NAME}"))
-        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v))))
+        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.pipPreferences.addWidget(disablePip)
         disablePip.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
 
@@ -1903,7 +1987,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout.addWidget(self.npmPreferences)
         disableNpm = SectionCheckBox(_("Enable {pm}").format(pm = Npm.NAME))
         disableNpm.setChecked(not getSettings(f"Disable{Npm.NAME}"))
-        disableNpm.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v))))
+        disableNpm.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.npmPreferences.addWidget(disableNpm)
         disableNpm.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8pc;border-bottom: 1px;}")
 
@@ -1915,6 +1999,10 @@ class SettingsSection(SmoothScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         Thread(target=self.announcements.loadAnnouncements, daemon=True, name="Settings: Announce loader").start()
         return super().showEvent(event)
+    
+    def inform(self, text: str) -> None:
+        self.notif = InWindowNotification(self, text)
+        self.notif.show()
 
 class BaseLogSection(QWidget):
     def __init__(self):
@@ -1974,23 +2062,21 @@ class BaseLogSection(QWidget):
         def saveLog():
             try:
                 print("🔵 Saving log...")
+                self.loadData()
                 f = QFileDialog.getSaveFileName(None, _("Export"), os.path.expanduser("~"), f"{_('Text file')} (*.txt)")
                 if f[0]:
                     fpath = f[0]
                     if not ".txt" in fpath.lower():
                         fpath += ".txt"
                     with open(fpath, "wb") as fobj:
-                        fobj.write(stdout_buffer.getvalue().encode("utf-8"))
+                        fobj.write(self.textEdit.toPlainText().encode("utf-8", errors="ignore"))
                         fobj.close()
                     os.startfile(fpath)
                     print("🟢 log saved successfully")
-                    self.textEdit.setPlainText(stdout_buffer.getvalue())
                 else:
                     print("🟡 log save cancelled!")
-                    self.textEdit.setPlainText(stdout_buffer.getvalue())
             except Exception as e:
                 report(e)
-                self.textEdit.setPlainText(stdout_buffer.getvalue())
 
         exportButtom = QPushButton(_("Export to a file"))
         exportButtom.setFixedWidth(200)
@@ -1999,9 +2085,9 @@ class BaseLogSection(QWidget):
         def copyLog():
             try:
                 print("🔵 Copying log to the clipboard...")
-                globals.app.clipboard().setText(stdout_buffer.getvalue())
+                self.loadData()
+                globals.app.clipboard().setText(self.textEdit.toPlainText())
                 print("🟢 Log copied to the clipboard successfully!")
-                self.textEdit.setPlainText(stdout_buffer.getvalue())
             except Exception as e:
                 report(e)
                 self.textEdit.setPlainText(stdout_buffer.getvalue())
@@ -2343,7 +2429,7 @@ class PackageInfoPopupWindow(QWidget):
         self.shareButton.setFixedWidth(200)
         self.shareButton.setStyleSheet("border-radius: 8px;")
         self.shareButton.setFixedHeight(35)
-        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}", self.window()))
+        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}^&psource={self.currentPackage.Source}", self.window()))
         self.installButton = QPushButton()
         self.installButton.setText(_("Install"))
         self.installButton.setObjectName("AccentButton")
