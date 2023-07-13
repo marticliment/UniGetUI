@@ -902,6 +902,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstallPackageItem(item))
 
         self.installIcon = QIcon(getMedia("install"))
+        self.pinnedIcon = QIcon(getMedia("pin_yellow"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
 
@@ -986,7 +987,8 @@ class UninstallSoftwareSection(SoftwareSection):
                     try:
                         if program.checkState(0) ==  Qt.CheckState.Checked:
                             IgnorePackageUpdates_Permanent(program.text(2), program.text(4))
-                            pass # TODO: show ignored
+                            program.setIcon(1, self.pinnedIcon)
+                            program.setToolTip(1, _("Updates for this package are ignored")+" - "+program.text(1))
                     except AttributeError:
                         pass
             self.updatePackageNumber()
@@ -1145,7 +1147,8 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setText(6, package.getFloatVersion())
             
             if package.hasUpdatesIgnoredPermanently():
-                pass # TODO: Show ignored
+                item.setIcon(1, self.pinnedIcon)
+                item.setToolTip(1, _("Updates for this package are ignored")+" - "+package.Name)
             
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
