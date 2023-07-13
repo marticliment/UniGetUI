@@ -68,6 +68,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             setSettings("WarnedAboutPackages_v2", True)
             self.informationBanner.show()
         self.installIcon = QIcon(getMedia("install"))
+        self.installedIcon = QIcon(getMedia("installed"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
 
@@ -330,6 +331,15 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
+                
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            if package.Id in UNINSTALL.IdPackageReference.keys():
+                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedItem = installedPackage.PackageItem
+                if installedItem in UNINSTALL.packageItems:
+                    item.setIcon(1, self.installedIcon)
+                    item.setToolTip(1, _("This package is already installed")+" - "+package.Name)
+
                 
 
                 
@@ -915,6 +925,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.installIcon = QIcon(getMedia("install"))
         self.pinnedIcon = QIcon(getMedia("pin_yellow"))
         self.updateIcon = QIcon(getMedia("update"))
+        self.installedIcon = QIcon(getMedia("installed"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
 
@@ -1168,7 +1179,16 @@ class UninstallSoftwareSection(SoftwareSection):
                 if updateItem in UPDATES.packageItems:
                     item.setIcon(1, self.updateIcon)
                     item.setToolTip(1, _("This package can be updated to version {0}").format(updatePackage.NewVersion)+" - "+package.Name)
-                
+            
+            DISCOVER: UninstallSoftwareSection = globals.discover
+            if package.Id in DISCOVER.IdPackageReference.keys():
+                discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[package.Id]
+                discoverableItem = discoverablePackage.PackageItem
+                if discoverableItem in DISCOVER.packageItems:
+                    discoverableItem.setIcon(1, self.installedIcon)
+                    discoverableItem.setToolTip(1, _("This package is already installed")+" - "+package.Name)
+
+
             
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
