@@ -330,6 +330,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
+                
 
     def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
@@ -985,7 +986,7 @@ class UninstallSoftwareSection(SoftwareSection):
                     try:
                         if program.checkState(0) ==  Qt.CheckState.Checked:
                             IgnorePackageUpdates_Permanent(program.text(2), program.text(4))
-                            # TODO: Needs labels
+                            pass # TODO: show ignored
                     except AttributeError:
                         pass
             self.updatePackageNumber()
@@ -1142,6 +1143,10 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
             item.setText(6, package.getFloatVersion())
+            
+            if package.hasUpdatesIgnoredPermanently():
+                pass # TODO: Show ignored
+            
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package

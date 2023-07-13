@@ -855,6 +855,7 @@ class SoftwareSection(QWidget):
                     self.treewidget.sortByColumn(6, self.sortOrder)
 
         self.packageList = TreeWidget("")
+        self.packageList.setUniformRowHeights(True)
         self.packageList.setHeader(HeaderView(Qt.Orientation.Horizontal, self.packageList))
         self.packageList.setSortingEnabled(True)
         self.packageList.sortByColumn(1, Qt.SortOrder.AscendingOrder)
@@ -1009,14 +1010,15 @@ class SoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, store: str) -> None:
         raise NotImplementedError("This function requires being reimplemented")
 
-    def addItemsToTreeWidget(self, reset: bool = False):
+    def addItemsToTreeWidget(self, reset: bool = False, itemsToAdd: int = 100):
+        self.setUpdatesEnabled(False)
         if reset:
-            for item in self.shownItems:
-                item.setHidden(True, forceShowAction=True)
+            for itemToHide in self.shownItems:
+                itemToHide.setHidden(True, forceShowAction=True)
             self.nextItemToShow = 0
             self.shownItems = []
         addedItems = 0
-        while addedItems < 100:
+        while addedItems < itemsToAdd:
             if self.nextItemToShow >= len(self.showableItems):
                 break
             itemToAdd = self.showableItems[self.nextItemToShow]
@@ -1028,6 +1030,7 @@ class SoftwareSection(QWidget):
             self.shownItems.append(itemToAdd)
             addedItems += 1
             self.nextItemToShow += 1
+        self.setUpdatesEnabled(True)
 
     def filter(self) -> None:
         print(f"🟢 Searching for string \"{self.query.text()}\"")
