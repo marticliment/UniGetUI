@@ -332,6 +332,8 @@ class DiscoverSoftwareSection(SoftwareSection):
                 self.showableItems.append(item)
                 
 
+                
+
     def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
         Initialize the install procedure for the given package, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
@@ -428,6 +430,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.packageList.label.setText(self.countLabel.text())
 
         self.installIcon = QIcon(getMedia("install"))
+        self.updateIcon = QIcon(getMedia("update"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
@@ -736,6 +739,14 @@ class UpdateSoftwareSection(SoftwareSection):
             action.setShortcut(package.Version)
             item.setAction(action)
             globals.trayMenuUpdatesList.addAction(action)
+            
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            if package.Id in UNINSTALL.IdPackageReference.keys():
+                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedItem = installedPackage.PackageItem
+                if installedItem in UNINSTALL.packageItems:
+                    installedItem.setIcon(1, self.updateIcon)
+                    installedItem.setToolTip(1, _("This package can be updated to version {0}").format(package.NewVersion)+" - "+package.Name)
 
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
@@ -903,6 +914,7 @@ class UninstallSoftwareSection(SoftwareSection):
 
         self.installIcon = QIcon(getMedia("install"))
         self.pinnedIcon = QIcon(getMedia("pin_yellow"))
+        self.updateIcon = QIcon(getMedia("update"))
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
 
@@ -1146,9 +1158,17 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setIcon(4, package.getSourceIcon())
             item.setText(6, package.getFloatVersion())
             
+            UPDATES: UpdateSoftwareSection = globals.updates
             if package.hasUpdatesIgnoredPermanently():
                 item.setIcon(1, self.pinnedIcon)
                 item.setToolTip(1, _("Updates for this package are ignored")+" - "+package.Name)
+            elif package.Id in UPDATES.IdPackageReference.keys():
+                updatePackage: UpgradablePackage = UPDATES.IdPackageReference[package.Id]
+                updateItem = updatePackage.PackageItem
+                if updateItem in UPDATES.packageItems:
+                    item.setIcon(1, self.updateIcon)
+                    item.setToolTip(1, _("This package can be updated to version {0}").format(updatePackage.NewVersion)+" - "+package.Name)
+                
             
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
