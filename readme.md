@@ -12,8 +12,7 @@ With this app, you'll be able to easily download, install, update and uninstall 
 
 **Disclaimer:** This project has no connection with none of the supported package managers — it's completely unofficial. Be aware of the fact that I, the developer of WingetUI, am NOT responsible for the downloaded apps.
 
-[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Active-brightgreen?style=for-the-badge)]()
-<!--[![Status](https://img.shields.io/badge/Project%20current%20development%20status-Temporarily%20Paused%20(I%20have%20final%20exams)-yellow?style=for-the-badge)]()-->
+![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
  
 ## Table of contents
  - **[WingetUI Homepage](https://www.marticliment.com/wingetui/)**
