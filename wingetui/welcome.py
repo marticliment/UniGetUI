@@ -5,7 +5,7 @@ from threading import Thread
 
 import globals
 from customWidgets import *
-from languages import *
+from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
