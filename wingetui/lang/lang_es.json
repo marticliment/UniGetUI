@@ -226,7 +226,7 @@
   "Operation history" : "Historial de operaciones",
   "Package details" : "Detalles del paquete",
   "Package ID" : "ID del paquete",
-  "Package Manager logs" : null,
+  "Package Manager logs" : "Registros del gestor de paquetes",
   "Package manager preferences" : "Preferencias del administrador de paquetes",
   "Package Name" : "Nombre del paquete",
   "Packages" : "Paquetes",
@@ -276,7 +276,7 @@
   "Search" : "Buscar",
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Buscar aplicaciones, avisarme de actualizaciones cuando estén disponibles y no hacer cosas de nerds. No quiero que WingetUI me complique demasiado, solo quiero una simple <b>tienda de aplicaciones</b>",
   "Search for packages" : "Buscar paquetes",
-  "Search for packages to start" : null,
+  "Search for packages to start" : "Busca paquetes para empezar",
   "Searching for installed packages..." : "Buscando paquetes instalados...",
   "Searching for packages..." : "Buscando paquetes...",
   "Searching for updates..." : "Buscando actualizaciones...",
@@ -402,11 +402,11 @@
   "WingetUI Settings" : "Configuración de WingetUI",
   "WingetUI Settings File" : "Archivo del configuración de WingetUI",
   "WingetUI tray application preferences" : "Preferencias de la bandeja de notificaciones de WingetUI",
-  "WingetUI will not check for updates periodically. They will still be checked at launch, but you won't be warned about them." : null,
+  "WingetUI will not check for updates periodically. They will still be checked at launch, but you won't be warned about them." : "WingetUI no buscará actualizaciones periódicamente. Seguirán siendo comprobadas al iniciarse, pero no serás avisado de ellas.",
   "WingetUI will show a UAC prompt every time a package requires elevation to be installed." : "WingetUI mostrará un aviso de UAC cada vez que un paquete requiera elevación para instalarse",
   "WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!" : "WingetUI no sería posible sin la ayuda de nuestros queridos contribuyentes. Revisa sus perfiles de GitHub ¡WingetUI no sería posible sin ellos!",
   "Yes" : "Sí",
   "You may restart your computer later if you wish" : "Puede reiniciar su computadora más tarde si lo desea",
   "You will be prompted only once, and administrator rights will be granted to packages that request them." : "Sólo se le pedirá una vez, y se concederán derechos de administrador a los paquetes que lo soliciten.",
-  "You will be prompted only once, and every future installation will be elevated automatically." : null
+  "You will be prompted only once, and every future installation will be elevated automatically." : "Sólo se le pedirá una vez, y cada instalación futura se elevará automáticamente."
 }
