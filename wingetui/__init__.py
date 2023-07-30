@@ -1,3 +1,4 @@
+import os
 import sys
 
 if "--debugcrash" in sys.argv:
@@ -2174,6 +2175,7 @@ except Exception as e:
         f"          APP Architecture: {platform.architecture()[0]}\n"+\
         f"                  Language: {langName}\n"+\
         f"               APP Version: {appversion}\n"+\
+        f"                Executable: {sys.executable}\n"+\
         f"                   Program: WingetUI\n"+\
         f"           Program section: Main script"+\
         "\n\n-----------------------------------------------------------------------------------------"
@@ -2184,8 +2186,5 @@ except Exception as e:
         traceback_info += f"\n{type(e).__name__}: {str(e)}"
     except:
         traceback_info += "\nUnable to get traceback"
-    traceback_info += str(type(e))
-    traceback_info += ": "
-    traceback_info += str(e)
     webbrowser.open(("https://www.marticliment.com/error-report/?appName=WingetUI&errorBody="+os_info.replace('\n', '{l}').replace(' ', '{s}')+"{l}{l}{l}{l}WingetUI Log:{l}"+str("\n\n\n\n"+traceback_info).replace('\n', '{l}').replace(' ', '{s}')).replace("#", "|=|"))
     print(traceback_info)
