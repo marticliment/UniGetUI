@@ -20,12 +20,12 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 VersionInfoVersion=2.0.2.0
-DefaultDirName="{autopf}\WingetUI"
+DefaultDirName="{commonpf64}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
 CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
-PrivilegesRequired=lowest
+;PrivilegesRequired=lowest
 OutputBaseFilename=WingetUI Installer
 OutputDir=.     
 MinVersion=10.0
@@ -37,7 +37,10 @@ WizardStyle=classic
 WizardImageFile=INSTALLER.BMP
 WizardSmallImageFile=wingetui\resources\icon.bmp
 DisableWelcomePage=no
-UsePreviousTasks=yes
+AllowUNCPath=no
+UsePreviousTasks=yes  
+UsePreviousPrivileges=no
+UsePreviousAppDir=no
 ChangesEnvironment=yes
 RestartIfNeededByRun=no
 Uninstallable=IsTaskSelected('regularinstall')
@@ -70,19 +73,27 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{autopf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{autopf}\WingetUI\pip-23.0.dist-info";
-Type: filesandordirs; Name: "{autopf}\WingetUI\pip-23.1.2.dist-info";
-Type: filesandordirs; Name: "{autopf}\WingetUI\setuptools-65.5.0.dist-info";   
-Type: filesandordirs; Name: "{autopf}\WingetUI\sudo";
-Type: filesandordirs; Name: "{autopf}\WingetUI\*.pyc";
-Type: filesandordirs; Name: "{autopf}\WingetUI\winget-cli\*";      
-Type: filesandordirs; Name: "{autopf}\WingetUI\resources\*";     
+Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.0.dist-info";
+Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.1.2.dist-info";
+Type: filesandordirs; Name: "{userpf}\WingetUI\setuptools-65.5.0.dist-info";   
+Type: filesandordirs; Name: "{userpf}\WingetUI\sudo";
+Type: filesandordirs; Name: "{userpf}\WingetUI\winget-cli\*";      
+Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";  
+Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
+Type: filesandordirs; Name: "{app}\pip-23.1.2.dist-info";
+Type: filesandordirs; Name: "{app}\setuptools-65.5.0.dist-info";   
+Type: filesandordirs; Name: "{app}\sudo";
+Type: filesandordirs; Name: "{app}\winget-cli\*";      
+Type: filesandordirs; Name: "{app}\resources\*";     
 Type: filesandordirs; Name: "{username}\WingetUI\resources\*";
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{autopf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Type: filesandordirs; Name: "{userpf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');   
+Type: filesandordirs; Name: "{app}\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 
 [Code]
 procedure InitializeWizard;
@@ -161,6 +172,36 @@ begin
     end;
 end;
 
+function IsCharValid(Value: Char): Boolean;
+begin
+  Result := Ord(Value) <= $007F;
+end;
+
+function IsDirNameValid(const Value: string): Boolean;
+var
+  I: Integer;
+begin
+  Result := False;
+  for I := 1 to Length(Value) do
+    if not IsCharValid(Value[I]) then
+      Exit;
+  Result := True;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  Result := True;
+
+  if (CurPageID = wpSelectDir) and 
+    not IsDirNameValid(WizardForm.DirEdit.Text) then
+  begin
+    Result := False;
+    MsgBox('There is an invalid character in the selected install location. ' +
+      'Install location cannot contain special characters. ' +
+      'Please input a valid path to continue, such as '+ExpandConstant('{commonpf64}')+'\WingetUI', mbError, MB_OK);
+  end;
+end;
+
 
 [Tasks]
 Name: "portableinstall"; Description: "Perform a portable installation"; GroupDescription: "Installation type"; Flags: unchecked exclusive
@@ -174,6 +215,8 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 [Files]
 Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+Source: "Y:\WinGetUI-Store\wingetuiBin\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs; Tasks: regularinstall
+
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
 Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
