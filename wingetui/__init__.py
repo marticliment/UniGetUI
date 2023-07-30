@@ -5,7 +5,7 @@ if "--debugcrash" in sys.argv:
     import faulthandler
     faulthandler.enable()
     
-pathIsValid = False
+pathIsValid = True
 specialCharacter = ""
 for char in sys.executable:
     if char not in "\\/:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSRTUVWXYZ1234567890_+()-., ":
