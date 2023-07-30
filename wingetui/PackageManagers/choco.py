@@ -15,9 +15,16 @@ from .sampleHelper import *
 class ChocoPackageManager(SamplePackageManager):
 
     if getSettings("UseSystemChocolatey"):
+        print("🟡 System chocolatey used")
         EXECUTABLE = "choco.exe"
     else:
-        EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe")
+        possiblePath =  os.path.join(os.path.expanduser("~"), "AppData/Local/Programs/WingetUI/choco-cli/choco.exe")
+        if os.path.isfile(possiblePath):
+            print("🔵 Found default chocolatey installation on expected location")
+            EXECUTABLE = possiblePath
+        else:
+            print("🟡 Chocolatey was not found on the default location, perhaps a portable WingetUI installation?")
+            EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe")
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
     icon = None
