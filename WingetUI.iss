@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "2.0.3-beta"
+#define MyAppVersion "2.0.3"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -74,6 +74,10 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [InstallDelete]
+[InstallDelete]
+Type: files; Name: "{userdesktop}\WingetUI.lnk"
+Type: files; Name: "{userstartmenu}\WingetUI.lnk"
+
 Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{userpf}\WingetUI\clr_loader\*";
@@ -238,8 +242,9 @@ Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
 Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
-Name: "{userstartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
-Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
+; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
+Name: "{commonstartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
+Name: "{commondesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall and not CmdLineParamExists('/NoVCRedist');
