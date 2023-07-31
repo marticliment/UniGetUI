@@ -109,7 +109,6 @@ Type: filesandordirs; Name: "{app}\setuptools-65.5.0.dist-info";
 Type: filesandordirs; Name: "{app}\sudo";
 Type: filesandordirs; Name: "{app}\winget-cli\*";      
 Type: filesandordirs; Name: "{app}\resources\*";     
-Type: filesandordirs; Name: "{username}\WingetUI\resources\*";
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{userpf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');   
