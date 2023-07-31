@@ -19,7 +19,7 @@ HASHES: dict[str:str] = {}
 
 time0 = time.time()
 
-for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./components/**.exe") + glob.glob("./**/**.pyc") + glob.glob("./**.pyc"):
+for file in glob.glob("./**/**.py") + glob.glob("./**.py") + glob.glob("./components/**.exe") + glob.glob("./**/**.pyc") + glob.glob("./**.pyc") + glob.glob("./**/**.dll") + glob.glob("./**.dll"):
     if "__init__" in file or "__pycache__" in file:
         continue
     with open(file,"rb") as f:
