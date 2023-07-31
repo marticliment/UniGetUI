@@ -11,7 +11,7 @@
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 UninstallDisplayName="WingetUI"
-AppId={{889610CC-4337-4BDB-AC3B-4F21806C0BDD}
+AppId={{889610CC-4337-4BDB-AC3B-4F21806C0BDE}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -74,33 +74,33 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [InstallDelete]
-[InstallDelete]
-Type: files; Name: "{userdesktop}\WingetUI.lnk"
-Type: files; Name: "{userstartmenu}\WingetUI.lnk"
+//[InstallDelete]
+//Type: files; Name: "{userdesktop}\WingetUI.lnk"
+//Type: files; Name: "{userstartmenu}\WingetUI.lnk"
 
-Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{userpf}\WingetUI\clr_loader\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\components\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\data\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\lang\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\markupsafe\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\PackageManagers\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\pythonnet\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\pywin32_system32\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\shiboken6\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\winsdk\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.1.2.dist-info";
-Type: filesandordirs; Name: "{userpf}\WingetUI\setuptools-65.5.0.dist-info";   
-Type: filesandordirs; Name: "{userpf}\WingetUI\sudo\*";
-Type: filesandordirs; Name: "{userpf}\WingetUI\winget-cli\*";      
-Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";   
-Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*.pyd";  
-Type: filesandordirs; Name: "{userpf}\WingetUI\resources\api-ms-win*.dll";  
-Type: filesandordirs; Name: "{userpf}\WingetUI\resources\python*.dll";  
-Type: filesandordirs; Name: "{userpf}\WingetUI\resources\wingetui.exe";  
+//Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+//Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+//Type: filesandordirs; Name: "{userpf}\WingetUI\clr_loader\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\components\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\data\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\lang\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\markupsafe\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\PackageManagers\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\pythonnet\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\pywin32_system32\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\shiboken6\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\winsdk\*";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.1.2.dist-info";
+//Type: filesandordirs; Name: "{userpf}\WingetUI\setuptools-65.5.0.dist-info";   
+//Type: filesandordirs; Name: "{userpf}\WingetUI\sudo\*";
+////Type: filesandordirs; Name: "{userpf}\WingetUI\winget-cli\*";      
+//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";   
+//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*.pyd";  
+//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\api-ms-win*.dll";  
+//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\python*.dll";  
+//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\wingetui.exe";  
 Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
@@ -248,7 +248,9 @@ Name: "{commondesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks:
 
 [Run]
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall and not CmdLineParamExists('/NoVCRedist');
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
+; Check: not CmdLineParamExists('/NoAutoStart');
+; Autostart is required to finish installation properly from an update, hence autostart will be obligatory
 
 
 [UninstallRun]
