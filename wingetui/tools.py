@@ -144,6 +144,8 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
+    clr.AddReference(SHARE_DLL_PATH)
+    import WingetUIShareComponent
     WingetUIShareComponent.Form1(["", text, url, coordinates])
 
     #coordinates = ""
@@ -577,8 +579,6 @@ SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrar
 # Begin Import C#.NET DLLs
 #
  
-clr.AddReference(SHARE_DLL_PATH)
-import WingetUIShareComponent
 
 #
 # End Import C#.NET DLLs
