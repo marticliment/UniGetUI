@@ -6,7 +6,6 @@ untranslatedPercentage = {
   "bn": "14%",
   "cs": "98%",
   "da": "32%",
-  "de": "98%",
   "el": "80%",
   "es": "95%",
   "fa": "75%",
@@ -21,9 +20,6 @@ untranslatedPercentage = {
   "nb": "84%",
   "nl": "98%",
   "pl": "98%",
-  "pt_BR": "98%",
-  "pt_PT": "98%",
-  "ru": "92%",
   "sl": "98%",
   "sr": "11%",
   "tg": "13%",
@@ -311,6 +307,10 @@ languageCredits = {
     {
       "name": "flatron4eg",
       "link": "https://github.com/flatron4eg"
+    },
+    {
+      "name": "katrovsky",
+      "link": "https://github.com/katrovsky"
     },
     {
       "name": "Sergey",

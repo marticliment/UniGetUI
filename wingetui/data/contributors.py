@@ -15,6 +15,7 @@ contributors = [
   "candrapersada",
   "elliot-100",
   "neoOpus",
+  "HorridModz",
   "Satanarious",
   "vsilvar",
   "quantumfallout",
@@ -29,7 +30,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1759
+    "contributions": 1761
   },
   {
     "name": "ppvnf",
@@ -94,6 +95,11 @@ contributorsInfo = [
   {
     "name": "neoOpus",
     "link": "https://github.com/neoOpus",
+    "contributions": 1
+  },
+  {
+    "name": "HorridModz",
+    "link": "https://github.com/HorridModz",
     "contributions": 1
   },
   {
