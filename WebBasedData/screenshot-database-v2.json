@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14020,
-        "done": 7569
+        "total": 14024,
+        "done": 7593
     },
     "icons_and_screenshots": {
         "115": {
@@ -788,8 +788,19 @@
             "images": []
         },
         "sigma-file-manager": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/YA5meL1.png",
+            "images": [
+                "https://i.imgur.com/CpJu3Co.png",
+                "https://i.imgur.com/GezgekX.png",
+                "https://i.imgur.com/rgSbFdi.png",
+                "https://i.imgur.com/cXCLIyo.png",
+                "https://i.imgur.com/86f2gwh.png",
+                "https://i.imgur.com/oO7XnNc.png",
+                "https://i.imgur.com/zNqNVtz.png",
+                "https://i.imgur.com/fpF8vik.png",
+                "https://i.imgur.com/CmZAbLo.png",
+                "https://i.imgur.com/S04JAkm.png"
+            ]
         },
         "freeter": {
             "icon": "https://community.chocolatey.org/content/packageimages/freeter.1.2.1.png",
@@ -2573,7 +2584,7 @@
             "images": []
         },
         "bitwarden": {
-            "icon": "https://tweakers.net/ext/i/2004761386.png",
+            "icon": "https://raw.githubusercontent.com/bitwarden/clients/master/apps/desktop/resources/icons/512x512.png",
             "images": [
                 "https://tweakers.net/ext/i/2003879068.png"
             ]
@@ -4187,15 +4198,16 @@
             "images": []
         },
         "dockerdesktop": {
-            "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
+            "icon": "https://i.imgur.com/sOiXSfX.png",
             "images": [
-                "https://www.docker.com/wp-content/uploads/2021/10/List-plus-running-compose.png",
-                "https://www.docker.com/wp-content/uploads/2021/10/Image-access-mngt_0.png"
+                "https://i.imgur.com/c36rCBs.png"
             ]
         },
         "dockerdesktopedge": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/sOiXSfX.png",
+            "images": [
+                "https://i.imgur.com/c36rCBs.png"
+            ]
         },
         "zerabase": {
             "icon": "",
@@ -5601,7 +5613,7 @@
             "images": []
         },
         "git": {
-            "icon": "https://community.chocolatey.org/content/packageimages/git.portable.2.39.2.png",
+            "icon": "https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png",
             "images": []
         },
         "mingit": {
@@ -8931,7 +8943,7 @@
             "images": []
         },
         "edge": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Microsoft_Edge_logo_%282019%29.png/240px-Microsoft_Edge_logo_%282019%29.png",
             "images": []
         },
         "edge-beta": {
@@ -9529,8 +9541,10 @@
             "images": []
         },
         "compass-full": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mongodb-js/compass/main/packages/compass/app-icons/linux/mongodb-compass.png",
+            "images": [
+                "https://raw.githubusercontent.com/mongodb-js/compass/main/packages/compass/compass-screenshot.png"
+            ]
         },
         "compass-isolated": {
             "icon": "",
@@ -10430,11 +10444,11 @@
             "images": []
         },
         "nodejs": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nodejs.install.19.7.0.png",
+            "icon": "https://nodejs.org/static/images/logo-hexagon-card.png",
             "images": []
         },
         "nodejs-lts": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nodejs-lts.18.14.2.png",
+            "icon": "https://nodejs.org/static/images/logo-hexagon-card.png",
             "images": []
         },
         "nodejs-nightly": {
@@ -10573,7 +10587,7 @@
             "images": []
         },
         "opera": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Opera.96.0.4693.20.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Opera_2015_icon.svg/512px-Opera_2015_icon.svg.png",
             "images": []
         },
         "opera-beta": {
@@ -10585,7 +10599,7 @@
             "images": []
         },
         "operagx": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Opera_GX_Icon.svg/512px-Opera_GX_Icon.svg.png",
             "images": []
         },
         "jdk-17": {
@@ -11181,15 +11195,15 @@
             "images": []
         },
         "postman": {
-            "icon": "",
+            "icon": "https://assets.getpostman.com/common-share/postman-logo.png",
             "images": []
         },
         "postman-canary": {
-            "icon": "",
+            "icon": "https://assets.getpostman.com/common-share/postman-logo.png",
             "images": []
         },
         "postman-desktopagent": {
-            "icon": "",
+            "icon": "https://assets.getpostman.com/common-share/postman-logo.png",
             "images": []
         },
         "fileshredder": {
@@ -13218,7 +13232,7 @@
             "images": []
         },
         "gg": {
-            "icon": "",
+            "icon": "https://i.imgur.com/KS6qrz8.png",
             "images": []
         },
         "steelseriesengine": {
@@ -13650,15 +13664,13 @@
             ]
         },
         "teamviewer": {
-            "icon": "https://static.teamviewer.com/resources/2019/07/TeamViewer_Logo_512x512.png",
+            "icon": "https://www.teamviewer.com/favicon.png",
             "images": [
-                "https://static.teamviewer.com/resources/2018/09/BauhausHowItWorks-RemoteControl.png",
-                "https://static.teamviewer.com/resources/2021/01/online-meeting-with-teamviewer-meeting.png",
-                "https://static.teamviewer.com/resources/2018/05/android.png"
+                "https://upload.wikimedia.org/wikipedia/commons/0/07/TeamViewer_15_Desktop_Win_English.png"
             ]
         },
         "teamviewer-host": {
-            "icon": "https://static.teamviewer.com/resources/2019/07/TeamViewer_Logo_512x512.png",
+            "icon": "https://www.teamviewer.com/favicon.png",
             "images": []
         },
         "gpu-z": {
@@ -14377,7 +14389,7 @@
             "images": []
         },
         "cura": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Cura.19.04.1.png",
+            "icon": "https://raw.githubusercontent.com/bq/Ultimaker-Cura/master/icons/cura-128.png",
             "images": []
         },
         "ultra": {
@@ -14816,12 +14828,16 @@
             "images": []
         },
         "wemod": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/7Mstj5O.png",
+            "images": [
+                "https://i.imgur.com/qo57Usj.png"
+            ]
         },
         "wemod-beta": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/7Mstj5O.png",
+            "images": [
+                "https://i.imgur.com/qo57Usj.png"
+            ]
         },
         "wevpn": {
             "icon": "",
@@ -14969,7 +14985,7 @@
             ]
         },
         "winscp": {
-            "icon": "https://en.wikipedia.org/wiki/WinSCP#/media/File:WinSCP_Logo.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/4/4f/WinSCP_6_Logo.png",
             "images": [
                 "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/commander.png?v=7006",
                 "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/explorer.png?v=7006",
@@ -16665,8 +16681,10 @@
             "images": []
         },
         "wsasideloader": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/pVsN9qp.png",
+            "images": [
+                "https://user-images.githubusercontent.com/44692189/246669862-ede49229-4667-47b1-ac2d-84f2d71b954f.png"
+            ]
         },
         "pyaudio": {
             "icon": "",
@@ -22904,8 +22922,10 @@
             "images": []
         },
         "mattermost": {
-            "icon": "",
-            "images": []
+            "icon": "https://mattermost.com/wp-content/themes/mattermost-2021/frontend/dist/img/favicon/v2/apple-touch-icon.png",
+            "images": [
+                "https://mattermost.com/wp-content/uploads/2022/07/mattermost-channels-collaborate.png"
+            ]
         },
         "maven": {
             "icon": "https://community.chocolatey.org/content/packageimages/maven.3.9.0.png",
@@ -23804,7 +23824,7 @@
             "images": []
         },
         "opera-gx": {
-            "icon": "https://community.chocolatey.org/content/packageimages/opera-gx.95.0.4635.54.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Opera_GX_Icon.svg/512px-Opera_GX_Icon.svg.png",
             "images": []
         },
         "optipng": {
@@ -24500,7 +24520,7 @@
             "images": []
         },
         "python": {
-            "icon": "",
+            "icon": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png",
             "images": []
         },
         "q": {
@@ -24676,7 +24696,7 @@
             "images": []
         },
         "raspberry-pi-imager": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/raspberrypi/rpi-imager/qml/src/icons/rpi-imager.png",
             "images": []
         },
         "rathole": {
@@ -48700,6 +48720,10 @@
         },
         "aliae": {
             "icon": "https://github.githubassets.com/images/icons/emoji/unicode/1f331.png",
+            "images": []
+        },
+        "golang": {
+            "icon": "https://go.dev/images/favicon-gopher.png",
             "images": []
         }
     }
