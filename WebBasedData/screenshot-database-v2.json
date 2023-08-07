@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14024,
-        "done": 7593
+        "done": 7596
     },
     "icons_and_screenshots": {
         "115": {
@@ -3304,7 +3304,7 @@
             "images": []
         },
         "webexteams": {
-            "icon": "",
+            "icon": "https://help.webex.com/images/favicon.png",
             "images": []
         },
         "webex-outlook-plugin": {
@@ -5613,7 +5613,7 @@
             "images": []
         },
         "git": {
-            "icon": "https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png",
+            "icon": "https://raw.githubusercontent.com/git/git-scm.com/main/public/images/logos/downloads/Git-Icon-1788C.png",
             "images": []
         },
         "mingit": {
@@ -8489,8 +8489,11 @@
             "images": []
         },
         "malwarebytes": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Malwarebytes_Logo_%282016%29.svg/270px-Malwarebytes_Logo_%282016%29.svg.png",
+            "images": [
+                "https://nl.malwarebytes.com/images/website-refresh/premium/take-a-look.png",
+                "https://nl.malwarebytes.com/images/website-refresh/premium/take-a-look2.png"
+            ]
         },
         "privacy": {
             "icon": "",
@@ -8581,8 +8584,10 @@
             "images": []
         },
         "mattermostdesktop": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mattermost/desktop/master/src/assets/linux/app_icon.png",
+            "images": [
+                "https://mattermost.com/wp-content/uploads/2022/07/mattermost-channels-collaborate.png"
+            ]
         },
         "geppetto": {
             "icon": "",
@@ -10444,11 +10449,11 @@
             "images": []
         },
         "nodejs": {
-            "icon": "https://nodejs.org/static/images/logo-hexagon-card.png",
+            "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/public/static/images/logo-hexagon.png",
             "images": []
         },
         "nodejs-lts": {
-            "icon": "https://nodejs.org/static/images/logo-hexagon-card.png",
+            "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/public/static/images/logo-hexagon.png",
             "images": []
         },
         "nodejs-nightly": {
@@ -12960,7 +12965,7 @@
             ]
         },
         "wingetuistore": {
-            "icon": "https://github.com/martinet101/WingetUI/blob/main/wingetui/resources/icon.png?raw=true",
+            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/resources/icon.png",
             "images": [
                 "https://github.com/martinet101/WingetUI/blob/main/media/winget_1.png?raw=true",
                 "https://github.com/martinet101/WingetUI/blob/main/media/winget_2.png?raw=true",
@@ -13664,13 +13669,13 @@
             ]
         },
         "teamviewer": {
-            "icon": "https://www.teamviewer.com/favicon.png",
+            "icon": "https://i.imgur.com/2UWkAjM.png",
             "images": [
                 "https://upload.wikimedia.org/wikipedia/commons/0/07/TeamViewer_15_Desktop_Win_English.png"
             ]
         },
         "teamviewer-host": {
-            "icon": "https://www.teamviewer.com/favicon.png",
+            "icon": "https://i.imgur.com/2UWkAjM.png",
             "images": []
         },
         "gpu-z": {
@@ -14973,13 +14978,13 @@
             "images": []
         },
         "winmerge": {
-            "icon": "https://en.wikipedia.org/wiki/WinMerge#/media/File:WinMergeLogo.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/7/79/WinMergeLogo.png",
             "images": [
                 "https://winmerge.org/screenshots/filecmp.png"
             ]
         },
         "winmerge-beta": {
-            "icon": "https://en.wikipedia.org/wiki/WinMerge#/media/File:WinMergeLogo.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/7/79/WinMergeLogo.png",
             "images": [
                 "https://winmerge.org/screenshots/filecmp.png"
             ]
@@ -31156,8 +31161,10 @@
             "images": []
         },
         "mattermost-desktop": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mattermost-desktop.5.2.2.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mattermost/desktop/master/src/assets/linux/app_icon.png",
+            "images": [
+                "https://mattermost.com/wp-content/uploads/2022/07/mattermost-channels-collaborate.png"
+            ]
         },
         "docfx-companion-tools": {
             "icon": "https://community.chocolatey.org/content/packageimages/docfx-companion-tools.1.7.0.png",
