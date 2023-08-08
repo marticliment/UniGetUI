@@ -271,7 +271,7 @@
   "Scoop bucket manager" : "Scoop 버킷 ",
   "Scoop package" : "Scoop 패키지",
   "Search" : "검색",
-  "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "데스크톱 소프트웨어를 검색하고 업데이트가 있을 때 경고하고 이상한한 일을하지 마십시오. WingetUI가 지나치게 복잡해지길 원하지 않고 단순한 <b>소프트웨어 스토어</b>이길 원합니다.",
+  "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "데스크톱 소프트웨어를 검색하고 업데이트가 있을 때 경고하고 이상한 일을 하지 마십시오. WingetUI가 지나치게 복잡해지길 원하지 않고 단순한 <b>소프트웨어 스토어</b>이길 원합니다.",
   "Search for packages" : "패키지 검색",
   "Search for packages to start" : "시작할 패키지 검색",
   "Searching for installed packages..." : "설치된 패키지 검색 중...",
