@@ -22,6 +22,7 @@ untranslatedPercentage = {
   "th": "30%",
   "tr": "97%",
   "ua": "96%",
+  "vi": "0%",
   "zh_CN": "98%",
   "zh_TW": "97%"
 }
@@ -361,6 +362,7 @@ languageCredits = {
       "link": ""
     }
   ],
+  "vi": [],
   "zh_CN": [
     {
       "name": "Aaron Liu",

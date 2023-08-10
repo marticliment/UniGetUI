@@ -126,7 +126,7 @@
   "General preferences" : "通用首选项",
   "GitHub profile" : "GitHub 个人资料",
   "Global" : "全局",
-  "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>" : "包含未知但有用的实用程序和其他有趣软件包的宝藏。<br>包括：<b>实用工具、命令行程序、通用软件（需要 extras 桶）</b>",
+  "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>" : "包含未知但有用的实用程序和其他有趣软件包的重要存储库。<br>包括：<b>实用工具、命令行程序、通用软件（需要 extras bucket）</b>",
   "Hide details" : "隐藏详情",
   "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "嗨，我的名字是 Martí，我是 WingetUI 的<i>开发者</i>。WingetUI 是在我的空闲时间制作的！",
   "homepage" : "网站主页",
