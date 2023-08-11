@@ -18,11 +18,11 @@ untranslatedPercentage = {
   "pl": "98%",
   "sl": "98%",
   "sr": "11%",
-  "tg": "13%",
+  "tg": "14%",
   "th": "30%",
   "tr": "97%",
   "ua": "96%",
-  "vi": "0%",
+  "vi": "15%",
   "zh_CN": "98%",
   "zh_TW": "97%"
 }
@@ -362,7 +362,12 @@ languageCredits = {
       "link": ""
     }
   ],
-  "vi": [],
+  "vi": [
+    {
+      "name": "txavlog",
+      "link": "https://github.com/txavlog"
+    }
+  ],
   "zh_CN": [
     {
       "name": "Aaron Liu",
