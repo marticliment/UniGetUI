@@ -258,7 +258,7 @@
   "Restart now" : "Nyní restartovat",
   "Restart required" : "Vyžadován restart",
   "Restart WingetUI" : "Restartovat WingetUI",
-  "Restart WingetUI to fully apply changes" : null,
+  "Restart WingetUI to fully apply changes" : "Pro aplikování změn restartujte WingetUI",
   "Restart your computer to finish the installation" : "Aby bylo možné dokončit instalaci, je nutné restartovat počítač",
   "Restart your PC to finish installation" : "Restartujte počítač k dokončení instalace",
   "Retry" : "Opakovat",
