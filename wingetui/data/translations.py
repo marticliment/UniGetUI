@@ -9,6 +9,7 @@ untranslatedPercentage = {
   "el": "80%",
   "es": "95%",
   "fa": "75%",
+  "he": "5%",
   "hi": "92%",
   "hr": "98%",
   "id": "95%",
@@ -22,7 +23,7 @@ untranslatedPercentage = {
   "th": "30%",
   "tr": "97%",
   "ua": "96%",
-  "vi": "21%",
+  "vi": "33%",
   "zh_CN": "98%",
   "zh_TW": "97%"
 }
@@ -168,6 +169,7 @@ languageCredits = {
       "link": "https://github.com/W1L7dev"
     }
   ],
+  "he": [],
   "hi": [
     {
       "name": "atharva_xoxo",
