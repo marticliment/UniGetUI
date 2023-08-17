@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14024,
-        "done": 7596
+        "done": 7610
     },
     "icons_and_screenshots": {
         "115": {
@@ -4463,55 +4463,55 @@
             "images": []
         },
         "temurin-11-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-11-jre": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-16-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-17-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-17-jre": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-18-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-18-jre": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-19-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-19-jre": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-20-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-20-jre": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-8-jdk": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "temurin-8-jre": {
-            "icon": "",
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
         "mosquitto": {
@@ -5226,7 +5226,7 @@
             "images": []
         },
         "mailspring": {
-            "icon": "",
+            "icon": "https://images2.imgbox.com/19/20/xmpBFPrl_o.png",
             "images": [
                 "https://i.postimg.cc/W1X0pj65/hero-graphic-win32-2x.png"
             ]
@@ -6706,9 +6706,9 @@
             "images": []
         },
         "insync": {
-            "icon": "\"https://images2.imgbox.com/d4/d8/0gMfRUTK_o.png",
+            "icon": "https://images2.imgbox.com/d4/d8/0gMfRUTK_o.png",
             "images": [
-                "https://i.ibb.co/8D4W4Lv/Insync-Vy-QWYJC469.png\""
+                "https://i.ibb.co/8D4W4Lv/Insync-Vy-QWYJC469.png"
             ]
         },
         "inteldriverandsupportassista\u2026": {
