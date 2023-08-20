@@ -23,8 +23,7 @@ untranslatedPercentage = {
   "th": "30%",
   "tr": "97%",
   "ua": "96%",
-  "vi": "61%",
-  "zh_CN": "98%",
+  "vi": "75%",
   "zh_TW": "97%"
 }
 
@@ -374,6 +373,10 @@ languageCredits = {
     {
       "name": "Aaron Liu",
       "link": ""
+    },
+    {
+      "name": "adfnekc",
+      "link": "https://github.com/adfnekc"
     },
     {
       "name": "BUGP Association",

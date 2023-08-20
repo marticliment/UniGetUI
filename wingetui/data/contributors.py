@@ -12,8 +12,10 @@ contributors = [
   "sklart",
   "aaronliu0130",
   "vedantmgoyal2009",
+  "adfnekc",
   "candrapersada",
   "elliot-100",
+  "sitiom",
   "neoOpus",
   "HorridModz",
   "Satanarious",
@@ -22,7 +24,6 @@ contributors = [
   "derula",
   "flatron4eg",
   "harleylara",
-  "sitiom",
   "victorelec14"
 ]
 
@@ -30,7 +31,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1774
+    "contributions": 1780
   },
   {
     "name": "ppvnf",
@@ -83,6 +84,11 @@ contributorsInfo = [
     "contributions": 2
   },
   {
+    "name": "adfnekc",
+    "link": "https://github.com/adfnekc",
+    "contributions": 2
+  },
+  {
     "name": "candrapersada",
     "link": "https://github.com/candrapersada",
     "contributions": 2
@@ -90,6 +96,11 @@ contributorsInfo = [
   {
     "name": "elliot-100",
     "link": "https://github.com/elliot-100",
+    "contributions": 2
+  },
+  {
+    "name": "sitiom",
+    "link": "https://github.com/sitiom",
     "contributions": 2
   },
   {
@@ -130,11 +141,6 @@ contributorsInfo = [
   {
     "name": "harleylara",
     "link": "https://github.com/harleylara",
-    "contributions": 1
-  },
-  {
-    "name": "sitiom",
-    "link": "https://github.com/sitiom",
     "contributions": 1
   },
   {
