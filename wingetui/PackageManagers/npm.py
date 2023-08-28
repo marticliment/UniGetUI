@@ -294,7 +294,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = [self.EXECUTABLE, "uninstall", ] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
