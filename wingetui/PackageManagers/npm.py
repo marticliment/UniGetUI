@@ -100,6 +100,27 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
             globals.PackageManagerOutput += rawoutput
+            p = subprocess.Popen(f"{self.EXECUTABLE} outdated -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
+            DashesPassed = False
+            rawoutput = "\n\n---------"+self.NAME+"@global"
+            while p.poll() is None:
+                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
+                if line:
+                    if not DashesPassed:
+                        if "Package" in line:
+                            DashesPassed = True
+                    else:
+                        package = list(filter(None, line.split(" ")))
+                        if len(package) >= 4:
+                            name = formatPackageIdAsName(package[0][1:] if package[0][0] == "@" else package[0]).strip()
+                            id = package[0].strip()
+                            version = package[1].strip()
+                            newVersion = package[3].strip()
+                            source = self.NAME+"@global"
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
+            globals.PackageManagerOutput += rawoutput
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             return packages
         except Exception as e:
@@ -145,8 +166,8 @@ class NPMPackageManager(DynamicLoadPackageManager):
                         package = line.split("@")
                         if len(package) >= 2:
                             idString = '@'.join(package[:-1]).strip()
-                            name = formatPackageIdAsName(idString[1:] if idString[0] == "@" else idString)
-                            id = idString
+                            name = formatPackageIdAsName(idString[1:] if idString[0] == "@" else idString).strip()
+                            id = idString.strip()
                             version = package[-1].strip()
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME+"@global", Npm))
@@ -273,7 +294,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = [self.EXECUTABLE, "uninstall", ] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
