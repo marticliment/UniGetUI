@@ -394,6 +394,7 @@ class PushButtonWithAction(QPushButton):
         self.action.triggered.connect(self.click)
 
 class CustomComboBox(QComboBox):
+    disableScrolling = False
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -406,6 +407,13 @@ class CustomComboBox(QComboBox):
         v = self.view().window()
         ApplyMenuBlur(v.winId().__int__(), v)
         return super().showEvent(event)
+    
+    def wheelEvent(self, e: QWheelEvent) -> None:
+        if self.disableScrolling:
+            e.ignore()
+            return False
+        else:
+            return super().wheelEvent(e)
 
     def dg(self):
         pass
@@ -893,6 +901,7 @@ class SectionComboBox(QWidget):
         self.buttonOn = buttonEnabled
         self.setAttribute(Qt.WA_StyledBackground)
         self.combobox = CustomComboBox(self)
+        self.combobox.disableScrolling = True
         self.combobox.setFixedWidth(250)
         self.setObjectName("stBtn")
         self.restartButton = QPushButton("Restart ElevenClock", self)
