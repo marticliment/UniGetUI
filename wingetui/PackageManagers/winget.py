@@ -13,10 +13,17 @@ from .sampleHelper import *
 
 class WingetPackageManager(DynamicPackageManager):
 
+    IS_ARM = False
+    try:
+        if subprocess.check_output("cmd.exe /C echo %PROCESSOR_ARCHITECTURE%") == b'ARM64\r\n':
+            IS_ARM = True
+    except Exception as e:
+        report(e)
+
     if getSettings("UseSystemWinget"):
         EXECUTABLE = "winget.exe"
     else:
-        if getSettings("EnableArmWinget"):
+        if getSettings("EnableArmWinget") or IS_ARM:
             print("🟠 USING ARM BUILT-In WINGET")
             EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_arm64", "winget.exe")
         else:
