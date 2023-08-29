@@ -31,7 +31,10 @@ class SamplePackageManager(PackageManagerModule):
     Capabilities.SupportsCustomScopes = False
 
     if not os.path.exists(CAHCE_FILE_PATH):
-        os.makedirs(CAHCE_FILE_PATH)
+        try:
+            os.makedirs(CAHCE_FILE_PATH)
+        except FileExistsError:
+            pass
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
