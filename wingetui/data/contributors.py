@@ -16,22 +16,22 @@ contributors = [
   "candrapersada",
   "elliot-100",
   "sitiom",
+  "joguarino",
   "neoOpus",
   "HorridModz",
   "Satanarious",
   "vsilvar",
+  "BastianKamp",
   "quantumfallout",
   "derula",
-  "flatron4eg",
-  "harleylara",
-  "victorelec14"
+  "flatron4eg"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1782
+    "contributions": 1785
   },
   {
     "name": "ppvnf",
@@ -104,6 +104,11 @@ contributorsInfo = [
     "contributions": 2
   },
   {
+    "name": "joguarino",
+    "link": "https://github.com/joguarino",
+    "contributions": 2
+  },
+  {
     "name": "neoOpus",
     "link": "https://github.com/neoOpus",
     "contributions": 1
@@ -124,6 +129,11 @@ contributorsInfo = [
     "contributions": 1
   },
   {
+    "name": "BastianKamp",
+    "link": "https://github.com/BastianKamp",
+    "contributions": 1
+  },
+  {
     "name": "quantumfallout",
     "link": "https://github.com/quantumfallout",
     "contributions": 1
@@ -136,16 +146,6 @@ contributorsInfo = [
   {
     "name": "flatron4eg",
     "link": "https://github.com/flatron4eg",
-    "contributions": 1
-  },
-  {
-    "name": "harleylara",
-    "link": "https://github.com/harleylara",
-    "contributions": 1
-  },
-  {
-    "name": "victorelec14",
-    "link": "https://github.com/victorelec14",
     "contributions": 1
   }
 ]
