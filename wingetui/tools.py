@@ -486,64 +486,92 @@ def getPackageIcon(package) -> str:
             report(e)
         return ""
 
-def ConvertMarkdownToHtml(text: str) -> str:
-    text = text.replace("\n\r", "<br>")
-    text = text.replace("\n", "<br>")
-    firsttext = "<br>"+text
-    text = ""
-    for line in firsttext.split("<br>"):
-        if line:
-            text += line+"<br>"
-    text = "<br>"+text
-    
-    # Convert images to URLs
-    for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", text):
-        match: str
-        text = text.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
-
-    # Convert URLs to <a href=></a> tags
-    for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", text):
-        match: str
-        text = text.replace(match, f'<br><a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][1:]}</a>')
-
-    # Convert headers
-    for match in re.findall("<br>#{3,4}[^\>\<]*<br>", text):
-        match: str
-        text = text.replace(match, f'<br><b>{match.replace("#", "").strip()}</b>')
-      
-    for match in re.findall("<br>##[^\>\<]*<br>", text):
-        match: str
-        text = text.replace(match, f'<br><b style="font-size:12.5pt;">{match.replace("#", "").strip()}</b>')
+def ConvertMarkdownToHtml(content: str) -> str:
+    try:
+        content = content.replace("\n\r", "<br>")
+        content = content.replace("\n", "<br>")
+        firsttext = "<br>"+content
+        content = ""
+        for line in firsttext.split("<br>"):
+            if line:
+                content += line+"<br>"
+        content = "<br>"+content
         
-    for match in re.findall("<br>#[^\>\<]*<br>", text):
-        match: str
-        text = text.replace(match, f'<br><b style="font-size:14pt;">{match.replace("#", "").strip()}</b>')
-    
-    text = text.replace("<br></b>", "</b><br>")
-    
-    # Convert unordered lists
-    text = text.replace("<br>- ", f"<br>{'&nbsp;'*4}● ")
-    text = text.replace("<br> - ", f"<br>{'&nbsp;'*4}● ")
-    text = text.replace("<br>  - ", f"<br>{'&nbsp;'*8}○ ")
-    text = text.replace("<br>   - ", f"<br>{'&nbsp;'*8}○ ")
-    text = text.replace("<br>    - ", f"<br>{'&nbsp;'*12}□ ")
-    text = text.replace("<br>     - ", f"<br>{'&nbsp;'*12}□ ")
-    text = text.replace("<br>* ", f"<br>{'&nbsp;'*4}● ")
-    text = text.replace("<br> * ", f"<br>{'&nbsp;'*4}● ")
-    text = text.replace("<br>  * ", f"<br>{'&nbsp;'*8}○ ")
-    text = text.replace("<br>   * ", f"<br>{'&nbsp;'*8}○ ")
-    text = text.replace("<br>    * ", f"<br>{'&nbsp;'*12}□ ")
-    text = text.replace("<br>     * ", f"<br>{'&nbsp;'*12}□ ")
-    
-    # Convert numbered lists
-    for number in range(0, 20):
-        text = text.replace(f"<br>{number}. ", f"<br>{'&nbsp;'*4}{number}. ")
-        text = text.replace(f"<br> {number}. ", f"<br>{'&nbsp;'*4}{number}. ")
-    
-    # Filter empty newlines
-    text = text.replace("<br><br>", "<br>").replace("<br><br>", "<br>")
-    print(text)
-    return text
+        # Convert headers
+        for match in re.findall("<br>[ ]*#{3,4}[^\>\<]*<br>", content):
+            match: str
+            content = content.replace(match, f'<br><b>{match.replace("#", "").strip()}</b>')
+        
+        for match in re.findall("<br>[ ]*##[^\>\<]*<br>", content):
+            match: str
+            content = content.replace(match, f'<br><b style="font-size:12.5pt;">{match.replace("#", "").strip()}</b>')
+            
+        for match in re.findall("<br>#[^\>\<]*<br>", content):
+            match: str
+            content = content.replace(match, f'<br><b style="font-size:14pt;">{match.replace("#", "").strip()}</b>')
+            
+        # Convert linked images to URLs
+        for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", content):
+            match: str
+            content = content.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
+
+        # Convert unlinked images to URLs
+        for match in re.findall("!\[[^\[\]]*\]\([^\(\)]*\)", content):
+            match: str
+            content = content.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][2:]}</a>')
+        
+        # Convert URLs to <a href=></a> tags
+        for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", content):
+            match: str
+            content = content.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][1:]}</a>')
+
+        i = 0
+        linelist = content.split("<br>")
+        while i<len(linelist):
+            line = linelist[i]
+            
+            for match in re.findall("\*\*[^ ][^\*]+[^ ]\*\*", line):
+                line = line.replace(match, "<b>"+match[2:-2]+"</b>")
+                
+            for match in re.findall("\*[^ ][^\*]+[^ ]\*", line):
+                line = line.replace(match, "<i>"+match[1:-1]+"</i>")
+                
+            for match in re.findall("`[^ ][^`]+[^ ]`", line):
+                line = line.replace(match, f"<span style='font-family: \"Consolas\";background-color:{'#303030' if isDark() else '#eeeeee'}'>"+match[1:-1]+"</span>")
+                
+            linelist[i] = line
+            i += 1
+            
+        content = "<br>".join(linelist)
+        
+        content = content.replace("<br></b>", "</b><br>")
+        
+        # Convert unordered lists
+        content = content.replace("<br>- ", f"<br>{'&nbsp;'*4}● ")
+        content = content.replace("<br> - ", f"<br>{'&nbsp;'*4}● ")
+        content = content.replace("<br>  - ", f"<br>{'&nbsp;'*8}○ ")
+        content = content.replace("<br>   - ", f"<br>{'&nbsp;'*8}○ ")
+        content = content.replace("<br>    - ", f"<br>{'&nbsp;'*12}□ ")
+        content = content.replace("<br>     - ", f"<br>{'&nbsp;'*12}□ ")
+        content = content.replace("<br>* ", f"<br>{'&nbsp;'*4}● ")
+        content = content.replace("<br> * ", f"<br>{'&nbsp;'*4}● ")
+        content = content.replace("<br>  * ", f"<br>{'&nbsp;'*8}○ ")
+        content = content.replace("<br>   * ", f"<br>{'&nbsp;'*8}○ ")
+        content = content.replace("<br>    * ", f"<br>{'&nbsp;'*12}□ ")
+        content = content.replace("<br>     * ", f"<br>{'&nbsp;'*12}□ ")
+        
+        # Convert numbered lists
+        for number in range(0, 20):
+            content = content.replace(f"<br>{number}. ", f"<br>{'&nbsp;'*4}{number}. ")
+            content = content.replace(f"<br> {number}. ", f"<br>{'&nbsp;'*4}{number}. ")
+        
+        # Filter empty newlines
+        content = content.replace("<br><br>", "<br>").replace("<br><br>", "<br>")
+        print(content)
+        return content
+    except Exception as e:
+        report(e)
+        return content
 
 globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
 globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
