@@ -334,10 +334,10 @@ class DynamicScrollArea(QWidget):
 
     def removeItem(self, item: QWidget):
         try:
-            self.items.remove(item)
+            if item in self.items:
+                self.items.remove(item)
         except ValueError as e:
             report(e)
-        print(self.items)
         item.setVisible(False)
         self.vlayout.removeWidget(item)
         self.rss()
@@ -347,7 +347,6 @@ class DynamicScrollArea(QWidget):
 
     def addItem(self, item: QWidget):
         self.items.append(item)
-        print(self.items)
         self.vlayout.addWidget(item)
         self.itemCount = len(self.items)
         self.setEnabled(True)
