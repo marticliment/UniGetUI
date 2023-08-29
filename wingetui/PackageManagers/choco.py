@@ -250,7 +250,7 @@ class ChocoPackageManager(SamplePackageManager):
             output = []
             while p.poll() is None:
                 line = p.stdout.readline().strip()
-                if " " in line:
+                if b" " in line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
                 details.Versions.append(line.split(" ")[1])
