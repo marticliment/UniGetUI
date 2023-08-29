@@ -143,6 +143,8 @@ class ScoopPackageManager(SamplePackageManager):
                     if not DashesPassed:
                         if "----" in line:
                             DashesPassed = True
+                    elif "Held package" in line:
+                        continue
                     else:
                         package = list(filter(None, line.split(" ")))
                         if len(package) >= 3:
