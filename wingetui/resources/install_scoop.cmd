@@ -10,9 +10,9 @@ if %errorlevel% equ 0 (
     echo WingetUI will be restarted to continue.
     pause
     taskkill /im wingetui.exe /f
-    start /b %wingetuipath% /i
+    start /b "%wingetuipath%" /i
 ) else (
     pause
     taskkill /im wingetui.exe /f
-    start /b %wingetuipath% /i
+    start /b "%wingetuipath%" /i
 )
