@@ -242,8 +242,31 @@ class DiscoverSoftwareSection(SoftwareSection):
             toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
             toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
+        
+        toolbar.addSeparator()
+        
+        def showHelpMenu():
+            helpMenu = QMenu(self)
+            help = QAction(QIcon(getMedia("launch")), "Guide for beginners on how to install a package")
+            help.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/install-a-program"))
+            helpMenu.addAction(help)
+            help2 = QAction(QIcon(getMedia("launch")), "Discover Packages overview - every feature explained")
+            help2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/discover-overview"))
+            helpMenu.addAction(help2)
+            helpMenu.addSeparator()
+            help3 = QAction(QIcon(getMedia("launch")), "WingetUI Help and Documentation")
+            help3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+            helpMenu.addAction(help3)
+            ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
+            helpMenu.exec(QCursor.pos())
+    
+        helpAction = QAction(QIcon(getMedia("help")), _("Help"), toolbar)
+        helpAction.triggered.connect(showHelpMenu)
+        toolbar.addAction(helpAction)
+
         toolbar.addWidget(TenPxSpacer())
         toolbar.addWidget(TenPxSpacer())
+        
 
         return toolbar
 

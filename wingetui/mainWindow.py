@@ -117,6 +117,10 @@ class RootWindow(QMainWindow):
         self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
+        
+        helpAction = QAction(QIcon(getMedia("help")), _("Help and documentation"), self)
+        helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        self.extrasMenu.addAction(helpAction)
 
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
