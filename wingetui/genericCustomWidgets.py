@@ -1074,15 +1074,14 @@ class ToastNotification(QObject):
         Shows a toast notification with the given information
         """
         if self.description:
-            template = windows_toasts.toast_types.ToastText4()
+            template = windows_toasts.Toast()
         else:
-            template = windows_toasts.toast_types.ToastText2()
-        template.SetHeadline(self.title)
+            template = windows_toasts.Toast()
+        template.text_fields = [self.title]
         if self.description:
-            template.SetFirstLine(self.description)
+            template.text_fields = [self.title, self.description]
         if self.smallText:
-            template.SetSecondLine(self.smallText)
-        #template.SetDuration(self.showTime)
+            template.text_fields = [self.title, self.description, self.smallText]
         for action in self.actionsReference.keys():
             actionText = self.actionsReference[action]
             if not actionText in self.addedActions:
