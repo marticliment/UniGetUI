@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7614
+        "done": 7615
     },
     "icons_and_screenshots": {
         "115": {
@@ -3902,7 +3902,7 @@
             "images": []
         },
         "spacedeskdriver-server": {
-            "icon": "",
+            "icon": "https://i.ibb.co/tCBfBrV/img.png",
             "images": []
         },
         "cloudcontinuityagent": {
