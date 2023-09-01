@@ -1938,7 +1938,7 @@ class SettingsSection(SmoothScrollArea):
         path = SectionButton(Winget.EXECUTABLE, _("Copy"), h = 50)
         path.clicked.connect(lambda: globals.app.clipboard().setText(Winget.EXECUTABLE))
         self.wingetPreferences.addWidget(path)
-        path.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+        path.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         disableWinget = SectionCheckBox(_("Enable {pm}").format(pm = "Winget"))
         disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
         disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
@@ -1967,7 +1967,7 @@ class SettingsSection(SmoothScrollArea):
         path = SectionButton(Scoop.EXECUTABLE, _("Copy"), h = 50)
         path.clicked.connect(lambda: globals.app.clipboard().setText(Scoop.EXECUTABLE))
         self.scoopPreferences.addWidget(path)
-        path.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+        path.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
 
         disableScoop = SectionCheckBox(_("Enable {pm}").format(pm = "Scoop"))
         disableScoop.setChecked(not getSettings(f"Disable{Scoop.NAME}"))
@@ -2008,7 +2008,7 @@ class SettingsSection(SmoothScrollArea):
         path = SectionButton(Choco.EXECUTABLE, _("Copy"), h = 50)
         path.clicked.connect(lambda: globals.app.clipboard().setText(Choco.EXECUTABLE))
         self.chocoPreferences.addWidget(path)
-        path.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+        path.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
 
         disableChocolatey = SectionCheckBox(_("Enable {pm}").format(pm = "Chocolatey"))
         disableChocolatey.setChecked(not getSettings(f"Disable{Choco.NAME}"))
@@ -2028,7 +2028,7 @@ class SettingsSection(SmoothScrollArea):
         path = SectionButton(Pip.EXECUTABLE, _("Copy"), h = 50)
         path.clicked.connect(lambda: globals.app.clipboard().setText(Pip.EXECUTABLE))
         self.pipPreferences.addWidget(path)
-        path.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+        path.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         disablePip = SectionCheckBox(_("Enable {pm}").format(pm = "Pip"))
         disablePip.setChecked(not getSettings(f"Disable{Pip.NAME}"))
         disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
@@ -2040,7 +2040,7 @@ class SettingsSection(SmoothScrollArea):
 
         path = SectionButton(Npm.EXECUTABLE, _("Copy"), h = 50)
         path.clicked.connect(lambda: globals.app.clipboard().setText(Npm.EXECUTABLE))
-        path.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
+        path.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
 
         self.npmPreferences.addWidget(path)
 
