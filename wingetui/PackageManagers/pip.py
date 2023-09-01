@@ -138,7 +138,11 @@ class PipPackageManager(DynamicLoadPackageManager):
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME, Pip))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            return packages
+            if len(packages) == 0:
+                print("🟠 Pip got too few installed packages, retrying")
+                return self.getInstalledPackages(second_atttempt=True)
+            else:
+                return packages
         except Exception as e:
             report(e)
             return []
