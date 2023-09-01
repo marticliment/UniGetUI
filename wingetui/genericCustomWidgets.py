@@ -1147,7 +1147,7 @@ class ToastNotification(QObject):
         template.on_activated=self.onAction
         template.on_dismissed=lambda _1: self.onDismissFun()
         template.on_failed=lambda _1: self.reportException()
-        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable) if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) else "{6D809377-6AF0-444B-8957-A3773F02200E}\\WingetUI\\wingetui.exe")
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=globals.AUMID if globals.AUMID != "" else None)
         self.toast.show_toast(template)
 
     def reportException(self, id):

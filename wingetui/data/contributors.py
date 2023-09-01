@@ -13,6 +13,7 @@ contributors = [
   "aaronliu0130",
   "vedantmgoyal2009",
   "adfnekc",
+  "BastianKamp",
   "candrapersada",
   "elliot-100",
   "sitiom",
@@ -21,7 +22,6 @@ contributors = [
   "HorridModz",
   "Satanarious",
   "vsilvar",
-  "BastianKamp",
   "quantumfallout",
   "derula",
   "flatron4eg"
@@ -31,7 +31,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1799
+    "contributions": 1813
   },
   {
     "name": "ppvnf",
@@ -89,6 +89,11 @@ contributorsInfo = [
     "contributions": 2
   },
   {
+    "name": "BastianKamp",
+    "link": "https://github.com/BastianKamp",
+    "contributions": 2
+  },
+  {
     "name": "candrapersada",
     "link": "https://github.com/candrapersada",
     "contributions": 2
@@ -126,11 +131,6 @@ contributorsInfo = [
   {
     "name": "vsilvar",
     "link": "https://github.com/vsilvar",
-    "contributions": 1
-  },
-  {
-    "name": "BastianKamp",
-    "link": "https://github.com/BastianKamp",
     "contributions": 1
   },
   {

@@ -283,13 +283,14 @@ try:
                         self.loadStatus += len(PackageManagersList)
 
                     Thread(target=self.detectSudo, daemon=True).start()
+                    Thread(target=self.getAUMID, daemon=True).start()
                     Thread(target=self.removeScoopCache, daemon=True).start()
 
                     # Daemon threads
                     Thread(target=self.instanceThread, daemon=True).start()
                     Thread(target=self.updateIfPossible, daemon=True).start()
 
-                    while self.loadStatus < 3 + len(PackageManagersList)*2:
+                    while self.loadStatus < 4 + len(PackageManagersList)*2:
                         time.sleep(0.01)
                 except Exception as e:
                     print(e)
@@ -300,6 +301,22 @@ try:
                     self.callInMain.emit(lambda: self.loadingProgressBar.repaint())
                     self.callInMain.emit(self.loadMainUI)
                     print(globals.componentStatus)
+                    
+            def getAUMID(self):
+                print("🔵 Loading WingetUI AUMID...")
+                try:
+                    output = str(subprocess.check_output(["powershell", "-Command", "Get-StartApps"]), encoding='utf-8', errors='ignore')
+                    for line in output.split("\n"):
+                        if list(filter(None, line.split(" ")))[0] == "WingetUI":
+                            globals.AUMID = list(filter(None, line.split(" ")))[1]
+                            print(f"🟢 Found valid aumid {globals.AUMID}")
+                            self.loadStatus += 1
+                            return
+                    print("🟠 Did not find a valid AUMID")
+                    self.loadStatus += 1
+                except Exception as e:
+                    self.loadStatus += 1
+                    report(e)
 
             def checkForRunningInstances(self):
                 print("🔵 Looking for alive instances...")

@@ -82,3 +82,5 @@ tray_is_available_updates: bool = False
 tray_is_needs_restart: bool = False
 
 PackageManagerOutput: str = "Outputs from package managers on the current session:\n \n"
+
+AUMID: str = ""
