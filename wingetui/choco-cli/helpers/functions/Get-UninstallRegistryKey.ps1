@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-UninstallRegistryKey {
-<#
+    <#
 .SYNOPSIS
 Retrieve registry key(s) for system-installed applications from an
 exact or wildcard search.
@@ -27,17 +27,6 @@ chocolateyUninstall.ps1 automation script.
 
 The function also prevents `Get-ItemProperty` from failing when
 handling wrongly encoded registry keys.
-
-.NOTES
-Available in 0.9.10+. If you need to maintain compatibility with pre
-0.9.10, please add the following to your nuspec (check for minimum
-version):
-
-~~~xml
-<dependencies>
-  <dependency id="chocolatey-core.extension" version="1.1.0" />
-</dependencies>
-~~~
 
 .INPUTS
 String
@@ -105,74 +94,78 @@ Install-ChocolateyInstallPackage
 .LINK
 Uninstall-ChocolateyPackage
 #>
-[CmdletBinding()]
-param(
-  [parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
-  [string] $softwareName,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [string] $softwareName,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  if ($softwareName -eq $null -or $softwareName -eq '') {
-    throw "$SoftwareName cannot be empty for Get-UninstallRegistryKey"
-  }
+    if ($softwareName -eq $null -or $softwareName -eq '') {
+        throw "$SoftwareName cannot be empty for Get-UninstallRegistryKey"
+    }
 
-  $ErrorActionPreference = 'Stop'
-  $local_key       = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
-  $machine_key     = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
-  $machine_key6432 = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    $ErrorActionPreference = 'Stop'
+    $local_key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    $machine_key = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    $machine_key6432 = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
 
-  Write-Verbose "Retrieving all uninstall registry keys"
-  [array]$keys = Get-ChildItem -Path @($machine_key6432, $machine_key, $local_key) -ErrorAction SilentlyContinue
-  Write-Debug "Registry uninstall keys on system: $($keys.Count)"
+    Write-Verbose "Retrieving all uninstall registry keys"
+    [array]$keys = Get-ChildItem -Path @($machine_key6432, $machine_key, $local_key) -ErrorAction SilentlyContinue
+    Write-Debug "Registry uninstall keys on system: $($keys.Count)"
 
-  Write-Debug "Error handling check: `'Get-ItemProperty`' fails if a registry key is encoded incorrectly."
-  [int]$maxAttempts = $keys.Count
-  for ([int]$attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-    [bool]$success = $false
+    Write-Debug "Error handling check: `'Get-ItemProperty`' fails if a registry key is encoded incorrectly."
+    [int]$maxAttempts = $keys.Count
+    for ([int]$attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        [bool]$success = $false
 
-    $keyPaths = $keys | Select-Object -ExpandProperty PSPath
-    try {
-      [array]$foundKey = Get-ItemProperty -LiteralPath $keyPaths -ErrorAction Stop | Where-Object { $_.DisplayName -like $softwareName }
-      $success = $true
-    } catch {
-      Write-Debug "Found bad key."
-      foreach ($key in $keys){
+        $keyPaths = $keys | Select-Object -ExpandProperty PSPath
         try {
-          Get-ItemProperty -LiteralPath $key.PsPath > $null
-        } catch {
-          $badKey = $key.PsPath
+            [array]$foundKey = Get-ItemProperty -LiteralPath $keyPaths -ErrorAction Stop | Where-Object { $_.DisplayName -like $softwareName }
+            $success = $true
         }
-      }
-      Write-Verbose "Skipping bad key: $badKey"
-      [array]$keys = $keys | Where-Object { $badKey -NotContains $_.PsPath }
+        catch {
+            Write-Debug "Found bad key."
+            foreach ($key in $keys) {
+                try {
+                    Get-ItemProperty -LiteralPath $key.PsPath > $null
+                }
+                catch {
+                    $badKey = $key.PsPath
+                }
+            }
+            Write-Verbose "Skipping bad key: $badKey"
+            [array]$keys = $keys | Where-Object { $badKey -NotContains $_.PsPath }
+        }
+
+        if ($success) {
+            break;
+        }
+
+        if ($attempt -ge 10) {
+            Write-Warning "Found 10 or more bad registry keys. Run command again with `'--verbose --debug`' for more info."
+            Write-Debug "Each key searched should correspond to an installed program. It is very unlikely to have more than a few programs with incorrectly encoded keys, if any at all. This may be indicative of one or more corrupted registry branches."
+        }
     }
 
-    if ($success) { break; }
-
-    if ($attempt -ge 10) {
-      Write-Warning "Found 10 or more bad registry keys. Run command again with `'--verbose --debug`' for more info."
-      Write-Debug "Each key searched should correspond to an installed program. It is very unlikely to have more than a few programs with incorrectly encoded keys, if any at all. This may be indicative of one or more corrupted registry branches."
+    if ($foundKey -eq $null -or $foundkey.Count -eq 0) {
+        Write-Warning "No registry key found based on  '$softwareName'"
     }
-  }
 
-  if ($foundKey -eq $null -or $foundkey.Count -eq 0) {
-    Write-Warning "No registry key found based on  '$softwareName'"
-  }
+    Write-Debug "Found $($foundKey.Count) uninstall registry key(s) with SoftwareName:`'$SoftwareName`'";
 
-  Write-Debug "Found $($foundKey.Count) uninstall registry key(s) with SoftwareName:`'$SoftwareName`'";
-
-  return $foundKey
+    return $foundKey
 }
 
 Set-Alias Get-InstallRegistryKey Get-UninstallRegistryKey
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBdLU7HfmsT9lS+
-# MXb0xNK+Xc4FA9KOO8pYFVpwMmW52KCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAr7rSv15BEVAdd
+# Hi9DFdA/R4f9zSgZHYO+xkt+mPq16qCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -293,70 +286,70 @@ Set-Alias Get-InstallRegistryKey Get-UninstallRegistryKey
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQg51ETGafDiV2zTXT6BMq/m2rh8VpY6BBl4K45tM0zIR0wDQYJ
-# KoZIhvcNAQEBBQAEggEAlGwbWhLvhaCG7SlPDvR7IFuPB3pOPuLrwZbyphpHLJPc
-# jfCyj8sKbq26OVbPrfJQXu32S8TCRLIFlMIsro0zEn94ucDT3Sk65gpPXow6QO0g
-# ajEJVJKoO6FHuTvonDAOtQTT1TXA1xKxdf2TzPbOZBDruJ1RtrAzok1ZAIQSOBV5
-# xZ0VL5hwrxa6ZbhUZmA8fZCfuKT27O3T9OLoO9VKE9+AxglCQIEzA3uVIwMcO50a
-# JOJeoqkxWMMnsnQFIr4rhfygwjk7EC9Qi+RW7UlcdoUKtt78eBy/kS46Nbptr5Il
-# zHV3ZaH+aywAq3SaBqDQCT5Fd/DOcJzijBdDKYsT4qGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCB2kPWvB9ni5zddnFBVMq4+
-# aPrbbMuzMxM6K6Z+zbiI/jANBgkqhkiG9w0BAQEFAASCAgC5dvxcZYp4kZMzqkQT
-# +AsJ5odGLaTqes9EXTQg8rX/yloGqOz6gYXqmaaMavtUsHSe6JlDfT4FaIiybzto
-# fTXQXRz584+9Ko2WnRVpQTrwH8exPduErQ6v8vV6qp/sv4NeOyALVTXBcNHOYbGZ
-# cRERPi5rQqD8MrZydghdUQL36cogJcLdfd116GftnDlxpw6A6f6oO+wuE62EZ8pU
-# U2mSfk6HvsUE2Rz3Ffx3i72uepZdb9mBDj+cqUeFgD0sJhkxUH4/uqAT0ghfqvDL
-# fiMorOWkFo9u7rTa0rCI3m7Mkc2yzlEXA6m/39t4PEKSTqvLJ+22LHBqhtWZ79ne
-# OYu68q17e7YZunAKutZJKLeZnTo5zNADI4oaDa2zIBLCEpBmbGK549SV8sQgs0Xq
-# j/TWHamlV9K+Afib0N5YVks4SrDyvBtXVlT/fbIJqTZtRJN2AVQp8ApgsjGet3f6
-# 6i6uPmFDHaL5IVsw4FP0g+A1TU3BCz2qyn3aesw2k2lt4UHyyq+Cekv+EQn0bbNH
-# DhwSChtdhwjj/DuTTlQwPafCJPVjVZ93WKMwHupMNb6HAL9RYd6E/j98v1rGKMMU
-# 9SuCXSczCgGZZhSl8RTbo+N+96GSjMwF+/bqg2EP4++BoG4gqVkaw9NPNT/YO0O/
-# J7VR6lwUIgQL5/etpNPPXCRVkw==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCAs+iPvbZO0+lUs9sMPd8kZUQkM8ltayHnbdsJHVihHnjAN
+# BgkqhkiG9w0BAQEFAASCAQAiNE3OtwmgRZaCZrykKmuvWfnkZM2kt4Nxn2JaLqSy
+# DLEUBfdJiMvigaLQXmqmQzpBgUOXhgt+GRZOHIUvrcR8L2j6Bzf8l9mCI0CLM6XT
+# Tf5XPO/djmmQrEFqReFyDfVU4dXG6ayKA7MCyD7gmISPHfLm8swNHzbirpvXfORu
+# mrZZ3xro9p+pxx2DU6gjMvs/xaxNp5UA2X7dXT4GXv5bClYSLP2qS4eWNnCFPKl4
+# TKW/r+WMvuJL6GT1DYZsll3pLK196tKlteg4Avz2rPZKlAdYiGb26sWr0IQABh+p
+# B7KC3PO2/hOZQDq40aAOJ3hQn2fHFZd1L22xZl3vvV/toYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgzMVowLwYJKoZIhvcNAQkEMSIEINgLILXlAv6H7p+1500Q
+# MpcojUwxHUwmvttR6gMNYJYfMA0GCSqGSIb3DQEBAQUABIICABaKzqO/z4hkZIBv
+# 049hb6cyQzDrC3W/OWudji6UOmRwm8qUvYxK7ke1wg7nwoF1pnmPcabB+YdvJDHU
+# 4vOvs+PNidq/cTX1C+Z6cjdya6ytDAZ/S3cvTutFdCR5Qup8nJcFqg8WNukYwF2R
+# Il34mdlrHJE6BDfGQMJHsyV1bRfvOc4L3YjVTaqyJCuShYV3ugXysZyjmBqcmpb8
+# ELj7cJMlAqEzXbJTE0iVb6N9+bfEWSD/NkcPA6apeu+M6NDOJ+FZ35UGitHCCoHa
+# MFgXBYwexz0JAPDNQExFMjeHWTnObCaMqM6/KF94xrErC45ZdG017V6tSB1GV+Dc
+# bE7DSXAvKmPk/8XVVhohElItFp76aMWz9JFi9yiNsQ1X8zEup1ZNSOrnIy5JfnuW
+# H7JVAgYzkzi6nQRpeOfQQ8b1PODKI2VJMNipC/J8OQhF9c0ttU+Go7mQUmi9JlT+
+# GdK9izhnwy8tWf78DHYiu1ciN+tYgVSuLsOKicKkzgrZ33C9WpZ0SrZZSQeDlGn0
+# spmYoVHQRe7ADZ/kTAn3LVn3yyoPiQNAQg1rqaPban+vAYfkFtWCDN0AAXb5zR4U
+# 7QzJp7FdD5ggNGodPGIz7q2R6TxTvKdhsAZ9uU9nDe0ywEqjmGQDCVDRRRvkHmER
+# zM4DoOm62Qi0yxeR/WT1QT2Bm75c
 # SIG # End signature block

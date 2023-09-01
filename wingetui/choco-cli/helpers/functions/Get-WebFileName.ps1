@@ -16,7 +16,7 @@
 # Based on http://stackoverflow.com/a/13571471/18475
 
 function Get-WebFileName {
-<#
+    <#
 .SYNOPSIS
 Gets the original file name from a url. Used by Get-WebFile to determine
 the original file name for a file.
@@ -26,7 +26,6 @@ Uses several techniques to determine the original file name of the file
 based on the url for the file.
 
 .NOTES
-Available in 0.9.10+.
 Falls back to DefaultName when the name cannot be determined.
 
 Chocolatey works best when the packages contain the software it is
@@ -66,199 +65,209 @@ Get-WebHeaders
 .LINK
 Get-ChocolateyWebFile
 #>
-param(
-  [parameter(Mandatory=$false, Position=0)][string] $url = '',
-  [parameter(Mandatory=$true, Position=1)][string] $defaultName,
-  [parameter(Mandatory=$false)][string] $userAgent = 'chocolatey command line',
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [parameter(Mandatory = $false, Position = 0)][string] $url = '',
+        [parameter(Mandatory = $true, Position = 1)][string] $defaultName,
+        [parameter(Mandatory = $false)][string] $userAgent = 'chocolatey command line',
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  $originalFileName = $defaultName
-  $fileName = $null
+    $originalFileName = $defaultName
+    $fileName = $null
 
-  if ($url -eq $null -or $url -eq '') {
-    Write-Debug "Url was null, using default name."
-    return $originalFileName
-  }
-
-  try {
-    $uri = [System.Uri]$url
-    if ($uri.IsFile()) {
-      $fileName = [System.IO.Path]::GetFileName($uri.LocalPath)
-      Write-Debug "Url is local file, returning fileName"
-
-      return $fileName
-    }
-  } catch {
-    #continue on
-  }
-
-  if ($url.StartsWith('ftp')) {
-    Write-Debug "Url is FTP, using default name."
-    return $originalFileName
-  }
-
-  $request = [System.Net.HttpWebRequest]::Create($url)
-  if ($request -eq $null) {
-    Write-Debug "Request was null, using default name."
-    return $originalFileName
-  }
-
-  $defaultCreds = [System.Net.CredentialCache]::DefaultCredentials
-  if ($defaultCreds -ne $null) {
-    $request.Credentials = $defaultCreds
-  }
-
-  $client = New-Object System.Net.WebClient
-  if ($defaultCreds -ne $null) {
-    $client.Credentials = $defaultCreds
-  }
-
-  # check if a proxy is required
-  $explicitProxy = $env:chocolateyProxyLocation
-  $explicitProxyUser = $env:chocolateyProxyUser
-  $explicitProxyPassword = $env:chocolateyProxyPassword
-  $explicitProxyBypassList = $env:chocolateyProxyBypassList
-  $explicitProxyBypassOnLocal = $env:chocolateyProxyBypassOnLocal
-  if ($explicitProxy -ne $null) {
-    # explicit proxy
-    $proxy = New-Object System.Net.WebProxy($explicitProxy, $true)
-    if ($explicitProxyPassword -ne $null) {
-      $passwd = ConvertTo-SecureString $explicitProxyPassword -AsPlainText -Force
-      $proxy.Credentials = New-Object System.Management.Automation.PSCredential ($explicitProxyUser, $passwd)
+    if ($url -eq $null -or $url -eq '') {
+        Write-Debug "Url was null, using default name."
+        return $originalFileName
     }
 
-    if ($explicitProxyBypassList -ne $null -and $explicitProxyBypassList -ne '') {
-      $proxy.BypassList =  $explicitProxyBypassList.Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)
+    try {
+        $uri = [System.Uri]$url
+        if ($uri.IsFile()) {
+            $fileName = [System.IO.Path]::GetFileName($uri.LocalPath)
+            Write-Debug "Url is local file, returning fileName"
+
+            return $fileName
+        }
     }
-    if ($explicitProxyBypassOnLocal -eq 'true') { $proxy.BypassProxyOnLocal = $true; }
-
-    Write-Debug "Using explicit proxy server '$explicitProxy'."
-    $request.Proxy = $proxy
-
-  } elseif ($client.Proxy -and !$client.Proxy.IsBypassed($url)) {
-    # system proxy (pass through)
-    $creds = [Net.CredentialCache]::DefaultCredentials
-    if ($creds -eq $null) {
-      Write-Debug "Default credentials were null. Attempting backup method"
-      $cred = Get-Credential
-      $creds = $cred.GetNetworkCredential();
-    }
-    $proxyAddress = $client.Proxy.GetProxy($url).Authority
-    Write-Debug "Using system proxy server '$proxyaddress'."
-    $proxy = New-Object System.Net.WebProxy($proxyAddress)
-    $proxy.Credentials = $creds
-    $proxy.BypassProxyOnLocal = $true
-    $request.Proxy = $proxy
-  }
-
-  $request.Method = "GET"
-  $request.Accept = '*/*'
-  $request.AllowAutoRedirect = $true
-  $request.MaximumAutomaticRedirections = 20
-  #$request.KeepAlive = $true
-  $request.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-  $request.Timeout = 30000
-  if ($env:chocolateyRequestTimeout -ne $null -and $env:chocolateyRequestTimeout -ne '') {
-    $request.Timeout =  $env:chocolateyRequestTimeout
-  }
-  if ($env:chocolateyResponseTimeout -ne $null -and $env:chocolateyResponseTimeout -ne '') {
-    $request.ReadWriteTimeout =  $env:chocolateyResponseTimeout
-  }
-
-  #http://stackoverflow.com/questions/518181/too-many-automatic-redirections-were-attempted-error-message-when-using-a-httpw
-  $request.CookieContainer = New-Object System.Net.CookieContainer
-  $request.UserAgent = $userAgent
-
-  [System.Text.RegularExpressions.Regex]$containsABadCharacter = New-Object Regex("[" + [System.Text.RegularExpressions.Regex]::Escape([System.IO.Path]::GetInvalidFileNameChars() -join '') + "\=\;]");
-
-  try
-  {
-    [System.Net.HttpWebResponse]$response = $request.GetResponse()
-    if ($response -eq $null) {
-      Write-Debug "Response was null, using default name."
-      return $originalFileName
+    catch {
+        #continue on
     }
 
-    [string]$header = $response.Headers['Content-Disposition']
-    [string]$headerLocation = $response.Headers['Location']
-
-    # start with content-disposition header
-    if ($header -ne '') {
-      $fileHeaderName = 'filename='
-      $index = $header.LastIndexOf($fileHeaderName, [StringComparison]::OrdinalIgnoreCase)
-      if ($index -gt -1) {
-        Write-Debug "Using header 'Content-Disposition' to determine file name."
-        $fileName = $header.Substring($index + $fileHeaderName.Length).Replace('"', '')
-      }
-    }
-    if ($containsABadCharacter.IsMatch($fileName)) { $fileName = $null }
-
-    # If empty, check location header next
-    if ($fileName -eq $null -or  $fileName -eq '') {
-      if ($headerLocation -ne '') {
-        Write-Debug "Using header 'Location' to determine file name."
-        $fileName = [System.IO.Path]::GetFileName($headerLocation)
-      }
-    }
-    if ($containsABadCharacter.IsMatch($fileName)) { $fileName = $null }
-
-    # Next comes using the response url value
-    if ($fileName -eq $null -or  $fileName -eq '') {
-      $responseUrl = $response.ResponseUri.ToString()
-      if (!$responseUrl.Contains('?')) {
-        Write-Debug "Using response url to determine file name. '$responseUrl'"
-        $fileName = [System.IO.Path]::GetFileName($responseUrl)
-      }
-    }
-    if ($containsABadCharacter.IsMatch($fileName)) { $fileName = $null }
-
-    # Next comes using the request url value
-    if ($fileName -eq $null -or  $fileName -eq '') {
-      $requestUrl = $url
-      $extension = [System.IO.Path]::GetExtension($requestUrl)
-      if (!$requestUrl.Contains('?') -and $extension -ne $null -and $extension -ne '') {
-        Write-Debug "Using request url to determine file name. ' $requestUrl'"
-        $fileName = [System.IO.Path]::GetFileName($requestUrl)
-      }
+    if ($url.StartsWith('ftp')) {
+        Write-Debug "Url is FTP, using default name."
+        return $originalFileName
     }
 
-    # when all else fails, default the name
-    if ($fileName -eq $null -or  $fileName -eq '' -or $containsABadCharacter.IsMatch($fileName)) {
-      Write-Debug "File name is null or illegal. Using $originalFileName instead."
-      $fileName = $originalFileName
+    $request = [System.Net.HttpWebRequest]::Create($url)
+    if ($request -eq $null) {
+        Write-Debug "Request was null, using default name."
+        return $originalFileName
     }
 
-    Write-Debug "File name determined from url is '$fileName'"
-
-    return $fileName
-  } catch {
-    if ($request -ne $null) {
-      $request.ServicePoint.MaxIdleTime = 0
-      $request.Abort();
-      # ruthlessly remove $request to ensure it isn't reused
-      Remove-Variable request
-      Start-Sleep 1
-      [GC]::Collect()
+    $defaultCreds = [System.Net.CredentialCache]::DefaultCredentials
+    if ($defaultCreds -ne $null) {
+        $request.Credentials = $defaultCreds
     }
 
-    Write-Debug "Url request/response failed - file name will be '$originalFileName':  $($_)"
-
-    return $originalFileName
-  } finally {
-   if ($response -ne $null) {
-      $response.Close();
+    $client = New-Object System.Net.WebClient
+    if ($defaultCreds -ne $null) {
+        $client.Credentials = $defaultCreds
     }
-  }
+
+    # check if a proxy is required
+    $explicitProxy = $env:chocolateyProxyLocation
+    $explicitProxyUser = $env:chocolateyProxyUser
+    $explicitProxyPassword = $env:chocolateyProxyPassword
+    $explicitProxyBypassList = $env:chocolateyProxyBypassList
+    $explicitProxyBypassOnLocal = $env:chocolateyProxyBypassOnLocal
+    if ($explicitProxy -ne $null) {
+        # explicit proxy
+        $proxy = New-Object System.Net.WebProxy($explicitProxy, $true)
+        if ($explicitProxyPassword -ne $null) {
+            $passwd = ConvertTo-SecureString $explicitProxyPassword -AsPlainText -Force
+            $proxy.Credentials = New-Object System.Management.Automation.PSCredential ($explicitProxyUser, $passwd)
+        }
+
+        if ($explicitProxyBypassList -ne $null -and $explicitProxyBypassList -ne '') {
+            $proxy.BypassList = $explicitProxyBypassList.Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)
+        }
+        if ($explicitProxyBypassOnLocal -eq 'true') {
+            $proxy.BypassProxyOnLocal = $true;
+        }
+
+        Write-Debug "Using explicit proxy server '$explicitProxy'."
+        $request.Proxy = $proxy
+    }
+    elseif ($client.Proxy -and !$client.Proxy.IsBypassed($url)) {
+        # system proxy (pass through)
+        $creds = [Net.CredentialCache]::DefaultCredentials
+        if ($creds -eq $null) {
+            Write-Debug "Default credentials were null. Attempting backup method"
+            $cred = Get-Credential
+            $creds = $cred.GetNetworkCredential();
+        }
+        $proxyAddress = $client.Proxy.GetProxy($url).Authority
+        Write-Debug "Using system proxy server '$proxyaddress'."
+        $proxy = New-Object System.Net.WebProxy($proxyAddress)
+        $proxy.Credentials = $creds
+        $proxy.BypassProxyOnLocal = $true
+        $request.Proxy = $proxy
+    }
+
+    $request.Method = "GET"
+    $request.Accept = '*/*'
+    $request.AllowAutoRedirect = $true
+    $request.MaximumAutomaticRedirections = 20
+    #$request.KeepAlive = $true
+    $request.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
+    $request.Timeout = 30000
+    if ($env:chocolateyRequestTimeout -ne $null -and $env:chocolateyRequestTimeout -ne '') {
+        $request.Timeout = $env:chocolateyRequestTimeout
+    }
+    if ($env:chocolateyResponseTimeout -ne $null -and $env:chocolateyResponseTimeout -ne '') {
+        $request.ReadWriteTimeout = $env:chocolateyResponseTimeout
+    }
+
+    #http://stackoverflow.com/questions/518181/too-many-automatic-redirections-were-attempted-error-message-when-using-a-httpw
+    $request.CookieContainer = New-Object System.Net.CookieContainer
+    $request.UserAgent = $userAgent
+
+    [System.Text.RegularExpressions.Regex]$containsABadCharacter = New-Object Regex("[" + [System.Text.RegularExpressions.Regex]::Escape([System.IO.Path]::GetInvalidFileNameChars() -join '') + "\=\;]");
+
+    try {
+        [System.Net.HttpWebResponse]$response = $request.GetResponse()
+        if ($response -eq $null) {
+            Write-Debug "Response was null, using default name."
+            return $originalFileName
+        }
+
+        [string]$header = $response.Headers['Content-Disposition']
+        [string]$headerLocation = $response.Headers['Location']
+
+        # start with content-disposition header
+        if ($header -ne '') {
+            $fileHeaderName = 'filename='
+            $index = $header.LastIndexOf($fileHeaderName, [StringComparison]::OrdinalIgnoreCase)
+            if ($index -gt -1) {
+                Write-Debug "Using header 'Content-Disposition' to determine file name."
+                $fileName = $header.Substring($index + $fileHeaderName.Length).Replace('"', '')
+            }
+        }
+        if ($containsABadCharacter.IsMatch($fileName)) {
+            $fileName = $null
+        }
+
+        # If empty, check location header next
+        if ($fileName -eq $null -or $fileName -eq '') {
+            if ($headerLocation -ne '') {
+                Write-Debug "Using header 'Location' to determine file name."
+                $fileName = [System.IO.Path]::GetFileName($headerLocation)
+            }
+        }
+        if ($containsABadCharacter.IsMatch($fileName)) {
+            $fileName = $null
+        }
+
+        # Next comes using the response url value
+        if ($fileName -eq $null -or $fileName -eq '') {
+            $responseUrl = $response.ResponseUri.ToString()
+            if (!$responseUrl.Contains('?')) {
+                Write-Debug "Using response url to determine file name. '$responseUrl'"
+                $fileName = [System.IO.Path]::GetFileName($responseUrl)
+            }
+        }
+        if ($containsABadCharacter.IsMatch($fileName)) {
+            $fileName = $null
+        }
+
+        # Next comes using the request url value
+        if ($fileName -eq $null -or $fileName -eq '') {
+            $requestUrl = $url
+            $extension = [System.IO.Path]::GetExtension($requestUrl)
+            if (!$requestUrl.Contains('?') -and $extension -ne $null -and $extension -ne '') {
+                Write-Debug "Using request url to determine file name. ' $requestUrl'"
+                $fileName = [System.IO.Path]::GetFileName($requestUrl)
+            }
+        }
+
+        # when all else fails, default the name
+        if ($fileName -eq $null -or $fileName -eq '' -or $containsABadCharacter.IsMatch($fileName)) {
+            Write-Debug "File name is null or illegal. Using $originalFileName instead."
+            $fileName = $originalFileName
+        }
+
+        Write-Debug "File name determined from url is '$fileName'"
+
+        return $fileName
+    }
+    catch {
+        if ($request -ne $null) {
+            $request.ServicePoint.MaxIdleTime = 0
+            $request.Abort();
+            # ruthlessly remove $request to ensure it isn't reused
+            Remove-Variable request
+            Start-Sleep 1
+            [GC]::Collect()
+        }
+
+        Write-Debug "Url request/response failed - file name will be '$originalFileName':  $($_)"
+
+        return $originalFileName
+    }
+    finally {
+        if ($response -ne $null) {
+            $response.Close();
+        }
+    }
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDcOXKiAM30+467
-# ApQsG0NfbgcPXlBdvhpkkyOVVf9AQaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBe2TxQ64lKqfx1
+# 7gj16ctpiGTPsHbIr10xU3fwMIHE/aCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -379,70 +388,70 @@ param(
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgP+oaLJVVXA6w2CHAn9dr7wAYxi11Wj4i3kTw26RGq4MwDQYJ
-# KoZIhvcNAQEBBQAEggEAIwC3I2pvsArKG2q7APz3DLcRx8eWzc0V7yAGhJgUW5Je
-# kCF0NE66fi4ta4Z2LS0Wctpfn3zUjr/8z6rhmnpQ08WYw+6BD6eXUfkTqZRkFI+y
-# 2Qjy8zQjvTDqYRs7FTP1K5vxxFheln7Oo5PbEBhHQnLXIcUd9s4XCOXvdbmSI5Hi
-# ISGUvTLOCfBYdSoz+fYpD01j6K32ieWtnYOb1Qn4L8ZxRqHhHx2ZiF3HxfyuPmbP
-# EMpxr9Gn6dIciiUdbCOqQPb9l7Ks9xHLgdb6ZJ+zMGoHyu3aUj8j16xYPluvRaDm
-# lYX/lHKItGS9H1Q3zI6jsRYt114ZJEJ+Mr/2x52IN6GCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjBaMC8GCSqGSIb3DQEJBDEiBCCcnEwndTYd6JEMQ+/55iPS
-# ScGBAq/0byHx/5DAJ2Kd9jANBgkqhkiG9w0BAQEFAASCAgCY1vLmzGCkZ8dGcRWp
-# 7X6CZ7THA0TqcTDJbK/7cdsFVL9wZLX73+wU7aY0Vjk8QwGd6OYoxORc+RZmwWU5
-# DSAC7y/qxJiRWFmb0y084pEA2UU8iNlqVtGXLtOAFSdlWVicwx+fwRYVbhmR7kvH
-# +EL/zu4C5AVPlera6BcIBVRE/oTIFGejrz56TzrGbrQkASCKijaYbUygF2jNYwfQ
-# lwlgDqMEKCUZO623O6RIP4nx2b6MwpSwR56CvCYwA9nOczMVtaX4bFSf/RFW0SMl
-# bC2tFehdl6zHXnQhhw0wSZYePGZuhDfQPE3T/INHjf+UrbDXpgXvY12Cmb81dPky
-# B8bmXAk9/5BKqPer5IYzIBQ0C0mYu8XS4A8bDVUFKp5jA2SkW7w6jnsWirbnaTJP
-# 46seh3z9/e6/hgjXf2ktu3RpFFcePJFbklo99PgDNKJB1+vrt4d2z3n1As6XAg6C
-# U4i+LK80QK28dqkFBCHNiEUeBsj3oOjPmCrDsE4EPs8LaJa+65UbTNpeZE7zzDwe
-# qBiiOsutFxnm81xVsb77MhCo8kdyJwBKgi0Yfir/eOolMTE4MW8bBb9Cxf4EaxHU
-# G64l1YuV0u0jaYHRZFgSBF4gH+GzxphvNP4YWD85UGWoWBxOa8pWNN2+K80iCTOs
-# ceqUm3Nr88R1NzP5cCciwVgKJA==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCBVb2haCTKbuhGZktwtaklsozYweM/B6D21zDQT7n8ylzAN
+# BgkqhkiG9w0BAQEFAASCAQAEaRzBn6MuIH+W+pJUuVKddW0eju2KoTtRviGlTpQZ
+# Bo1eTDKI6J8ia9mTULNZB0xxNGUwCGKihZfKgocsSBHCHtqk6/X5+GDCNTrEqXqw
+# ePKuGVbIwZdpy5aLBNc9S0N2WWvQ5CAovvKjAegVFjnH+Q1b13xUWf7EpNphNEQW
+# jJeZp5GHNcNNTUX1S8vRZAqJaSq9jl6AmRc3lDn/W4Voix4sGuY/ESUoSx0Jt8i0
+# 5ZD77eGoHpAI9kEgT3Ym2wuqP8wqNgtet7Fox4H+kOvw1r08TVa96bZt5Lt8o5qp
+# M+aoOel9WL9vjX5X450g/saFxTMQ6tX6ku1I/GttVH+foYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgzMVowLwYJKoZIhvcNAQkEMSIEINsAz1i/yLoyPn/kNfwA
+# AOwZ02qtlRkmnvaV8WtS/EOMMA0GCSqGSIb3DQEBAQUABIICAGTMiM9bM8QO2Gcv
+# ufJWfnIBbhhWhfqaGZW86fRAoRWCzo6qUt1al+A7+lEnrE+y3l1lHXSQoF0qU2vF
+# j3jvaw6RKe0GXsXgCVSYCbG1/rNE0nLkT3DDa29I1+IXtYirlLdV9qrDfpPrpavt
+# H70NIcFXl3c9MHTs3wMLB6UueZVnJ3EiPEtr7TR2d3Yy8QyHzlw0TZ3sx8E3GMLj
+# nAiS2zRTod4xTmMTjhrwp1jOAMYJ/nSWQJVJQP/4m/7bKRghKbt4ad5QkzU87KZH
+# kQgqgSp6g6Ykg1W0TZMOHZJKl1o00kjoAHPrp7SXS6ymEjBx6jDcA/V78gqryvkQ
+# aAjS4AbLeO2oxAy/sjZjM31guYETntkMNrjgA6I+VmiG1A6ApzUQ0EAZYWsRCsG+
+# mWUmrTgeF49NIKn28/dkbP18NWW+qJgnikkh2zuMN33ho3Itvkd+MzJNhRRiTmGB
+# bemUiwSFMYU/bcT85vu1FVq+mfccR+YSkM4SHrZMU5c6ksEbBR9InBYhdHMTTC0z
+# 2HlQUvoRAQglidlr2hbJOPik3mvHVdc9BsNsRbu858uhygyePgqYx/d4BMOuPBQ4
+# Fo34qfQaYmdkU2GujHjhjwU7G7vpEo1vgCMDrSH5Ov4w+Cj3d45iZIDiPSqphAX+
+# Ap9Hqmqvti7dn8v4a3gU0f69WFpA
 # SIG # End signature block

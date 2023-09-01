@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyShortcut {
-<#
+    <#
 .SYNOPSIS
 Creates a shortcut
 
@@ -45,8 +45,8 @@ The full absolute path to the target for new shortcut.
 OPTIONAL - The full absolute path of the Working Directory that will be
 used by the new shortcut.
 
-As of v0.10.12, the directory will be created unless it contains environment
-variable expansion like `%AppData%\FooBar`.
+The directory will be created unless it contains environment variable
+expansion like `%AppData%\FooBar`.
 
 .PARAMETER Arguments
 OPTIONAL - Additional arguments that should be passed along to the new
@@ -61,16 +61,17 @@ OPTIONAL - A text description to be associated with the new description.
 
 .PARAMETER WindowStyle
 OPTIONAL - Type of windows target application should open with.
-Available in 0.9.10+.
+
 0 = Hidden, 1 = Normal Size, 3 = Maximized, 7 - Minimized.
+
 Full list table 3.9 here: https://technet.microsoft.com/en-us/library/ee156605.aspx
 
 .PARAMETER RunAsAdmin
 OPTIONAL - Set "Run As Administrator" checkbox for the created the
-shortcut. Available in 0.9.10+.
+shortcut.
 
 .PARAMETER PinToTaskbar
-OPTIONAL - Pin the new shortcut to the taskbar. Available in 0.9.10+.
+OPTIONAL - Pin the new shortcut to the taskbar.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
@@ -101,7 +102,6 @@ Install-ChocolateyShortcut `
 >
 # Creates a new notepad shortcut on the root of c: that starts
 # notepad.exe as Administrator. Shortcut is also pinned to taskbar.
-# These parameters are available in 0.9.10+.
 
 Install-ChocolateyShortcut `
   -ShortcutFilePath "C:\notepad.lnk" `
@@ -116,118 +116,122 @@ Install-ChocolateyExplorerMenuItem
 .LINK
 Install-ChocolateyPinnedTaskBarItem
 #>
-	param(
-    [parameter(Mandatory=$true, Position=0)][string] $shortcutFilePath,
-    [parameter(Mandatory=$true, Position=1)][string] $targetPath,
-    [parameter(Mandatory=$false, Position=2)][string] $workingDirectory,
-    [parameter(Mandatory=$false, Position=3)][string] $arguments,
-    [parameter(Mandatory=$false, Position=4)][string] $iconLocation,
-    [parameter(Mandatory=$false, Position=5)][string] $description,
-    [parameter(Mandatory=$false, Position=6)][int] $windowStyle,
-    [parameter(Mandatory=$false)][switch] $runAsAdmin,
-    [parameter(Mandatory=$false)][switch] $pinToTaskbar,
-    [parameter(ValueFromRemainingArguments = $true)][Object[]]$ignoredArguments
-	)
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $shortcutFilePath,
+        [parameter(Mandatory = $true, Position = 1)][string] $targetPath,
+        [parameter(Mandatory = $false, Position = 2)][string] $workingDirectory,
+        [parameter(Mandatory = $false, Position = 3)][string] $arguments,
+        [parameter(Mandatory = $false, Position = 4)][string] $iconLocation,
+        [parameter(Mandatory = $false, Position = 5)][string] $description,
+        [parameter(Mandatory = $false, Position = 6)][int] $windowStyle,
+        [parameter(Mandatory = $false)][switch] $runAsAdmin,
+        [parameter(Mandatory = $false)][switch] $pinToTaskbar,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]]$ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-	# http://powershell.com/cs/blogs/tips/archive/2009/02/05/validating-a-url.aspx
-	function isURIWeb($address) {
-	  $uri = $address -as [System.URI]
-	  $uri.AbsoluteURI -ne $null -and $uri.Scheme -match '[http|https]'
-	}
-
-  if (!$shortcutFilePath) {
-    # shortcut file path could be null if someone is trying to get special
-    # paths for LocalSystem (SYSTEM).
-    Write-Warning "Unable to create shortcut. `$shortcutFilePath can not be null."
-    return
-  }
-
-	$shortcutDirectory = $([System.IO.Path]::GetDirectoryName($shortcutFilePath))
-  if (!(Test-Path($shortcutDirectory))) {
-    [System.IO.Directory]::CreateDirectory($shortcutDirectory) | Out-Null
-  }
-
-	if (!$targetPath) {
-	  throw "Install-ChocolateyShortcut - `$targetPath can not be null."
-	}
-
-	if(!(Test-Path($targetPath)) -and !(IsURIWeb($targetPath))) {
-	  Write-Warning "'$targetPath' does not exist. If it is not created the shortcut will not be valid."
-	}
-
-	if($iconLocation) {
-		if(!(Test-Path($iconLocation))) {
-		  Write-Warning "'$iconLocation' does not exist. A default icon will be used."
-		}
-	}
-
-  if ($workingDirectory) {
-    if ($workingDirectory -notmatch '%\w+%' -and !(Test-Path($workingDirectory))) {
-      [System.IO.Directory]::CreateDirectory($workingDirectory) | Out-Null
-    }
-	}
-
-	Write-Debug "Creating Shortcut..."
-	try {
-		$global:WshShell = New-Object -com "WScript.Shell"
-	    $lnk = $global:WshShell.CreateShortcut($shortcutFilePath)
-	    $lnk.TargetPath = $targetPath
-		$lnk.WorkingDirectory = $workingDirectory
-	    $lnk.Arguments = $arguments
-	    if($iconLocation) {
-	      $lnk.IconLocation = $iconLocation
-	    }
-		if ($description) {
-		  $lnk.Description = $description
-		}
-
-    if ($windowStyle) {
-      $lnk.WindowStyle = $windowStyle
+    # http://powershell.com/cs/blogs/tips/archive/2009/02/05/validating-a-url.aspx
+    function isURIWeb($address) {
+        $uri = $address -as [System.URI]
+        $uri.AbsoluteURI -ne $null -and $uri.Scheme -match '[http|https]'
     }
 
-    $lnk.Save()
+    if (!$shortcutFilePath) {
+        # shortcut file path could be null if someone is trying to get special
+        # paths for LocalSystem (SYSTEM).
+        Write-Warning "Unable to create shortcut. `$shortcutFilePath can not be null."
+        return
+    }
 
-		Write-Debug "Shortcut created."
+    $shortcutDirectory = $([System.IO.Path]::GetDirectoryName($shortcutFilePath))
+    if (!(Test-Path($shortcutDirectory))) {
+        [System.IO.Directory]::CreateDirectory($shortcutDirectory) | Out-Null
+    }
 
-    [System.IO.FileInfo]$Path = $shortcutFilePath
-    If ($runAsAdmin) {
-      #In order to enable the "Run as Admin" checkbox, this code reads the .LNK as a stream
-      #  and flips a specific bit while writing a new copy.  It then replaces the original
-      #  .LNK with the copy, similar to this example: http://poshcode.org/2513
-      $TempFileName = [IO.Path]::GetRandomFileName()
-      $TempFile = [IO.FileInfo][IO.Path]::Combine($Path.Directory, $TempFileName)
-      $Writer = New-Object System.IO.FileStream $TempFile, ([System.IO.FileMode]::Create)
-      $Reader = $Path.OpenRead()
-      While ($Reader.Position -lt $Reader.Length) {
-        $Byte = $Reader.ReadByte()
-        If ($Reader.Position -eq 22) {$Byte = 34}
-        $Writer.WriteByte($Byte)
+    if (!$targetPath) {
+        throw "Install-ChocolateyShortcut - `$targetPath can not be null."
+    }
+
+    if (!(Test-Path($targetPath)) -and !(IsURIWeb($targetPath))) {
+        Write-Warning "'$targetPath' does not exist. If it is not created the shortcut will not be valid."
+    }
+
+    if ($iconLocation) {
+        if (!(Test-Path($iconLocation))) {
+            Write-Warning "'$iconLocation' does not exist. A default icon will be used."
         }
-      $Reader.Close()
-      $Writer.Close()
-      $Path.Delete()
-      Rename-Item -Path $TempFile -NewName $Path.Name | Out-Null
     }
 
-    If ($pinToTaskbar) {
-      $scfilename = $Path.FullName
-      $pinverb = (new-object -com "shell.application").namespace($(split-path -parent $Path.FullName)).Parsename($(split-path -leaf $Path.FullName)).verbs() | 
-        Where-Object{$_.Name -eq 'Pin to Tas&kbar'}
-      If ($pinverb) { $pinverb.doit() }
+    if ($workingDirectory) {
+        if ($workingDirectory -notmatch '%\w+%' -and !(Test-Path($workingDirectory))) {
+            [System.IO.Directory]::CreateDirectory($workingDirectory) | Out-Null
+        }
     }
-	}
-	catch {
-		Write-Warning "Unable to create shortcut. Error captured was $($_.Exception.Message)."
-	}
+
+    Write-Debug "Creating Shortcut..."
+    try {
+        $global:WshShell = New-Object -com "WScript.Shell"
+        $lnk = $global:WshShell.CreateShortcut($shortcutFilePath)
+        $lnk.TargetPath = $targetPath
+        $lnk.WorkingDirectory = $workingDirectory
+        $lnk.Arguments = $arguments
+        if ($iconLocation) {
+            $lnk.IconLocation = $iconLocation
+        }
+        if ($description) {
+            $lnk.Description = $description
+        }
+
+        if ($windowStyle) {
+            $lnk.WindowStyle = $windowStyle
+        }
+
+        $lnk.Save()
+
+        Write-Debug "Shortcut created."
+
+        [System.IO.FileInfo]$Path = $shortcutFilePath
+        If ($runAsAdmin) {
+            #In order to enable the "Run as Admin" checkbox, this code reads the .LNK as a stream
+            #  and flips a specific bit while writing a new copy.  It then replaces the original
+            #  .LNK with the copy, similar to this example: http://poshcode.org/2513
+            $TempFileName = [IO.Path]::GetRandomFileName()
+            $TempFile = [IO.FileInfo][IO.Path]::Combine($Path.Directory, $TempFileName)
+            $Writer = New-Object System.IO.FileStream $TempFile, ([System.IO.FileMode]::Create)
+            $Reader = $Path.OpenRead()
+            While ($Reader.Position -lt $Reader.Length) {
+                $Byte = $Reader.ReadByte()
+                If ($Reader.Position -eq 22) {
+                    $Byte = 34
+                }
+                $Writer.WriteByte($Byte)
+            }
+            $Reader.Close()
+            $Writer.Close()
+            $Path.Delete()
+            Rename-Item -Path $TempFile -NewName $Path.Name | Out-Null
+        }
+
+        If ($pinToTaskbar) {
+            $scfilename = $Path.FullName
+            $pinverb = (New-Object -com "shell.application").namespace($(Split-Path -Parent $Path.FullName)).Parsename($(Split-Path -Leaf $Path.FullName)).verbs() |
+                Where-Object { $_.Name -eq 'Pin to Tas&kbar' }
+            If ($pinverb) {
+                $pinverb.doit()
+            }
+        }
+    }
+    catch {
+        Write-Warning "Unable to create shortcut. Error captured was $($_.Exception.Message)."
+    }
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDk0cWQxqJIXQ5C
-# xF+kcyLXOM5zsaZ3iOud5Q9Q9dVWraCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBFpWm+N2Mljr+b
+# rOl3sHa2biRgJkri6s88vLvASyFsFqCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -348,70 +352,70 @@ Install-ChocolateyPinnedTaskBarItem
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgmSVUtfXn2DTgNmu7MqmJtbTYjuX0u1JMTmgJjB6ya5QwDQYJ
-# KoZIhvcNAQEBBQAEggEAi8h49RmRSYKR/T0cUwj8z7nYI3vGsowNXlKolJQ1KKtU
-# J6HCuAUI3W7QZx15Y/g/Ahs738/JX0NBTBJik/Z/8b3edItLTgpdLEMHP0WxSWDT
-# Fcg2vPcbFSRZKTPN7uTfKKv6vdzPvxfA2wzLtvj1vvlpJqKkvWCbWKaKHV1tsJy5
-# XmSKZNTL2MJJqR4lB2sQNa5u1Dw5eg11dAFX+y3zF0gWTB5L3qOao6Z0rqqbaVPh
-# gMQHRLZJ70I3J9RqjXbI/YVRP4vtKWTIxiloRfSlfpI5nb3cz8Qzm8Ck93bVm0S+
-# NdsCmZgaUQ+kydDrancYHAwOXsVnFb7CWmK5muJQYKGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCAATgmNYxXYP9pqKQp8XszO
-# aC4wmg8vckRhkTnK04MCfTANBgkqhkiG9w0BAQEFAASCAgAXJTR7WYNN9uYU4qjy
-# 7dJXW315SHBQdAmzGl21juMOlnS6K7xBJogHdoESTJy2eahu1YrnjyV7r/kvku8C
-# tJi5aoqfIfiHgHMx0Kc8pQwfv1In9jCvNGk+1jWmU6WnG4/3QGNoIRLJM3BLBIFt
-# oVKB18M0CXLkjC6cQyk86zL58OiUWOavayVece9FSmGUf4joyjZmZ4mULUb0KtFl
-# x7Lv9hQWhxSRxIafQFk9xcpK9Hxb+LKSqNnXykIUmzgguzqtJlcBP1yzPeNARQRk
-# no7bAdHKrbjtwdEPQze6JT/faNC0RFvcbWu7M5cH6bNH4jU+q+nopuHQMFHcGu3z
-# tksukLNwzM0eSPAvqACdI01tWIcwh9Kcd7C//ksy2f39tiuUgbBE1bKbhxMIbCcY
-# aK3RyuTlJg0I0/NiN7l34iyJAddk+l5XrWXtb3mGcRTl015eNFYOesP1jNiTKk1V
-# w/MI7boLIhwx9A5SiYpqlhnMtFsrCmMyyANQ9swuLlZadSbX0jWFcLcNp66vgGOh
-# ZIDcm3GN66FSrDE+XZOsgfbD/1c7B5GYtc7+54ebX+6+isV11mA/9tnOLdpWBuan
-# k0TGyb0/NaazeUFhgyDY2BGMiMzeQkgQyN5+H9AEkP2pPGt3CW5Dt8YTsN50xNHu
-# Oe5FkXqbYEtpQ/yEcEYjkx+XPA==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCBkcSEDORuXbEPDXT3YwyEEE749wBMV/VceaouqnjbCxDAN
+# BgkqhkiG9w0BAQEFAASCAQCUcfqFTiIWUKynhYmB5f9KwRyjHGJicuIhVBX01pge
+# RZ5mb0ydt/YDHO/xbHgMQsmUo3sTu2VLVlEEsBL8zqTKHbz/S2eoYUJlSbVTMq7b
+# VnJMhBQKPHrkO8TV5ALr6N2RfT59db6niOvM20Gl2dX2nk2CeOSn4HKftpuztmh6
+# FNouvctef/mPKwJgzgt/0Lt3sNNZAVZkkJyWRi14tDE5UnWYe1X6rqTccB83FZ9v
+# BOEBYM3Ee7kcDcQRSg0GDGERVcZw/5M7+t885JzVPDESlCcON+qHS2AaXS3LTb5Q
+# Hb47nog9D7pGXNtORnYoMXfMzG5q6i3F41XytNGORhVLoYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgzM1owLwYJKoZIhvcNAQkEMSIEIF9ydqs4btt6yl7MQKyp
+# W5uc5W8MOWmuhwFOhVzCTyM1MA0GCSqGSIb3DQEBAQUABIICABNa0RPkLzkHupex
+# /IWR060+cqHeQOZq46kC9cQAnNSVST0bymQAvgJM9zeBMGzrqfoLy+FnII3KtWLS
+# /LZAprKPB0hbNBHUgjG9VEUCootoGCVu8O0u0fiM7DrVtvFyA7NUdvFIUTL25lQ7
+# b2D1YMQsZo/ktXD7WAgI5HkdflV2e3SdppEOYQV4xI7taLmk9eAswCJuq3nDVBO/
+# 9HHmqiaDtY6XwXWXW7ZQslLjILDr+t5IDLsWd+TtetTAgIUwqE5Vz0SI/iZqVEP4
+# KPIuF0u5yQI8igDsUUebCrTbm5ywsTZbqd54vPPNmhNr7IkP/OvDoyMG37gHCLlR
+# eziEj+WS11qSnjVwQHJ0q3MS8qSsEIJMNQlOeFCyXc+Pi+nw3flrNmXp03hEITDy
+# sAczKQMQIzdw1rI7Z0nXlGrPtMQExOSghhHmEpaDRJY183XeMFEyFYnnlSizPY3S
+# Db2uGVsSoFLEWXM+x80TLSbySmMF6sPJXQW3e8JIDnPkghE9wPIiT6C/H9uOz5G1
+# vK+qHMu1Jom1ve0khOVtQcf1ntnMDs/Ynv/IY+ezLUgQ6iJYNJHyY5bWo9OAaTCK
+# kpekZ1/zPQ2SY8VzdGnJMlXGKrVwv0Zsr0C8fIsRD3Pbx/ZLHOdRchSxIT5Iombm
+# 2dElan9f+kayNdQaA/NDNmIWqnV5
 # SIG # End signature block

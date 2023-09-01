@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-ChecksumValid {
-<#
+    <#
 .SYNOPSIS
 Checks a file's checksum versus a passed checksum and checksum type.
 
@@ -116,111 +116,116 @@ Get-ChocolateyWebFile
 .LINK
 Install-ChocolateyPackage
 #>
-param(
-  [parameter(Mandatory=$true, Position=0)][string] $file,
-  [parameter(Mandatory=$false, Position=1)][string] $checksum = '',
-  [parameter(Mandatory=$false, Position=2)][string] $checksumType = 'md5',
-  [parameter(Mandatory=$false, Position=3)][string] $originalUrl = '',
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $file,
+        [parameter(Mandatory = $false, Position = 1)][string] $checksum = '',
+        [parameter(Mandatory = $false, Position = 2)][string] $checksumType = 'md5',
+        [parameter(Mandatory = $false, Position = 3)][string] $originalUrl = '',
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  if ($env:ChocolateyIgnoreChecksums -eq 'true') {
-    Write-Warning "Ignoring checksums due to feature checksumFiles turned off or option --ignore-checksums set."
-    return
-  }
-
-  if ($checksum -eq '' -or $checksum -eq $null) {
-    $allowEmptyChecksums = $env:ChocolateyAllowEmptyChecksums
-    $allowEmptyChecksumsSecure = $env:ChocolateyAllowEmptyChecksumsSecure
-    if ($allowEmptyChecksums -eq 'true') {
-      Write-Debug "Empty checksums are allowed due to allowEmptyChecksums feature or option."
-      return
+    if ($env:ChocolateyIgnoreChecksums -eq 'true') {
+        Write-Warning "Ignoring checksums due to feature checksumFiles turned off or option --ignore-checksums set."
+        return
     }
 
-    if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https") -and $allowEmptyChecksumsSecure -eq 'true') {
-      Write-Debug "Download from HTTPS source with feature 'allowEmptyChecksumsSecure' enabled."
-      return
+    if ($checksum -eq '' -or $checksum -eq $null) {
+        $allowEmptyChecksums = $env:ChocolateyAllowEmptyChecksums
+        $allowEmptyChecksumsSecure = $env:ChocolateyAllowEmptyChecksumsSecure
+        if ($allowEmptyChecksums -eq 'true') {
+            Write-Debug "Empty checksums are allowed due to allowEmptyChecksums feature or option."
+            return
+        }
+
+        if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https") -and $allowEmptyChecksumsSecure -eq 'true') {
+            Write-Debug "Download from HTTPS source with feature 'allowEmptyChecksumsSecure' enabled."
+            return
+        }
+
+        Write-Warning "Missing package checksums are not allowed (by default for HTTP/FTP, `n HTTPS when feature 'allowEmptyChecksumsSecure' is disabled) for `n safety and security reasons. Although we strongly advise against it, `n if you need this functionality, please set the feature `n 'allowEmptyChecksums' ('choco feature enable -n `n allowEmptyChecksums') `n or pass in the option '--allow-empty-checksums'. You can also pass `n checksums at runtime (recommended). See `choco install -?` for details."
+        Write-Debug "If you are a maintainer attempting to determine the checksum for packaging purposes, please run `n 'choco install checksum' and run 'checksum -t sha256 -f $file' `n Ensure you do this for all remote resources."
+        if ($PSVersionTable.PSVersion.Major -ge 4) {
+            Write-Debug "Because you are running PowerShell with a major version of v4 or greater, you could also opt to run `n '(Get-FileHash -Path $file -Algorithm SHA256).Hash' `n rather than install a separate tool."
+        }
+
+        if ($env:ChocolateyPowerShellHost -eq 'true') {
+            $statement = "The integrity of the file '$([System.IO.Path]::GetFileName($file))'"
+            if ($originalUrl -ne $null -and $originalUrl -ne '') {
+                $statement += " from '$originalUrl'"
+            }
+            $statement += " has not been verified by a checksum in the package scripts."
+            $question = 'Do you wish to allow the install to continue (not recommended)?'
+            $choices = New-Object System.Collections.ObjectModel.Collection[System.Management.Automation.Host.ChoiceDescription]
+            $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
+            $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
+
+            $selection = $Host.UI.PromptForChoice($statement, $question, $choices, 1)
+
+            if ($selection -eq 0) {
+                return
+            }
+        }
+
+        if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https")) {
+            throw "This package downloads over HTTPS but does not yet have package checksums to verify the package. We recommend asking the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksumsSecure, provide the runtime switch '--allow-empty-checksums-secure', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details)."
+        }
+        else {
+            throw "Empty checksums are no longer allowed by default for non-secure sources. Please ask the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksums, provide the runtime switch '--allow-empty-checksums', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details). It is strongly advised against allowing empty checksums for non-internal HTTP/FTP sources."
+        }
     }
 
-    Write-Warning "Missing package checksums are not allowed (by default for HTTP/FTP, `n HTTPS when feature 'allowEmptyChecksumsSecure' is disabled) for `n safety and security reasons. Although we strongly advise against it, `n if you need this functionality, please set the feature `n 'allowEmptyChecksums' ('choco feature enable -n `n allowEmptyChecksums') `n or pass in the option '--allow-empty-checksums'. You can also pass `n checksums at runtime (recommended). See `choco install -?` for details."
-    Write-Debug "If you are a maintainer attempting to determine the checksum for packaging purposes, please run `n 'choco install checksum' and run 'checksum -t sha256 -f $file' `n Ensure you do this for all remote resources."
-    if ($PSVersionTable.PSVersion.Major -ge 4){
-      Write-Debug "Because you are running PowerShell with a major version of v4 or greater, you could also opt to run `n '(Get-FileHash -Path $file -Algorithm SHA256).Hash' `n rather than install a separate tool."
+    if (!([System.IO.File]::Exists($file))) {
+        throw "Unable to checksum a file that doesn't exist - Could not find file `'$file`'"
     }
 
-    if ($env:ChocolateyPowerShellHost -eq 'true') {
-      $statement = "The integrity of the file '$([System.IO.Path]::GetFileName($file))'"
-      if ($originalUrl -ne $null -and $originalUrl -ne '') {
-        $statement += " from '$originalUrl'"
-      }
-      $statement += " has not been verified by a checksum in the package scripts."
-      $question = 'Do you wish to allow the install to continue (not recommended)?'
-      $choices = New-Object System.Collections.ObjectModel.Collection[System.Management.Automation.Host.ChoiceDescription]
-      $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
-      $choices.Add((New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
-
-      $selection = $Host.UI.PromptForChoice($statement, $question, $choices, 1)
-
-      if ($selection -eq 0) { return }
+    if ($checksumType -eq $null -or $checksumType -eq '') {
+        $checksumType = 'md5'
     }
 
-    if ($originalUrl -ne $null -and $originalUrl.ToLower().StartsWith("https")) {
-      throw "This package downloads over HTTPS but does not yet have package checksums to verify the package. We recommend asking the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksumsSecure, provide the runtime switch '--allow-empty-checksums-secure', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details)."
-    } else {
-      throw "Empty checksums are no longer allowed by default for non-secure sources. Please ask the maintainer to add checksums to this package. In the meantime if you need this package to work correctly, please enable the feature allowEmptyChecksums, provide the runtime switch '--allow-empty-checksums', or pass in checksums at runtime (recommended - see 'choco install -?' / 'choco upgrade -?' for details). It is strongly advised against allowing empty checksums for non-internal HTTP/FTP sources."
+    if ($checksumType -ne 'sha1' -and $checksumType -ne 'sha256' -and $checksumType -ne 'sha512' -and $checksumType -ne 'md5') {
+        Write-Debug 'Setting checksumType to md5 due to non-set value or type is not specified correctly.'
+        throw "Checksum type '$checksumType' is unsupported. This type may be supported in a newer version of Chocolatey."
     }
-  }
 
-  if (!([System.IO.File]::Exists($file))) { throw "Unable to checksum a file that doesn't exist - Could not find file `'$file`'" }
+    $checksumExe = Join-Path "$helpersPath" '..\tools\checksum.exe'
+    if (!([System.IO.File]::Exists($checksumExe))) {
+        Update-SessionEnvironment
+        $checksumExe = Join-Path "$env:ChocolateyInstall" 'tools\checksum.exe'
+    }
+    Write-Debug "checksum.exe found at `'$checksumExe`'"
 
-  if ($checksumType -eq $null -or $checksumType -eq ''){
-    $checksumType = 'md5'
-  }
+    $params = "-c=`"$checksum`" -t=`"$checksumType`" -f=`"$file`""
 
-  if ($checksumType -ne 'sha1' -and $checksumType -ne 'sha256' -and $checksumType -ne 'sha512' -and $checksumType -ne 'md5') {
-    Write-Debug 'Setting checksumType to md5 due to non-set value or type is not specified correctly.'
-    throw "Checksum type '$checksumType' is unsupported. This type may be supported in a newer version of Chocolatey."
-  }
+    Write-Debug "Executing command ['$checksumExe' $params]"
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($checksumExe, $params)
+    $process.StartInfo.UseShellExecute = $false
+    $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
 
-  $checksumExe = Join-Path "$helpersPath" '..\tools\checksum.exe'
-  if (!([System.IO.File]::Exists($checksumExe))) {
-    Update-SessionEnvironment
-    $checksumExe = Join-Path "$env:ChocolateyInstall" 'tools\checksum.exe'
-  }
-  Write-Debug "checksum.exe found at `'$checksumExe`'"
+    $process.Start() | Out-Null
+    $process.WaitForExit()
+    $exitCode = $process.ExitCode
+    $process.Dispose()
 
-  $params = "-c=`"$checksum`" -t=`"$checksumType`" -f=`"$file`""
+    Write-Debug "Command [`'$checksumExe`' $params] exited with `'$exitCode`'."
 
-  Write-Debug "Executing command ['$checksumExe' $params]"
-  $process = New-Object System.Diagnostics.Process
-  $process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($checksumExe, $params)
-  $process.StartInfo.UseShellExecute = $false
-  $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+    if ($exitCode -ne 0) {
+        throw "Checksum for '$file' did not meet '$checksum' for checksum type '$checksumType'. Consider passing the actual checksums through with `--checksum --checksum64` once you validate the checksums are appropriate. A less secure option is to pass `--ignore-checksums` if necessary."
+    }
 
-  $process.Start() | Out-Null
-  $process.WaitForExit()
-  $exitCode = $process.ExitCode
-  $process.Dispose()
-
-  Write-Debug "Command [`'$checksumExe`' $params] exited with `'$exitCode`'."
-
-  if ($exitCode -ne 0) {
-    throw "Checksum for '$file' did not meet '$checksum' for checksum type '$checksumType'. Consider passing the actual checksums through with `--checksum --checksum64` once you validate the checksums are appropriate. A less secure option is to pass `--ignore-checksums` if necessary."
-  }
-
-  #$fileCheckSumActual = $md5Output.Split(' ')[0]
-  # if ($fileCheckSumActual -ne $checkSum) {
-  #   throw "CheckSum for `'$file'` did not meet `'$checkSum`'."
-  # }
+    #$fileCheckSumActual = $md5Output.Split(' ')[0]
+    # if ($fileCheckSumActual -ne $checkSum) {
+    #   throw "CheckSum for `'$file'` did not meet `'$checkSum`'."
+    # }
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAwa9JoM762ljj4
-# LXP3Y/xwfoXIJm56EVwwNCNYTIIXcKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB2C8DV+23E5keM
+# 058E9c67jcShgUMIAFLVjBdLSTJE5aCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -341,70 +346,70 @@ param(
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgB+ubPnJpOpVsLqeoOYIx0E5hAZDyK4xr2LAJDLRkUQ0wDQYJ
-# KoZIhvcNAQEBBQAEggEAbrENb/PeeyaaQqxgMBv1G/9MDelj8JCswLgki2462M8F
-# zKpmksrSyCkdVJI6PM/PKE96Tz/maHAsMCwe90HbMKb1mOdk51WegQBcyOtPpwDS
-# 2MSLRJcwSD+7yqdpIj6dqSRkoDKvs+o0KfLxl9nUMGU0V2swaxhk5EMQPUrhcEdW
-# cySSDTpu8Ex6qlJLKEUveBAhOZ9mTdm/qUdQtqmpmpJ6+RWpy0wARERxDOPc9hWV
-# hF9DOFD1qpCYIqLFdkx487GuONwDyuXIKpJ+Id5esu0tyrdEH1uIUIS6n330AAvR
-# Xw634TvM8H3IK8q8cgqZfGaK8vwwQ1BACheLR29SJKGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCBOT5fPfZPoy3q/XpHGTyDs
-# 1H2bVnYCd0HdHS0dlZ8muzANBgkqhkiG9w0BAQEFAASCAgCR+Nd93WfErfsU/6kg
-# v99fZdn01htPJDTW3xhMfrCaTi0vk2pFA7O+JlvO+XPpTYHWe8JR+wMSE4S0iVGu
-# XlFY6EDC7JfknyTolnOS9/XvIeV2UpwM8wNufkrcsLYUb0lZqXq+ndYS0G5LJh3R
-# okYOzJuGNjndplFPkLmP58WkvFBLZLnfAAxvBkELPXoeB6Kg187/G8vIkkaaW2ME
-# 6eGh6i8QQj0o5UgL6hT63JqaTMe/tRoXQ145Vcdv36YAnYiUSJoYxG9LNiGvkJOj
-# FcU4FtKRAm54DB3VMZQHxPL1+FLfzXlcmq593wIShEeaO2pOAQwbQq7XpBrne4e4
-# FJjMWpyk/u0Twuds0dvYKNwvalr9+nG+6MZNVYH+lb8DX4O5ubiKx9wbJ1GEL4X3
-# Jz6JR2knCTE6GLJmSr7P4aLnaFm8BmPqQ7coG+xPC0n2USXWoId6DMt+WmLxKCJh
-# cHVrZGH06liufsyxxi0j2diqiUMnfZKaEP35N6NjiJPsRzhaqwzdwEkeKv03aOLj
-# CPQ4uJ7dVp+utWvsHVoJ+i+UqIzfwdQR07uOIOzof/G+Bvx5BUy8mqMEqbP1uiyU
-# n8Xf9sPc3jy0lEQVSneVU3bu9xt2ICSaJAcWYTEoZWIPmxEYWJSmd8jJxrkyDuJw
-# pnYBlGQ+aboX5XIq7zLcKU5Z/g==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCAHAWDOsVcr+f5oRXQofamoM1SNFTaQMVfxDaIa2b7w0DAN
+# BgkqhkiG9w0BAQEFAASCAQCWEpAhxhbjJa6XKVlfef/oBH1yHX+YGMyXd5asT3wU
+# +Ccv2HDIe+M67LvrQkZenrc/ijz26LWWdjxHEFQG6BLxo29BB4Jbg3odl5gbanKV
+# v/s/7BrtOMukzXBR+4CkfcqHmQef3lKFq2t1GFyVEKSoiAVxMhLeiRCLQjs9xGtr
+# exMV4RjxhOA6A2mfW3mBIKG1t7K8WNdp/cn7vpwSc360nlk4yoQ7aGuH0L0F/5iG
+# Kc4Yz4kXAbFxBVx17dQmiYGF4vgJnXZRdFnzphogJlj4wUJ9zt2J2iRMIJ7iUHOV
+# JGCD1CaOCOAN6cLLs9GwXv/cPV8D8/uh1732G2/+6LwFoYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgyOVowLwYJKoZIhvcNAQkEMSIEIACm4ERANw/AyfOwgIhI
+# I2BtcoDLFcgGSUbeGeMKCvnMMA0GCSqGSIb3DQEBAQUABIICADpwTAwYS9/NmuXv
+# KDRTROH5a2KFVs3AwpanCmjEmUHMVvoj3hQE12PTwD57NLEQ9AJZmP9z0iW2Tz3Y
+# eknzXXpR3QejGZynehBuuj06cKVAp9CMGtRujg6w9EFP7frkT70xkR14vuxGT5a7
+# z3Y6M7bDwyzkx70IylglAg34OWkwIAcRsuCEmG0Gla6DvTrbyGDFhP841ZCu9i2B
+# uATSQ+AxFbdbXlUhKHLql4iZxeYYKyBtRsy0zhph9B/Yh50WZpnbgnmpnRiAb11b
+# t9hI7JJEr0ExIhkMv4LE3D4NwcAo1v8OVom4dciugpSPUA2oZbpTmlsUDpW7VPib
+# VwKefsUkaYtZDbU7kHEkq889pVcc8A+mhCZbGWld7Z1RTKe9rtpuqPWBuMlMwiCc
+# c74Z6ZoxiEZqSPEBS/me4QxYyw1ZkkMvrpo95dIhJ2GOFtrtmCaEQAfMyve7vAjC
+# Xfl5rs5ny5gNjLhkNz3Ck1MBFD1NbfsB0stR60WsBvzKDeQCYhPlG3clPtVXNx1P
+# owWiEbEIa8KjTGJNdoL9qEUvG4GF7CG6AFdYx/ekUer3lm1fszv8inSoceJuL6Fh
+# aTGKYmGNoOXSPLVKlJVPKT25cThzhvdfvoYzNApi/jtxmqScmCKmKXEn7ux8WHWg
+# wVwTUg8ArdNjJmFULW3Oq05d0bg/
 # SIG # End signature block

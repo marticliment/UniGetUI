@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Get-ChocolateyUnzip {
-<#
+    <#
 .SYNOPSIS
 Unzips an archive file and returns the location for further processing.
 
@@ -23,8 +23,6 @@ Unzips an archive file and returns the location for further processing.
 This unzips files using the 7-zip command line tool 7z.exe.
 Supported archive formats are listed at:
 https://sevenzip.osdn.jp/chm/general/formats.htm
-Prior to 0.9.10.1, 7za.exe was used. Supported archive formats for
-7za.exe are: 7z, lzma, cab, zip, gzip, bzip2, and tar.
 
 .INPUTS
 None
@@ -41,21 +39,21 @@ publicly (like on the community feed). Otherwise, please use
 Install-ChocolateyZipPackage to download those resources from their
 official distribution points.
 
-Starting in 0.9.10, will automatically call Set-PowerShellExitCode to
-set the package exit code based on 7-zip's exit code.
+Will automatically call Set-PowerShellExitCode to set the package exit code
+based on 7-zip's exit code.
 
 .PARAMETER FileFullPath
 This is the full path to the zip file. If embedding it in the package
 next to the install script, the path will be like
 `"$(Split-Path -Parent $MyInvocation.MyCommand.Definition)\\file.zip"`
 
-In 0.10.1+, `File` is an alias for FileFullPath.
+`File` is an alias for FileFullPath.
 
 This can be a 32-bit or 64-bit file. This is mandatory in earlier versions
 of Chocolatey, but optional if FileFullPath64 has been provided.
 
 .PARAMETER FileFullPath64
-Full file path to a 64-bit native installer to run. Available in 0.10.4+.
+Full file path to a 64-bit native installer to run.
 If embedding in the package, you can get it to the path with
 `"$(Split-Path -parent $MyInvocation.MyCommand.Definition)\\INSTALLER_FILE"`
 
@@ -77,7 +75,7 @@ uninstalls
 
 .PARAMETER DisableLogging
 OPTIONAL - This disables logging of the extracted items. It speeds up
-extraction of archives with many files. 
+extraction of archives with many files.
 
 Usage of this parameter will prevent Uninstall-ChocolateyZipPackage
 from working, extracted files will have to be cleaned up with
@@ -95,170 +93,198 @@ Get-ChocolateyUnzip -FileFullPath "c:\someFile.zip" -Destination $toolsDir
 .LINK
 Install-ChocolateyZipPackage
 #>
-param(
-  [alias("file")][parameter(Mandatory=$false, Position=0)][string] $fileFullPath,
-  [alias("unzipLocation")][parameter(Mandatory=$true, Position=1)][string] $destination,
-  [parameter(Mandatory=$false, Position=2)][string] $specificFolder,
-  [parameter(Mandatory=$false, Position=3)][string] $packageName,
-  [alias("file64")][parameter(Mandatory=$false)][string] $fileFullPath64,
-  [parameter(Mandatory=$false)][switch] $disableLogging,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [alias("file")][parameter(Mandatory = $false, Position = 0)][string] $fileFullPath,
+        [alias("unzipLocation")][parameter(Mandatory = $true, Position = 1)][string] $destination,
+        [parameter(Mandatory = $false, Position = 2)][string] $specificFolder,
+        [parameter(Mandatory = $false, Position = 3)][string] $packageName,
+        [alias("file64")][parameter(Mandatory = $false)][string] $fileFullPath64,
+        [parameter(Mandatory = $false)][switch] $disableLogging,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-   $bitnessMessage = ''
-    $zipfileFullPath=$fileFullPath
-  if ((Get-OSArchitectureWidth 32) -or $env:ChocolateyForceX86 -eq 'true') {
-    if (!$fileFullPath) { throw "32-bit archive is not supported for $packageName"; }
-    if ($fileFullPath64) { $bitnessMessage = '32-bit '; }
-  } elseif ($fileFullPath64) {
-    $zipfileFullPath = $fileFullPath64
-    $bitnessMessage = '64-bit '
-  }
-
-  if ($zipfileFullPath -eq '' -or $zipfileFullPath -eq $null) {
-    throw 'Package parameters incorrect, either FileFullPath or FileFullPath64 must be specified.'
-  }
-
-  if ($packageName) {
-    $packagelibPath = $env:ChocolateyPackageFolder
-    if (!(Test-Path -path $packagelibPath)) {
-      New-Item $packagelibPath -type directory
+    $bitnessMessage = ''
+    $zipfileFullPath = $fileFullPath
+    if ((Get-OSArchitectureWidth 32) -or $env:ChocolateyForceX86 -eq 'true') {
+        if (!$fileFullPath) {
+            throw "32-bit archive is not supported for $packageName";
+        }
+        if ($fileFullPath64) {
+            $bitnessMessage = '32-bit ';
+        }
+    }
+    elseif ($fileFullPath64) {
+        $zipfileFullPath = $fileFullPath64
+        $bitnessMessage = '64-bit '
     }
 
-    $zipFilename=split-path $zipfileFullPath -Leaf
-    $zipExtractLogFullPath= Join-Path $packagelibPath $zipFilename`.txt
-  }
-
-  if ($env:chocolateyPackageName -ne $null -and $env:chocolateyPackageName -eq $env:ChocolateyInstallDirectoryPackage) {
-    Write-Warning "Install Directory override not available for zip packages at this time.`n If this package also runs a native installer using Chocolatey`n functions, the directory will be honored."
-  }
-
-  Write-Host "Extracting $bitnessMessage$zipfileFullPath to $destination..."
-  if (![System.IO.Directory]::Exists($destination)) { [System.IO.Directory]::CreateDirectory($destination) | Out-Null }
-
-  $7zip = Join-Path "$helpersPath" '..\tools\7z.exe'
-  if (!([System.IO.File]::Exists($7zip))) {
-    Update-SessionEnvironment
-    $7zip = Join-Path "$env:ChocolateyInstall" 'tools\7z.exe'
-  }
-  $7zip = [System.IO.Path]::GetFullPath($7zip)
-  Write-Debug "7zip found at `'$7zip`'"
-
-  # 32-bit 7z would not find C:\Windows\System32\config\systemprofile\AppData\Local\Temp,
-  # because it gets translated to C:\Windows\SysWOW64\... by the WOW redirection layer.
-  # Replace System32 with sysnative, which does not get redirected.
-  # 32-bit 7z is required so it can see both architectures
-  if ([IntPtr]::Size -ne 4) {
-    $fileFullPathNoRedirection = $zipfileFullPath -ireplace ([System.Text.RegularExpressions.Regex]::Escape([Environment]::GetFolderPath('System'))),(Join-Path $Env:SystemRoot 'SysNative')
-    $destinationNoRedirection = $destination -ireplace ([System.Text.RegularExpressions.Regex]::Escape([Environment]::GetFolderPath('System'))),(Join-Path $Env:SystemRoot 'SysNative')
-  } else {
-    $fileFullPathNoRedirection = $zipfileFullPath
-    $destinationNoRedirection = $destination
-  }
-
-  $workingDirectory = $(Get-Location -PSProvider 'FileSystem')
-  if ($workingDirectory -eq $null -or $workingDirectory.ProviderPath -eq $null) {
-    Write-Debug "Unable to use current location for Working Directory. Using Cache Location instead."
-    $workingDirectory = $env:TEMP
-  }
-  $workingDirectory = $workingDirectory.ProviderPath
-
-  $loggingParam = '-bb1'
-  if ($disableLogging) {
-      $loggingParam = '-bb0'
-  }
-
-  $params = "x -aoa -bd $loggingParam -o`"$destinationNoRedirection`" -y `"$fileFullPathNoRedirection`""
-  if ($specificfolder) {
-    $params += " `"$specificfolder`""
-  }
-  Write-Debug "Executing command ['$7zip' $params]"
-
-  # Capture 7z's output into a StringBuilder and write it out in blocks, to improve I/O performance.
-  $global:zipFileList = New-Object System.Text.StringBuilder
-  $global:zipDestinationFolder = $destination
-
-  # Redirecting output slows things down a bit.
-  $writeOutput = {
-    if ($EventArgs.Data -ne $null) {
-      $line = $EventArgs.Data
-      Write-Verbose "$line"
-      if ($line.StartsWith("- ")) {
-        $global:zipFileList.AppendLine($global:zipDestinationFolder + "\" + $line.Substring(2))
-      }
+    if ($zipfileFullPath -eq '' -or $zipfileFullPath -eq $null) {
+        throw 'Package parameters incorrect, either FileFullPath or FileFullPath64 must be specified.'
     }
-  }
 
-  $writeError = {
-    if ($EventArgs.Data -ne $null) {
-      Write-Error "$($EventArgs.Data)"
+    if ($packageName) {
+        $packagelibPath = $env:ChocolateyPackageFolder
+        if (!(Test-Path -Path $packagelibPath)) {
+            New-Item $packagelibPath -type directory
+        }
+
+        $zipFilename = Split-Path $zipfileFullPath -Leaf
+        $zipExtractLogFullPath = Join-Path $packagelibPath $zipFilename`.txt
     }
-  }
 
-  $process = New-Object System.Diagnostics.Process
-  $process.EnableRaisingEvents = $true
-  Register-ObjectEvent -InputObject $process -SourceIdentifier "LogOutput_ChocolateyZipProc" -EventName OutputDataReceived -Action $writeOutput | Out-Null
-  Register-ObjectEvent -InputObject $process -SourceIdentifier "LogErrors_ChocolateyZipProc" -EventName ErrorDataReceived -Action  $writeError | Out-Null
+    if ($env:chocolateyPackageName -ne $null -and $env:chocolateyPackageName -eq $env:ChocolateyInstallDirectoryPackage) {
+        Write-Warning "Install Directory override not available for zip packages at this time.`n If this package also runs a native installer using Chocolatey`n functions, the directory will be honored."
+    }
 
-  $process.StartInfo = new-object System.Diagnostics.ProcessStartInfo($7zip, $params)
-  $process.StartInfo.RedirectStandardOutput = $true
-  $process.StartInfo.RedirectStandardError = $true
-  $process.StartInfo.UseShellExecute = $false
-  $process.StartInfo.WorkingDirectory = $workingDirectory
-  $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
-  $process.StartInfo.CreateNoWindow = $true
+    Write-Host "Extracting $bitnessMessage$zipfileFullPath to $destination..."
+    if (![System.IO.Directory]::Exists($destination)) {
+        [System.IO.Directory]::CreateDirectory($destination) | Out-Null
+    }
 
-  $process.Start() | Out-Null
-  if ($process.StartInfo.RedirectStandardOutput) { $process.BeginOutputReadLine() }
-  if ($process.StartInfo.RedirectStandardError) { $process.BeginErrorReadLine() }
-  $process.WaitForExit()
+    $7zip = Join-Path "$helpersPath" '..\tools\7z.exe'
+    if (!([System.IO.File]::Exists($7zip))) {
+        Update-SessionEnvironment
+        $7zip = Join-Path "$env:ChocolateyInstall" 'tools\7z.exe'
+    }
+    $7zip = [System.IO.Path]::GetFullPath($7zip)
+    Write-Debug "7zip found at `'$7zip`'"
 
-  # For some reason this forces the jobs to finish and waits for
-  # them to do so. Without this it never finishes.
-  Unregister-Event -SourceIdentifier "LogOutput_ChocolateyZipProc"
-  Unregister-Event -SourceIdentifier "LogErrors_ChocolateyZipProc"
+    # 32-bit 7z would not find C:\Windows\System32\config\systemprofile\AppData\Local\Temp,
+    # because it gets translated to C:\Windows\SysWOW64\... by the WOW redirection layer.
+    # Replace System32 with sysnative, which does not get redirected.
+    # 32-bit 7z is required so it can see both architectures
+    if ([IntPtr]::Size -ne 4) {
+        $fileFullPathNoRedirection = $zipfileFullPath -ireplace ([System.Text.RegularExpressions.Regex]::Escape([Environment]::GetFolderPath('System'))), (Join-Path $Env:SystemRoot 'SysNative')
+        $destinationNoRedirection = $destination -ireplace ([System.Text.RegularExpressions.Regex]::Escape([Environment]::GetFolderPath('System'))), (Join-Path $Env:SystemRoot 'SysNative')
+    }
+    else {
+        $fileFullPathNoRedirection = $zipfileFullPath
+        $destinationNoRedirection = $destination
+    }
 
-  # sometimes the process hasn't fully exited yet.
-  for ($loopCount=1; $loopCount -le 15; $loopCount++) {
-    if ($process.HasExited) { break; }
-    Write-Debug "Waiting for 7z.exe process to exit - $loopCount/15 seconds";
-    Start-Sleep 1;
-  }
+    $workingDirectory = $(Get-Location -PSProvider 'FileSystem')
+    if ($workingDirectory -eq $null -or $workingDirectory.ProviderPath -eq $null) {
+        Write-Debug "Unable to use current location for Working Directory. Using Cache Location instead."
+        $workingDirectory = $env:TEMP
+    }
+    $workingDirectory = $workingDirectory.ProviderPath
 
-  $exitCode = $process.ExitCode
-  $process.Dispose()
+    $loggingParam = '-bb1'
+    if ($disableLogging) {
+        $loggingParam = '-bb0'
+    }
 
-  Set-PowerShellExitCode $exitCode
-  Write-Debug "Command ['$7zip' $params] exited with `'$exitCode`'."
+    $params = "x -aoa -bd $loggingParam -o`"$destinationNoRedirection`" -y `"$fileFullPathNoRedirection`""
+    if ($specificfolder) {
+        $params += " `"$specificfolder`""
+    }
+    Write-Debug "Executing command ['$7zip' $params]"
 
-  if ($zipExtractLogFullPath -and -not $disableLogging) {
-    Set-Content $zipExtractLogFullPath $global:zipFileList.ToString() -Encoding UTF8 -Force
-  }
+    # Capture 7z's output into a StringBuilder and write it out in blocks, to improve I/O performance.
+    $global:zipFileList = New-Object System.Text.StringBuilder
+    $global:zipDestinationFolder = $destination
 
-  Write-Debug "7z exit code: $exitCode"
+    # Redirecting output slows things down a bit.
+    $writeOutput = {
+        if ($EventArgs.Data -ne $null) {
+            $line = $EventArgs.Data
+            Write-Verbose "$line"
+            if ($line.StartsWith("- ")) {
+                $global:zipFileList.AppendLine($global:zipDestinationFolder + "\" + $line.Substring(2))
+            }
+        }
+    }
 
-  $errorMessageAddendum = " This is most likely an issue with the '$env:chocolateyPackageName' package and not with Chocolatey itself. Please follow up with the package maintainer(s) directly."
-  switch ($exitCode) {
-    0 { break }
-    1 { throw 'Some files could not be extracted.' + $errorMessageAddendum } # this one is returned e.g. for access denied errors
-    2 { throw '7-Zip encountered a fatal error while extracting the files.' + $errorMessageAddendum }
-    7 { throw ('7-Zip command line error.' + $errorMessageAddendum) }
-    8 { throw '7-Zip out of memory.' + $errorMessageAddendum }
-    255 { throw 'Extraction cancelled by the user.' + $errorMessageAddendum }
-    default { throw "7-Zip signalled an unknown error (code $exitCode)"  + $errorMessageAddendum}
-  }
+    $writeError = {
+        if ($EventArgs.Data -ne $null) {
+            Write-Error "$($EventArgs.Data)"
+        }
+    }
 
-  $env:ChocolateyPackageInstallLocation = $destination
-  return $destination
+    $process = New-Object System.Diagnostics.Process
+    $process.EnableRaisingEvents = $true
+    Register-ObjectEvent -InputObject $process -SourceIdentifier "LogOutput_ChocolateyZipProc" -EventName OutputDataReceived -Action $writeOutput | Out-Null
+    Register-ObjectEvent -InputObject $process -SourceIdentifier "LogErrors_ChocolateyZipProc" -EventName ErrorDataReceived -Action  $writeError | Out-Null
+
+    $process.StartInfo = New-Object System.Diagnostics.ProcessStartInfo($7zip, $params)
+    $process.StartInfo.RedirectStandardOutput = $true
+    $process.StartInfo.RedirectStandardError = $true
+    $process.StartInfo.UseShellExecute = $false
+    $process.StartInfo.WorkingDirectory = $workingDirectory
+    $process.StartInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+    $process.StartInfo.CreateNoWindow = $true
+
+    $process.Start() | Out-Null
+    if ($process.StartInfo.RedirectStandardOutput) {
+        $process.BeginOutputReadLine()
+    }
+    if ($process.StartInfo.RedirectStandardError) {
+        $process.BeginErrorReadLine()
+    }
+    $process.WaitForExit()
+
+    # For some reason this forces the jobs to finish and waits for
+    # them to do so. Without this it never finishes.
+    Unregister-Event -SourceIdentifier "LogOutput_ChocolateyZipProc"
+    Unregister-Event -SourceIdentifier "LogErrors_ChocolateyZipProc"
+
+    # sometimes the process hasn't fully exited yet.
+    for ($loopCount = 1; $loopCount -le 15; $loopCount++) {
+        if ($process.HasExited) {
+            break;
+        }
+        Write-Debug "Waiting for 7z.exe process to exit - $loopCount/15 seconds";
+        Start-Sleep 1;
+    }
+
+    $exitCode = $process.ExitCode
+    $process.Dispose()
+
+    Set-PowerShellExitCode $exitCode
+    Write-Debug "Command ['$7zip' $params] exited with `'$exitCode`'."
+
+    if ($zipExtractLogFullPath -and -not $disableLogging) {
+        Set-Content $zipExtractLogFullPath $global:zipFileList.ToString() -Encoding UTF8 -Force
+    }
+
+    Write-Debug "7z exit code: $exitCode"
+
+    $errorMessageAddendum = " This is most likely an issue with the '$env:chocolateyPackageName' package and not with Chocolatey itself. Please follow up with the package maintainer(s) directly."
+    switch ($exitCode) {
+        0 {
+            break
+        }
+        1 {
+            throw 'Some files could not be extracted.' + $errorMessageAddendum
+        } # this one is returned e.g. for access denied errors
+        2 {
+            throw '7-Zip encountered a fatal error while extracting the files.' + $errorMessageAddendum
+        }
+        7 {
+            throw ('7-Zip command line error.' + $errorMessageAddendum)
+        }
+        8 {
+            throw '7-Zip out of memory.' + $errorMessageAddendum
+        }
+        255 {
+            throw 'Extraction cancelled by the user.' + $errorMessageAddendum
+        }
+        default {
+            throw "7-Zip signalled an unknown error (code $exitCode)" + $errorMessageAddendum
+        }
+    }
+
+    $env:ChocolateyPackageInstallLocation = $destination
+    return $destination
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC1qXozQXxOqKPy
-# 4vb4ZZ5M5/YOx+PIO0LMI8JfNcSQtaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB6CtB07Ubh59UJ
+# h2QBHy5k+de4Lt8azGqBPYi0+g6Mh6CCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -379,70 +405,70 @@ param(
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQg9ij9hRsljIXHmPDwSEB556v1jetBptsmD0QluvMewvgwDQYJ
-# KoZIhvcNAQEBBQAEggEAG0TsbwQHVnSlUrDterHlKHqtl31AD25qIFizykY/WWe9
-# XDGpHHF9nWPfT8C5zh1cPOIp2nY9AgUEKpuvYLsn3CcHM3oSErsOndGFly7PAvvq
-# kWkpfmCMm7R6rtl99jpdV7B6yUdSyIxuD+pDFABE7divIvLUZMbV8DpjCJYwZTul
-# 6KpQakglUtIHR/hud1aQBWaEGjUhrPaOu+cCMQ5CV76ofAQIhvBNoL/xh1UAxJdK
-# ht49jWJoqfqh+/GtSFh4NgFkzBmzAU7YNbDZUAc5CYFtT1yg+OkDa14K0AA/jqYb
-# y/JRf8eshGtRofuOqbl5k9hI3qZ1jwaIvI8eEIC+PaGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMTlaMC8GCSqGSIb3DQEJBDEiBCAwgr6NpLAlz8WEDkn0jEXu
-# bw6zUcMo/Pb3g5HrFDUo8DANBgkqhkiG9w0BAQEFAASCAgAi8kskhBLRjUdv4tvM
-# NDnpEyiPC5imTgYIS+J7ySapgZNGEkuz8K7xYr11eM2SxbS8GxNnAsAhSImHPlHf
-# AV0nzfLKctBhtWbc3EsYSg/qTwJoOZG2ed4X5rekU0VnYtOhaIl93xZd7r0fIXhh
-# 2nb2oDxjv6nGjSQuMGrUe8sPZ55rnHQjqic8+YmX8fMDaokSK6crNeTBAosjFtG4
-# t1LOkSyEZpZ5DP2Net/LP+Ar17k/lb7+M/zGrb0wcgp/WCGJNvjbot2pKXby0fOd
-# LFcnMc/uO5exCD6IpoV+e4UF9qRXVELNNO5XtEKlvB7be2+Fku20LmkHNVW6onF1
-# eKHccvo9T5W40P5JQfQ8h4E44Pcc1YnXWoV/gr1D+WBps1NVtbafBKYiJq+sVIOm
-# I5HSkwpW8abhKe5Sfq3y35a6Cbxaoc3IfY1AnfWP2K73dMqDhe2YkZt0X8zADgEC
-# 3WayRgDgX4/A10q6Ew1Id9NYPRJ2V7wM5gnEobZGlAGEPaZLntfnUG6b+5Ksqgsc
-# /jVpC9U7MlKavcmMmmjxmfpXWTdadQZ3ToXWOL/6x97TcmMl4/CNSCXZW7OwXlLO
-# 6PzacVUn+5r3KOo+sRV+XTJT7aRdSJ0BsNmMqiLDp8oY5qrDQGvwMojgAkFZLSyH
-# iV5RwZb8a/vDbxR1KGEdMDB3cw==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCARDcAWbQxei6jDjJZ4jCTJI2sVnqmsE3zYh+brhGn+xzAN
+# BgkqhkiG9w0BAQEFAASCAQAwadOX72iYl4aLIErvrVNTfaMfXrkBNiOqRhlFOpaC
+# azkla5f/rEfvOR+MmG/j7/9MzTeFgWZsOOyGdzUFeZihmRQkxPGmBKFkR0byaH7R
+# OVt0LTS4Lu7VQGwMXVKkwuyCK9Gr5618kV47hcdZnfqM9J7yCyEWMav2yAahascW
+# gm1ywHeQpyfpvuzDAAphpdm5KknA7wJu/9K3XSjXmc80iuGA14VCWy2yBhsgwmRh
+# olaZOSXDG/l4J9HLzuE5V658FcMOmxhA7aT+LPCskYrd7/7vkRO4W8aOi+rj7UV6
+# ydpD1A5vFEyT/iQ4LQC1zd/C8+H5JdX9GP0TjowWfrK/oYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgzMFowLwYJKoZIhvcNAQkEMSIEIGd8FwJhoqvsMw0bfHKT
+# nUZBdjR+cIXPcYxqJ8MmuINeMA0GCSqGSIb3DQEBAQUABIICAAgdYJMZBYk6iLQm
+# MlAb5nA8eAOwtNqJ2MM+CWyCVhxdfh+rBdaR8eEulhU6NjGxqQDQXzEpCr9PisN6
+# bsJEFwJgY0zhgNHNyyLcOw/8y7nvqZXmKL8OVst5s9Rr9H+2vvWqEmTiogRbD8rV
+# +FA8BEtv9LUFBvwxmyIG4qXnsVUqVu/EK4SkCgtiIuK8zG9mBEuF7rLkQe0W9X9l
+# +oCwuuJIoH+BgLUoGxVc3Q8EfBfTbXOGWYTp0w5bbhIvzpEv5VM3siq5qYxmS9E7
+# qGMwk4ezvGTImtpO6A6DAMQ0tFqfpFiy1ikgbQLLrXaw1TliHUE9fOXR6f65CwHR
+# ItIwpFokrHQvMSqv1F/1Uad4O3/InlprGkfkGVMXZKsM81qktYeq0Wa/lXL1bUZe
+# ICav6U+541IzTw0pubDmRm+Y/2tovRqBuPwugW0hBT0T9M2848IXtknxkGwfNAOp
+# F924w/MBgXi4VMP1mDSqhj2hwVaHLMvsRsSMQk2Wqjf+JbZIiTeTKxzHLnkei++j
+# MIgUkmdg7pz0831bOOqn5QSWdP5B62jC0GBbE5mAOLsW6hHRWX/nSl7qul4RKEwb
+# k2d6xbYvpzZlFHMIsIhAOFTvSNslS3xpGhm7iy3kUzJZAelaZ/nkTpUQS6FsSUSI
+# I0afzWTaG3Cu7U6DnYV1MtjXTyg4
 # SIG # End signature block

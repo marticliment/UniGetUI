@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyVsixPackage {
-<#
+    <#
 .SYNOPSIS
 Downloads and installs a VSIX package for Visual Studio
 
@@ -45,14 +45,14 @@ None
 The name of the package - while this is an arbitrary value, it's
 recommended that it matches the package id.
 
-In 0.10.4+, `Name` is an alias for PackageName.
+`Name` is an alias for PackageName.
 
 .PARAMETER VsixUrl
 The URL of the package to be installed.
 
 Prefer HTTPS when available. Can be HTTP, FTP, or File URIs.
 
-In 0.10.4+, `Url` is an alias for VsixUrl.
+`Url` is an alias for VsixUrl.
 
 .PARAMETER VsVersion
 The major version number of Visual Studio where the
@@ -63,7 +63,7 @@ will be targeted.
 NOTE: For Visual Studio 2015, the VsVersion is 14. It can be determined
 by looking at the folders under Program Files / Program Files (x86).
 
-In 0.10.4+, `VisualStudioVersion` is an alias for VsVersion.
+`VisualStudioVersion` is an alias for VsVersion.
 
 .PARAMETER Checksum
 The checksum hash value of the Url resource. This allows a checksum to
@@ -99,10 +99,10 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers. Available in 0.9.10+.
+OPTIONAL - Specify custom headers.
 
 .PARAMETER File
-Will be used for VsixUrl if VsixUrl is empty. Available in 0.10.7+.
+Will be used for VsixUrl if VsixUrl is empty.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
@@ -136,16 +136,16 @@ Install-ChocolateyInstallPackage
 .LINK
 Install-ChocolateyZipPackage
 #>
-param(
-  [alias("name")][parameter(Mandatory=$true, Position=0)][string] $packageName,
-  [alias("url")][parameter(Mandatory=$false, Position=1)][string] $vsixUrl,
-  [alias("visualStudioVersion")][parameter(Mandatory=$false, Position=2)][int] $vsVersion = 0,
-  [parameter(Mandatory=$false)][string] $checksum = '',
-  [parameter(Mandatory=$false)][string] $checksumType = '',
-  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
-  [alias("fileFullPath")][parameter(Mandatory=$false)][string] $file = '',
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
+    param(
+        [alias("name")][parameter(Mandatory = $true, Position = 0)][string] $packageName,
+        [alias("url")][parameter(Mandatory = $false, Position = 1)][string] $vsixUrl,
+        [alias("visualStudioVersion")][parameter(Mandatory = $false, Position = 2)][int] $vsVersion = 0,
+        [parameter(Mandatory = $false)][string] $checksum = '',
+        [parameter(Mandatory = $false)][string] $checksumType = '',
+        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
+        [alias("fileFullPath")][parameter(Mandatory = $false)][string] $file = '',
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
 
     Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
@@ -153,49 +153,46 @@ param(
         $vsixUrl = $file
     }
 
-    if($vsVersion -eq 0) {
-        if ([System.IntPtr]::Size -eq 4)
-        {
+    if ($vsVersion -eq 0) {
+        if ([System.IntPtr]::Size -eq 4) {
             <# 32bits system case #>
             $versions = Get-ChildItem HKLM:SOFTWARE\Microsoft\VisualStudio -ErrorAction SilentlyContinue |
-              Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } |
-              Where-Object { $_.property -contains "InstallDir" } |
-              Sort-Object { [int]($_.PSChildName) } -descending
+                Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } |
+                Where-Object { $_.property -contains "InstallDir" } |
+                Sort-Object { [int]($_.PSChildName) } -Descending
         }
-        else
-        {
-            $versions=(get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } | Where-Object {$_.property -contains "InstallDir"} | Sort-Object {[int]($_.PSChildName)} -descending)
+        else {
+            $versions = (Get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName -match "^[0-9\.]+$") } | Where-Object { $_.property -contains "InstallDir" } | Sort-Object { [int]($_.PSChildName) } -Descending)
         }
-        if($versions -and $versions.Length){
+        if ($versions -and $versions.Length) {
             $version = $versions[0]
-        }elseif($versions){
+        }
+        elseif ($versions) {
             $version = $versions
         }
     }
     else {
-        if ([System.IntPtr]::Size -eq 4)
-        {
+        if ([System.IntPtr]::Size -eq 4) {
             <# 32bits system case #>
-            $versions=(get-ChildItem HKLM:SOFTWARE\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object {$_.property -contains "InstallDir"})
+            $versions = (Get-ChildItem HKLM:SOFTWARE\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object { $_.property -contains "InstallDir" })
         }
-        else
-        {
-            $version=(get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object {$_.property -contains "InstallDir"})
+        else {
+            $version = (Get-ChildItem HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio -ErrorAction SilentlyContinue | Where-Object { ($_.PSChildName.EndsWith("$vsVersion.0")) } | Where-Object { $_.property -contains "InstallDir" })
         }
     }
 
     if ($version) {
-        $vnum=$version.PSPath.Substring($version.PSPath.LastIndexOf('\')+1)
-        if($vnum -as [int] -lt 10) {
+        $vnum = $version.PSPath.Substring($version.PSPath.LastIndexOf('\') + 1)
+        if ($vnum -as [int] -lt 10) {
             throw "This installed VS version, $vnum, does not support installing VSIX packages. Version 10 is the minimum acceptable version."
         }
-        $dir=(get-itemProperty $version.PSPath "InstallDir").InstallDir
+        $dir = (Get-ItemProperty $version.PSPath "InstallDir").InstallDir
         $installer = Join-Path $dir "VsixInstaller.exe"
     }
 
     if ($installer) {
-        $download="$env:TEMP\$($packageName.Replace(' ','')).vsix"
-        try{
+        $download = "$env:TEMP\$($packageName.Replace(' ','')).vsix"
+        try {
             Get-ChocolateyWebFile $packageName $download $vsixUrl -checksum $checksum -checksumType $checksumType -Options $options
         }
         catch {
@@ -204,8 +201,9 @@ param(
 
         Write-Debug "Installing VSIX using $installer"
         $exitCode = Install-Vsix "$installer" "$download"
-        if($exitCode -gt 0 -and $exitCode -ne 1001) { #1001: Already installed
-           throw "There was an error installing '$packageName'. The exit code returned was $exitCode."
+        if ($exitCode -gt 0 -and $exitCode -ne 1001) {
+            #1001: Already installed
+            throw "There was an error installing '$packageName'. The exit code returned was $exitCode."
         }
     }
     else {
@@ -214,10 +212,10 @@ param(
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCb9v+X9fcDfKTL
-# ++O91eqGb9TQL/6cAjhx+zviZ6qbyqCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCARxBv/xHQHXbkT
+# 7dQTV7L4szTwnriUbpDBbD904aH946CCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -338,70 +336,70 @@ param(
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgM0A2UTv7NAawFKCA1xfCYaWtX5Vui24vZLB9fTI4r4MwDQYJ
-# KoZIhvcNAQEBBQAEggEAOVEN6NvlI/FFwScq6yhzmp2Q5VnSZKo2D/lsC0oQJ35o
-# f/7EYijzDKkjCFpPmt7QcZo9fmbPbDKKsO/PVDM5NZ3hd4cGHsZXnaTx5+SWbD2N
-# w/Ivyjr+lbw1uocEKm+O6GXxZWcblVb7jkMnGiAU0P45EXDa2qRI/iPis4QhF3Ao
-# eU6IbXzSJp5A6XHeAZOdIgu9464l/gxLd0ECKmPJzkT6D5vi5sZu4ElCjJHNPoBJ
-# Pz60ibHalljP2My8aB6K0YYX4e3RxUXNgGc7wCVBpGf/93P208+LEXBqd9mRE4vl
-# 6lrrl5acaAdD4+GOyAe2MIVUrHK89j7ABsPQ+I8PPKGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjJaMC8GCSqGSIb3DQEJBDEiBCDqsXKfLyvZFB/6tOybMQgI
-# xyQR8fIRsjN9rGoT9DZ/bTANBgkqhkiG9w0BAQEFAASCAgCIhV0qc0QeChIDpUGE
-# t2w9+BiT+XOgQw+v2jByGaK1GbcLHlWrEzks8e5v1jD4m25oh12MY2vj9HUGRQEX
-# ydmh07eSOhti+oPBzz3+6tRDm9ZcemuWuI65rrptJ5zYwpor9XhZYirgSHjE+x/o
-# WUdF9zWWVRJMSKQ9hl1cbsKiMsnjNNQ9qQLl8k/L1Ign26hKtOvFMhWGiB86IpQQ
-# In2XdPn44puqO9sLOhq/7n/FGpQoaHSJAwgZ94YxczrbOGQso7iplPB9pCuImXSY
-# HwcGm+5SpDHOku68F7qizAEj0nBRPDHI9WWvPcenn9dv6bEwhKAVeR6NDjRPqEws
-# fQ/2acQRggNLxhk8hVNwKjplsMR36Svyp4wmeTD+0TaPcQsNaYnNxMRhw+wTN1TN
-# R/ARO0098ZGBAPiQBGcygvtASPFlLMcHWRWoXm5uBv8V9dZY9TMzEL54shpbZ3+O
-# bATW3xFwyjLij8QydrDZAYwjz+WTj5EfE04WHBPMTWSB+ioNvgjjlClBVH14pWFL
-# v1g8vfsnleSGdQ+3+WjiUNgys7h5EHgmiqOO6Sm7WBzItJvOY3G3LFl9booZmm0C
-# racEAn7nOQOqSiEuWyllY2PZvvKDO+45KpaZNlMreF3WNgzLKn1t0KcrCwkJnqjV
-# wNM1svb528dDfHwas8GnaVdEzQ==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCBaMoMvHsiUSweb0RqXZ7A3vnUr/hMbiEf0Al111blceDAN
+# BgkqhkiG9w0BAQEFAASCAQAI5am6+CFfLv+yr8/FLo0DbcbiyFYPmyOaGeoJU56c
+# mtkyGXsLJ0o/lpCdyLQKgKCxfq4zQ9BeoZNQ4lMN7/51prvGdE0k1urGdYwVJqXn
+# n1917qpjb5JVmw+KTPQ8wa7/CPkMiRxC7SsgvuhF6tEY2MShLqDOgVRUcBWlLdS4
+# EzkMZjXo+UPC6KstSY8BNhO3UaRu4iytduCt4Uzx3lpWp+z9+K7qmLpqJ5r8hQcE
+# JRY0hGFVqh89/8KJH8zH8QB+QzQOY321pgpt/A3RST9BCeY006O9usOBC8+cyvo2
+# 921VpgznVRAl1uqcpLhfiq56vaf59+fFSPRu+kUepOP2oYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgzM1owLwYJKoZIhvcNAQkEMSIEIKXIdVgFfjJ1SH4uIgDw
+# FpqJE2GJEv85WdDkkQpDQcGhMA0GCSqGSIb3DQEBAQUABIICAJp2F7vHrtjVaHpY
+# 6lphTiAVL00Rf4pe2TG8vwNxXmX7ac5Czw7Yhqc7D3ZK7b614QlDmBcApF+X1F7y
+# E2hTbRHPNQ87Py/Hyka8aAp/K9urCBMbs3ZyBjfo9pSMMvNUFrfC2GvyppnlN12A
+# 4+lvVqGd1hPlctSacZsize+kEdRYWpI9rOjsKQQM41EgnJRaBmB923yNKSJhsYWi
+# C6wncb6oCbRbwNp2+KGiT/b6w7+oh6h39jAdm2SeeCS2+lNwPRLUHw29/mSbOkHp
+# bkkEDadoS+rgkx0HmTGiakoguat0YsA5spDLNXymLK0flHw8TwvJ7eYMA5PchjBQ
+# Sqr/XDw/xGK92cocYV1ZkhViNDrVxJ44HBf7AlVZ5mYwo34dKaLYa3KcN3XG8PMM
+# RziOKJKipQkPa48nOS7TNnXFkikgg0KJQYoHk7ttWT+kNT7t7N/fgN38fzYnMOq9
+# JTpJA8kJPgIK5KRzpOSxdDAoU+M9QjYQvXHUoPzmqw9oG5RxFdY4ML4nnWQXiMI6
+# vSCmmQoYjxXwepMKQm8NE6pgKvH1bsgz9U5s5SmM6FfpRiiOQ6Z8DT/ao7i740rZ
+# jzts0ydrFAp9AQVDrK2QBzAFTet3hkn91bt7ZXacnGcH2J0OgTR8mYO++0kjkAXb
+# at4tRSxbaQ33gxsUGsjk0pgEiRjF
 # SIG # End signature block

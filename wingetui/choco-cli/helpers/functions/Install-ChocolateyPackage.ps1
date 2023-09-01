@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function Install-ChocolateyPackage {
-<#
+    <#
 .SYNOPSIS
 **NOTE:** Administrative Access Required.
 
@@ -191,28 +191,28 @@ https://support.microsoft.com/en-us/kb/811833 for more details.
 The recommendation is to use at least SHA256.
 
 .PARAMETER Options
-OPTIONAL - Specify custom headers. Available in 0.9.10+.
+OPTIONAL - Specify custom headers.
 
 .PARAMETER File
-Will be used for Url if Url is empty. Available in 0.10.7+.
+Will be used for Url if Url is empty.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER File64
-Will be used for Url64bit if Url64bit is empty. Available in 0.10.7+.
+Will be used for Url64bit if Url64bit is empty.
 
 This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER UseOnlyPackageSilentArguments
 Do not allow choco to provide/merge additional silent arguments and only
-use the ones available with the package. Available in 0.9.10+.
+use the ones available with the package.
 
 .PARAMETER UseOriginalLocation
 Do not download the resources. This is typically passed if Url/Url64bit
 are pointed to local files or files on a share and those files should
-be used in place. Available in 0.10.1+.
+be used in place.
 
 NOTE: You can also use `Install-ChocolateyInstallPackage` for the same
 functionality (see links).
@@ -222,9 +222,8 @@ Allows splatting with arguments that do not apply. Do not use directly.
 
 .PARAMETER BeforeInstall Script
 Specifies the commands to run after download has completed but before install steps have begun.
-Available in 0.11.0+.
 
-Use this for starting an auxiliary process such as AutoHotkey, so that any timeouts are not 
+Use this for starting an auxiliary process such as AutoHotkey, so that any timeouts are not
 affected by the time to download.
 
 .EXAMPLE
@@ -345,89 +344,95 @@ Get-UninstallRegistryKey
 .LINK
 Install-ChocolateyZipPackage
 #>
-param(
-  [parameter(Mandatory=$true, Position=0)][string] $packageName,
-  [parameter(Mandatory=$false, Position=1)]
-  [alias("installerType","installType")][string] $fileType = 'exe',
-  [parameter(Mandatory=$false, Position=2)][string[]] $silentArgs = '',
-  [parameter(Mandatory=$false, Position=3)][string] $url = '',
-  [parameter(Mandatory=$false, Position=4)]
-  [alias("url64")][string] $url64bit = '',
-  [parameter(Mandatory=$false)] $validExitCodes = @(0),
-  [parameter(Mandatory=$false)][string] $checksum = '',
-  [parameter(Mandatory=$false)][string] $checksumType = '',
-  [parameter(Mandatory=$false)][string] $checksum64 = '',
-  [parameter(Mandatory=$false)][string] $checksumType64 = '',
-  [parameter(Mandatory=$false)][hashtable] $options = @{Headers=@{}},
-  [alias("fileFullPath")][parameter(Mandatory=$false)][string] $file = '',
-  [alias("fileFullPath64")][parameter(Mandatory=$false)][string] $file64 = '',
-  [parameter(Mandatory=$false)]
-  [alias("useOnlyPackageSilentArgs")][switch] $useOnlyPackageSilentArguments = $false,
-  [parameter(Mandatory=$false)][switch]$useOriginalLocation,
-  [parameter(Mandatory=$false)][scriptblock] $beforeInstall,
-  [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
-)
-  [string]$silentArgs = $silentArgs -join ' '
+    param(
+        [parameter(Mandatory = $true, Position = 0)][string] $packageName,
+        [parameter(Mandatory = $false, Position = 1)]
+        [alias("installerType", "installType")][string] $fileType = 'exe',
+        [parameter(Mandatory = $false, Position = 2)][string[]] $silentArgs = '',
+        [parameter(Mandatory = $false, Position = 3)][string] $url = '',
+        [parameter(Mandatory = $false, Position = 4)]
+        [alias("url64")][string] $url64bit = '',
+        [parameter(Mandatory = $false)] $validExitCodes = @(0),
+        [parameter(Mandatory = $false)][string] $checksum = '',
+        [parameter(Mandatory = $false)][string] $checksumType = '',
+        [parameter(Mandatory = $false)][string] $checksum64 = '',
+        [parameter(Mandatory = $false)][string] $checksumType64 = '',
+        [parameter(Mandatory = $false)][hashtable] $options = @{Headers = @{} },
+        [alias("fileFullPath")][parameter(Mandatory = $false)][string] $file = '',
+        [alias("fileFullPath64")][parameter(Mandatory = $false)][string] $file64 = '',
+        [parameter(Mandatory = $false)]
+        [alias("useOnlyPackageSilentArgs")][switch] $useOnlyPackageSilentArguments = $false,
+        [parameter(Mandatory = $false)][switch]$useOriginalLocation,
+        [parameter(Mandatory = $false)][scriptblock] $beforeInstall,
+        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    )
+    [string]$silentArgs = $silentArgs -join ' '
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
+    Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
 
-  $chocoTempDir = $env:TEMP
-  $tempDir = Join-Path $chocoTempDir "$($env:chocolateyPackageName)"
-  if ($env:chocolateyPackageVersion -ne $null) { $tempDir = Join-Path $tempDir "$($env:chocolateyPackageVersion)"; }
-  $tempDir = $tempDir -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
-  if (![System.IO.Directory]::Exists($tempDir)) { [System.IO.Directory]::CreateDirectory($tempDir) | Out-Null }
-  $downloadFilePath = Join-Path $tempDir "$($packageName)Install.$fileType"
-
-  if ($url -eq '' -or $url -eq $null) {
-    $url = $file
-  }
-  if ($url64bit -eq '' -or $url64bit -eq $null) {
-    $url64bit = $file64
-  }
-
-  [string]$filePath = $downloadFilePath
-  if ($useOriginalLocation) {
-    $filePath = $url
-    if (Get-OSArchitectureWidth 64) {
-      $forceX86 = $env:chocolateyForceX86
-      if ($forceX86) {
-        Write-Debug "User specified '-x86' so forcing 32-bit"
-      } else {
-        if ($url64bit -ne $null -and $url64bit -ne '') {
-          $filePath = $url64bit
-        }
-      }
+    $chocoTempDir = $env:TEMP
+    $tempDir = Join-Path $chocoTempDir "$($env:chocolateyPackageName)"
+    if ($env:chocolateyPackageVersion -ne $null) {
+        $tempDir = Join-Path $tempDir "$($env:chocolateyPackageVersion)";
     }
-  } else {
-    $filePath = Get-ChocolateyWebFile -PackageName $packageName `
-                                      -FileFullPath $downloadFilePath `
-                                      -Url $url `
-                                      -Url64bit $url64bit `
-                                      -Checksum $checksum `
-                                      -ChecksumType $checksumType `
-                                      -Checksum64 $checksum64 `
-                                      -ChecksumType64 $checksumType64 `
-                                      -Options $options `
-                                      -GetOriginalFileName
-  }
+    $tempDir = $tempDir -replace '\\chocolatey\\chocolatey\\', '\chocolatey\'
+    if (![System.IO.Directory]::Exists($tempDir)) {
+        [System.IO.Directory]::CreateDirectory($tempDir) | Out-Null
+    }
+    $downloadFilePath = Join-Path $tempDir "$($packageName)Install.$fileType"
 
-  if ($beforeInstall) {
-    & $beforeInstall
-  }
+    if ($url -eq '' -or $url -eq $null) {
+        $url = $file
+    }
+    if ($url64bit -eq '' -or $url64bit -eq $null) {
+        $url64bit = $file64
+    }
 
-  Install-ChocolateyInstallPackage -PackageName $packageName `
-                                   -FileType $fileType `
-                                   -SilentArgs $silentArgs `
-                                   -File $filePath `
-                                   -ValidExitCodes $validExitCodes `
-                                   -UseOnlyPackageSilentArguments:$useOnlyPackageSilentArguments
+    [string]$filePath = $downloadFilePath
+    if ($useOriginalLocation) {
+        $filePath = $url
+        if (Get-OSArchitectureWidth 64) {
+            $forceX86 = $env:chocolateyForceX86
+            if ($forceX86) {
+                Write-Debug "User specified '-x86' so forcing 32-bit"
+            }
+            else {
+                if ($url64bit -ne $null -and $url64bit -ne '') {
+                    $filePath = $url64bit
+                }
+            }
+        }
+    }
+    else {
+        $filePath = Get-ChocolateyWebFile -PackageName $packageName `
+            -FileFullPath $downloadFilePath `
+            -Url $url `
+            -Url64bit $url64bit `
+            -Checksum $checksum `
+            -ChecksumType $checksumType `
+            -Checksum64 $checksum64 `
+            -ChecksumType64 $checksumType64 `
+            -Options $options `
+            -GetOriginalFileName
+    }
+
+    if ($beforeInstall) {
+        & $beforeInstall
+    }
+
+    Install-ChocolateyInstallPackage -packageName $packageName `
+        -fileType $fileType `
+        -silentArgs $silentArgs `
+        -file $filePath `
+        -validExitCodes $validExitCodes `
+        -UseOnlyPackageSilentArguments:$useOnlyPackageSilentArguments
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBsCdjL9jCfkeFQ
-# P5ANAb19l6fPhKzek2bBeG0Q6lvyzKCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCr5worPIXRCnmJ
+# fBd03cqX9I783zWUienpJqyJQ+/OFqCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -548,70 +553,70 @@ param(
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgwAuZpRaJVSl1O8hufOVKElU6mtCaW+PBihAvEELJ450wDQYJ
-# KoZIhvcNAQEBBQAEggEAOMpQDxBANh8G9xbsxF37lHFl3/h4Wu88rxNuCLlWtkOc
-# 1CnOupPfEW0nb8GQwnGHRkM1vsxKJp3gBHOfEkYHcLOsAXU209CyJ7eOlM/f1caZ
-# sNCDyA+yddHCeSv+lCJ4V+VTLN4a3wnIsryzXBjuIc+yYvKd1XG1iE/Pz5hUDZ8U
-# qEvzZvDfwzEgta7hw4NYFgSih6hK7fYD5M35/CrjaP9XcksvgReqvgBcO3UTI5bA
-# ZEk+hgzu2QmD0zZZ0BRVSaI8yM6vgndOV4qc1pZx+JK3EBebR3R1/c7U2XxjXyIl
-# kdvUwtMZU8RbXw1Wy+vwfGyQnq4yFA1YFKBJqN9xfKGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMjFaMC8GCSqGSIb3DQEJBDEiBCDYcVRgTIPMYnHvWJB0nNuw
-# CiSIvKIvsTsfg+O4uBeC5zANBgkqhkiG9w0BAQEFAASCAgAS4t7H9S+9s6hZgFzh
-# QFtogZ1bGITxb/za3Z05R8i8RKee8qdBsLvI3W4mtBjJoZ7mtNT3OkK4K2E1hPJR
-# SWQ0k5zjN0Y5c1FKsPSkbGJrDFKX0B0eyI6faZfvBPYMlem7b/c8pJXOX6Wj/TbJ
-# n1fUwZQyZX1fLRL7ka9O4jOkX9FGyD/0+ag9JLHZJf0svMFNWFZ2YUOi9sxgPw52
-# kbkRlcdtAv+7NEKauFOlBYXlYfMp7EaIbL1Xm8+nXPkZVSXe1jyCg0F0dyHCoYYV
-# HeMESfNbFYfDiKb6MaeQV6NXJTG6TD4JYzCDMrvxVzIdeKhGgSwqCBYei7uzV5aD
-# 3YbJFw8MpY2yFK2z2/ZrTUiUUV/ICQ0JHbyaHNnU75XBu5NS1lI4zFD1iHwp/Tp3
-# 1nA6ASvGUl6K1oJdp+xYGkNgS6im3zohRaB/ptXtl04uVq6/IVZz5QJZHevA7wBI
-# IH2dRELSEuKtkhCt+tr6HphhirQUJmLz3KLBkVkyuDTE4tiKwbBxlJJZihudfZwR
-# frSKMSKCkxYYNbjPQyz/c+eD9b/YxpUYe0z163cQrXJfnjuHpWoWuLnKIJQPhZrR
-# CMW4s0Jih6eWoG3feIKWsc42Or58ic0Lf66r23AYGVc3n/QZvm/WdlyOGBtIRd0k
-# Z7OmXoNigL3ncv73a/aIa9LIng==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCBdcb2cqsIg0EhKi6GuOkY4pFNT3xCiRW/Keo5/wOrkuDAN
+# BgkqhkiG9w0BAQEFAASCAQCUXJ72DXIse9n0hcNVpvNAojYjv5R9tGnGJbMI8ChW
+# hvCyCHc0721YER9lB1VjqY2jfs5x5xbaS9HiF1lfTjHggBO7f85b+cE7KJCj9CqR
+# uty6upbQ3iPAaXcnydr1JoHCJvnuTTg2H0ZwtxUWgT2bWsz3QZ5/C+gy3YA77gOu
+# RnIGwQVEy7fab1QAGWY9yGG4LWVOaYBP/55LVwQIS3w981i2Vf8PjC37lsSNzgzx
+# HZJXkjEshJ3X9zGHxZKTnQuCRcDxVglJmNWGu8SUdBkrZo/izWwECi6VnMgeqzIK
+# V2pPRFgvjpBzwuMR94M0kUMUjYzDWqNwUSwuV1hWfbWgoYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgzMlowLwYJKoZIhvcNAQkEMSIEIGATW6FjU5w0JX1HbvHt
+# OIDvZZQ/Kj4Pg1o0TRlc3LfXMA0GCSqGSIb3DQEBAQUABIICAD0PixrbFnU5+X9T
+# 76mSyxUsU9ABhzud/j7KQWylGrVgZw7F8cvLSNENyI6yQQRkwTJgI/BZO4z5qigQ
+# 9+FVovadHvipqMH8ACQ8VaoJGLMlx8gBw3tL7NypIVffXpBrLtFzEWgxvnbLLu3q
+# t8qoqIwIK8LRRjQSy2fJ+sOZ2GVhowbCiK7+F8gwh7VGOOpOUkStvPlrXIYToxfq
+# hje5IR00OcSwQ7bPAHBYyl8xZwctzIJ/KiKHW/73Nq6ge5r9unrfCfor8btwlSE/
+# oJMr1BX7AQN5idVaQXQhF1XTnP1m82agxigP1FHQc551SFLznxN4oZCV8lZf2ghy
+# +bhMUSHPilcIdjd1YiZpP8nNIq/68+XGLG+riwM/X+n31n2xfun9ANCjZEzVut4R
+# rNmaofRnOe3RxazmAQy7q1UHiG1OA8ebnqLHmN8MLZoIZCSI8YwPEqbtRIMov4M4
+# 2wcUM7+vliZ+Ta/r7ugVCDq4/Q7/bHuaej4pP/vzpVZNtnrm4jfIP5bkfrD3wb/J
+# wAffNwXzPvY0q1XefyqKlslwgmDjDtZD+vv0nX/Ze1mFiDWph2ZFLezE+RAPuR6W
+# /PlMxYqITnn8/vj3fCJAoDzHLuz6oZvmOpqBBlEvptAl/X3SJA331Of3xpuFTA+E
+# tWnIvM5kB5roA2//q1HFOpfRUFxX
 # SIG # End signature block

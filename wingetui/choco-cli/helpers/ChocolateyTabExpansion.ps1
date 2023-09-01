@@ -26,62 +26,103 @@ $script:choco = "$env:ChocolateyInstall\choco.exe"
 
 function script:chocoCmdOperations($commands, $command, $filter, $currentArguments) {
     $currentOptions = @('zzzz')
-    if ($currentArguments -ne $null -and $currentArguments.Trim() -ne '') { $currentOptions = $currentArguments.Trim() -split ' ' }
+    if (-not [string]::IsNullOrWhiteSpace($currentArguments)) {
+        $currentOptions = $currentArguments.Trim() -split ' '
+    }
 
-    $commands.$command.Replace("  "," ") -split ' ' |
-      Where-Object { $_ -notmatch "^(?:$($currentOptions -join '|' -replace "=", "\="))(?:\S*)\s?$" } |
-      Where-Object { $_ -like "$filter*" }
+    $commands.$command.Replace("  ", " ") -split ' ' |
+        Where-Object { $_ -notmatch "^(?:$($currentOptions -join '|' -replace "=", "\="))(?:\S*)\s?$" } |
+        Where-Object { $_ -like "$filter*" }
 }
 
-$script:someCommands = @('-?','search','list','info','install','outdated','upgrade','uninstall','new','download','optimize','pack','push','sync','-h','--help','pin','source','config','feature','apikey','export','help','template','--version')
+$script:chocoCommands = @('-?','search','list','info','install','outdated','upgrade','uninstall','new','pack','push','-h','--help','pin','source','config','feature','apikey','export','help','template','cache','--version')
 
 # ensure these all have a space to start, or they will cause issues
-$allcommands = " --debug --verbose --trace --noop --help --accept-license --confirm --limit-output --no-progress --log-file='' --execution-timeout='' --cache-location='' --proxy='' --proxy-user='' --proxy-password='' --proxy-bypass-list='' --proxy-bypass-on-local --force --no-color --skip-compatibility-checks"
-$proListOptions = " --audit --use-self-service"
-$proInfoOptions = " --use-self-service"
-$proInstallUpgradeOptions = " --install-directory='' --package-parameters-sensitive='' --max-download-rate='' --install-arguments-sensitive='' --skip-download-cache --use-download-cache --skip-virus-check --virus-check --virus-positives-minimum='' --deflate-package-size --no-deflate-package-size --deflate-nupkg-only --use-self-service"
-$proUpgradeOptions = " --exclude-chocolatey-packages-during-upgrade-all --include-chocolatey-packages-during-upgrade-all --use-self-service"
-$proNewOptions = " --file='' --build-package --file64='' --from-programs-and-features --use-original-location --keep-remote --url='' --url64='' --checksum='' --checksum64='' --checksumtype='' --pause-on-error --remove-architecture-from-name --include-architecture-in-name"
-$proUninstallOptions = " --from-programs-and-features --use-self-service"
-$proPinOptions = " --note='' --use-self-service"
-$proOutdatedOptions = " --use-self-service"
-$proPushOptions = " --use-self-service"
+$allcommands = " --debug --verbose --trace --noop --help -? --online --accept-license --confirm --limit-output --no-progress --log-file='' --execution-timeout='' --cache-location='' --proxy='' --proxy-user='' --proxy-password='' --proxy-bypass-list='' --proxy-bypass-on-local --force --no-color --skip-compatibility-checks --ignore-http-cache"
 
 $commandOptions = @{
-  list = "--lo --id-only --pre --exact --by-id-only --id-starts-with --detailed --approved-only --not-broken --source='' --user='' --password='' --local-only --prerelease --include-programs --page='' --page-size='' --order-by-popularity --download-cache-only --disable-package-repository-optimizations" + $proListOptions + $allcommands
-  search = "--pre --exact --by-id-only --id-starts-with --detailed --approved-only --not-broken --source='' --user='' --password='' --local-only --prerelease --include-programs --page='' --page-size='' --order-by-popularity --download-cache-only --disable-package-repository-optimizations" + $proListOptions + $allcommands
-  info = "--pre --lo --source='' --user='' --password='' --local-only --prerelease --disable-package-repository-optimizations" + $proInfoOptions + $allcommands
-  install = "-y -whatif -? --pre --version= --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --force-dependencies --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --allow-multiple-versions --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --stop-on-first-package-failure --disable-package-repository-optimizations --pin" + $proInstallUpgradeOptions + $allcommands
-  pin = "--name='' --version='' -?" + $proPinOptions + $allcommands
-  outdated = "-? --source='' --user='' --password='' --ignore-pinned --ignore-unfound --pre --prerelease --disable-package-repository-optimizations" + $proOutdatedOptions + $allcommands
-  upgrade = "-y -whatif -? --pre --version='' --except='' --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --allow-multiple-versions --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --fail-on-unfound --fail-on-not-installed --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --exclude-prerelease --stop-on-first-package-failure --use-remembered-options --ignore-remembered-options --skip-when-not-installed --install-if-not-installed --disable-package-repository-optimizations --pin" + $proInstallUpgradeOptions + $proUpgradeOptions + $allcommands
-  uninstall = "-y -whatif -? --force-dependencies --remove-dependencies --all-versions --source='windowsfeatures' --version= --uninstall-arguments='' --override-arguments --not-silent --params='' --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --use-autouninstaller --skip-autouninstaller --fail-on-autouninstaller --ignore-autouninstaller-failure --stop-on-first-package-failure" + $proUninstallOptions + $allcommands
-  new = "--template-name='' --output-directory='' --automaticpackage --version='' --maintainer='' packageversion='' maintainername='' maintainerrepo='' installertype='' url='' url64='' silentargs='' --use-built-in-template -?" + $proNewOptions + $allcommands
-  pack = "--version='' --output-directory='' -?" + $allcommands
-  push = "--source='' --api-key='' --timeout='' -?" + $proPushOptions + $allcommands
-  source = "--name='' --source='' --user='' --password='' --priority= --bypass-proxy --allow-self-service -?" + $allcommands
-  config = "--name='' --value='' -?" + $allcommands
-  feature = "--name='' -?" + $allcommands
-  apikey = "--source='' --api-key='' --remove -?" + $allcommands
-  download = "--internalize --internalize-all-urls --ignore-dependencies --installed-packages --ignore-unfound-packages --resources-location='' --download-location='' --outputdirectory='' --source='' --version='' --prerelease --user='' --password='' --cert='' --certpassword='' --append-use-original-location --recompile --disable-package-repository-optimizations -? --use-self-service" + $allcommands
-  sync = "--output-directory='' --id='' --package-id='' -? --use-self-service" + $allcommands
-  optimize = "--deflate-nupkg-only --id='' -? --use-self-service" + $allcommands
-  export = "--include-version-numbers --output-file-path='' -?" + $allcommands
-  template = "--name=''" + $allcommands
+    list      = "--id-only --pre --exact --by-id-only --id-starts-with --detailed --prerelease --include-programs --source='' --page='' --page-size=''"
+    search    = "--id-only --pre --exact --by-id-only --id-starts-with --detailed --approved-only --not-broken --source='' --user='' --password='' --prerelease --include-programs --page='' --page-size='' --order-by-popularity --download-cache-only --disable-package-repository-optimizations"
+    info      = "--pre --source='' --user='' --password='' --prerelease --disable-package-repository-optimizations"
+    install   = "-y -whatif --pre --version= --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --force-dependencies --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --stop-on-first-package-failure --disable-package-repository-optimizations --pin"
+    pin       = "--name='' --version=''"
+    outdated  = "--source='' --user='' --password='' --ignore-pinned --ignore-unfound --pre --prerelease --disable-package-repository-optimizations"
+    upgrade   = "-y -whatif --pre --version='' --except='' --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --fail-on-unfound --fail-on-not-installed --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --exclude-prerelease --stop-on-first-package-failure --use-remembered-options --ignore-remembered-options --skip-when-not-installed --install-if-not-installed --disable-package-repository-optimizations --pin"
+    uninstall = "-y -whatif --force-dependencies --remove-dependencies --all-versions --source='windowsfeatures' --version= --uninstall-arguments='' --override-arguments --not-silent --params='' --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --use-autouninstaller --skip-autouninstaller --fail-on-autouninstaller --ignore-autouninstaller-failure --stop-on-first-package-failure"
+    new       = "--template-name='' --output-directory='' --automaticpackage --version='' --maintainer='' packageversion='' maintainername='' maintainerrepo='' installertype='' url='' url64='' silentargs='' --use-built-in-template"
+    pack      = "--version='' --output-directory=''"
+    push      = "--source='' --api-key='' --timeout=''"
+    source    = "--name='' --source='' --user='' --password='' --priority= --bypass-proxy --allow-self-service"
+    config    = "--name='' --value=''"
+    feature   = "--name=''"
+    apikey    = "--source='' --api-key='' --remove"
+    export    = "--include-version-numbers --output-file-path=''"
+    template  = "--name=''"
+    cache     = "--expired"
 }
 
-try {
-  # if license exists
-  # add in pro/biz switches
+$commandOptions['find'] = $commandOptions['search']
+
+$licenseFile = "$env:ChocolateyInstall\license\chocolatey.license.xml"
+
+if (Test-Path $licenseFile) {
+    # Add pro-only commands
+    $script:chocoCommands = @(
+        $script:chocoCommands
+        'download'
+        'optimize'
+    )
+
+    $commandOptions.download = "--internalize --internalize-all-urls --ignore-dependencies --installed-packages --ignore-unfound-packages --resources-location='' --download-location='' --outputdirectory='' --source='' --version='' --prerelease --user='' --password='' --cert='' --certpassword='' --append-use-original-location --recompile --disable-package-repository-optimizations"
+    $commandOptions.sync = "--output-directory='' --id='' --package-id=''"
+    $commandOptions.optimize = "--deflate-nupkg-only --id=''"
+
+    # Add pro switches to commands that have additional switches on Pro
+    $proInstallUpgradeOptions = " --install-directory='' --package-parameters-sensitive='' --max-download-rate='' --install-arguments-sensitive='' --skip-download-cache --use-download-cache --skip-virus-check --virus-check --virus-positives-minimum='' --deflate-package-size --no-deflate-package-size --deflate-nupkg-only"
+
+    $commandOptions.install += $proInstallUpgradeOptions
+    $commandOptions.upgrade += $proInstallUpgradeOptions + " --exclude-chocolatey-packages-during-upgrade-all --include-chocolatey-packages-during-upgrade-all"
+    $commandOptions.new += " --build-package --use-original-location --keep-remote --url='' --url64='' --checksum='' --checksum64='' --checksumtype='' --pause-on-error"
+    $commandOptions.pin += " --note=''"
+
+    # Add Business-only commands and options if the license is a Business or Trial license
+    [xml]$xml = Get-Content -Path $licenseFile -ErrorAction Stop
+    $licenseType = $xml.license.type
+
+    if ('Business', 'BusinessTrial' -contains $licenseType) {
+
+        # Add business-only commands
+        $script:chocoCommands = @(
+            $script:chocoCommands
+            'support'
+            'sync'
+        )
+
+        $commandOptions.list += " --audit"
+        $commandOptions.uninstall += " --from-programs-and-features"
+        $commandOptions.new += " --file='' --file64='' --from-programs-and-features --remove-architecture-from-name --include-architecture-in-name"
+
+        # Add --use-self-service to commands that support it
+        $selfServiceCommands = 'list', 'find', 'search', 'info', 'install', 'upgrade', 'uninstall', 'pin', 'outdated', 'push', 'download', 'sync', 'optimize'
+        foreach ($command in $selfServiceCommands) {
+            $commandOptions.$command += ' --use-self-service'
+        }
+    }
 }
-catch {
+
+foreach ($key in @($commandOptions.Keys)) {
+    $commandOptions.$key += $allcommands
 }
+
+# Consistent ordering for commands so the added pro commands aren't weirdly out of order
+$script:chocoCommands = $script:chocoCommands | Sort-Object -Property { $_ -replace '[^a-z](.*$)', '$1--' }
 
 function script:chocoCommands($filter) {
     $cmdList = @()
     if (-not $global:ChocolateyTabSettings.AllCommands) {
-        $cmdList += $someCommands -like "$filter*"
-    } else {
+        $cmdList += $script:chocoCommands -like "$filter*"
+    }
+    else {
         $cmdList += (& $script:choco -h) |
             Where-Object { $_ -match '^  \S.*' } |
             ForEach-Object { $_.Split(' ', [StringSplitOptions]::RemoveEmptyEntries) } |
@@ -92,122 +133,134 @@ function script:chocoCommands($filter) {
 }
 
 function script:chocoLocalPackages($filter) {
-    if ($filter -ne $null -and $filter.StartsWith(".")) { return; } #file search
-    @(& $script:choco list $filter -lo -r --id-starts-with) | ForEach-Object { $_.Split('|')[0] }
+    if ($filter -and $filter.StartsWith(".")) {
+        return;
+    } #file search
+    @(& $script:choco list $filter -r --id-starts-with) | ForEach-Object { $_.Split('|')[0] }
 }
 
 function script:chocoLocalPackagesUpgrade($filter) {
-    if ($filter -ne $null -and $filter.StartsWith(".")) { return; } #file search
-    @('all|') + @(& $script:choco list $filter -lo -r --id-starts-with) | 
-      Where-Object { $_ -like "$filter*" } | 
-      ForEach-Object { $_.Split('|')[0] }
+    if ($filter -and $filter.StartsWith(".")) {
+        return;
+    } #file search
+    @('all|') + @(& $script:choco list $filter -r --id-starts-with) |
+        Where-Object { $_ -like "$filter*" } |
+        ForEach-Object { $_.Split('|')[0] }
 }
 
 function script:chocoRemotePackages($filter) {
-    if ($filter -ne $null -and $filter.StartsWith(".")) { return; } #file search
-    @('packages.config|') + @(& $script:choco search $filter --page='0' --page-size='30' -r --id-starts-with --order-by-popularity) | 
-      Where-Object { $_ -like "$filter*" } | 
-      ForEach-Object { $_.Split('|')[0] }
+    if ($filter -and $filter.StartsWith(".")) {
+        return;
+    } #file search
+    @('packages.config|') + @(& $script:choco search $filter --page='0' --page-size='30' -r --id-starts-with --order-by-popularity) |
+        Where-Object { $_ -like "$filter*" } |
+        ForEach-Object { $_.Split('|')[0] }
 }
 
 function Get-AliasPattern($exe) {
-  $aliases = @($exe) + @(Get-Alias | Where-Object { $_.Definition -eq $exe } | Select-Object -Exp Name)
+    $aliases = @($exe) + @(Get-Alias | Where-Object { $_.Definition -eq $exe } | Select-Object -Exp Name)
 
-  "($($aliases -join '|'))"
+    "($($aliases -join '|'))"
 }
 
 function ChocolateyTabExpansion($lastBlock) {
-  switch -regex ($lastBlock -replace "^$(Get-AliasPattern choco) ","") {
+    switch -regex ($lastBlock -replace "^$(Get-AliasPattern choco) ", "") {
 
-    # Handles uninstall package names
-    "^uninstall\s+(?<package>[^\.][^-\s]*)$" {
-      chocoLocalPackages $matches['package']
-    }
+        # Handles uninstall package names
+        "^uninstall\s+(?<package>[^\.][^-\s]*)$" {
+            chocoLocalPackages $matches['package']
+        }
 
-    # Handles install package names
-    "^(install)\s+(?<package>[^\.][^-\s]+)$" {
-      chocoRemotePackages $matches['package']
-    }
+        # Handles install package names
+        "^(install)\s+(?<package>[^\.][^-\s]+)$" {
+            chocoRemotePackages $matches['package']
+        }
 
-    # Handles upgrade / uninstall package names
-    "^upgrade\s+(?<package>[^\.][^-\s]*)$" {
-      chocoLocalPackagesUpgrade $matches['package']
-    }
+        # Handles upgrade / uninstall package names
+        "^upgrade\s+(?<package>[^\.][^-\s]*)$" {
+            chocoLocalPackagesUpgrade $matches['package']
+        }
 
-    # Handles list/search first tab
-    "^(list|search)\s+(?<subcommand>[^-\s]*)$" {
-      @('<filter>','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles list/search first tab
+        "^(list|search|find)\s+(?<subcommand>[^-\s]*)$" {
+            @('<filter>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles new first tab
-    "^(new)\s+(?<subcommand>[^-\s]*)$" {
-      @('<name>','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles new first tab
+        "^(new)\s+(?<subcommand>[^-\s]*)$" {
+            @('<name>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles pack first tab
-    "^(pack)\s+(?<subcommand>[^-\s]*)$" {
-      @('<PathtoNuspec>','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles pack first tab
+        "^(pack)\s+(?<subcommand>[^-\s]*)$" {
+            @('<PathtoNuspec>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles push first tab
-    "^(push)\s+(?<subcommand>[^-\s]*)$" {
-      @('<PathtoNupkg>','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles push first tab
+        "^(push)\s+(?<subcommand>[^-\s]*)$" {
+            @('<PathtoNupkg>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles source first tab
-    "^(source)\s+(?<subcommand>[^-\s]*)$" {
-      @('list','add','remove','disable','enable','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles source first tab
+        "^(source)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'add', 'remove', 'disable', 'enable', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles pin first tab
-    "^(pin)\s+(?<subcommand>[^-\s]*)$" {
-      @('list','add','remove','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles pin first tab
+        "^(pin)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'add', 'remove', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles feature first tab
-    "^(feature)\s+(?<subcommand>[^-\s]*)$" {
-      @('list','disable','enable','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
-    # Handles config first tab
-    "^(config)\s+(?<subcommand>[^-\s]*)$" {
-      @('list','get','set','unset','-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles feature first tab
+        "^(feature)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'disable', 'enable', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+        # Handles config first tab
+        "^(config)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'get', 'set', 'unset', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles template first tab
-    "^(template)\s+(?<subcommand>[^-\s]*)$" {
-        @('list', 'info', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-    }
+        # Handles template first tab
+        "^(template)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'info', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles more options after others
-    "^(?<cmd>$($commandOptions.Keys -join '|'))(?<currentArguments>.*)\s+(?<op>\S*)$" {
-      chocoCmdOperations $commandOptions $matches['cmd'] $matches['op'] $matches['currentArguments']
-    }
+        # Handles cache first tab
+        "^(cache)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'remove', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
 
-    # Handles choco <cmd> <op>
-    "^(?<cmd>$($commandOptions.Keys -join '|'))\s+(?<op>\S*)$" {
-      chocoCmdOperations $commandOptions $matches['cmd'] $matches['op']
-    }
+        # Handles more options after others
+        "^(?<cmd>$($commandOptions.Keys -join '|'))(?<currentArguments>.*)\s+(?<op>\S*)$" {
+            chocoCmdOperations $commandOptions $matches['cmd'] $matches['op'] $matches['currentArguments']
+        }
 
-    # Handles choco <cmd>
-    "^(?<cmd>\S*)$" {
-      chocoCommands $matches['cmd']
+        # Handles choco <cmd> <op>
+        "^(?<cmd>$($commandOptions.Keys -join '|'))\s+(?<op>\S*)$" {
+            chocoCmdOperations $commandOptions $matches['cmd'] $matches['op']
+        }
+
+        # Handles choco <cmd>
+        "^(?<cmd>\S*)$" {
+            chocoCommands $matches['cmd']
+        }
     }
-  }
 }
 
-$PowerTab_RegisterTabExpansion = if (Get-Module -Name powertab) { Get-Command Register-TabExpansion -Module powertab -ErrorAction SilentlyContinue }
-if ($PowerTab_RegisterTabExpansion)
-{
-  & $PowerTab_RegisterTabExpansion "choco" -Type Command {
-    param($Context, [ref]$TabExpansionHasOutput, [ref]$QuoteSpaces)  # 1:
+$PowerTab_RegisterTabExpansion = if (Get-Module -Name powertab) {
+    Get-Command Register-TabExpansion -Module powertab -ErrorAction SilentlyContinue
+}
+if ($PowerTab_RegisterTabExpansion) {
+    & $PowerTab_RegisterTabExpansion "choco" -Type Command {
+        param($Context, [ref]$TabExpansionHasOutput, [ref]$QuoteSpaces)  # 1:
 
-    $line = $Context.Line
-    $lastBlock = [System.Text.RegularExpressions.Regex]::Split($line, '[|;]')[-1].TrimStart()
-    $TabExpansionHasOutput.Value = $true
-    ChocolateyTabExpansion $lastBlock
-  }
+        $line = $Context.Line
+        $lastBlock = [System.Text.RegularExpressions.Regex]::Split($line, '[|;]')[-1].TrimStart()
+        $TabExpansionHasOutput.Value = $true
+        ChocolateyTabExpansion $lastBlock
+    }
 
-  return
+    return
 }
 
 if (Test-Path Function:\TabExpansion) {
@@ -219,18 +272,24 @@ function TabExpansion($line, $lastWord) {
 
     switch -regex ($lastBlock) {
         # Execute Chocolatey tab completion for all choco-related commands
-        "^$(Get-AliasPattern choco) (.*)" { ChocolateyTabExpansion $lastBlock }
+        "^$(Get-AliasPattern choco) (.*)" {
+            ChocolateyTabExpansion $lastBlock
+        }
 
         # Fall back on existing tab expansion
-        default { if (Test-Path Function:\TabExpansionBackup) { TabExpansionBackup $line $lastWord } }
+        default {
+            if (Test-Path Function:\TabExpansionBackup) {
+                TabExpansionBackup $line $lastWord
+            }
+        }
     }
 }
 
 # SIG # Begin signature block
-# MIIjfwYJKoZIhvcNAQcCoIIjcDCCI2wCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA3ID+iDcuzZo3I
-# 6lWvOPhuwIPXnL6Avz1iBv6KB/dXcaCCHXgwggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBUYRqiu988equo
+# St3XXe50/O/UDO+p+n58C0+jTp4WU6CCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -351,70 +410,70 @@ function TabExpansion($line, $lastWord) {
 # 4d0j/R0o08f56PGYX/sr2H7yRp11LB4nLCbbbxV7HhmLNriT1ObyF5lZynDwN7+Y
 # AN8gFk8n+2BnFqFmut1VwDophrCYoCvtlUG3OtUVmDG0YgkPCr2B2RP+v6TR81fZ
 # vAT6gt4y3wSJ8ADNXcL50CN/AAvkdgIm2fBldkKmKYcJRyvmfxqkhQ/8mJb2VVQr
-# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwDCCBKigAwIBAgIQDE1p
-# ckuU+jwqSj0pB4A9WjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
+# H4D6wPIOK+XW+6kvRBVK5xMOHds3OBqhK/bt1nz8MIIGwjCCBKqgAwIBAgIQBUSv
+# 85SdCDmmv9s/X+VhFjANBgkqhkiG9w0BAQsFADBjMQswCQYDVQQGEwJVUzEXMBUG
 # A1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0IFRydXN0ZWQg
-# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIyMDkyMTAwMDAw
-# MFoXDTMzMTEyMTIzNTk1OVowRjELMAkGA1UEBhMCVVMxETAPBgNVBAoTCERpZ2lD
-# ZXJ0MSQwIgYDVQQDExtEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMiAtIDIwggIiMA0G
-# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDP7KUmOsap8mu7jcENmtuh6BSFdDMa
-# JqzQHFUeHjZtvJJVDGH0nQl3PRWWCC9rZKT9BoMW15GSOBwxApb7crGXOlWvM+xh
-# iummKNuQY1y9iVPgOi2Mh0KuJqTku3h4uXoW4VbGwLpkU7sqFudQSLuIaQyIxvG+
-# 4C99O7HKU41Agx7ny3JJKB5MgB6FVueF7fJhvKo6B332q27lZt3iXPUv7Y3UTZWE
-# aOOAy2p50dIQkUYp6z4m8rSMzUy5Zsi7qlA4DeWMlF0ZWr/1e0BubxaompyVR4aF
-# eT4MXmaMGgokvpyq0py2909ueMQoP6McD1AGN7oI2TWmtR7aeFgdOej4TJEQln5N
-# 4d3CraV++C0bH+wrRhijGfY59/XBT3EuiQMRoku7mL/6T+R7Nu8GRORV/zbq5Xwx
-# 5/PCUsTmFntafqUlc9vAapkhLWPlWfVNL5AfJ7fSqxTlOGaHUQhr+1NDOdBk+lbP
-# 4PQK5hRtZHi7mP2Uw3Mh8y/CLiDXgazT8QfU4b3ZXUtuMZQpi+ZBpGWUwFjl5S4p
-# kKa3YWT62SBsGFFguqaBDwklU/G/O+mrBw5qBzliGcnWhX8T2Y15z2LF7OF7ucxn
-# EweawXjtxojIsG4yeccLWYONxu71LHx7jstkifGxxLjnU15fVdJ9GSlZA076XepF
-# cxyEftfO4tQ6dwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB
-# /wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwIAYDVR0gBBkwFzAIBgZngQwB
-# BAIwCwYJYIZIAYb9bAcBMB8GA1UdIwQYMBaAFLoW2W1NhS9zKXaaL3WMaiCPnshv
-# MB0GA1UdDgQWBBRiit7QYfyPMRTtlwvNPSqUFN9SnDBaBgNVHR8EUzBRME+gTaBL
-# hklodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRSU0E0
-# MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCBgDAk
-# BggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFgGCCsGAQUFBzAC
-# hkxodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRUcnVzdGVkRzRS
-# U0E0MDk2U0hBMjU2VGltZVN0YW1waW5nQ0EuY3J0MA0GCSqGSIb3DQEBCwUAA4IC
-# AQBVqioa80bzeFc3MPx140/WhSPx/PmVOZsl5vdyipjDd9Rk/BX7NsJJUSx4iGNV
-# CUY5APxp1MqbKfujP8DJAJsTHbCYidx48s18hc1Tna9i4mFmoxQqRYdKmEIrUPwb
-# tZ4IMAn65C3XCYl5+QnmiM59G7hqopvBU2AJ6KO4ndetHxy47JhB8PYOgPvk/9+d
-# EKfrALpfSo8aOlK06r8JSRU1NlmaD1TSsht/fl4JrXZUinRtytIFZyt26/+YsiaV
-# OBmIRBTlClmia+ciPkQh0j8cwJvtfEiy2JIMkU88ZpSvXQJT657inuTTH4YBZJwA
-# wuladHUNPeF5iL8cAZfJGSOA1zZaX5YWsWMMxkZAO85dNdRZPkOaGK7DycvD+5sT
-# X2q1x+DzBcNZ3ydiK95ByVO5/zQQZ/YmMph7/lxClIGUgp2sCovGSxVK05iQRWAz
-# gOAj3vgDpPZFR+XOuANCR+hBNnF3rf2i6Jd0Ti7aHh2MWsgemtXC8MYiqE+bvdgc
-# mlHEL5r2X6cnl7qWLoVXwGDneFZ/au/ClZpLEQLIgpzJGgV8unG1TnqZbPTontRa
-# mMifv427GFxD9dAq6OJi7ngE273R+1sKqHB+8JeEeOMIA11HLGOoJTiXAdI/Otrl
-# 5fbmm9x+LMz/F0xNAKLY1gEOuIvu5uByVYksJxlh9ncBjDGCBV0wggVZAgEBMIGG
-# MHIxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsT
-# EHd3dy5kaWdpY2VydC5jb20xMTAvBgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJl
-# ZCBJRCBDb2RlIFNpZ25pbmcgQ0ECEAq50xD7ISvojIGz0sLozlEwDQYJYIZIAWUD
-# BAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMx
-# DAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkq
-# hkiG9w0BCQQxIgQgt3oI/+GtTMEMY5o2wJ+SgfizBnHaQZIoePJ1087yfmcwDQYJ
-# KoZIhvcNAQEBBQAEggEAkr6a5E0/5hzQs/q38XvfiJ7R1eyS90IFftQN7ki3qiYP
-# X+yZtr1Cp8o05qkgSClv1hC7ONG2aM2fWxlU8MJa2lZcNuOofagu26mRl6y3Y9n+
-# v61w5F1Yl7buvdHl05B/fFch00rPbyaE/mmw7iy7yuhhW8jkp4Ipaqgfjf6xKs9I
-# mE3g+BTfWR+TbHg3CFbgIjpYd+4SneFf56ziAJ/b0Z6HIMDzC24g3jf/fep9BqEU
-# TBVVkZ+NgwpGiXRCtAGvfkLVWfUnOr+/DMvEkYPXTwF0V3DSHhm9eyJx78eln8HB
-# FsATS/CdHAd6QScMYHv9Xk/jVIX3kSxr3jIr1gwZ3aGCAyAwggMcBgkqhkiG9w0B
-# CQYxggMNMIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2Vy
-# dCwgSW5jLjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNI
-# QTI1NiBUaW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUD
-# BAIBBQCgaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-# Fw0yMzA1MTAxMDUzMThaMC8GCSqGSIb3DQEJBDEiBCDbEyyKs7gHH5fR5s1zElHW
-# yMhml3AjP8BTsWtI7k8nWDANBgkqhkiG9w0BAQEFAASCAgCgHMfvCTm+YQhHD9e+
-# jvH+bG9WSE3cvlpkzHHEi2EQM1vOon54kSOkLmjHnUf/E25WRjeE8bDR88KMS7IB
-# tDgPmDJAJhYQWUTXmTQ5zr0r8phrdt8AtULG22RFaEzloNZg6TggoK+MmT2EF2FV
-# cXLu0zATVTLjGiXl1SJrh/Bwt+scmr6dTZj2rpoA2SJVbgV/64XY35FjKyC3Hy5x
-# KQqfkX+uNGNkUnS4lqv50Tk+in1OQZV0ldoWpcceD6knAgYvYlP/gwJRXIVrhqIa
-# amaet5w/tqeNR8gTyVZWuj8ydfduqq13jBlwZZJByq0mW3BiBQ7TIiTKqY6G77hl
-# kRqgq4iS8T/34c5z5xbxEzVgNm7YF1y1g7VSs/5qMJVf4czzNw8oMPGOmc7vV/H2
-# Gwg2ok8TPFQc1HIUgUjU+vL+KcOx53EyyFEK7O24wGYsaRlmB6UVbATIdHWWyYlR
-# X6a7PFVgww2CFFco82ArRS5RuXCA12UF5sUX//Afw4uQABH/EcerccG0+eVP3ez0
-# IqykLMkJm7QOYbCF3addf1T6LgSIs4pjQjOuTybP48L0+3KlKLA0xDcEpmTdzBG4
-# jwDOn/4ysS6lXkGhcLLyttOH5lPIxriyrp3BIBtE7xYNpFDYPZRD3zRVuvPjtbvf
-# Osrw6jCgyPX5SdqRL0bhmNnK9Q==
+# RzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBMB4XDTIzMDcxNDAwMDAw
+# MFoXDTM0MTAxMzIzNTk1OVowSDELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMSAwHgYDVQQDExdEaWdpQ2VydCBUaW1lc3RhbXAgMjAyMzCCAiIw
+# DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKNTRYcdg45brD5UsyPgz5/X5dLn
+# XaEOCdwvSKOXejsqnGfcYhVYwamTEafNqrJq3RApih5iY2nTWJw1cb86l+uUUI8c
+# IOrHmjsvlmbjaedp/lvD1isgHMGXlLSlUIHyz8sHpjBoyoNC2vx/CSSUpIIa2mq6
+# 2DvKXd4ZGIX7ReoNYWyd/nFexAaaPPDFLnkPG2ZS48jWPl/aQ9OE9dDH9kgtXkV1
+# lnX+3RChG4PBuOZSlbVH13gpOWvgeFmX40QrStWVzu8IF+qCZE3/I+PKhu60pCFk
+# cOvV5aDaY7Mu6QXuqvYk9R28mxyyt1/f8O52fTGZZUdVnUokL6wrl76f5P17cz4y
+# 7lI0+9S769SgLDSb495uZBkHNwGRDxy1Uc2qTGaDiGhiu7xBG3gZbeTZD+BYQfvY
+# sSzhUa+0rRUGFOpiCBPTaR58ZE2dD9/O0V6MqqtQFcmzyrzXxDtoRKOlO0L9c33u
+# 3Qr/eTQQfqZcClhMAD6FaXXHg2TWdc2PEnZWpST618RrIbroHzSYLzrqawGw9/sq
+# hux7UjipmAmhcbJsca8+uG+W1eEQE/5hRwqM/vC2x9XH3mwk8L9CgsqgcT2ckpME
+# tGlwJw1Pt7U20clfCKRwo+wK8REuZODLIivK8SgTIUlRfgZm0zu++uuRONhRB8qU
+# t+JQofM604qDy0B7AgMBAAGjggGLMIIBhzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0T
+# AQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAgBgNVHSAEGTAXMAgGBmeB
+# DAEEAjALBglghkgBhv1sBwEwHwYDVR0jBBgwFoAUuhbZbU2FL3MpdpovdYxqII+e
+# yG8wHQYDVR0OBBYEFKW27xPn783QZKHVVqllMaPe1eNJMFoGA1UdHwRTMFEwT6BN
+# oEuGSWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNFJT
+# QTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcmwwgZAGCCsGAQUFBwEBBIGDMIGA
+# MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wWAYIKwYBBQUH
+# MAKGTGh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRH
+# NFJTQTQwOTZTSEEyNTZUaW1lU3RhbXBpbmdDQS5jcnQwDQYJKoZIhvcNAQELBQAD
+# ggIBAIEa1t6gqbWYF7xwjU+KPGic2CX/yyzkzepdIpLsjCICqbjPgKjZ5+PF7SaC
+# inEvGN1Ott5s1+FgnCvt7T1IjrhrunxdvcJhN2hJd6PrkKoS1yeF844ektrCQDif
+# XcigLiV4JZ0qBXqEKZi2V3mP2yZWK7Dzp703DNiYdk9WuVLCtp04qYHnbUFcjGnR
+# uSvExnvPnPp44pMadqJpddNQ5EQSviANnqlE0PjlSXcIWiHFtM+YlRpUurm8wWkZ
+# us8W8oM3NG6wQSbd3lqXTzON1I13fXVFoaVYJmoDRd7ZULVQjK9WvUzF4UbFKNOt
+# 50MAcN7MmJ4ZiQPq1JE3701S88lgIcRWR+3aEUuMMsOI5ljitts++V+wQtaP4xeR
+# 0arAVeOGv6wnLEHQmjNKqDbUuXKWfpd5OEhfysLcPTLfddY2Z1qJ+Panx+VPNTwA
+# vb6cKmx5AdzaROY63jg7B145WPR8czFVoIARyxQMfq68/qTreWWqaNYiyjvrmoI1
+# VygWy2nyMpqy0tg6uLFGhmu6F/3Ed2wVbK6rr3M66ElGt9V/zLY4wNjsHPW2obhD
+# LN9OTH0eaHDAdwrUAuBcYLso/zjlUlrWrBciI0707NMX+1Br/wd3H3GXREHJuEbT
+# bDJ8WC9nR2XlG3O2mflrLAZG70Ee8PBf4NvZrZCARK+AEEGKMYIFXTCCBVkCAQEw
+# gYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE
+# CxMQd3d3LmRpZ2ljZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1
+# cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
+# ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
+# AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
+# CSqGSIb3DQEJBDEiBCDfDL7B2AfWKpg9Nm9hr3XQxwhcpaxsNKBN602KuTlzrzAN
+# BgkqhkiG9w0BAQEFAASCAQAT2tnkIXzzvVcUQjPuIL2EmvsIrXe8khyzf0bQI34M
+# xaDI//YPGxrb3JlYXSMMuwFm3dvdqICSS47Uftc0UmqsGeJrP7q9SyrJw5wZXT+L
+# vxbPZMZ7GzkAOlC8pyKl84Uobxlm417n6fy1CVZfEto0nso+LcFf4wj3EzXkN1aC
+# 4K1NMh5VZsTFb3f9ZmY0XL+xKw2RhXifm6A4ZnXR9ERlMWITxthp6TZ0QsRTE7oD
+# mh0ysL55HNfrkBzOJOB5S3DToYU6Ce9o3OrAEa2muIk5FWyBa5uxlGySfu05YAdF
+# JHrKk53XZhX89egcBIHadwyz3iAR0/9XwZRoXggNn5j8oYIDIDCCAxwGCSqGSIb3
+# DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
+# ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
+# U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
+# ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
+# MQ8XDTIzMDgwODA3MDgyOVowLwYJKoZIhvcNAQkEMSIEIMrXTSMRBj55U8CqGS9g
+# gCqJp7cRtLK1ouUvplAvAINuMA0GCSqGSIb3DQEBAQUABIICAAqe2Om4svhexdTh
+# 7SXsjKaePSy1ayltCN580ETdW17W4USX6YvQOOtM5E7FoxYjyPvKHnoDFNg8vHqS
+# uy8jPwCJ1YQzsKvv/FeCVbp2Pi1M7gpgKOERy5MV9Uov+atq15+KccwOnUHtFXiH
+# Bqh80SBkT79drN6QiFdD/w5xjhLnhjD4snBGuPSooD0k+Vqbz2znd9r63o7qyi8/
+# QbQ+NkQK8G/mvJGA0PQC5UCpmlp9DSDQd4v9ano6eZo6mC9aaL8euoBgVGVfdffL
+# 2p5xHsrel6652qLQFVBhdxxGfeaFFXpwiklKzmUN8NmqcN+orr+O2J1ug0xcrbIH
+# kfeSN9omj9dSzbSgG823d5jkrK261cAHsAzJTcftlz/k0QvdgzkPLaHGbvg01t6X
+# RtRPwJjFO1dHWLRq6UMIfvpi4RdpKwLA8Mpg7QZC12Fsi8/F6lF11PZILrtLCQIN
+# ahxK/iLozdmu+vYDCxyh5ogaGMCi1bZKm0aC/0BATjgtzcSe8tmgcltHLiZtd+lq
+# ohr44CXTjz3uAscz126fgyk76NeOw7UC9xWc+DsHKIMgOsU8PETSNbl9V2SiMwz7
+# VP0hGC5YyyES9PM9aiS8+agDbUR1iEkFrOScbWgDF6G3L85u48sGbV8soIxQYWBU
+# JhYDXzHF0UmLrcq1Tlq+bOWGAL36
 # SIG # End signature block

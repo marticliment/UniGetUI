@@ -1,5 +1,4 @@
-﻿# Copyright © 2017 - 2021 Chocolatey Software, Inc.
-# Copyright © 2011 - 2017 RealDimensions Software, LLC
+﻿# Copyright © 2022 Chocolatey Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,58 +13,60 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Function Format-FileSize {
+function Get-ChocolateyConfigValue {
     <#
 .SYNOPSIS
-DO NOT USE. Not part of the public API.
+Retrieve a value from the Chocolatey Configuration file
 
 .DESCRIPTION
-Formats file size into a human readable format.
+This function will attempt to retrieve the path according to the specified Path Type
+to a valid location that can be used by maintainers in certain scenarios.
 
 .NOTES
-This function is not part of the API.
+Available in 2.1.0+
 
 .INPUTS
 None
 
 .OUTPUTS
-Returns a string representation of the file size in a more friendly
-format based on the passed in bytes.
+This function outputs the value of the specified configuration key.
+If the key is not found, there is no output.
 
-.PARAMETER Size
-The size of a file in bytes.
+.PARAMETER configKey
+The name of the configuration value that should be looked up.
 
 .PARAMETER IgnoredArguments
 Allows splatting with arguments that do not apply. Do not use directly.
 
 .EXAMPLE
-Format-FileSize -Size $fileSizeBytes
-
-.LINK
-Get-WebFile
+>
+$value = Get-ChocolateyConfigValue -configKey 'cacheLocation'
 #>
-    param (
-        [Parameter(Mandatory = $true, Position = 0)][double] $size,
-        [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
+    param(
+        [parameter(Mandatory = $true)]
+        [string] $configKey,
+        [parameter(ValueFromRemainingArguments = $true)]
+        [Object[]] $ignoredArguments
     )
 
-    # Do not log function call, it interrupts the single line download progress output.
-
-    Foreach ($unit in @('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB')) {
-        If ($size -lt 1024) {
-            return [string]::Format("{0:0.##} {1}", $size, $unit)
-        }
-        $size /= 1024
+    try {
+        $installLocation = Get-ChocolateyPath -pathType 'InstallPath'
+        $configPath = Join-Path $installLocation "config\chocolatey.config"
+        [xml]$configContents = Get-Content -Path $configPath
+        return $configContents.chocolatey.config.add |
+                Where-Object { $_.key -eq $configKey } |
+                Select-Object -ExpandProperty value
     }
-
-    return [string]::Format("{0:0.##} YB", $size)
+    catch {
+        Write-Error "Unable to read config value '$configKey' with error" -Exception $_
+    }
 }
 
 # SIG # Begin signature block
 # MIIjgQYJKoZIhvcNAQcCoIIjcjCCI24CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB8WmB66cZF2sNK
-# elJsU0aUBPtLFfLjt61aqg5edHmrHKCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAMDWjN41Z5K4a6
+# gDUOWVq2Ld90gTRCfeauAwu9YMKzSaCCHXowggUwMIIEGKADAgECAhAECRgbX9W7
 # ZnVTQ7VvlVAIMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0xMzEwMjIxMjAwMDBa
@@ -228,28 +229,28 @@ Get-WebFile
 # cmVkIElEIENvZGUgU2lnbmluZyBDQQIQCrnTEPshK+iMgbPSwujOUTANBglghkgB
 # ZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJ
 # AzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8G
-# CSqGSIb3DQEJBDEiBCBzzu8xXYC/ZptEe1rSoKs1NYPLlnIJoojnV3m1dXQ8JzAN
-# BgkqhkiG9w0BAQEFAASCAQAgFstcGC+lclvh3gb8J3pQ/szvPBmDnpy9Cw4VJog9
-# 2/GOA6sRaQR1T9M9fs8SXKCpPGQq7xfeiZm3fmuo18+QPtmAYud/NUKVUE2j/sy2
-# EbvgdpFb/Qu1Ykb5nU/pdFUu8xWQIlEuojY6YWvVnIGTFixLRGMP+MarHzamlAv0
-# oo8vO9wcGK5khnOnO+44/ul8e4dPYFCxXasyZL+fRwCM4Df4YD4jyPNqVB228grc
-# WRphjEuNXmUiwkusRP5gY61fizLgTL12WePt7GM4F/VugldTro4UdP/6/wtXDi8O
-# X1EvFDtnPmYImH8aQaL9WTE4uG2f/2RTpTnsV8Ng/TTroYIDIDCCAxwGCSqGSIb3
+# CSqGSIb3DQEJBDEiBCAjQhqg/D+qa0SYOt+y338jMX62U/P8vqQDXVtj/2qCADAN
+# BgkqhkiG9w0BAQEFAASCAQCRWfk3u4iBE3chaOgT1JfvAqT29F5zZSlrXMn1qCjm
+# POJ9i8yExe0PmF7oO2Cy3m8JCUqawIG2SEfo4Po9IFYeaVGQcreviZIGedWmxH+B
+# 1Ts7CYiTZwY25jMjbLMVc07RxS3MQHxcidkb700BnJC6WF5o+DxSPIogtWFO5SR1
+# BNovceVgqObQZSLe4uUNe/d7S3vtkbzL0ksbG6fWDlmHjuixoWQRFu77YbW8f6P5
+# ZMLNJGttq23XttATtsJ3gv2AfqMOjsuV65fAy7eVQa2kCAyd+Pb8RbFvW8CosY4A
+# BVEyEojXO+3PdeiPV8XKntFHvFGf6YDJrRdUjehmhJR5oYIDIDCCAxwGCSqGSIb3
 # DQEJBjGCAw0wggMJAgEBMHcwYzELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDkRpZ2lD
 # ZXJ0LCBJbmMuMTswOQYDVQQDEzJEaWdpQ2VydCBUcnVzdGVkIEc0IFJTQTQwOTYg
 # U0hBMjU2IFRpbWVTdGFtcGluZyBDQQIQBUSv85SdCDmmv9s/X+VhFjANBglghkgB
 # ZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
-# MQ8XDTIzMDgwODA3MDgyOVowLwYJKoZIhvcNAQkEMSIEIGQXuU0lpO3GLS3FUB91
-# tXmnJHifAhvJOCRv8k3J5zaDMA0GCSqGSIb3DQEBAQUABIICAIcBoFtLzDC1jKVf
-# TO3yXVIK0SVqzH4zLXxvWh7+GwG7BoAU7GJbfkEsDPGnfJmToVwrrVH4LWKzGvTK
-# xKIXxOcSwcFpCCPiubwV/3XaktSUmv55k3CPWDUvo4/rlKBgO6yjsi8ndKC7Gdps
-# 96uxc5wZkC9GhZhExgbCT530rIjjItJ2/fj8zWM45XdcPrVzmSchUVcHQ3o1H56L
-# oM2aI3e8eJ5JCOrazQony5UYNtKe5Ic27dIGe5ySrOA6mcrxYIi2C6MJSHiO+fYE
-# WfnJiYSf8jPqUvH5h+VsqH2xTOMQAolpVg8D35wjEWlo1HKLZ8pmdUAsqYcRFHN3
-# rjQrY61BLtBhWA6LntcU9jYtMQfT6jKY3u09FBFW8RdkI8XK5W8FlIWvtFT2E1GL
-# tIDtiep8eJqg+idFzkO2/55EY0dfYBisJKunyZUPGhesiV+prd2IZ5TrvjLN/T63
-# 6VLXIfU76ZNKnu+LmQ/IbHJaQECirk95/b9ItUxuifOIo2WSXkS57dcMt95VOQri
-# yRCxCE62O8OZvXPRrdYL5a7jmlYK/x/RMD8ZICx4cH71fUzwsm2ihRkWiOt1AoWH
-# bYz3tReE3q/B5Eej/nC4EvrcaEoM2j/WlH9QBjI9mELNbm3MCNN+gtWBEjUuGZ6K
-# ZLzKWQjL+oxFpX+/7wRK3edb5H+2
+# MQ8XDTIzMDgwODA3MDgyOVowLwYJKoZIhvcNAQkEMSIEILwVdKVIsoiqT2OD4+g7
+# ydodrbg+SNdHMQsFjB/vPSyIMA0GCSqGSIb3DQEBAQUABIICAHcG5W1NsSHkZbCN
+# bYWQUZ9OL7iHga8qGPkNHsNwumhhx3zXm+1GW3D8C7Q8ALZSHCBty7vMYNH3exXV
+# JLTnz/ITBuxTWTMglJhrYT9f07I6kXn5/RDei3f16ldMjIaOAKjrs+28P6bqXQf3
+# 9V7/P4ab3oEmy/R+lq0NM+WYO4T2VQnYDo1V1X8qwSs8WhYL9X629iDvJIvsl6Rr
+# 1Sl2mfSpa86aVLeARhxBPGP9ZHiLYDDkqsVlNlWYuwhgg7dJDHZ+L/A+lTaqw6gF
+# n5NSiJV/wWT6POyT/dOZ/Gx2yK8LaF33OmoEwmVEM0AALS/CiViZ8fBC9eFstUUT
+# S0CtA9om0FF8OMuwn6Qm2vcmAq0PAiFL6efgKoWfdtshkEdg3UZ0i9Xxh05f0rL4
+# 8Y2xlmzLFmHsjCdPpNtrcYi48zr57Zj3hbBh8oNYf0x8jSRz7m6ocULv6rOMQ4tv
+# rnum3ExQTyUcv0OvoGYlbumCOerY+w9bj4dxGx/mwK/4Z1cXUeARcHErwV4agbqh
+# YMrAro5nOr5uzhn8fdk+jY0CLLg4JydGDtYTtZyqYAeuRI7dldo1SOFiUKAbg26M
+# lM9OmtDG4pBwodPXpck+EY8JW7mTWImZ64C36C5Mvd8Xxx6rsm+95FqVZWfQ9W7W
+# BIHiVUgoTjjfMfeE6Jw4Z4XvgkAr
 # SIG # End signature block
