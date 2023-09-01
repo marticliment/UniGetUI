@@ -11,7 +11,7 @@ from .PackageClasses import *
 from .sampleHelper import *
 
 
-class ScoopPackageManager(SamplePackageManager):
+class ScoopPackageManager(DynamicLoadPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -41,90 +41,44 @@ class ScoopPackageManager(SamplePackageManager):
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
-
-    def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
+            
+    def getPackagesForQuery(self, query: str) -> list[Package]:
         f"""
-        Will retieve the cached packages for the package manager {self.NAME} in the format of a list[Package] object.
-        If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
-        Finally, it will start a background cacher thread.
+        Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
-        print(f"🔵 Starting {self.NAME} search for available packages")
+        print(f"🔵 Starting {self.NAME} search for dynamic packages")
         try:
+            if shutil.which("scoop-search") == None:
+                print("🟡 Installing scoop-search, that was missing...")
+                Command = self.EXECUTABLE + " install scoop-search"
+                p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+                p.wait()
             packages: list[Package] = []
-            if os.path.exists(self.CACHE_FILE):
-                f = open(self.CACHE_FILE, "r", encoding="utf-8", errors="ignore")
-                content = f.read()
-                f.close()
-                if content != "":
-                    print(f"🟢 Found valid, non-empty cache file for {self.NAME}!")
-                    for line in content.split("\n"):
-                        package = line.split(",")
-                        if len(package) >= 4 and not package[0] in self.BLACKLISTED_PACKAGE_NAMES and not package[1] in self.BLACKLISTED_PACKAGE_IDS and not package[2] in self.BLACKLISTED_PACKAGE_VERSIONS:
-                            packages.append(Package(package[0], package[1], package[2], package[3], Scoop))
-                    Thread(target=self.cacheAvailablePackages, daemon=True, name=f"{self.NAME} package cacher thread").start()
-                    print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-                    return packages
-                else:
-                    print(f"🟠 {self.NAME} cache file exists but is empty!")
-                    if second_attempt:
-                        print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
-                        return []
-                    self.cacheAvailablePackages()
-                    return self.getAvailablePackages(second_attempt = True)
-            else:
-                print(f"🟡 {self.NAME} cache file does not exist, creating cache forcefully and returning new package list")
-                if second_attempt:
-                    print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
-                    return []
-                self.cacheAvailablePackages()
-                return self.getAvailablePackages(second_attempt = True)
+            p = subprocess.Popen(f"scoop-search {query}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------"+self.NAME
+            bucket = ""
+            while p.poll() is None:
+                line: str = str(p.stdout.readline(), "utf-8", errors="ignore")
+                rawoutput += "\n"+line
+                if line:
+                    if line.startswith("'"):
+                        bucket = line.split("'")[1]
+                    elif line.startswith("    "):
+                        package = list(filter(None, line.strip().split(" ")))
+                        if len(package) >= 2:
+                            name = formatPackageIdAsName(package[0])
+                            id = package[0]
+                            version = package[1].replace("(", "").replace(")", "")
+                            source = f'{self.NAME}: {bucket}'
+                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(Package(name, id, version, source, Scoop))
+            print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
+            globals.PackageManagerOutput += rawoutput
+            return packages
         except Exception as e:
             report(e)
             return []
 
-    def cacheAvailablePackages(self) -> None:
-        """
-        INTERNAL METHOD
-        Will load the available packages and write them into the cache file
-        """
-        print(f"🔵 Starting {self.NAME} package caching")
-        try:
-            p = subprocess.Popen(f"{self.NAME} search", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
-            ContentsToCache = ""
-            DashesPassed = False
-            while p.poll() is None:
-                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                if line:
-                    if not DashesPassed:
-                        if "----" in line:
-                            DashesPassed = True
-                    else:
-                        package = list(filter(None, line.split(" ")))
-                        name = formatPackageIdAsName(package[0])
-                        id = package[0]
-                        version = package[1]
-                        try:
-                            source = f"Scoop: {package[2].strip()}"
-                        except IndexError:
-                            source = "Scoop"
-                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                            ContentsToCache += f"{name},{id},{version},{source}\n"
-            AlreadyCachedPackages = ""
-            try:
-                if os.path.exists(self.CACHE_FILE):
-                    f = open(self.CACHE_FILE, "r")
-                    AlreadyCachedPackages = f.read()
-                    f.close()
-            except Exception as e:
-                report(e)
-            for line in AlreadyCachedPackages.split("\n"):
-                if line.split(",")[0] not in ContentsToCache:
-                    ContentsToCache += line + "\n"
-            with open(self.CACHE_FILE, "w") as f:
-                f.write(ContentsToCache)
-            print(f"🟢 {self.NAME} packages cached successfuly")
-        except Exception as e:
-            report(e)
 
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""

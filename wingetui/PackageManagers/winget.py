@@ -71,7 +71,6 @@ class WingetPackageManager(DynamicPackageManager):
             versionPosition: int = 0
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                print(line)
                 if line:
                     if not hasShownId:
                         if " Id " in line:

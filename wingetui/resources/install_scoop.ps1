@@ -14,4 +14,6 @@ If (-Not (Get-Command git -ErrorAction SilentlyContinue)) {
     scoop install git
 }
 
+scoop install scoop-search
+
 Write-Output "Done!"
