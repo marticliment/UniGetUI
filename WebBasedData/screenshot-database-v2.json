@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7611
+        "done": 7615
     },
     "icons_and_screenshots": {
         "115": {
@@ -3902,7 +3902,7 @@
             "images": []
         },
         "spacedeskdriver-server": {
-            "icon": "",
+            "icon": "https://i.ibb.co/tCBfBrV/img.png",
             "images": []
         },
         "cloudcontinuityagent": {
@@ -16039,11 +16039,11 @@
             "images": []
         },
         "calibre": {
-            "icon": "",
+            "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759046134149253/Calibre_logo_3.png",
             "images": []
         },
         "calibre-portable": {
-            "icon": "",
+            "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759046134149253/Calibre_logo_3.png",
             "images": []
         },
         "champ-r": {
@@ -24545,7 +24545,7 @@
             "images": []
         },
         "qbittorrent-enhanced": {
-            "icon": "",
+            "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759395762950295/New_qBittorrent_Logo.png",
             "images": []
         },
         "qgroundcontrol": {

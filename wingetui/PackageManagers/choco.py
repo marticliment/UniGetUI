@@ -35,7 +35,7 @@ class ChocoPackageManager(SamplePackageManager):
 
     BLACKLISTED_PACKAGE_NAMES =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
     BLACKLISTED_PACKAGE_IDS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
-    BLACKLISTED_PACKAGE_VERSIONS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument"]
+    BLACKLISTED_PACKAGE_VERSIONS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
 
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
@@ -250,7 +250,7 @@ class ChocoPackageManager(SamplePackageManager):
             output = []
             while p.poll() is None:
                 line = p.stdout.readline().strip()
-                if " " in line:
+                if b" " in line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
             for line in output:
                 details.Versions.append(line.split(" ")[1])

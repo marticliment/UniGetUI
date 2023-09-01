@@ -910,6 +910,9 @@ try:
             margin-left: 0px;
             margin-right: 0px;
         }}
+        QHeaderView {{
+            padding-right: 0px;
+        }}
         QHeaderView::section {{
             background-color: transparent;
             border-radius: 6px;
@@ -972,11 +975,13 @@ try:
             border-bottom-left-radius: 6px;
             border-left: 1px solid #1f1f1f;
             margin-left: 0px;
+            padding-left: 0px;
         }}
         QTreeWidget::item:last {{
             border-top-right-radius: 6px;
             border-bottom-right-radius: 6px;
             border-right: 1px solid #1f1f1f;
+            padding-right: 0px;
             margin-right: 0px;
         }}
         QTreeWidget::item:first:selected {{
@@ -1666,6 +1671,9 @@ try:
             margin-left: 0px;
             margin-right: 0px;
         }}
+        QHeaderView {{
+            padding-right: 0px;
+        }}
         QHeaderView::section {{
             background-color: transparent;
             border-radius: 6px;
@@ -2171,7 +2179,6 @@ try:
         a.running = False
         sys.exit(0)
     except (ModuleNotFoundError, ImportError, FileNotFoundError) as e:
-        # Yes, having nested try clauses is not the best, but I want to make sure this Except clause does not cause crashes.
         import traceback
         tb = traceback.format_exception(*sys.exc_info())
         tracebacc = ""

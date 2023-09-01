@@ -334,10 +334,10 @@ class DynamicScrollArea(QWidget):
 
     def removeItem(self, item: QWidget):
         try:
-            self.items.remove(item)
+            if item in self.items:
+                self.items.remove(item)
         except ValueError as e:
             report(e)
-        print(self.items)
         item.setVisible(False)
         self.vlayout.removeWidget(item)
         self.rss()
@@ -347,7 +347,6 @@ class DynamicScrollArea(QWidget):
 
     def addItem(self, item: QWidget):
         self.items.append(item)
-        print(self.items)
         self.vlayout.addWidget(item)
         self.itemCount = len(self.items)
         self.setEnabled(True)
@@ -395,6 +394,7 @@ class PushButtonWithAction(QPushButton):
         self.action.triggered.connect(self.click)
 
 class CustomComboBox(QComboBox):
+    disableScrolling = False
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -407,6 +407,13 @@ class CustomComboBox(QComboBox):
         v = self.view().window()
         ApplyMenuBlur(v.winId().__int__(), v)
         return super().showEvent(event)
+    
+    def wheelEvent(self, e: QWheelEvent) -> None:
+        if self.disableScrolling:
+            e.ignore()
+            return False
+        else:
+            return super().wheelEvent(e)
 
     def dg(self):
         pass
@@ -894,6 +901,7 @@ class SectionComboBox(QWidget):
         self.buttonOn = buttonEnabled
         self.setAttribute(Qt.WA_StyledBackground)
         self.combobox = CustomComboBox(self)
+        self.combobox.disableScrolling = True
         self.combobox.setFixedWidth(250)
         self.setObjectName("stBtn")
         self.restartButton = QPushButton("Restart ElevenClock", self)
@@ -1066,15 +1074,14 @@ class ToastNotification(QObject):
         Shows a toast notification with the given information
         """
         if self.description:
-            template = windows_toasts.toast_types.ToastText4()
+            template = windows_toasts.Toast()
         else:
-            template = windows_toasts.toast_types.ToastText2()
-        template.SetHeadline(self.title)
+            template = windows_toasts.Toast()
+        template.text_fields = [self.title]
         if self.description:
-            template.SetFirstLine(self.description)
+            template.text_fields = [self.title, self.description]
         if self.smallText:
-            template.SetSecondLine(self.smallText)
-        #template.SetDuration(self.showTime)
+            template.text_fields = [self.title, self.description, self.smallText]
         for action in self.actionsReference.keys():
             actionText = self.actionsReference[action]
             if not actionText in self.addedActions:

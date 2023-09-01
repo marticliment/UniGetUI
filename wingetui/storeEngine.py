@@ -48,7 +48,6 @@ class PackageInstallerWidget(QWidget):
         self.liveOutputWindowWindow.resize(700, 400)
         self.liveOutputWindowWindow.setWindowTitle(_("Live command-line output"))
         self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText()+"\n"+s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
-        ApplyMica(self.liveOutputWindowWindow.winId(), MICAMODE.DARK)
 
         if getSettings(f"AlwaysElevate{self.Package.PackageManager.NAME}"):
             print(f"🟡 {self.Package.PackageManager.NAME} installation automatically elevated!")
@@ -152,6 +151,9 @@ class PackageInstallerWidget(QWidget):
         print(f"🟢 Waiting for install permission... title={self.Package.Name}, id={self.Package.Id}, installId={self.installId}")
         print("🔵 Given package:", package)
         print("🔵 Installation options:", options)
+        
+        ApplyMica(self.liveOutputWindowWindow.winId(), MICAMODE.DARK)
+
 
     def startInstallation(self) -> None:
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
@@ -396,10 +398,13 @@ class PackageInstallerWidget(QWidget):
         return super().resizeEvent(event)
 
     def updateProgressbarSize(self):
-        pos = self.liveOutputButton.pos()
-        pos.setY(pos.y()+self.liveOutputButton.height()-2)
-        self.progressbar.move(pos)
-        self.progressbar.setFixedWidth(self.liveOutputButton.width())
+        try:
+            pos = self.liveOutputButton.pos()
+            pos.setY(pos.y()+self.liveOutputButton.height()-2)
+            self.progressbar.move(pos)
+            self.progressbar.setFixedWidth(self.liveOutputButton.width())
+        except AttributeError as e:
+            print("AttributeError on PackageInstallerWidget.updateProgressbarSize")
 
 class PackageUpdaterWidget(PackageInstallerWidget):
 

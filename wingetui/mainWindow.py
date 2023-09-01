@@ -36,7 +36,12 @@ class RootWindow(QMainWindow):
             assert (len(rs)==4), "Invalid window geometry format"
             geometry = QRect(int(rs[0]), int(rs[1]), int(rs[2]), int(rs[3]))
             if QApplication.primaryScreen().availableVirtualGeometry().contains(geometry):
-                self.setGeometry(geometry)
+                self.move(geometry.x(), geometry.y())
+                if geometry.width() == self.screen().geometry().width() and geometry.x() == self.screen().geometry().x() and \
+                   geometry.height() == (self.screen().geometry().height()-71) and geometry.y() == (self.screen().geometry().y()+22):
+                       self.setWindowState(Qt.WindowState.WindowMaximized)
+                else:
+                    self.setGeometry(geometry)
         except Exception as e:
             report(e)
         self.loadWidgets()
@@ -112,6 +117,10 @@ class RootWindow(QMainWindow):
         self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
+        
+        helpAction = QAction(QIcon(getMedia("help")), _("Help and documentation"), self)
+        helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        self.extrasMenu.addAction(helpAction)
 
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)

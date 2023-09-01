@@ -143,6 +143,8 @@ class ScoopPackageManager(SamplePackageManager):
                     if not DashesPassed:
                         if "----" in line:
                             DashesPassed = True
+                    elif "Held package" in line:
+                        continue
                     else:
                         package = list(filter(None, line.split(" ")))
                         if len(package) >= 3:
@@ -231,8 +233,7 @@ class ScoopPackageManager(SamplePackageManager):
                     details.Description = "\n".join(data["description"])
                 else:
                     details.Description = data["description"]
-                    
-            
+            details.Description = ConvertMarkdownToHtml(details.Description)
 
             if "version" in data.keys():
                 details.Versions.append(data["version"])
@@ -255,6 +256,8 @@ class ScoopPackageManager(SamplePackageManager):
                     details.ReleaseNotes = "\n".join(data["notes"])
                 else:
                     details.ReleaseNotes = data["notes"]
+            details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
+
             if "license" in data.keys():
                 details.License = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
                 details.LicenseURL = unknownStr if type(data["license"]) != dict else data["license"]["url"]
