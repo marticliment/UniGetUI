@@ -463,10 +463,7 @@ class WingetPackageManager(DynamicPackageManager):
         """
         print(f"🔵 Starting get info for {package.Id} on {self.NAME}")
         if "…" in package.Id:
-            newId = self.getFullPackageId(package.Id)
-            if newId:
-                print(f"🔵 Replacing ID {package.Id} for {newId}")
-                package.Id = newId
+            self.updatePackageId(package)
         details = PackageDetails(package)
         try:
             details.Scopes = [_("Current user"), _("Local machine")]
@@ -621,7 +618,7 @@ class WingetPackageManager(DynamicPackageManager):
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
-            package.Id = self.getFullPackageId(package.Id)
+            self.updatePackageId(package)
         Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -632,7 +629,7 @@ class WingetPackageManager(DynamicPackageManager):
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
-            package.Id = self.getFullPackageId(package.Id)
+            self.updatePackageId(package)
         Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + ["--include-unknown"] + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -665,7 +662,7 @@ class WingetPackageManager(DynamicPackageManager):
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
-            package.Id = self.getFullPackageId(package.Id)
+            self.updatePackageId(package, installed=True)
         Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -690,24 +687,35 @@ class WingetPackageManager(DynamicPackageManager):
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
 
-    def getFullPackageId(self, id: str) -> tuple[str, str]:
-        p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--id", id.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+    def updatePackageId(self, package: Package, installed: bool = False) -> tuple[str, str]:
+        if not installed:
+            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--name", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+        else:
+            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "list", "--query", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         idSeparator = -1
-        print(f"🔵 Finding Id for {id}")
+        rawoutput = "\n\n"+" ".join(p.args)
+        print(f"🔵 Finding Id for {package.Name} with command {p.args}")
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
             if line:
-                if idSeparator != -1:
-                    if not b"---" in line:
-                        print(f"🔵 found Id", str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip())
-                        return str(line[idSeparator:], "utf-8", errors="ignore").split(" ")[0].strip()
-                else:
+                rawoutput += str(line, encoding='utf-8', errors="ignore")+"\n"
+                if idSeparator == -1:
                     l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","").split("\r")[-1]
                     if(" Id " in l):
                         idSeparator = len(l.split("Id")[0])
+                else:
+                    if not b"---" in line:
+                        newId = str(line, "utf-8", errors="ignore")[idSeparator:].split(" ")[0].strip()
+                        print(line, idSeparator)
+                        print(f"🔵 found Id", newId)
+                        package.Id = newId
+                        globals.PackageManagerOutput += rawoutput + "\n\n"
+                        return                
+                    
+        globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
-        return id
+        
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
