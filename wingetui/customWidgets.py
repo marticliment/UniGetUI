@@ -38,25 +38,25 @@ PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
 StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Winget,
     Scoop,
-    Choco
 ]
 
 StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Winget: False,
-    Scoop: False,
-    Choco: False
+    Scoop: False
 }
 
 DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
     Pip,
     Npm,
+    Choco,
     Winget # Microsoft Store source only
 ]
 
 DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Pip: False,
     Npm: False,
-    Winget: False  # Microsoft Store source only
+    Winget: False,  # Microsoft Store source only
+    Choco: False
 }
 
 class QLinkLabel(QLabel):
