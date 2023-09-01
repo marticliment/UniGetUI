@@ -417,7 +417,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                 signal.emit()
         except Exception as e:
             globals.componentStatus[f"{self.NAME}Found"] = False
-            globals.componentStatus[f"{self.NAME}Version"] = str(e)
+            globals.componentStatus[f"{self.NAME}Version"] = _("{pm} could not be found").format(pm=self.NAME)
             if signal:
                 signal.emit()
 
