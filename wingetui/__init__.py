@@ -363,7 +363,10 @@ try:
             def downloadPackagesMetadata(self):
                 try:
                     self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
-                    data = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json").read()
+                    url = "https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json"
+                    if getSettings("IconDataBaseURL"):
+                        url = getSettingsValue("iconDataBaseURL")
+                    data = urlopen(url).read()
                     try:
                         os.makedirs(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta"))
                     except FileExistsError:
