@@ -36,12 +36,10 @@ PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
 }
 
 StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
-    Winget,
     Scoop,
 ]
 
 StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
-    Winget: False,
     Scoop: False
 }
 
@@ -49,13 +47,13 @@ DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
     Pip,
     Npm,
     Choco,
-    Winget # Microsoft Store source only
+    Winget
 ]
 
 DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Pip: False,
     Npm: False,
-    Winget: False,  # Microsoft Store source only
+    Winget: False,
     Choco: False
 }
 

@@ -61,135 +61,11 @@ class WingetPackageManager(DynamicPackageManager):
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
 
-    def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
-        f"""
-        Will retieve the cached packages for the package manager {self.NAME} in the format of a list[Package] object.
-        If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
-        Finally, it will start a background cacher thread.
-        """
-        print(f"🔵 Starting {self.NAME} search for available packages")
-        try:
-            packages: list[Package] = []
-            if os.path.exists(self.CACHE_FILE):
-                f = open(self.CACHE_FILE, "r", encoding="utf-8", errors="ignore")
-                content = f.read()
-                f.close()
-                if content != "":
-                    print(f"🟢 Found valid, non-empty cache file for {self.NAME}!")
-                    for line in content.split("\n"):
-                        package = line.split(",")
-                        if len(package) >= 2:
-                            packages.append(Package(package[0], package[1], package[2], "Winget: winget", Winget))
-                    Thread(target=self.cacheAvailablePackages, daemon=True, name=f"{self.NAME} package cacher thread").start()
-                    print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-                    return packages
-                else:
-                    print(f"🟠 {self.NAME} cache file exists but is empty!")
-                    f.close()
-                    if second_attempt:
-                        print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
-                        return []
-                    self.cacheAvailablePackages()
-                    return self.getAvailablePackages(second_attempt = True)
-            else:
-                print(f"🟡 {self.NAME} cache file does not exist, creating cache forcefully and returning new package list")
-                if second_attempt:
-                    print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
-                    return []
-                self.cacheAvailablePackages()
-                return self.getAvailablePackages(second_attempt = True)
-        except Exception as e:
-            report(e)
-            return []
-
-    def cacheAvailablePackages(self) -> None:
-        """
-        Internal method, should not be called manually externally.
-        Will load the available packages and write them into the cache file
-        """
-        print(f"🔵 Starting {self.NAME} package caching")
-        try:
-            p = subprocess.Popen([self.EXECUTABLE, "search", "", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
-            ContentsToCache = ""
-            hasShownId: bool = False
-            idPosition: int = 0
-            versionPosition: int = 0
-            while p.poll() is None:
-                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                if line:
-                    if not hasShownId:
-                        if " Id " in line:
-                            line = line.replace("\x08-\x08\\\x08|\x08 \r","")
-                            for char in ("\r", "/", "|", "\\", "-"):
-                                line = line.split(char)[-1].strip()
-                            hasShownId = True
-                            idPosition = len(line.split("Id")[0])
-                            versionPosition = len(line.split("Version")[0])
-                    elif "---" in line:
-                        pass
-                    else:
-                        try:
-                            name = line[0:idPosition].strip()
-                            idVersionSubstr = line[idPosition:].strip()
-                            if "  " in name:
-                                oName = name
-                                while "  " in oName:
-                                    oName = oName.replace("  ", " ")
-                                idVersionSubstr = oName.split(" ")[-1]+idVersionSubstr
-                                name = " ".join(oName.split(" ")[:-1])
-                            idVersionSubstr.replace("\t", " ")
-                            while "  " in idVersionSubstr:
-                                idVersionSubstr = idVersionSubstr.replace("  ", " ")
-                            iOffset = 0
-                            id = idVersionSubstr.split(" ")[iOffset]
-                            ver = idVersionSubstr.split(" ")[iOffset+1]
-                            if len(id) == 1:
-                                iOffset + 1
-                                id = idVersionSubstr.split(" ")[iOffset]
-                                ver = idVersionSubstr.split(" ")[iOffset+1]
-                            if ver.strip() in ("<", "-"):
-                                iOffset += 1
-                                ver = idVersionSubstr.split(" ")[iOffset+1]
-                            if not "  " in name:
-                                if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                    ContentsToCache += f"{name},{id},{ver}\n"
-                            else:
-                                if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                    name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
-                                    while "##" in name:
-                                        name = name.replace("##", "#")
-                                    print(f"🟡 package {name} failed parsing, going for method 2...")
-                                    ContentsToCache += f"{name},{id},{ver}\n"
-                        except Exception as e:
-                            ContentsToCache += f"{line[0:idPosition].strip()},{line[idPosition:versionPosition].strip()},{line[versionPosition:].strip()}\n"
-                            if type(e) != IndexError:
-                                report(e)
-            AlreadyCachedPackages = ""
-            try:
-                if os.path.exists(self.CACHE_FILE):
-                    f = open(self.CACHE_FILE, "r", encoding="utf-8", errors="ignore")
-                    AlreadyCachedPackages = f.read()
-                    f.close()
-            except Exception as e:
-                report(e)
-            for line in AlreadyCachedPackages.split("\n"):
-                if line.split(",")[0] not in ContentsToCache:
-                    ContentsToCache += line + "\n"
-            with open(self.CACHE_FILE, "w", encoding="utf-8", errors="ignore") as f:
-                f.write(ContentsToCache)
-            print(f"🟢 {self.NAME} packages cached successfuly")
-        except Exception as e:
-            report(e)
-
     def getPackagesForQuery(self, query: str) -> list[Package]:
-        if getSettings("DisableMicrosoftStore"):
-            print("🟡 Microsoft Store source is disabled")
-            return []
-        print(f"🔵 Starting {self.NAME} search for dynamic packages (msstore source)")
+        print(f"🔵 Starting {self.NAME} search for dynamic packages")
+        packages: list[Package] = []
         try:
-            packages: list[Package] = []
-            p = subprocess.Popen([self.EXECUTABLE, "search", query, "--source", "msstore", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
-            ContentsToCache = ""
+            p = subprocess.Popen([self.EXECUTABLE, "search", query, "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
@@ -205,6 +81,7 @@ class WingetPackageManager(DynamicPackageManager):
                             hasShownId = True
                             idPosition = len(line.split("Id")[0])
                             versionPosition = len(line.split("Version")[0])
+                            sourcePosition = len(line.split("Source")[0])
                     elif "---" in line:
                         pass
                     else:
@@ -223,38 +100,36 @@ class WingetPackageManager(DynamicPackageManager):
                             iOffset = 0
                             id = idVersionSubstr.split(" ")[iOffset]
                             ver = idVersionSubstr.split(" ")[iOffset+1]
+                            source = idVersionSubstr.split(" ")[iOffset+2]
                             if len(id) == 1:
                                 iOffset + 1
                                 id = idVersionSubstr.split(" ")[iOffset]
                                 ver = idVersionSubstr.split(" ")[iOffset+1]
+                                source = idVersionSubstr.split(" ")[iOffset+2]
                             if ver.strip() in ("<", "-"):
                                 iOffset += 1
                                 ver = idVersionSubstr.split(" ")[iOffset+1]
+                                source = idVersionSubstr.split(" ")[iOffset+2]
                             if not "  " in name:
                                 if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                    ContentsToCache += f"{name},{id},{ver}\n"
+                                    packages.append(Package(name, id, ver, f"Winget: {source}", Winget))
                             else:
                                 if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                                     while "##" in name:
                                         name = name.replace("##", "#")
                                     print(f"🟡 package {name} failed parsing, going for method 2...")
-                                    ContentsToCache += f"{name},{id},{ver}\n"
+                                    packages.append(Package(name, id, ver, f"Winget: {source}", Winget))
                         except Exception as e:
-                            ContentsToCache += f"{line[0:idPosition].strip()},{line[idPosition:versionPosition].strip()},{line[versionPosition:].strip()}\n"
+                            packages.append(Package(line[0:idPosition].strip(), line[idPosition:versionPosition].strip(), line[versionPosition:sourcePosition].strip(), f"Winget: {line[sourcePosition:].strip()}", Winget))
                             if type(e) != IndexError:
                                 report(e)
-
-            for line in ContentsToCache.split("\n"):
-                package = line.split(",")
-                if len(package) >= 2:
-                    packages.append(Package(package[0], package[1], package[2], "Winget: msstore", Winget))
-
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s) (msstore)")
             return packages
 
         except Exception as e:
             report(e)
+            return packages
 
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""

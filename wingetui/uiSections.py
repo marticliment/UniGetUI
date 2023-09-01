@@ -1943,10 +1943,10 @@ class SettingsSection(SmoothScrollArea):
         disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
         disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(v), button.setEnabled(v), enableSystemWinget.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.wingetPreferences.addWidget(disableWinget)
-        disableWinget = SectionCheckBox(_("Enable Microsoft Store package source"))
-        disableWinget.setChecked(not getSettings(f"DisableMicrosoftStore"))
-        disableWinget.stateChanged.connect(lambda v: (setSettings(f"DisableMicrosoftStore", not bool(v))))
-        self.wingetPreferences.addWidget(disableWinget)
+        #disableWinget = SectionCheckBox(_("Enable Microsoft Store package source"))
+        #disableWinget.setChecked(not getSettings(f"DisableMicrosoftStore"))
+        #disableWinget.stateChanged.connect(lambda v: (setSettings(f"DisableMicrosoftStore", not bool(v))))
+        #self.wingetPreferences.addWidget(disableWinget)
 
 
         button = SectionButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
