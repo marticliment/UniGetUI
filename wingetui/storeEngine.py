@@ -152,7 +152,7 @@ class PackageInstallerWidget(QWidget):
         print("🔵 Given package:", package)
         print("🔵 Installation options:", options)
         
-        ApplyMica(self.liveOutputWindowWindow.winId(), MICAMODE.DARK)
+        ApplyMica(self.liveOutputWindowWindow.winId(), MicaTheme.DARK)
 
 
     def startInstallation(self) -> None:

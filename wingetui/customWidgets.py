@@ -162,7 +162,7 @@ class CustomMessageBox(QMainWindow):
         self.callInMain.connect(lambda f: f())
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint)
         self.setObjectName("micawin")
-        ApplyMica(self.winId().__int__(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        ApplyMica(self.winId().__int__(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.hide()
         if isDark():
             self.setStyleSheet(f"""#micawin {{
@@ -714,7 +714,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         return super().resizeEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
-        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        r = ApplyMica(self.winId(), ColorMode=MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         self.loadItems()
         return super().showEvent(event)
@@ -1480,7 +1480,7 @@ class PackageExporter(MovableFramelessWindow):
         return super().resizeEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
-        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        r = ApplyMica(self.winId(), ColorMode=MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 
@@ -1695,7 +1695,7 @@ class PackageImporter(MovableFramelessWindow):
         return super().resizeEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
-        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        r = ApplyMica(self.winId(), ColorMode=MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 

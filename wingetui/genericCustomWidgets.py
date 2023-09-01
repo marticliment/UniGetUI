@@ -15,7 +15,7 @@ from win32mica import *
 class MessageBox(QMessageBox):
     def __init__(self, parent: object = None) -> None:
         super().__init__(parent)
-        ApplyMica(self.winId(), MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
 
 class SmoothScrollArea(QScrollArea):
@@ -1232,7 +1232,7 @@ class MovableFramelessWindow(DraggableWindow):
         return super().resizeEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
-        r = ApplyMica(self.winId(), ColorMode=MICAMODE.DARK if isDark() else MICAMODE.LIGHT)
+        r = ApplyMica(self.winId(), ColorMode=MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 

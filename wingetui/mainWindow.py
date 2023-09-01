@@ -368,13 +368,13 @@ class RootWindow(QMainWindow):
 
     def showEvent(self, event: QShowEvent) -> None:
         if(not self.isWinDark):
-            r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.LIGHT)
+            r = win32mica.ApplyMica(self.winId(), win32mica.MicaTheme.LIGHT)
             print(r)
             if not self.appliedStyleSheet and globals.lightCSS != "":
                 self.appliedStyleSheet = True
                 self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f6f6f6"))
         else:
-            r = win32mica.ApplyMica(self.winId(), win32mica.MICAMODE.DARK)
+            r = win32mica.ApplyMica(self.winId(), win32mica.MicaTheme.DARK)
             if not self.appliedStyleSheet and globals.darkCSS != "":
                 self.appliedStyleSheet = True
                 self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
