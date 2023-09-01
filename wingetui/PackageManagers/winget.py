@@ -331,7 +331,7 @@ class WingetPackageManager(DynamicPackageManager):
             report(e)
             return []
 
-    def getPackageDetails(self, package: Package) -> PackageDetails:
+    def getPackageDetails(self, package: Package, defaultLocale = False) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
         """
@@ -350,14 +350,52 @@ class WingetPackageManager(DynamicPackageManager):
                 outputIsDescribing = False
                 outputIsShowingNotes = False
                 outputIsShowingTags = False
-                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                if defaultLocale:
+                    localeList = ["--locale", "en-US"]
+                p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements", "--locale", locale.getdefaultlocale()[0].replace("_", "-")], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 output: list[str] = []
+                foundInstallers = True
                 while p.poll() is None:
                     line = p.stdout.readline()
                     if line:
                         if b"No package found matching input criteria." in line:
                             return details
+                        elif b"No applicable installer found; see logs for more details." in line:
+                            foundInstallers = False
+                            print(f"🟡 Couldn't found installers for locale {locale.getdefaultlocale()[0]}")
+                        elif b"The value provided for the `locale` argument is invalid" in line:
+                            foundInstallers = False
+                            print(f"🟠 The locale {locale.getdefaultlocale()[0]} was tagged as invalid!")
                         output.append(str(line, encoding='utf-8', errors="ignore"))
+                
+                if not foundInstallers:
+                    p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements", "--locale", "en-US"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                    output: list[str] = []
+                    foundInstallers = True
+                    while p.poll() is None:
+                        line = p.stdout.readline()
+                        if line:
+                            if b"No package found matching input criteria." in line:
+                                return details
+                            elif b"No applicable installer found; see logs for more details." in line:
+                                foundInstallers = False
+                                print(f"🟠 Couldn't found installers for locale en_US")
+                            output.append(str(line, encoding='utf-8', errors="ignore"))
+                            
+                if not foundInstallers:
+                    p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+                    output: list[str] = []
+                    foundInstallers = True
+                    while p.poll() is None:
+                        line = p.stdout.readline()
+                        if line:
+                            if b"No package found matching input criteria." in line:
+                                return details
+                            elif b"No applicable installer found; see logs for more details." in line:
+                                foundInstallers = False
+                                break
+                            output.append(str(line, encoding='utf-8', errors="ignore"))
+
 
                 globals.PackageManagerOutput += "\n--------"+"\n".join(output)
 
