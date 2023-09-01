@@ -115,3 +115,4 @@ wingetui/choco-cli/redirects/cuninst.exe.ignore
 wingetui/choco-cli/redirects/cup.exe
 wingetui/choco-cli/redirects/cup.exe.ignore
 dllexp.exe
+sign.cmd.lnk
