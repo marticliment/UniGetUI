@@ -361,9 +361,9 @@ try:
                 self.loadStatus += 1
 
             def downloadPackagesMetadata(self):
+                self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
+                url = "https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json"
                 try:
-                    self.callInMain.emit(lambda: self.loadingText.setText(_("Downloading package metadata...")))
-                    url = "https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json"
                     if getSettings("IconDataBaseURL"):
                         url = getSettingsValue("iconDataBaseURL")
                     data = urlopen(url).read()
@@ -373,8 +373,9 @@ try:
                         pass
                     with open(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/packages.json"), "wb") as f:
                         f.write(data)
-                    print("🟢 Downloaded latest metadata to local file")
+                    print(f"🟢 Downloaded latest metadata to local file from url {url}")
                 except Exception as e:
+                    print(f"🔴 Could not load latest metadata from remote file {url}")
                     report(e)
                 try:
                     with open(os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/packages.json"), "rb") as f:

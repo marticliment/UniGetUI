@@ -998,6 +998,61 @@ class SectionCheckBox(QWidget):
     def text(self) -> str:
         return self.checkbox.text()
 
+class SectionCheckBoxTextBox(SectionCheckBox):
+    stateChanged = Signal(bool)
+    valueChanged = Signal(str)
+
+    def __init__(self, text: str, parent=None, helpLabel: str = ""):
+        super().__init__(text=text, parent=parent)
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.lineedit = CustomLineEdit(self)
+        self.oldtext = ""
+        self.lineedit.setObjectName("")
+        self.lineedit.textChanged.connect(self.valuechangedEvent)
+        self.checkbox.stateChanged.connect(self.stateChangedEvent)
+        self.helplabel = QLabel(helpLabel, self)
+        self.helplabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.helplabel.setOpenExternalLinks(True)
+        self.stateChangedEvent(self.checkbox.isChecked())
+        self.checkbox.move((70), 10)
+        self.checkbox.setFixedHeight(30)
+        self.setFixedHeight(50)
+        #self.lineedit.setFixedHeight(30)
+        #self.helplabel.setFixedHeight(30)
+        
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.checkbox)
+        self.layout().addStretch()
+        self.layout().addWidget(self.helplabel)
+        self.layout().addWidget(self.lineedit)
+        self.layout().setContentsMargins(70, 5, 20, 0)
+
+    def valuechangedEvent(self, text: str):
+        self.valueChanged.emit(text)
+
+    def setPlaceholderText(self, text: str):
+        self.lineedit.setPlaceholderText(text)
+        self.oldtext = text
+
+    def setText(self, text: str):
+        self.lineedit.setText(text)
+
+    def stateChangedEvent(self, v: bool):
+        self.lineedit.setEnabled(self.checkbox.isChecked())
+        if not self.checkbox.isChecked():
+            self.lineedit.setEnabled(False)
+            self.oldtext = self.lineedit.placeholderText()
+            self.lineedit.setToolTip(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()))
+            self.lineedit.setPlaceholderText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+            self.stateChanged.emit(v)
+        else:
+            self.stateChanged.emit(v)
+            self.lineedit.setEnabled(True)
+            self.lineedit.setToolTip("")
+            self.lineedit.setPlaceholderText(self.oldtext)
+            self.valueChanged.emit(self.lineedit.text())
+
+
 class ToastNotification(QObject):
     toast: int = 0
     title: str = ""
@@ -1092,7 +1147,7 @@ class ToastNotification(QObject):
         template.on_activated=self.onAction
         template.on_dismissed=lambda _1: self.onDismissFun()
         template.on_failed=lambda _1: self.reportException()
-        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable) if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) else None)
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=str(sys.executable) if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) else "{6D809377-6AF0-444B-8957-A3773F02200E}\\WingetUI\\wingetui.exe")
         self.toast.show_toast(template)
 
     def reportException(self, id):

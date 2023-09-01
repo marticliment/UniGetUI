@@ -1896,6 +1896,15 @@ class SettingsSection(SmoothScrollArea):
         disableLangUpdates.setChecked(getSettings("DisableLangAutoUpdater"))
         disableLangUpdates.stateChanged.connect(lambda v: setSettings("DisableLangAutoUpdater", bool(v)))
         self.advancedOptions.addWidget(disableLangUpdates)
+        
+        useCustomIconProvider = SectionCheckBoxTextBox(_("Use a custom icon and screenshot database URL"), None, f"<a style='color:rgb({getColors()[2 if isDark() else 4]})' href=\"https://www.marticliment.com/wingetui/help/icons-and-screenshots#custom-source\">{_('More details')}</a>")
+        useCustomIconProvider.setPlaceholderText(_("Paste a valid URL to the database"))
+        useCustomIconProvider.setText(getSettingsValue("IconDataBaseURL"))
+        useCustomIconProvider.setChecked(getSettings("IconDataBaseURL"))
+        useCustomIconProvider.stateChanged.connect(lambda e: setSettings("IconDataBaseURL", e))
+        useCustomIconProvider.valueChanged.connect(lambda v: setSettingsValue("IconDataBaseURL", v))
+        self.advancedOptions.addWidget(useCustomIconProvider)
+        
         resetyWingetUICache = SectionButton(_("Reset WingetUI icon and screenshot cache"), _("Reset"))
         resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/")), self.inform(_("Cache was reset successfully!"))))
         resetyWingetUICache.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
