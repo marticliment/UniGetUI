@@ -460,7 +460,11 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
-        return super().startLoadingPackages(force)
+        text = self.query.text()
+        super().startLoadingPackages(force)
+        if text != "":
+            self.query.setText(text)
+            self.startLoadingDyamicPackages(text, force=True)
 
     def startLoadingDyamicPackages(self, query: str, force: bool = False) -> None:
         print(f"🔵 Loading dynamic packages for query {query}")
