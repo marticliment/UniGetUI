@@ -21,10 +21,10 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         possiblePath =  os.path.join(os.path.expanduser("~"), "AppData/Local/Programs/WingetUI/choco-cli/choco.exe")
         if os.path.isfile(possiblePath):
             print("🔵 Found default chocolatey installation on expected location")
-            EXECUTABLE = possiblePath
+            EXECUTABLE = possiblePath.replace("/", "\\")
         else:
             print("🟡 Chocolatey was not found on the default location, perhaps a portable WingetUI installation?")
-            EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe")
+            EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe").replace("/", "\\")
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
     icon = None
@@ -303,6 +303,13 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
         globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        
+        if getSettings("ShownWelcomeWizard") and not getSettings("UseSystemChocolatey") and not getSettings("ChocolateyAddedToPath") and not os.path.isfile(r"C:\ProgramData\Chocolatey\bin\choco.exe"):
+            subprocess.run("powershell -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\""+ self.EXECUTABLE.replace('\\choco.exe', '\\bin')+";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
+            subprocess.run(f"powershell -Command [Environment]::SetEnvironmentVariable(\\\"chocolateyinstall\\\", \\\"{os.path.dirname(self.EXECUTABLE)}\\\", \\\"User\\\")", shell=True, check=False)
+            print("🔵 Adding chocolatey to path...")
+            setSettings("ChocolateyAddedToPath", True)
+        
         if signal:
             signal.emit()
 

@@ -984,6 +984,9 @@ class PackageManagersSlide(BasicNavWidget):
         def enablePackageManagers():
             setSettings("DisableWinget", not winget.isChecked())
             setSettings("DisableChocolatey", not choco.isChecked())
+            if choco.isChecked():
+                if shutil.which("choco.exe") != None:
+                    setSettings("UseSystemChocolatey", True)
             setSettings("DisableScoop", not scoop.isChecked())
             setSettings("DisablePip", not pip.isChecked())
             setSettings("DisableNpm", not npm.isChecked())
