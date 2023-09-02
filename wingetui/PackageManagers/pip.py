@@ -114,7 +114,7 @@ class PipPackageManager(DynamicLoadPackageManager):
             report(e)
             return []
 
-    def getInstalledPackages(self) -> list[Package]:
+    def getInstalledPackages(self, second_attempt: bool = False) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
@@ -138,9 +138,9 @@ class PipPackageManager(DynamicLoadPackageManager):
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME, Pip))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            if len(packages) == 0:
+            if len(packages) == 0 and not second_attempt:
                 print("🟠 Pip got too few installed packages, retrying")
-                return self.getInstalledPackages(second_atttempt=True)
+                return self.getInstalledPackages(second_attempt=True)
             else:
                 return packages
         except Exception as e:

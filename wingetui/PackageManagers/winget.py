@@ -207,7 +207,7 @@ class WingetPackageManager(DynamicPackageManager):
             report(e)
             return []
 
-    def getInstalledPackages(self) -> list[Package]:
+    def getInstalledPackages(self, second_attempt = False) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
@@ -326,6 +326,11 @@ class WingetPackageManager(DynamicPackageManager):
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
+            
+            if len(packages) <= 2 and not second_attempt:
+                print("🟠 Chocolatey got too few installed packages, retrying")
+                return self.getInstalledPackages(second_attempt=True)
+            
             return packages
         except Exception as e:
             report(e)

@@ -104,7 +104,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
             report(e)
             return []
 
-    def getInstalledPackages(self, second_atttempt = False) -> list[Package]:
+    def getInstalledPackages(self, second_attempt = False) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
@@ -126,9 +126,9 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                             packages.append(Package(name, id, version, source, Choco))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
-            if len(packages) <= 2:
+            if len(packages) <= 2 and not second_attempt:
                 print("🟠 Chocolatey got too few installed packages, retrying")
-                return self.getInstalledPackages(second_atttempt=True)
+                return self.getInstalledPackages(second_attempt=True)
             else:
                 return packages
         except Exception as e:
