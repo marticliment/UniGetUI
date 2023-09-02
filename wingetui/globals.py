@@ -62,6 +62,7 @@ centralWindowLayout: QWidget = None
 centralTextureImage: QLabel = None
 
 scoopBuckets: dict[str:str] = {}
+wingetSources: dict[str:str] = {}
 
 shareProcessHandler: Popen = None
 

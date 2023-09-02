@@ -1947,6 +1947,10 @@ class SettingsSection(SmoothScrollArea):
         #disableWinget.setChecked(not getSettings(f"DisableMicrosoftStore"))
         #disableWinget.stateChanged.connect(lambda v: (setSettings(f"DisableMicrosoftStore", not bool(v))))
         #self.wingetPreferences.addWidget(disableWinget)
+        bucketManager = WingetBucketManager()
+        bucketManager.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        self.wingetPreferences.addWidget(bucketManager)
+
 
 
         button = SectionButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
@@ -1958,9 +1962,6 @@ class SettingsSection(SmoothScrollArea):
         button.setEnabled(disableWinget.isChecked())
         enableSystemWinget.setEnabled(disableWinget.isChecked())
 
-        resetCache = SectionButton(_("Reset {pm} cache").format(pm=Winget.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Winget.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
-        self.wingetPreferences.addWidget(resetCache)
 
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Scoop"), getMedia("scoop"), _("{pm} package manager specific preferences").format(pm = "Scoop"))
         self.layout.addWidget(self.scoopPreferences)
@@ -1998,9 +1999,6 @@ class SettingsSection(SmoothScrollArea):
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
-        resetCache = SectionButton(_("Reset {pm} cache").format(pm=Scoop.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Scoop.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
-        self.scoopPreferences.addWidget(resetCache)
 
         self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Chocolatey"), getMedia("choco"), _("{pm} package manager specific preferences").format(pm = "Chocolatey"))
         self.layout.addWidget(self.chocoPreferences)
@@ -2018,9 +2016,6 @@ class SettingsSection(SmoothScrollArea):
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
         enableSystemChocolatey.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         self.chocoPreferences.addWidget(enableSystemChocolatey)
-        resetCache = SectionButton(_("Reset {pm} cache").format(pm=Choco.NAME), _("Reset"))
-        resetCache.clicked.connect(lambda: (os.remove(Choco.CACHE_FILE), self.inform(_("Cache was reset successfully!"))))
-        self.chocoPreferences.addWidget(resetCache)
 
         self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm = "Pip"), getMedia("python"), _("{pm} package manager specific preferences").format(pm = "Pip"))
         self.layout.addWidget(self.pipPreferences)

@@ -633,6 +633,31 @@ class WingetPackageManager(DynamicPackageManager):
         globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
         
+    def loadSources(self, sourceSignal: Signal, finishSignal: Signal) -> None:
+        print("🟢 Starting winget source search...")
+        p = subprocess.Popen(f"{self.EXECUTABLE} source list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        output = []
+        dashesPassed = False
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            if line:
+                if not dashesPassed:
+                    if b"---" in line:
+                        dashesPassed = True
+                else:
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
+        for element in output:
+            try:
+                while "  " in element.strip():
+                    element = element.strip().replace("  ", " ")
+                element: list[str] = element.split(" ")
+                sourceSignal.emit(element[0].strip(), element[1].strip())
+            except Exception as e:
+                report(e)
+        print("🟢 winget source search finished")
+        finishSignal.emit()
+        
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)

@@ -646,11 +646,13 @@ class CustomInstallerWidget(PackageInstallerWidget):
     counterSignal = Signal(int)
     callInMain = Signal(object)
     changeBarOrientation = Signal()
-    def __init__(self, name: str, command: list, packageManager: PackageManagerModule):
+    def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
         self.Package.PackageItem = QTreeWidgetItem()
         self.Options = InstallationOptions()
         self.command = command
+        if runAsAdministrator:
+            self.Options.RunAsAdministrator = True
         super().__init__(self.Package, self.Options)
 
     def runInstallation(self) -> None:
@@ -686,10 +688,13 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
     counterSignal = Signal(int)
     callInMain = Signal(object)
     changeBarOrientation = Signal()
-    def __init__(self, name: str, command: list, packageManager: PackageManagerModule):
+    def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
         self.Package.PackageItem = QTreeWidgetItem()
         self.Options = InstallationOptions()
+        if runAsAdministrator:
+            self.Options.RunAsAdministrator = True
+
         self.command = command
         super().__init__(self.Package, self.Options)
 
@@ -868,8 +873,159 @@ class ScoopBucketManager(QWidget):
                 p.finishInstallation.connect(self.loadBuckets)
 
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
-        os.remove(Scoop.CACHE_FILE)
         globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
+
+
+
+class WingetBucketManager(QWidget):
+    addSourceSignal = Signal(str, str)
+    finishLoading = Signal()
+    setLoadBarValue = Signal(str)
+    startAnim = Signal(QVariantAnimation)
+    changeBarOrientation = Signal()
+
+    def __init__(self):
+        super().__init__()
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setObjectName("stBtn")
+        self.addSourceSignal.connect(self.addItem)
+        layout = QVBoxLayout()
+        hLayout = QHBoxLayout()
+        hLayout.addWidget(QLabel(_("Manage Winget buckets")))
+        hLayout.addStretch()
+
+        self.loadingProgressBar = QProgressBar(self)
+        self.loadingProgressBar.setRange(0, 1000)
+        self.loadingProgressBar.setValue(0)
+        self.loadingProgressBar.setFixedHeight(4)
+        self.loadingProgressBar.setTextVisible(False)
+        self.loadingProgressBar.hide()
+        self.finishLoading.connect(lambda: self.loadingProgressBar.hide())
+        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
+        self.startAnim.connect(lambda anim: anim.start())
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+
+        self.reloadButton = QPushButton()
+        self.reloadButton.clicked.connect(self.loadSources)
+        self.reloadButton.setFixedSize(30, 30)
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.reloadButton.setAccessibleName(_("Reload"))
+        self.addBucketButton = QPushButton(_("Add source"))
+        self.addBucketButton.setFixedHeight(30)
+        self.addBucketButton.clicked.connect(self.wingetAddExtraSource)
+        hLayout.addWidget(self.addBucketButton)
+        hLayout.addWidget(self.reloadButton)
+        hLayout.setContentsMargins(10, 0, 15, 0)
+        layout.setContentsMargins(60, 10, 5, 10)
+        self.bucketList = TreeWidget()
+        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        if isDark():
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+        else:
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+
+        self.bucketList.label.setText(_("Loading sources..."))
+        self.bucketList.label.show()
+        self.bucketList.setColumnCount(3)
+        self.bucketList.setHeaderLabels([_("Name"), _("Source"), " "])
+        self.bucketList.sortByColumn(0, Qt.SortOrder.AscendingOrder)
+        self.bucketList.setSortingEnabled(True)
+        self.bucketList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
+        self.bucketList.setIconSize(QSize(24, 24))
+        self.bucketList.setColumnWidth(0, 160)
+        self.bucketList.setColumnWidth(1, 480)
+        self.bucketList.setColumnWidth(2, 50)
+        layout.addLayout(hLayout)
+        layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.bucketList)
+        self.setLayout(layout)
+        self.bucketIcon = QIcon(getMedia("list"))
+
+        self.leftSlow = QVariantAnimation()
+        self.leftSlow.setStartValue(0)
+        self.leftSlow.setEndValue(1000)
+        self.leftSlow.setDuration(700)
+        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
+
+        self.rightSlow = QVariantAnimation()
+        self.rightSlow.setStartValue(1000)
+        self.rightSlow.setEndValue(0)
+        self.rightSlow.setDuration(700)
+        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
+
+        self.leftFast = QVariantAnimation()
+        self.leftFast.setStartValue(0)
+        self.leftFast.setEndValue(1000)
+        self.leftFast.setDuration(300)
+        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
+
+        self.rightFast = QVariantAnimation()
+        self.rightFast.setStartValue(1000)
+        self.rightFast.setEndValue(0)
+        self.rightFast.setDuration(300)
+        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
+        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+
+        self.leftSlow.start()
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.loadSources()
+        return super().showEvent(event)
+
+    def loadSources(self):
+        if getSettings("DisableWinget"):
+            return
+        for i in range(self.bucketList.topLevelItemCount()):
+            item = self.bucketList.takeTopLevelItem(0)
+            del item
+        Thread(target=Winget.loadSources, args=(self.addSourceSignal, self.finishLoading), name="MAIN: Load winget buckets").start()
+        self.loadingProgressBar.show()
+        self.bucketList.label.show()
+        self.bucketList.label.setText("Loading...")
+        globals.wingetSources = {}
+
+    def addItem(self, name: str, url: str):
+        self.bucketList.label.hide()
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setToolTip(0, name)
+        item.setIcon(0, self.bucketIcon)
+        item.setText(1, url)
+        item.setToolTip(1, url)
+        self.bucketList.addTopLevelItem(item)
+        btn = QPushButton()
+        btn.clicked.connect(lambda: (self.wingetRemoveExtraSource(name), self.bucketList.takeTopLevelItem(self.bucketList.indexOfTopLevelItem(item))))
+        btn.setFixedSize(24, 24)
+        btn.setIcon(QIcon(getMedia("menu_uninstall")))
+        self.bucketList.setItemWidget(item, 2, btn)
+        globals.wingetSources[name] = url
+
+    def wingetAddExtraSource(self) -> None:
+        sources = {
+            "msstore": "https://storeedgefd.dsx.mp.microsoft.com/v9.0",
+            "winget": "https://cdn.winget.microsoft.com/cache",
+        }
+        r = QInputDialog.getItem(self, _("Winget source manager"), _("Which source do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another source")), list(sources.keys())+[_("Another source")], 1, editable=False)
+        if r[1]:
+            sourcename = r[0]
+            if sourcename == _("Another source"):
+                r2 = QInputDialog.getText(self, _("Winget source manager"), _("Type here the name and the URL of the source you want to add, separated by a space."), text="msstore https://storeedgefd.dsx.mp.microsoft.com/v9.0")
+                if r2[1]:
+                    bName = r2[0].split(" ")[0]
+                    p = CustomInstallerWidget(f"{sourcename} Winget source", [Winget.EXECUTABLE, "source", "add", r2[0].split(" ")[0], r2[0].split(" ")[1]], Winget, runAsAdministrator=True)
+                    globals.installersWidget.addItem(p)
+                    p.finishInstallation.connect(self.loadSources)
+            else:
+                p = CustomInstallerWidget(f"{sourcename} Winget source", [Winget.EXECUTABLE, "source", "add", sourcename, sources[sourcename]], Winget, runAsAdministrator=True)
+                globals.installersWidget.addItem(p)
+                p.finishInstallation.connect(self.loadSources)
+
+    def wingetRemoveExtraSource(self, source: str) -> None:
+        globals.installersWidget.addItem(CustomUninstallerWidget(f"{source} Winget source", [Winget.EXECUTABLE, "source", "remove", source], Winget, runAsAdministrator = True))
+
 
 if(__name__=="__main__"):
     import __init__
