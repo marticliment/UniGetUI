@@ -20,13 +20,14 @@ AppPublisherURL='https://www.marticliment.com/'
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 VersionInfoVersion=2.0.3.0
-DefaultDirName="{commonpf64}\WingetUI"
+DefaultDirName="{autopf64}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
 DirExistsWarning=no
 CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 ;PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=WingetUI Installer
 OutputDir=.     
 MinVersion=10.0
@@ -39,9 +40,9 @@ WizardImageFile=INSTALLER.BMP
 WizardSmallImageFile=wingetui\resources\icon.bmp
 DisableWelcomePage=no
 AllowUNCPath=no
-UsePreviousTasks=yes  
-UsePreviousPrivileges=no
-UsePreviousAppDir=no
+UsePreviousTasks=yes
+UsePreviousPrivileges=yes
+UsePreviousAppDir=yes
 ChangesEnvironment=yes
 RestartIfNeededByRun=no
 Uninstallable=IsTaskSelected('regularinstall')
@@ -226,7 +227,7 @@ end;
 Name: "portableinstall"; Description: "Perform a portable installation"; GroupDescription: "Installation type"; Flags: unchecked exclusive
 Name: "regularinstall"; Description: "Perform a regular installation"; GroupDescription: "Installation type"; Flags: exclusive   
 Name: "regularinstall\startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts"; 
-Name: "regularinstall\desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked;
+Name: "regularinstall\desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked; 
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
@@ -234,7 +235,7 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 [Files]
 Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "Y:\WinGetUI-Store\wingetuiBin\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs; Tasks: regularinstall
+Source: "Y:\WinGetUI-Store\wingetuiBin\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
