@@ -819,6 +819,8 @@ class ScoopBucketManager(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
 
         self.leftSlow.start()
+        
+        self.loadBuckets()
 
     def showEvent(self, event: QShowEvent) -> None:
         self.loadBuckets()
