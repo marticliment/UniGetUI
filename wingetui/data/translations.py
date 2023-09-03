@@ -275,6 +275,10 @@ languageCredits = {
   ],
   "pt_BR": [
     {
+      "name": "maisondasilva",
+      "link": "https://github.com/maisondasilva"
+    },
+    {
       "name": "ppvnf",
       "link": "https://github.com/ppvnf"
     },
