@@ -64,6 +64,7 @@ class WingetPackageManager(DynamicPackageManager):
     def getPackagesForQuery(self, query: str) -> list[Package]:
         print(f"🔵 Starting {self.NAME} search for dynamic packages")
         packages: list[Package] = []
+        rawOutput = f"\n\n------- Winget query {query}"
         try:
             p = subprocess.Popen([self.EXECUTABLE, "search", query, "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
             hasShownId: bool = False
@@ -72,6 +73,7 @@ class WingetPackageManager(DynamicPackageManager):
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
+                    rawOutput += line
                     if not hasShownId:
                         if " Id " in line:
                             line = line.replace("\x08-\x08\\\x08|\x08 \r","")
@@ -124,6 +126,7 @@ class WingetPackageManager(DynamicPackageManager):
                             if type(e) != IndexError:
                                 report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s) (msstore)")
+            globals.PackageManagerOutput += rawOutput
             return packages
 
         except Exception as e:
@@ -675,6 +678,6 @@ class WingetPackageManager(DynamicPackageManager):
 Winget = WingetPackageManager()
 
 
-if(__name__=="__main__"):
+if(__name__ == "__main__"):
     os.chdir("..")
-    import __init__
+    os.system("cd ..;python -m __init__.py")
