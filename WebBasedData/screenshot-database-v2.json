@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7615
+        "done": 7616
     },
     "icons_and_screenshots": {
         "115": {
@@ -8369,8 +8369,11 @@
             "images": []
         },
         "mcreator": {
-            "icon": "",
-            "images": []
+            "icon": "https://mcreator.net/favicon/apple-touch-icon.png",
+            "images": [
+                "https://mcreator.net/sites/default/files/wiki/%5B1%5D%20Main%20Menu.png",
+                "https://i.imgur.com/5ymmOCS.png"
+            ]
         },
         "pictoselector": {
             "icon": "",
