@@ -11,7 +11,7 @@ jobs:
         TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download Tolgee translations
         run: |
           python scripts/download_translations.py --autocommit
