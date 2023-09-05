@@ -1232,7 +1232,7 @@ class MovableFramelessWindow(DraggableWindow):
         return super().resizeEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
-        r = ApplyMica(self.winId(), ColorMode=MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
+        r = ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
 
