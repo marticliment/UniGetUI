@@ -762,7 +762,6 @@ class ScoopBucketManager(QWidget):
         self.reloadButton = QPushButton()
         self.reloadButton.clicked.connect(self.loadBuckets)
         self.reloadButton.setFixedSize(30, 30)
-        self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.reloadButton.setAccessibleName(_("Reload"))
         self.addBucketButton = QPushButton(_("Add bucket"))
         self.addBucketButton.setFixedHeight(30)
@@ -773,13 +772,9 @@ class ScoopBucketManager(QWidget):
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
         self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-        if isDark():
-            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
-        else:
-            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
 
         self.bucketList.label.setText(_("Loading buckets..."))
-        self.bucketList.label.show()
+        self.bucketList.label.setVisible(True)
         self.bucketList.setColumnCount(4)
         self.bucketList.setHeaderLabels([_("Name"), _("Source"), _("Update date"), _("Manifests"), _("Remove")])
         self.bucketList.sortByColumn(0, Qt.SortOrder.AscendingOrder)
@@ -795,7 +790,6 @@ class ScoopBucketManager(QWidget):
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.bucketList)
         self.setLayout(layout)
-        self.bucketIcon = QIcon(getMedia("bucket"))
 
         self.leftSlow = QVariantAnimation()
         self.leftSlow.setStartValue(0)
@@ -828,8 +822,22 @@ class ScoopBucketManager(QWidget):
         self.leftSlow.start()
         
         self.loadBuckets()
+        self.ApplyIcons()
+        self.registeredThemeEvent = False
+        
+    def ApplyIcons(self):
+        if isDark():
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+        else:
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.bucketIcon = QIcon(getMedia("bucket"))
+        self.reloadButton.click()
 
     def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
         self.loadBuckets()
         return super().showEvent(event)
 
@@ -918,7 +926,6 @@ class WingetBucketManager(QWidget):
         self.reloadButton.clicked.connect(self.loadSources)
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
-        self.reloadButton.setAccessibleName(_("Reload"))
         self.addBucketButton = QPushButton(_("Add source"))
         self.addBucketButton.setFixedHeight(30)
         self.addBucketButton.clicked.connect(self.wingetAddExtraSource)
@@ -928,10 +935,6 @@ class WingetBucketManager(QWidget):
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
         self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-        if isDark():
-            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
-        else:
-            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
 
         self.bucketList.label.setText(_("Loading sources..."))
         self.bucketList.label.show()
@@ -980,7 +983,23 @@ class WingetBucketManager(QWidget):
 
         self.leftSlow.start()
 
+        self.registeredThemeEvent = False
+        self.ApplyIcons()
+        
+    def ApplyIcons(self):
+        if isDark():
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #222222; background-color: rgba(30, 30, 30, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+        else:
+            self.bucketList.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.bucketIcon = QIcon(getMedia("list"))
+        self.reloadButton.click()
+
+
     def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
         self.loadSources()
         return super().showEvent(event)
 
