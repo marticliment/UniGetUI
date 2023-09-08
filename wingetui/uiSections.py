@@ -649,7 +649,6 @@ class UpdateSoftwareSection(SoftwareSection):
         self.ToolbarSelectNone.setIcon(QIcon(getMedia("selectnone")))
         self.ToolbarHelp.setIcon(QIcon(getMedia("help")))
         self.ToolbarSelectAll.setIcon(QIcon(getMedia("selectall")))
-        self.ToolbarSelectNone.setIcon(QIcon(getMedia("selectnone")))
         self.ToolbarIgnoreSelected.setIcon(QIcon(getMedia("pin")))
         self.ToolbarManageBlacklist.setIcon(QIcon(getMedia("blacklist")))
         
@@ -1120,41 +1119,66 @@ class UninstallSoftwareSection(SoftwareSection):
         self.contextMenu = QMenu(self)
         self.contextMenu.setParent(self)
         self.contextMenu.setStyleSheet("* {background: red;color: black}")
-        self.UninstallAction = QAction(_("Uninstall"))
-        self.UninstallAction.setIcon(QIcon(getMedia("menu_uninstall")))
-        self.UninstallAction.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem()))
-        self.AdminAction = QAction(_("Uninstall as administrator"))
-        self.AdminAction.setIcon(QIcon(getMedia("runasadmin")))
-        self.AdminAction.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), admin=True))
-        self.RemoveDataAction = QAction(_("Remove permanent data"))
-        self.RemoveDataAction.setIcon(QIcon(getMedia("menu_close")))
-        self.RemoveDataAction.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), removeData=True))
-        self.InteractiveAction = QAction(_("Interactive uninstall"))
-        self.InteractiveAction.setIcon(QIcon(getMedia("interactive")))
-        self.InteractiveAction.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
-        self.IgnoreUpdatesAction = QAction(_("Ignore updates for this package"))
-        self.IgnoreUpdatesAction.setIcon(QIcon(getMedia("pin")))
-        self.IgnoreUpdatesAction.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4)), self.showBlacklistedIcon(self.packageList.currentItem())))
-        self.DetailsAction = QAction(_("Package details"))
-        self.DetailsAction.setIcon(QIcon(getMedia("info")))
-        self.DetailsAction.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), uninstall=True))
-        self.ShareAction = QAction(_("Share this package"))
-        self.ShareAction.setIcon(QIcon(getMedia("share")))
-        self.ShareAction.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
-        self.contextMenu.addAction(self.UninstallAction)
+        self.MenuInstall = QAction(_("Uninstall"))
+        self.MenuInstall.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem()))
+        self.MenuAdministrator = QAction(_("Uninstall as administrator"))
+        self.MenuAdministrator.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), admin=True))
+        self.MenuRemovePermaData = QAction(_("Remove permanent data"))
+        self.MenuRemovePermaData.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), removeData=True))
+        self.MenuInteractive = QAction(_("Interactive uninstall"))
+        self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
+        self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
+        self.MenuIgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4)), self.showBlacklistedIcon(self.packageList.currentItem())))
+        self.MenuDetails = QAction(_("Package details"))
+        self.MenuDetails.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), uninstall=True))
+        self.MenuShare = QAction(_("Share this package"))
+        self.MenuShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        self.contextMenu.addAction(self.MenuInstall)
         self.contextMenu.addSeparator()
-        self.contextMenu.addAction(self.AdminAction)
-        self.contextMenu.addAction(self.RemoveDataAction)
-        self.contextMenu.addAction(self.InteractiveAction)
+        self.contextMenu.addAction(self.MenuAdministrator)
+        self.contextMenu.addAction(self.MenuRemovePermaData)
+        self.contextMenu.addAction(self.MenuInteractive)
         self.contextMenu.addSeparator()
         self.contextMenu.addSeparator()
-        self.contextMenu.addAction(self.IgnoreUpdatesAction)
+        self.contextMenu.addAction(self.MenuIgnoreUpdates)
         self.contextMenu.addSeparator()
-        self.contextMenu.addAction(self.ShareAction)
-        self.contextMenu.addAction(self.DetailsAction)
+        self.contextMenu.addAction(self.MenuShare)
+        self.contextMenu.addAction(self.MenuDetails)
 
         self.finishInitialisation()
-    
+        
+    def ApplyIcons(self):
+        super().ApplyIcons()
+        self.installIcon = QIcon(getMedia("install"))
+        self.pinnedIcon = QIcon(getMedia("pin_yellow"))
+        self.updateIcon = QIcon(getMedia("update"))
+        self.installedIcon = QIcon(getMedia("installed"))
+        self.IDIcon = QIcon(getMedia("ID"))
+        self.versionIcon = QIcon(getMedia("version"))
+        
+        self.MenuInteractive.setIcon(QIcon(getMedia("interactive")))
+        self.MenuRemovePermaData.setIcon(QIcon(getMedia("menu_close")))
+        self.MenuAdministrator.setIcon(QIcon(getMedia("runasadmin")))
+        self.MenuInstall.setIcon(QIcon(getMedia("menu_uninstall")))
+        self.MenuDetails.setIcon(QIcon(getMedia("info")))
+        self.MenuShare.setIcon(QIcon(getMedia("share")))
+        self.MenuIgnoreUpdates.setIcon(QIcon(getMedia("pin")))
+        
+        self.ToolbarInstall.setIcon(QIcon(getMedia("menu_uninstall")))
+        self.ToolbarShowInfo.setIcon(QIcon(getMedia("info")))
+        self.ToolbarRunAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
+        self.ToolbarInteractive.setIcon(QIcon(getMedia("interactive")))
+        self.ToolbarShare.setIcon(QIcon(getMedia("share")))
+        self.ToolbarSelectNone.setIcon(QIcon(getMedia("selectnone")))
+        self.ToolbarHelp.setIcon(QIcon(getMedia("help")))
+        self.ToolbarSelectAll.setIcon(QIcon(getMedia("selectall")))
+        self.ToolbarIgnoreSelected.setIcon(QIcon(getMedia("pin")))
+        self.ToolbarExport.setIcon(QIcon(getMedia("export")))
+        
+        self.HelpMenuEntry1.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
+
     def showBlacklistedIcon(self, packageItem: QTreeWidgetItem):
         packageItem.setIcon(1, self.pinnedIcon)
         packageItem.setToolTip(1, _("Updates for this package are ignored")+" - "+packageItem.text(1))
@@ -1168,20 +1192,20 @@ class UninstallSoftwareSection(SoftwareSection):
 
         try:
             Capabilities: PackageManagerCapabilities =  self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
-            self.AdminAction.setVisible(Capabilities.CanRunAsAdmin)
-            self.RemoveDataAction.setVisible(Capabilities.CanRemoveDataOnUninstall)
-            self.InteractiveAction.setVisible(Capabilities.CanRunInteractively)
+            self.MenuAdministrator.setVisible(Capabilities.CanRunAsAdmin)
+            self.MenuRemovePermaData.setVisible(Capabilities.CanRemoveDataOnUninstall)
+            self.MenuInteractive.setVisible(Capabilities.CanRunInteractively)
         except Exception as e:
             report(e)
 
         if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
-            self.IgnoreUpdatesAction.setVisible(True)
-            self.ShareAction.setVisible(True)
-            self.DetailsAction.setVisible(True)
+            self.MenuIgnoreUpdates.setVisible(True)
+            self.MenuShare.setVisible(True)
+            self.MenuDetails.setVisible(True)
         else:
-            self.IgnoreUpdatesAction.setVisible(False)
-            self.ShareAction.setVisible(False)
-            self.DetailsAction.setVisible(False)
+            self.MenuIgnoreUpdates.setVisible(False)
+            self.MenuShare.setVisible(False)
+            self.MenuDetails.setVisible(False)
 
         pos.setY(pos.y()+35)
 
@@ -1192,9 +1216,9 @@ class UninstallSoftwareSection(SoftwareSection):
         toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         toolbar.addWidget(TenPxSpacer())
-        self.upgradeSelected = QAction(QIcon(getMedia("menu_uninstall")), _("Uninstall selected packages"), toolbar)
-        self.upgradeSelected.triggered.connect(lambda: self.uninstallSelected())
-        toolbar.addAction(self.upgradeSelected)
+        self.ToolbarInstall = QAction(_("Uninstall selected packages"), toolbar)
+        self.ToolbarInstall.triggered.connect(lambda: self.uninstallSelected())
+        toolbar.addAction(self.ToolbarInstall)
 
         def blacklistSelectedPackages():
             for program in self.packageItems:
@@ -1225,75 +1249,94 @@ class UninstallSoftwareSection(SoftwareSection):
             else:
                 self.openInfo(item, uninstall=True)
 
-        showInfoAction = QAction("", toolbar)# ("Show info")
-        showInfoAction.triggered.connect(showInfo)
-        showInfoAction.setIcon(QIcon(getMedia("info")))
-        runAsAdmin = QAction("", toolbar)# ("Run as administrator")
-        runAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
-        runAsAdmin.triggered.connect(lambda: self.uninstallSelected(admin=True))
-        interactive = QAction("", toolbar)# ("Interactive uninstall")
-        interactive.setIcon(QIcon(getMedia("interactive")))
-        interactive.triggered.connect(lambda: self.uninstallSelected(interactive=True))
-        share = QAction("", toolbar)
-        share.setIcon(QIcon(getMedia("share")))
-        share.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        self.ToolbarShowInfo = QAction("", toolbar)# ("Show info")
+        self.ToolbarShowInfo.triggered.connect(showInfo)
+        self.ToolbarRunAsAdmin = QAction("", toolbar)# ("Run as administrator")
+        self.ToolbarRunAsAdmin.triggered.connect(lambda: self.uninstallSelected(admin=True))
+        self.ToolbarInteractive = QAction("", toolbar)# ("Interactive uninstall")
+        self.ToolbarInteractive.triggered.connect(lambda: self.uninstallSelected(interactive=True))
+        self.ToolbarShare = QAction("", toolbar)
+        self.ToolbarShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
-        for action in [runAsAdmin, interactive]:
+        for action in [self.ToolbarRunAsAdmin, self.ToolbarInteractive]:
             toolbar.addAction(action)
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
         toolbar.addSeparator()
 
-        for action in [showInfoAction, share]:
+        for action in [self.ToolbarShowInfo, self.ToolbarShare]:
             toolbar.addAction(action)
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
         toolbar.addSeparator()
 
-        self.selectAllAction = QAction(QIcon(getMedia("selectall")), "", toolbar)
-        self.selectAllAction.triggered.connect(lambda: self.setAllPackagesSelected(True))
-        toolbar.addAction(self.selectAllAction)
-        toolbar.widgetForAction(self.selectAllAction).setFixedSize(40, 45)
-        self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", toolbar)
-        self.selectNoneAction.triggered.connect(lambda: self.setAllPackagesSelected(False))
-        toolbar.addAction(self.selectNoneAction)
-        toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
-        toolbar.widgetForAction(self.selectNoneAction).setToolTip(_("Clear selection"))
-        toolbar.widgetForAction(self.selectAllAction).setToolTip(_("Select all"))
+        self.ToolbarSelectAll = QAction("", toolbar)
+        self.ToolbarSelectAll.triggered.connect(lambda: self.setAllPackagesSelected(True))
+        toolbar.addAction(self.ToolbarSelectAll)
+        toolbar.widgetForAction(self.ToolbarSelectAll).setFixedSize(40, 45)
+        self.ToolbarSelectNone = QAction("", toolbar)
+        self.ToolbarSelectNone.triggered.connect(lambda: self.setAllPackagesSelected(False))
+        toolbar.addAction(self.ToolbarSelectNone)
+        toolbar.widgetForAction(self.ToolbarSelectNone).setFixedSize(40, 45)
+        toolbar.widgetForAction(self.ToolbarSelectNone).setToolTip(_("Clear selection"))
+        toolbar.widgetForAction(self.ToolbarSelectAll).setToolTip(_("Select all"))
 
         toolbar.addSeparator()
         
-        self.blacklistAction = QAction(QIcon(getMedia("pin")), _("Ignore selected packages"), toolbar)
-        self.blacklistAction.triggered.connect(lambda: blacklistSelectedPackages())
-        toolbar.addAction(self.blacklistAction)
+        self.ToolbarIgnoreSelected = QAction(QIcon(getMedia("pin")), _("Ignore selected packages"), toolbar)
+        self.ToolbarIgnoreSelected.triggered.connect(lambda: blacklistSelectedPackages())
+        toolbar.addAction(self.ToolbarIgnoreSelected)
         
         toolbar.addSeparator()
 
-        self.exportSelectedAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
-        self.exportSelectedAction.triggered.connect(lambda: self.exportSelectedPackages())
-        toolbar.addAction(self.exportSelectedAction)
+        self.ToolbarExport = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
+        self.ToolbarExport.triggered.connect(lambda: self.exportSelectedPackages())
+        toolbar.addAction(self.ToolbarExport)
 
-        w = QWidget()
-        w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        toolbar.addWidget(w)
-        toolbar.addWidget(TenPxSpacer())
-        toolbar.addWidget(TenPxSpacer())
 
         tooltips = {
-            self.upgradeSelected: _("Uninstall selected packages"),
-            showInfoAction: _("Show package details"),
-            runAsAdmin: _("Uninstall the selected packages with administrator privileges"),
-            interactive: _("Do an interactive uninstall for the selected packages"),
-            share: _("Share this package"),
-            self.blacklistAction: _("Ignore updates for the selected packages"),
-            self.selectNoneAction: _("Clear selection"),
-            self.selectAllAction: _("Select all packages"),
-            self.exportSelectedAction: _("Export selected packages to a file")
+            self.ToolbarInstall: _("Uninstall selected packages"),
+            self.ToolbarShowInfo: _("Show package details"),
+            self.ToolbarRunAsAdmin: _("Uninstall the selected packages with administrator privileges"),
+            self.ToolbarInteractive: _("Do an interactive uninstall for the selected packages"),
+            self.ToolbarShare: _("Share this package"),
+            self.ToolbarIgnoreSelected: _("Ignore updates for the selected packages"),
+            self.ToolbarSelectNone: _("Clear selection"),
+            self.ToolbarSelectAll: _("Select all packages"),
+            self.ToolbarExport: _("Export selected packages to a file")
         }
 
         for action in tooltips.keys():
             toolbar.widgetForAction(action).setToolTip(tooltips[action])
             toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
+        
+        toolbar.addSeparator()
+        
+        self.HelpMenuEntry1 = QAction("")
+        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile(""))
+        self.HelpMenuEntry2 = QAction("")
+        self.HelpMenuEntry2.triggered.connect(lambda: os.startfile(""))
+        self.HelpMenuEntry3 = QAction("")
+        self.HelpMenuEntry3.triggered.connect(lambda: os.startfile(""))
+        
+        def showHelpMenu():
+            helpMenu = QMenu(self)
+            #helpMenu.addAction(self.HelpMenuEntry1)
+            #helpMenu.addAction(self.HelpMenuEntry2)
+            helpMenu.addSeparator()
+            #helpMenu.addAction(self.HelpMenuEntry3)
+            ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
+            helpMenu.exec(QCursor.pos())
+    
+        self.ToolbarHelp = QAction(QIcon(getMedia("help")), _("Help"), toolbar)
+        self.ToolbarHelp.triggered.connect(showHelpMenu)
+        toolbar.addAction(self.ToolbarHelp)
+        
+        w = QWidget()
+        w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        toolbar.addWidget(w)
+        toolbar.addWidget(TenPxSpacer())
+        toolbar.addWidget(TenPxSpacer())
 
         return toolbar
 
