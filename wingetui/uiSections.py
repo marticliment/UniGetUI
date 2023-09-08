@@ -69,39 +69,34 @@ class DiscoverSoftwareSection(SoftwareSection):
         if not getSettings("WarnedAboutPackages_v2"):
             setSettings("WarnedAboutPackages_v2", True)
             self.informationBanner.show()
-        self.installIcon = QIcon(getMedia("install"))
-        self.installedIcon = QIcon(getMedia("installed"))
-        self.IDIcon = QIcon(getMedia("ID"))
-        self.versionIcon = QIcon(getMedia("newversion"))
 
         self.contextMenu = QMenu(self)
         self.contextMenu.setParent(self)
         self.MenuDetailsAction = QAction(_("Package details"))
         self.MenuDetailsAction.triggered.connect(lambda: (self.contextMenu.close(), self.openInfo(self.packageList.currentItem())))
-        self.MenuDetailsAction.setIcon(QIcon(getMedia("info")))
-        self.InstallAction = QAction(_("Install"))
-        self.InstallAction.setIcon(QIcon(getMedia("newversion")))
-        self.InstallAction.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem()))
-        self.AdminAction = QAction(_("Install as administrator"))
-        self.AdminAction.setIcon(QIcon(getMedia("runasadmin")))
-        self.AdminAction.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), admin=True))
-        self.SkipHashAction = QAction(_("Skip hash check"))
-        self.SkipHashAction.setIcon(QIcon(getMedia("checksum")))
-        self.SkipHashAction.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), skiphash=True))
-        self.InteractiveAction = QAction(_("Interactive installation"))
-        self.InteractiveAction.setIcon(QIcon(getMedia("interactive")))
-        self.InteractiveAction.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), interactive=True,))
-        self.ShareAction = QAction(_("Share this package"))
-        self.ShareAction.setIcon(QIcon(getMedia("share")))
-        self.ShareAction.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        self.MenuInstall = QAction(_("Install"))
+        self.MenuInstall.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem()))
+        self.MenuAdministrator = QAction(_("Install as administrator"))
+        self.MenuAdministrator.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), admin=True))
+        self.MenuSkipHash = QAction(_("Skip hash check"))
+        self.MenuSkipHash.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), skiphash=True))
+        self.MenuInteractive = QAction(_("Interactive installation"))
+        self.MenuInteractive.triggered.connect(lambda: self.installPackageItem(self.packageList.currentItem(), interactive=True,))
+        self.MenuShare = QAction(_("Share this package"))
+        self.MenuShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        
+        self.installIcon = QIcon(getMedia("install"))
+        self.installedIcon = QIcon(getMedia("installed"))
+        self.IDIcon = QIcon(getMedia("ID"))
+        self.versionIcon = QIcon(getMedia("newversion"))
 
-        self.contextMenu.addAction(self.InstallAction)
+        self.contextMenu.addAction(self.MenuInstall)
         self.contextMenu.addSeparator()
-        self.contextMenu.addAction(self.AdminAction)
-        self.contextMenu.addAction(self.InteractiveAction)
-        self.contextMenu.addAction(self.SkipHashAction)
+        self.contextMenu.addAction(self.MenuAdministrator)
+        self.contextMenu.addAction(self.MenuInteractive)
+        self.contextMenu.addAction(self.MenuSkipHash)
         self.contextMenu.addSeparator()
-        self.contextMenu.addAction(self.ShareAction)
+        self.contextMenu.addAction(self.MenuShare)
         self.contextMenu.addAction(self.MenuDetailsAction)
         self.contextMenu.addSeparator()
         
@@ -152,6 +147,29 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.query.setFocus()
 
         self.finishInitialisation()
+        
+    def ApplyIcons(self):
+        super().ApplyIcons()
+        self.installIcon = QIcon(getMedia("install"))
+        self.installedIcon = QIcon(getMedia("installed"))
+        self.IDIcon = QIcon(getMedia("ID"))
+        self.versionIcon = QIcon(getMedia("newversion"))
+        self.MenuShare.setIcon(QIcon(getMedia("share")))
+        self.MenuInteractive.setIcon(QIcon(getMedia("interactive")))
+        self.MenuSkipHash.setIcon(QIcon(getMedia("checksum")))
+        self.MenuAdministrator.setIcon(QIcon(getMedia("runasadmin")))
+        self.MenuInstall.setIcon(QIcon(getMedia("newversion")))
+        self.MenuDetailsAction.setIcon(QIcon(getMedia("info")))
+        self.ToolbarInstall.setIcon(QIcon(getMedia("newversion")))
+        self.ToolbarShowInfo.setIcon(QIcon(getMedia("info")))
+        self.ToolbarRunAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
+        self.ToolbarSkipHash.setIcon(QIcon(getMedia("checksum")))
+        self.ToolbarInteractive.setIcon(QIcon(getMedia("interactive")))
+        self.ToolbarShare.setIcon(QIcon(getMedia("share")))
+        self.ToolbarSelectNone.setIcon(QIcon(getMedia("selectnone")))
+        self.ToolbarImportPackages.setIcon(QIcon(getMedia("import")))
+        self.ToolbarExportPackages.setIcon(QIcon(getMedia("export")))
+        
 
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
@@ -162,9 +180,9 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         try:
             Capabilities: PackageManagerCapabilities =  self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
-            self.AdminAction.setVisible(Capabilities.CanRunAsAdmin)
-            self.SkipHashAction.setVisible(Capabilities.CanSkipIntegrityChecks)
-            self.InteractiveAction.setVisible(Capabilities.CanRunInteractively)
+            self.MenuAdministrator.setVisible(Capabilities.CanRunAsAdmin)
+            self.MenuSkipHash.setVisible(Capabilities.CanSkipIntegrityChecks)
+            self.MenuInteractive.setVisible(Capabilities.CanRunInteractively)
         except Exception as e:
             report(e)
 
@@ -176,66 +194,60 @@ class DiscoverSoftwareSection(SoftwareSection):
         toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         toolbar.addWidget(TenPxSpacer())
-        self.installPackages = QAction(QIcon(getMedia("newversion")), _("Install selected packages"), toolbar)
-        self.installPackages.triggered.connect(lambda: self.installSelectedPackageItems())
-        toolbar.addAction(self.installPackages)
+        self.ToolbarInstall = QAction(_("Install selected packages"), toolbar)
+        self.ToolbarInstall.triggered.connect(lambda: self.installSelectedPackageItems())
+        toolbar.addAction(self.ToolbarInstall)
 
-        showInfo = QAction("", toolbar)# ("Show info")
-        showInfo.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
-        showInfo.setIcon(QIcon(getMedia("info")))
-        runAsAdmin = QAction("", toolbar)# ("Run as administrator")
-        runAsAdmin.setIcon(QIcon(getMedia("runasadmin")))
-        runAsAdmin.triggered.connect(lambda: self.installSelectedPackageItems(admin=True))
-        checksum = QAction("", toolbar)# ("Skip hash check")
-        checksum.setIcon(QIcon(getMedia("checksum")))
-        checksum.triggered.connect(lambda: self.installSelectedPackageItems(skiphash=True))
-        interactive = QAction("", toolbar)# ("Interactive update")
-        interactive.setIcon(QIcon(getMedia("interactive")))
-        interactive.triggered.connect(lambda: self.installSelectedPackageItems(interactive=True))
-        share = QAction("", toolbar)
-        share.setIcon(QIcon(getMedia("share")))
-        share.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        self.ToolbarShowInfo = QAction("", toolbar)# ("Show info")
+        self.ToolbarShowInfo.triggered.connect(lambda: self.openInfo(self.packageList.currentItem()))
+        self.ToolbarRunAsAdmin = QAction("", toolbar)# ("Run as administrator")
+        self.ToolbarRunAsAdmin.triggered.connect(lambda: self.installSelectedPackageItems(admin=True))
+        self.ToolbarSkipHash = QAction("", toolbar)# ("Skip hash check")
+        self.ToolbarSkipHash.triggered.connect(lambda: self.installSelectedPackageItems(skiphash=True))
+        self.ToolbarInteractive = QAction("", toolbar)# ("Interactive update")
+        self.ToolbarInteractive.triggered.connect(lambda: self.installSelectedPackageItems(interactive=True))
+        self.ToolbarShare = QAction("", toolbar)
+        self.ToolbarShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
 
-        for action in [runAsAdmin, checksum, interactive]:
+        for action in [self.ToolbarRunAsAdmin, self.ToolbarSkipHash, self.ToolbarInteractive]:
             toolbar.addAction(action)
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
         toolbar.addSeparator()
 
-        for action in [showInfo, share]:
+        for action in [self.ToolbarShowInfo, self.ToolbarShare]:
             toolbar.addAction(action)
             toolbar.widgetForAction(action).setFixedSize(40, 45)
 
         toolbar.addSeparator()
 
-        self.selectNoneAction = QAction(QIcon(getMedia("selectnone")), "", toolbar)
-        self.selectNoneAction.triggered.connect(lambda: self.setAllPackagesSelected(False))
-        toolbar.addAction(self.selectNoneAction)
-        toolbar.widgetForAction(self.selectNoneAction).setFixedSize(40, 45)
+        self.ToolbarSelectNone = QAction("", toolbar)
+        self.ToolbarSelectNone.triggered.connect(lambda: self.setAllPackagesSelected(False))
+        toolbar.addAction(self.ToolbarSelectNone)
+        toolbar.widgetForAction(self.ToolbarSelectNone).setFixedSize(40, 45)
 
         toolbar.addSeparator()
 
-        self.importAction = QAction(_("Import packages from a file"), toolbar)
-        self.importAction.setIcon(QIcon(getMedia("import")))
-        self.importAction.triggered.connect(lambda: self.importPackages())
-        toolbar.addAction(self.importAction)
+        self.ToolbarImportPackages = QAction(_("Import packages from a file"), toolbar)
+        self.ToolbarImportPackages.triggered.connect(lambda: self.importPackages())
+        toolbar.addAction(self.ToolbarImportPackages)
 
-        self.exportAction = QAction(QIcon(getMedia("export")), _("Export selected packages to a file"), toolbar)
-        self.exportAction.triggered.connect(lambda: self.exportSelectedPackages())
-        toolbar.addAction(self.exportAction)
+        self.ToolbarExportPackages = QAction(_("Export selected packages to a file"), toolbar)
+        self.ToolbarExportPackages.triggered.connect(lambda: self.exportSelectedPackages())
+        toolbar.addAction(self.ToolbarExportPackages)
 
 
         tooltips = {
-            self.installPackages: _("Install selected packages"),
-            showInfo: _("Show package details"),
-            runAsAdmin: _("Install selected packages with administrator privileges"),
-            checksum: _("Skip the hash check when installing the selected packages"),
-            interactive: _("Do an interactive install for the selected packages"),
-            share: _("Share this package"),
-            self.selectNoneAction: _("Clear selection"),
-            self.importAction: _("Install packages from a file"),
-            self.exportAction: _("Export selected packages to a file")
+            self.ToolbarInstall: _("Install selected packages"),
+            self.ToolbarShowInfo: _("Show package details"),
+            self.ToolbarRunAsAdmin: _("Install selected packages with administrator privileges"),
+            self.ToolbarSkipHash: _("Skip the hash check when installing the selected packages"),
+            self.ToolbarInteractive: _("Do an interactive install for the selected packages"),
+            self.ToolbarShare: _("Share this package"),
+            self.ToolbarSelectNone: _("Clear selection"),
+            self.ToolbarImportPackages: _("Install packages from a file"),
+            self.ToolbarExportPackages: _("Export selected packages to a file")
         }
 
         for action in tooltips.keys():

@@ -95,19 +95,19 @@ class RootWindow(QMainWindow):
         QTabWidget::tab-bar {{
             alignment: center;
             }}""")
-        self.discover = DiscoverSoftwareSection()
+        self.discover = DiscoverSoftwareSection(self)
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.discover = self.discover
         self.widgets[self.discover] = self.addTab(self.discover, _("Discover Packages"))
-        self.updates = UpdateSoftwareSection()
+        self.updates = UpdateSoftwareSection(self)
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.updates = self.updates
         self.widgets[self.updates] = self.addTab(self.updates, _("Software Updates"))
-        self.uninstall = UninstallSoftwareSection()
+        self.uninstall = UninstallSoftwareSection(self)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
         self.widgets[self.uninstall] = self.addTab(self.uninstall, _("Installed Packages"))
-        self.settingsSection = SettingsSection()
+        self.settingsSection = SettingsSection(self)
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, _("WingetUI Settings"), addToMenu=True, actionIcon="settings")
         self.aboutSection = AboutSection()
         self.widgets[self.aboutSection] = self.addTab(self.aboutSection, _("About WingetUI"), addToMenu=True, actionIcon="info")
@@ -373,7 +373,6 @@ class RootWindow(QMainWindow):
         return super().showEvent(event)
 
     def ApplyStyleSheetsAndIcons(self):
-        print("THEME CHANGING")
         if isDark():
             self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
         else:
@@ -387,6 +386,9 @@ class RootWindow(QMainWindow):
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         for widget in self.DynamicIconsToApply.keys():
             widget.setIcon(QIcon(getMedia(self.DynamicIconsToApply[widget])))
+        for manager in PackageManagersList:
+            manager.LoadedIcons = False
+            
 
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.lastFocusedWindow = self.winId()

@@ -748,6 +748,7 @@ class SoftwareSection(QWidget):
     addedItems: list[TreeWidgetItemWithQAction] = []
     shownItems: list[TreeWidgetItemWithQAction] = []
     nextItemToShow: int = 0
+    OnThemeChange = Signal()
 
     PackageManagers: list[PackageManagerModule] = PackageManagersList
     PackagesLoaded: dict[PackageManagerModule:bool] = {}
@@ -772,14 +773,12 @@ class SoftwareSection(QWidget):
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.startLoadingPackages)
-        self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.reloadButton.setAccessibleName(_("Reload"))
 
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;")
         self.searchButton.clicked.connect(self.filter)
-        self.searchButton.setIcon(QIcon(getMedia("search")))
         self.searchButton.setAccessibleName(_("Search"))
 
         headerLayout = QHBoxLayout()
@@ -986,6 +985,13 @@ class SoftwareSection(QWidget):
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        self.window().OnThemeChange.connect(self.ApplyIcons)
+        
+    def ApplyIcons(self):
+        self.OnThemeChange.emit()
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.searchButton.setIcon(QIcon(getMedia("search")))
+        self.reloadButton.click()
 
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")
