@@ -4,7 +4,7 @@ import locale
 import os
 import re
 import shutil
-import subprocess
+import platform
 import sys
 import time
 import winreg
@@ -27,9 +27,15 @@ OLD_STDERR = sys.stderr
 stdout_buffer = io.StringIO()
 stderr_buffer = io.StringIO()
 MissingTranslationList = []
-SYSTEM_THEME_ON_LAUNCH = 0
 realpath = 0
 blueColor = "blue"
+try:
+    winver = int(platform.version().split('.')[2])
+except Exception as e:
+    print(e)
+    winver = 00000
+isWin11 = winver >= 22000
+
 
 def cprint(*args) -> None:
     print(*args, file=OLD_STDOUT)
@@ -194,7 +200,7 @@ def isDark() -> bool:
             return True
         case "light":
             return False
-    return SYSTEM_THEME_ON_LAUNCH == 0
+    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) == 0
 
 def isTaskbarDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 1) == 0
@@ -612,7 +618,6 @@ SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrar
 # End Import C#.NET DLLs
 #
 
-SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
 if isDark():
     blueColor = f"rgb({getColors()[1]})"
 else:
