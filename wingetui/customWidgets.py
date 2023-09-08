@@ -698,6 +698,13 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
                 continue
             IgnorePackageUpdates_Permanent(ignoredPackage[0], ignoredPackage[1])
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
+        
+        INSTALLED: SoftwareSection = globals.uninstall
+        if id in INSTALLED.IdPackageReference:
+            package: Package = INSTALLED.IdPackageReference[id]
+            package.PackageItem.setIcon(1, INSTALLED.installIcon)
+            package.PackageItem.setToolTip(1, package.Name)
+        
         del i
 
     def unBlackistSingleVersion(self, id: str, version: str, store: str, item: TreeWidgetItemWithQAction):
