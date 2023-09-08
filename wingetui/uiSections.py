@@ -169,6 +169,10 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.ToolbarSelectNone.setIcon(QIcon(getMedia("selectnone")))
         self.ToolbarImportPackages.setIcon(QIcon(getMedia("import")))
         self.ToolbarExportPackages.setIcon(QIcon(getMedia("export")))
+        self.ToolbarHelp.setIcon(QIcon(getMedia("help")))
+        self.HelpMenuEntry1.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
         
 
     def showContextMenu(self, pos: QPoint) -> None:
@@ -257,24 +261,25 @@ class DiscoverSoftwareSection(SoftwareSection):
         
         toolbar.addSeparator()
         
+        self.HelpMenuEntry1 = QAction("Guide for beginners on how to install a package")
+        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/install-a-program"))
+        self.HelpMenuEntry2 = QAction("Discover Packages overview - every feature explained")
+        self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/discover-overview"))
+        self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+
         def showHelpMenu():
             helpMenu = QMenu(self)
-            help = QAction(QIcon(getMedia("launch")), "Guide for beginners on how to install a package")
-            help.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/install-a-program"))
-            helpMenu.addAction(help)
-            help2 = QAction(QIcon(getMedia("launch")), "Discover Packages overview - every feature explained")
-            help2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/discover-overview"))
-            helpMenu.addAction(help2)
+            helpMenu.addAction(self.HelpMenuEntry1)
+            helpMenu.addAction(self.HelpMenuEntry2)
             helpMenu.addSeparator()
-            help3 = QAction(QIcon(getMedia("launch")), "WingetUI Help and Documentation")
-            help3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
-            helpMenu.addAction(help3)
+            helpMenu.addAction(self.HelpMenuEntry3)
             ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
             helpMenu.exec(QCursor.pos())
     
-        helpAction = QAction(QIcon(getMedia("help")), _("Help"), toolbar)
-        helpAction.triggered.connect(showHelpMenu)
-        toolbar.addAction(helpAction)
+        self.ToolbarHelp = QAction(_("Help"), toolbar)
+        self.ToolbarHelp.triggered.connect(showHelpMenu)
+        toolbar.addAction(self.ToolbarHelp)
 
         toolbar.addWidget(TenPxSpacer())
         toolbar.addWidget(TenPxSpacer())
