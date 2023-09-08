@@ -34,7 +34,7 @@ class PipPackageManager(DynamicLoadPackageManager):
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
 
-    LoadedIcons = True
+    LoadedIcons = False
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):

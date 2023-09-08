@@ -631,6 +631,21 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.localIcon = QIcon(getMedia("localpc"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
 
+    def ApplyIcons(self):
+        self.installIcon = QIcon(getMedia("install"))
+        self.versionIcon = QIcon(getMedia("newversion"))
+        self.wingetIcon = Winget.getIcon("Winget")
+        self.scoopIcon = Scoop.getIcon("Scoop")
+        self.chocolateyIcon = Choco.getIcon("Chocolatey")
+        self.pipIcon = Pip.getIcon("Pip")
+        self.npmIcon = Npm.getIcon("Npm")
+        self.localIcon = QIcon(getMedia("localpc"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        try:
+            self.loadItems()
+        except AttributeError:
+            pass # This will be called before __init__ finished loading, so some attributes may not have been set when called
+        return super().ApplyIcons()
 
     def loadItems(self):
         self.treewidget.clear()
@@ -1384,10 +1399,16 @@ class PackageExporter(MovableFramelessWindow):
         exportButton.setObjectName("AccentButton")
         hLayout.addWidget(exportButton)
         self.layout().addLayout(hLayout)
-
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        
+    def ApplyIcons(self):
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        # Package Exporter cannot easily reload packages
+        return super().ApplyIcons()
 
     def showExportUI(self, packageList: list[Package]):
         """
@@ -1599,6 +1620,14 @@ class PackageImporter(MovableFramelessWindow):
         self.versionIcon = QIcon(getMedia("version"))
 
         self.showImportUI()
+        
+    def ApplyIcons(self):
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        self.versionIcon = QIcon(getMedia("version"))
+        # Package Importer cannot easily reload package list
+        return super().ApplyIcons()
 
     def showImportUI(self):
         """

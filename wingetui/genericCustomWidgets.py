@@ -114,7 +114,7 @@ class SmoothScrollArea(QScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
-            self.window().OnThemeChange.connect(self.ApplyIcons)
+            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
     
     def ApplyIcons(self):
@@ -249,7 +249,7 @@ class TreeWidget(QTreeWidget):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
-            self.window().OnThemeChange.connect(self.ApplyIcons)
+            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
     
     def ApplyIcons(self):
@@ -750,7 +750,7 @@ class CollapsableSection(QWidget):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
-            self.window().OnThemeChange.connect(self.ApplyIcons)
+            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
             
     def ApplyIcons(self):
@@ -1238,22 +1238,33 @@ class MovableFramelessWindow(DraggableWindow):
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.setStyleSheet("margin: 0px;")
-        self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
+        self.backButton = QPushButton("", self)
         self.backButton.move(self.width()-40, 0)
         self.backButton.resize(30, 30)
         self.backButton.setFlat(True)
-        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:#c42b1c;}")
         self.backButton.clicked.connect(self.close)
         self.backButton.show()
+        self.ApplyIcons()
+        self.registeredThemeEvent = False
+        
+    def ApplyIcons(self):
+        ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
+        self.setStyleSheet("#background{background-color:"+("transparent" if isWin11 else ("#202020" if isDark() else "white"))+";}")
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:#c42b1c;}")
+        self.backButton.setIcon(QIcon(getMedia("close")))
+    
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.backButton.move(self.width()-35, 0)
         return super().resizeEvent(event)
 
-    def showEvent(self, event: QShowEvent) -> None:
-        r = ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
-        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
-        return super().showEvent(event)
+    
+        
+
 
 class ButtonWithResizeSignal(QPushButton):
     resized = Signal()
