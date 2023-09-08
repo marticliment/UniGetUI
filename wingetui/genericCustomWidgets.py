@@ -545,6 +545,7 @@ class CollapsableSection(QWidget):
     childrenw = []
     callInMain = Signal(object)
     baseHeight: int = 70
+    registeredThemeEvent = False
     def __init__(self, text: str, icon: str, descText: str = "No description provided"):
         if isDark():
             self.iconMode = "white"
@@ -641,6 +642,7 @@ class CollapsableSection(QWidget):
         self.compressibleWidget.setGraphicsEffect(self.childrenOpacity)
 
         self.compressibleWidget.move((-1500),(-1500))
+        self.ApplyIcons()
 
     def showHideChildren(self):
         self.hideChildren()
@@ -745,7 +747,13 @@ class CollapsableSection(QWidget):
     def getChildren(self) -> list:
         return self.childrenw
 
-    def showEvent(self, event) -> None:
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
+        return super().showEvent(event)
+            
+    def ApplyIcons(self):
         if isDark():
             self.setIcon(self.icon.replace("black", "white"))
         else:
@@ -754,7 +762,7 @@ class CollapsableSection(QWidget):
             self.showHideButton.setIcon(QIcon(getMedia("expand")))
         else:
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-        return super().showEvent(event)
+
 
 class SmallCollapsableSection(CollapsableSection):
     oldScrollValue = 0
@@ -847,17 +855,6 @@ class SmallCollapsableSection(CollapsableSection):
 
     def getChildren(self) -> list:
         return self.childrenw
-
-    def showEvent(self, event) -> None:
-        if isDark():
-            self.setIcon(self.icon.replace("black", "white"))
-        else:
-            self.setIcon(self.icon.replace("white", "black"))
-        if self.childsVisible:
-            self.showHideButton.setIcon(QIcon(getMedia("expand")))
-        else:
-            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-        return super().showEvent(event)
 
 class SectionHWidget(QWidget):
     def __init__(self, lastOne: bool = False):
