@@ -21,6 +21,7 @@ class MessageBox(QMessageBox):
 class SmoothScrollArea(QScrollArea):
     missingScroll = 0
     buttonVisible = False
+    registeredThemeEvent = False
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -109,10 +110,20 @@ class SmoothScrollArea(QScrollArea):
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.goTopButton.move(self.width()-48, self.height()-48)
         return super().resizeEvent(event)
+    
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
+        return super().showEvent(event)
+    
+    def ApplyIcons(self):
+        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
 
 class TreeWidget(QTreeWidget):
     missingScroll: int = 0
     buttonVisible: bool = False
+    registeredThemeEvent = False
     def __init__(self, emptystr: str = "") -> None:
         super().__init__()
         self.smoothScrollAnimation = QVariantAnimation(self)
@@ -138,7 +149,6 @@ class TreeWidget(QTreeWidget):
         self.label.setFixedHeight(50)
         self.buttonOpacity = QGraphicsOpacityEffect()
         self.goTopButton = QPushButton(self)
-        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
         self.goTopButton.setToolTip(_("Return to top"))
         self.goTopButton.setAccessibleDescription(_("Return to top"))
         self.goTopButton.setFixedSize(24, 32)
@@ -148,6 +158,8 @@ class TreeWidget(QTreeWidget):
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
         self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
+        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+
 
     def connectCustomScrollbar(self, scrollbar: QScrollBar):
         try:
@@ -233,6 +245,16 @@ class TreeWidget(QTreeWidget):
                 event.ignore()
                 return
         return super().keyPressEvent(event)
+    
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
+        return super().showEvent(event)
+    
+    def ApplyIcons(self):
+        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+
 
 class PackageListSortingModel(QAbstractItemModel):
 
