@@ -29,6 +29,8 @@ class SamplePackageManager(PackageManagerModule):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = False
+    
+    LoadedIcons = False
 
     if not os.path.exists(CAHCE_FILE_PATH):
         try:
@@ -201,7 +203,9 @@ class SamplePackageManager(PackageManagerModule):
             report(e)
             return details
 
-    def getIcon(source: str = "") -> QIcon:
+    def getIcon(self, source: str = "") -> QIcon:
+        if not self.LoadedIcons:
+           self.LoadedIcons = True
         return QIcon()
 
     def getParameters(self, options: InstallationOptions) -> list[str]:

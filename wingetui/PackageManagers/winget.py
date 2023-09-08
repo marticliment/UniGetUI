@@ -47,6 +47,7 @@ class WingetPackageManager(DynamicPackageManager):
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = True
 
+    LoadedIcons = False
     wingetIcon = None
     localIcon = None
     steamIcon = None
@@ -491,7 +492,8 @@ class WingetPackageManager(DynamicPackageManager):
             return details
 
     def getIcon(self, source: str) -> QIcon:
-        if not self.wingetIcon:
+        if not self.LoadedIcons:
+            self.LoadedIcons = True
             self.wingetIcon = QIcon(getMedia("winget"))
             self.localIcon = QIcon(getMedia("localpc"))
             self.msStoreIcon = QIcon(getMedia("msstore"))
