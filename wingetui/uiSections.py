@@ -7,6 +7,7 @@ import subprocess
 import sys
 import time
 from threading import Thread
+import win32mica
 
 import globals
 from customWidgets import *
@@ -1802,7 +1803,7 @@ class SettingsSection(SmoothScrollArea):
         self.theme.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
 
         self.generalTitle.addWidget(self.theme)
-        self.theme.restartButton.setText(_("Restart WingetUI"))
+        self.theme.restartButton.setText(_("Apply"))
 
         themes = {
             _("Light"): "light",
@@ -1824,8 +1825,24 @@ class SettingsSection(SmoothScrollArea):
         except Exception as e:
             report(e)
 
+        def applyTheme():
+            mode = win32mica.MicaTheme.AUTO
+            theme = getSettingsValue("PreferredTheme")
+            match theme:
+                case "dark":
+                    mode = win32mica.MicaTheme.DARK
+                case "light":
+                    mode = win32mica.MicaTheme.LIGHT
+            if mode == win32mica.MicaTheme.AUTO:
+                win32mica.ApplyMica(globals.mainWindow.winId(), mode, OnThemeChange=lambda _: globals.mainWindow.callInMain.emit(globals.mainWindow.ApplyStyleSheetsAndIcons))
+            else:
+                win32mica.ApplyMica(globals.mainWindow.winId(), mode)
+            globals.mainWindow.ApplyStyleSheetsAndIcons()
+            self.theme.restartButton.hide()
+
+
         self.theme.combobox.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), self.theme.restartButton.setVisible(True)))
-        self.theme.restartButton.clicked.connect(restartWingetUIByLangChange)
+        self.theme.restartButton.clicked.connect(applyTheme)
 
 
         def exportSettings():

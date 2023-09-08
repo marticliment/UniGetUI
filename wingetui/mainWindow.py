@@ -59,9 +59,14 @@ class RootWindow(QMainWindow):
             }}
             QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
-
-        win32mica.ApplyMica(self.winId(), win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(self.ApplyStyleSheetsAndIcons))
-        self.ApplyStyleSheetsAndIcons()
+        mode = win32mica.MicaTheme.AUTO
+        theme = getSettingsValue("PreferredTheme")
+        match theme:
+            case "dark":
+                mode = win32mica.MicaTheme.DARK
+            case "light":
+                mode = win32mica.MicaTheme.LIGHT
+        win32mica.ApplyMica(self.winId(), mode, OnThemeChange=lambda _: self.callInMain.emit(self.ApplyStyleSheetsAndIcons))
         print("🟢 Main application loaded...")
 
     def loadWidgets(self) -> None:

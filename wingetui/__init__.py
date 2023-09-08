@@ -520,6 +520,8 @@ try:
                     globals.darkCSS = darkCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                     globals.lightCSS = lightCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                     self.window = RootWindow()
+                    self.window.ApplyStyleSheetsAndIcons()
+
                     self.showProgram.connect(lambda id: (self.discoverPackages.trigger(), globals.discover.loadShared(id)))
                     self.discoverPackages.triggered.connect(lambda: self.window.showWindow(0))
                     self.updatePackages.triggered.connect(lambda: self.window.showWindow(1))
