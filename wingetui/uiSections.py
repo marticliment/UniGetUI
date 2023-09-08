@@ -1833,10 +1833,7 @@ class SettingsSection(SmoothScrollArea):
                     mode = win32mica.MicaTheme.DARK
                 case "light":
                     mode = win32mica.MicaTheme.LIGHT
-            if mode == win32mica.MicaTheme.AUTO:
-                win32mica.ApplyMica(globals.mainWindow.winId(), mode, OnThemeChange=lambda _: globals.mainWindow.callInMain.emit(globals.mainWindow.ApplyStyleSheetsAndIcons))
-            else:
-                win32mica.ApplyMica(globals.mainWindow.winId(), mode)
+            win32mica.ApplyMica(globals.mainWindow.winId(), mode)
             globals.mainWindow.ApplyStyleSheetsAndIcons()
             self.theme.restartButton.hide()
 

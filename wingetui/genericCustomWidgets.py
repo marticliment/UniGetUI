@@ -1248,7 +1248,8 @@ class MovableFramelessWindow(DraggableWindow):
         self.registeredThemeEvent = False
         
     def ApplyIcons(self):
-        ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
+        if self.isVisible():
+            ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if isWin11 else ("#202020" if isDark() else "white"))+";}")
         self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:#c42b1c;}")
         self.backButton.setIcon(QIcon(getMedia("close")))
@@ -1257,6 +1258,8 @@ class MovableFramelessWindow(DraggableWindow):
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+        ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
+
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.backButton.move(self.width()-35, 0)

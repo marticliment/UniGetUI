@@ -59,14 +59,8 @@ class RootWindow(QMainWindow):
             }}
             QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
-        mode = win32mica.MicaTheme.AUTO
-        theme = getSettingsValue("PreferredTheme")
-        match theme:
-            case "dark":
-                mode = win32mica.MicaTheme.DARK
-            case "light":
-                mode = win32mica.MicaTheme.LIGHT
-        win32mica.ApplyMica(self.winId(), mode, OnThemeChange=lambda _: self.callInMain.emit(self.ApplyStyleSheetsAndIcons))
+        win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(self.ApplyStyleSheetsAndIcons(True))) # Spawn a theme thread
+        self.ApplyStyleSheetsAndIcons()
         print("🟢 Main application loaded...")
 
     def loadWidgets(self) -> None:
@@ -377,7 +371,17 @@ class RootWindow(QMainWindow):
             report(e)
         return super().showEvent(event)
 
-    def ApplyStyleSheetsAndIcons(self):
+    def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):
+        if not skipMica:
+            mode = win32mica.MicaTheme.AUTO
+            theme = getSettingsValue("PreferredTheme")
+            match theme:
+                case "dark":
+                    mode = win32mica.MicaTheme.DARK
+                case "light":
+                    mode = win32mica.MicaTheme.LIGHT
+            win32mica.ApplyMica(self.winId(), mode)
+            
         if isDark():
             self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
         else:
@@ -394,7 +398,6 @@ class RootWindow(QMainWindow):
         for manager in PackageManagersList:
             manager.LoadedIcons = False
             
-
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.lastFocusedWindow = self.winId()
         return super().enterEvent(event)
