@@ -416,14 +416,14 @@ class DiscoverSoftwareSection(SoftwareSection):
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
                 
-            """UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
             if package.Id in UNINSTALL.IdPackageReference.keys():
                 installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
                 installedItem = installedPackage.PackageItem
                 if installedItem in UNINSTALL.packageItems:
                     item.setIcon(1, self.installedIcon)
                     item.setToolTip(1, _("This package is already installed")+" - "+package.Name)
-            """
+            
                 
 
                 
@@ -1300,11 +1300,12 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setIcon(4, package.getSourceIcon())
             item.setText(6, package.getFloatVersion())
             
-            """UPDATES: UpdateSoftwareSection = globals.updates
-            if package.hasUpdatesIgnoredPermanently():
+            UPDATES: UpdateSoftwareSection = globals.updates
+            """if package.hasUpdatesIgnoredPermanently():
                 item.setIcon(1, self.pinnedIcon)
                 item.setToolTip(1, _("Updates for this package are ignored")+" - "+package.Name)
-            elif package.Id in UPDATES.IdPackageReference.keys():
+            """
+            if package.Id in UPDATES.IdPackageReference.keys():
                 updatePackage: UpgradablePackage = UPDATES.IdPackageReference[package.Id]
                 updateItem = updatePackage.PackageItem
                 if updateItem in UPDATES.packageItems:
@@ -1318,7 +1319,7 @@ class UninstallSoftwareSection(SoftwareSection):
                 if discoverableItem in DISCOVER.packageItems:
                     discoverableItem.setIcon(1, self.installedIcon)
                     discoverableItem.setToolTip(1, _("This package is already installed")+" - "+package.Name)
-            """
+            
 
             
             self.PackageItemReference[package] = item

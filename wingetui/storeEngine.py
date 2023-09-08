@@ -567,6 +567,13 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     if self.Package.PackageItem in UNINSTALL_SECTION.showableItems:
                         UNINSTALL_SECTION.showableItems.remove(self.Package.PackageItem)
                     del i
+                    DISCOVER = globals.discover
+                    if self.Package.Id in DISCOVER.IdPackageReference.keys():
+                        discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[self.Package.Id]
+                        discoverableItem = discoverablePackage.PackageItem
+                        if discoverableItem in DISCOVER.packageItems:
+                            discoverableItem.setIcon(1, DISCOVER.installIcon)
+                            discoverableItem.setToolTip(1, self.Package.Name)
                 except Exception as e:
                     report(e)
                 UNINSTALL_SECTION.updatePackageNumber()
