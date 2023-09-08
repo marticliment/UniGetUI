@@ -2232,10 +2232,6 @@ class BaseLogSection(QWidget):
 
         self.textEdit = QPlainTextEditWithFluentMenu()
         self.textEdit.setReadOnly(True)
-        if isDark():
-            self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #161616;}}")
-        else:
-            self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #dddddd;}}")
 
         self.textEdit.setPlainText(stdout_buffer.getvalue())
 
@@ -2294,11 +2290,22 @@ class BaseLogSection(QWidget):
         self.layout().addWidget(self.textEdit, stretch=1)
 
         self.setAutoFillBackground(True)
+        
+    
+        self.ApplyIcons()
+        self.registeredThemeEvent = False
+        
+    def ApplyIcons(self):
+        if isDark():
+            self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #161616;}}")
+        else:
+            self.textEdit.setStyleSheet(f"QPlainTextEdit{{margin: 10px;border-radius: 6px;border: 1px solid #dddddd;}}")
 
-    def loadData(self):
-        raise NotImplementedError("Needs replacing")
 
     def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
         self.loadData()
         return super().showEvent(event)
 
