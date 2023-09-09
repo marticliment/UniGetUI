@@ -4,7 +4,7 @@ import locale
 import os
 import re
 import shutil
-import subprocess
+import platform
 import sys
 import time
 import winreg
@@ -27,9 +27,15 @@ OLD_STDERR = sys.stderr
 stdout_buffer = io.StringIO()
 stderr_buffer = io.StringIO()
 MissingTranslationList = []
-SYSTEM_THEME_ON_LAUNCH = 0
 realpath = 0
 blueColor = "blue"
+try:
+    winver = int(platform.version().split('.')[2])
+except Exception as e:
+    print(e)
+    winver = 00000
+isWin11 = winver >= 22000
+
 
 def cprint(*args) -> None:
     print(*args, file=OLD_STDOUT)
@@ -194,7 +200,7 @@ def isDark() -> bool:
             return True
         case "light":
             return False
-    return SYSTEM_THEME_ON_LAUNCH == 0
+    return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) == 0
 
 def isTaskbarDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 1) == 0
@@ -273,20 +279,13 @@ def update_tray_icon():
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
     mode = isDark()
-    isW11 = False
-    try:
-        import platform
-        if int(platform.version().split('.')[2]) >= 22000:
-            isW11 = True
-    except Exception as e:
-        report(e)
     if not avoidOverrideStyleSheet:
         if window.objectName() == "":
             window.setObjectName("MenuMenuMenuMenu")
         if not isDark():
-            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
+            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
         else:
-            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
+            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
     if mode:
         try:
             GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
@@ -612,7 +611,6 @@ SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrar
 # End Import C#.NET DLLs
 #
 
-SYSTEM_THEME_ON_LAUNCH = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
 if isDark():
     blueColor = f"rgb({getColors()[1]})"
 else:

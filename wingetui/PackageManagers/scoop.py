@@ -34,6 +34,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = True
 
+    LoadedIcons = False
     icon = None
 
     if not os.path.exists(CACHE_FILE_PATH):
@@ -271,7 +272,8 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             return details
 
     def getIcon(self, source: str) -> QIcon:
-        if not self.icon:
+        if not self.LoadedIcons:
+            self.LoadedIcons = True
             self.icon = QIcon(getMedia("scoop"))
         return self.icon
 

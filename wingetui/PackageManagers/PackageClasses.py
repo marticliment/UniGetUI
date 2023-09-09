@@ -165,6 +165,7 @@ class InstallationWidgetType(QWidget):
 class PackageManagerModule():
     NAME: str
     Capabilities: PackageManagerCapabilities
+    LoadedIcons: bool
     def __init__(self):
         pass
 

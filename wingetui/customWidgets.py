@@ -3,6 +3,7 @@ from functools import partial
 from typing import Optional
 
 import PySide6.QtCore
+import PySide6.QtGui
 import PySide6.QtWidgets
 from genericCustomWidgets import *
 from PackageManagers import PackageClasses
@@ -85,61 +86,29 @@ class QLinkLabel(QLabel):
         c.exec(QCursor.pos())
 
 class CommandLineEdit(CustomLineEdit):
+    registeredThemeEvent = False
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setReadOnly(True)
         self.setClearButtonEnabled(False)
         self.copyButton = QPushButton(self)
-        self.copyButton.setIcon(QIcon(getMedia("copy")))
         self.copyButton.setIconSize(QSize(24, 24))
         self.setFixedHeight(50)
         self.copyButton.setFixedSize(42, 42)
         self.copyButton.clicked.connect(lambda: globals.app.clipboard().setText(self.text()))
-        if isDark():
-            self.setStyleSheet("""
-                QLineEdit {
-                    border: 1px solid #282828;
-                    background-color: #191919;
-                    font-family: "Consolas";
-                    padding: 15px;
-                    border-radius: 8px;
-                    padding-right: 50px;
-                }
-                QPushButton {
-                    border-radius: 6px;
-                    background-color: rgba(0, 0, 0, 1%);
-                    border: 0px;
-                }
-                QPushButton:hover {
-                    background-color: rgba(255, 255, 255, 5%);
-                }
-                QPushButton:pressed {
-                    background-color: rgba(255, 255, 255, 10%);
-                }
-                """)
-        else:
-            self.setStyleSheet("""
-                QLineEdit {
-                    border: 1px solid #f5f5f5;
-                    background-color: #ffffff;
-                    font-family: "Consolas";
-                    padding: 15px;
-                    border-radius: 8px;
-                    padding-right: 50px;
-                }
-                QPushButton {
-                    border-radius: 6px;
-                    background-color: rgba(255, 255, 255, 100%);
-                    border: 0px;
-                }
-                QPushButton:hover {
-                    background-color: rgba(240, 240, 240, 100%);
-                }
-                QPushButton:pressed {
-                    background-color: rgba(225, 225, 225, 100%);
-                }
-                """)
-
+        self.copyButton.setObjectName("CommandLineEditCopyButton")
+        self.ApplyIcons()
+        self.setObjectName("CommandLineEdit")
+        
+    def ApplyIcons(self):
+        self.copyButton.setIcon(QIcon(getMedia("copy")))
+    
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = True
+            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+        return super().showEvent(event)
+    
     def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
         arg__1.ignore()
         return False
@@ -631,6 +600,21 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.localIcon = QIcon(getMedia("localpc"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
 
+    def ApplyIcons(self):
+        self.installIcon = QIcon(getMedia("install"))
+        self.versionIcon = QIcon(getMedia("newversion"))
+        self.wingetIcon = Winget.getIcon("Winget")
+        self.scoopIcon = Scoop.getIcon("Scoop")
+        self.chocolateyIcon = Choco.getIcon("Chocolatey")
+        self.pipIcon = Pip.getIcon("Pip")
+        self.npmIcon = Npm.getIcon("Npm")
+        self.localIcon = QIcon(getMedia("localpc"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        try:
+            self.loadItems()
+        except AttributeError:
+            pass # This will be called before __init__ finished loading, so some attributes may not have been set when called
+        return super().ApplyIcons()
 
     def loadItems(self):
         self.treewidget.clear()
@@ -748,6 +732,7 @@ class SoftwareSection(QWidget):
     addedItems: list[TreeWidgetItemWithQAction] = []
     shownItems: list[TreeWidgetItemWithQAction] = []
     nextItemToShow: int = 0
+    OnThemeChange = Signal()
 
     PackageManagers: list[PackageManagerModule] = PackageManagersList
     PackagesLoaded: dict[PackageManagerModule:bool] = {}
@@ -772,14 +757,12 @@ class SoftwareSection(QWidget):
         self.reloadButton.setFixedSize(30, 30)
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.startLoadingPackages)
-        self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.reloadButton.setAccessibleName(_("Reload"))
 
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;")
         self.searchButton.clicked.connect(self.filter)
-        self.searchButton.setIcon(QIcon(getMedia("search")))
         self.searchButton.setAccessibleName(_("Search"))
 
         headerLayout = QHBoxLayout()
@@ -986,6 +969,12 @@ class SoftwareSection(QWidget):
         self.rightFast.setEndValue(0)
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        self.window().OnThemeChange.connect(self.ApplyIcons)
+        
+    def ApplyIcons(self):
+        self.OnThemeChange.emit()
+        self.reloadButton.setIcon(QIcon(getMedia("reload")))
+        self.searchButton.setIcon(QIcon(getMedia("search")))
 
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")
@@ -1378,10 +1367,16 @@ class PackageExporter(MovableFramelessWindow):
         exportButton.setObjectName("AccentButton")
         hLayout.addWidget(exportButton)
         self.layout().addLayout(hLayout)
-
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        
+    def ApplyIcons(self):
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        # Package Exporter cannot easily reload packages
+        return super().ApplyIcons()
 
     def showExportUI(self, packageList: list[Package]):
         """
@@ -1593,6 +1588,14 @@ class PackageImporter(MovableFramelessWindow):
         self.versionIcon = QIcon(getMedia("version"))
 
         self.showImportUI()
+        
+    def ApplyIcons(self):
+        self.installIcon = QIcon(getMedia("install"))
+        self.idIcon = QIcon(getMedia("ID"))
+        self.removeIcon = QIcon(getMedia("menu_uninstall"))
+        self.versionIcon = QIcon(getMedia("version"))
+        # Package Importer cannot easily reload package list
+        return super().ApplyIcons()
 
     def showImportUI(self):
         """

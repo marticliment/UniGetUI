@@ -27,6 +27,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
             EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe").replace("/", "\\")
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
+    LoadedIcons = False
     icon = None
 
     NAME = "Chocolatey"
@@ -208,7 +209,8 @@ class ChocoPackageManager(DynamicLoadPackageManager):
             return details
 
     def getIcon(self, source: str) -> QIcon:
-        if not self.icon:
+        if not self.LoadedIcons:
+            self.LoadedIcons = True
             self.icon = QIcon(getMedia("choco"))
         return self.icon
 
