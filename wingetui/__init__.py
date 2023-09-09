@@ -407,7 +407,6 @@ try:
                 try:
                     globals.trayIcon = QSystemTrayIcon()
                     self.trayIcon = globals.trayIcon
-                    update_tray_icon()
                     globals.app = self
                     self.trayIcon.setToolTip(_("Initializing WingetUI..."))
                     self.trayIcon.setVisible(True)
@@ -424,18 +423,15 @@ try:
                     menu.addAction(self.updatePackages)
 
                     self.updatesMenu = menu.addMenu(_("0 updates found"))
-                    self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
                     self.updatesMenu.setParent(menu)
                     globals.trayMenuUpdatesList = self.updatesMenu
                     menu.addMenu(self.updatesMenu)
 
                     globals.updatesHeader = QAction(f"{_('App Name')}  \t{_('Installed Version')} \t → \t {_('New version')}", menu)
                     globals.updatesHeader.setEnabled(False)
-                    globals.updatesHeader.setIcon(QIcon(getMedia("version")))
                     self.updatesMenu.addAction(globals.updatesHeader)
 
                     self.uaAction = QAction(_("Update all"), menu)
-                    self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
                     menu.addAction(self.uaAction)
                     menu.addSeparator()
 
@@ -443,39 +439,45 @@ try:
                     menu.addAction(self.uninstallPackages)
 
                     self.installedMenu = menu.addMenu(_("0 packages found"))
-                    self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
                     self.installedMenu.setParent(menu)
                     globals.trayMenuInstalledList = self.installedMenu
                     menu.addMenu(self.installedMenu)
                     menu.addSeparator()
 
                     globals.installedHeader = QAction(f"{_('App Name')}\t{_('Installed Version')}", menu)
-                    globals.installedHeader.setIcon(QIcon(getMedia("version")))
                     globals.installedHeader.setEnabled(False)
                     self.installedMenu.addAction(globals.installedHeader)
 
                     self.infoAction = QAction(_("About WingetUI version {0}").format(versionName), menu)
-                    self.infoAction.setIcon(QIcon(getMedia("info")))
                     menu.addAction(self.infoAction)
                     self.showAction = QAction(_("Show WingetUI"), menu)
-                    self.showAction.setIcon(QIcon(getMedia("icon")))
                     menu.addAction(self.showAction)
                     menu.addSeparator()
 
                     self.settings = QAction(_("WingetUI Settings"), menu)
                     menu.addAction(self.settings)
 
-
                     self.quitAction = QAction(menu)
-                    self.quitAction.setIcon(QIcon(getMedia("menu_close")))
                     self.quitAction.setText(_("Quit"))
                     self.quitAction.triggered.connect(lambda: self.quit())
                     menu.addAction(self.quitAction)
-
-                    self.updatePackages.setIcon(QIcon(getMedia("alert_laptop")))
-                    self.discoverPackages.setIcon(QIcon(getMedia("desktop_download")))
-                    self.settings.setIcon(QIcon(getMedia("settings_gear")))
-                    self.uninstallPackages.setIcon(QIcon(getMedia("workstation")))
+                    
+                    def ApplyMenuIcons():
+                        self.infoAction.setIcon(QIcon(getMedia("info")))
+                        self.showAction.setIcon(QIcon(getMedia("icon")))
+                        globals.installedHeader.setIcon(QIcon(getMedia("version")))
+                        self.installedMenu.menuAction().setIcon(QIcon(getMedia("list")))
+                        globals.updatesHeader.setIcon(QIcon(getMedia("version")))
+                        self.uaAction.setIcon(QIcon(getMedia("menu_installall")))
+                        self.updatesMenu.menuAction().setIcon(QIcon(getMedia("list")))
+                        self.quitAction.setIcon(QIcon(getMedia("menu_close")))
+                        self.updatePackages.setIcon(QIcon(getMedia("alert_laptop")))
+                        self.discoverPackages.setIcon(QIcon(getMedia("desktop_download")))
+                        self.settings.setIcon(QIcon(getMedia("settings_gear")))
+                        self.uninstallPackages.setIcon(QIcon(getMedia("workstation")))
+                        update_tray_icon()
+                        
+                    ApplyMenuIcons()
 
                     def showWindow():
                         # This function will be defined when the mainWindow gets defined
@@ -520,6 +522,8 @@ try:
                     globals.darkCSS = darkCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                     globals.lightCSS = lightCSS.replace("Segoe UI Variable Text", globals.textfont).replace("Segoe UI Variable Display", globals.dispfont).replace("Segoe UI Variable Display Semib", globals.dispfontsemib)
                     self.window = RootWindow()
+                    self.window.OnThemeChange.connect(ApplyMenuIcons)
+                    
                     self.showProgram.connect(lambda id: (self.discoverPackages.trigger(), globals.discover.loadShared(id)))
                     self.discoverPackages.triggered.connect(lambda: self.window.showWindow(0))
                     self.updatePackages.triggered.connect(lambda: self.window.showWindow(1))
