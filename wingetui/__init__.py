@@ -619,9 +619,12 @@ try:
                 if not getSettings("DisableAutoUpdateWingetUI"):
                     print("🔵 Starting update check")
                     integrityPass = False
-                    dmname = socket.gethostbyname_ex("versions.marticliment.com")[0]
-                    if(dmname == dmname): # Check provider IP to prevent exploits
-                        integrityPass = True
+                    try:
+                        dmname = socket.gethostbyname_ex("versions.marticliment.com")[0]
+                        if(dmname == dmname): # Check provider IP to prevent exploits
+                            integrityPass = True
+                    except Exception as e:
+                        pass
                     try:
                         response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
                     except Exception as e:

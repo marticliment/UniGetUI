@@ -70,6 +70,7 @@ class WingetPackageManager(DynamicPackageManager):
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
+            noSourcesAvailable: bool = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
@@ -83,6 +84,11 @@ class WingetPackageManager(DynamicPackageManager):
                             idPosition = len(line.split("Id")[0])
                             versionPosition = len(line.split("Version")[0])
                             sourcePosition = len(line.split("Source")[0])
+                            if len(line) == sourcePosition:
+                                print(len(line), sourcePosition)
+                                noSourcesAvailable = True
+                                print("🟡 Winget reported no sources")
+                                    
                     elif "---" in line:
                         pass
                     else:
@@ -116,6 +122,9 @@ class WingetPackageManager(DynamicPackageManager):
                                     source = globals.wingetSources.keys()[0]
                                 else:
                                     source = _("Unknown")
+                            elif noSourcesAvailable:
+                                source = list(globals.wingetSources.keys())[0]
+                                
                             if not "  " in name:
                                 if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     packages.append(Package(name, id, ver, f"Winget: {source}", Winget))
