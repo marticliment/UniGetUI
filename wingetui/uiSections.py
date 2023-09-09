@@ -1891,8 +1891,7 @@ class SettingsSection(SmoothScrollArea):
             globals.mainWindow.ApplyStyleSheetsAndIcons()
             self.theme.restartButton.hide()
 
-
-        self.theme.combobox.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), self.theme.restartButton.setVisible(True)))
+        self.theme.combobox.currentTextChanged.connect(lambda v: (setSettingsValue("PreferredTheme", themes[v]), applyTheme()))
         self.theme.restartButton.clicked.connect(applyTheme)
 
 

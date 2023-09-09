@@ -417,6 +417,7 @@ class PushButtonWithAction(QPushButton):
 
 class CustomComboBox(QComboBox):
     disableScrolling = False
+    registeredThemeEvent = False
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -424,12 +425,19 @@ class CustomComboBox(QComboBox):
         self.setItemDelegate(QStyledItemDelegate(self))
         self.setObjectName("transparent")
         self.view().window().setObjectName("transparent")
+        self.ApplyBackdrop()
 
     def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
+        return super().showEvent(event)
+
+    def ApplyBackdrop(self):
         v = self.view().window()
         ApplyMenuBlur(v.winId().__int__(), v)
-        return super().showEvent(event)
-    
+
+        
     def wheelEvent(self, e: QWheelEvent) -> None:
         if self.disableScrolling:
             e.ignore()
