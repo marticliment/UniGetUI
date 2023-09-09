@@ -115,6 +115,7 @@ class SmoothScrollArea(QScrollArea):
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            self.ApplyIcons()
         return super().showEvent(event)
     
     def ApplyIcons(self):
@@ -250,6 +251,7 @@ class TreeWidget(QTreeWidget):
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            self.ApplyIcons()
         return super().showEvent(event)
     
     def ApplyIcons(self):
@@ -759,6 +761,7 @@ class CollapsableSection(QWidget):
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            self.ApplyIcons()
         return super().showEvent(event)
             
     def ApplyIcons(self):
@@ -1266,6 +1269,7 @@ class MovableFramelessWindow(DraggableWindow):
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            self.ApplyIcons()
         ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
 
 

@@ -51,8 +51,6 @@ class RootWindow(QMainWindow):
         self.blackmatt.move(0, 0)
         self.blackmatt.resize(self.size())
         self.installEventFilter(self)
-        self.setStyleSheet("""
-        """)
         win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(lambda: self.ApplyStyleSheetsAndIcons(True))) # Spawn a theme thread
         self.ApplyStyleSheetsAndIcons()
         print("🟢 Main application loaded...")
@@ -366,6 +364,14 @@ class RootWindow(QMainWindow):
         return super().showEvent(event)
 
     def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):
+        
+        if isDark():
+            self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
+        else:
+            self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if isWin11 else "#f6f6f6"))
+        self.ApplyIcons()
+        self.callInMain.emit(self.OnThemeChange.emit)
+
         if not skipMica:
             mode = win32mica.MicaTheme.AUTO
             theme = getSettingsValue("PreferredTheme")
@@ -376,12 +382,6 @@ class RootWindow(QMainWindow):
                     mode = win32mica.MicaTheme.LIGHT
             win32mica.ApplyMica(self.winId(), mode)
             
-        if isDark():
-            self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
-        else:
-            self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if isWin11 else "#f6f6f6"))
-        self.ApplyIcons()
-        self.callInMain.emit(self.OnThemeChange.emit)
 
     def ApplyIcons(self):
         self.helpAction.setIcon(QIcon(getMedia("help")))
