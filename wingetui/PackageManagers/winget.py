@@ -71,6 +71,7 @@ class WingetPackageManager(DynamicPackageManager):
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
+            noSourcesAvailable: bool = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
@@ -84,6 +85,11 @@ class WingetPackageManager(DynamicPackageManager):
                             idPosition = len(line.split("Id")[0])
                             versionPosition = len(line.split("Version")[0])
                             sourcePosition = len(line.split("Source")[0])
+                            if len(line) == sourcePosition:
+                                print(len(line), sourcePosition)
+                                noSourcesAvailable = True
+                                print("🟡 Winget reported no sources")
+                                    
                     elif "---" in line:
                         pass
                     else:
@@ -112,6 +118,15 @@ class WingetPackageManager(DynamicPackageManager):
                                 iOffset += 1
                                 ver = idVersionSubstr.split(" ")[iOffset+1]
                                 source = idVersionSubstr.split(" ")[iOffset+2]
+                                
+                            if source.strip() == "":
+                                if len(globals.wingetSources.keys()>=0):
+                                    source = globals.wingetSources.keys()[0]
+                                else:
+                                    source = _("Unknown")
+                            elif noSourcesAvailable:
+                                source = list(globals.wingetSources.keys())[0]
+                                
                             if not "  " in name:
                                 if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     packages.append(Package(name, id, ver, f"Winget: {source}", Winget))
@@ -141,7 +156,7 @@ class WingetPackageManager(DynamicPackageManager):
         print(f"🔵 Starting {self.NAME} search for updates")
         try:
             packages: list[UpgradablePackage] = []
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "upgrade", "--include-unknown", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "upgrade", "--include-unknown", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
@@ -266,7 +281,7 @@ class WingetPackageManager(DynamicPackageManager):
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "list", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "list", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
@@ -611,9 +626,9 @@ class WingetPackageManager(DynamicPackageManager):
 
     def updatePackageId(self, package: Package, installed: bool = False) -> tuple[str, str]:
         if not installed:
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "search", "--name", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "search", "--name", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         else:
-            p = subprocess.Popen(["mode", "400,30&", self.EXECUTABLE, "list", "--query", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "list", "--query", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         idSeparator = -1
         rawoutput = "\n\n"+" ".join(p.args)
         print(f"🔵 Finding Id for {package.Name} with command {p.args}")
