@@ -279,20 +279,13 @@ def update_tray_icon():
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
     mode = isDark()
-    isW11 = False
-    try:
-        import platform
-        if int(platform.version().split('.')[2]) >= 22000:
-            isW11 = True
-    except Exception as e:
-        report(e)
     if not avoidOverrideStyleSheet:
         if window.objectName() == "":
             window.setObjectName("MenuMenuMenuMenu")
         if not isDark():
-            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
+            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
         else:
-            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isW11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
+            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
     if mode:
         try:
             GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)

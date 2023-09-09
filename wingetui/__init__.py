@@ -1366,6 +1366,25 @@ try:
         #DraggableVerticalSection:hover {{
             background-color: rgba(255, 255, 255, 17%);
         }}
+        #CommandLineEdit {{
+            border: 1px solid #282828;
+            background-color: #191919;
+            font-family: "Consolas";
+            padding: 15px;
+            border-radius: 8px;
+            padding-right: 50px;
+        }}
+        #CommandLineEditCopyButton {{
+            border-radius: 6px;
+            background-color: rgba(0, 0, 0, 1%);
+            border: 0px;
+        }}
+        #CommandLineEditCopyButton:hover {{
+            background-color: rgba(255, 255, 255, 5%);
+        }}
+        #CommandLineEditCopyButton:pressed {{
+            background-color: rgba(255, 255, 255, 10%);
+        }}
         """
 
         menuDarkCSS = f"""
@@ -2116,6 +2135,25 @@ try:
         #DraggableVerticalSection:hover {{
             background-color: rgba(0, 0, 0, 25%);
         }}
+        #CommandLineEdit {{
+            border: 1px solid #f5f5f5;
+            background-color: #ffffff;
+            font-family: "Consolas";
+            padding: 15px;
+            border-radius: 8px;
+            padding-right: 50px;
+        }}
+        #CommandLineEditCopyButton {{
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 100%);
+            border: 0px;
+        }}
+        #CommandLineEditCopyButton:hover {{
+            background-color: rgba(240, 240, 240, 100%);
+        }}
+        #CommandLineEditCopyButton:pressed {{
+            background-color: rgba(225, 225, 225, 100%);
+        }}
         """
 
         menuLightCSS = f"""
@@ -2180,7 +2218,7 @@ try:
             padding-right: 20px;
             padding-left: 0px;
             border-radius: 4px;
-        }}    
+        }}
         """
 
         if "--daemon" in sys.argv:

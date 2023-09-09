@@ -2371,18 +2371,7 @@ class PackageInfoPopupWindow(QWidget):
         self.sct = QShortcut(QKeySequence("Esc"), self.baseScrollArea)
         self.sct.activated.connect(lambda: self.close())
         self.baseScrollArea.setWidgetResizable(True)
-        self.baseScrollArea.setStyleSheet(f"""
-        QGroupBox {{
-            border: 0px;
-        }}
-        QScrollArea{{
-            border-radius: 5px;
-            padding: 5px;
-            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 50%)'};
-            border-radius: 16px;
-            border: 1px solid {"#303030" if isDark() else "#bbbbbb"};
-        }}
-        """)
+        
 
         self.loadingProgressBar = QProgressBar(self)
         self.loadingProgressBar.setRange(0, 1000)
@@ -2401,8 +2390,6 @@ class PackageInfoPopupWindow(QWidget):
 
         self.appIcon = QLabel()
         self.appIcon.setFixedSize(QSize(96, 96))
-        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};")
-        self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
         self.appIcon.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignHCenter)
 
         fortyWidget = QWidget()
@@ -2462,7 +2449,6 @@ class PackageInfoPopupWindow(QWidget):
 
         self.screenshotsWidget = QScrollArea()
         self.screenshotsWidget.setWidgetResizable(True)
-        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};border: 0px solid black;}};")
         self.screenshotsWidget.setFixedHeight(150)
         self.screenshotsWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.screenshotsWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -2472,7 +2458,6 @@ class PackageInfoPopupWindow(QWidget):
         self.blackCover = QWidget(self.centralwidget)
         self.blackCover.setStyleSheet("border: none;border-radius: 16px; margin: 0px;background-color: rgba(0, 0, 0, 30%);")
         self.blackCover.hide()
-        blackCover = self.blackCover
 
         self.imagesLayout = QHBoxLayout()
         self.imagesLayout.setContentsMargins(0, 0, 0, 0)
@@ -2567,11 +2552,12 @@ class PackageInfoPopupWindow(QWidget):
 
         optionsSection.addWidget(firstRow)
 
-        self.commandWindow = CommandLineEdit()
-        self.commandWindow.setReadOnly(True)
+        self.CustomCommandLabel = CommandLineEdit()
+        self.CustomCommandLabel.setReadOnly(True)
 
         commandWidget = SectionHWidget(lastOne = True)
-        commandWidget.addWidget(self.commandWindow)
+        commandWidget.addWidget(self.CustomCommandLabel)
+        commandWidget.setFixedHeight(70)
 
 
         self.versionLabel = QLabel(_("Version to install:"))
@@ -2629,7 +2615,6 @@ class PackageInfoPopupWindow(QWidget):
         optionsSection.addWidget(commandWidget)
 
         self.shareButton = QPushButton(_("Share this package"))
-        self.shareButton.setIcon(QIcon(getMedia("share")))
         self.shareButton.setFixedWidth(200)
         self.shareButton.setStyleSheet("border-radius: 8px;")
         self.shareButton.setFixedHeight(35)
@@ -2703,8 +2688,6 @@ class PackageInfoPopupWindow(QWidget):
         self.hLayout.addLayout(self.vLayout, stretch=0)
 
         self.centralwidget.setLayout(self.hLayout)
-        if(isDark()):
-            print("🔵 Is Dark")
         self.baseScrollArea.setWidget(self.centralwidget)
 
         l = QHBoxLayout()
@@ -2713,12 +2696,11 @@ class PackageInfoPopupWindow(QWidget):
         self.setLayout(l)
 
 
-        self.backButton = QPushButton(QIcon(getMedia("close")), "", self)
+        self.backButton = QPushButton("", self)
         self.setStyleSheet("margin: 0px;")
         self.backButton.move(self.width()-40, 0)
         self.backButton.resize(40, 40)
         self.backButton.setFlat(True)
-        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
         self.backButton.clicked.connect(lambda: (self.onClose.emit(), self.close()))
         self.backButton.show()
 
@@ -2766,6 +2748,33 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
         self.architectureCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
         self.scopeCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
+        
+        self.ApplyIcons()
+        self.registeredThemeEvent = False
+        
+    def ApplyIcons(self):
+        self.baseScrollArea.setStyleSheet(f"""
+        QGroupBox {{
+            border: 0px;
+        }}
+        QScrollArea{{
+            border-radius: 5px;
+            padding: 5px;
+            background-color: {'rgba(30, 30, 30, 50%)' if isDark() else 'rgba(255, 255, 255, 50%)'};
+            border-radius: 16px;
+            border: 1px solid {"#303030" if isDark() else "#bbbbbb"};
+        }}
+        """)
+        self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};")
+        self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
+        self.shareButton.setIcon(QIcon(getMedia("share")))
+        self.backButton.setIcon(QIcon(getMedia("close")))
+        self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
+        self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};border: 0px solid black;}};")
+        self.CustomCommandLabel.ApplyIcons()
+        for widget in self.imagesCarrousel:
+            widget.clickableButton.setStyleSheet(f"QPushButton{{background-color: rgba(127, 127, 127, 1%);border: 0px;border-radius: 0px;}}QPushButton:hover{{background-color: rgba({'255, 255, 255' if not isDark() else '0, 0, 0'}, 10%)}}")
+
 
     def resizeEvent(self, event = None):
         self.centralwidget.setFixedWidth(self.width()-18)
@@ -2802,23 +2811,23 @@ class PackageInfoPopupWindow(QWidget):
         parameters = " ".join(self.getCommandLineParameters())
         if self.currentPackage.isManager(Winget):
             if not "…" in self.currentPackage.Id:
-                self.commandWindow.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
+                self.CustomCommandLabel.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
             else:
-                self.commandWindow.setText(_("Loading..."))
+                self.CustomCommandLabel.setText(_("Loading..."))
         elif self.currentPackage.isManager(Scoop):
-            self.commandWindow.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+            self.CustomCommandLabel.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Choco):
-            self.commandWindow.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
+            self.CustomCommandLabel.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Pip):
             idtoInstall = self.currentPackage.Id
             if self.versionCombo.currentText() not in ("Latest", _("Latest"), "Loading...", _("Loading...")):
                 idtoInstall += "=="+self.versionCombo.currentText()
-            self.commandWindow.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {idtoInstall} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+            self.CustomCommandLabel.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {idtoInstall} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         elif self.currentPackage.isManager(Npm):
-            self.commandWindow.setText(f"npm {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+            self.CustomCommandLabel.setText(f"npm {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
         else:
             print(f"🟠 Unknown source {self.currentPackage.Source}")
-        self.commandWindow.setCursorPosition(0)
+        self.CustomCommandLabel.setCursorPosition(0)
 
     def showPackageDetails(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
         self.isAnUpdate = update
@@ -2826,6 +2835,8 @@ class PackageInfoPopupWindow(QWidget):
         if self.currentPackage == package:
             return
         self.currentPackage = package
+
+        self.ApplyIcons()
 
         self.iv.resetImages()
         if "…" in package.Id:
@@ -3144,21 +3155,6 @@ class PackageInfoPopupWindow(QWidget):
             globals.centralWindowLayout.show()
         return super().hide()
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        #self.pressed = True
-        #self.oldPos = event.pos()
-        return super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        #if self.pressed:
-        #    self.window().move(self.pos()+(event.pos()-self.oldPos))
-        return super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        #self.pressed = False
-        #self.oldPos = event.pos()
-        return super().mouseReleaseEvent(event)
-
     def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
             anim: QVariantAnimation
@@ -3168,6 +3164,13 @@ class PackageInfoPopupWindow(QWidget):
             anim.finished.disconnect()
             anim.deleteLater()
         return super().destroy(destroyWindow, destroySubWindows)
+    
+    def showEvent(self, event: QShowEvent):
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
+        return super().showEvent(event)
+
 
 
 

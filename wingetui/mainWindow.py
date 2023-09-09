@@ -52,14 +52,8 @@ class RootWindow(QMainWindow):
         self.blackmatt.resize(self.size())
         self.installEventFilter(self)
         self.setStyleSheet("""
-            QTreeWidget::item{{
-                height: 25px;
-                padding: 5px;
-                margin-left: 10px;
-            }}
-            QGroupBox:title{{ max-width: 0; max-height: 0; }}
         """)
-        win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(self.ApplyStyleSheetsAndIcons(True))) # Spawn a theme thread
+        win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(lambda: self.ApplyStyleSheetsAndIcons(True))) # Spawn a theme thread
         self.ApplyStyleSheetsAndIcons()
         print("🟢 Main application loaded...")
 
@@ -387,7 +381,7 @@ class RootWindow(QMainWindow):
         else:
             self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if isWin11 else "#f6f6f6"))
         self.ApplyIcons()
-        self.OnThemeChange.emit()
+        self.callInMain.emit(self.OnThemeChange.emit)
 
     def ApplyIcons(self):
         self.helpAction.setIcon(QIcon(getMedia("help")))
