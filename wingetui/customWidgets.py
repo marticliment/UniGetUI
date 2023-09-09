@@ -975,7 +975,6 @@ class SoftwareSection(QWidget):
         self.OnThemeChange.emit()
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.searchButton.setIcon(QIcon(getMedia("search")))
-        self.reloadButton.click()
 
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")

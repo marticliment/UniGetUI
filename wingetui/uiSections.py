@@ -178,7 +178,22 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
         
-
+        for item in self.packageItems:
+            package: Package = self.ItemPackageReference[item]
+            
+            item.setIcon(1, self.installIcon)
+            item.setIcon(2, self.IDIcon)
+            item.setIcon(3, self.versionIcon)
+            item.setIcon(4, package.getSourceIcon())
+                
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            if package.Id in UNINSTALL.IdPackageReference.keys():
+                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedItem = installedPackage.PackageItem
+                if installedItem in UNINSTALL.packageItems:
+                    item.setIcon(1, self.installedIcon)
+            
+        
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
             return
@@ -418,6 +433,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def addItem(self, package: Package) -> None:
         if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
+            
             item = TreeWidgetItemWithQAction(self)
             item.setCheckState(0, Qt.CheckState.Unchecked)
             item.setText(1, package.Name)
@@ -429,6 +445,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             item.setText(4, package.Source)
             item.setIcon(4, package.getSourceIcon())
             item.setText(6, package.getFloatVersion())
+            
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package
@@ -444,10 +461,6 @@ class DiscoverSoftwareSection(SoftwareSection):
                 if installedItem in UNINSTALL.packageItems:
                     item.setIcon(1, self.installedIcon)
                     item.setToolTip(1, _("This package is already installed")+" - "+package.Name)
-            
-                
-
-                
 
     def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
@@ -656,6 +669,23 @@ class UpdateSoftwareSection(SoftwareSection):
         self.HelpMenuEntry1.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
+        
+        for item in self.packageItems:
+            package: UpgradablePackage = self.ItemPackageReference[item]
+            
+            item.setIcon(1, self.installIcon)
+            item.setIcon(2, self.IDIcon)
+            item.setIcon(3, self.versionIcon)
+            item.setIcon(4, self.newVersionIcon)
+            item.setIcon(5, package.getSourceIcon())
+            
+            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            if package.Id in UNINSTALL.IdPackageReference.keys():
+                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedItem = installedPackage.PackageItem
+                if installedItem in UNINSTALL.packageItems:
+                    installedItem.setIcon(1, self.updateIcon)
+
 
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
@@ -944,7 +974,6 @@ class UpdateSoftwareSection(SoftwareSection):
                     installedItem.setIcon(1, self.updateIcon)
                     installedItem.setToolTip(1, _("This package can be updated to version {0}").format(package.NewVersion)+" - "+package.Name)
             
-
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
             return " " if item.checkState(0) == Qt.CheckState.Checked else ""
@@ -1179,6 +1208,31 @@ class UninstallSoftwareSection(SoftwareSection):
         self.HelpMenuEntry1.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
+        
+        for item in self.packageItems:
+            package: UpgradablePackage = self.ItemPackageReference[item]
+            
+            item.setIcon(1, self.installIcon)
+            item.setIcon(2, self.IDIcon)
+            item.setIcon(3, self.versionIcon)
+            item.setIcon(4, package.getSourceIcon())
+            
+            if package.hasUpdatesIgnoredPermanently():
+                item.setIcon(1, self.pinnedIcon)
+
+            UPDATES: UpdateSoftwareSection = globals.updates
+            if package.Id in UPDATES.IdPackageReference.keys():
+                updatePackage: UpgradablePackage = UPDATES.IdPackageReference[package.Id]
+                updateItem = updatePackage.PackageItem
+                if updateItem in UPDATES.packageItems:
+                    item.setIcon(1, self.updateIcon)
+            
+            DISCOVER: UninstallSoftwareSection = globals.discover
+            if package.Id in DISCOVER.IdPackageReference.keys():
+                discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[package.Id]
+                discoverableItem = discoverablePackage.PackageItem
+                if discoverableItem in DISCOVER.packageItems:
+                    discoverableItem.setIcon(1, self.installedIcon)
 
     def showBlacklistedIcon(self, packageItem: QTreeWidgetItem):
         packageItem.setIcon(1, self.pinnedIcon)
