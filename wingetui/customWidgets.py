@@ -1488,11 +1488,10 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
 
-    pendingPackages: dict[str:TreeWidgetItemWithQAction] = {}
+    ItemPackageReference: dict[str:TreeWidgetItemWithQAction] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
-
 
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1565,6 +1564,7 @@ class PackageImporter(MovableFramelessWindow):
         self.treewidget.header().setSectionResizeMode(4, QHeaderView.Fixed)
         self.treewidget.setColumnWidth(2, 150)
         self.treewidget.setColumnWidth(3, 100)
+        self.treewidget.setColumnHidden(2, True)
         self.treewidget.setColumnWidth(4, 0)
         self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
 
@@ -1614,39 +1614,26 @@ class PackageImporter(MovableFramelessWindow):
                 contents = json.load(f)
                 f.close()
                 try:
-                    packages = contents["winget"]["Sources"][0]["Packages"]
-                    for pkg in packages:
-                        packageList.append(pkg["PackageIdentifier"])
-                except KeyError as e:
-                    print("🟠 Invalid winget section")
-                for manager in ["chocolatey", "scoop", "pip", "npm"]:
-                    try:
-                        packages = contents[manager]["apps"]
-                        for pkg in packages:
-                            packageList.append(pkg["Name"])
-                    except KeyError as e:
-                        print(f"🟠 Invalid {manager} section")
-                for packageId in packageList:
-                    item = TreeWidgetItemWithQAction()
-                    unknownIcon = QIcon(getMedia("question"))
-                    self.treewidget.addTopLevelItem(item)
-                    if packageId in DISCOVER_SECTION.IdPackageReference:
-                        package = DISCOVER_SECTION.IdPackageReference[packageId]
-                        self.addItemFromPackage(package, item)
-                    else:
-                        # If the package is not available from any package manager:
-                        item.setText(0, packageId)
-                        item.setText(1, packageId)
-                        item.setText(2, _("Unknown"))
-                        item.setText(3, _("Unknown"))
-                        item.setIcon(0, self.installIcon)
-                        item.setIcon(1, self.idIcon)
-                        item.setIcon(2, unknownIcon)
-                        item.setIcon(3, unknownIcon)
-                        item.setDisabled(True)
-                        self.pendingPackages[packageId] = item
+                    Managers = {
+                        Winget: contents["winget"]["Sources"][0]["Packages"],
+                        Scoop: contents["scoop"]["apps"],
+                        Choco: contents["chocolatey"]["apps"],
+                        Npm: contents["pip"]["apps"],
+                        Pip: contents["npm"]["apps"]
+                    }
+                    for manager in Managers.keys():
+                        for entry in Managers[manager]:
+                            packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
+                            package = Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager)
+                            item = TreeWidgetItemWithQAction()
+                            package.PackageItem = item
+                            self.treewidget.addTopLevelItem(item)
+                            self.addItemFromPackage(package, item)
+                            self.ItemPackageReference[item] = package
+                except Exception as e:
+                    report(e)
+
                 self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
-                Thread(target=self.loadDynamicPackages).start()
                 self.loadingProgressBar.hide()
             else:
                 self.close()
@@ -1669,36 +1656,11 @@ class PackageImporter(MovableFramelessWindow):
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
         self.treewidget.setItemWidget(item, 4, removeButton)
-
-    def loadDynamicPackages(self):
-        DISCOVER_SECTION: SoftwareSection = globals.discover
-        DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.packageList.setEnabled(False))
-        DISCOVER_SECTION.callInMain.emit(lambda: self.loadingProgressBar.show())
-        for packageId in self.pendingPackages.keys():
-            print(packageId)
-            DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.query.setText(packageId))
-            DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.finishFiltering(DISCOVER_SECTION.query.text()))
-            while not DISCOVER_SECTION.isLoadingDynamic: # Make time before packages actually start loading
-                time.sleep(0.001)
-            while DISCOVER_SECTION.isLoadingDynamic:
-                time.sleep(0.01)
-            if packageId in DISCOVER_SECTION.IdPackageReference:
-                package = DISCOVER_SECTION.IdPackageReference[packageId]
-                DISCOVER_SECTION.callInMain.emit(lambda: self.addItemFromPackage(package, self.pendingPackages[packageId]))
-                DISCOVER_SECTION.callInMain.emit(lambda: self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0))
-        DISCOVER_SECTION.callInMain.emit(lambda: self.loadingProgressBar.hide())
-        DISCOVER_SECTION.callInMain.emit(lambda: DISCOVER_SECTION.packageList.setEnabled(True))
-
+        
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
-        for i in range(self.treewidget.topLevelItemCount()):
-            if not self.treewidget.topLevelItem(i).isDisabled():
-                try:
-                    id = self.treewidget.topLevelItem(i).text(1)
-                    item = DISCOVER_SECTION.PackageItemReference[DISCOVER_SECTION.IdPackageReference[id]]
-                    DISCOVER_SECTION.installPackageItem(item)
-                except Exception as e:
-                    report(e)
+        for package in list(self.ItemPackageReference.values()):
+            DISCOVER_SECTION.installPackage(package)
         self.close()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -1708,6 +1670,10 @@ class PackageImporter(MovableFramelessWindow):
         r = ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
         return super().showEvent(event)
+    
+    def closeEvent(self, event: QCloseEvent) -> None:
+        globals.discover.callInMain.emit(lambda: globals.discover.packageList.setEnabled(True))
+        return super().closeEvent(event)
 
 class FlowLayout(QLayout):
     # partially Taken from https://github.com/ByteDream/PyQt5-expansion/blob/main/QCustomObjects.py

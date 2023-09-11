@@ -32,9 +32,10 @@ class DiscoverSoftwareSection(SoftwareSection):
     LastQueryDynamicallyLoaded: str = ""
 
     finishDynamicLoading = Signal()
-    isLoadingDynamic: bool = False
     
     ShouldHideGuideArrow: bool = False
+
+    runningThreads = 0
 
     def __init__(self, parent = None):
         super().__init__(parent = parent)
@@ -66,10 +67,10 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.packageList.setColumnWidth(4, 150)
         self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
-        self.informationBanner.setText(_("The packages are being loaded for the first time. This process will take longer than usual, since package caches are being rebuilt."))
-        if not getSettings("WarnedAboutPackages_v2"):
-            setSettings("WarnedAboutPackages_v2", True)
-            self.informationBanner.show()
+        #self.informationBanner.setText(_("The packages are being loaded for the first time. This process will take longer than usual, since package caches are being rebuilt."))
+        #if not getSettings("WarnedAboutPackages_v2"):
+            #setSettings("WarnedAboutPackages_v2", True)
+            #self.informationBanner.show()
 
         self.contextMenu = QMenu(self)
         self.contextMenu.setParent(self)
@@ -345,7 +346,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.err.showErrorMessage(errorData, showNotification=False)
 
     def loadSharedId(self, argument: str):
-        while self.isLoadingDynamic:
+        while self.isLoadingDynamicPackages():
             time.sleep(0.1)
         self.callInMain.emit(lambda: self.loadShared(argument, second_round=True))
 
@@ -376,7 +377,7 @@ class DiscoverSoftwareSection(SoftwareSection):
                 self.LastQueryDynamicallyLoaded = text
                 self.startLoadingDyamicPackages(text)
             super().finishFiltering(text)
-            if len(self.showableItems) == 0 and self.isLoadingDynamic:
+            if len(self.showableItems) == 0 and self.isLoadingDynamicPackages():
                 self.packageList.label.setText(_("Looking for packages..."))
         elif len(text) == 0:
             self.showableItems = []
@@ -425,11 +426,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         else:
             self.packageList.label.setText(_(""))
 
-        for manager in self.DynaimcPackageManagers: # Stop here if not all package managers loaded
-            if not self.DynamicPackagesLoaded[manager] and manager.isEnabled():
-                return
-        self.isLoadingDynamic = False
-        self.loadingProgressBar.hide()
+        if not self.isLoadingDynamicPackages():
+            self.loadingProgressBar.hide()
+        
+    def isLoadingDynamicPackages(self) -> bool:
+        return self.runningThreads > 0
 
     def addItem(self, package: Package) -> None:
         if not "---" in package.Name and not package.Name in ("+", "Scoop", "At", "The", "But", "Au") and not version in ("the", "is"):
@@ -464,9 +465,19 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
-        Initialize the install procedure for the given package, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
+        Initialize the install procedure for the given package item, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
         """
         package: Package = self.ItemPackageReference[item]
+        options = InstallationOptions()
+        options.RunAsAdministrator = admin
+        options.InteractiveInstallation = interactive
+        options.SkipHashCheck = skiphash
+        self.addInstallation(PackageInstallerWidget(package, options))
+        
+    def installPackage(self, package: Package, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+        """
+        Initialize the install procedure for the given package, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
+        """
         options = InstallationOptions()
         options.RunAsAdministrator = admin
         options.InteractiveInstallation = interactive
@@ -481,16 +492,16 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.finishLoading.emit()
 
     def loadDynamicPackages(self, query: str, manager: PackageClasses.DynamicPackageManager) -> None:
+        self.runningThreads += 1
         packages = manager.getPackagesForQuery(query)
-        if query == self.query.text():
-            for package in packages:
-                if package.Id not in self.IdPackageReference:
-                    self.addProgram.emit(package)
-                elif package.Source != self.IdPackageReference[package.Id].Source:
-                    self.addProgram.emit(package)
-            self.DynamicPackagesLoaded[manager] = True
-            if query == self.query.text():
-                self.finishDynamicLoading.emit()
+        for package in packages:
+            if package.Id not in self.IdPackageReference:
+                self.addProgram.emit(package)
+            elif package.Source != self.IdPackageReference[package.Id].Source:
+                self.addProgram.emit(package)
+        self.DynamicPackagesLoaded[manager] = True
+        self.runningThreads -= 1
+        self.finishDynamicLoading.emit()
 
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
@@ -502,7 +513,6 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def startLoadingDyamicPackages(self, query: str, force: bool = False) -> None:
         print(f"🔵 Loading dynamic packages for query {query}")
-        self.isLoadingDynamic = True
         for manager in self.DynaimcPackageManagers:
             self.DynamicPackagesLoaded[manager] = False
         self.loadingProgressBar.show()
