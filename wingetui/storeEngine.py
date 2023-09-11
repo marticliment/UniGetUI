@@ -68,7 +68,7 @@ class PackageInstallerWidget(QWidget):
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(10, 10, 10, 10)
         self.iconLabel = QPushButton(self)
-        self.iconLabel.setIcon(QIcon(getMedia("install")))
+        self.iconLabel.setIcon(getMaskedIcon("package_masked"))
         self.iconLabel.setFixedHeight(30)
         self.iconLabel.setIconSize(QSize(24, 24))
         self.iconLabel.setFixedWidth(30)
@@ -176,7 +176,9 @@ class PackageInstallerWidget(QWidget):
                 self.callInMain.emit(lambda: self.iconLabel.setIcon(icon))
             else:
                 print(f"🟠 Icon for {self.Package.Id} exists but is null")
+                self.callInMain.emit(lambda: self.iconLabel.setIcon(getMaskedIcon("package_masked")))
         else:
+            self.callInMain.emit(lambda: self.iconLabel.setIcon(getMaskedIcon("package_masked")))
             print(f"🟡 Icon for {self.Package.Id} does not exist")
 
     def setProgressbarColor(self, color: str):
