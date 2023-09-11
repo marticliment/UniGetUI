@@ -348,7 +348,7 @@ class DynamicScrollArea(QWidget):
             if self.getFullHeight() >= self.maxHeight:
                 self.setFixedHeight(self.maxHeight)
             else:
-                self.setFixedHeight(self.getFullHeight() if self.getFullHeight() > 20 else 4)
+                self.setFixedHeight(self.getFullHeight() if self.getFullHeight() > 15 else 4)
 
     def getFullHeight(self) -> int:
         """
