@@ -85,9 +85,8 @@ class WingetPackageManager(DynamicPackageManager):
                             versionPosition = len(line.split("Version")[0])
                             sourcePosition = len(line.split("Source")[0])
                             if len(line) == sourcePosition:
-                                print(len(line), sourcePosition)
                                 noSourcesAvailable = True
-                                print("🟡 Winget reported no sources")
+                                print("🟡 Winget reported no sources on getPackagesForQuery")
                                     
                     elif "---" in line:
                         pass
@@ -107,39 +106,44 @@ class WingetPackageManager(DynamicPackageManager):
                             iOffset = 0
                             id = idVersionSubstr.split(" ")[iOffset]
                             ver = idVersionSubstr.split(" ")[iOffset+1]
-                            source = idVersionSubstr.split(" ")[iOffset+2]
+                            if not noSourcesAvailable:
+                                source = "Winget: "+idVersionSubstr.split(" ")[iOffset+2]
                             if len(id) == 1:
                                 iOffset + 1
                                 id = idVersionSubstr.split(" ")[iOffset]
                                 ver = idVersionSubstr.split(" ")[iOffset+1]
-                                source = idVersionSubstr.split(" ")[iOffset+2]
+                                if not noSourcesAvailable:
+                                    source = "Winget: "+idVersionSubstr.split(" ")[iOffset+2]
                             if ver.strip() in ("<", "-"):
                                 iOffset += 1
                                 ver = idVersionSubstr.split(" ")[iOffset+1]
-                                source = idVersionSubstr.split(" ")[iOffset+2]
-                            if source.strip() == "":
+                                if not noSourcesAvailable:
+                                    source = "Winget: "+idVersionSubstr.split(" ")[iOffset+2]
+                                    
+                            if noSourcesAvailable:
+                                source = "Winget"
+                            elif source.strip() == "":
                                 if len(globals.wingetSources.keys()>=0):
-                                    source = globals.wingetSources.keys()[0]
+                                    source = "Winget: "+list(globals.wingetSources.keys())[0]
                                 else:
-                                    source = _("Unknown")
-                            elif noSourcesAvailable:
-                                source = list(globals.wingetSources.keys())[0]
-                                
+                                    source = "Winget"
+ 
                             if not "  " in name:
                                 if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                    packages.append(Package(name, id, ver, f"Winget: {source}", Winget))
+                                    packages.append(Package(name, id, ver, source, Winget))
                             else:
                                 if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                                     while "##" in name:
                                         name = name.replace("##", "#")
                                     print(f"🟡 package {name} failed parsing, going for method 2...")
-                                    packages.append(Package(name, id, ver, f"Winget: {source}", Winget))
+                                    packages.append(Package(name, id, ver, source, Winget))
                         except Exception as e:
+                            report(e)
                             packages.append(Package(line[0:idPosition].strip(), line[idPosition:versionPosition].strip(), line[versionPosition:sourcePosition].strip(), f"Winget: {line[sourcePosition:].strip()}", Winget))
                             if type(e) != IndexError:
                                 report(e)
-            print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s) (msstore)")
+            print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawOutput
             return packages
 
@@ -160,6 +164,7 @@ class WingetPackageManager(DynamicPackageManager):
             versionPosition: int = 0
             newVerPosition: int = 0
             rawoutput = "\n\n---------"+self.NAME
+            noSourcesAvailable = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 rawoutput += "\n"+line
@@ -173,6 +178,9 @@ class WingetPackageManager(DynamicPackageManager):
                         versionPosition = len(line.split("Version")[0])
                         newVerPosition = len(line.split("Available")[0])
                         sourcePosition = len(line.split("Source")[0])
+                        if len(line) == sourcePosition:
+                            noSourcesAvailable = True
+                            print("🟡 Winget reported no sources on getAvailableUpdates")
                     else:
                         pass
                 elif "---" in line:
@@ -190,42 +198,43 @@ class WingetPackageManager(DynamicPackageManager):
                         id = verElement.split(" ")[iOffset+0]
                         ver = verElement.split(" ")[iOffset+1]
                         newver = verElement.split(" ")[iOffset+2]
-                        source = verElement.split(" ")[iOffset+3]
+                        if not noSourcesAvailable:
+                            source = "Winget: "+verElement.split(" ")[iOffset+3]
                         if len(id)==1:
                             iOffset + 1
                             id = verElement.split(" ")[iOffset+0]
-                            newver = verElement.split(" ")[iOffset+2]
                             ver = verElement.split(" ")[iOffset+1]
+                            newver = verElement.split(" ")[iOffset+2]
+                            if not noSourcesAvailable:
+                                source = "Winget: "+verElement.split(" ")[iOffset+3]
                         if ver.strip() in ("<", ">", "-"):
                             iOffset += 1
                             ver = verElement.split(" ")[iOffset+1]
                             newver = verElement.split(" ")[iOffset+2]
+                            if not noSourcesAvailable:
+                                source = "Winget: "+verElement.split(" ")[iOffset+3]
                         name = element[0:idPosition].strip()
-                        if len(id) == 1:
-                            iOffset + 1
-                            id = verElement.split(" ")[iOffset]
-                            ver = verElement.split(" ")[iOffset+1]
-                            source = verElement.split(" ")[iOffset+3]
-                        if ver.strip() in ("<", "-"):
-                            iOffset += 1
-                            ver = verElement.split(" ")[iOffset+1]
-                            source = verElement.split(" ")[iOffset+3]
-                        if source.strip() == "":
-                            if len(globals.wingetSources.keys()>=0):
+                            
+                        if noSourcesAvailable:
+                            source = "Winget"
+                        elif source.strip() == "":
+                            if len(list(globals.wingetSources.keys())>=0):
                                 print("🟠 No source found on Winget.getAvailableUpdates()!")
-                                source = globals.wingetSources.keys()[0]
+                                source = "Winget: "+list(globals.wingetSources.keys())[0]
                             else:
-                                source = _("Unknown")
+                                source = "Winget"
+                                
                         if not "  " in name:
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name, id, ver, newver, "Winget: "+source, Winget))
+                                packages.append(UpgradablePackage(name, id, ver, newver, source, Winget))
                         else:
                             name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                             while "##" in name:
                                 name = name.replace("##", "#")
                             if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, "Winget: "+source, Winget))
+                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, source, Winget))
                     except Exception as e:
+                        report(e)
                         packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:sourcePosition].split(" ")[0].strip(), "Winget: "+element[sourcePosition:].split(" ")[0].strip(), Winget))
                         if type(e) != IndexError:
                             report(e)

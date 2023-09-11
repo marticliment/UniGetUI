@@ -972,6 +972,8 @@ class WingetBucketManager(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
 
         self.leftSlow.start()
+        
+        self.loadSources()
 
     def showEvent(self, event: QShowEvent) -> None:
         self.loadSources()
