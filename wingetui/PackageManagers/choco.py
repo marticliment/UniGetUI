@@ -252,7 +252,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         counter = 0
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
                 counter += 1
@@ -283,7 +283,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         output = ""
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = p.stdout.readline()
+            line = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:

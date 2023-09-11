@@ -319,7 +319,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         output = ""
         outputCode = 1
         while p.poll() is None:
-            line = p.stdout.readline()
+            line = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
@@ -359,7 +359,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         outputCode = 1
         output = ""
         while p.poll() is None:
-            line = p.stdout.readline()
+            line = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:

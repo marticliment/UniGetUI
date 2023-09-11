@@ -249,7 +249,7 @@ class SamplePackageManager(PackageManagerModule):
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
-            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
                 output += line+"\n"
                 widget.addInfoLine.emit(line)
@@ -273,7 +273,7 @@ class SamplePackageManager(PackageManagerModule):
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
-            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
                 output += line+"\n"
                 widget.addInfoLine.emit(line)

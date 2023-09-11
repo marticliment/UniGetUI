@@ -607,7 +607,7 @@ class WingetPackageManager(DynamicPackageManager):
         output = ""
         counter = 0
         while p.poll() is None:
-            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
                 counter += 1
@@ -640,7 +640,7 @@ class WingetPackageManager(DynamicPackageManager):
         counter = RETURNCODE_OPERATION_SUCCEEDED
         output = ""
         while p.poll() is None:
-            line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
+            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
                 counter += 1

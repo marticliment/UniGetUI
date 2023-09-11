@@ -5,8 +5,10 @@ import os
 import re
 import shutil
 import platform
+import subprocess
 import sys
 import time
+from typing import IO
 import winreg
 from datetime import datetime
 from pathlib import Path
@@ -372,6 +374,20 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """
     baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
     return  [v.split(",") for v in baseList if len(v.split(",")) == 3]
+
+def getLineFromStdout(p: subprocess.Popen) -> bytes:
+    """
+    This function replaces p.stdout.readline(). Will return lines both from \\n-ending and \\r-ending character sequences.
+    This function may be more resource-intensive, so it should be used only when live outputs must be analyzed in real time.
+    """
+    stdout: IO[bytes] = p.stdout
+    char = stdout.read(1)
+    line = b""
+    while not char in (b"\n", b"\r") and p.poll() is None:
+        line += char
+        char = stdout.read(1)
+    line = line.replace(b"\r", b"").replace(b"\n", b"")
+    return line if (line or p.poll() is not None) else getLineFromStdout(p)
 
 class KillableThread(Thread):
     def __init__(self, *args, **keywords):
