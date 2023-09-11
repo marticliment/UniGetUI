@@ -88,7 +88,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.MenuShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
         
         self.installIcon = QIcon(getMedia("install"))
-        self.installedIcon = QIcon(getMedia("installed"))
+        self.installedIcon = getMaskedIcon("installed_masked")
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
 
@@ -153,7 +153,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     def ApplyIcons(self):
         super().ApplyIcons()
         self.installIcon = QIcon(getMedia("install"))
-        self.installedIcon = QIcon(getMedia("installed"))
+        self.installedIcon = getMaskedIcon("installed_masked")
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("newversion"))
         
@@ -626,7 +626,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.MenuShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
         
         self.installIcon = QIcon(getMedia("install"))
-        self.updateIcon = QIcon(getMedia("update"))
+        self.updateIcon = getMaskedIcon("update_masked") 
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
@@ -649,7 +649,7 @@ class UpdateSoftwareSection(SoftwareSection):
     def ApplyIcons(self):
         super().ApplyIcons()
         self.installIcon = QIcon(getMedia("install"))
-        self.updateIcon = QIcon(getMedia("update"))
+        self.updateIcon = getMaskedIcon("update_masked")
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         self.newVersionIcon = QIcon(getMedia("newversion"))
@@ -1150,9 +1150,11 @@ class UninstallSoftwareSection(SoftwareSection):
         self.packageList.itemDoubleClicked.connect(lambda item, column: self.uninstallPackageItem(item))
 
         self.installIcon = QIcon(getMedia("install"))
-        self.pinnedIcon = QIcon(getMedia("pin_yellow"))
-        self.updateIcon = QIcon(getMedia("update"))
-        self.installedIcon = QIcon(getMedia("installed"))
+        
+        self.pinnedIcon = getMaskedIcon("pin_masked")
+        self.updateIcon = getMaskedIcon("update_masked")
+        
+        self.installedIcon = getMaskedIcon("installed_masked")
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
 
@@ -1190,9 +1192,11 @@ class UninstallSoftwareSection(SoftwareSection):
     def ApplyIcons(self):
         super().ApplyIcons()
         self.installIcon = QIcon(getMedia("install"))
-        self.pinnedIcon = QIcon(getMedia("pin_yellow"))
-        self.updateIcon = QIcon(getMedia("update"))
-        self.installedIcon = QIcon(getMedia("installed"))
+        
+        self.pinnedIcon = getMaskedIcon("pin_masked")        
+        
+        self.updateIcon = getMaskedIcon("update_masked") 
+        self.installedIcon = getMaskedIcon("installed_masked")
         self.IDIcon = QIcon(getMedia("ID"))
         self.versionIcon = QIcon(getMedia("version"))
         

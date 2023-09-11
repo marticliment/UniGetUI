@@ -473,6 +473,21 @@ def formatPackageIdAsName(id: str):
     """
     return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")]).replace(".install", " ("+_("Install")+")").replace(".portable", " ("+_("Portable")+")")
 
+def getMaskedIcon(iconName: str) -> QIcon:
+    if getMedia(iconName) in globals.maskedImages.keys():
+        return globals.maskedImages[getMedia(iconName)]
+    R, G, B = getColors()[2 if isDark() else 1].split(",")
+    R, G, B = (int(R), int(G), int(B))
+    base_img = QImage(getMedia(iconName))
+    print(getMedia(iconName))
+    for x in range(base_img.width()):
+        for y in range(base_img.height()):
+            color = base_img.pixelColor(x, y)
+            if color.green() >= 205 and color.red() <= 50 and color.blue() <= 50:
+                base_img.setPixelColor(x, y, QColor(R, G, B))
+    globals.maskedImages[getMedia(iconName)] = QIcon(QPixmap.fromImage(base_img))
+    return globals.maskedImages[getMedia(iconName)]
+
 def getPackageIcon(package) -> str:
     try:
         id = package.Id

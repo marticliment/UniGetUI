@@ -293,7 +293,7 @@ class PackageInstallerWidget(QWidget):
                 update_tray_icon()
             if type(self) == PackageInstallerWidget:
                 self.Package.PackageItem.setCheckState(0, Qt.CheckState.Unchecked)
-                self.Package.PackageItem.setIcon(1, QIcon(getMedia("installed")))
+                self.Package.PackageItem.setIcon(1, getMaskedIcon("installed_masked"))
                 self.Package.PackageItem.setToolTip(1, _("This package is already installed")+" - "+self.Package.Name)
 
                 if not self.Package.Id in globals.uninstall.IdPackageReference.keys():

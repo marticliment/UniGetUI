@@ -85,3 +85,5 @@ tray_is_needs_restart: bool = False
 PackageManagerOutput: str = "Outputs from package managers on the current session:\n \n"
 
 AUMID: str = ""
+
+maskedImages: dict[str:QIcon] = {}

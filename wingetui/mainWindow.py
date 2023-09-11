@@ -384,6 +384,7 @@ class RootWindow(QMainWindow):
             
 
     def ApplyIcons(self):
+        globals.maskedImages = {}
         self.helpAction.setIcon(QIcon(getMedia("help")))
         self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
