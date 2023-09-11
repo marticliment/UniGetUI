@@ -20,18 +20,18 @@ contributors = [
   "joguarino",
   "neoOpus",
   "HorridModz",
+  "reima",
   "Satanarious",
   "vsilvar",
   "quantumfallout",
-  "derula",
-  "flatron4eg"
+  "derula"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1825
+    "contributions": 1858
   },
   {
     "name": "ppvnf",
@@ -124,6 +124,11 @@ contributorsInfo = [
     "contributions": 1
   },
   {
+    "name": "reima",
+    "link": "https://github.com/reima",
+    "contributions": 1
+  },
+  {
     "name": "Satanarious",
     "link": "https://github.com/Satanarious",
     "contributions": 1
@@ -141,11 +146,6 @@ contributorsInfo = [
   {
     "name": "derula",
     "link": "https://github.com/derula",
-    "contributions": 1
-  },
-  {
-    "name": "flatron4eg",
-    "link": "https://github.com/flatron4eg",
     "contributions": 1
   }
 ]
