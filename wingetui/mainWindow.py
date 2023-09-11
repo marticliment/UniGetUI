@@ -17,14 +17,14 @@ class RootWindow(QMainWindow):
     callInMain = Signal(object)
     pressed = False
     oldPos = QPoint(0, 0)
-    isWinDark = False
     appliedStyleSheet = False
     closedpos: QPoint = QPoint(-1, -1)
+    DynamicIconsToApply: dict[QWidget:str] = {}
+    OnThemeChange = Signal()
 
     def __init__(self):
         self.oldbtn = None
         super().__init__()
-        self.isWinDark = isDark()
         self.callInMain.connect(lambda f: f())
         self.setWindowTitle("WingetUI")
         self.setMinimumSize(700, 560)
@@ -51,16 +51,8 @@ class RootWindow(QMainWindow):
         self.blackmatt.move(0, 0)
         self.blackmatt.resize(self.size())
         self.installEventFilter(self)
-        self.setStyleSheet("""
-            QTreeWidget::item{{
-                height: 25px;
-                padding: 5px;
-                margin-left: 10px;
-            }}
-            QGroupBox:title{{ max-width: 0; max-height: 0; }}
-        """)
-
-
+        win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(lambda: self.ApplyStyleSheetsAndIcons(True))) # Spawn a theme thread
+        self.ApplyStyleSheetsAndIcons()
         print("🟢 Main application loaded...")
 
     def loadWidgets(self) -> None:
@@ -94,19 +86,19 @@ class RootWindow(QMainWindow):
         QTabWidget::tab-bar {{
             alignment: center;
             }}""")
-        self.discover = DiscoverSoftwareSection()
+        self.discover = DiscoverSoftwareSection(self)
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.discover = self.discover
         self.widgets[self.discover] = self.addTab(self.discover, _("Discover Packages"))
-        self.updates = UpdateSoftwareSection()
+        self.updates = UpdateSoftwareSection(self)
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.updates = self.updates
         self.widgets[self.updates] = self.addTab(self.updates, _("Software Updates"))
-        self.uninstall = UninstallSoftwareSection()
+        self.uninstall = UninstallSoftwareSection(self)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
         globals.uninstall = self.uninstall
         self.widgets[self.uninstall] = self.addTab(self.uninstall, _("Installed Packages"))
-        self.settingsSection = SettingsSection()
+        self.settingsSection = SettingsSection(self)
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, _("WingetUI Settings"), addToMenu=True, actionIcon="settings")
         self.aboutSection = AboutSection()
         self.widgets[self.aboutSection] = self.addTab(self.aboutSection, _("About WingetUI"), addToMenu=True, actionIcon="info")
@@ -118,16 +110,15 @@ class RootWindow(QMainWindow):
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
         
-        helpAction = QAction(QIcon(getMedia("help")), _("Help and documentation"), self)
-        helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
-        self.extrasMenu.addAction(helpAction)
+        self.helpAction = QAction(_("Help and documentation"), self)
+        self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        self.extrasMenu.addAction(self.helpAction)
 
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()
         self.adminButton = QPushButton("")
-        self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.adminButton.clicked.connect(lambda: (self.warnAboutAdmin(), self.adminButton.setChecked(True)))
         self.adminButton.setFixedWidth(40)
         self.adminButton.setFixedHeight(40)
@@ -147,7 +138,6 @@ class RootWindow(QMainWindow):
             ApplyMenuBlur(self.extrasMenu.winId(), self.extrasMenu)
             self.extrasMenu.exec(QCursor.pos())
 
-        self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         self.extrasMenuButton.clicked.connect(lambda: showExtrasMenu())
         self.extrasMenuButton.setFixedWidth(40)
         self.extrasMenuButton.setIconSize(QSize(24, 24))
@@ -222,7 +212,7 @@ class RootWindow(QMainWindow):
             btn.setStyleSheet("" + btn.styleSheet())
         self.oldbtn = btn
         if addToMenu:
-            btn.action.setIcon(QIcon(getMedia(actionIcon)))
+            self.DynamicIconsToApply[btn.action] = actionIcon
             btn.action.setParent(self.extrasMenu)
             btn.clicked.connect(lambda: self.extrasMenuButton.setChecked(True))
             self.extrasMenu.addAction(btn.action)
@@ -367,23 +357,41 @@ class RootWindow(QMainWindow):
 
 
     def showEvent(self, event: QShowEvent) -> None:
-        if(not self.isWinDark):
-            r = win32mica.ApplyMica(self.winId(), win32mica.MicaTheme.LIGHT)
-            print(r)
-            if not self.appliedStyleSheet and globals.lightCSS != "":
-                self.appliedStyleSheet = True
-                self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if r == 0x0 else "#f6f6f6"))
-        else:
-            r = win32mica.ApplyMica(self.winId(), win32mica.MicaTheme.DARK)
-            if not self.appliedStyleSheet and globals.darkCSS != "":
-                self.appliedStyleSheet = True
-                self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if r == 0x0 else "#202020"))
         try:
             globals.uninstall.startLoadingPackages()
         except Exception as e:
             report(e)
         return super().showEvent(event)
 
+    def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):
+        
+        if isDark():
+            self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
+        else:
+            self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if isWin11 else "#f6f6f6"))
+        self.ApplyIcons()
+        self.callInMain.emit(self.OnThemeChange.emit)
+
+        if not skipMica:
+            mode = win32mica.MicaTheme.AUTO
+            theme = getSettingsValue("PreferredTheme")
+            match theme:
+                case "dark":
+                    mode = win32mica.MicaTheme.DARK
+                case "light":
+                    mode = win32mica.MicaTheme.LIGHT
+            win32mica.ApplyMica(self.winId(), mode)
+            
+
+    def ApplyIcons(self):
+        self.helpAction.setIcon(QIcon(getMedia("help")))
+        self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
+        self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
+        for widget in self.DynamicIconsToApply.keys():
+            widget.setIcon(QIcon(getMedia(self.DynamicIconsToApply[widget])))
+        for manager in PackageManagersList:
+            manager.LoadedIcons = False
+            
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.lastFocusedWindow = self.winId()
         return super().enterEvent(event)
