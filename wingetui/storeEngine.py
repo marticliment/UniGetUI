@@ -982,6 +982,8 @@ class WingetBucketManager(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
 
         self.leftSlow.start()
+        
+        self.loadSources()
 
         self.registeredThemeEvent = False
         self.ApplyIcons()
