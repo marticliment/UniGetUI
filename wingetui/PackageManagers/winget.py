@@ -25,6 +25,7 @@ class WingetPackageManager(DynamicPackageManager):
     else:
         if getSettings("EnableArmWinget") or IS_ARM:
             print("🟠 USING ARM BUILT-In WINGET")
+            IS_ARM = True
             EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_arm64", "winget.exe")
         else:
             EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_x64", "winget.exe")
@@ -392,8 +393,8 @@ class WingetPackageManager(DynamicPackageManager):
         details = PackageDetails(package)
         try:
             details.Scopes = [_("Current user"), _("Local machine")]
-            details.ManifestUrl = f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{package.Id[0].lower()}/{'/'.join(package.Id.split('.'))}" if not (len(package.Id) == 14 and package.Id == package.Id.upper()) else f"https://apps.microsoft.com/store/detail/{package.Id}"
-            details.Architectures = ["x64", "x86"] + (["arm64"] if getSettings("EnableArmWinget") else [])
+            details.ManifestUrl = f"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{package.Id[0].lower()}/{'/'.join(package.Id.split('.'))}" if not (package.Id == package.Id.upper()) else f"https://apps.microsoft.com/store/detail/{package.Id}"
+            details.Architectures = ["x64", "x86"] + (["arm64"] if self.IS_ARM else [])
             loadedInformationPieces = 0
             currentIteration = 0
             while loadedInformationPieces < 2 and currentIteration < 50:
