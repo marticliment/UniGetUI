@@ -760,10 +760,32 @@ class SoftwareSection(QWidget):
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setAccessibleName(_("Reload"))
-
+        
+        
+        self.filterScrollArea = SmoothScrollArea(self)
+        
+        def toggleFiltersPane():
+            if self.filterScrollArea.isVisible():
+                self.filterScrollArea.hide()
+                self.toggleFilters.setChecked(False)
+                self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
+                setSettings(f"ShowFilterUI{sectionName}", False)
+            else:
+                self.toggleFilters.setChecked(True)
+                self.filterScrollArea.show()
+                self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
+                setSettings(f"ShowFilterUI{sectionName}", True)
+                
+        self.toggleFilters = QPushButton()
+        self.toggleFilters.setFixedSize(30, 30)
+        self.toggleFilters.setStyleSheet("margin-top: 0px;")
+        self.toggleFilters.setAccessibleName(_("Toggle search filters pane"))
+        self.toggleFilters.setCheckable(True)
+        self.toggleFilters.clicked.connect(toggleFiltersPane)
+            
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
-        self.searchButton.setStyleSheet("margin-top: 0px;")
+        self.searchButton.setStyleSheet("margin-top: 0px;border-top-left-radius:0px;border-bottom-left-radius:0px;")
         self.searchButton.clicked.connect(self.filter)
         self.searchButton.setAccessibleName(_("Search"))
 
@@ -784,7 +806,7 @@ class SoftwareSection(QWidget):
         self.query.editingFinished.connect(lambda: (self.filter()))
         self.query.textChanged.connect(lambda: self.filter() if self.forceCheckBox.isChecked() else print())
         self.query.setFixedHeight(30)
-        self.query.setStyleSheet("margin-top: 0px;")
+        self.query.setStyleSheet("margin-top: 0px;border-top-right-radius:0px;border-bottom-right-radius:0px;")
         self.query.setMinimumWidth(100)
         self.query.setMaximumWidth(250)
         self.query.setBaseSize(250, 30)
@@ -818,14 +840,19 @@ class SoftwareSection(QWidget):
         self.titleWidget.setFixedHeight(70)
         self.titleWidget.setLayout(v)
 
+        headerLayout.setSpacing(0)
         headerLayout.addWidget(self.titleWidget, stretch=1)
         headerLayout.addStretch()
         headerLayout.setContentsMargins(5, 0, 5, 0)
         forceCheckBox = QVBoxLayout()
         forceCheckBox.addWidget(self.forceCheckBox)
         headerLayout.addLayout(forceCheckBox)
+        headerLayout.addSpacing(5)
         headerLayout.addWidget(self.query)
         headerLayout.addWidget(self.searchButton)
+        headerLayout.addSpacing(5)
+        headerLayout.addWidget(self.toggleFilters)
+        headerLayout.addSpacing(5)
         headerLayout.addWidget(self.reloadButton)
 
         self.packageListScrollBar = CustomScrollBar()
@@ -859,7 +886,6 @@ class SoftwareSection(QWidget):
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
 
-        self.filterScrollArea = SmoothScrollArea(self)
         self.filterScrollArea.setFixedWidth(220)
         self.filterScrollArea.setStyleSheet("QScrollArea{border:0px;}")
         
@@ -1017,10 +1043,25 @@ class SoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         self.window().OnThemeChange.connect(self.ApplyIcons)
         
+        if getSettings(f"ShowFilterUI{self.sectionName}"):
+            self.toggleFilters.setChecked(True)
+            self.filterScrollArea.show()
+            self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
+        else:
+            self.filterScrollArea.hide()
+            self.toggleFilters.setChecked(False)
+            self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
+        
     def ApplyIcons(self):
         self.OnThemeChange.emit()
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.searchButton.setIcon(QIcon(getMedia("search")))
+        if self.filterScrollArea.isVisible():
+            self.toggleFilters.setChecked(True)
+            self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
+        else:
+            self.toggleFilters.setChecked(False)
+            self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
 
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")

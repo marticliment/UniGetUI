@@ -784,6 +784,13 @@ try:
             height: 30px;
             border-top: 1px solid rgba(107, 107, 107, 25%);
         }}
+        QPushButton:checked {{
+            background-color:rgba(86, 86, 86, 55%);
+            border-radius: 6px;
+            border: 1px solid rgba(100, 100, 100, 55%);
+            height: 30px;
+            border-top: 1px solid rgba(107, 107, 107, 55%);
+        }}
         #Headerbutton {{
             width: 150px;
             background-color:rgba(0, 0, 0, 1%);
@@ -1558,6 +1565,13 @@ try:
         }}
         QPushButton:hover {{
             background-color: rgba(255, 255, 255, 90%);
+            border: 1px solid rgba(220, 220, 220, 65%);
+            border-top: 1px solid rgba(220, 220, 220, 80%);
+            border-radius: 6px;
+            height: 30px;
+        }}
+        QPushButton:checked {{
+            background-color: rgba(235, 235, 235, 100%);
             border: 1px solid rgba(220, 220, 220, 65%);
             border-top: 1px solid rgba(220, 220, 220, 80%);
             border-radius: 6px;

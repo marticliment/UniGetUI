@@ -39,7 +39,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     runningThreads = 0
 
     def __init__(self, parent = None):
-        super().__init__(parent = parent)
+        super().__init__(parent = parent, sectionName = "Discover")
 
         self.finishDynamicLoading.connect(self.finishDynamicLoadingIfNeeded)
 
@@ -557,7 +557,7 @@ class UpdateSoftwareSection(SoftwareSection):
     UpdatesNotification: ToastNotification = None
 
     def __init__(self, parent = None):
-        super().__init__(parent = parent)
+        super().__init__(parent = parent, sectionName = "Update")
 
 
         self.blacklistManager = IgnoredUpdatesManager(self.window())
@@ -1138,7 +1138,7 @@ class UninstallSoftwareSection(SoftwareSection):
     FilterItemForManager = {}
     
     def __init__(self, parent = None):
-        super().__init__(parent = parent)
+        super().__init__(parent = parent, sectionName = "Uninstall")
         self.query.setPlaceholderText(" "+_("Search on your software"))
         self.SectionImage.setPixmap(QIcon(getMedia("workstation")).pixmap(QSize(64, 64)))
         self.discoverLabel.setText(_("Installed Packages"))
