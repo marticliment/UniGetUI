@@ -733,6 +733,8 @@ class SoftwareSection(QWidget):
     shownItems: list[TreeWidgetItemWithQAction] = []
     nextItemToShow: int = 0
     OnThemeChange = Signal()
+    
+    FilterItemForManager = {}
 
     PackageManagers: list[PackageManagerModule] = PackageManagersList
     PackagesLoaded: dict[PackageManagerModule:bool] = {}
@@ -857,6 +859,49 @@ class SoftwareSection(QWidget):
         self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
 
 
+        self.filterScrollArea = SmoothScrollArea(self)
+        self.filterScrollArea.setFixedWidth(220)
+        self.filterScrollArea.setStyleSheet("QScrollArea{border:0px;margin-right: 10px;}")
+        
+        scrollWidget = QWidget()        
+        scrollWidget.setFixedWidth(200)
+
+        filterLayout = QVBoxLayout()
+        filterLayout.setContentsMargins(0,0,0,0)
+        scrollWidget.setLayout(filterLayout)
+        
+        sourceTitle = QLabel(_("Filter by source")+":")
+        sourceTitle.setStyleSheet("font-size: 10pt;font-weight: bold")
+        sourceTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        filterLayout.addWidget(sourceTitle)
+        
+        self.filterList = TreeWidget()
+        self.filterList.setColumnCount(3)
+        self.filterList.setColumnWidth(0, 20)
+        self.filterList.setColumnWidth(1, 100)
+        self.filterList.header().setStretchLastSection(True)
+        self.filterList.setColumnWidth(2, 10)
+        self.filterList.setFixedWidth(200)
+        self.filterList.verticalScrollBar().setFixedWidth(12)
+        self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
+
+        self.filterList.header().hide()
+        self.filterList.setIndentation(0)
+        self.filterList.setStyleSheet("margin: 0px; border: 0px")
+
+        for manager in PackageManagersList:
+            item = QTreeWidgetItem()
+            item.setText(1, manager.NAME)
+            item.setText(2, "0")
+            item.setCheckState(0, Qt.CheckState.Checked)
+            self.FilterItemForManager[manager] = item
+            self.filterList.addTopLevelItem(item)
+        
+        filterLayout.addWidget(self.filterList)
+        filterLayout.addStretch()
+        
+        self.filterScrollArea.setWidget(scrollWidget)
+
 
         def updateItemState(item: TreeWidgetItemWithQAction, column: int):
             if column == 0:
@@ -923,6 +968,7 @@ class SoftwareSection(QWidget):
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.informationBanner)
         hl2 = QHBoxLayout()
+        hl2.addWidget(self.filterScrollArea)
         hl2.addWidget(self.packageList)
         hl2.addWidget(self.packageListScrollBar)
         hl2.setSpacing(0)
@@ -1017,6 +1063,13 @@ class SoftwareSection(QWidget):
             if self.nextItemToShow >= len(self.showableItems):
                 break
             itemToAdd = self.showableItems[self.nextItemToShow]
+            
+            # Check if package meets filter criteria
+            package: Package = self.ItemPackageReference[itemToAdd]
+            if self.FilterItemForManager[package.PackageManager].checkState(0) == Qt.CheckState.Unchecked:
+                self.nextItemToShow += 1
+                continue
+                
             if itemToAdd not in self.addedItems:
                 self.packageList.addTopLevelItem(itemToAdd)
                 self.addedItems.append(itemToAdd)
@@ -1074,6 +1127,7 @@ class SoftwareSection(QWidget):
                 except RuntimeError:
                     print("🟠 RuntimeError on SoftwareSection.finishFiltering")
         found = len(self.showableItems)
+        self.updateFilterTable()
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
@@ -1084,6 +1138,18 @@ class SoftwareSection(QWidget):
                 self.packageList.label.setText("")
         self.addItemsToTreeWidget(reset = True)
         self.packageList.scrollToItem(self.packageList.currentItem())
+        
+    def updateFilterTable(self):
+        managerCount = {}
+        for manager in PackageManagersList:
+            managerCount[manager] = 0
+        for packageItem in self.showableItems:
+            package: Package = self.ItemPackageReference[packageItem]
+            managerCount[package.PackageManager] += 1
+        for manager in PackageManagersList:
+            item: QTreeWidgetItem = self.FilterItemForManager[manager]
+            item.setText(2, str(managerCount[manager]))
+            item.setDisabled(not manager.isEnabled() or managerCount[manager] == 0)
 
     def showQuery(self) -> None:
         self.programbox.show()
