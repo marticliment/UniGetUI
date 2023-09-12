@@ -861,10 +861,10 @@ class SoftwareSection(QWidget):
 
         self.filterScrollArea = SmoothScrollArea(self)
         self.filterScrollArea.setFixedWidth(220)
-        self.filterScrollArea.setStyleSheet("QScrollArea{border:0px;margin-right: 10px;}")
+        self.filterScrollArea.setStyleSheet("QScrollArea{border:0px;}")
         
         scrollWidget = QWidget()        
-        scrollWidget.setFixedWidth(200)
+        scrollWidget.setFixedWidth(210)
 
         filterLayout = QVBoxLayout()
         filterLayout.setContentsMargins(0,0,0,0)
@@ -878,10 +878,10 @@ class SoftwareSection(QWidget):
         self.filterList = TreeWidget()
         self.filterList.setColumnCount(3)
         self.filterList.setColumnWidth(0, 20)
-        self.filterList.setColumnWidth(1, 100)
+        self.filterList.setColumnWidth(1, 110)
         self.filterList.header().setStretchLastSection(True)
         self.filterList.setColumnWidth(2, 10)
-        self.filterList.setFixedWidth(200)
+        self.filterList.setFixedWidth(210)
         self.filterList.verticalScrollBar().setFixedWidth(12)
         self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
 
@@ -1142,14 +1142,16 @@ class SoftwareSection(QWidget):
     def updateFilterTable(self):
         managerCount = {}
         for manager in PackageManagersList:
-            managerCount[manager] = 0
+            managerCount[manager] = 0        
         for packageItem in self.showableItems:
             package: Package = self.ItemPackageReference[packageItem]
             managerCount[package.PackageManager] += 1
         for manager in PackageManagersList:
             item: QTreeWidgetItem = self.FilterItemForManager[manager]
             item.setText(2, str(managerCount[manager]))
-            item.setDisabled(not manager.isEnabled() or managerCount[manager] == 0)
+            item.setHidden(not manager.isEnabled())
+            item.setDisabled(managerCount[manager] == 0)
+        self.filterList.setFixedHeight(45*self.filterList.topLevelItemCount()+10)
 
     def showQuery(self) -> None:
         self.programbox.show()

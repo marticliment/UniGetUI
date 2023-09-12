@@ -28,6 +28,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     DynaimcPackageManagers = DynaimcPackageManagersList.copy()
     DynamicPackagesLoaded = DynamicPackagesLoadedDict.copy()
+    FilterItemForManager = {}
 
     LastQueryDynamicallyLoaded: str = ""
 
@@ -379,6 +380,9 @@ class DiscoverSoftwareSection(SoftwareSection):
             super().finishFiltering(text)
             if len(self.showableItems) == 0 and self.isLoadingDynamicPackages():
                 self.packageList.label.setText(_("Looking for packages..."))
+            else:
+                self.updateFilterTable()
+
         elif len(text) == 0:
             self.showableItems = []
             for item in self.packageItems:
@@ -395,9 +399,13 @@ class DiscoverSoftwareSection(SoftwareSection):
                 self.loadingProgressBar.hide()
                 self.packageList.label.show()
                 self.packageList.label.setText(_("Search for packages to start"))
-        else:
+            
+            self.updateFilterTable()
+
+        else:        
             self.showableItems = []
             self.addItemsToTreeWidget(reset=True)
+            self.updateFilterTable()
             self.loadingProgressBar.hide()
             self.packageList.label.show()
             self.packageList.label.setText(_("Please type at least two characters"))
@@ -428,7 +436,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         if not self.isLoadingDynamicPackages():
             self.loadingProgressBar.hide()
-        
+            
     def isLoadingDynamicPackages(self) -> bool:
         return self.runningThreads > 0
 
@@ -539,6 +547,8 @@ class UpdateSoftwareSection(SoftwareSection):
 
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
+    FilterItemForManager = {}
+    
     addProgram = Signal(object)
     availableUpdates: int = 0
     PackageItemReference: dict[UpgradablePackage:TreeWidgetItemWithQAction] = {}
@@ -1026,6 +1036,9 @@ class UpdateSoftwareSection(SoftwareSection):
                     found += 1
             except RuntimeError:
                 print("nullitem")
+        
+        self.updateFilterTable()
+
         if found == 0:
             if self.packageList.label.text() == "":
                 self.packageList.label.show()
@@ -1122,6 +1135,8 @@ class UninstallSoftwareSection(SoftwareSection):
     allPkgSelected: bool = False
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
+    FilterItemForManager = {}
+    
     def __init__(self, parent = None):
         super().__init__(parent = parent)
         self.query.setPlaceholderText(" "+_("Search on your software"))
