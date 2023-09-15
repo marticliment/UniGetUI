@@ -979,13 +979,18 @@ try:
             border-bottom: 1px solid #1f1f1f;
             border-top: 1px solid #1f1f1f;
         }}
-        QTreeWidget#FlatTreeWidget::item {{
+        QTreeWidget#FlatTreeWidget::item,
+        QTreeWidget#FlatTreeWidget::item:first {{
             margin: 0px;
             padding: 0px;
             background-color: transparent;
             height: 30px;
             border: 0px;
-            border: 1px solid red;
+            border-radius: 0px;
+            border-bottom: 1px solid #1f1f1f;
+        }}
+        QTreeWidget#FlatTreeWidget::item:last {{
+            padding-right: 10px;
         }}
         #IslandWidget {{
             padding: 5px;

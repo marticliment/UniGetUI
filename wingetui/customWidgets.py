@@ -894,10 +894,11 @@ class SoftwareSection(QWidget):
 
 
         self.filterScrollArea.setFixedWidth(220)
-        self.filterScrollArea.setStyleSheet("QScrollArea{border:0px;}")
+        self.filterScrollArea.goTopButton.hide()
+        self.filterScrollArea.setObjectName("IslandWidget")
         
         scrollWidget = QWidget()        
-        scrollWidget.setFixedWidth(210)
+        scrollWidget.setFixedWidth(198)
 
         filterLayout = QVBoxLayout()
         filterLayout.setContentsMargins(0,0,0,0)
@@ -909,12 +910,13 @@ class SoftwareSection(QWidget):
         filterLayout.addWidget(sourceTitle)
         
         self.filterList = TreeWidget()
+        self.filterList.setObjectName("FlatTreeWidget")
         self.filterList.setColumnCount(3)
-        self.filterList.setColumnWidth(0, 20)
-        self.filterList.setColumnWidth(1, 110)
+        self.filterList.setColumnWidth(0, 12)
+        self.filterList.setColumnWidth(1, 120)
         self.filterList.header().setStretchLastSection(True)
         self.filterList.setColumnWidth(2, 10)
-        self.filterList.setFixedWidth(210)
+        self.filterList.setFixedWidth(198)
         self.filterList.verticalScrollBar().setFixedWidth(12)
         self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
 
@@ -924,6 +926,7 @@ class SoftwareSection(QWidget):
 
         for manager in PackageManagersList:
             item = QTreeWidgetItem()
+            item.setTextAlignment(2, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             item.setText(1, manager.NAME)
             item.setText(2, "0")
             item.setCheckState(0, Qt.CheckState.Checked)
