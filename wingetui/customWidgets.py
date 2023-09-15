@@ -765,7 +765,7 @@ class SoftwareSection(QWidget):
         self.filterScrollArea = SmoothScrollArea(self)
         
         def toggleFiltersPane():
-            if self.filterScrollArea.isVisible():
+            if self.toggleFilters.isChecked():
                 self.filterScrollArea.hide()
                 self.toggleFilters.setChecked(False)
                 self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
@@ -1044,8 +1044,8 @@ class SoftwareSection(QWidget):
         self.window().OnThemeChange.connect(self.ApplyIcons)
         
         if getSettings(f"ShowFilterUI{self.sectionName}"):
-            self.toggleFilters.setChecked(True)
             self.filterScrollArea.show()
+            self.toggleFilters.setChecked(True)
             self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
         else:
             self.filterScrollArea.hide()
@@ -1056,7 +1056,7 @@ class SoftwareSection(QWidget):
         self.OnThemeChange.emit()
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.searchButton.setIcon(QIcon(getMedia("search")))
-        if self.filterScrollArea.isVisible():
+        if self.toggleFilters.isChecked():
             self.toggleFilters.setChecked(True)
             self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
         else:
