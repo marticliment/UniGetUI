@@ -11,7 +11,6 @@ untranslatedPercentage = {
   "he": "5%",
   "hi": "92%",
   "hr": "98%",
-  "it": "98%",
   "ja": "98%",
   "nb": "84%",
   "pl": "98%",
@@ -212,6 +211,10 @@ languageCredits = {
     },
     {
       "name": "Maicol Battistini (@maicol07)",
+      "link": ""
+    },
+    {
+      "name": "Massimo Pissarello (@mapi68)",
       "link": ""
     },
     {
