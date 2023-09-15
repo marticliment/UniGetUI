@@ -766,15 +766,13 @@ class SoftwareSection(QWidget):
         
         def toggleFiltersPane():
             if self.toggleFilters.isChecked():
-                self.filterScrollArea.hide()
-                self.toggleFilters.setChecked(False)
-                self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
-                setSettings(f"ShowFilterUI{sectionName}", False)
-            else:
-                self.toggleFilters.setChecked(True)
                 self.filterScrollArea.show()
                 self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
                 setSettings(f"ShowFilterUI{sectionName}", True)
+            else:
+                self.filterScrollArea.hide()
+                self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
+                setSettings(f"ShowFilterUI{sectionName}", False)
                 
         self.toggleFilters = QPushButton()
         self.toggleFilters.setFixedSize(30, 30)
@@ -782,7 +780,16 @@ class SoftwareSection(QWidget):
         self.toggleFilters.setAccessibleName(_("Toggle search filters pane"))
         self.toggleFilters.setCheckable(True)
         self.toggleFilters.clicked.connect(toggleFiltersPane)
-            
+        
+        if getSettings(f"ShowFilterUI{self.sectionName}"):
+            self.filterScrollArea.show()
+            self.toggleFilters.setChecked(True)
+            self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
+        else:
+            self.filterScrollArea.hide()
+            self.toggleFilters.setChecked(False)
+            self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
+        
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;border-top-left-radius:0px;border-bottom-left-radius:0px;")
@@ -1043,24 +1050,14 @@ class SoftwareSection(QWidget):
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         self.window().OnThemeChange.connect(self.ApplyIcons)
         
-        if getSettings(f"ShowFilterUI{self.sectionName}"):
-            self.filterScrollArea.show()
-            self.toggleFilters.setChecked(True)
-            self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
-        else:
-            self.filterScrollArea.hide()
-            self.toggleFilters.setChecked(False)
-            self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
         
     def ApplyIcons(self):
         self.OnThemeChange.emit()
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
         self.searchButton.setIcon(QIcon(getMedia("search")))
         if self.toggleFilters.isChecked():
-            self.toggleFilters.setChecked(True)
             self.toggleFilters.setIcon(getMaskedIcon("edit_filters_masked"))
         else:
-            self.toggleFilters.setChecked(False)
             self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
 
     def finishInitialisation(self):
