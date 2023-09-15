@@ -1803,6 +1803,28 @@ try:
             border-top: 1px solid rgba(220, 220, 220, 35%);
             border-bottom: 1px solid rgba(220, 220, 220, 35%);
         }}
+        QTreeWidget#FlatTreeWidget::item,
+        QTreeWidget#FlatTreeWidget::item:first {{
+            margin: 0px;
+            padding: 0px;
+            background-color: transparent;
+            height: 30px;
+            border: 0px;
+            border-radius: 0px;
+            border-bottom: 1px solid rgba(220, 220, 220, 35%);
+        }}
+        QTreeWidget#FlatTreeWidget::item:last {{
+            padding-right: 10px;
+        }}
+        #IslandWidget {{
+            padding: 5px;
+            margin: 5px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            background-color: rgba(255, 255, 255, 40%);
+            border: 1px solid rgba(220, 220, 220, 35%);
+            border-radius: 8px;
+        }}
         QTreeWidget::item:selected {{
             margin-top: 2px;
             margin-bottom: 2px;
@@ -2079,8 +2101,8 @@ try:
             border-bottom: 1px;
         }}
         #stChkBg{{
-            padding: {(15)}px;
-            padding-left: {(45)}px;
+            padding: 15px;
+            padding-left: 15px;
             background-color: rgba(255, 255, 255, 10%);
             margin: 10px;
             margin-bottom: 0;
@@ -2088,44 +2110,58 @@ try:
             border: 1px solid rgba(196, 196, 196, 25%);
             border-bottom: 0;
         }}
-        #stChk::indicator{{
-            height: {(20)}px;
-            width: {(20)}px;
+        QTreeView::indicator,
+        QCheckBox::indicator,
+        #stChk::indicator  {{
+            height: 20px;
+            width: 20px;
         }}
+        QTreeView::indicator:unchecked,
+        QCheckBox::indicator:unchecked,
         #stChk::indicator:unchecked {{
             background-color: rgba(255, 255, 255, 10%);
             border: 1px solid rgba(136, 136, 136, 25%);
             border-radius: 6px;
         }}
+        QTreeView::indicator:disabled,
+        QCheckBox::indicator:disabled,
         #stChk::indicator:disabled {{
             background-color: #eeeeee;
             color: rgba(136, 136, 136, 25%);
             border: 1px solid rgba(136, 136, 136, 25%);
             border-radius: 6px;
         }}
+        QTreeView::indicator:unchecked:hover,
+        QCheckBox::indicator:unchecked:hover,
         #stChk::indicator:unchecked:hover {{
             background-color: #eeeeee;
             border: 1px solid rgba(136, 136, 136, 25%);
             border-radius: 6px;
         }}
+        QTreeView::indicator:checked,
+        QCheckBox::indicator:checked,
         #stChk::indicator:checked {{
             border: 0 solid rgba(136, 136, 136, 25%);
             background-color: rgb({colors[4]});
             border-radius: 5px;
             image: url("{getPath("tick_black.png")}");
         }}
+        QCheckBox::indicator:checked:hover,
+        QTreeView::indicator:checked:hover,
         #stChk::indicator:checked:hover {{
             border: 0 solid rgba(136, 136, 136, 25%);
             background-color: rgb({colors[3]});
             border-radius: 5px;
             image: url("{getPath("tick_black.png")}");
         }}
+        QTreeView::indicator:checked:disabled,
+        QCheckBox::indicator:checked:disabled,
         #stChk::indicator:checked:disabled {{
             border: 1px solid rgba(136, 136, 136, 25%);
             background-color: #eeeeee;
             color: rgba(136, 136, 136, 25%);
             border-radius: 6px;
-            image: url("{getPath("tick_white.png")}");
+            image: url("{getPath("tick_black.png")}");
         }}
         #stCmbbx {{
             width: {(100)}px;
