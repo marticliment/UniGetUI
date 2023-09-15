@@ -214,7 +214,7 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "Massimo Pissarello",
+      "name": "Massimo Pissarello (@mapi68)",
       "link": ""
     },
     {
