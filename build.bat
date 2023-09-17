@@ -8,7 +8,7 @@ IF EXIST %py% (
 )
 
 
-@echo on
+@echo off
 
 %py% -m pip install -r requirements.txt
 
@@ -69,11 +69,14 @@ move dist\wingetuiBin ..\
 popd
 rmdir /Q /S wingetui_bin
 
-timeout 2
+echo You may now sign the executable file
+pause
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
     %INSTALLATOR% "WingetUI.iss"
+    echo You may now sign the installer
+    pause
     "wingetui Installer.exe"
 ) else (
     echo "Make installer was skipped, because the installer is missing."
