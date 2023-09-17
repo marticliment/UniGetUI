@@ -202,7 +202,7 @@ languageCredits = {
   ],
   "it": [
     {
-      "name": "Alberto Franzin (@mrfranza)",
+      "name": "Alberto Franzin @mrfranza",
       "link": ""
     },
     {
@@ -214,11 +214,11 @@ languageCredits = {
       "link": ""
     },
     {
-      "name": "Maicol Battistini (@maicol07)",
+      "name": "Maicol Battistini @maicol07",
       "link": ""
     },
     {
-      "name": "Massimo Pissarello (@mapi68)",
+      "name": "Massimo Pissarello @mapi68",
       "link": ""
     },
     {
