@@ -2198,6 +2198,41 @@ try:
             border-radius: 6px;
             image: url("{getPath("tick_black.png")}");
         }}
+        QRadioButton::indicator:checked {{
+            height: 12px;
+            width: 12px;
+            border-radius: 10px;
+            border: 4px solid rgb({colors[3]});
+            background-color: white;
+        }}
+        QRadioButton::indicator:checked:hover {{
+            height: 14px;
+            width: 14px;
+            border-radius: 10px;
+            border: 3px solid rgb({colors[3]});
+            background-color: white;
+        }}
+        QRadioButton::indicator:checked:disabled {{
+            height: 12px;
+            width: 12px;
+            border-radius: 10px;
+            background-color: #f3f3f3;
+            border: 1px solid #c2c2c2;
+        }}
+        QRadioButton::indicator:unchecked {{
+            height: 18px;
+            width: 18px;
+            border-radius: 10px;
+            background-color: #f3f3f3;
+            border: 1px solid #a2a2a2;
+        }}
+        QRadioButton::indicator:unchecked:hover {{
+            height: 18px;
+            width: 18px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            border: 1px solid #a2a2a2;
+        }}
         #stCmbbx {{
             width: {(100)}px;
             background-color: rgba(255, 255, 255, 10%);
