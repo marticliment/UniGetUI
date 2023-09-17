@@ -763,6 +763,7 @@ class SoftwareSection(QWidget):
         
         
         self.filterScrollArea = SmoothScrollArea(self)
+        self.filterScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         
         def toggleFiltersPane():
             if self.toggleFilters.isChecked():
@@ -903,10 +904,10 @@ class SoftwareSection(QWidget):
         self.filterList.setObjectName("FlatTreeWidget")
         self.filterList.setColumnCount(3)
         self.filterList.setColumnWidth(0, 12)
-        self.filterList.setColumnWidth(1, 120)
+        self.filterList.setColumnWidth(1, 110)
         self.filterList.header().setStretchLastSection(True)
         self.filterList.setColumnWidth(2, 10)
-        self.filterList.setFixedWidth(198)
+        self.filterList.setFixedWidth(188)
         self.filterList.verticalScrollBar().setFixedWidth(12)
         self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
@@ -951,7 +952,7 @@ class SoftwareSection(QWidget):
 
 
         filterLayout.addLayout(searchOptionsLayout)
-        filterLayout.addStretch(5)
+        filterLayout.addSpacing(5)
         
         searchOnTitle = QLabel(_("Search on")+":")
         searchOnTitle.setStyleSheet("font-size: 10pt;font-weight: bold")

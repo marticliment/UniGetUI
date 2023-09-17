@@ -1353,11 +1353,6 @@ try:
             border-radius: 6px;
             image: url("{getPath("tick_white.png")}");
         }}
-        
-        
-        
-        
-        
         QRadioButton::indicator:checked {{
             height: 12px;
             width: 12px;
@@ -1393,10 +1388,6 @@ try:
             background-color: #2a2a2a;
             border: 1px solid #444444;
         }}
-        
-        
-        
-        
         #stCmbbx {{
             width: {(100)}px;
             background-color:rgba(81, 81, 81, 25%);
