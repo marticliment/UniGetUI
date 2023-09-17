@@ -763,6 +763,7 @@ class SoftwareSection(QWidget):
         
         
         self.filterScrollArea = SmoothScrollArea(self)
+        self.filterScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         
         def toggleFiltersPane():
             if self.toggleFilters.isChecked():
@@ -799,13 +800,6 @@ class SoftwareSection(QWidget):
         headerLayout = QHBoxLayout()
         headerLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.forceCheckBox = QCheckBox(_("Instant search"))
-        self.forceCheckBox.setFixedHeight(30)
-        self.forceCheckBox.setLayoutDirection(Qt.RightToLeft)
-        self.forceCheckBox.setStyleSheet("margin-top: 0px;")
-        self.forceCheckBox.setChecked(True)
-        self.forceCheckBox.setChecked(not getSettings(f"DisableInstantSearchOn{sectionName}"))
-        self.forceCheckBox.clicked.connect(lambda v: setSettings(f"DisableInstantSearchOn{sectionName}", bool(not v)))
 
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" PlaceholderText")
@@ -851,9 +845,6 @@ class SoftwareSection(QWidget):
         headerLayout.addWidget(self.titleWidget, stretch=1)
         headerLayout.addStretch()
         headerLayout.setContentsMargins(5, 0, 5, 0)
-        forceCheckBox = QVBoxLayout()
-        forceCheckBox.addWidget(self.forceCheckBox)
-        headerLayout.addLayout(forceCheckBox)
         headerLayout.addSpacing(5)
         headerLayout.addWidget(self.query)
         headerLayout.addWidget(self.searchButton)
@@ -913,10 +904,10 @@ class SoftwareSection(QWidget):
         self.filterList.setObjectName("FlatTreeWidget")
         self.filterList.setColumnCount(3)
         self.filterList.setColumnWidth(0, 12)
-        self.filterList.setColumnWidth(1, 120)
+        self.filterList.setColumnWidth(1, 110)
         self.filterList.header().setStretchLastSection(True)
         self.filterList.setColumnWidth(2, 10)
-        self.filterList.setFixedWidth(198)
+        self.filterList.setFixedWidth(188)
         self.filterList.verticalScrollBar().setFixedWidth(12)
         self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
@@ -935,6 +926,64 @@ class SoftwareSection(QWidget):
             self.filterList.addTopLevelItem(item)
         
         filterLayout.addWidget(self.filterList)
+        
+        sourceTitle = QLabel(_("Search options")+":")
+        sourceTitle.setStyleSheet("font-size: 10pt;font-weight: bold")
+        sourceTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        filterLayout.addWidget(sourceTitle)
+        
+        searchOptionsLayout = QVBoxLayout()
+        searchOptionsLayout.setContentsMargins(5,0,5,0)
+        
+        self.forceCheckBox = QCheckBox(_("Instant search"))
+        self.forceCheckBox.setChecked(not getSettings(f"DisableInstantSearchOn{sectionName}"))
+        self.forceCheckBox.clicked.connect(lambda v: setSettings(f"DisableInstantSearchOn{sectionName}", bool(not v)))
+        searchOptionsLayout.addWidget(self.forceCheckBox)
+        
+        
+        self.DistinguishCapsWhenFiltering = QCheckBox(_("Distinguish between\nuppercase and lowercase"))
+        self.DistinguishCapsWhenFiltering.stateChanged.connect(lambda v: self.finishFiltering(self.query.text()))
+        searchOptionsLayout.addWidget(self.DistinguishCapsWhenFiltering)
+        
+        self.IgnoreSpecialChars = QCheckBox(_("Ignore special characters"))
+        self.IgnoreSpecialChars.setChecked(True)
+        self.IgnoreSpecialChars.stateChanged.connect(lambda v: self.finishFiltering(self.query.text()))
+        searchOptionsLayout.addWidget(self.IgnoreSpecialChars)
+
+
+        filterLayout.addLayout(searchOptionsLayout)
+        filterLayout.addSpacing(5)
+        
+        searchOnTitle = QLabel(_("Search on")+":")
+        searchOnTitle.setStyleSheet("font-size: 10pt;font-weight: bold")
+        searchOnTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        filterLayout.addWidget(searchOnTitle)
+        
+        searchOptionsLayout = QVBoxLayout()
+        searchOptionsLayout.setContentsMargins(5,0,5,0)
+        
+        searchLocations = QButtonGroup()
+        
+        self.SearchOnNameRadio = QRadioButton(_("Package Name"))
+        self.SearchOnNameRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
+        searchOptionsLayout.addWidget(self.SearchOnNameRadio)
+        searchLocations.addButton(self.SearchOnNameRadio)
+        
+        self.SearchOnIdRadio = QRadioButton(_("Package ID"))
+        self.SearchOnIdRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
+        searchOptionsLayout.addWidget(self.SearchOnIdRadio)
+        searchLocations.addButton(self.SearchOnIdRadio)
+        
+        self.SearchOnBothRadio = QRadioButton(_("Both"))
+        self.SearchOnBothRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
+        self.SearchOnBothRadio.setChecked(True)
+        searchOptionsLayout.addWidget(self.SearchOnBothRadio)
+        searchLocations.addButton(self.SearchOnBothRadio)
+
+
+        filterLayout.addLayout(searchOptionsLayout)     
+        
+           
         filterLayout.addStretch()
         
         self.filterScrollArea.setWidget(scrollWidget)
@@ -1127,7 +1176,24 @@ class SoftwareSection(QWidget):
         Thread(target=lambda: (time.sleep(0.1), self.callInMain.emit(partial(self.finishFiltering, self.query.text())))).start()
 
     def containsQuery(self, item: TreeWidgetItemWithQAction, querytext: str) -> bool:
-        return querytext in item.text(1).lower().replace("-", "").replace(" ", "") or querytext in item.text(2).lower().replace("-", "").replace(" ", "")
+        packageName = item.text(1)
+        packageId = item.text(2)
+        if self.IgnoreSpecialChars.isChecked():
+            packageName = packageName.replace("-", "").replace(" ", "").replace(".", "").replace("_", "")
+            packageId = packageId.replace("-", "").replace(" ", "").replace(".", "").replace("_", "")
+            querytext = querytext.replace("-", "").replace(" ", "").replace(".", "").replace("_", "")
+        
+        if not self.DistinguishCapsWhenFiltering.isChecked():
+            packageName = packageName.lower()
+            packageId = packageId.lower()
+            querytext = querytext.lower()
+            
+        if self.SearchOnIdRadio.isChecked():
+            return querytext in packageId
+        elif self.SearchOnNameRadio.isChecked():
+            return querytext in packageName
+        else:
+            return querytext in packageName or querytext in packageId
 
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
@@ -1164,7 +1230,7 @@ class SoftwareSection(QWidget):
                 self.showableItems = self.packageItems.copy()
             else:
                 try:
-                    if self.containsQuery(item, text.replace("-", "").replace(" ", "").lower()):
+                    if self.containsQuery(item, text):
                         self.showableItems.append(item)
                 except RuntimeError:
                     print("🟠 RuntimeError on SoftwareSection.finishFiltering")

@@ -1031,7 +1031,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
         for item in self.packageItems:
             try:
-                if self.containsQuery(item, text.replace("-", "").replace(" ", "").lower()):
+                if self.containsQuery(item, text):
                     self.showableItems.append(item)
                     found += 1
             except RuntimeError:
