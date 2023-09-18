@@ -868,7 +868,7 @@ class SmallCollapsableSection(CollapsableSection):
         return self.childrenw
 
 class SectionHWidget(QWidget):
-    def __init__(self, lastOne: bool = False):
+    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
         super().__init__()
         if not lastOne:
             self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
@@ -877,7 +877,11 @@ class SectionHWidget(QWidget):
         self.setLayout(QHBoxLayout())
         self.setObjectName("stBtn")
         self.setFixedHeight(40)
-        self.setContentsMargins(40, 0, 0, 0)
+        if smallerMargins:
+            self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
+            self.setContentsMargins(5, 0, 0, 0)
+        else:
+            self.setContentsMargins(40, 0, 0, 0)
 
     def addWidget(self, w: QWidget):
         self.layout().addWidget(w)
@@ -886,6 +890,28 @@ class SectionHWidget(QWidget):
 
     def addStretch(self):
         self.layout().addStretch()
+        
+class SectionVWidget(QWidget):
+    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
+        super().__init__()
+        if not lastOne:
+            self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setAutoFillBackground(True)
+        self.setLayout(QVBoxLayout())
+        self.setObjectName("stBtn")
+        if smallerMargins:
+            self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
+            self.setContentsMargins(5, 0, 0, 0)
+        else:
+            self.setContentsMargins(40, 0, 0, 0)
+
+    def addWidget(self, w: QWidget):
+        self.layout().addWidget(w)
+        
+    def addStretch(self):
+        self.layout().addStretch()
+
 
 class SectionButton(QWidget):
     clicked = Signal()

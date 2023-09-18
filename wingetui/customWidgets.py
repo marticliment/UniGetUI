@@ -764,6 +764,7 @@ class SoftwareSection(QWidget):
         
         self.filterScrollArea = SmoothScrollArea(self)
         self.filterScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.filterScrollArea.setWidgetResizable(True)
         
         def toggleFiltersPane():
             if self.toggleFilters.isChecked():
@@ -885,36 +886,32 @@ class SoftwareSection(QWidget):
 
 
         self.filterScrollArea.setFixedWidth(220)
+        self.filterScrollArea.setFrameShape(QFrame.Shape.NoFrame)
         self.filterScrollArea.goTopButton.hide()
-        self.filterScrollArea.setObjectName("IslandWidget")
+        
+        sourcesWidget = SmallCollapsableSection("Sources", getMedia("provider"))
+        sourcesWidget.showHideButton.click()
         
         scrollWidget = QWidget()        
-        scrollWidget.setFixedWidth(198)
+        
 
         filterLayout = QVBoxLayout()
-        filterLayout.setContentsMargins(0,0,0,0)
+        filterLayout.setContentsMargins(0,0,10,0)
         scrollWidget.setLayout(filterLayout)
-        
-        sourceTitle = QLabel(_("Filter by source")+":")
-        sourceTitle.setStyleSheet("font-size: 10pt;font-weight: bold")
-        sourceTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        filterLayout.addWidget(sourceTitle)
-        
+                
         self.filterList = TreeWidget()
         self.filterList.setObjectName("FlatTreeWidget")
         self.filterList.setColumnCount(3)
         self.filterList.setColumnWidth(0, 12)
-        self.filterList.setColumnWidth(1, 110)
-        self.filterList.header().setStretchLastSection(True)
+        self.filterList.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.filterList.setColumnWidth(2, 10)
-        self.filterList.setFixedWidth(188)
         self.filterList.verticalScrollBar().setFixedWidth(12)
         self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
 
         self.filterList.header().hide()
         self.filterList.setIndentation(0)
-        self.filterList.setStyleSheet("margin: 0px; border: 0px")
+        self.filterList.setStyleSheet("margin: 0px; border: 0px;padding: 0px;")
 
         for manager in PackageManagersList:
             item = QTreeWidgetItem()
@@ -925,12 +922,16 @@ class SoftwareSection(QWidget):
             self.FilterItemForManager[manager] = item
             self.filterList.addTopLevelItem(item)
         
-        filterLayout.addWidget(self.filterList)
+        hostwidget = SectionHWidget(lastOne=True, smallerMargins=True)
+        hostwidget.addWidget(self.filterList)
+        sourcesWidget.addWidget(hostwidget)
+        filterLayout.addWidget(sourcesWidget)
+        filterLayout.addSpacing(0)
         
-        sourceTitle = QLabel(_("Search options")+":")
-        sourceTitle.setStyleSheet("font-size: 10pt;font-weight: bold")
-        sourceTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        filterLayout.addWidget(sourceTitle)
+        
+        optionsWidget = SmallCollapsableSection("Filters", getMedia("edit_filters"))
+        optionsWidget.showHideButton.click()
+        
         
         searchOptionsLayout = QVBoxLayout()
         searchOptionsLayout.setContentsMargins(5,0,5,0)
@@ -938,54 +939,54 @@ class SoftwareSection(QWidget):
         self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setChecked(not getSettings(f"DisableInstantSearchOn{sectionName}"))
         self.forceCheckBox.clicked.connect(lambda v: setSettings(f"DisableInstantSearchOn{sectionName}", bool(not v)))
-        searchOptionsLayout.addWidget(self.forceCheckBox)
-        
+        hostwidget = SectionVWidget(smallerMargins=True)
+        hostwidget.addWidget(self.forceCheckBox)
+        optionsWidget.addWidget(hostwidget)
         
         self.DistinguishCapsWhenFiltering = QCheckBox(_("Distinguish between\nuppercase and lowercase"))
         self.DistinguishCapsWhenFiltering.stateChanged.connect(lambda v: self.finishFiltering(self.query.text()))
-        searchOptionsLayout.addWidget(self.DistinguishCapsWhenFiltering)
+        hostwidget = SectionVWidget(smallerMargins=True)
+        hostwidget.addWidget(self.DistinguishCapsWhenFiltering)
+        optionsWidget.addWidget(hostwidget)
         
         self.IgnoreSpecialChars = QCheckBox(_("Ignore special characters"))
         self.IgnoreSpecialChars.setChecked(True)
         self.IgnoreSpecialChars.stateChanged.connect(lambda v: self.finishFiltering(self.query.text()))
-        searchOptionsLayout.addWidget(self.IgnoreSpecialChars)
+        hostwidget = SectionVWidget(smallerMargins=True)
+        hostwidget.addWidget(self.IgnoreSpecialChars)
+        optionsWidget.addWidget(hostwidget)
 
-
-        filterLayout.addLayout(searchOptionsLayout)
-        filterLayout.addSpacing(5)
         
-        searchOnTitle = QLabel(_("Search on")+":")
-        searchOnTitle.setStyleSheet("font-size: 10pt;font-weight: bold")
-        searchOnTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        filterLayout.addWidget(searchOnTitle)
+        searchOn = SectionVWidget(lastOne=True, smallerMargins=True)
         
-        searchOptionsLayout = QVBoxLayout()
-        searchOptionsLayout.setContentsMargins(5,0,5,0)
+        searchOnTitle = QLabel(_("Compare query against")+":")
+        searchOn.addWidget(searchOnTitle)
+        
         
         searchLocations = QButtonGroup()
         
         self.SearchOnNameRadio = QRadioButton(_("Package Name"))
         self.SearchOnNameRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
-        searchOptionsLayout.addWidget(self.SearchOnNameRadio)
+        searchOn.addWidget(self.SearchOnNameRadio)
         searchLocations.addButton(self.SearchOnNameRadio)
         
         self.SearchOnIdRadio = QRadioButton(_("Package ID"))
         self.SearchOnIdRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
-        searchOptionsLayout.addWidget(self.SearchOnIdRadio)
+        searchOn.addWidget(self.SearchOnIdRadio)
         searchLocations.addButton(self.SearchOnIdRadio)
         
         self.SearchOnBothRadio = QRadioButton(_("Both"))
         self.SearchOnBothRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
         self.SearchOnBothRadio.setChecked(True)
-        searchOptionsLayout.addWidget(self.SearchOnBothRadio)
+        searchOn.addWidget(self.SearchOnBothRadio)
         searchLocations.addButton(self.SearchOnBothRadio)
-
-
-        filterLayout.addLayout(searchOptionsLayout)     
         
-           
+        optionsWidget.addWidget(searchOn)
+
+        
+        filterLayout.addWidget(optionsWidget)     
         filterLayout.addStretch()
-        
+                
         self.filterScrollArea.setWidget(scrollWidget)
 
 

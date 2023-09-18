@@ -1218,9 +1218,7 @@ try:
         }}
         #subtitleLabelHover {{
             background-color: rgba(20, 20, 20, 0.01);
-            margin: 10px;
-            margin-top: 0;
-            margin-bottom: 0;
+            margin: 0px;
             border-radius: 4px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
@@ -1228,9 +1226,7 @@ try:
         }}
         #subtitleLabelHover:hover{{
             background-color: rgba(255, 255, 255, 3%);
-            margin: 10px;
-            margin-top: 0;
-            margin-bottom: 0;
+            margin: 0px;
             padding-left: {(20)}px;
             padding-top: 0;
             padding-bottom: 0;
@@ -1241,9 +1237,7 @@ try:
         }}
         #subtitleLabelHover:pressed{{
             background-color: rgba(0, 0, 0, 12%);
-            margin: 10px;
-            margin-top: 0;
-            margin-bottom: 0;
+            margin: 0px;
             padding-left: {(20)}px;
             padding-top: 0;
             padding-bottom: 0;
@@ -1259,7 +1253,7 @@ try:
             border-radius: 8px;
         }}
         #subtitleLabel{{
-            margin: 10px;
+            margin: 0px;
             margin-bottom: 0;
             margin-top: 0;
             padding-left: {(20)}px;
@@ -2078,9 +2072,7 @@ try:
         }}
         #subtitleLabel{{
             background-color: rgba(255, 255, 255, 60%);
-            margin: 10px;
-            margin-bottom: 0;
-            margin-top: 0;
+            margin: 0px;
             padding-left: {(20)}px;
             padding-top: {(15)}px;
             padding-bottom: {(15)}px;
@@ -2092,9 +2084,7 @@ try:
         }}
         #subtitleLabelHover {{
             background-color: rgba(255, 255, 255, 1%);
-            margin: 10px;
-            margin-top: 0;
-            margin-bottom: 0;
+            margin: 0px;
             border-radius: 8px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
@@ -2102,9 +2092,7 @@ try:
         }}
         #subtitleLabelHover:hover{{
             background-color: rgba(0, 0, 0, 3%);
-            margin: 10px;
-            margin-top: 0;
-            margin-bottom: 0;
+            margin: 0px;
             padding-left: {(20)}px;
             padding-top: {(15)}px;
             padding-bottom: {(15)}px;
