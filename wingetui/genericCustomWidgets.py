@@ -879,7 +879,7 @@ class SectionHWidget(QWidget):
         self.setFixedHeight(40)
         if smallerMargins:
             self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
-            self.setContentsMargins(5, 0, 0, 0)
+            self.setContentsMargins(0, 0, 0, 0)
         else:
             self.setContentsMargins(40, 0, 0, 0)
 
