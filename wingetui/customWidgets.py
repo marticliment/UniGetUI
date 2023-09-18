@@ -1269,6 +1269,7 @@ class SoftwareSection(QWidget):
     def openInfo(self, item: TreeWidgetItemWithQAction, update: bool = False, uninstall: bool = False, installedVersion: str = "") -> None:
         self.infobox.showPackageDetails(self.ItemPackageReference[item], update, uninstall, installedVersion)
         self.infobox.show()
+        self.infobox.reposition()
 
     def loadPackages(self, manager) -> None:
         raise NotImplementedError("This function requires being reimplemented")
