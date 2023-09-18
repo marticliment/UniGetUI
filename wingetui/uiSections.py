@@ -3004,6 +3004,12 @@ class PackageInfoPopupWindow(QWidget):
 
         self.finishedCount = 0
 
+    def reposition(self):
+        self.setGeometry((self.parent().width() - self.width()) / 2,
+                         (self.parent().height() - self.height()) /2,
+                         self.width(),
+                         self.height())
+
     def loadPackageDetails(self, package: Package):
         details = package.PackageManager.getPackageDetails(package)
         self.callInMain.emit(lambda: self.printData(details))
