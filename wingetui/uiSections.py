@@ -1698,22 +1698,43 @@ class AboutSection(SmoothScrollArea):
 
             self.layout.addSpacing(15)
             self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
-            self.layout.addWidget(QLabel())
-            self.layout.addWidget(QLinkLabel(f"WingetUI:&nbsp;&nbsp;&nbsp;&nbsp;LGPL v2.1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/WinGetUI/blob/main/LICENSE\">https://github.com/marticliment/WinGetUI/blob/main/LICENSE</a>"))
-            self.layout.addWidget(QLabel())
-            self.layout.addWidget(QLinkLabel(f"PySide6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LGPLv3:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://www.gnu.org/licenses/lgpl-3.0.html\">https://www.gnu.org/licenses/lgpl-3.0.html</a>"))
-            self.layout.addWidget(QLinkLabel(f"Python3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://docs.python.org/3/license.html#psf-license\">https://docs.python.org/3/license.html#psf-license</a>"))
-            self.layout.addWidget(QLinkLabel(f"Pywin32:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('PSF License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://spdx.org/licenses/PSF-2.0.html\">https://spdx.org/licenses/PSF-2.0.html</a>"))
-            self.layout.addWidget(QLinkLabel(f"Win32mica:&thinsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/win32mica/blob/main/LICENSE\">https://github.com/marticliment/win32mica/blob/main/LICENSE</a>"))
-            self.layout.addWidget(QLinkLabel())
-            self.layout.addWidget(QLinkLabel(f"Winget:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli/blob/master/LICENSE\">https://github.com/microsoft/winget-cli/blob/master/LICENSE</a>"))
-            self.layout.addWidget(QLinkLabel(f"Scoop:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('Unlicense')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/lukesampson/scoop/blob/master/LICENSE\">https://github.com/lukesampson/scoop/blob/master/LICENSE</a>"))
-            self.layout.addWidget(QLinkLabel(f"Chocolatey:&thinsp;Apache v2:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/chocolatey/choco/blob/master/LICENSE\">https://github.com/chocolatey/choco/blob/master/LICENSE</a>"))
-            self.layout.addWidget(QLinkLabel(f"GSudo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('MIT License')}:&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://github.com/gerardog/gsudo/blob/master/LICENSE.txt\">https://github.com/gerardog/gsudo/blob/master/LICENSE.txt</a>"))
-            self.layout.addWidget(QLinkLabel())
-            self.layout.addWidget(QLinkLabel(f"{_('Icons')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;{_('By Icons8')}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;<a style=\"color: {blueColor};\" href=\"https://icons8.com\">https://icons8.com</a>"))
-            self.layout.addWidget(QLinkLabel())
-            self.layout.addWidget(QLinkLabel())
+            
+            licensesTable = QTableWidget()
+            licensesTable.setAutoFillBackground(True)
+            licensesTable.setStyleSheet("*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;padding: 0px;margin: 0px;}QTableCornerButton::section,QHeaderView,QHeaderView::section,QTableWidget,QWidget,QTableWidget::item{background-color: transparent;border: 0px solid transparent}")
+            licensesTable.setEnabled(True)
+            licensesTable.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            licensesTable.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            licensesTable.setShowGrid(False)
+            licensesTable.horizontalHeader().hide()
+            licensesTable.verticalHeader().hide()
+            licensesTable.verticalHeader().setFixedWidth(30)
+            licensesTable.setColumnCount(3)
+            licensesTable.setColumnWidth(0, 120)
+            licensesTable.setColumnWidth(1, 120)
+            licensesTable.setColumnWidth(2, 460)
+            licensesTable.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+
+            licensesTable.setRowHeight(0, 35)
+            licensesTable.setCornerWidget(QLabel(""))
+            licensesTable.setCornerButtonEnabled(False)
+            licensesTable.cornerWidget().setStyleSheet("background: transparent;")
+            
+            from data.licenses import licenses, licenseUrls
+            
+            licensesTable.setRowCount(len(list(licenses.keys())))
+            licensesTable.setFixedHeight(len(list(licenses.keys()))*32)
+            
+            i = 0
+            for library in licenses.keys():
+                licensesTable.setItem(i, 0, QTableWidgetItem(library))
+                licensesTable.setItem(i, 1, QTableWidgetItem(licenses[library]))
+                licensesTable.setCellWidget(i, 2, QLinkLabel(f'<a style="color: {blueColor};" href="{licenseUrls[library]}">{licenseUrls[library]}</a>'))
+                i += 1
+                
+            self.layout.addWidget(licensesTable)
+
             button = QPushButton(_("About Qt6"))
             button.setFixedWidth(710)
             button.setFixedHeight(25)
@@ -2403,7 +2424,6 @@ class BaseLogSection(QWidget):
             self.window().OnThemeChange.connect(self.ApplyIcons)
         self.loadData()
         return super().showEvent(event)
-
 
 class OperationHistorySection(BaseLogSection):
 
