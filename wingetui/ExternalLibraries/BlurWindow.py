@@ -94,7 +94,7 @@ def ApplyBlur(hwnd, hexColor=False, Acrylic=False, Dark=False, smallCorners=Fals
 
     if Acrylic:
         accent.AccentState = 4  # UWP but LAG #ACCENT_ENABLE_ACRYLICBLURBEHIND
-        if hexColor is not False:  # UWP without color is translucent
+        if hexColor is False:  # UWP without color is translucent
             accent.AccentFlags = 2
             gradientColor = HEXtoRGBAint('#12121240')  # placeholder color
 
