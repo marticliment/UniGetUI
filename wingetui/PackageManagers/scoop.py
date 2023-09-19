@@ -49,25 +49,25 @@ class ScoopPackageManager(DynamicLoadPackageManager):
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
-            
+
     def getPackagesForQuery(self, query: str) -> list[Package]:
         f"""
         Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
         print(f"🔵 Starting {self.NAME} search for dynamic packages")
         try:
-            if shutil.which("scoop-search") == None:
+            if shutil.which("scoop-search") is None:
                 print("🟡 Installing scoop-search, that was missing...")
                 Command = self.EXECUTABLE + " install scoop-search"
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 p.wait()
             packages: list[Package] = []
             p = subprocess.Popen(f"scoop-search {query}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             bucket = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if line.startswith("'"):
                         bucket = line.split("'")[1]
@@ -78,7 +78,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                             id = package[0]
                             version = package[1].replace("(", "").replace(")", "")
                             source = f'{self.NAME}: {bucket}'
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -86,7 +86,6 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         except Exception as e:
             report(e)
             return []
-
 
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         f"""
@@ -97,10 +96,10 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} status", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if not DashesPassed:
                         if "----" in line:
@@ -115,7 +114,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                             version = package[1]
                             newVersion = package[2]
                             source = self.NAME
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -134,10 +133,10 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             packages: list[Package] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if not DashesPassed:
                         if "----" in line:
@@ -150,7 +149,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                             id = package[0]
                             version = package[1]
                             source = f"Scoop{' (Global)' if globalscoop else ''}: {package[2].strip()}"
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -183,7 +182,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             for line in p.stdout.readlines():
                 line = line.strip()
                 if line:
-                    rawOutput += line+b"\n"
+                    rawOutput += line + b"\n"
 
             with open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "wb") as f:
                 f.write(rawOutput)
@@ -229,7 +228,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                 url = data["url"][0] if type(data["url"]) == list else data["url"]
                 details.InstallerURL = url
                 try:
-                    details.InstallerSize = int(urlopen(url).length/1000000)
+                    details.InstallerSize = int(urlopen(url).length / 1000000)
                 except Exception as e:
                     print("🟠 Can't get installer size:", type(e), str(e))
             elif "architecture" in data.keys():
@@ -237,7 +236,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                 url = data["architecture"]["64bit"]["url"]
                 details.InstallerURL = url
                 try:
-                    details.InstallerSize = int(urlopen(url).length/1000000)
+                    details.InstallerSize = int(urlopen(url).length / 1000000)
                 except Exception as e:
                     print("🟠 Can't get installer size:", type(e), str(e))
                 if type(data["architecture"]) == dict:
@@ -248,7 +247,6 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                     if "url" in data["checkver"].keys():
                         url = data["checkver"]["url"]
                         details.ReleaseNotesUrl = url
-
 
             if details.ReleaseNotesUrl == unknownStr and "github.com" in details.InstallerURL:
                 try:
@@ -267,9 +265,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                     output.append(self.ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
             for line in output:
                 for line in output:
-                    if("Updated by" in line):
+                    if "Updated by" in line:
                         details.Publisher = line.replace("Updated by", "").strip()[1:].strip()
-                    elif("Updated at" in line):
+                    elif "Updated at" in line:
                         details.UpdateDate = line.replace("Updated at", "").strip()[1:].strip()
 
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
@@ -300,9 +298,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         bucket_prefix = ""
-        if len(package.Source.split(":"))>1 and not "/" in package.Source:
-            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = self.EXECUTABLE.split(" ") + ["install", bucket_prefix+package.Id] + self.getParameters(options)
+        if len(package.Source.split(":")) > 1 and "/" not in package.Source:
+            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
+        Command = self.EXECUTABLE.split(" ") + ["install", bucket_prefix + package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -312,9 +310,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         bucket_prefix = ""
-        if len(package.Source.split(":"))>1 and not "/" in package.Source:
-            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = self.EXECUTABLE.split(" ") + ["update", bucket_prefix+package.Id] + self.getParameters(options)
+        if len(package.Source.split(":")) > 1 and "/" not in package.Source:
+            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
+        Command = self.EXECUTABLE.split(" ") + ["update", bucket_prefix + package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} update with Command", Command)
@@ -330,19 +328,19 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                if("Installing" in line):
+                if "Installing" in line:
                     widget.counterSignal.emit(1)
-                elif("] 100%" in line or "Downloading" in line):
+                elif "] 100%" in line or "Downloading" in line:
                     widget.counterSignal.emit(4)
-                elif("was installed successfully!" in line):
+                elif "was installed successfully!" in line:
                     widget.counterSignal.emit(6)
                 widget.addInfoLine.emit(line)
-                if("was installed successfully" in line):
+                if "was installed successfully" in line:
                     outputCode = 0
-                elif ("is already installed" in line):
+                elif "is already installed" in line:
                     outputCode = 0
-                output += line+"\n"
-        if "-g" in output and not "successfully" in output and not options.RunAsAdministrator:
+                output += line + "\n"
+        if "-g" in output and "successfully" not in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
@@ -352,9 +350,9 @@ class ScoopPackageManager(DynamicLoadPackageManager):
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         bucket_prefix = ""
-        if len(package.Source.split(":"))>1 and not "/" in package.Source:
-            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "")+"/"
-        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix+package.Id] + self.getParameters(options)
+        if len(package.Source.split(":")) > 1 and "/" not in package.Source:
+            bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
+        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix + package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} uninstall with Command", Command)
@@ -370,22 +368,21 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                if("Uninstalling" in line):
+                if "Uninstalling" in line:
                     widget.counterSignal.emit(1)
-                elif("Removing shim for" in line):
+                elif "Removing shim for" in line:
                     widget.counterSignal.emit(4)
-                elif("was uninstalled" in line):
+                elif "was uninstalled" in line:
                     widget.counterSignal.emit(6)
                 widget.addInfoLine.emit(line)
-                if("was uninstalled" in line):
+                if "was uninstalled" in line:
                     outputCode = 0
-                output += line+"\n"
-        if "-g" in output and not "was uninstalled" in output and not options.RunAsAdministrator:
+                output += line + "\n"
+        if "-g" in output and "was uninstalled" not in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
-
 
     def loadBuckets(self, packageSignal: Signal, finishSignal: Signal) -> None:
         print("🟢 Starting scoop search...")
@@ -396,7 +393,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
             line = p.stdout.readline()
             line = line.strip()
             if line:
-                if(counter > 1 and not b"---" in line):
+                if counter > 1 and b"---" not in line:
                     output.append(self.ansi_escape.sub('', str(line, encoding='utf-8', errors="ignore")))
                 else:
                     counter += 1
@@ -406,13 +403,13 @@ class ScoopPackageManager(DynamicLoadPackageManager):
                 while "  " in element.strip():
                     element = element.strip().replace("  ", " ")
                 element: list[str] = element.split(" ")
-                packageSignal.emit(element[0].strip(), element[1].strip(), element[2].strip()+" "+element[3].strip(), element[4].strip())
+                packageSignal.emit(element[0].strip(), element[1].strip(), element[2].strip() + " " + element[3].strip(), element[4].strip())
             except IndexError as e:
                 try:
                     packageSignal.emit(element[0].strip(), element[1].strip(), "Unknown", "Unknown")
                 except IndexError as f:
                     print(e, f)
-                print("IndexError: "+str(e))
+                print("IndexError: " + str(e))
 
         print("🟢 Scoop bucket search finished")
         finishSignal.emit()
@@ -420,11 +417,11 @@ class ScoopPackageManager(DynamicLoadPackageManager):
     def detectManager(self, signal: Signal = None) -> None:
         try:
             o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-            globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") != None
+            globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") is None
             globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").replace("\n", " ").replace("\r", " ")
             if signal:
                 signal.emit()
-        except Exception as e:
+        except Exception:
             globals.componentStatus[f"{self.NAME}Found"] = False
             globals.componentStatus[f"{self.NAME}Version"] = _("{pm} could not be found").format(pm=self.NAME)
             if signal:
@@ -435,5 +432,6 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         subprocess.run(f"{self.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)
         if signal:
             signal.emit()
+
 
 Scoop = ScoopPackageManager()
