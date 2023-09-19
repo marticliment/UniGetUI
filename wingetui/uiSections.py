@@ -465,9 +465,9 @@ class DiscoverSoftwareSection(SoftwareSection):
                 
             UNINSTALL: UninstallSoftwareSection = globals.uninstall
             if package.Id in UNINSTALL.IdPackageReference.keys():
-                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
+                installedPackage: Package = UNINSTALL.IdPackageReference[package.Id]
                 installedItem = installedPackage.PackageItem
-                if installedItem in UNINSTALL.packageItems:
+                if installedItem in UNINSTALL.packageItems and package.Source == installedPackage.Source:
                     item.setIcon(1, self.installedIcon)
                     item.setToolTip(1, _("This package is already installed")+" - "+package.Name)
 
