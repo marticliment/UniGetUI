@@ -32,7 +32,7 @@ class Package():
         self.PackageManager = PackageManager
 
     def isWinget(self) -> bool:
-        return "winget" in self.Source.lower() 
+        return "winget" in self.Source.lower()
 
     def isScoop(self) -> bool:
         return "scoop" in self.Source.lower()
@@ -80,9 +80,10 @@ class Package():
 
     def __str__(self) -> str:
         return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
-    
+
     def hasUpdatesIgnoredPermanently(self) -> bool:
         return [self.Id, self.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent()
+
 
 class UpgradablePackage(Package):
     NewVersion = ""
@@ -92,6 +93,7 @@ class UpgradablePackage(Package):
         super().__init__(Name, Id, InstalledVersion, Source, PackageManager)
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
+
 
 class PackageDetails(Package):
     Name: str = ""
@@ -108,7 +110,7 @@ class PackageDetails(Package):
     LicenseURL: str = ""
     InstallerURL: str = _("Not available")
     InstallerHash: str = _("Not available")
-    InstallerSize: int = 0 # In Megabytes
+    InstallerSize: int = 0  # In Megabytes
     InstallerType: str = _("Not available")
     ManifestUrl: str = _("Not available")
     UpdateDate: str = _("Not available")
@@ -131,6 +133,7 @@ class PackageDetails(Package):
     def asUrl(self, url: str) -> str:
         return f"<a href='{url}' style='color:{blueColor}'>{url}</a>" if "://" in url else url
 
+
 class InstallationOptions():
     SkipHashCheck: bool = False
     InteractiveInstallation: bool = False
@@ -152,6 +155,7 @@ class InstallationOptions():
         str += f"RemoveDataOnUninstall={self.RemoveDataOnUninstall}>"
         return str
 
+
 class PackageManagerCapabilities():
     CanRunAsAdmin: bool = False
     CanSkipIntegrityChecks: bool = False
@@ -161,6 +165,7 @@ class PackageManagerCapabilities():
     SupportsCustomArchitectures: bool = False
     SupportsCustomScopes: bool = False
 
+
 class InstallationWidgetType(QWidget):
     finishInstallation: Signal
     addInfoLine: Signal
@@ -169,10 +174,12 @@ class InstallationWidgetType(QWidget):
     def __init__(self) -> None:
         raise RuntimeError("This class is a type declaration!")
 
+
 class PackageManagerModule():
     NAME: str
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
+
     def __init__(self):
         pass
 
@@ -180,19 +187,19 @@ class PackageManagerModule():
         pass
 
     def getAvailablePackages(self) -> list[Package]:
-        f"""
+        """
         Will retieve the cached packages for the package manager  in the format of a list[Package] object.
         If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
         Finally, it will start a background cacher thread.
         """
 
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
-        f"""
+        """
         Will retieve the upgradable packages by the package manager in the format of a list[UpgradablePackage] object.
         """
 
     def getInstalledPackages(self) -> list[Package]:
-        f"""
+        """
         Will retieve the intalled packages by the package manager in the format of a list[Package] object.
         """
 
@@ -246,13 +253,13 @@ class PackageManagerModule():
         Force update package manager's sources
         """
 
+
 class DynamicPackageManager(PackageManagerModule):
 
     def getPackagesForQuery(self, query: str) -> list[Package]:
         f"""
         Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
-
 
 
 RETURNCODE_OPERATION_SUCCEEDED = 0
@@ -266,6 +273,7 @@ RETURNCODE_INCORRECT_HASH = 2
 RETURNCODE_NEEDS_ELEVATION = 1603
 RETURNCODE_NEEDS_SCOOP_ELEVATION = -200
 RETURNCODE_NEEDS_PIP_ELEVATION = -100
+
 
 class BlacklistMethod():
     Legacy = 0
