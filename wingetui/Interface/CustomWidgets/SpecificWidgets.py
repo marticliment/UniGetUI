@@ -67,6 +67,7 @@ DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
 
 class CommandLineEdit(CustomLineEdit):
     registeredThemeEvent = False
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setReadOnly(True)
@@ -79,23 +80,24 @@ class CommandLineEdit(CustomLineEdit):
         self.copyButton.setObjectName("CommandLineEditCopyButton")
         self.ApplyIcons()
         self.setObjectName("CommandLineEdit")
-        
+
     def ApplyIcons(self):
         self.copyButton.setIcon(QIcon(getMedia("copy")))
-    
+
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = True
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
-    
+
     def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
         arg__1.ignore()
         return False
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.copyButton.move(self.width()-46, 4)
+        self.copyButton.move(self.width() - 46, 4)
         return super().resizeEvent(event)
+
 
 class CustomMessageBox(QMainWindow):
     showerr = Signal(dict, bool)
@@ -105,6 +107,7 @@ class CustomMessageBox(QMainWindow):
     callInMain = Signal(object)
     qanswer = -1
     isQuestion = False
+
     def __init__(self, parent):
         super().__init__(parent)
         self.showerr.connect(self.em)
@@ -114,46 +117,46 @@ class CustomMessageBox(QMainWindow):
         ApplyMica(self.winId().__int__(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.hide()
         if isDark():
-            self.setStyleSheet(f"""#micawin {{
+            self.setStyleSheet("""#micawin {
                 background-color: #222222;
                 color: white;
-                }}
-                #btnBackground {{
+                }
+                #btnBackground {
                     border-top: 1px solid #1b1b1b;
                     background-color: #181818;
-                }}
-                               """)
+                }
+            """)
         else:
-            self.setStyleSheet(f"""#micawin {{
+            self.setStyleSheet("""#micawin {
                 background-color: #f6f6f6;
                 color: black;
-                }}
-                #btnBackground {{
+                }
+                #btnBackground {
                     border-top: 1px solid #d5d5d5;
                     background-color: #e5e5e5;
-                }}
-                               """)
-        l = QVBoxLayout()
+                }
+            """)
+        titleVLayout = QVBoxLayout()
         self.titleLabel = QLabel()
         self.titleLabel.setStyleSheet("font-size: 16pt;font-family: \"Segoe UI Variable Text\";font-weight: bold;")
-        l.addSpacing(10)
-        l.addWidget(self.titleLabel)
-        l.addSpacing(2)
+        titleVLayout.addSpacing(10)
+        titleVLayout.addWidget(self.titleLabel)
+        titleVLayout.addSpacing(2)
         self.textLabel = QLabel()
         self.textLabel.setWordWrap(True)
-        l.addWidget(self.textLabel)
-        l.addSpacing(10)
-        l.addStretch()
+        titleVLayout.addWidget(self.textLabel)
+        titleVLayout.addSpacing(10)
+        titleVLayout.addStretch()
         self.iconLabel = QLabel()
         self.iconLabel.setFixedSize(64, 64)
         layout = QVBoxLayout()
-        hl = QHBoxLayout()
-        hl.setContentsMargins(20, 20, 20, 10)
-        hl.addWidget(self.iconLabel)
-        hl.addLayout(l)
-        hl.addSpacing(16)
+        titleHLayout = QHBoxLayout()
+        titleHLayout.setContentsMargins(20, 20, 20, 10)
+        titleHLayout.addWidget(self.iconLabel)
+        titleHLayout.addLayout(titleVLayout)
+        titleHLayout.addSpacing(16)
         self.bgw1 = QWidget()
-        self.bgw1.setLayout(hl)
+        self.bgw1.setLayout(titleHLayout)
         layout.addWidget(self.bgw1)
         self.buttonLayout = QHBoxLayout()
         self.okButton = QPushButton(self)
@@ -187,14 +190,14 @@ class CustomMessageBox(QMainWindow):
         self.buttonLayout.addSpacing(10)
         bglayout = QVBoxLayout()
         bglayout.addLayout(self.buttonLayout)
-        l = QHBoxLayout()
+        titleVLayout = QHBoxLayout()
         self.moreInfoTextArea = CustomPlainTextEdit()
         self.moreInfoTextArea.setReadOnly(True)
         self.moreInfoTextArea.setVisible(False)
         self.moreInfoTextArea.setMinimumHeight(120)
-        l.addWidget(self.moreInfoTextArea)
-        l.setContentsMargins(10, 0, 10, 0)
-        bglayout.addLayout(l, stretch=1)
+        titleVLayout.addWidget(self.moreInfoTextArea)
+        titleVLayout.setContentsMargins(10, 0, 10, 0)
+        bglayout.addLayout(titleVLayout, stretch=1)
         bglayout.addSpacing(10)
 
         self.bgw2 = QWidget()
@@ -216,13 +219,11 @@ class CustomMessageBox(QMainWindow):
 
     def moreInfo(self):
         if not self.isQuestion:
-            spacingAdded = False
             self.moreInfoTextArea.setVisible(not self.moreInfoTextArea.isVisible())
             self.moreInfoButton.setText(_("Hide details") if self.moreInfoTextArea.isVisible() else _("Show details"))
             if self.moreInfoTextArea.isVisible():
                 # show textedit
                 s = self.size()
-                spacingAdded = True
                 self.resize(s)
                 self.setMinimumWidth(450)
                 self.setMinimumHeight(self.bgw1.sizeHint().height())
@@ -237,7 +238,7 @@ class CustomMessageBox(QMainWindow):
                 self.setMinimumWidth(450)
                 self.setFixedHeight(self.fHeight)
                 self.setMinimumHeight(self.fHeight)
-                self.setMaximumHeight(self.fHeight+1)
+                self.setMaximumHeight(self.fHeight + 1)
 
     def paintEvent(self, event: QPaintEvent) -> None:
         if not self.moreInfoTextArea.isVisible():
@@ -247,11 +248,11 @@ class CustomMessageBox(QMainWindow):
             self.setMinimumHeight(self.bgw1.sizeHint().height() + 70 + self.moreInfoTextArea.height() + 10)
         return super().paintEvent(event)
 
-    def showErrorMessage(self, data: dict, showNotification = True):
+    def showErrorMessage(self, data: dict, showNotification=True):
         self.isQuestion = False
         self.showerr.emit(data, showNotification)
 
-    def em(self, data: dict, showNotification = True):
+    def em(self, data: dict, showNotification=True):
         self.buttonLayout.setDirection(QBoxLayout.Direction.LeftToRight)
         self.okButton.setObjectName("")
         self.moreInfoButton.setObjectName("")
@@ -283,7 +284,7 @@ class CustomMessageBox(QMainWindow):
                     if self.parent().window().isVisible():
                         wVisible = True
                         g: QRect = self.parent().window().geometry()
-                        self.move(g.x()+g.width()//2-self.width()//2, g.y()+g.height()//2-self.height()//2)
+                        self.move(g.x() + g.width() // 2 - self.width() // 2, g.y() + g.height() // 2 - self.height() // 2)
             except AttributeError:
                 print("Parent has no window!")
         if showNotification:
@@ -353,7 +354,7 @@ class CustomMessageBox(QMainWindow):
                         self.show()
                         self.setMinimumWidth(320)
                         self.resize(self.minimumSizeHint())
-                        self.move(g.x()+g.width()//2-self.width()//2, g.y()+g.height()//2-self.height()//2)
+                        self.move(g.x() + g.width() // 2 - self.width() // 2, g.y() + g.height() // 2 - self.height() // 2)
             except AttributeError:
                 print("Parent has no window!")
         if wExists:
@@ -368,21 +369,21 @@ class CustomMessageBox(QMainWindow):
             self.show()
             globals.app.beep()
 
-
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = True
-        self.oldpos = QCursor.pos()-self.window().pos()
+        self.oldpos = QCursor.pos() - self.window().pos()
         return super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.mousePressed:
-            self.move(QCursor.pos()-self.oldpos)#(self.window().pos()+(QCursor.pos()-self.oldpos))
-            self.oldpos = self.oldpos = QCursor.pos()-self.window().pos()
+            self.move(QCursor.pos() - self.oldpos)  # (self.window().pos()+(QCursor.pos()-self.oldpos))
+            self.oldpos = self.oldpos = QCursor.pos() - self.window().pos()
         return super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = False
         return super().mouseReleaseEvent(event)
+
 
 class AnnouncementsPane(QLabel):
     callInMain = Signal(object)
@@ -417,10 +418,10 @@ class AnnouncementsPane(QLabel):
         self.pictureLabel.setText("Loading media...")
         self.w.setContentsMargins(0, 0, 0, 0)
         self.area.setWidget(self.w)
-        l = QVBoxLayout()
-        l.setSpacing(0)
-        l.setContentsMargins(0, self.getPx(5), 0, self.getPx(5))
-        l.addWidget(self.area, stretch=1)
+        vLayout = QVBoxLayout()
+        vLayout.setSpacing(0)
+        vLayout.setContentsMargins(0, self.getPx(5), 0, self.getPx(5))
+        vLayout.addWidget(self.area, stretch=1)
         self.area.setWidgetResizable(True)
         self.area.setContentsMargins(0, 0, 0, 0)
         self.area.setObjectName("backgroundWindow")
@@ -430,9 +431,7 @@ class AnnouncementsPane(QLabel):
         self.area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.pictureLabel.setFixedHeight(self.area.height())
         self.textLabel.setFixedHeight(self.area.height())
-        self.setLayout(l)
-
-
+        self.setLayout(vLayout)
 
     def loadAnnouncements(self, useHttps: bool = True):
         try:
@@ -447,16 +446,16 @@ class AnnouncementsPane(QLabel):
                 response = urlopen(announcement_image_url)
                 print("🔵 Image URL:", response.url)
                 response = response.read()
-                self.file =  open(os.path.join(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui")), "announcement.png"), "wb")
+                self.file = open(os.path.join(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui")), "announcement.png"), "wb")
                 self.file.write(response)
                 self.callInMain.emit(lambda: self.pictureLabel.setText(""))
                 self.file.close()
                 h = self.area.height()
                 self.callInMain.emit(lambda: self.pictureLabel.setFixedHeight(h))
                 self.callInMain.emit(lambda: self.textLabel.setFixedHeight(h))
-                self.callInMain.emit(lambda: self.pictureLabel.setPixmap(QPixmap(self.file.name).scaledToHeight(h-self.getPx(8), Qt.SmoothTransformation)))
+                self.callInMain.emit(lambda: self.pictureLabel.setPixmap(QPixmap(self.file.name).scaledToHeight(h - self.getPx(8), Qt.SmoothTransformation)))
             except Exception as ex:
-                s = "Couldn't load the announcement image"+"\n\n"+str(ex)
+                s = "Couldn't load the announcement image" + "\n\n" + str(ex)
                 self.callInMain.emit(lambda: self.pictureLabel.setText(s))
                 print("🟠 Unable to retrieve announcement image")
                 print(ex)
@@ -464,7 +463,7 @@ class AnnouncementsPane(QLabel):
             if useHttps:
                 self.loadAnnouncements(useHttps=False)
             else:
-                s = "Couldn't load the announcements. Please try again later"+"\n\n"+str(e)
+                s = "Couldn't load the announcements. Please try again later" + "\n\n" + str(e)
                 self.callInMain.emit(lambda: self.setTtext(s))
                 print("🟠 Unable to retrieve latest announcement")
                 print(e)
@@ -480,6 +479,7 @@ class AnnouncementsPane(QLabel):
 
     def setText(self, a: str) -> None:
         raise Exception("This member should not be used under any circumstances")
+
 
 class WelcomeWizardPackageManager(QWidget):
     def __init__(self, text, description, image) -> None:
@@ -523,6 +523,7 @@ class WelcomeWizardPackageManager(QWidget):
 
     def isChecked(self) -> bool:
         return self.checkbox.isChecked()
+
 
 class IgnoredUpdatesManager(MovableFramelessWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:
@@ -593,7 +594,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         try:
             self.loadItems()
         except AttributeError:
-            pass # This will be called before __init__ finished loading, so some attributes may not have been set when called
+            pass  # This will be called before __init__ finished loading, so some attributes may not have been set when called
         return super().ApplyIcons()
 
     def loadItems(self):
@@ -662,13 +663,13 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
                 continue
             IgnorePackageUpdates_Permanent(ignoredPackage[0], ignoredPackage[1])
         i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        
+
         INSTALLED: SoftwareSection = globals.uninstall
         if id in INSTALLED.IdPackageReference:
             package: Package = INSTALLED.IdPackageReference[id]
             package.PackageItem.setIcon(1, INSTALLED.installIcon)
             package.PackageItem.setToolTip(1, package.Name)
-        
+
         del i
 
     def unBlackistSingleVersion(self, id: str, version: str, store: str, item: TreeWidgetItemWithQAction):
@@ -686,9 +687,10 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
 
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
-        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        self.setStyleSheet("#background{background-color:" + ("transparent" if r == 0x0 else ("#202020" if isDark() else "white")) + ";}")
         self.loadItems()
         return super().showEvent(event)
+
 
 class SoftwareSection(QWidget):
 
@@ -713,7 +715,7 @@ class SoftwareSection(QWidget):
     shownItems: list[TreeWidgetItemWithQAction] = []
     nextItemToShow: int = 0
     OnThemeChange = Signal()
-    
+
     FilterItemForManager = {}
 
     PackageManagers: list[PackageManagerModule] = PackageManagersList
@@ -721,8 +723,8 @@ class SoftwareSection(QWidget):
     for manager in PackageManagers:
         PackagesLoaded[manager] = False
 
-    def __init__(self, parent = None, sectionName: str = "Install"):
-        super().__init__(parent = parent)
+    def __init__(self, parent: QWidget = None, sectionName: str = "Install"):
+        super().__init__(parent=parent)
         self.sectionName = sectionName
         self.infobox = globals.infobox
         self.packageExporter = PackageExporter(self)
@@ -740,12 +742,11 @@ class SoftwareSection(QWidget):
         self.reloadButton.setStyleSheet("margin-top: 0px;")
         self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setAccessibleName(_("Reload"))
-        
-        
+
         self.filterScrollArea = SmoothScrollArea(self)
         self.filterScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.filterScrollArea.setWidgetResizable(True)
-        
+
         def toggleFiltersPane():
             if self.toggleFilters.isChecked():
                 self.filterScrollArea.show()
@@ -755,14 +756,14 @@ class SoftwareSection(QWidget):
                 self.filterScrollArea.hide()
                 self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
                 setSettings(f"ShowFilterUI{sectionName}", False)
-                
+
         self.toggleFilters = QPushButton()
         self.toggleFilters.setFixedSize(30, 30)
         self.toggleFilters.setStyleSheet("margin-top: 0px;")
         self.toggleFilters.setAccessibleName(_("Toggle search filters pane"))
         self.toggleFilters.setCheckable(True)
         self.toggleFilters.clicked.connect(toggleFiltersPane)
-        
+
         if getSettings(f"ShowFilterUI{self.sectionName}"):
             self.filterScrollArea.show()
             self.toggleFilters.setChecked(True)
@@ -771,7 +772,7 @@ class SoftwareSection(QWidget):
             self.filterScrollArea.hide()
             self.toggleFilters.setChecked(False)
             self.toggleFilters.setIcon(QIcon(getMedia("edit_filters")))
-        
+
         self.searchButton = QPushButton()
         self.searchButton.setFixedSize(30, 30)
         self.searchButton.setStyleSheet("margin-top: 0px;border-top-left-radius:0px;border-bottom-left-radius:0px;")
@@ -780,7 +781,6 @@ class SoftwareSection(QWidget):
 
         headerLayout = QHBoxLayout()
         headerLayout.setContentsMargins(0, 0, 0, 0)
-
 
         self.query = CustomLineEdit()
         self.query.setPlaceholderText(" PlaceholderText")
@@ -804,7 +804,6 @@ class SoftwareSection(QWidget):
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
-
 
         self.SectionImage = QLabel()
         self.SectionImage.setFixedWidth(80)
@@ -836,17 +835,18 @@ class SoftwareSection(QWidget):
 
         self.packageListScrollBar = CustomScrollBar()
         self.packageListScrollBar.setOrientation(Qt.Vertical)
-        self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v>=(self.packageListScrollBar.maximum()-20) else None)
+        self.packageListScrollBar.valueChanged.connect(lambda v: self.addItemsToTreeWidget() if v >= (self.packageListScrollBar.maximum() - 20) else None)
 
         class HeaderView(QHeaderView):
             sortOrder = Qt.SortOrder.DescendingOrder
+
             def __init__(self, orientation: Qt.Orientation, parent: TreeWidget) -> None:
                 super().__init__(orientation, parent)
                 self.treewidget = parent
                 self.sectionClicked.connect(self.clickNewSection)
 
             def clickNewSection(self, s: int):
-                if s==3:
+                if s == 3:
                     self.sortOrder = Qt.SortOrder.AscendingOrder if self.sortOrder == Qt.SortOrder.DescendingOrder else Qt.SortOrder.DescendingOrder
                     self.treewidget.sortByColumn(6, self.sortOrder)
 
@@ -862,23 +862,21 @@ class SoftwareSection(QWidget):
         self.packageList.setVerticalScrollMode(QTreeWidget.ScrollPerPixel)
         self.packageList.setIconSize(QSize(24, 24))
         self.packageList.header().sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
-        self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem())+20 > self.packageList.topLevelItemCount() else None)
-
+        self.packageList.currentItemChanged.connect(lambda: self.addItemsToTreeWidget() if self.packageList.indexOfTopLevelItem(self.packageList.currentItem()) + 20 > self.packageList.topLevelItemCount() else None)
 
         self.filterScrollArea.setFixedWidth(220)
         self.filterScrollArea.setFrameShape(QFrame.Shape.NoFrame)
         self.filterScrollArea.goTopButton.hide()
-        
+
         sourcesWidget = SmallCollapsableSection("Sources", getMedia("provider"))
         sourcesWidget.showHideButton.click()
-        
-        scrollWidget = QWidget()        
-        
+
+        scrollWidget = QWidget()
 
         filterLayout = QVBoxLayout()
-        filterLayout.setContentsMargins(0,0,10,0)
+        filterLayout.setContentsMargins(0, 0, 10, 0)
         scrollWidget.setLayout(filterLayout)
-                
+
         self.filterList = TreeWidget()
         self.filterList.setObjectName("FlatTreeWidget")
         self.filterList.setColumnCount(3)
@@ -886,7 +884,7 @@ class SoftwareSection(QWidget):
         self.filterList.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.filterList.setColumnWidth(2, 10)
         self.filterList.verticalScrollBar().setFixedWidth(12)
-        self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset = True) if c == 0 else None)
+        self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset=True) if c == 0 else None)
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
 
         self.filterList.header().hide()
@@ -901,34 +899,32 @@ class SoftwareSection(QWidget):
             item.setCheckState(0, Qt.CheckState.Checked)
             self.FilterItemForManager[manager] = item
             self.filterList.addTopLevelItem(item)
-        
+
         hostwidget = SectionHWidget(lastOne=True, smallerMargins=True)
         hostwidget.addWidget(self.filterList)
         sourcesWidget.addWidget(hostwidget)
         filterLayout.addWidget(sourcesWidget)
         filterLayout.addSpacing(0)
-        
-        
+
         optionsWidget = SmallCollapsableSection("Filters", getMedia("edit_filters"))
         optionsWidget.showHideButton.click()
-        
-        
+
         searchOptionsLayout = QVBoxLayout()
-        searchOptionsLayout.setContentsMargins(5,0,5,0)
-        
+        searchOptionsLayout.setContentsMargins(5, 0, 5, 0)
+
         self.forceCheckBox = QCheckBox(_("Instant search"))
         self.forceCheckBox.setChecked(not getSettings(f"DisableInstantSearchOn{sectionName}"))
         self.forceCheckBox.clicked.connect(lambda v: setSettings(f"DisableInstantSearchOn{sectionName}", bool(not v)))
         hostwidget = SectionVWidget(smallerMargins=True)
         hostwidget.addWidget(self.forceCheckBox)
         optionsWidget.addWidget(hostwidget)
-        
+
         self.DistinguishCapsWhenFiltering = QCheckBox(_("Distinguish between\nuppercase and lowercase"))
         self.DistinguishCapsWhenFiltering.stateChanged.connect(lambda v: self.finishFiltering(self.query.text()))
         hostwidget = SectionVWidget(smallerMargins=True)
         hostwidget.addWidget(self.DistinguishCapsWhenFiltering)
         optionsWidget.addWidget(hostwidget)
-        
+
         self.IgnoreSpecialChars = QCheckBox(_("Ignore special characters"))
         self.IgnoreSpecialChars.setChecked(True)
         self.IgnoreSpecialChars.stateChanged.connect(lambda v: self.finishFiltering(self.query.text()))
@@ -936,39 +932,35 @@ class SoftwareSection(QWidget):
         hostwidget.addWidget(self.IgnoreSpecialChars)
         optionsWidget.addWidget(hostwidget)
 
-        
         searchOn = SectionVWidget(lastOne=True, smallerMargins=True)
-        
-        searchOnTitle = QLabel(_("Compare query against")+":")
+
+        searchOnTitle = QLabel(_("Compare query against") + ":")
         searchOn.addWidget(searchOnTitle)
-        
-        
+
         searchLocations = QButtonGroup()
-        
+
         self.SearchOnNameRadio = QRadioButton(_("Package Name"))
         self.SearchOnNameRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
         searchOn.addWidget(self.SearchOnNameRadio)
         searchLocations.addButton(self.SearchOnNameRadio)
-        
+
         self.SearchOnIdRadio = QRadioButton(_("Package ID"))
         self.SearchOnIdRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
         searchOn.addWidget(self.SearchOnIdRadio)
         searchLocations.addButton(self.SearchOnIdRadio)
-        
+
         self.SearchOnBothRadio = QRadioButton(_("Both"))
         self.SearchOnBothRadio.clicked.connect(lambda v: self.finishFiltering(self.query.text()))
         self.SearchOnBothRadio.setChecked(True)
         searchOn.addWidget(self.SearchOnBothRadio)
         searchLocations.addButton(self.SearchOnBothRadio)
-        
+
         optionsWidget.addWidget(searchOn)
 
-        
-        filterLayout.addWidget(optionsWidget)     
+        filterLayout.addWidget(optionsWidget)
         filterLayout.addStretch()
-                
-        self.filterScrollArea.setWidget(scrollWidget)
 
+        self.filterScrollArea.setWidget(scrollWidget)
 
         def updateItemState(item: TreeWidgetItemWithQAction, column: int):
             if column == 0:
@@ -1009,13 +1001,13 @@ class SoftwareSection(QWidget):
         w.setMaximumWidth(1300)
 
         self.bodyWidget = QWidget()
-        l = QHBoxLayout()
-        l.addWidget(ScrollWidget(self.packageList), stretch=0)
-        l.addWidget(w)
-        l.setContentsMargins(0, 0, 0, 0)
-        l.addWidget(ScrollWidget(self.packageList), stretch=0)
-        l.addWidget(self.packageListScrollBar)
-        self.bodyWidget.setLayout(l)
+        hLayout = QHBoxLayout()
+        hLayout.addWidget(ScrollWidget(self.packageList), stretch=0)
+        hLayout.addWidget(w)
+        hLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.addWidget(ScrollWidget(self.packageList), stretch=0)
+        hLayout.addWidget(self.packageListScrollBar)
+        self.bodyWidget.setLayout(hLayout)
 
         self.countLabel = QLabel(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
@@ -1041,7 +1033,7 @@ class SoftwareSection(QWidget):
         hl2.setSpacing(0)
         hl2.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(hl2)
-        self.programbox.setLayout(l)
+        self.programbox.setLayout(hLayout)
         self.mainLayout.addWidget(self.programbox, stretch=1)
         self.infobox.hide()
 
@@ -1051,13 +1043,11 @@ class SoftwareSection(QWidget):
         self.infobox.addProgram.connect(self.addInstallation)
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
-        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not self.loadingProgressBar.invertedAppearance()))
 
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
-
-        g = self.packageList.geometry()
 
         self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.leftSlow.setStartValue(0)
@@ -1083,8 +1073,7 @@ class SoftwareSection(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         self.window().OnThemeChange.connect(self.ApplyIcons)
-        
-        
+
     def ApplyIcons(self):
         self.OnThemeChange.emit()
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
@@ -1096,12 +1085,12 @@ class SoftwareSection(QWidget):
 
     def finishInitialisation(self):
         print(f"🟢 {self.sectionName} tab loaded successfully")
-        toolbarWidgets = [self.toolbar.widgetForAction(action) for action in self.toolbar.actions() if self.toolbar.widgetForAction(action) != None and type(self.toolbar.widgetForAction(action)) != TenPxSpacer]
+        toolbarWidgets = [self.toolbar.widgetForAction(action) for action in self.toolbar.actions() if self.toolbar.widgetForAction(action) is not None and type(self.toolbar.widgetForAction(action)) != TenPxSpacer]
         taborder = [self.forceCheckBox, self.query, self.searchButton, self.reloadButton] + toolbarWidgets + [self.packageList]
-        for i in range(len(taborder)-1):
-            self.setTabOrder(taborder[i], taborder[i+1])
+        for i in range(len(taborder) - 1):
+            self.setTabOrder(taborder[i], taborder[i + 1])
         self.leftSlow.start()
-        self.startLoadingPackages(force = True)
+        self.startLoadingPackages(force=True)
 
     def showContextMenu(self, pos: QPoint):
         raise NotImplementedError("This function requires being reimplemented")
@@ -1135,13 +1124,13 @@ class SoftwareSection(QWidget):
             if self.nextItemToShow >= len(self.showableItems):
                 break
             itemToAdd = self.showableItems[self.nextItemToShow]
-            
+
             # Check if package meets filter criteria
             package: Package = self.ItemPackageReference[itemToAdd]
             if self.FilterItemForManager[package.PackageManager].checkState(0) == Qt.CheckState.Unchecked:
                 self.nextItemToShow += 1
                 continue
-                
+
             if itemToAdd not in self.addedItems:
                 self.packageList.addTopLevelItem(itemToAdd)
                 self.addedItems.append(itemToAdd)
@@ -1166,12 +1155,12 @@ class SoftwareSection(QWidget):
             packageId = normalizeString(packageId)
             querytext = normalizeString(querytext)
             packageName = normalizeString(packageName)
-        
+
         if not self.DistinguishCapsWhenFiltering.isChecked():
             packageName = packageName.lower()
             packageId = packageId.lower()
             querytext = querytext.lower()
-            
+
         if self.SearchOnIdRadio.isChecked():
             return querytext in packageId
         elif self.SearchOnNameRadio.isChecked():
@@ -1182,12 +1171,16 @@ class SoftwareSection(QWidget):
     def finishFiltering(self, text: str):
         def getChecked(item: TreeWidgetItemWithQAction) -> str:
             return " " if item.checkState(0) == Qt.CheckState.Checked else ""
+
         def getTitle(item: TreeWidgetItemWithQAction) -> str:
             return item.text(1)
+
         def getID(item: TreeWidgetItemWithQAction) -> str:
             return item.text(2)
+
         def getVersion(item: TreeWidgetItemWithQAction) -> str:
             return item.text(6)
+
         def getSource(item: TreeWidgetItemWithQAction) -> str:
             return item.text(4)
 
@@ -1228,13 +1221,13 @@ class SoftwareSection(QWidget):
             if self.packageList.label.text() == _("No packages found matching the input criteria"):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
-        self.addItemsToTreeWidget(reset = True)
+        self.addItemsToTreeWidget(reset=True)
         self.packageList.scrollToItem(self.packageList.currentItem())
-        
+
     def updateFilterTable(self):
         managerCount = {}
         for manager in PackageManagersList:
-            managerCount[manager] = 0        
+            managerCount[manager] = 0
         for packageItem in self.showableItems:
             package: Package = self.ItemPackageReference[packageItem]
             managerCount[package.PackageManager] += 1
@@ -1243,7 +1236,7 @@ class SoftwareSection(QWidget):
             item.setText(2, str(managerCount[manager]))
             item.setHidden(not manager.isEnabled())
             item.setDisabled(managerCount[manager] == 0)
-        self.filterList.setFixedHeight(45*self.filterList.topLevelItemCount()+10)
+        self.filterList.setFixedHeight(45 * self.filterList.topLevelItemCount() + 10)
 
     def showQuery(self) -> None:
         self.programbox.show()
@@ -1274,7 +1267,7 @@ class SoftwareSection(QWidget):
         self.packageList.setSortingEnabled(True)
 
     def startLoadingPackages(self, force: bool = False) -> None:
-        for manager in self.PackageManagers: # Stop here if not all package managers loaded
+        for manager in self.PackageManagers:  # Stop here if not all package managers loaded
             if not self.PackagesLoaded[manager] and not force:
                 return
         for manager in self.PackageManagers:
@@ -1329,9 +1322,9 @@ class SoftwareSection(QWidget):
                 self.discoverLabelIsSmall = False
                 self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
 
-        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width() + 10)
         if self.toolbarDefaultWidth == 0:
-            self.toolbarDefaultWidth = self.toolbar.sizeHint().width()+2
+            self.toolbarDefaultWidth = self.toolbar.sizeHint().width() + 2
         if self.toolbarDefaultWidth != 0:
             if self.toolbarDefaultWidth > self.toolbar.width():
                 if not self.isToolbarSmall:
@@ -1341,10 +1334,12 @@ class SoftwareSection(QWidget):
                 if self.isToolbarSmall:
                     self.isToolbarSmall = False
                     self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width()+10)
+        self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width() + 10)
+
 
 class ImageViewer(QWidget):
     callInMain = Signal(object)
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.callInMain.connect(lambda f: f())
@@ -1381,13 +1376,12 @@ class ImageViewer(QWidget):
         self.setLayout(layout)
 
         self.closeButton = QPushButton(QIcon(getMedia("close")), "", self)
-        self.closeButton.move(self.width()-40, 0)
+        self.closeButton.move(self.width() - 40, 0)
         self.closeButton.resize(40, 40)
         self.closeButton.setFlat(True)
         self.closeButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:#c42b1c;}")
         self.closeButton.clicked.connect(lambda: (self.close()))
         self.closeButton.show()
-
 
         self.backButton = QPushButton(QIcon(getMedia("left")), "", self)
         try:
@@ -1395,11 +1389,10 @@ class ImageViewer(QWidget):
             self.bk.activated.connect(lambda: self.backButton.click())
         except TypeError:
             pass
-        self.backButton.move(0, self.height()//2-24)
+        self.backButton.move(0, self.height() // 2 - 24)
         self.backButton.resize(48, 48)
         self.backButton.setFlat(False)
-        #self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:#c42b1c;}")
-        self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()-1 if self.stackedWidget.currentIndex()>0 else self.stackedWidget.count()-1)))
+        self.backButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1 if self.stackedWidget.currentIndex() > 0 else self.stackedWidget.count() - 1)))
         self.backButton.show()
 
         self.nextButton = QPushButton(QIcon(getMedia("right")), "", self)
@@ -1408,30 +1401,28 @@ class ImageViewer(QWidget):
             self.nxt.activated.connect(lambda: self.nextButton.click())
         except TypeError:
             pass
-        self.nextButton.move(self.width()-48, self.height()//2-24)
+        self.nextButton.move(self.width() - 48, self.height() // 2 - 24)
         self.nextButton.resize(48, 48)
         self.nextButton.setFlat(False)
-        #self.nextButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:#c42b1c;}")
-        self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex()+1 if self.stackedWidget.currentIndex()<(self.stackedWidget.count()-1) else 0)))
+        self.nextButton.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1 if self.stackedWidget.currentIndex() < (self.stackedWidget.count() - 1) else 0)))
         self.nextButton.show()
         self.hide()
 
-
-    def resizeEvent(self, event = None):
-        self.closeButton.move(self.width()-40, 0)
-        self.backButton.move(10, self.height()//2-24)
-        self.nextButton.move(self.width()-58, self.height()//2-24)
+    def resizeEvent(self, event: QResizeEvent = None):
+        self.closeButton.move(self.width() - 40, 0)
+        self.backButton.move(10, self.height() // 2 - 24)
+        self.nextButton.move(self.width() - 58, self.height() // 2 - 24)
         for i in range(self.stackedWidget.count()):
             l: QLabel = self.stackedWidget.widget(i)
             l.resize(self.stackedWidget.size())
             pixmap: QPixmap = self.images[l]
             l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-        if(event):
+        if event:
             return super().resizeEvent(event)
 
     def show(self, index: int = 0) -> None:
         g = QRect(0, 0, self.window().geometry().width(), self.window().geometry().height())
-        self.resize(g.width()-100, g.height()-100)
+        self.resize(g.width() - 100, g.height() - 100)
         self.move(50, 50)
         self.raise_()
         self.stackedWidget.setCurrentIndex(index)
@@ -1459,12 +1450,12 @@ class ImageViewer(QWidget):
             del widget
 
     def addImage(self, pixmap: QPixmap) -> None:
-        l = QLabel()
-        l.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        self.stackedWidget.addWidget(l)
-        l.resize(self.stackedWidget.size())
-        l.setPixmap(pixmap.scaled(l.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-        self.images[l] = pixmap
+        label = QLabel()
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.stackedWidget.addWidget(label)
+        label.resize(self.stackedWidget.size())
+        label.setPixmap(pixmap.scaled(label.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.images[label] = pixmap
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if abs(event.angleDelta().x()) <= 30:
@@ -1478,6 +1469,7 @@ class ImageViewer(QWidget):
             elif event.angleDelta().x() > 30:
                 self.nextButton.click()
         return super().wheelEvent(event)
+
 
 class PackageExporter(MovableFramelessWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:
@@ -1496,7 +1488,7 @@ class PackageExporter(MovableFramelessWindow):
         h.addWidget(title)
         h.addStretch()
         self.layout().addLayout(h)
-        desc = QLabel(_("The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved.")+"\n"+_("Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported."))
+        desc = QLabel(_("The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved.") + "\n" + _("Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported."))
         desc.setWordWrap(True)
         self.layout().addWidget(desc)
         desc.setContentsMargins(10, 0, 0, 0)
@@ -1531,7 +1523,7 @@ class PackageExporter(MovableFramelessWindow):
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
         self.removeIcon = QIcon(getMedia("menu_uninstall"))
-        
+
     def ApplyIcons(self):
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
@@ -1592,9 +1584,9 @@ class PackageExporter(MovableFramelessWindow):
                     pipPackageList.append(pipPackage)
             wingetDetails = {
                 "Argument": "https://cdn.winget.microsoft.com/cache",
-                "Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
                 "Name": "winget",
-                "Type" : "Microsoft.PreIndexed.Package"
+                "Type": "Microsoft.PreIndexed.Package"
             }
             wingetVersion = "1.4"
             try:
@@ -1602,12 +1594,12 @@ class PackageExporter(MovableFramelessWindow):
             except Exception as e:
                 report(e)
             wingetExportSchema = {
-                "$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate" : str(datetime.now()),
+                "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+                "CreationDate": str(datetime.now()),
                 "Sources": [{
                     "Packages": wingetPackagesList,
                     "SourceDetails": wingetDetails}],
-                "WinGetVersion" : wingetVersion
+                "WinGetVersion": wingetVersion
             }
             scoopExportSchema = {
                 "apps": scoopPackageList,
@@ -1644,8 +1636,9 @@ class PackageExporter(MovableFramelessWindow):
 
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
-        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        self.setStyleSheet("#background{background-color:" + ("transparent" if r == 0x0 else ("#202020" if isDark() else "white")) + ";}")
         return super().showEvent(event)
+
 
 class PackageImporter(MovableFramelessWindow):
 
@@ -1670,7 +1663,7 @@ class PackageImporter(MovableFramelessWindow):
         h.addWidget(title)
         h.addStretch()
         self.layout().addLayout(h)
-        desc = QLabel(_("The following packages are going to be installed on your system.")+"\n"+_("Please note that certain packages might not be installable, due to the package managers that are enabled on this machine."))
+        desc = QLabel(_("The following packages are going to be installed on your system.") + "\n" + _("Please note that certain packages might not be installable, due to the package managers that are enabled on this machine."))
         desc.setWordWrap(True)
         self.layout().addWidget(desc)
         desc.setContentsMargins(10, 0, 0, 0)
@@ -1686,7 +1679,7 @@ class PackageImporter(MovableFramelessWindow):
         self.loadingProgressBar.setTextVisible(False)
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
-        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not(self.loadingProgressBar.invertedAppearance())))
+        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not self.loadingProgressBar.invertedAppearance()))
 
         self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
         self.leftSlow.setStartValue(0)
@@ -1749,7 +1742,7 @@ class PackageImporter(MovableFramelessWindow):
         self.versionIcon = QIcon(getMedia("version"))
 
         self.showImportUI()
-        
+
     def ApplyIcons(self):
         self.installIcon = QIcon(getMedia("install"))
         self.idIcon = QIcon(getMedia("ID"))
@@ -1765,9 +1758,7 @@ class PackageImporter(MovableFramelessWindow):
         try:
             self.loadingProgressBar.show()
             self.pendingPackages = {}
-            DISCOVER_SECTION: SoftwareSection = globals.discover
             self.treewidget.clear()
-            packageList: list[str] = []
             self.show()
             file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
@@ -1817,7 +1808,7 @@ class PackageImporter(MovableFramelessWindow):
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
         self.treewidget.setItemWidget(item, 4, removeButton)
-        
+
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
         for package in list(self.ItemPackageReference.values()):
@@ -1829,13 +1820,12 @@ class PackageImporter(MovableFramelessWindow):
 
     def showEvent(self, event: QShowEvent) -> None:
         r = ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
-        self.setStyleSheet("#background{background-color:"+("transparent" if r == 0x0 else ("#202020" if isDark() else "white"))+";}")
+        self.setStyleSheet("#background{background-color:" + ("transparent" if r == 0x0 else ("#202020" if isDark() else "white")) + ";}")
         return super().showEvent(event)
-    
+
     def closeEvent(self, event: QCloseEvent) -> None:
         globals.discover.callInMain.emit(lambda: globals.discover.packageList.setEnabled(True))
         return super().closeEvent(event)
-
 
 
 if __name__ == "__main__":
