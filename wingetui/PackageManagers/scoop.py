@@ -414,7 +414,7 @@ class ScoopPackageManager(DynamicLoadPackageManager):
         try:
             o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
             globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") != None
-            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").split("\n")[1]
+            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").replace("\n", " ").replace("\r", " ")
             if signal:
                 signal.emit()
         except Exception as e:
