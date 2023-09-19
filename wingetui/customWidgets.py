@@ -1,6 +1,7 @@
 from datetime import datetime
 from functools import partial
 from typing import Optional
+from unicodedata import combining, normalize
 
 import PySide6.QtCore
 import PySide6.QtGui
@@ -1183,6 +1184,9 @@ class SoftwareSection(QWidget):
             packageName = packageName.replace("-", "").replace(" ", "").replace(".", "").replace("_", "")
             packageId = packageId.replace("-", "").replace(" ", "").replace(".", "").replace("_", "")
             querytext = querytext.replace("-", "").replace(" ", "").replace(".", "").replace("_", "")
+            packageId = normalizeString(packageId)
+            querytext = normalizeString(querytext)
+            packageName = normalizeString(packageName)
         
         if not self.DistinguishCapsWhenFiltering.isChecked():
             packageName = packageName.lower()

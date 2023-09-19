@@ -14,6 +14,8 @@ from datetime import datetime
 from pathlib import Path
 from threading import Thread
 from urllib.request import urlopen
+from unicodedata import combining, normalize
+
 
 import globals
 import clr
@@ -487,6 +489,14 @@ def getMaskedIcon(iconName: str) -> QIcon:
                 base_img.setPixelColor(x, y, QColor(R, G, B))
     globals.maskedImages[getMedia(iconName)] = QIcon(QPixmap.fromImage(base_img))
     return globals.maskedImages[getMedia(iconName)]
+
+LATIN = "ä  æ  ǽ  đ ð ƒ ħ ı ł ø ǿ ö  œ  ß  ŧ ü  Ä  Æ  Ǽ  Đ Ð Ƒ Ħ I Ł Ø Ǿ Ö  Œ  ẞ  Ŧ Ü "
+ASCII = "ae ae ae d d f h i l o o oe oe ss t ue AE AE AE D D F H I L O O OE OE SS T UE"
+
+def normalizeString(s, outliers=str.maketrans(dict(zip(LATIN.split(), ASCII.split())))):
+    # Got this function from https://stackoverflow.com/a/71408065/11632591
+    return "".join(c for c in normalize("NFD", s.translate(outliers)) if not combining(c))
+
 
 def getPackageIcon(package) -> str:
     try:
