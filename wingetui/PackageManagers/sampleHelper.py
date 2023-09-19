@@ -35,7 +35,7 @@ class SamplePackageManager(PackageManagerModule):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = False
-    
+
     LoadedIcons = False
 
     if not os.path.exists(CAHCE_FILE_PATH):
@@ -75,14 +75,14 @@ class SamplePackageManager(PackageManagerModule):
                         print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
                         return []
                     self.cacheAvailablePackages()
-                    return self.getAvailablePackages(second_attempt = True)
+                    return self.getAvailablePackages(second_attempt=True)
             else:
                 print(f"🟡 {self.NAME} cache file does not exist, creating cache forcefully and returning new package list")
                 if second_attempt:
                     print(f"🔴 Could not load {self.NAME} packages, returning an empty list!")
                     return []
                 self.cacheAvailablePackages()
-                return self.getAvailablePackages(second_attempt = True)
+                return self.getAvailablePackages(second_attempt=True)
         except Exception as e:
             report(e)
             return []
@@ -94,7 +94,7 @@ class SamplePackageManager(PackageManagerModule):
         """
         print(f"🔵 Starting {self.NAME} package caching")
         try:
-            p = subprocess.Popen([self.NAME, "search", "*"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+            p = subprocess.Popen([self.NAME, "search", "*"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
             ContentsToCache = ""
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -109,7 +109,7 @@ class SamplePackageManager(PackageManagerModule):
                     else:
                         continue
 
-                    if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                    if self.NAME not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                         ContentsToCache += f"{self.NAME},{id},{version},{source}\n"
 
             AlreadyCachedPackages = ""
@@ -139,7 +139,7 @@ class SamplePackageManager(PackageManagerModule):
             rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
 
                     if len(line.split("|")) >= 3:
@@ -152,7 +152,7 @@ class SamplePackageManager(PackageManagerModule):
                     else:
                         continue
 
-                    if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                    if self.NAME not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(self.NAME, id, version, newVersion, source, self))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -168,11 +168,11 @@ class SamplePackageManager(PackageManagerModule):
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen([self.EXECUTABLE, "list", "--local-only"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "list", "--local-only"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             rawoutput = "\n\n---------"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
 
                     if len(line.split("|")) >= 3:
@@ -184,7 +184,7 @@ class SamplePackageManager(PackageManagerModule):
                     else:
                         continue
 
-                    if not self.NAME in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                    if self.NAME not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(Package(self.NAME, id, version, source, self))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -211,7 +211,7 @@ class SamplePackageManager(PackageManagerModule):
 
     def getIcon(self, source: str = "") -> QIcon:
         if not self.LoadedIcons:
-           self.LoadedIcons = True
+            self.LoadedIcons = True
         return QIcon()
 
     def getParameters(self, options: InstallationOptions) -> list[str]:
@@ -257,7 +257,7 @@ class SamplePackageManager(PackageManagerModule):
         while p.poll() is None:
             line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
-                output += line+"\n"
+                output += line + "\n"
                 widget.addInfoLine.emit(line)
                 if "downloading" in line:
                     widget.counterSignal.emit(3)
@@ -281,7 +281,7 @@ class SamplePackageManager(PackageManagerModule):
         while p.poll() is None:
             line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
             if line:
-                output += line+"\n"
+                output += line + "\n"
                 widget.addInfoLine.emit(line)
                 if "removing" in line:
                     widget.counterSignal.emit(5)
@@ -300,6 +300,7 @@ class SamplePackageManager(PackageManagerModule):
         if signal:
             signal.emit()
 
+
 class DynamicLoadPackageManager(SamplePackageManager):
 
     def getAvailablePackages(self, second_attempt: bool = False) -> list[Package]:
@@ -315,5 +316,6 @@ class DynamicLoadPackageManager(SamplePackageManager):
         """
         raise NotImplementedError("This method must be reimplemented")
 
-if(__name__=="__main__"):
+
+if __name__ == "__main__":
     import __init__
