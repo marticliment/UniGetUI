@@ -18,7 +18,7 @@ from .PackageClasses import *
 from .sampleHelper import *
 
 
-class ScoopPackageManager(DynamicLoadPackageManager):
+class ScoopPackageManager(DynamicPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
