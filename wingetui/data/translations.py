@@ -202,24 +202,24 @@ languageCredits = {
   ],
   "it": [
     {
-      "name": "Alberto Franzin @mrfranza",
-      "link": ""
-    },
-    {
       "name": "David Senoner",
       "link": ""
     },
     {
-      "name": "GiacoBot",
-      "link": ""
+      "name": "giacobot",
+      "link": "https://github.com/giacobot"
     },
     {
-      "name": "Maicol Battistini @maicol07",
-      "link": ""
+      "name": "maicol07)",
+      "link": "https://github.com/maicol07)"
     },
     {
-      "name": "Massimo Pissarello @mapi68",
-      "link": ""
+      "name": "mapi68",
+      "link": "https://github.com/mapi68"
+    },
+    {
+      "name": "mrfranza",
+      "link": "https://github.com/mrfranza"
     },
     {
       "name": "Rosario Di Mauro",

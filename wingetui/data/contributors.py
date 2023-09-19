@@ -16,6 +16,7 @@ contributors = [
   "BastianKamp",
   "candrapersada",
   "elliot-100",
+  "raghavdhingra24",
   "sitiom",
   "joguarino",
   "neoOpus",
@@ -23,15 +24,14 @@ contributors = [
   "reima",
   "Satanarious",
   "vsilvar",
-  "quantumfallout",
-  "derula"
+  "quantumfallout"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1896
+    "contributions": 1901
   },
   {
     "name": "ppvnf",
@@ -104,6 +104,11 @@ contributorsInfo = [
     "contributions": 2
   },
   {
+    "name": "raghavdhingra24",
+    "link": "https://github.com/raghavdhingra24",
+    "contributions": 2
+  },
+  {
     "name": "sitiom",
     "link": "https://github.com/sitiom",
     "contributions": 2
@@ -141,11 +146,6 @@ contributorsInfo = [
   {
     "name": "quantumfallout",
     "link": "https://github.com/quantumfallout",
-    "contributions": 1
-  },
-  {
-    "name": "derula",
-    "link": "https://github.com/derula",
     "contributions": 1
   }
 ]
