@@ -1,8 +1,20 @@
-# source: https://github.com/Opticos/GWSL-Source/blob/master/blur.py , https://www.cnblogs.com/zhiyiYo/p/14659981.html , https://github.com/ifwe/digsby/blob/master/digsby/src/gui/vista.py
+"""
+
+ExternalLibraries/BlurWindow.py
+
+This modified library applies blur effect to menus.
+Code sources: 
+ - https://pypi.org/project/BlurWindow/
+ - https://github.com/Opticos/GWSL-Source/blob/master/blur.py
+ - https://www.cnblogs.com/zhiyiYo/p/14659981.html
+ - https://github.com/ifwe/digsby/blob/master/digsby/src/gui/vista.py
+
+
+"""
+
+
 import ctypes
 import platform
-
-# Main code taken from https://pypi.org/project/BlurWindow/
 
 if platform.system() == 'Windows':
     from ctypes.wintypes import BOOL, DWORD, HRGN, HWND

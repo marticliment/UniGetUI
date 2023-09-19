@@ -1,4 +1,10 @@
-from __future__ import annotations
+"""
+
+wingetui/Interface/GenericSections.py
+
+This file contains the code for miscellanious User Interface sections, such as the about tab, the settings and the logs.
+
+"""
 
 import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import json
@@ -41,7 +47,7 @@ class AboutSection(SmoothScrollArea):
         l.addStretch()
         self.widget.setLayout(l)
         self.setWidget(self.widget)
-        self.announcements = QAnnouncements()
+        self.announcements = AnnouncementsPane()
         self.layout.addWidget(self.announcements)
         title = QLabel(_("Component Information"))
         title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
@@ -94,24 +100,24 @@ class AboutSection(SmoothScrollArea):
             title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
             self.layout.addWidget(title)
             self.layout.addSpacing(5)
-            description = QLinkLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
+            description = CustomLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.")+"\n"+_("This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
             self.layout.addWidget(description)
             self.layout.addSpacing(5)
-            self.layout.addWidget(QLinkLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://marticliment.com/wingetui\">https://marticliment.com/wingetui</a>"))
-            self.layout.addWidget(QLinkLabel(f"{_('Repository')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/wingetui\">https://github.com/marticliment/wingetui</a>"))
+            self.layout.addWidget(CustomLabel(f"{_('Homepage')}:   <a style=\"color: {blueColor};\" href=\"https://marticliment.com/wingetui\">https://marticliment.com/wingetui</a>"))
+            self.layout.addWidget(CustomLabel(f"{_('Repository')}:   <a style=\"color: {blueColor};\" href=\"https://github.com/marticliment/wingetui\">https://github.com/marticliment/wingetui</a>"))
             self.layout.addSpacing(30)
 
-            self.layout.addWidget(QLinkLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
-            self.layout.addWidget(QLinkLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
+            self.layout.addWidget(CustomLabel(f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+            self.layout.addWidget(CustomLabel(_("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
             contributorsHTMLList = "<ul>"
             for contributor in contributorsInfo:
                 contributorsHTMLList += f"<li><a style=\"color:{blueColor}\" href=\"{contributor.get('link')}\">{contributor.get('name')}</a></li>"
             contributorsHTMLList += "</ul>"
-            self.layout.addWidget(QLinkLabel(contributorsHTMLList))
+            self.layout.addWidget(CustomLabel(contributorsHTMLList))
             self.layout.addSpacing(15)
 
-            self.layout.addWidget(QLinkLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
-            self.layout.addWidget(QLinkLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
+            self.layout.addWidget(CustomLabel(f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+            self.layout.addWidget(CustomLabel(_("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
             translatorsHTMLList = "<ul>"
             translatorList = []
             translatorData: dict[str, str] = {}
@@ -131,22 +137,22 @@ class AboutSection(SmoothScrollArea):
                 translatorsHTMLList += f"<li>{translatorData[translator]}</li>"
             translatorsHTMLList += "</ul><br>"
             translatorsHTMLList += _("Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>").format(blueColor, "https://github.com/marticliment/WingetUI/wiki#translating-wingetui")
-            self.layout.addWidget(QLinkLabel(translatorsHTMLList))
+            self.layout.addWidget(CustomLabel(translatorsHTMLList))
             self.layout.addSpacing(15)
 
-            self.layout.addWidget(QLinkLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
-            self.layout.addWidget(QLinkLabel(_("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
+            self.layout.addWidget(CustomLabel(f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+            self.layout.addWidget(CustomLabel(_("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
             try:
-                self.layout.addWidget(QLinkLabel(_("Check out my {0} and my {1}!").format(f"<a style=\"color:{blueColor}\" href=\"https://github.com/marticliment\">{_('GitHub profile')}</a>", f"<a style=\"color:{blueColor}\" href=\"http://www.marticliment.com\">{_('homepage')}</a>")))
+                self.layout.addWidget(CustomLabel(_("Check out my {0} and my {1}!").format(f"<a style=\"color:{blueColor}\" href=\"https://github.com/marticliment\">{_('GitHub profile')}</a>", f"<a style=\"color:{blueColor}\" href=\"http://www.marticliment.com\">{_('homepage')}</a>")))
             except Exception as e:
                 print(e)
                 print(blueColor)
                 print(_('homepage'))
                 print(_('GitHub profile'))
-            self.layout.addWidget(QLinkLabel(_("Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!").format(f"<a style=\"color:{blueColor}\" href=\"https://ko-fi.com/martinet101\">{_('buy me a coffee')}</a>")))
+            self.layout.addWidget(CustomLabel(_("Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!").format(f"<a style=\"color:{blueColor}\" href=\"https://ko-fi.com/martinet101\">{_('buy me a coffee')}</a>")))
 
             self.layout.addSpacing(15)
-            self.layout.addWidget(QLinkLabel(f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+            self.layout.addWidget(CustomLabel(f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
             
             licensesTable = QTableWidget()
             licensesTable.setAutoFillBackground(True)
@@ -179,7 +185,7 @@ class AboutSection(SmoothScrollArea):
             for library in licenses.keys():
                 licensesTable.setItem(i, 0, QTableWidgetItem(library))
                 licensesTable.setItem(i, 1, QTableWidgetItem(licenses[library]))
-                licensesTable.setCellWidget(i, 2, QLinkLabel(f'<a style="color: {blueColor};" href="{licenseUrls[library]}">{licenseUrls[library]}</a>'))
+                licensesTable.setCellWidget(i, 2, CustomLabel(f'<a style="color: {blueColor};" href="{licenseUrls[library]}">{licenseUrls[library]}</a>'))
                 i += 1
                 
             self.layout.addWidget(licensesTable)
@@ -189,7 +195,7 @@ class AboutSection(SmoothScrollArea):
             button.setFixedHeight(25)
             button.clicked.connect(lambda: MessageBox.aboutQt(self, f"WingetUI - {_('About Qt6')}"))
             self.layout.addWidget(button)
-            self.layout.addWidget(QLinkLabel())
+            self.layout.addWidget(CustomLabel())
             self.layout.addStretch()
         except Exception as e:
             self.layout.addWidget(QLabel("An error occurred while loading the about section"))
@@ -219,7 +225,7 @@ class SettingsSection(SmoothScrollArea):
         l.addStretch()
         self.widget.setLayout(l)
         self.setWidget(self.widget)
-        self.announcements = QAnnouncements()
+        self.announcements = AnnouncementsPane()
         self.announcements.setMinimumWidth(800)
         self.layout.addWidget(self.announcements)
         title = QLabel(_("WingetUI Settings"))

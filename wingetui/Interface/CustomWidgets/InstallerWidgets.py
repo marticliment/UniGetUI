@@ -1,5 +1,14 @@
-from __future__ import annotations
+"""
 
+wingetui/Interface/CustomWidgets/InstallerWidgets.py
+
+This file contains the custom widgets that represent a package when it is being installed/updated/uninstalled.
+This file also contains the following classes:
+ - ScoopBucketManager
+ - WingetBucketManager
+
+
+"""
 import json
 import os
 import signal

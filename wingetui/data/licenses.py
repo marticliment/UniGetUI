@@ -1,3 +1,11 @@
+"""
+
+wingetui/data/licenses.py
+
+This file contains a list of the used libraries and their licenses
+
+"""
+
 from tools import _
 
 licenses = {

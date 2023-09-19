@@ -1,3 +1,12 @@
+"""
+
+wingetui/tools.py
+
+This file contains miscellanious functions and methods
+
+"""
+
+
 import io
 import json
 import locale
@@ -158,12 +167,6 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     clr.AddReference(SHARE_DLL_PATH)
     import WingetUIShareComponent
     WingetUIShareComponent.Form1(["", text, url, coordinates])
-
-    #coordinates = ""
-    #if window:
-    #    coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    #globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
-    #cprint(globals.shareProcessHandler.args)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
@@ -432,7 +435,6 @@ def foregroundWindowThread():
         globals.lastFocusedWindow = fw
         time.sleep(8)
 
-
 def loadLangFile(file: str, bundled: bool = False) -> dict:
     try:
         path = os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file)
@@ -644,14 +646,6 @@ except TypeError as e:
     GSUDO_EXE_LOCATION = os.path.expanduser("~")
 SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrary.dll")
 
-#
-# Begin Import C#.NET DLLs
-#
- 
-
-#
-# End Import C#.NET DLLs
-#
 
 if isDark():
     blueColor = f"rgb({getColors()[1]})"

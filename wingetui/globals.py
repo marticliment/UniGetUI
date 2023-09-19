@@ -1,3 +1,12 @@
+"""
+
+wingetui/globals.py
+
+This file contains global variables and type definitons
+
+"""
+
+
 from subprocess import Popen
 
 from PySide6.QtCore import *

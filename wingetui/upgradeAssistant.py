@@ -1,3 +1,12 @@
+"""
+
+wingetui/upgradeAssistant.py
+
+This file contains the code that will migrate WingetUI to C:\\Program Files when installing version 2.0.3
+
+"""
+
+
 import os
 import sys
 import winreg

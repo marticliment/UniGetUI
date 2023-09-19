@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/sampleHelper.py
+
+This file holds a sample package manager implementation. The code here must be reimplemented before being used
+
+"""
+
 import os
 import subprocess
 import sys

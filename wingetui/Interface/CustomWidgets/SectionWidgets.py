@@ -1,3 +1,14 @@
+"""
+
+wingetui/Interface/CustomWidgets/SectionWidgets.py
+
+This file contains the classes for the set of Widgets used on:
+ - The settings tab
+ - The filter pane
+ - The "Install Options" section, on the Package Details tab
+
+"""
+
 from typing import Optional
 
 import PySide6.QtCore

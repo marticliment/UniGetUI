@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/PackageClasses.py
+
+This file holds the classes related to Packages and PackageManagers .
+
+"""
+
 import subprocess
 from typing import Optional
 

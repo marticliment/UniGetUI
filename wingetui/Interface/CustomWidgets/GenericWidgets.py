@@ -1,3 +1,14 @@
+"""
+
+wingetui/Interface/CustomWidgets/GenericWidgets.py
+
+This file contains the custom widgets that have been modified but that were not built for a singe purpose, since they are generic widgets.
+Generally they are optimized versions of Qt standard widgets.
+
+
+
+"""
+
 from typing import Optional
 
 import PySide6.QtCore
@@ -17,6 +28,33 @@ class MessageBox(QMessageBox):
         super().__init__(parent)
         ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
+
+class CustomLabel(QLabel):
+    def __init__(self, text: str = "", stylesheet: str = ""):
+        super().__init__(text)
+        self.setStyleSheet(stylesheet)
+        self.setTextFormat(Qt.RichText)
+        self.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.setWordWrap(True)
+        self.setOpenExternalLinks(True)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showmenu)
+        self.lineedit = QLineEdit(self)
+        self.lineedit.hide()
+        self.lineedit.setReadOnly(True)
+
+    def setText(self, text: str) -> None:
+        super().setText(text)
+
+    def showmenu(self, pos: QPoint) -> None:
+        self.lineedit.setText(self.selectedText())
+        self.lineedit.selectAll()
+        c = QLineEdit.createStandardContextMenu(self.lineedit)
+        selAction = c.actions()[-1]
+        selAction.setEnabled(True)
+        selAction.triggered.connect(lambda: self.setSelection(0, len(self.text())))
+        ApplyMenuBlur(c.winId().__int__(), c)
+        c.exec(QCursor.pos())
 
 class SmoothScrollArea(QScrollArea):
     missingScroll = 0

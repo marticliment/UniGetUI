@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/choco.py
+
+This file holds the Chocolatey Package Manager related code.
+
+"""
+
 import os
 import re
 import subprocess

@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/pip.py
+
+This file holds the Pip Package Manager related code.
+
+"""
+
 import os
 import re
 import subprocess

@@ -1,3 +1,12 @@
+"""
+
+wingetui/welcome.py
+
+This file contains the code that handles the Welcome Wizard
+
+"""
+
+
 import ctypes
 import os
 import time

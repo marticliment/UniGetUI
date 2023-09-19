@@ -1,3 +1,11 @@
+"""
+
+wingetui/Interface/CustomWidgets/SpecificWidgets.py
+
+This file contains the classes for miscellainous, custom made, specific-case-oriented widgets.
+
+"""
+
 from datetime import datetime
 from functools import partial
 from typing import Optional
@@ -59,32 +67,6 @@ DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Scoop: False
 }
 
-class QLinkLabel(QLabel):
-    def __init__(self, text: str = "", stylesheet: str = ""):
-        super().__init__(text)
-        self.setStyleSheet(stylesheet)
-        self.setTextFormat(Qt.RichText)
-        self.setTextInteractionFlags(Qt.TextBrowserInteraction)
-        self.setWordWrap(True)
-        self.setOpenExternalLinks(True)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.showmenu)
-        self.lineedit = QLineEdit(self)
-        self.lineedit.hide()
-        self.lineedit.setReadOnly(True)
-
-    def setText(self, text: str) -> None:
-        super().setText(text)
-
-    def showmenu(self, pos: QPoint) -> None:
-        self.lineedit.setText(self.selectedText())
-        self.lineedit.selectAll()
-        c = QLineEdit.createStandardContextMenu(self.lineedit)
-        selAction = c.actions()[-1]
-        selAction.setEnabled(True)
-        selAction.triggered.connect(lambda: self.setSelection(0, len(self.text())))
-        ApplyMenuBlur(c.winId().__int__(), c)
-        c.exec(QCursor.pos())
 
 class CommandLineEdit(CustomLineEdit):
     registeredThemeEvent = False
@@ -405,7 +387,7 @@ class CustomMessageBox(QMainWindow):
         self.mousePressed = False
         return super().mouseReleaseEvent(event)
 
-class QAnnouncements(QLabel):
+class AnnouncementsPane(QLabel):
     callInMain = Signal(object)
 
     def __init__(self):

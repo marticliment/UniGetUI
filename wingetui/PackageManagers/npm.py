@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/npm.py
+
+This file holds the Npm Package Manager related code.
+
+"""
+
 import os
 import re
 import subprocess

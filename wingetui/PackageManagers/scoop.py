@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/scoop.py
+
+This file holds the Scoop Package Manager related code.
+
+"""
+
 import os
 import re
 import subprocess

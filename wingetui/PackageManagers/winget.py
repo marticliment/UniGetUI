@@ -1,3 +1,11 @@
+"""
+
+wingetui/PackageManagers/winget.py
+
+This file holds the Winget Package Manager related code.
+
+"""
+
 import os
 import subprocess
 import sys

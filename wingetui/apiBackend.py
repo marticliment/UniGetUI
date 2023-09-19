@@ -1,3 +1,12 @@
+"""
+
+wingetui/apiBacked.py
+
+This file contains the API used to communicate with https://marticliment.com/wingetui/share
+
+"""
+
+
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS, cross_origin
 from PySide6.QtCore import Signal

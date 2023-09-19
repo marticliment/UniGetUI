@@ -1,3 +1,12 @@
+"""
+
+wingetui/Interface/MainWindow.py
+
+This file contains the code of the main WingetUI window.
+
+"""
+
+
 import ctypes
 import os
 import sys

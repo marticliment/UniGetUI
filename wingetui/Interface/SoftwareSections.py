@@ -1,4 +1,17 @@
-from __future__ import annotations
+"""
+
+wingetui/Interface/SoftwareSections.py
+
+This file contains the code for the following classes:
+ - DiscoverSoftwareSection
+ - UpdateSoftwareSection
+ - UninstallSoftwareSection
+ - PackageInfoPopupWindow
+ 
+Those classes are the classes that represent the three main tabs on WingetUI's interface. 
+The class PackageInfoPopupWindow contains the code for the Package Details window.
+
+"""
 
 import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import json
@@ -1615,7 +1628,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.vLayout = QVBoxLayout()
         self.layout = QVBoxLayout()
-        self.title = QLinkLabel()
+        self.title = CustomLabel()
         self.title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
         self.title.setText(_("Loading..."))
 
@@ -1646,25 +1659,25 @@ class PackageInfoPopupWindow(QWidget):
 
         self.hLayout = QHBoxLayout()
         self.oLayout = QHBoxLayout()
-        self.description = QLinkLabel("<b>"+_('Description:')+"</b> "+_('Unknown'))
+        self.description = CustomLabel("<b>"+_('Description:')+"</b> "+_('Unknown'))
         self.description.setWordWrap(True)
 
         self.layout.addWidget(self.tagsWidget)
         self.layout.addWidget(self.description)
 
-        self.homepage = QLinkLabel("<b>"+_('Homepage')+":</b> "+_('Unknown'))
+        self.homepage = CustomLabel("<b>"+_('Homepage')+":</b> "+_('Unknown'))
         self.homepage.setWordWrap(True)
 
         self.layout.addWidget(self.homepage)
 
-        self.publisher = QLinkLabel("<b>"+_('Publisher')+":</b> "+_('Unknown'))
+        self.publisher = CustomLabel("<b>"+_('Publisher')+":</b> "+_('Unknown'))
         self.publisher.setOpenExternalLinks(False)
         self.publisher.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
         self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
-        self.author = QLinkLabel("<b>"+_('Author')+":</b> "+_('Unknown'))
+        self.author = CustomLabel("<b>"+_('Author')+":</b> "+_('Unknown'))
         self.author.setOpenExternalLinks(False)
         self.author.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
         self.author.setWordWrap(True)
@@ -1672,7 +1685,7 @@ class PackageInfoPopupWindow(QWidget):
         self.layout.addWidget(self.author)
         self.layout.addSpacing(10)
 
-        self.license = QLinkLabel("<b>"+_('License')+":</b> "+_('Unknown'))
+        self.license = CustomLabel("<b>"+_('License')+":</b> "+_('Unknown'))
         self.license.setWordWrap(True)
 
         self.layout.addWidget(self.license)
@@ -1875,41 +1888,41 @@ class PackageInfoPopupWindow(QWidget):
 
         self.layout.addSpacing(10)
 
-        self.packageId = QLinkLabel("<b>"+_('Package ID')+"</b> "+_('Unknown'))
+        self.packageId = CustomLabel("<b>"+_('Package ID')+"</b> "+_('Unknown'))
         self.packageId.setWordWrap(True)
         self.layout.addWidget(self.packageId)
-        self.manifest = QLinkLabel("<b>"+_('Manifest')+"</b> "+_('Unknown'))
+        self.manifest = CustomLabel("<b>"+_('Manifest')+"</b> "+_('Unknown'))
         self.manifest.setWordWrap(True)
         self.layout.addWidget(self.manifest)
-        self.lastver = QLinkLabel("<b>"+_('Latest Version:')+"</b> "+_('Unknown'))
+        self.lastver = CustomLabel("<b>"+_('Latest Version:')+"</b> "+_('Unknown'))
         self.lastver.setWordWrap(True)
         self.layout.addWidget(self.lastver)
-        self.sha = QLinkLabel(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> "+_('Unknown'))
+        self.sha = CustomLabel(f"<b>{_('Installer SHA256')} ({_('Latest Version')}):</b> "+_('Unknown'))
         self.sha.setWordWrap(True)
         self.layout.addWidget(self.sha)
-        self.link = QLinkLabel(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> "+_('Unknown'))
+        self.link = CustomLabel(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> "+_('Unknown'))
         self.link.setWordWrap(True)
         self.layout.addWidget(self.link)
-        self.type = QLinkLabel(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> "+_('Unknown'))
+        self.type = CustomLabel(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> "+_('Unknown'))
         self.type.setWordWrap(True)
         self.layout.addWidget(self.type)
-        self.date = QLinkLabel("<b>"+_('Last updated:')+"</b> "+_('Unknown'))
+        self.date = CustomLabel("<b>"+_('Last updated:')+"</b> "+_('Unknown'))
         self.date.setWordWrap(True)
         self.layout.addWidget(self.date)
-        self.notes = QLinkLabel("<b>"+_('Release notes:')+"</b> "+_('Unknown'))
+        self.notes = CustomLabel("<b>"+_('Release notes:')+"</b> "+_('Unknown'))
         self.notes.setWordWrap(True)
         self.layout.addWidget(self.notes)
-        self.notesurl = QLinkLabel("<b>"+_('Release notes URL:')+"</b> "+_('Unknown'))
+        self.notesurl = CustomLabel("<b>"+_('Release notes URL:')+"</b> "+_('Unknown'))
         self.notesurl.setWordWrap(True)
         self.layout.addWidget(self.notesurl)
 
-        self.storeLabel = QLinkLabel("<b>"+_("Source:")+"</b> ")
+        self.storeLabel = CustomLabel("<b>"+_("Source:")+"</b> ")
         self.storeLabel.setWordWrap(True)
         self.layout.addWidget(self.storeLabel)
 
         self.layout.addSpacing(10)
         self.layout.addStretch()
-        self.advert = QLinkLabel("<b>"+_("DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE."))
+        self.advert = CustomLabel("<b>"+_("DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE."))
         self.advert.setWordWrap(True)
         self.layout.addWidget(self.advert)
 

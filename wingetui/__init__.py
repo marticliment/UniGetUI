@@ -1,3 +1,15 @@
+"""
+
+wingetui/__init__.py
+
+This file handles:
+ - The WingetUI initialization code
+ - The system tray menu
+ - The built-in updater
+ - Loading the StyleSheet contents
+
+"""
+
 import os
 import sys
 
