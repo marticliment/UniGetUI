@@ -1,3 +1,12 @@
+"""
+
+wingetui/tools.py
+
+This file contains miscellanious functions and methods
+
+"""
+
+
 import io
 import json
 import locale
@@ -19,7 +28,8 @@ from unicodedata import combining, normalize
 
 import globals
 import clr
-from external.blurwindow import GlobalBlur
+
+from ExternalLibraries.BlurWindow import GlobalBlur
 from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -44,32 +54,38 @@ isWin11 = winver >= 22000
 def cprint(*args) -> None:
     print(*args, file=OLD_STDOUT)
 
-def report(exception) -> None: # Exception reporter
+
+def report(exception) -> None:  # Exception reporter
     import traceback
     tb = traceback.format_exception(*sys.exc_info())
     try:
         for line in tb:
-            print("🔴 "+line)
-            cprint("🔴 "+line)
-        print(f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
+            print("🔴 ", line)
+            cprint("🔴 ", line)
+        print(
+            f"🔴 Note this traceback was caught by reporter and has been added to the log ({exception})")
     except UnicodeEncodeError:
         for line in tb:
-            print("ERROR "+line)
-            cprint("ERROR "+line)
-        print(f"ERROR Note this traceback was caught by reporter and has been added to the log ({exception})")
+            print("ERROR", line)
+            cprint("ERROR", line)
+        print(
+            f"ERROR Note this traceback was caught by reporter and has been added to the log ({exception})")
 
-def _(s): # Translate function
+
+def _(s):  # Translate function
     global lang
     try:
         t = lang[s]
-        return ("🟢"+t+"🟢" if debugLang else t) if t else f"🟡{s}🟡" if debugLang else eng_(s)
+        return ("🟢" + t + "🟢" if debugLang else t) if t else f"🟡{s}🟡" if debugLang else eng_(s)
     except KeyError:
-        if debugLang: print(s)
-        if not s in MissingTranslationList:
+        if debugLang:
+            print(s)
+        if s not in MissingTranslationList:
             MissingTranslationList.append(s)
         return f"🔴{eng_(s)}🔴" if debugLang else eng_(s)
 
-def eng_(s): # English translate function
+
+def eng_(s):  # English translate function
     try:
         t = englang[s]
         return t if t else s
@@ -78,7 +94,8 @@ def eng_(s): # English translate function
             print(s)
         return s
 
-def getSettings(s: str, cache = True) -> bool:
+
+def getSettings(s: str, cache=True) -> bool:
     """
     Returns a boolean value representing if the given setting is enabled or not.
     """
@@ -89,12 +106,14 @@ def getSettings(s: str, cache = True) -> bool:
                 raise KeyError("Cache disabled")
             return globals.settingsCache[s]
         except KeyError:
-            v = os.path.exists(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s))
+            v = os.path.exists(os.path.join(os.path.join(
+                os.path.expanduser("~"), ".wingetui"), s))
             globals.settingsCache[s] = v
             return v
     except Exception as e:
         print(e)
         return False
+
 
 def setSettings(s: str, v: bool) -> None:
     """
@@ -103,20 +122,26 @@ def setSettings(s: str, v: bool) -> None:
     globals.settingsCache
     try:
         globals.settingsCache = {}
-        if(v):
-            open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w").close()
+        if (v):
+            open(os.path.join(os.path.join(
+                os.path.expanduser("~"), ".wingetui"), s), "w").close()
         else:
             try:
-                os.remove(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s))
+                os.remove(os.path.join(os.path.join(
+                    os.path.expanduser("~"), ".wingetui"), s))
             except FileNotFoundError:
                 pass
     except Exception as e:
         print(e)
     if "Notifications" in s:
-        globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
-        globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-        globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-        globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+        globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings(
+            "DisableNotifications")
+        globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
+            "DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+        globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
+            "DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+        globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
+            "DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
 
 
 def getSettingsValue(s: str) -> str:
@@ -126,17 +151,18 @@ def getSettingsValue(s: str) -> str:
     globals.settingsCache
     try:
         try:
-            return str(globals.settingsCache[s+"Value"])
+            return str(globals.settingsCache[s + "Value"])
         except KeyError:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r", encoding="utf-8", errors="ignore") as sf:
                 v: str = sf.read()
-                globals.settingsCache[s+"Value"] = v
+                globals.settingsCache[s + "Value"] = v
                 return v
     except FileNotFoundError:
         return ""
     except Exception as e:
         print(e)
         return ""
+
 
 def setSettingsValue(s: str, v: str) -> None:
     """
@@ -150,6 +176,7 @@ def setSettingsValue(s: str, v: str) -> None:
     except Exception as e:
         print(e)
 
+
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
@@ -158,18 +185,13 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     import WingetUIShareComponent
     WingetUIShareComponent.Form1(["", text, url, coordinates])
 
-    #coordinates = ""
-    #if window:
-    #    coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    #globals.shareProcessHandler = subprocess.Popen([SHARE_EXE_PATH, text, url, coordinates], shell=True)
-    #cprint(globals.shareProcessHandler.args)
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
     reg_keypath = aKey
     try:
         reg_key = winreg.OpenKey(registry, reg_keypath)
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         return default
     except Exception as e:
         print(e)
@@ -180,22 +202,26 @@ def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
             value_name, value, _ = winreg.EnumValue(reg_key, i)
             if value_name == sKey:
                 return value
-        except OSError as e:
+        except OSError:
             return default
         except Exception as e:
             print(e)
             return default
 
+
 def getColors() -> list:
-    colors = ['215,226,228', '160,174,183', '101,116,134', '81,92,107', '69,78,94', '41,47,64', '15,18,36', '239,105,80']
-    string = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent", "AccentPalette", b'\xe9\xd8\xf1\x00\xcb\xb7\xde\x00\x96}\xbd\x00\x82g\xb0\x00gN\x97\x00H4s\x00#\x13K\x00\x88\x17\x98\x00')
+    colors = ['215,226,228', '160,174,183', '101,116,134',
+              '81,92,107', '69,78,94', '41,47,64', '15,18,36', '239,105,80']
+    string = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent", "AccentPalette",
+                         b'\xe9\xd8\xf1\x00\xcb\xb7\xde\x00\x96}\xbd\x00\x82g\xb0\x00gN\x97\x00H4s\x00#\x13K\x00\x88\x17\x98\x00')
     i = 0
     j = 0
-    while (i+2)<len(string):
+    while (i + 2) < len(string):
         colors[j] = f"{string[i]},{string[i+1]},{string[i+2]}"
         j += 1
         i += 4
     return colors
+
 
 def isDark() -> bool:
     prefs = getSettingsValue("PreferredTheme")
@@ -206,24 +232,28 @@ def isDark() -> bool:
             return False
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) == 0
 
+
 def isTaskbarDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 1) == 0
+
 
 def queueProgram(id: str):
     globals.pending_programs.append(id)
 
+
 def removeProgram(id: str):
     try:
-       globals.pending_programs.remove(id)
+        globals.pending_programs.remove(id)
     except ValueError:
         pass
-    if(globals.current_program == id):
+    if (globals.current_program == id):
         globals.current_program = ""
+
 
 def checkQueue():
     print("🟢 checkQueue Thread started!")
     while True:
-        if(globals.current_program == ""):
+        if (globals.current_program == ""):
             try:
                 globals.current_program = globals.pending_programs[0]
                 print(f"🔵 Current program set to {globals.current_program}")
@@ -231,29 +261,35 @@ def checkQueue():
                 pass
         time.sleep(0.2)
 
+
 operationsToAdd: dict[object:str] = {}
+
 
 def AddOperationToLog(operation: str, package, commandline: str):
     global operationsToAdd
-    stringToAdd =  f" Operation: {operation} - Perform date {str(datetime.now())}\n"
+    stringToAdd = f" Operation: {operation} - Perform date {str(datetime.now())}\n"
     stringToAdd += f" Package: {str(package)}\n"
     stringToAdd += f" Command-line call: {commandline}"
     operationsToAdd[package] = stringToAdd
+
 
 def AddResultToLog(output: list, package, result: int):
     print(output)
     global operationsToAdd
     try:
-        currentInstallations = getSettingsValue("OperationHistory").split("\n\n--------------------------------\n")
-        stringToAdd =  operationsToAdd[package]
+        currentInstallations = getSettingsValue("OperationHistory").split(
+            "\n\n--------------------------------\n")
+        stringToAdd = operationsToAdd[package]
         stringToAdd += f" Output code: {result}\n"
-        stringToAdd += f" Console output:\n"
+        stringToAdd += " Console output:\n"
         for line in output:
             for subline in line.split("\r"):
                 stringToAdd += f"   | {subline}\n"
-        setSettingsValue("OperationHistory", "\n\n--------------------------------\n".join(([stringToAdd] + currentInstallations)[0:100]))
+        setSettingsValue("OperationHistory", "\n\n--------------------------------\n".join(
+            ([stringToAdd] + currentInstallations)[0:100]))
     except Exception as e:
         report(e)
+
 
 def update_tray_icon():
     if globals.tray_is_error:
@@ -268,9 +304,11 @@ def update_tray_icon():
     elif globals.tray_is_available_updates:
         try:
             if globals.updates.availableUpdates == 1:
-                trayIconToolTip = _("WingetUI - 1 update is available").replace("WingetUI - ", "")
+                trayIconToolTip = _(
+                    "WingetUI - 1 update is available").replace("WingetUI - ", "")
             else:
-                trayIconToolTip = _("WingetUI - {0} updates are available").format(globals.updates.availableUpdates).replace("WingetUI - ", "")
+                trayIconToolTip = _("WingetUI - {0} updates are available").format(
+                    globals.updates.availableUpdates).replace("WingetUI - ", "")
         except Exception as e:
             report(e)
             trayIconToolTip = _("Updates available!").replace('"', '')
@@ -278,7 +316,9 @@ def update_tray_icon():
         globals.trayIcon.setToolTip(f"{trayIconToolTip} - WingetUI")
     else:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_empty")))
-        globals.trayIcon.setToolTip(f"{_('WingetUI - Everything is up to date').replace('WingetUI - ', '')} - WingetUI")
+        globals.trayIcon.setToolTip(
+            f"{_('WingetUI - Everything is up to date').replace('WingetUI - ', '')} - WingetUI")
+
 
 def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
     hwnd = int(hwnd)
@@ -287,95 +327,117 @@ def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidO
         if window.objectName() == "":
             window.setObjectName("MenuMenuMenuMenu")
         if not isDark():
-            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
+            window.setStyleSheet(
+                f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
         else:
-            window.setStyleSheet(f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
+            window.setStyleSheet(
+                f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
     if mode:
         try:
-            GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140", Dark=True, smallCorners=smallCorners)
+            GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140",
+                       Dark=True, smallCorners=smallCorners)
         except OverflowError:
             pass
     else:
         try:
-            GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40", Dark=True, smallCorners=smallCorners)
+            GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40",
+                       Dark=True, smallCorners=smallCorners)
         except OverflowError:
             pass
+
 
 def getPath(s: str) -> str:
     return str(Path(f"{realpath}/resources/{s}").resolve()).replace("\\", "/")
 
+
 def getIconMode() -> str:
     return "white" if isDark() else "black"
+
 
 def getTaskbarIconMode() -> str:
     return "white" if isTaskbarDark() else "black"
 
-def getMedia(m: str, autoIconMode = True) -> str:
+
+def getMedia(m: str, autoIconMode=True) -> str:
     filename = ""
-    if autoIconMode == True:
+    if autoIconMode is True:
         filename = getPath(f"{m}_{getIconMode()}.png")
     if not filename or not os.path.exists(filename):
         filename = getPath(f"{m}.png")
     return filename
 
-def getTaskbarMedia(m: str, autoIconMode = True) -> str:
+
+def getTaskbarMedia(m: str, autoIconMode=True) -> str:
     filename = ""
-    if autoIconMode == True:
+    if autoIconMode is True:
         filename = getPath(f"{m}_{getTaskbarIconMode()}.png")
     if not filename or not os.path.exists(filename):
         filename = getPath(f"{m}.png")
     return filename
 
+
 def getint(s: str, fallback: int) -> int:
     try:
         return int(s)
-    except:
+    except Exception:
         print("can't parse", s)
         return fallback
+
 
 def blacklistUpdatesForPackage(id: str):
     """
     THIS FUNCTION IS DEPRECATED. USE IgnorePackageUpdates_Permanent INSTEAD
     """
-    setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates")+id+",")
+    setSettingsValue("BlacklistedUpdates", getSettingsValue(
+        "BlacklistedUpdates") + id + ",")
     try:
-        raise Exception("This function has been deprecated, and shouldn't have been called")
+        raise Exception(
+            "This function has been deprecated, and shouldn't have been called")
     except Exception as e:
         report(e)
+
 
 def IgnorePackageUpdates_Permanent(id: str, store: str):
     """
     With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
     """
-    baseList = [v for v in getSettingsValue("PermanentlyIgnoredPackageUpdates").split(";") if v]
+    baseList = [v for v in getSettingsValue(
+        "PermanentlyIgnoredPackageUpdates").split(";") if v]
     packageString = f"{id},{store.lower().split(':')[0]}"
-    if not packageString in baseList:
+    if packageString not in baseList:
         baseList.append(packageString)
     setSettingsValue("PermanentlyIgnoredPackageUpdates", ";".join(baseList))
+
 
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
     """
-    baseList = [v for v in getSettingsValue("PermanentlyIgnoredPackageUpdates").split(";") if v]
-    return  [v.split(",") for v in baseList if len(v.split(",")) == 2]
+    baseList = [v for v in getSettingsValue(
+        "PermanentlyIgnoredPackageUpdates").split(";") if v]
+    return [v.split(",") for v in baseList if len(v.split(",")) == 2]
+
 
 def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
     """
     With the given PACKAGE_ID, SKIPPED_VERSION and PACKAGE_STORE parameters, add the versions of the packages to the blacklist
     """
-    baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
+    baseList = [v for v in getSettingsValue(
+        "SingleVersionIgnoredPackageUpdates").split(";") if v]
     packageString = f"{id},{version.lower().replace(',', '.')},{store.lower().split(':')[0]}"
-    if not packageString in baseList:
+    if packageString not in baseList:
         baseList.append(packageString)
     setSettingsValue("SingleVersionIgnoredPackageUpdates", ";".join(baseList))
+
 
 def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """
     Returns a list in the following format [[packageId, skippedVersion, store], [packageId, skippedVersion, store], etc.] representing the packages that have a version skipped.
     """
-    baseList = [v for v in getSettingsValue("SingleVersionIgnoredPackageUpdates").split(";") if v]
-    return  [v.split(",") for v in baseList if len(v.split(",")) == 3]
+    baseList = [v for v in getSettingsValue(
+        "SingleVersionIgnoredPackageUpdates").split(";") if v]
+    return [v.split(",") for v in baseList if len(v.split(",")) == 3]
+
 
 def getLineFromStdout(p: subprocess.Popen) -> bytes:
     """
@@ -385,11 +447,12 @@ def getLineFromStdout(p: subprocess.Popen) -> bytes:
     stdout: IO[bytes] = p.stdout
     char = stdout.read(1)
     line = b""
-    while not char in (b"\n", b"\r") and p.poll() is None:
+    while char not in (b"\n", b"\r") and p.poll() is None:
         line += char
         char = stdout.read(1)
     line = line.replace(b"\r", b"").replace(b"\n", b"")
     return line if (line or p.poll() is not None) else getLineFromStdout(p)
+
 
 class KillableThread(Thread):
     def __init__(self, *args, **keywords):
@@ -412,13 +475,15 @@ class KillableThread(Thread):
         self.shouldBeRuning = False
 
     def localtrace(self, frame, event, arg):
-        if not(self.shouldBeRuning) and event == 'line':
+        if not (self.shouldBeRuning) and event == 'line':
             raise SystemExit()
         return self.localtrace
+
 
 def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
     if globals.ENABLE_WINGETUI_NOTIFICATIONS:
         globals.trayIcon.showMessage(title, text, QIcon())
+
 
 def foregroundWindowThread():
     """
@@ -434,10 +499,10 @@ def foregroundWindowThread():
 
 def loadLangFile(file: str, bundled: bool = False) -> dict:
     try:
-        path = os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file)
+        path = os.path.join(os.path.expanduser("~"), ".wingetui/lang/" + file)
         if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled:
             print(f"🟡 Using bundled lang file (forced={bundled})")
-            path = getPath("../lang/"+file)
+            path = getPath("../lang/" + file)
         else:
             print("🟢 Using cached lang file")
         with open(path, "r", encoding='utf-8') as file:
@@ -446,34 +511,41 @@ def loadLangFile(file: str, bundled: bool = False) -> dict:
         report(e)
         return {}
 
+
 def updateLangFile(file: str):
     global lang
     try:
         try:
-            oldlang = open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file), "rb").read()
+            oldlang = open(os.path.join(os.path.expanduser(
+                "~"), ".wingetui/lang/" + file), "rb").read()
         except FileNotFoundError:
             oldlang = ""
-        newlang = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/"+file)
+        newlang = urlopen(
+            "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/" + file)
         if newlang.status == 200:
             langdata: bytes = newlang.read()
             if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui/lang/")):
-                os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"))
+                os.makedirs(os.path.join(
+                    os.path.expanduser("~"), ".wingetui/lang/"))
             if oldlang != langdata:
                 print("🟢 Updating outdated language file...")
-                with open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/"+file), "wb") as f:
+                with open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/" + file), "wb") as f:
                     f.write(langdata)
                     f.close()
-                    lang = loadLangFile(file) | {"locale": lang["locale"] if "locale" in lang.keys() else "en"}
+                    lang = loadLangFile(file) | {
+                        "locale": lang["locale"] if "locale" in lang.keys() else "en"}
             else:
                 print("🔵 Language file up-to-date")
     except Exception as e:
         report(e)
 
+
 def formatPackageIdAsName(id: str):
     """
     Returns a more beautiful name for the given ID
     """
-    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")]).replace(".install", " ("+_("Install")+")").replace(".portable", " ("+_("Portable")+")")
+    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
+
 
 def getMaskedIcon(iconName: str) -> QIcon:
     if getMedia(iconName) in globals.maskedImages.keys():
@@ -487,11 +559,14 @@ def getMaskedIcon(iconName: str) -> QIcon:
             color = base_img.pixelColor(x, y)
             if color.green() >= 205 and color.red() <= 50 and color.blue() <= 50:
                 base_img.setPixelColor(x, y, QColor(R, G, B))
-    globals.maskedImages[getMedia(iconName)] = QIcon(QPixmap.fromImage(base_img))
+    globals.maskedImages[getMedia(iconName)] = QIcon(
+        QPixmap.fromImage(base_img))
     return globals.maskedImages[getMedia(iconName)]
+
 
 LATIN = "ä  æ  ǽ  đ ð ƒ ħ ı ł ø ǿ ö  œ  ß  ŧ ü  Ä  Æ  Ǽ  Đ Ð Ƒ Ħ I Ł Ø Ǿ Ö  Œ  ẞ  Ŧ Ü "
 ASCII = "ae ae ae d d f h i l o o oe oe ss t ue AE AE AE D D F H I L O O OE OE SS T UE"
+
 
 def normalizeString(s, outliers=str.maketrans(dict(zip(LATIN.split(), ASCII.split())))):
     # Got this function from https://stackoverflow.com/a/71408065/11632591
@@ -500,9 +575,9 @@ def normalizeString(s, outliers=str.maketrans(dict(zip(LATIN.split(), ASCII.spli
 
 def getPackageIcon(package) -> str:
     try:
-        id = package.Id
         iconId = package.getIconId()
-        iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
+        iconpath = os.path.join(os.path.expanduser(
+            "~"), f".wingetui/cachedmeta/{iconId}.icon.png")
         if not os.path.exists(iconpath):
             iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
             print("🔵 Found icon: ", iconurl)
@@ -526,66 +601,74 @@ def getPackageIcon(package) -> str:
             report(e)
         return ""
 
+
 def ConvertMarkdownToHtml(content: str) -> str:
     try:
         content = content.replace("\n\r", "<br>")
         content = content.replace("\n", "<br>")
-        firsttext = "<br>"+content
+        firsttext = "<br>" + content
         content = ""
         for line in firsttext.split("<br>"):
             if line:
-                content += line+"<br>"
-        content = "<br>"+content
-        
+                content += line + "<br>"
+        content = "<br>" + content
+
         # Convert headers
-        for match in re.findall("<br>[ ]*#{3,4}[^\>\<]*<br>", content):
+        for match in re.findall(r"<br>[ ]*#{3,4}[^\>\<]*<br>", content):
             match: str
-            content = content.replace(match, f'<br><b>{match.replace("#", "").strip()}</b>')
-        
-        for match in re.findall("<br>[ ]*##[^\>\<]*<br>", content):
+            content = content.replace(
+                match, f'<br><b>{match.replace("#", "").strip()}</b>')
+
+        for match in re.findall(r"<br>[ ]*##[^\>\<]*<br>", content):
             match: str
-            content = content.replace(match, f'<br><b style="font-size:12.5pt;">{match.replace("#", "").strip()}</b>')
-            
-        for match in re.findall("<br>#[^\>\<]*<br>", content):
+            content = content.replace(
+                match, f'<br><b style="font-size:12.5pt;">{match.replace("#", "").strip()}</b>')
+
+        for match in re.findall(r"<br>#[^\>\<]*<br>", content):
             match: str
-            content = content.replace(match, f'<br><b style="font-size:14pt;">{match.replace("#", "").strip()}</b>')
-            
+            content = content.replace(
+                match, f'<br><b style="font-size:14pt;">{match.replace("#", "").strip()}</b>')
+
         # Convert linked images to URLs
-        for match in re.findall("\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", content):
+        for match in re.findall(r"\[!\[[^\[\]]*\]\([^\(\)]*\)\]\([^\(\)]*\)", content):
             match: str
-            content = content.replace(match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
+            content = content.replace(
+                match, f'<a style="color:{blueColor}" href="{match.split("(")[-1][:-1]}">{match.split("]")[0][3:]}</a>')
 
         # Convert unlinked images to URLs
-        for match in re.findall("!\[[^\[\]]*\]\([^\(\)]*\)", content):
+        for match in re.findall(r"!\[[^\[\]]*\]\([^\(\)]*\)", content):
             match: str
-            content = content.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][2:]}</a>')
-        
+            content = content.replace(
+                match, f'<a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][2:]}</a>')
+
         # Convert URLs to <a href=></a> tags
-        for match in re.findall("\[[^\[\]]*\]\([^\(\)]*\)", content):
+        for match in re.findall(r"\[[^\[\]]*\]\([^\(\)]*\)", content):
             match: str
-            content = content.replace(match, f'<a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][1:]}</a>')
+            content = content.replace(
+                match, f'<a style="color:{blueColor}" href="{match.split("]")[1][1:-1]}">{match.split("]")[0][1:]}</a>')
 
         i = 0
         linelist = content.split("<br>")
-        while i<len(linelist):
+        while i < len(linelist):
             line = linelist[i]
-            
-            for match in re.findall("\*\*[^ ][^\*]+[^ ]\*\*", line):
-                line = line.replace(match, "<b>"+match[2:-2]+"</b>")
-                
-            for match in re.findall("\*[^ ][^\*]+[^ ]\*", line):
-                line = line.replace(match, "<i>"+match[1:-1]+"</i>")
-                
-            for match in re.findall("`[^ ][^`]+[^ ]`", line):
-                line = line.replace(match, f"<span style='font-family: \"Consolas\";background-color:{'#303030' if isDark() else '#eeeeee'}'>"+match[1:-1]+"</span>")
-                
+
+            for match in re.findall(r"\*\*[^ ][^\*]+[^ ]\*\*", line):
+                line = line.replace(match, "<b>" + match[2:-2] + "</b>")
+
+            for match in re.findall(r"\*[^ ][^\*]+[^ ]\*", line):
+                line = line.replace(match, "<i>" + match[1:-1] + "</i>")
+
+            for match in re.findall(r"`[^ ][^`]+[^ ]`", line):
+                line = line.replace(
+                    match, f"<span style='font-family: \"Consolas\";background-color:{'#303030' if isDark() else '#eeeeee'}'>" + match[1:-1] + "</span>")
+
             linelist[i] = line
             i += 1
-            
+
         content = "<br>".join(linelist)
-        
+
         content = content.replace("<br></b>", "</b><br>")
-        
+
         # Convert unordered lists
         content = content.replace("<br>- ", f"<br>{'&nbsp;'*4}● ")
         content = content.replace("<br> - ", f"<br>{'&nbsp;'*4}● ")
@@ -599,24 +682,31 @@ def ConvertMarkdownToHtml(content: str) -> str:
         content = content.replace("<br>   * ", f"<br>{'&nbsp;'*8}○ ")
         content = content.replace("<br>    * ", f"<br>{'&nbsp;'*12}□ ")
         content = content.replace("<br>     * ", f"<br>{'&nbsp;'*12}□ ")
-        
+
         # Convert numbered lists
         for number in range(0, 20):
-            content = content.replace(f"<br>{number}. ", f"<br>{'&nbsp;'*4}{number}. ")
-            content = content.replace(f"<br> {number}. ", f"<br>{'&nbsp;'*4}{number}. ")
-        
+            content = content.replace(
+                f"<br>{number}. ", f"<br>{'&nbsp;'*4}{number}. ")
+            content = content.replace(
+                f"<br> {number}. ", f"<br>{'&nbsp;'*4}{number}. ")
+
         # Filter empty newlines
-        content = content.replace("<br><br>", "<br>").replace("<br><br>", "<br>")
+        content = content.replace(
+            "<br><br>", "<br>").replace("<br><br>", "<br>")
         print(content)
         return content
     except Exception as e:
         report(e)
         return content
 
+
 globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
-globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings("DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings("DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings("DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
+    "DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
+    "DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
+    "DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
 
 
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
@@ -631,26 +721,20 @@ else:
 if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     try:
         os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui"))
-    except:
+    except Exception:
         pass
 
-GSUDO_EXECUTABLE = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
+GSUDO_EXECUTABLE = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings(
+    "UseUserGSudo") else shutil.which("gsudo")
 
 try:
     GSUDO_EXE_LOCATION = os.path.dirname(GSUDO_EXECUTABLE)
 except TypeError as e:
     report(e)
     GSUDO_EXE_LOCATION = os.path.expanduser("~")
-SHARE_DLL_PATH = os.path.join(os.path.join(realpath, "components"), "ShareLibrary.dll")
+SHARE_DLL_PATH = os.path.join(os.path.join(
+    realpath, "components"), "ShareLibrary.dll")
 
-#
-# Begin Import C#.NET DLLs
-#
- 
-
-#
-# End Import C#.NET DLLs
-#
 
 if isDark():
     blueColor = f"rgb({getColors()[1]})"
@@ -673,9 +757,10 @@ try:
             lang = loadLangFile(languages[ln]) | {"locale": ln}
             langFound = True
             if not getSettings("DisableLangAutoUpdater"):
-                Thread(target=updateLangFile, args=(languages[ln],), name=f"DAEMON: Update lang_{ln}.json").start()
+                Thread(target=updateLangFile, args=(
+                    languages[ln],), name=f"DAEMON: Update lang_{ln}.json").start()
             break
-    if (langFound == False):
+    if langFound is False:
         raise Exception(f"Value not found for {langNames}")
 except Exception as e:
     report(e)
@@ -703,9 +788,9 @@ except Exception as e:
 print(f"It took {time.time()-t0} to load all language files")
 
 
-
 Thread(target=checkQueue, daemon=True).start()
-Thread(target=foregroundWindowThread, daemon=True, name="Tools: get foreground window").start()
+Thread(target=foregroundWindowThread, daemon=True,
+       name="Tools: get foreground window").start()
 
 
 if __name__ == "__main__":

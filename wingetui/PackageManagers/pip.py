@@ -1,7 +1,14 @@
+"""
+
+wingetui/PackageManagers/pip.py
+
+This file holds the Pip Package Manager related code.
+
+"""
+
 import os
 import re
 import subprocess
-import sys
 
 from PySide6.QtCore import *
 from tools import *
@@ -49,7 +56,7 @@ class PipPackageManager(DynamicLoadPackageManager):
         """
         print(f"🔵 Starting {self.NAME} search for dynamic packages")
         try:
-            if shutil.which("parse_pip_search") == None:
+            if shutil.which("parse_pip_search") is None:
                 print("🟡 Installing pip-search, that was missing...")
                 Command = self.EXECUTABLE.split(" ") + ["install", "parse_pip_search"] + self.getParameters(InstallationOptions())
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
@@ -57,10 +64,10 @@ class PipPackageManager(DynamicLoadPackageManager):
             packages: list[Package] = []
             p = subprocess.Popen(f"parse_pip_search {query}", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if not DashesPassed:
                         if "----" in line:
@@ -72,7 +79,7 @@ class PipPackageManager(DynamicLoadPackageManager):
                             id = package[0]
                             version = package[1]
                             source = self.NAME
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Pip))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -90,10 +97,10 @@ class PipPackageManager(DynamicLoadPackageManager):
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list --outdated", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if not DashesPassed:
                         if "----" in line:
@@ -106,7 +113,7 @@ class PipPackageManager(DynamicLoadPackageManager):
                             version = package[1]
                             newVersion = package[2]
                             source = self.NAME
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Pip))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -136,7 +143,7 @@ class PipPackageManager(DynamicLoadPackageManager):
                             name = formatPackageIdAsName(package[0])
                             id = package[0]
                             version = package[1]
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME, Pip))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             if len(packages) == 0 and not second_attempt:
@@ -195,11 +202,11 @@ class PipPackageManager(DynamicLoadPackageManager):
                 details.InstallerURL = url["url"]
                 details.InstallerType = url["url"].split(".")[-1].capitalize().replace("Whl", "Wheel")
             if "size" in url:
-                details.InstallerSize = int(url["size"])/1000000
+                details.InstallerSize = int(url["size"]) / 1000000
             if "digests" in url:
                 if "sha256" in url["digests"]:
                     details.InstallerHash = url["digests"]["sha256"]
-                    
+
             details.Description = ConvertMarkdownToHtml(details.Description)
             details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
 
@@ -241,7 +248,7 @@ class PipPackageManager(DynamicLoadPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         idtoInstall = package.Id
         if options.Version:
-            idtoInstall += "=="+options.Version
+            idtoInstall += "==" + options.Version
         Command = self.EXECUTABLE.split(" ") + ["install", idtoInstall] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -253,7 +260,7 @@ class PipPackageManager(DynamicLoadPackageManager):
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         idtoInstall = package.Id
         if options.Version:
-            idtoInstall += "=="+options.Version
+            idtoInstall += "==" + options.Version
         Command = self.EXECUTABLE.split(" ") + ["install", idtoInstall, "--upgrade"] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -270,11 +277,12 @@ class PipPackageManager(DynamicLoadPackageManager):
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
-                output += line+"\n"
+                output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
+                print(other)
                 outputCode = RETURNCODE_FAILED
         if "--user" in output:
             outputCode = RETURNCODE_NEEDS_PIP_ELEVATION
@@ -298,11 +306,12 @@ class PipPackageManager(DynamicLoadPackageManager):
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
-                output += line+"\n"
+                output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
+                print(other)
                 outputCode = RETURNCODE_FAILED
         if "--user" in output:
             outputCode = RETURNCODE_NEEDS_PIP_ELEVATION
@@ -310,14 +319,15 @@ class PipPackageManager(DynamicLoadPackageManager):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -V", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("python.exe") != None
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("python.exe") is not None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
 
     def updateSources(self, signal: Signal = None) -> None:
-        pass # Handled by the package manager, no need to manually reload
+        pass  # Handled by the package manager, no need to manually reload
         if signal:
             signal.emit()
+
 
 Pip = PipPackageManager()

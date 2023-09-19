@@ -1,7 +1,13 @@
+"""
+
+wingetui/PackageManagers/winget.py
+
+This file holds the Winget Package Manager related code.
+
+"""
+
 import os
 import subprocess
-import sys
-import time
 
 from PySide6.QtCore import *
 from tools import *
@@ -29,7 +35,6 @@ class WingetPackageManager(DynamicPackageManager):
             EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_arm64", "winget.exe")
         else:
             EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_x64", "winget.exe")
-
 
     NAME = "Winget"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
@@ -79,7 +84,7 @@ class WingetPackageManager(DynamicPackageManager):
                     rawOutput += line
                     if not hasShownId:
                         if " Id " in line:
-                            line = line.replace("\x08-\x08\\\x08|\x08 \r","")
+                            line = line.replace("\x08-\x08\\\x08|\x08 \r", "")
                             for char in ("\r", "/", "|", "\\", "-"):
                                 line = line.split(char)[-1].strip()
                             hasShownId = True
@@ -89,7 +94,7 @@ class WingetPackageManager(DynamicPackageManager):
                             if len(line) == sourcePosition:
                                 noSourcesAvailable = True
                                 print("🟡 Winget reported no sources on getPackagesForQuery")
-                                    
+
                     elif "---" in line:
                         pass
                     else:
@@ -100,41 +105,41 @@ class WingetPackageManager(DynamicPackageManager):
                                 oName = name
                                 while "  " in oName:
                                     oName = oName.replace("  ", " ")
-                                idVersionSubstr = oName.split(" ")[-1]+idVersionSubstr
+                                idVersionSubstr = oName.split(" ")[-1] + idVersionSubstr
                                 name = " ".join(oName.split(" ")[:-1])
                             idVersionSubstr.replace("\t", " ")
                             while "  " in idVersionSubstr:
                                 idVersionSubstr = idVersionSubstr.replace("  ", " ")
                             iOffset = 0
                             id = idVersionSubstr.split(" ")[iOffset]
-                            ver = idVersionSubstr.split(" ")[iOffset+1]
+                            ver = idVersionSubstr.split(" ")[iOffset + 1]
                             if not noSourcesAvailable:
-                                source = "Winget: "+idVersionSubstr.split(" ")[iOffset+2]
+                                source = "Winget: " + idVersionSubstr.split(" ")[iOffset + 2]
                             if len(id) == 1:
                                 iOffset + 1
                                 id = idVersionSubstr.split(" ")[iOffset]
-                                ver = idVersionSubstr.split(" ")[iOffset+1]
+                                ver = idVersionSubstr.split(" ")[iOffset + 1]
                                 if not noSourcesAvailable:
-                                    source = "Winget: "+idVersionSubstr.split(" ")[iOffset+2]
+                                    source = "Winget: " + idVersionSubstr.split(" ")[iOffset + 2]
                             if ver.strip() in ("<", "-"):
                                 iOffset += 1
-                                ver = idVersionSubstr.split(" ")[iOffset+1]
+                                ver = idVersionSubstr.split(" ")[iOffset + 1]
                                 if not noSourcesAvailable:
-                                    source = "Winget: "+idVersionSubstr.split(" ")[iOffset+2]
-                                    
+                                    source = "Winget: " + idVersionSubstr.split(" ")[iOffset + 2]
+
                             if noSourcesAvailable:
                                 source = "Winget"
                             elif source.strip() == "":
-                                if len(globals.wingetSources.keys()>=0):
-                                    source = "Winget: "+list(globals.wingetSources.keys())[0]
+                                if len(globals.wingetSources.keys() >= 0):
+                                    source = "Winget: " + list(globals.wingetSources.keys())[0]
                                 else:
                                     source = "Winget"
- 
-                            if not "  " in name:
-                                if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+
+                            if "  " not in name:
+                                if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     packages.append(Package(name, id, ver, source, Winget))
                             else:
-                                if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                                     while "##" in name:
                                         name = name.replace("##", "#")
@@ -165,14 +170,14 @@ class WingetPackageManager(DynamicPackageManager):
             idPosition: int = 0
             versionPosition: int = 0
             newVerPosition: int = 0
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             noSourcesAvailable = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if not hasShownId:
                     if " Id " in line:
-                        line = line.replace("\x08-\x08\\\x08|\x08 \r","")
+                        line = line.replace("\x08-\x08\\\x08|\x08 \r", "")
                         for char in ("\r", "/", "|", "\\", "-"):
                             line = line.split(char)[-1].strip()
                         hasShownId = True
@@ -197,47 +202,47 @@ class WingetPackageManager(DynamicPackageManager):
                         while "  " in verElement:
                             verElement = verElement.replace("  ", " ")
                         iOffset = 0
-                        id = verElement.split(" ")[iOffset+0]
-                        ver = verElement.split(" ")[iOffset+1]
-                        newver = verElement.split(" ")[iOffset+2]
+                        id = verElement.split(" ")[iOffset]
+                        ver = verElement.split(" ")[iOffset + 1]
+                        newver = verElement.split(" ")[iOffset + 2]
                         if not noSourcesAvailable:
-                            source = "Winget: "+verElement.split(" ")[iOffset+3]
-                        if len(id)==1:
+                            source = "Winget: " + verElement.split(" ")[iOffset + 3]
+                        if len(id) == 1:
                             iOffset + 1
-                            id = verElement.split(" ")[iOffset+0]
-                            ver = verElement.split(" ")[iOffset+1]
-                            newver = verElement.split(" ")[iOffset+2]
+                            id = verElement.split(" ")[iOffset]
+                            ver = verElement.split(" ")[iOffset + 1]
+                            newver = verElement.split(" ")[iOffset + 2]
                             if not noSourcesAvailable:
-                                source = "Winget: "+verElement.split(" ")[iOffset+3]
+                                source = "Winget: " + verElement.split(" ")[iOffset + 3]
                         if ver.strip() in ("<", ">", "-"):
                             iOffset += 1
-                            ver = verElement.split(" ")[iOffset+1]
-                            newver = verElement.split(" ")[iOffset+2]
+                            ver = verElement.split(" ")[iOffset + 1]
+                            newver = verElement.split(" ")[iOffset + 2]
                             if not noSourcesAvailable:
-                                source = "Winget: "+verElement.split(" ")[iOffset+3]
+                                source = "Winget: " + verElement.split(" ")[iOffset + 3]
                         name = element[0:idPosition].strip()
-                            
+
                         if noSourcesAvailable:
                             source = "Winget"
                         elif source.strip() == "":
-                            if len(list(globals.wingetSources.keys())>=0):
+                            if len(list(globals.wingetSources.keys()) >= 0):
                                 print("🟠 No source found on Winget.getAvailableUpdates()!")
-                                source = "Winget: "+list(globals.wingetSources.keys())[0]
+                                source = "Winget: " + list(globals.wingetSources.keys())[0]
                             else:
                                 source = "Winget"
-                                
-                        if not "  " in name:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+
+                        if "  " not in name:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, ver, newver, source, Winget))
                         else:
                             name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                             while "##" in name:
                                 name = name.replace("##", "#")
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1]+id, ver, newver, source, Winget))
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1] + id, ver, newver, source, Winget))
                     except Exception as e:
                         report(e)
-                        packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:sourcePosition].split(" ")[0].strip(), "Winget: "+element[sourcePosition:].split(" ")[0].strip(), Winget))
+                        packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:sourcePosition].split(" ")[0].strip(), "Winget: " + element[sourcePosition:].split(" ")[0].strip(), Winget))
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
@@ -247,7 +252,7 @@ class WingetPackageManager(DynamicPackageManager):
             report(e)
             return []
 
-    def getInstalledPackages(self, second_attempt = False) -> list[Package]:
+    def getInstalledPackages(self, second_attempt: bool = False) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
@@ -289,9 +294,9 @@ class WingetPackageManager(DynamicPackageManager):
                     if id.count("GOG") == 1:
                         s = "GOG"
             if s == "Winget":
-                if len(id.split("_")[-1]) in (13, 14) and (len(id.split("_"))==2 or id == id.upper()):
+                if len(id.split("_")[-1]) in (13, 14) and (len(id.split("_")) == 2 or id == id.upper()):
                     s = "Microsoft Store"
-                elif len(id.split("_")[-1]) <= 13 and len(id.split("_"))==2 and "…" == id.split("_")[-1][-1]: # Delect microsoft store ellipsed packages
+                elif len(id.split("_")[-1]) <= 13 and len(id.split("_")) == 2 and "…" == id.split("_")[-1][-1]:  # Delect microsoft store ellipsed packages
                     s = "Microsoft Store"
             if len(id) in (13, 14) and (id.upper() == id):
                 s = "Winget: msstore"
@@ -306,13 +311,13 @@ class WingetPackageManager(DynamicPackageManager):
             hasShownId: bool = False
             idPosition: int = 0
             versionPosition: int = 0
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if not hasShownId:
                     if " Id " in line:
-                        line = line.replace("\x08-\x08\\\x08|\x08 \r","")
+                        line = line.replace("\x08-\x08\\\x08|\x08 \r", "")
                         for char in ("\r", "/", "|", "\\", "-"):
                             line = line.split(char)[-1].strip()
                         hasShownId = True
@@ -324,7 +329,7 @@ class WingetPackageManager(DynamicPackageManager):
                 elif "---" in line:
                     pass
                 else:
-                    packageLine = line.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010") # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
+                    packageLine = line.replace("2010  x", "2010 x").replace("Microsoft.VCRedist.2010", " Microsoft.VCRedist.2010")  # Fix an issue with MSVC++ 2010, where it shows with a double space (see https://github.com/marticliment/WingetUI#450)
                     try:
                         verElement = packageLine[idPosition:].strip()
                         verElement.replace("\t", " ")
@@ -337,53 +342,51 @@ class WingetPackageManager(DynamicPackageManager):
                         if len(id) > (versionPosition - idPosition):
                             id = " ".join(untrimmedVerelement.split(" ")[iOffset])
                             id = id.replace("  ", "#").replace(" ", "").replace("#", " ")
-                            ver = verElement.split(" ")[iOffset+1]
+                            ver = verElement.split(" ")[iOffset + 1]
                         if len(id) == 1:
                             iOffset + 1
-                            id = verElement.split(" ")[iOffset+0]
-                            ver = verElement.split(" ")[iOffset+1] 
+                            id = verElement.split(" ")[iOffset]
+                            ver = verElement.split(" ")[iOffset + 1]
                         if ver.strip() in ("<", "-", ">"):
                             iOffset += 1
-                            ver = verElement.split(" ")[iOffset+1]
+                            ver = verElement.split(" ")[iOffset + 1]
                         name = packageLine[0:idPosition].strip()
-                        
+
                         if name.strip() == "":
                             continue
-                        else:
-                            print('"'+name+'"')
 
                         if packageLine.strip().split(" ")[-1] in globals.wingetSources.keys():
-                            source = "Winget: "+packageLine.split( )[-1]
+                            source = "Winget: " + packageLine.split(" ")[-1]
                         else:
                             source = getSource(id)
-                            
-                        if not "  " in name:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+
+                        if "  " not in name:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id.strip(), ver, source, Winget))
                         else:
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and not id.strip() in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 print(f"🟡 package {name} failed parsing, going for method 2...")
                                 name = name.replace("  ", "#").replace("# ", "#").replace(" #", "#")
                                 while "##" in name:
                                     name = name.replace("##", "#")
-                                packages.append(Package(name.split("#")[0], (name.split("#")[-1]+id).strip(), ver, source, Winget))
+                                packages.append(Package(name.split("#")[0], (name.split("#")[-1] + id).strip(), ver, source, Winget))
                     except Exception as e:
-                        packages.append(Package(packageLine[0:idPosition].strip(), packageLine[idPosition:versionPosition].strip(), packageLine[versionPosition:sourcePosition].strip(), "Winget: "+packageLine[sourcePosition:].strip(), Winget))
+                        packages.append(Package(packageLine[0:idPosition].strip(), packageLine[idPosition:versionPosition].strip(), packageLine[versionPosition:sourcePosition].strip(), "Winget: " + packageLine[sourcePosition:].strip(), Winget))
                         if type(e) != IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
-            
+
             if len(packages) <= 2 and not second_attempt:
                 print("🟠 Chocolatey got too few installed packages, retrying")
                 return self.getInstalledPackages(second_attempt=True)
-            
+
             return packages
         except Exception as e:
             report(e)
             return []
 
-    def getPackageDetails(self, package: Package, defaultLocale = False) -> PackageDetails:
+    def getPackageDetails(self, package: Package) -> PackageDetails:
         """
         Will return a PackageDetails object containing the information of the given Package object
         """
@@ -402,8 +405,6 @@ class WingetPackageManager(DynamicPackageManager):
                 outputIsDescribing = False
                 outputIsShowingNotes = False
                 outputIsShowingTags = False
-                if defaultLocale:
-                    localeList = ["--locale", "en-US"]
                 p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements", "--locale", locale.getdefaultlocale()[0].replace("_", "-")], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                 output: list[str] = []
                 foundInstallers = True
@@ -419,7 +420,7 @@ class WingetPackageManager(DynamicPackageManager):
                             foundInstallers = False
                             print(f"🟠 The locale {locale.getdefaultlocale()[0]} was tagged as invalid!")
                         output.append(str(line, encoding='utf-8', errors="ignore"))
-                
+
                 if not foundInstallers:
                     p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements", "--locale", "en-US"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                     output: list[str] = []
@@ -431,9 +432,9 @@ class WingetPackageManager(DynamicPackageManager):
                                 return details
                             elif b"No applicable installer found; see logs for more details." in line:
                                 foundInstallers = False
-                                print(f"🟠 Couldn't found installers for locale en_US")
+                                print("🟠 Couldn't found installers for locale en_US")
                             output.append(str(line, encoding='utf-8', errors="ignore"))
-                            
+
                 if not foundInstallers:
                     p = subprocess.Popen([self.EXECUTABLE, "show", "--id", f"{package.Id}", "--exact", "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
                     output: list[str] = []
@@ -448,12 +449,11 @@ class WingetPackageManager(DynamicPackageManager):
                                 break
                             output.append(str(line, encoding='utf-8', errors="ignore"))
 
-
-                globals.PackageManagerOutput += "\n--------"+"\n".join(output)
+                globals.PackageManagerOutput += "\n--------" + "\n".join(output)
 
                 for line in output:
                     if line[0] == " " and outputIsDescribing:
-                        details.Description += "<br>"+line[2:]
+                        details.Description += "<br>" + line[2:]
                     else:
                         outputIsDescribing = False
                     if line[0] == " " and outputIsShowingNotes:
@@ -489,7 +489,7 @@ class WingetPackageManager(DynamicPackageManager):
                     elif "Installer Url:" in line:
                         details.InstallerURL = line.replace("Installer Url:", "").strip()
                         try:
-                            details.InstallerSize = int(urlopen(details.InstallerURL).length/1000000)
+                            details.InstallerSize = int(urlopen(details.InstallerURL).length / 1000000)
                         except Exception as e:
                             print("🟠 Can't get installer size:", type(e), str(e))
                         loadedInformationPieces += 1
@@ -509,7 +509,7 @@ class WingetPackageManager(DynamicPackageManager):
                         loadedInformationPieces += 1
                     elif "Installer Type:" in line:
                         details.InstallerType = line.replace("Installer Type:", "").strip()
-                        
+
             details.Description = ConvertMarkdownToHtml(details.Description)
             details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
 
@@ -584,7 +584,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
-        Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options) + ["--accept-package-agreements"]
+        Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -595,7 +595,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
-        Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + ["--include-unknown"] + self.getParameters(options) + ["--accept-package-agreements"]
+        Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + ["--include-unknown"] + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -612,15 +612,15 @@ class WingetPackageManager(DynamicPackageManager):
                 widget.addInfoLine.emit(line)
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line+"\n"
+                output += line + "\n"
         p.wait()
         match p.returncode:
             case 0x8A150011:
                 outputCode = RETURNCODE_INCORRECT_HASH
-            case 0x8A150109: # need restart
+            case 0x8A150109:  # need restart
                 outputCode = RETURNCODE_NEEDS_RESTART
             case other:
-                outputCode = p.returncode
+                outputCode = other
         if "No applicable upgrade found" in output or "No newer package versions are available from the configured sources" in output:
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
@@ -628,7 +628,7 @@ class WingetPackageManager(DynamicPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package, installed=True)
-        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if not "…" in package.Id else ["--name", '"'+package.Name+'"']) + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
@@ -645,7 +645,7 @@ class WingetPackageManager(DynamicPackageManager):
                 widget.addInfoLine.emit(line)
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line+"\n"
+                output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if "1603" in output or "0x80070005" in output or "Access is denied" in output:
@@ -654,33 +654,33 @@ class WingetPackageManager(DynamicPackageManager):
 
     def updatePackageId(self, package: Package, installed: bool = False) -> tuple[str, str]:
         if not installed:
-            p = subprocess.Popen([self.EXECUTABLE, "search", "--name", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "search", "--name", package.Name.replace("…", ""), "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         else:
-            p = subprocess.Popen([self.EXECUTABLE, "list", "--query", package.Name.replace("…", ""), "--accept-source-agreements"] ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "list", "--query", package.Name.replace("…", ""), "--accept-source-agreements"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         idSeparator = -1
-        rawoutput = "\n\n"+" ".join(p.args)
+        rawoutput = "\n\n" + " ".join(p.args)
         print(f"🔵 Finding Id for {package.Name} with command {p.args}")
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
             if line:
-                rawoutput += str(line, encoding='utf-8', errors="ignore")+"\n"
+                rawoutput += str(line, encoding='utf-8', errors="ignore") + "\n"
                 if idSeparator == -1:
-                    l = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r","").split("\r")[-1]
-                    if(" Id " in l):
-                        idSeparator = len(l.split("Id")[0])
+                    line = str(line, encoding='utf-8', errors="ignore").replace("\x08-\x08\\\x08|\x08 \r", "").split("\r")[-1]
+                    if " Id " in line:
+                        idSeparator = len(line.split("Id")[0])
                 else:
-                    if not b"---" in line:
+                    if b"---" not in line:
                         newId = str(line, "utf-8", errors="ignore")[idSeparator:].split(" ")[0].strip()
                         print(line, idSeparator)
-                        print(f"🔵 found Id", newId)
+                        print("🔵 found Id", newId)
                         package.Id = newId
                         globals.PackageManagerOutput += rawoutput + "\n\n"
-                        return                
-                    
+                        return
+
         globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
-        
+
     def loadSources(self, sourceSignal: Signal, finishSignal: Signal) -> None:
         print("🟢 Starting winget source search...")
         p = subprocess.Popen(f"{self.EXECUTABLE} source list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
@@ -705,11 +705,10 @@ class WingetPackageManager(DynamicPackageManager):
                 report(e)
         print("🟢 winget source search finished")
         finishSignal.emit()
-        
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
@@ -720,9 +719,9 @@ class WingetPackageManager(DynamicPackageManager):
         if signal:
             signal.emit()
 
+
 Winget = WingetPackageManager()
 
-
-if(__name__ == "__main__"):
+if __name__ == "__main__":
     os.chdir("..")
     os.system("cd ..;python -m __init__.py")

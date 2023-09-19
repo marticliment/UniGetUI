@@ -1,7 +1,16 @@
+"""
+
+wingetui/upgradeAssistant.py
+
+This file contains the code that will migrate WingetUI to C:\\Program Files when installing version 2.0.3
+
+"""
+
+
 import os
-import sys
 import winreg
 import glob
+
 
 def doTheMagic():
     try:
@@ -30,25 +39,25 @@ def doTheMagic():
         try:
             os.remove(os.path.join(os.path.expanduser("~"), "AppData/Roaming/Microsoft/Windows/Start Menu/Programs/WingetUI.lnk"))
         except Exception as e:
-            print("Can't delete start menu entry, ",e)
+            print("Can't delete start menu entry, ", e)
 
         try:
             os.remove(os.path.join(os.path.expanduser("~"), "AppData/Roaming/Microsoft/Windows/Start Menu/WingetUI.lnk"))
         except Exception as e:
-            print("Can't delete start menu entry, ",e)
+            print("Can't delete start menu entry, ", e)
 
         try:
             os.remove(os.path.join(os.path.expanduser("~"), "Desktop/WingetUI.lnk"))
         except Exception as e:
-            print("Can't delete desktop entry, ",e)
-            
-        for file in glob.glob(INSTALL_LOCATION+"/**/*.*", recursive=True):
+            print("Can't delete desktop entry, ", e)
+
+        for file in glob.glob(INSTALL_LOCATION + "/**/*.*", recursive=True):
             if "choco-cli" in file:
                 print(f"Not deleting {file} because is chocolatey component!")
             else:
                 try:
                     os.remove(file)
                 except Exception as e:
-                    print(f"Can't delete file {file}, ",e)
+                    print(f"Can't delete file {file}, ", e)
     except Exception as e:
         print(e)

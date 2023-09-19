@@ -1,3 +1,11 @@
+"""
+
+wingetui/lang/lang_tools.py
+
+This file contains a list of the available languages and other related information
+
+"""
+
 import os
 
 languageReference = {

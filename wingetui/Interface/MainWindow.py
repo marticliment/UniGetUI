@@ -1,3 +1,12 @@
+"""
+
+wingetui/Interface/MainWindow.py
+
+This file contains the code of the main WingetUI window.
+
+"""
+
+
 import ctypes
 import os
 import sys
@@ -7,10 +16,10 @@ import win32mica
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from storeEngine import *
+from Interface.CustomWidgets.InstallerWidgets import *
 from tools import *
 from tools import _
-from uiSections import *
+from Interface.SoftwareSections import *
 
 
 class RootWindow(QMainWindow):
@@ -29,17 +38,18 @@ class RootWindow(QMainWindow):
         self.setWindowTitle("WingetUI")
         self.setMinimumSize(700, 560)
         self.setObjectName("micawin")
-        self.setWindowIcon(QIcon(getMedia("icon", autoIconMode = False)))
+        self.setWindowIcon(QIcon(getMedia("icon", autoIconMode=False)))
         self.resize(QSize(1200, 700))
         try:
             rs = getSettingsValue("OldWindowGeometry").split(",")
-            assert (len(rs)==4), "Invalid window geometry format"
+            assert (len(rs) == 4), "Invalid window geometry format"
+
             geometry = QRect(int(rs[0]), int(rs[1]), int(rs[2]), int(rs[3]))
             if QApplication.primaryScreen().availableVirtualGeometry().contains(geometry):
                 self.move(geometry.x(), geometry.y())
                 if geometry.width() == self.screen().geometry().width() and geometry.x() == self.screen().geometry().x() and \
-                   geometry.height() == (self.screen().geometry().height()-71) and geometry.y() == (self.screen().geometry().y()+22):
-                       self.setWindowState(Qt.WindowState.WindowMaximized)
+                   geometry.height() == (self.screen().geometry().height() - 71) and geometry.y() == (self.screen().geometry().y() + 22):
+                    self.setWindowState(Qt.WindowState.WindowMaximized)
                 else:
                     self.setGeometry(geometry)
         except Exception as e:
@@ -51,7 +61,7 @@ class RootWindow(QMainWindow):
         self.blackmatt.move(0, 0)
         self.blackmatt.resize(self.size())
         self.installEventFilter(self)
-        win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(lambda: self.ApplyStyleSheetsAndIcons(True))) # Spawn a theme thread
+        win32mica.ApplyMica(1, win32mica.MicaTheme.AUTO, OnThemeChange=lambda _: self.callInMain.emit(lambda: self.ApplyStyleSheetsAndIcons(True)))  # Spawn a theme thread
         self.ApplyStyleSheetsAndIcons()
         print("🟢 Main application loaded...")
 
@@ -109,11 +119,10 @@ class RootWindow(QMainWindow):
         self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
-        
+
         self.helpAction = QAction(_("Help and documentation"), self)
         self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
         self.extrasMenu.addAction(self.helpAction)
-
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
@@ -144,8 +153,10 @@ class RootWindow(QMainWindow):
         self.extrasMenuButton.setCheckable(True)
         self.extrasMenuButton.setFixedHeight(40)
         self.extrasMenuButton.setObjectName("Headerbutton")
+
         def resetSelectionIndex():
             self.widgets[self.mainWidget.currentWidget()].setChecked(True)
+
         self.extrasMenu.aboutToHide.connect(resetSelectionIndex)
         self.buttonBox.addButton(self.extrasMenuButton)
         globals.extrasMenuButton = self.extrasMenuButton
@@ -194,7 +205,7 @@ class RootWindow(QMainWindow):
     def adjustInstallationsSize(self, offset: int = 0) -> None:
         if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():
             self.installationsWidget.maxHeight = self.installationsWidget.getFullHeight()
-        self.installationsWidget.maxHeight = self.installationsWidget.maxHeight+offset
+        self.installationsWidget.maxHeight = self.installationsWidget.maxHeight + offset
         if self.installationsWidget.maxHeight < 4 and self.installationsWidget.itemCount > 0:
             self.installationsWidget.maxHeight = 4
         self.installationsWidget.calculateSize()
@@ -222,17 +233,17 @@ class RootWindow(QMainWindow):
         return btn
 
     def warnAboutAdmin(self):
-            from tools import _
-            self.err = CustomMessageBox(self)
-            errorData = {
-                "titlebarTitle": "WingetUI",
-                "mainTitle": _("Administrator privileges"),
-                "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why.").format(showDetails=_("Show details")),
-                "buttonTitle": _("Ok"),
-                "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator."),
-                "icon": QIcon(getMedia("icon")),
-            }
-            self.err.showErrorMessage(errorData, showNotification=False)
+        from tools import _
+        self.err = CustomMessageBox(self)
+        errorData = {
+            "titlebarTitle": "WingetUI",
+            "mainTitle": _("Administrator privileges"),
+            "mainText": _("It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why.").format(showDetails=_("Show details")),
+            "buttonTitle": _("Ok"),
+            "errorDetails": _("There are two main reasons to not run WingetUI as administrator:\n The first one is that the Scoop package manager might cause problems with some commands when ran with administrator rights.\n The second one is that running WingetUI as administrator means that any package that you download will be ran as administrator (and this is not safe).\n Remeber that if you need to install a specific package as administrator, you can always right-click the item -> Install/Update/Uninstall as administrator."),
+            "icon": QIcon(getMedia("icon")),
+        }
+        self.err.showErrorMessage(errorData, showNotification=False)
 
     def isAdmin(self) -> bool:
         return ctypes.windll.shell32.IsUserAnAdmin() != 0
@@ -255,7 +266,7 @@ class RootWindow(QMainWindow):
             event.accept()
         if getSettings("DisablesystemTray"):
             if globals.pending_programs != []:
-                retValue = QMessageBox.question(self, _("Warning"), _("There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to quit WingetUI?"), buttons = QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes, defaultButton = QMessageBox.StandardButton.No)
+                retValue = QMessageBox.question(self, _("Warning"), _("There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to quit WingetUI?"), buttons=QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes, defaultButton=QMessageBox.StandardButton.No)
                 if retValue == QMessageBox.StandardButton.No:
                     event.ignore()
                     return
@@ -278,12 +289,12 @@ class RootWindow(QMainWindow):
 
     def askRestart_threaded(self, e: CustomMessageBox):
         questionData = {
-                "titlebarTitle": _("Restart required"),
-                "mainTitle": _("A restart is required"),
-                "mainText": _("Do you want to restart your computer now?"),
-                "acceptButtonTitle": _("Yes"),
-                "cancelButtonTitle": _("No"),
-                "icon": QIcon(getMedia("notif_restart")),
+            "titlebarTitle": _("Restart required"),
+            "mainTitle": _("A restart is required"),
+            "mainText": _("Do you want to restart your computer now?"),
+            "acceptButtonTitle": _("Yes"),
+            "cancelButtonTitle": _("No"),
+            "icon": QIcon(getMedia("notif_restart")),
         }
         if e.askQuestion(questionData):
             subprocess.run("shutdown /g /t 0 /d P:04:02", shell=True)
@@ -296,14 +307,14 @@ class RootWindow(QMainWindow):
             pass
         try:
             s = self.infobox.size()
-            if self.height()-100 >= 650:
+            if self.height() - 100 >= 650:
                 self.infobox.setFixedHeight(650)
-                self.infobox.move((self.width()-s.width())//2, (self.height()-650)//2)
+                self.infobox.move((self.width() - s.width()) // 2, (self.height() - 650) // 2)
             else:
-                self.infobox.setFixedHeight(self.height()-100)
-                self.infobox.move((self.width()-s.width())//2, 50)
+                self.infobox.setFixedHeight(self.height() - 100)
+                self.infobox.move((self.width() - s.width()) // 2, 50)
 
-            self.infobox.iv.resize(self.width()-100, self.height()-100)
+            self.infobox.iv.resize(self.width() - 100, self.height() - 100)
 
             globals.centralTextureImage.move(0, 0)
             globals.centralTextureImage.resize(event.size())
@@ -313,7 +324,7 @@ class RootWindow(QMainWindow):
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
         return super().resizeEvent(event)
 
-    def showWindow(self, index = -2):
+    def showWindow(self, index=-2):
         if globals.lastFocusedWindow != self.winId() or index >= -1:
             if not self.window().isMaximized():
                 self.window().show()
@@ -338,7 +349,7 @@ class RootWindow(QMainWindow):
                         if globals.updatesAvailable > 0:
                             self.widgets[self.updates].click()
                         else:
-                            pass # Show on the default window
+                            pass  # Show on the default window
                     case 0:
                         self.widgets[self.discover].click()
                     case 1:
@@ -355,7 +366,6 @@ class RootWindow(QMainWindow):
             self.hide()
             globals.lastFocusedWindow = 0
 
-
     def showEvent(self, event: QShowEvent) -> None:
         try:
             globals.uninstall.startLoadingPackages()
@@ -364,7 +374,7 @@ class RootWindow(QMainWindow):
         return super().showEvent(event)
 
     def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):
-        
+
         if isDark():
             self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
         else:
@@ -381,7 +391,6 @@ class RootWindow(QMainWindow):
                 case "light":
                     mode = win32mica.MicaTheme.LIGHT
             win32mica.ApplyMica(self.winId(), mode)
-            
 
     def ApplyIcons(self):
         globals.maskedImages = {}
@@ -392,7 +401,7 @@ class RootWindow(QMainWindow):
             widget.setIcon(QIcon(getMedia(self.DynamicIconsToApply[widget])))
         for manager in PackageManagersList:
             manager.LoadedIcons = False
-            
+
     def enterEvent(self, event: QEnterEvent) -> None:
         globals.lastFocusedWindow = self.winId()
         return super().enterEvent(event)
@@ -407,5 +416,7 @@ class RootWindow(QMainWindow):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
         return super().mouseReleaseEvent(event)
-if(__name__=="__main__"):
+
+
+if __name__ == "__main__":
     import __init__

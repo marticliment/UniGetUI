@@ -1,4 +1,14 @@
-from typing import Optional
+"""
+
+wingetui/Interface/CustomWidgets/GenericWidgets.py
+
+This file contains the custom widgets that have been modified but that were not built for a singe purpose, since they are generic widgets.
+Generally they are optimized versions of Qt standard widgets.
+
+
+
+"""
+
 
 import PySide6.QtCore
 import PySide6.QtGui
@@ -18,11 +28,41 @@ class MessageBox(QMessageBox):
         ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
         self.setStyleSheet("QMessageBox{background-color: transparent;}")
 
+
+class CustomLabel(QLabel):
+    def __init__(self, text: str = "", stylesheet: str = ""):
+        super().__init__(text)
+        self.setStyleSheet(stylesheet)
+        self.setTextFormat(Qt.RichText)
+        self.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.setWordWrap(True)
+        self.setOpenExternalLinks(True)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showmenu)
+        self.lineedit = QLineEdit(self)
+        self.lineedit.hide()
+        self.lineedit.setReadOnly(True)
+
+    def setText(self, text: str) -> None:
+        super().setText(text)
+
+    def showmenu(self, pos: QPoint) -> None:
+        self.lineedit.setText(self.selectedText())
+        self.lineedit.selectAll()
+        c = QLineEdit.createStandardContextMenu(self.lineedit)
+        selAction = c.actions()[-1]
+        selAction.setEnabled(True)
+        selAction.triggered.connect(lambda: self.setSelection(0, len(self.text())))
+        ApplyMenuBlur(c.winId().__int__(), c)
+        c.exec(QCursor.pos())
+
+
 class SmoothScrollArea(QScrollArea):
     missingScroll = 0
     buttonVisible = False
     registeredThemeEvent = False
-    def __init__(self, parent = None):
+
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
         self.setAutoFillBackground(True)
         self.smoothScrollAnimation = QVariantAnimation(self)
@@ -40,7 +80,7 @@ class SmoothScrollArea(QScrollArea):
         self.buttonOpacity.setOpacity(0)
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
-        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
+        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v / 100))
 
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
@@ -55,7 +95,7 @@ class SmoothScrollArea(QScrollArea):
         else:
             self.missingScroll = 0
         finalPos += self.missingScroll
-        self.showTopButton() if finalPos>20 else self.hideTopButton()
+        self.showTopButton() if finalPos > 20 else self.hideTopButton()
         if finalPos < 0:
             finalPos = 0
         elif finalPos > self.verticalScrollBar().maximum():
@@ -96,35 +136,37 @@ class SmoothScrollArea(QScrollArea):
         if not self.buttonVisible:
             self.buttonVisible = True
             self.goTopButton.raise_()
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
+            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
             self.buttonAnimation.setEndValue(100)
             self.buttonAnimation.start()
 
     def hideTopButton(self):
         if self.buttonVisible:
             self.buttonVisible = False
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
+            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
             self.buttonAnimation.setEndValue(0)
             self.buttonAnimation.start()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.goTopButton.move(self.width()-48, self.height()-48)
+        self.goTopButton.move(self.width() - 48, self.height() - 48)
         return super().resizeEvent(event)
-    
+
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
             self.ApplyIcons()
         return super().showEvent(event)
-    
+
     def ApplyIcons(self):
         self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+
 
 class TreeWidget(QTreeWidget):
     missingScroll: int = 0
     buttonVisible: bool = False
     registeredThemeEvent = False
+
     def __init__(self, emptystr: str = "") -> None:
         super().__init__()
         self.smoothScrollAnimation = QVariantAnimation(self)
@@ -136,7 +178,7 @@ class TreeWidget(QTreeWidget):
         self.setSortingEnabled(True)
         self.label = QLabel(emptystr, self)
         self.label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-        op=QGraphicsOpacityEffect(self.label)
+        op = QGraphicsOpacityEffect(self.label)
         op.setOpacity(0.5)
         self.setRootIsDecorated(False)
         self.label.setGraphicsEffect(op)
@@ -158,21 +200,20 @@ class TreeWidget(QTreeWidget):
         self.buttonOpacity.setOpacity(0)
         self.buttonAnimation = QVariantAnimation(self)
         self.buttonAnimation.setDuration(100)
-        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v/100))
+        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v / 100))
         self.goTopButton.setIcon(QIcon(getMedia("gotop")))
-
 
     def connectCustomScrollbar(self, scrollbar: QScrollBar):
         try:
             self.goTopButton.clicked.disconnect()
         except RuntimeError:
             cprint("Can't disconnect")
-        scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v>20 else self.hideTopButton())
+        scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v > 20 else self.hideTopButton())
         self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.label.move((self.width()-self.label.width())//2, (self.height()-self.label.height())//2,)
-        self.goTopButton.move(self.width()-24, self.height()-48)
+        self.label.move((self.width() - self.label.width()) // 2, (self.height() - self.label.height()) // 2,)
+        self.goTopButton.move(self.width() - 24, self.height() - 48)
         return super().resizeEvent(event)
 
     def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
@@ -183,14 +224,14 @@ class TreeWidget(QTreeWidget):
         if not self.buttonVisible:
             self.buttonVisible = True
             self.goTopButton.raise_()
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
+            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
             self.buttonAnimation.setEndValue(100)
             self.buttonAnimation.start()
 
     def hideTopButton(self):
         if self.buttonVisible:
             self.buttonVisible = False
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity()*100))
+            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
             self.buttonAnimation.setEndValue(0)
             self.buttonAnimation.start()
 
@@ -246,14 +287,14 @@ class TreeWidget(QTreeWidget):
                 event.ignore()
                 return
         return super().keyPressEvent(event)
-    
+
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
             self.ApplyIcons()
         return super().showEvent(event)
-    
+
     def ApplyIcons(self):
         self.goTopButton.setIcon(QIcon(getMedia("gotop")))
 
@@ -265,6 +306,7 @@ class PackageListSortingModel(QAbstractItemModel):
             column = 6
         return super().sort(column, order)
 
+
 class ScrollWidget(QWidget):
     def __init__(self, scroller: QWidget) -> None:
         self.scroller = scroller
@@ -274,8 +316,9 @@ class ScrollWidget(QWidget):
         self.scroller.wheelEvent(event)
         return super().wheelEvent(event)
 
+
 class CustomLineEdit(QLineEdit):
-    def __init__(self, parent = None):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent=parent)
         self.textChanged.connect(self.updateTextColor)
         self.updateTextColor(self.text())
@@ -290,38 +333,42 @@ class CustomLineEdit(QLineEdit):
     def updateTextColor(self, text: str) -> None:
         if text == "":
             self.startStyleSheet = super().styleSheet()
-            super().setStyleSheet(self.startStyleSheet+"color: grey;")
+            super().setStyleSheet(self.startStyleSheet + "color: grey;")
         else:
             super().setStyleSheet(self.startStyleSheet)
 
     def setStyleSheet(self, styleSheet: str) -> None:
         if self.text() == "":
             self.startStyleSheet = styleSheet
-            super().setStyleSheet(self.startStyleSheet+"color: grey;")
+            super().setStyleSheet(self.startStyleSheet + "color: grey;")
         else:
             super().setStyleSheet(self.startStyleSheet)
 
+
 class ResizableWidget(QWidget):
     resized = Signal(QResizeEvent)
-    def __init__(self, parent = None) -> None:
+
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resized.emit(event)
         return super().resizeEvent(event)
 
+
 class DynamicScrollArea(QWidget):
     maxHeight = 200
     items = []
-    def __init__(self, resizeBar: QWidget = None, parent = None) -> None:
+
+    def __init__(self, resizeBar: QWidget = None, parent: QWidget = None) -> None:
         super().__init__(parent)
-        l = QVBoxLayout()
+        vLayout = QVBoxLayout()
         self.resizeBar = resizeBar
-        l.setContentsMargins(5, 0, 5, 5)
+        vLayout.setContentsMargins(5, 0, 5, 5)
         self.scrollArea = SmoothScrollArea()
         self.coushinWidget = QWidget()
-        l.addWidget(self.coushinWidget)
-        l.addWidget(self.scrollArea)
+        vLayout.addWidget(self.coushinWidget)
+        vLayout.addWidget(self.scrollArea)
         self.w = ResizableWidget()
         self.w.resized.connect(self.rss)
         self.vlayout = QVBoxLayout()
@@ -330,7 +377,7 @@ class DynamicScrollArea(QWidget):
         self.scrollArea.setWidget(self.w)
         self.scrollArea.setFrameShape(QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
-        self.setLayout(l)
+        self.setLayout(vLayout)
         self.itemCount = 0
         self.rss()
 
@@ -354,7 +401,7 @@ class DynamicScrollArea(QWidget):
         """
         Returns the full height of the widget
         """
-        return self.w.sizeHint().height()+20
+        return self.w.sizeHint().height() + 20
 
     def removeItem(self, item: QWidget):
         try:
@@ -383,9 +430,11 @@ class DynamicScrollArea(QWidget):
         if self.resizeBar:
             self.resizeBar.show()
 
+
 class TreeWidgetItemWithQAction(QTreeWidgetItem):
     itemAction: QAction = QAction
-    def __init__(self, parent = None):
+
+    def __init__(self, parent: QWidget = None):
         super().__init__()
 
     def setAction(self, action: QAction):
@@ -410,16 +459,20 @@ class TreeWidgetItemWithQAction(QTreeWidgetItem):
     def treeWidget(self) -> TreeWidget:
         return super().treeWidget()
 
+
 class PushButtonWithAction(QPushButton):
     action: QAction = None
+
     def __init__(self, text: str = ""):
         super().__init__(text)
         self.action = QAction(text, self)
         self.action.triggered.connect(self.click)
 
+
 class CustomComboBox(QComboBox):
     disableScrolling = False
     registeredThemeEvent = False
+
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setAutoFillBackground(True)
@@ -439,7 +492,6 @@ class CustomComboBox(QComboBox):
         v = self.view().window()
         ApplyMenuBlur(v.winId().__int__(), v)
 
-        
     def wheelEvent(self, e: QWheelEvent) -> None:
         if self.disableScrolling:
             e.ignore()
@@ -450,6 +502,7 @@ class CustomComboBox(QComboBox):
     def dg(self):
         pass
 
+
 class CustomScrollBar(QScrollBar):
     def __init__(self):
         super().__init__()
@@ -458,11 +511,13 @@ class CustomScrollBar(QScrollBar):
     def showHideIfNeeded(self, min: int, max: int):
         self.setVisible(min != max)
 
+
 class CustomPlainTextEdit(QPlainTextEdit):
     def contextMenuEvent(self, e: QContextMenuEvent) -> None:
         menu = self.createStandardContextMenu()
         ApplyMenuBlur(menu.winId(), menu)
         menu.exec(QCursor.pos())
+
 
 class NotClosableWidget(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
@@ -470,6 +525,7 @@ class NotClosableWidget(QWidget):
             event.ignore()
             return
         return super().closeEvent(event)
+
 
 class ClosableOpaqueMessage(QWidget):
     def __init__(self, text: str = None) -> None:
@@ -543,570 +599,11 @@ class ClosableOpaqueMessage(QWidget):
     def setIcon(self, icon: QIcon) -> None:
         self.image.setPixmap(icon.pixmap(QSize(self.image.size())))
 
+
 class TenPxSpacer(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.setFixedWidth(10)
-
-class CollapsableSection(QWidget):
-    oldScrollValue = 0
-    showing = False
-    searchMode = False
-    childrenw = []
-    callInMain = Signal(object)
-    baseHeight: int = 70
-    registeredThemeEvent = False
-    def __init__(self, text: str, icon: str, descText: str = "No description provided"):
-        if isDark():
-            self.iconMode = "white"
-            semib = "Semib"
-        else:
-            self.iconMode = "black"
-            semib = ""
-        super().__init__()
-        self.callInMain.connect(lambda f: f())
-        self.icon = icon
-        self.setObjectName("subtitleLabel")
-        self.label = QLabel(text, self)
-        self.setMaximumWidth(1000)
-        self.descLabel = QLabel(descText, self)
-        self.bg70 = QWidget(self)
-        self.bg70.setObjectName("micaRegularBackground")
-        self.descLabel.setObjectName("greyishLabel")
-        if lang["locale"] == "zh_TW":
-            self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft JhengHei UI\";")
-            self.descLabel.setStyleSheet("font-size: 8pt;background: none;font-family: \"Microsoft JhengHei UI\";")
-        elif lang["locale"] == "zh_CN":
-            self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft YaHei UI\";")
-            self.descLabel.setStyleSheet("font-size: 8pt;background: none;font-family: \"Microsoft YaHei UI\";")
-        else:
-            self.label.setStyleSheet(f"font-size: 10pt;background: none;font-family: \"Segoe UI Variable Text\";")
-            self.descLabel.setStyleSheet(f"font-size: 8pt;background: none;font-family: \"Segoe UI Variable Text\";")
-
-        self.image = QLabel(self)
-        self.image.setStyleSheet(f"padding: 1px;background: transparent;")
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.compressibleWidget = QWidget(self)
-        self.compressibleWidget.show()
-        #self.compressibleWidget.setAutoFillBackground(True)
-        self.compressibleWidget.setObjectName("compressibleWidget")
-        self.compressibleWidget.setStyleSheet("#compressibleWidget{background-color: transparent;}")
-
-        self.showHideButton = QPushButton("", self)
-        self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-        self.showHideButton.setStyleSheet("border: none; background-color:none;")
-        self.showHideButton.clicked.connect(self.toggleChilds)
-        l = QVBoxLayout()
-        l.setSpacing(0)
-        l.setContentsMargins(0, 0, 0, 0)
-        self.childsVisible = False
-        self.compressibleWidget.setLayout(l)
-
-        self.setStyleSheet(f"QWidget#subtitleLabel{{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}}")
-        self.bg70.setStyleSheet(f"QWidget#subtitleLabel{{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}}")
-
-
-        self.showAnim = QVariantAnimation(self.compressibleWidget)
-        self.showAnim.setEasingCurve(QEasingCurve.InOutCubic)
-        self.showAnim.setStartValue(0)
-        self.showAnim.setEndValue(1000)
-        self.showAnim.valueChanged.connect(lambda v: self.setChildFixedHeight(v))
-        self.showAnim.setDuration(300)
-        self.showAnim.finished.connect(self.invertNotAnimated)
-        self.hideAnim = QVariantAnimation(self.compressibleWidget)
-        self.hideAnim.setEndValue(0)
-        self.hideAnim.setEasingCurve(QEasingCurve.InOutCubic)
-        self.hideAnim.valueChanged.connect(lambda v: self.setChildFixedHeight(v))
-        self.hideAnim.setDuration(300)
-        self.hideAnim.finished.connect(self.invertNotAnimated)
-        self.scrollAnim = QVariantAnimation(self)
-        self.scrollAnim.setEasingCurve(QEasingCurve.InOutCubic)
-        self.scrollAnim.valueChanged.connect(lambda i: self.window().scrollArea.verticalScrollBar().setValue(i))
-        self.scrollAnim.setDuration(200)
-        self.NotAnimated = True
-
-        self.button = QPushButton("", self)
-        self.button.setObjectName("subtitleLabelHover")
-        self.button.clicked.connect(self.toggleChilds)
-        self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-        self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")
-        self.setChildFixedHeight(0)
-
-        self.newShowAnim = QVariantAnimation(self)
-        self.newShowAnim.setEasingCurve(QEasingCurve.OutQuart)
-        self.newShowAnim.setStartValue(self.baseHeight-20)
-        self.newShowAnim.setEndValue(self.baseHeight)
-        self.newShowAnim.setDuration(200)
-        self.newShowAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-(self.baseHeight-20))/20)))
-
-        self.newHideAnim = QVariantAnimation(self)
-        self.newHideAnim.setEasingCurve(QEasingCurve.InQuart)
-        self.newHideAnim.setStartValue(self.baseHeight)
-        self.newHideAnim.setEndValue(self.baseHeight-20)
-        self.newHideAnim.setDuration(200)
-        self.newHideAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-(self.baseHeight-20))/20)))
-        self.newHideAnim.finished.connect(lambda: (self.compressibleWidget.hide(),self.setChildFixedHeight(self.baseHeight)))
-
-        self.childrenOpacity = QGraphicsOpacityEffect(self.compressibleWidget)
-        self.childrenOpacity.setOpacity(0)
-        self.compressibleWidget.setGraphicsEffect(self.childrenOpacity)
-
-        self.compressibleWidget.move((-1500),(-1500))
-        self.ApplyIcons()
-
-    def showHideChildren(self):
-        self.hideChildren()
-        self.showChildren()
-
-    def hideChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.show())
-        self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
-        self.callInMain.emit(self.newHideAnim.start)
-        time.sleep(0.2)
-        self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
-        self.callInMain.emit(lambda: self.setChildFixedHeight(self.baseHeight))
-
-    def showChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (self.baseHeight-20)))
-        self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
-        self.callInMain.emit(lambda: self.compressibleWidget.show())
-        self.callInMain.emit(self.newShowAnim.start)
-
-    def setChildFixedHeight(self, h: int) -> None:
-        self.compressibleWidget.setFixedHeight(h)
-        self.setFixedHeight(h+self.baseHeight)
-
-    def invertNotAnimated(self):
-        self.NotAnimated = not self.NotAnimated
-
-    def toggleChilds(self):
-        if self.childsVisible:
-            self.childsVisible = False
-            self.invertNotAnimated()
-            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-            Thread(target=lambda: (time.sleep(0.2),self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"),self.bg70.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
-            Thread(target=self.hideChildren).start()
-        else:
-            self.showHideButton.setIcon(QIcon(getMedia("expand")))
-            self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-            self.bg70.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-            self.invertNotAnimated()
-            self.childsVisible = True
-            Thread(target=self.showChildren).start()
-
-    def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
-
-    def setIcon(self, icon: str) -> None:
-        self.image.setPixmap(QIcon(icon).pixmap(QSize((24), (24))))
-
-    def resizeEvent(self, event: QResizeEvent = None) -> None:
-        if not self.searchMode:
-            self.image.show()
-            self.showHideButton.show()
-            self.button.show()
-            self.label.show()
-            self.descLabel.show()
-            self.button.move(0, 0)
-            self.button.resize(self.width(), (70))
-            self.showHideButton.setIconSize(QSize((12), (12)))
-            self.showHideButton.setFixedSize(30, 30)
-            self.showHideButton.move(self.width()-(55), (20))
-
-            self.label.move((60), (17))
-            self.label.setFixedHeight(20)
-            self.descLabel.move((60), (37))
-            self.descLabel.setFixedHeight(20)
-            self.descLabel.setFixedWidth(self.width()-(70)-(70))
-
-            self.image.move((17), (20))
-            self.image.setFixedHeight(30)
-            if self.childsVisible and self.NotAnimated:
-                self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(70))
-                self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
-            elif self.NotAnimated:
-                self.setFixedHeight(70)
-            self.compressibleWidget.move(0, (70))
-            self.compressibleWidget.setFixedWidth(self.width())
-            self.image.setFixedHeight(30)
-            self.label.setFixedWidth(self.width()-(140))
-            self.image.setFixedWidth(30)
-            self.bg70.show()
-            self.bg70.move(0, 0)
-            self.bg70.resize(self.width()-(10), (70))
-        else:
-            self.bg70.hide()
-            self.image.hide()
-            self.showHideButton.hide()
-            self.button.hide()
-            self.image.hide()
-            self.label.hide()
-            self.descLabel.hide()
-
-            self.setFixedHeight(self.compressibleWidget.sizeHint().height())
-            self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
-            self.compressibleWidget.move(0, 0)
-            self.compressibleWidget.setFixedWidth(self.width())
-        if event:
-            return super().resizeEvent(event)
-
-    def addWidget(self, widget: QWidget) -> None:
-        self.compressibleWidget.layout().addWidget(widget)
-        self.childrenw.append(widget)
-
-    def getChildren(self) -> list:
-        return self.childrenw
-
-    def showEvent(self, event: QShowEvent) -> None:
-        if not self.registeredThemeEvent:
-            self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
-            self.ApplyIcons()
-        return super().showEvent(event)
-            
-    def ApplyIcons(self):
-        if isDark():
-            self.setIcon(self.icon.replace("black", "white"))
-        else:
-            self.setIcon(self.icon.replace("white", "black"))
-        if self.childsVisible:
-            self.showHideButton.setIcon(QIcon(getMedia("expand")))
-        else:
-            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-
-
-class SmallCollapsableSection(CollapsableSection):
-    oldScrollValue = 0
-    showing = False
-    childrenw = []
-    callInMain = Signal(object)
-    def __init__(self, text: str, icon: str):
-        self.baseHeight = 40
-        super().__init__(text, icon, descText="")
-        self.setFixedHeight(40)
-
-    def showHideChildren(self):
-        self.hideChildren()
-        self.showChildren()
-
-    def hideChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.show())
-        self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
-        self.callInMain.emit(self.newHideAnim.start)
-        time.sleep(0.2)
-        self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
-        self.callInMain.emit(lambda: self.setChildFixedHeight(40))
-
-    def showChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (20)))
-        self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
-        self.callInMain.emit(lambda: self.compressibleWidget.show())
-        self.callInMain.emit(self.newShowAnim.start)
-
-    def setChildFixedHeight(self, h: int) -> None:
-        self.compressibleWidget.setFixedHeight(h)
-        self.setFixedHeight(h+(40))
-
-    def invertNotAnimated(self):
-        self.NotAnimated = not self.NotAnimated
-
-    def toggleChilds(self):
-        if self.childsVisible:
-            self.childsVisible = False
-            self.invertNotAnimated()
-            self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-            Thread(target=lambda: (time.sleep(0.2),self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"),self.bg70.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
-            Thread(target=self.hideChildren).start()
-        else:
-            self.showHideButton.setIcon(QIcon(getMedia("expand")))
-            self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-            self.bg70.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-            self.invertNotAnimated()
-            self.childsVisible = True
-            Thread(target=self.showChildren).start()
-
-    def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
-
-    def setIcon(self, icon: str) -> None:
-        self.image.setPixmap(QIcon(icon).pixmap(QSize((24), (24))))
-
-    def resizeEvent(self, event: QResizeEvent = None) -> None:
-        self.image.show()
-        self.showHideButton.show()
-        self.button.show()
-        self.label.show()
-        self.button.move(0, 0)
-        self.button.resize(self.width(), (40))
-        self.showHideButton.setIconSize(QSize((12), (12)))
-        self.showHideButton.setFixedSize(30, 30)
-        self.showHideButton.move(self.width()-(45), (5))
-
-        self.label.move((45), (10))
-        self.label.setFixedHeight(20)
-
-        self.image.move((10), (8))
-        self.image.setFixedHeight(24)
-        if self.childsVisible and self.NotAnimated:
-            self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(40))
-            self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
-        elif self.NotAnimated:
-            self.setFixedHeight(40)
-        self.compressibleWidget.move(0, (40))
-        self.compressibleWidget.setFixedWidth(self.width())
-        self.label.setFixedWidth(self.width()-(140))
-        self.image.setFixedWidth(30)
-        self.bg70.show()
-        self.bg70.move(0, 0)
-        self.bg70.resize(self.width()-(0), (40))
-
-    def addWidget(self, widget: QWidget) -> None:
-        self.compressibleWidget.layout().addWidget(widget)
-        self.childrenw.append(widget)
-
-    def getChildren(self) -> list:
-        return self.childrenw
-
-class SectionHWidget(QWidget):
-    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
-        super().__init__()
-        if not lastOne:
-            self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.setAutoFillBackground(True)
-        self.setLayout(QHBoxLayout())
-        self.setObjectName("stBtn")
-        self.setFixedHeight(40)
-        if smallerMargins:
-            self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
-            self.setContentsMargins(0, 0, 0, 0)
-        else:
-            self.setContentsMargins(40, 0, 0, 0)
-
-    def addWidget(self, w: QWidget):
-        self.layout().addWidget(w)
-        if w.sizeHint().height()+20 > self.height():
-            self.setFixedHeight(w.sizeHint().height()+20)
-
-    def addStretch(self):
-        self.layout().addStretch()
-        
-class SectionVWidget(QWidget):
-    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
-        super().__init__()
-        if not lastOne:
-            self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.setAutoFillBackground(True)
-        self.setLayout(QVBoxLayout())
-        self.setObjectName("stBtn")
-        if smallerMargins:
-            self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
-            self.setContentsMargins(5, 0, 0, 0)
-        else:
-            self.setContentsMargins(40, 0, 0, 0)
-
-    def addWidget(self, w: QWidget):
-        self.layout().addWidget(w)
-        
-    def addStretch(self):
-        self.layout().addStretch()
-
-
-class SectionButton(QWidget):
-    clicked = Signal()
-    def __init__(self, text="", btntext="", parent=None, h = 30):
-        super().__init__(parent)
-        self.fh = h
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.button = QPushButton(btntext+" ", self)
-        self.button.setLayoutDirection(Qt.RightToLeft)
-        self.setObjectName("stBtn")
-        self.button.setMinimumWidth(250)
-        self.setFixedHeight(50)
-        self.button.setFixedHeight(30)
-        self.label = QLabel(text, self)
-        if lang["locale"] == "zh_TW":
-            self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
-            self.button.setStyleSheet("font-size: 10pt;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
-        elif lang["locale"] == "zh_CN":
-            self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft YaHei UI\";font-weight: 450;")
-            self.button.setStyleSheet("font-size: 10pt;font-family: \"Microsoft YaHei UI\";font-weight: 450;")
-        else:
-            self.label.setStyleSheet("font-size: 9pt;background: none;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
-            self.button.setStyleSheet("font-size: 9pt;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
-        self.label.setObjectName("StLbl")
-        self.button.clicked.connect(self.clicked.emit)
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(self.label)
-        self.layout().addStretch()
-        self.layout().addWidget(self.button)
-        self.layout().setContentsMargins(70, 0, 20, 0)
-
-    def setIcon(self, icon: QIcon) -> None:
-        self.button.setIcon(icon)
-
-    def text(self) -> str:
-        return self.label.text() + " " + self.button.text()
-
-class SectionComboBox(QWidget):
-    textChanged = Signal(str)
-    valueChanged = Signal(str)
-    def __init__(self, text="", parent=None, buttonEnabled: bool = True):
-        super().__init__(parent)
-        self.buttonOn = buttonEnabled
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.combobox = CustomComboBox(self)
-        self.combobox.disableScrolling = True
-        self.combobox.setFixedWidth(250)
-        self.setObjectName("stBtn")
-        self.restartButton = QPushButton("Restart ElevenClock", self)
-        self.restartButton.hide()
-        self.restartButton.setFixedHeight(30)
-        self.restartButton.setFixedWidth(200)
-        self.restartButton.setObjectName("AccentButton")
-        self.label = QLabel(text, self)
-
-        if lang["locale"] == "zh_TW":
-            self.label.setStyleSheet("font-size: 11pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
-            self.combobox.setStyleSheet("font-size: 11pt;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
-            self.restartButton.setStyleSheet("font-size: 11pt;font-family: \"Microsoft JhengHei UI\";font-weight: 450;")
-        elif lang["locale"] == "zh_CN":
-            self.label.setStyleSheet("font-size: 11pt;background: none;font-family: \"Microsoft YaHei UI\";font-weight: 450;")
-            self.combobox.setStyleSheet("font-size: 11pt;font-family: \"Microsoft YaHei UI\";font-weight: 450;")
-            self.restartButton.setStyleSheet("font-size: 11pt;font-family: \"Microsoft YaHei UI\";font-weight: 450;")
-        else:
-            self.label.setStyleSheet("font-size: 9pt;background: none;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
-            self.combobox.setStyleSheet("font-size: 9pt;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
-            self.restartButton.setStyleSheet("font-size: 9pt;font-family: \"Segoe UI Variable Text\";font-weight: 450;")
-        self.label.setObjectName("StLbl")
-        self.setFixedHeight(50)
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(self.label)
-        self.layout().addStretch()
-        self.layout().addWidget(self.restartButton)
-        self.layout().addWidget(self.combobox)
-        self.layout().setContentsMargins(70, 0, 20, 0)
-
-    def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
-
-    def loadItems(self, items: list, index: int = -1) -> None:
-        return self.setItems(items, index)
-
-    def setItems(self, items: list, index: int = -1) -> None:
-        self.combobox.addItems(items)
-        try:
-            if index >= 0:
-                self.combobox.setCurrentIndex(index)
-        except Exception as e:
-            report(e)
-            self.combobox.setCurrentIndex(0)
-        self.combobox.currentTextChanged.connect(self.textChanged.emit)
-        self.combobox.currentTextChanged.connect(self.valueChanged.emit)
-
-
-    def setIcon(self, icon: QIcon) -> None:
-        pass
-        #self.button.setIcon(icon)
-
-    def toggleRestartButton(self, force = None) -> None:
-        if self.buttonOn:
-            if (force == None):
-                force = self.restartButton.isHidden
-            if (force == True):
-                self.restartButton.show()
-            else:
-                self.restartButton.hide()
-
-    def text(self) -> str:
-        return self.label.text() + " " + self.combobox.currentText()
-
-class SectionCheckBox(QWidget):
-    stateChanged = Signal(bool)
-    def __init__(self, text="", parent=None, margin=70, bigfont = False):
-        self.margin = margin
-        super().__init__(parent)
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.setObjectName("stChkBg")
-        self.checkbox = QCheckBox(text, self)
-        if lang["locale"] == "zh_TW":
-            self.checkbox.setStyleSheet(f"font-size: {14 if bigfont else 11}pt;background: none;font-family: \"Microsoft JhengHei UI\";font-weight: {700 if bigfont else 450};")
-        elif lang["locale"] == "zh_CN":
-            self.checkbox.setStyleSheet(f"font-size: {14 if bigfont else 11}pt;background: none;font-family: \"Microsoft YaHei UI\";font-weight: {700 if bigfont else 450};")
-        else:
-            self.checkbox.setStyleSheet(f"font-size: {14 if bigfont else 9}pt;background: none;font-family: \"Segoe UI Variable {'Display' if bigfont else 'Text'}\";font-weight: {700 if bigfont else 450};")
-        self.checkbox.setObjectName("stChk")
-        self.checkbox.stateChanged.connect(self.stateChanged.emit)
-        self.setFixedHeight(50)
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(self.checkbox)
-        self.layout().setContentsMargins(70, 0, 20, 0)
-
-    def setChecked(self, checked: bool) -> None:
-        self.checkbox.setChecked(checked)
-
-    def isChecked(self) -> bool:
-        return self.checkbox.isChecked()
-
-    def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
-    def text(self) -> str:
-        return self.checkbox.text()
-
-class SectionCheckBoxTextBox(SectionCheckBox):
-    stateChanged = Signal(bool)
-    valueChanged = Signal(str)
-
-    def __init__(self, text: str, parent=None, helpLabel: str = ""):
-        super().__init__(text=text, parent=parent)
-        self.setAttribute(Qt.WA_StyledBackground)
-        self.lineedit = CustomLineEdit(self)
-        self.oldtext = ""
-        self.lineedit.setObjectName("")
-        self.lineedit.textChanged.connect(self.valuechangedEvent)
-        self.checkbox.stateChanged.connect(self.stateChangedEvent)
-        self.helplabel = QLabel(helpLabel, self)
-        self.helplabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.helplabel.setOpenExternalLinks(True)
-        self.stateChangedEvent(self.checkbox.isChecked())
-        self.checkbox.move((70), 10)
-        self.checkbox.setFixedHeight(30)
-        self.setFixedHeight(50)
-        #self.lineedit.setFixedHeight(30)
-        #self.helplabel.setFixedHeight(30)
-        
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(self.checkbox)
-        self.layout().addStretch()
-        self.layout().addWidget(self.helplabel)
-        self.layout().addWidget(self.lineedit)
-        self.layout().setContentsMargins(70, 5, 20, 0)
-
-    def valuechangedEvent(self, text: str):
-        self.valueChanged.emit(text)
-
-    def setPlaceholderText(self, text: str):
-        self.lineedit.setPlaceholderText(text)
-        self.oldtext = text
-
-    def setText(self, text: str):
-        self.lineedit.setText(text)
-
-    def stateChangedEvent(self, v: bool):
-        self.lineedit.setEnabled(self.checkbox.isChecked())
-        if not self.checkbox.isChecked():
-            self.lineedit.setEnabled(False)
-            self.oldtext = self.lineedit.placeholderText()
-            self.lineedit.setToolTip(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()))
-            self.lineedit.setPlaceholderText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
-            self.stateChanged.emit(v)
-        else:
-            self.stateChanged.emit(v)
-            self.lineedit.setEnabled(True)
-            self.lineedit.setToolTip("")
-            self.lineedit.setPlaceholderText(self.oldtext)
-            self.valueChanged.emit(self.lineedit.text())
 
 
 class ToastNotification(QObject):
@@ -1122,7 +619,7 @@ class ToastNotification(QObject):
     onDismissFun: object
     addedActions: list = []
 
-    def __init__(self, parent = None, signalCaller: object = None):
+    def __init__(self, parent=None, signalCaller: object = None):
         super().__init__(parent=parent)
         self.signalCaller = signalCaller
         self.onClickFun = self.nullFunction
@@ -1195,14 +692,14 @@ class ToastNotification(QObject):
             template.text_fields = [self.title, self.description, self.smallText]
         for action in self.actionsReference.keys():
             actionText = self.actionsReference[action]
-            if not actionText in self.addedActions:
+            if actionText not in self.addedActions:
                 actionId = actionText.lower().replace(" ", "_")
                 template.AddAction(windows_toasts.ToastButton(actionText, arguments=f"{actionId}"))
                 self.callableActions[actionId] = action
                 self.addedActions.append(actionText)
-        template.on_activated=self.onAction
-        template.on_dismissed=lambda _1: self.onDismissFun()
-        template.on_failed=lambda _1: self.reportException()
+        template.on_activated = self.onAction
+        template.on_dismissed = lambda _1: self.onDismissFun()
+        template.on_failed = lambda _1: self.reportException()
         self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=globals.AUMID if globals.AUMID != "" else None)
         self.toast.show_toast(template)
 
@@ -1241,10 +738,12 @@ class ToastNotification(QObject):
             else:
                 self.onClickFun()
 
+
 class DraggableWindow(QWidget):
     pressed = False
     oldPos = QPoint(0, 0)
-    def __init__(self, parent = None) -> None:
+
+    def __init__(self, parent: QWidget = None) -> None:
         self.FixLag = False
         super().__init__(parent)
 
@@ -1255,7 +754,7 @@ class DraggableWindow(QWidget):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.pressed:
-            self.move(self.pos()+(event.pos()-self.oldPos))
+            self.move(self.pos() + event.pos() - self.oldPos)
         return super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
@@ -1268,6 +767,7 @@ class DraggableWindow(QWidget):
             time.sleep(0.02)
         return super().moveEvent(event)
 
+
 class MovableFramelessWindow(DraggableWindow):
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1276,21 +776,21 @@ class MovableFramelessWindow(DraggableWindow):
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.setStyleSheet("margin: 0px;")
         self.backButton = QPushButton("", self)
-        self.backButton.move(self.width()-40, 0)
+        self.backButton.move(self.width() - 40, 0)
         self.backButton.resize(30, 30)
         self.backButton.setFlat(True)
         self.backButton.clicked.connect(self.close)
         self.backButton.show()
         self.ApplyIcons()
         self.registeredThemeEvent = False
-        
+
     def ApplyIcons(self):
         if self.isVisible():
             ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
-        self.setStyleSheet("#background{background-color:"+("transparent" if isWin11 else ("#202020" if isDark() else "white"))+";}")
+        self.setStyleSheet("#background{background-color:" + ("transparent" if isWin11 else ("#202020" if isDark() else "white")) + ";}")
         self.backButton.setStyleSheet("QPushButton{border: none;border-radius:6px;background:transparent;}QPushButton:hover{background-color:#c42b1c;}")
         self.backButton.setIcon(QIcon(getMedia("close")))
-    
+
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
@@ -1298,13 +798,9 @@ class MovableFramelessWindow(DraggableWindow):
             self.ApplyIcons()
         ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
 
-
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.backButton.move(self.width()-35, 0)
+        self.backButton.move(self.width() - 35, 0)
         return super().resizeEvent(event)
-
-    
-        
 
 
 class ButtonWithResizeSignal(QPushButton):
@@ -1314,11 +810,13 @@ class ButtonWithResizeSignal(QPushButton):
         self.resized.emit()
         return super().resizeEvent(event)
 
+
 class VerticallyDraggableWidget(QLabel):
     pressed = False
     oldPos = QPoint(0, 0)
     dragged = Signal(int)
-    def __init__(self, parent = None) -> None:
+
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
         self.setMouseTracking(True)
 
@@ -1357,6 +855,7 @@ class VerticallyDraggableWidget(QLabel):
         globals.app.restoreOverrideCursor()
         return super().closeEvent(event)
 
+
 class ClickableLabel(QLabel):
     clicked = Signal()
 
@@ -1368,8 +867,10 @@ class ClickableLabel(QLabel):
         self.clicked.emit()
         return super().mousePressEvent(ev)
 
+
 class InWindowNotification(QMainWindow):
     callInMain = Signal(object)
+
     def __init__(self, parent: QWidget, text: str):
         super().__init__(parent.window())
         self.callInMain.emit(lambda f: f())
@@ -1398,41 +899,159 @@ class InWindowNotification(QMainWindow):
 
         self.setGraphicsEffect(effect)
 
-        
     def show(self, timeout: int = 5):
         super().show()
         self.update()
         self.repaint()
         self.setFixedHeight(34)
-        self.setFixedWidth(self.sizeHint().width()+32)
-        self.move(self.baseGeometry.width()//2 - self.sizeHint().width()//2, self.baseGeometry.height()-100)
-        
+        self.setFixedWidth(self.sizeHint().width() + 32)
+        self.move(self.baseGeometry.width() // 2 - self.sizeHint().width() // 2, self.baseGeometry.height() - 100)
+
         self.hideAnim = QVariantAnimation()
         self.hideAnim.setEasingCurve(QEasingCurve.Type.InOutQuart)
         self.hideAnim.setStartValue(100)
         self.hideAnim.setEndValue(0)
         self.hideAnim.setDuration(300)
-        self.hideAnim.valueChanged.connect(lambda v: (self.opacity.setOpacity(v/100)))
+        self.hideAnim.valueChanged.connect(lambda v: (self.opacity.setOpacity(v / 100)))
         self.hideAnim.finished.connect(lambda: self.hide())
-        
+
         self.showAnim = QVariantAnimation()
         self.showAnim.setEasingCurve(QEasingCurve.Type.InOutQuart)
         self.showAnim.setStartValue(0)
         self.showAnim.setEndValue(100)
         self.showAnim.setDuration(300)
-        self.showAnim.valueChanged.connect(lambda v: self.opacity.setOpacity(v/100))
+        self.showAnim.valueChanged.connect(lambda v: self.opacity.setOpacity(v / 100))
         self.timer = QTimer(self)
-        self.timer.setInterval(timeout*1000)
+        self.timer.setInterval(timeout * 1000)
         self.timer.start()
         self.timer.timeout.connect(lambda: (print(""), self.hideAnim.start(), self.timer.stop()))
         self.showAnim.start()
-        
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         print("")
         self.timer.stop()
         self.hideAnim.start()
         return super().mousePressEvent(event)
-        
+
+
+class FlowLayout(QLayout):
+    # partially Taken from https://github.com/ByteDream/PyQt5-expansion/blob/main/QCustomObjects.py
+    def __init__(self, parent=None, margin=0, spacing=-1):
+        super().__init__(parent)
+
+        if parent is not None:
+            self.setContentsMargins(margin, margin, margin, margin)
+
+        self.setSpacing(spacing)
+
+        self._items = []
+        self.__pending_positions = {}
+
+    def __del__(self):
+        item = self.takeAt(0)
+        while item:
+            item = self.takeAt(0)
+
+    def addItem(self, a0: QLayoutItem) -> None:
+        try:
+            position = self.__pending_positions[a0.widget()]
+            self._items.insert(position, a0)
+            del self.__pending_positions[a0.widget()]
+        except KeyError:
+            self._items.append(a0)
+
+    def addWidget(self, w: QWidget, position: int = None) -> None:
+        if position:
+            self.__pending_positions[w] = position
+        super().addWidget(w)
+
+    def count(self):
+        return len(self._items)
+
+    def expandingDirections(self):
+        return Qt.Orientations(Qt.Orientation(0))
+
+    def itemAt(self, index: int) -> QLayoutItem:
+        if 0 <= index < len(self._items):
+            return self._items[index]
+
+        return None
+
+    def hasHeightForWidth(self):
+        return True
+
+    def heightForWidth(self, width):
+        height = self._doLayout(QRect(0, 0, width, 0), True)
+        return height
+
+    def minimumSize(self):
+        size = QSize()
+
+        for item in self._items:
+            size = size.expandedTo(item.minimumSize())
+
+        margin, _, _, _ = self.getContentsMargins()
+
+        size += QSize(2 * margin, 2 * margin)
+        return size
+
+    def removeItem(self, a0: QLayoutItem) -> None:
+        a0.widget().deleteLater()
+
+    def removeWidget(self, w: QWidget) -> None:
+        w.deleteLater()
+
+    def setGeometry(self, rect):
+        super().setGeometry(rect)
+        self._doLayout(rect, False)
+
+    def sizeHint(self):
+        return self.minimumSize()
+
+    def takeAt(self, index: int) -> QLayoutItem:
+        if 0 <= index < len(self._items):
+            return self._items.pop(index)
+
+        return None
+
+    def _doLayout(self, rect, testOnly):
+        """This does the layout. Dont ask me how. Source: https://github.com/baoboa/pyqt5/blob/master/examples/layouts/flowlayout.py"""
+        x = rect.x()
+        y = rect.y()
+        line_height = 0
+
+        for item in self._items:
+            wid = item.widget()
+            space_x = self.spacing() + wid.style().layoutSpacing(
+                QSizePolicy.PushButton,
+                QSizePolicy.PushButton,
+                Qt.Horizontal)
+            space_y = self.spacing() + wid.style().layoutSpacing(
+                QSizePolicy.PushButton,
+                QSizePolicy.PushButton,
+                Qt.Vertical)
+            next_x = x + item.sizeHint().width() + space_x
+            if next_x - space_x > rect.right() and line_height > 0:
+                x = rect.x()
+                y = y + line_height + space_y
+                next_x = x + item.sizeHint().width() + space_x
+                line_height = 0
+
+            if not testOnly:
+                item.setGeometry(QRect(QPoint(x, y), item.sizeHint()))
+
+            x = next_x
+            line_height = max(line_height, item.sizeHint().height())
+
+        return y + line_height - rect.y()
+
+    def clear(self):
+        items = self._items.copy()
+        for item in items:
+            item: QLayoutItem
+            self.removeWidget(item.widget())
+            self.removeItem(item)
+
 
 if __name__ == "__main__":
     import __init__
