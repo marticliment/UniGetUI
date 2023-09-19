@@ -15,21 +15,26 @@ from PySide6.QtWidgets import *
 
 
 class DynamicScrollAreaType(QWidget):
-    def __init__(self, parent = None) -> None:
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
+
     def rss(self):
         pass
+
     def removeItem(self, item: QWidget):
         pass
+
     def addItem(self, item: QWidget):
         pass
 
+
 class Section(QWidget):
-    def __init__(self, parent = None) -> None:
+    def __init__(self, parent=None) -> None:
         super().__init__(parent, parent)
 
     def addTreeWidgetItem(item: QTreeWidgetItem):
-       pass
+        pass
+
 
 componentStatus: dict = {
     "sudoFound": False,
