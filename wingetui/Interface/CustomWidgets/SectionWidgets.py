@@ -30,13 +30,12 @@ class CollapsableSection(QWidget):
     callInMain = Signal(object)
     baseHeight: int = 70
     registeredThemeEvent = False
+
     def __init__(self, text: str, icon: str, descText: str = "No description provided"):
         if isDark():
             self.iconMode = "white"
-            semib = "Semib"
         else:
             self.iconMode = "black"
-            semib = ""
         super().__init__()
         self.callInMain.connect(lambda f: f())
         self.icon = icon
@@ -54,15 +53,15 @@ class CollapsableSection(QWidget):
             self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Microsoft YaHei UI\";")
             self.descLabel.setStyleSheet("font-size: 8pt;background: none;font-family: \"Microsoft YaHei UI\";")
         else:
-            self.label.setStyleSheet(f"font-size: 10pt;background: none;font-family: \"Segoe UI Variable Text\";")
-            self.descLabel.setStyleSheet(f"font-size: 8pt;background: none;font-family: \"Segoe UI Variable Text\";")
+            self.label.setStyleSheet("font-size: 10pt;background: none;font-family: \"Segoe UI Variable Text\";")
+            self.descLabel.setStyleSheet("font-size: 8pt;background: none;font-family: \"Segoe UI Variable Text\";")
 
         self.image = QLabel(self)
-        self.image.setStyleSheet(f"padding: 1px;background: transparent;")
+        self.image.setStyleSheet("padding: 1px;background: transparent;")
         self.setAttribute(Qt.WA_StyledBackground)
         self.compressibleWidget = QWidget(self)
         self.compressibleWidget.show()
-        #self.compressibleWidget.setAutoFillBackground(True)
+        # self.compressibleWidget.setAutoFillBackground(True)
         self.compressibleWidget.setObjectName("compressibleWidget")
         self.compressibleWidget.setStyleSheet("#compressibleWidget{background-color: transparent;}")
 
@@ -70,15 +69,14 @@ class CollapsableSection(QWidget):
         self.showHideButton.setIcon(QIcon(getMedia("collapse")))
         self.showHideButton.setStyleSheet("border: none; background-color:none;")
         self.showHideButton.clicked.connect(self.toggleChilds)
-        l = QVBoxLayout()
-        l.setSpacing(0)
-        l.setContentsMargins(0, 0, 0, 0)
+        vLayout = QVBoxLayout()
+        vLayout.setSpacing(0)
+        vLayout.setContentsMargins(0, 0, 0, 0)
         self.childsVisible = False
-        self.compressibleWidget.setLayout(l)
+        self.compressibleWidget.setLayout(vLayout)
 
-        self.setStyleSheet(f"QWidget#subtitleLabel{{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}}")
-        self.bg70.setStyleSheet(f"QWidget#subtitleLabel{{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}}")
-
+        self.setStyleSheet("QWidget#subtitleLabel{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}")
+        self.bg70.setStyleSheet("QWidget#subtitleLabel{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}")
 
         self.showAnim = QVariantAnimation(self.compressibleWidget)
         self.showAnim.setEasingCurve(QEasingCurve.InOutCubic)
@@ -102,30 +100,30 @@ class CollapsableSection(QWidget):
         self.button = QPushButton("", self)
         self.button.setObjectName("subtitleLabelHover")
         self.button.clicked.connect(self.toggleChilds)
-        self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-        self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")
+        self.button.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+        self.button.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")
         self.setChildFixedHeight(0)
 
         self.newShowAnim = QVariantAnimation(self)
         self.newShowAnim.setEasingCurve(QEasingCurve.OutQuart)
-        self.newShowAnim.setStartValue(self.baseHeight-20)
+        self.newShowAnim.setStartValue(self.baseHeight - 20)
         self.newShowAnim.setEndValue(self.baseHeight)
         self.newShowAnim.setDuration(200)
-        self.newShowAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-(self.baseHeight-20))/20)))
+        self.newShowAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i), self.childrenOpacity.setOpacity((i - (self.baseHeight - 20)) / 20)))
 
         self.newHideAnim = QVariantAnimation(self)
         self.newHideAnim.setEasingCurve(QEasingCurve.InQuart)
         self.newHideAnim.setStartValue(self.baseHeight)
-        self.newHideAnim.setEndValue(self.baseHeight-20)
+        self.newHideAnim.setEndValue(self.baseHeight - 20)
         self.newHideAnim.setDuration(200)
-        self.newHideAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i),self.childrenOpacity.setOpacity((i-(self.baseHeight-20))/20)))
-        self.newHideAnim.finished.connect(lambda: (self.compressibleWidget.hide(),self.setChildFixedHeight(self.baseHeight)))
+        self.newHideAnim.valueChanged.connect(lambda i: (self.compressibleWidget.move(0, i), self.childrenOpacity.setOpacity((i - (self.baseHeight - 20)) / 20)))
+        self.newHideAnim.finished.connect(lambda: (self.compressibleWidget.hide(), self.setChildFixedHeight(self.baseHeight)))
 
         self.childrenOpacity = QGraphicsOpacityEffect(self.compressibleWidget)
         self.childrenOpacity.setOpacity(0)
         self.compressibleWidget.setGraphicsEffect(self.childrenOpacity)
 
-        self.compressibleWidget.move((-1500),(-1500))
+        self.compressibleWidget.move(-1500, -1500)
         self.ApplyIcons()
 
     def showHideChildren(self):
@@ -141,14 +139,14 @@ class CollapsableSection(QWidget):
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.baseHeight))
 
     def showChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (self.baseHeight-20)))
+        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (self.baseHeight - 20)))
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
         self.callInMain.emit(lambda: self.compressibleWidget.show())
         self.callInMain.emit(self.newShowAnim.start)
 
     def setChildFixedHeight(self, h: int) -> None:
         self.compressibleWidget.setFixedHeight(h)
-        self.setFixedHeight(h+self.baseHeight)
+        self.setFixedHeight(h + self.baseHeight)
 
     def invertNotAnimated(self):
         self.NotAnimated = not self.NotAnimated
@@ -158,18 +156,18 @@ class CollapsableSection(QWidget):
             self.childsVisible = False
             self.invertNotAnimated()
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-            Thread(target=lambda: (time.sleep(0.2),self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"),self.bg70.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
+            Thread(target=lambda: (time.sleep(0.2), self.button.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"), self.bg70.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
             Thread(target=self.hideChildren).start()
         else:
             self.showHideButton.setIcon(QIcon(getMedia("expand")))
-            self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-            self.bg70.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+            self.button.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+            self.bg70.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.invertNotAnimated()
             self.childsVisible = True
             Thread(target=self.showChildren).start()
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
     def setIcon(self, icon: str) -> None:
         self.image.setPixmap(QIcon(icon).pixmap(QSize((24), (24))))
@@ -182,32 +180,32 @@ class CollapsableSection(QWidget):
             self.label.show()
             self.descLabel.show()
             self.button.move(0, 0)
-            self.button.resize(self.width(), (70))
-            self.showHideButton.setIconSize(QSize((12), (12)))
+            self.button.resize(self.width(), 70)
+            self.showHideButton.setIconSize(QSize(12, 12))
             self.showHideButton.setFixedSize(30, 30)
-            self.showHideButton.move(self.width()-(55), (20))
+            self.showHideButton.move(self.width() - 55, 20)
 
-            self.label.move((60), (17))
+            self.label.move(60, 17)
             self.label.setFixedHeight(20)
-            self.descLabel.move((60), (37))
+            self.descLabel.move(60, 37)
             self.descLabel.setFixedHeight(20)
-            self.descLabel.setFixedWidth(self.width()-(70)-(70))
+            self.descLabel.setFixedWidth(self.width() - 14)
 
-            self.image.move((17), (20))
+            self.image.move(17, 20)
             self.image.setFixedHeight(30)
             if self.childsVisible and self.NotAnimated:
-                self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(70))
+                self.setFixedHeight(self.compressibleWidget.sizeHint().height() + 70)
                 self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
             elif self.NotAnimated:
                 self.setFixedHeight(70)
-            self.compressibleWidget.move(0, (70))
+            self.compressibleWidget.move(0, 70)
             self.compressibleWidget.setFixedWidth(self.width())
             self.image.setFixedHeight(30)
-            self.label.setFixedWidth(self.width()-(140))
+            self.label.setFixedWidth(self.width() - 140)
             self.image.setFixedWidth(30)
             self.bg70.show()
             self.bg70.move(0, 0)
-            self.bg70.resize(self.width()-(10), (70))
+            self.bg70.resize(self.width() - 10, 70)
         else:
             self.bg70.hide()
             self.image.hide()
@@ -237,7 +235,7 @@ class CollapsableSection(QWidget):
             globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
             self.ApplyIcons()
         return super().showEvent(event)
-            
+
     def ApplyIcons(self):
         if isDark():
             self.setIcon(self.icon.replace("black", "white"))
