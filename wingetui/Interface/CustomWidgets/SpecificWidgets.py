@@ -6,7 +6,7 @@ from unicodedata import combining, normalize
 import PySide6.QtCore
 import PySide6.QtGui
 import PySide6.QtWidgets
-from genericCustomWidgets import *
+from Interface.CustomWidgets.SectionWidgets import *
 from PackageManagers import PackageClasses
 from PackageManagers.choco import Choco
 from PackageManagers.npm import Npm

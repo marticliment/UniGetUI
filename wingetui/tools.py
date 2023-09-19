@@ -19,7 +19,8 @@ from unicodedata import combining, normalize
 
 import globals
 import clr
-from external.blurwindow import GlobalBlur
+
+from ExternalLibraries.BlurWindow import GlobalBlur
 from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *

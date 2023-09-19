@@ -11,7 +11,7 @@ from threading import Thread
 
 import globals
 import PySide6.QtGui
-from customWidgets import *
+from Interface.CustomWidgets.SpecificWidgets import *
 from PackageManagers.PackageClasses import (Package, PackageDetails,
                                             UpgradablePackage)
 from PySide6.QtCore import *
@@ -732,7 +732,6 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
                 self.addInfoLine.emit(line)
         self.finishInstallation.emit(p.returncode, output)
 
-
 class ScoopBucketManager(QWidget):
     addBucketsignal = Signal(str, str, str, str)
     finishLoading = Signal()
@@ -893,8 +892,6 @@ class ScoopBucketManager(QWidget):
 
     def scoopRemoveExtraBucket(self, bucket: str) -> None:
         globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
-
-
 
 class WingetBucketManager(QWidget):
     addSourceSignal = Signal(str, str)

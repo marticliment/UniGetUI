@@ -4,7 +4,7 @@ import time
 from threading import Thread
 
 import globals
-from customWidgets import *
+from Interface.CustomWidgets.SpecificWidgets import *
 from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *

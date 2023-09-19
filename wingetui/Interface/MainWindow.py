@@ -7,10 +7,10 @@ import win32mica
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from storeEngine import *
+from Interface.CustomWidgets.InstallerWidgets import *
 from tools import *
 from tools import _
-from uiSections import *
+from Interface.SoftwareSections import *
 
 
 class RootWindow(QMainWindow):

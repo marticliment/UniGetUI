@@ -94,9 +94,9 @@ try:
         import globals
         import win32mica
         from apiBackend import runBackendApi
-        from customWidgets import *
-        from external.blurwindow import ExtendFrameIntoClientArea, GlobalBlur
-        from mainWindow import *
+        from Interface.CustomWidgets.SpecificWidgets import *
+        from ExternalLibraries.BlurWindow import ExtendFrameIntoClientArea, GlobalBlur
+        from Interface.MainWindow import *
         from PySide6.QtCore import *
         from PySide6.QtGui import *
         from PySide6.QtWidgets import *
