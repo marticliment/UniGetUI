@@ -72,7 +72,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             id = package[0].strip()
                             version = package[4].strip()
                             source = self.NAME
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Npm))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             return packages
@@ -89,10 +89,10 @@ class NPMPackageManager(DynamicLoadPackageManager):
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} outdated", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if not DashesPassed:
                         if "Package" in line:
@@ -105,15 +105,15 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             version = package[1].strip()
                             newVersion = package[3].strip()
                             source = self.NAME
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
             globals.PackageManagerOutput += rawoutput
             p = subprocess.Popen(f"{self.EXECUTABLE} outdated -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
-            rawoutput = "\n\n---------"+self.NAME+"@global"
+            rawoutput = "\n\n---------" + self.NAME + "@global"
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if not DashesPassed:
                         if "Package" in line:
@@ -125,8 +125,8 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             id = package[0].strip()
                             version = package[1].strip()
                             newVersion = package[3].strip()
-                            source = self.NAME+"@global"
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS and not newVersion in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            source = self.NAME + "@global"
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
             globals.PackageManagerOutput += rawoutput
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
@@ -144,10 +144,10 @@ class NPMPackageManager(DynamicLoadPackageManager):
             packages: list[Package] = []
             p = subprocess.Popen(f"{self.EXECUTABLE} list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             currentScope = ""
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line and len(line) > 4:
                     if line[1:3] in ("--", "──"):
                         line = line[3:]
@@ -157,17 +157,17 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             name = formatPackageIdAsName(idString[1:] if idString[0] == "@" else idString).strip()
                             id = idString.strip()
                             version = package[-1].strip()
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, version, self.NAME+currentScope, Npm))
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(Package(name, id, version, self.NAME + currentScope, Npm))
                     elif "@" in line.split(" ")[0]:
-                        currentScope = "@"+line.split(" ")[0][:-1]
+                        currentScope = "@" + line.split(" ")[0][:-1]
                         print("🔵 NPM changed scope to", currentScope)
             globals.PackageManagerOutput += rawoutput
             p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line and len(line) > 4:
                     if line[1:3] in ("--", "──"):
                         line = line[3:]
@@ -177,8 +177,8 @@ class NPMPackageManager(DynamicLoadPackageManager):
                             name = formatPackageIdAsName(idString[1:] if idString[0] == "@" else idString).strip()
                             id = idString.strip()
                             version = package[-1].strip()
-                            if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, version, self.NAME+"@global", Npm))
+                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
+                                packages.append(Package(name, id, version, self.NAME + "@global", Npm))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
             return packages
@@ -216,11 +216,11 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 elif line.startswith(".tarball"):
                     details.InstallerURL = line.replace(".tarball: ", "").strip()
                     try:
-                        details.InstallerSize = int(urlopen(details.InstallerURL).length/1000000)
+                        details.InstallerSize = int(urlopen(details.InstallerURL).length / 1000000)
                     except Exception as e:
                         print("🟠 Can't get installer size:", type(e), str(e))
                 elif line.startswith(".integrity"):
-                    details.InstallerHash = "<br>"+line.replace(".integrity: sha512-", "").replace("==", "").strip()
+                    details.InstallerHash = "<br>" + line.replace(".integrity: sha512-", "").replace("==", "").strip()
                 elif line.startswith("maintainers:"):
                     ReadingMaintainer = True
                 elif ReadingMaintainer:
@@ -229,16 +229,16 @@ class NPMPackageManager(DynamicLoadPackageManager):
                 elif line.startswith("published"):
                     details.Publisher = line.split("by")[-1].split("<")[0].strip()
                     details.UpdateDate = line.split("by")[0].replace("published", "").strip()
-                    
+
             details.Description = ConvertMarkdownToHtml(details.Description)
             details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
-            
+
             p = subprocess.Popen(f"{self.EXECUTABLE} info {package.Id} versions --json", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ, shell=True)
             output: list[str] = []
             while p.poll() is None:
                 line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
                 if line.startswith("\""):
-                    details.Versions = [line[:-1].replace("\"", "")] + details.Versions # The addition order is inverted, so the latest version shows at the top
+                    details.Versions = [line[:-1].replace("\"", "")] + details.Versions  # The addition order is inverted, so the latest version shows at the top
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
         except Exception as e:
@@ -264,7 +264,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id+("@latest" if options.Version == "" else f"@{options.Version}")] + self.getParameters(options)
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id + ("@latest" if options.Version == "" else f"@{options.Version}")] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -275,7 +275,7 @@ class NPMPackageManager(DynamicLoadPackageManager):
     def startUpdate(self, package: UpgradablePackage, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id+"@"+package.NewVersion] + self.getParameters(options)
+        Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id + "@" + package.NewVersion] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -291,11 +291,12 @@ class NPMPackageManager(DynamicLoadPackageManager):
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
-                output += line+"\n"
+                output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
+                print(other)
                 outputCode = RETURNCODE_FAILED
 
         widget.finishInstallation.emit(outputCode, output)
@@ -320,24 +321,26 @@ class NPMPackageManager(DynamicLoadPackageManager):
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
                 widget.addInfoLine.emit(line)
-                output += line+"\n"
+                output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
             case other:
+                print(other)
                 outputCode = RETURNCODE_FAILED
         widget.finishInstallation.emit(outputCode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} --version", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("npm") != None
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("npm") is not None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
 
     def updateSources(self, signal: Signal = None) -> None:
-        pass # Handled by the package manager, no need to manually reload
+        pass  # Handled by the package manager, no need to manually reload
         if signal:
             signal.emit()
+
 
 Npm = NPMPackageManager()
