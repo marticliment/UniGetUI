@@ -248,11 +248,13 @@ class CollapsableSection(QWidget):
         else:
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
 
+
 class SmallCollapsableSection(CollapsableSection):
     oldScrollValue = 0
     showing = False
     childrenw = []
     callInMain = Signal(object)
+
     def __init__(self, text: str, icon: str):
         self.baseHeight = 40
         super().__init__(text, icon, descText="")
@@ -267,18 +269,18 @@ class SmallCollapsableSection(CollapsableSection):
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
         self.callInMain.emit(self.newHideAnim.start)
         time.sleep(0.2)
-        self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
+        self.callInMain.emit(lambda: self.compressibleWidget.move(-1500, -1500))
         self.callInMain.emit(lambda: self.setChildFixedHeight(40))
 
     def showChildren(self) -> None:
-        self.callInMain.emit(lambda: self.compressibleWidget.move(0, (20)))
+        self.callInMain.emit(lambda: self.compressibleWidget.move(0, 20))
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
         self.callInMain.emit(lambda: self.compressibleWidget.show())
         self.callInMain.emit(self.newShowAnim.start)
 
     def setChildFixedHeight(self, h: int) -> None:
         self.compressibleWidget.setFixedHeight(h)
-        self.setFixedHeight(h+(40))
+        self.setFixedHeight(h + 40)
 
     def invertNotAnimated(self):
         self.NotAnimated = not self.NotAnimated
@@ -288,21 +290,21 @@ class SmallCollapsableSection(CollapsableSection):
             self.childsVisible = False
             self.invertNotAnimated()
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
-            Thread(target=lambda: (time.sleep(0.2),self.button.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"),self.bg70.setStyleSheet(f"border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
+            Thread(target=lambda: (time.sleep(0.2), self.button.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"), self.bg70.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
             Thread(target=self.hideChildren).start()
         else:
             self.showHideButton.setIcon(QIcon(getMedia("expand")))
-            self.button.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
-            self.bg70.setStyleSheet(f"border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+            self.button.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
+            self.bg70.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.invertNotAnimated()
             self.childsVisible = True
             Thread(target=self.showChildren).start()
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
     def setIcon(self, icon: str) -> None:
-        self.image.setPixmap(QIcon(icon).pixmap(QSize((24), (24))))
+        self.image.setPixmap(QIcon(icon).pixmap(QSize(24, 24)))
 
     def resizeEvent(self, event: QResizeEvent = None) -> None:
         self.image.show()
@@ -310,28 +312,28 @@ class SmallCollapsableSection(CollapsableSection):
         self.button.show()
         self.label.show()
         self.button.move(0, 0)
-        self.button.resize(self.width(), (40))
-        self.showHideButton.setIconSize(QSize((12), (12)))
+        self.button.resize(self.width(), 40)
+        self.showHideButton.setIconSize(QSize(12, 12))
         self.showHideButton.setFixedSize(30, 30)
-        self.showHideButton.move(self.width()-(45), (5))
+        self.showHideButton.move(self.width() - 45, 5)
 
-        self.label.move((45), (10))
+        self.label.move(45, 10)
         self.label.setFixedHeight(20)
 
-        self.image.move((10), (8))
+        self.image.move(10, 8)
         self.image.setFixedHeight(24)
         if self.childsVisible and self.NotAnimated:
-            self.setFixedHeight(self.compressibleWidget.sizeHint().height()+(40))
+            self.setFixedHeight(self.compressibleWidget.sizeHint().height() + 40)
             self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
         elif self.NotAnimated:
             self.setFixedHeight(40)
-        self.compressibleWidget.move(0, (40))
+        self.compressibleWidget.move(0, 40)
         self.compressibleWidget.setFixedWidth(self.width())
-        self.label.setFixedWidth(self.width()-(140))
+        self.label.setFixedWidth(self.width() - 140)
         self.image.setFixedWidth(30)
         self.bg70.show()
         self.bg70.move(0, 0)
-        self.bg70.resize(self.width()-(0), (40))
+        self.bg70.resize(self.width(), 40)
 
     def addWidget(self, widget: QWidget) -> None:
         self.compressibleWidget.layout().addWidget(widget)
@@ -339,6 +341,7 @@ class SmallCollapsableSection(CollapsableSection):
 
     def getChildren(self) -> list:
         return self.childrenw
+
 
 class SectionHWidget(QWidget):
     def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
@@ -351,19 +354,20 @@ class SectionHWidget(QWidget):
         self.setObjectName("stBtn")
         self.setFixedHeight(40)
         if smallerMargins:
-            self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
+            self.setStyleSheet(self.styleSheet() + "#stBtn{margin: 0px;}")
             self.setContentsMargins(0, 0, 0, 0)
         else:
             self.setContentsMargins(40, 0, 0, 0)
 
     def addWidget(self, w: QWidget):
         self.layout().addWidget(w)
-        if w.sizeHint().height()+20 > self.height():
-            self.setFixedHeight(w.sizeHint().height()+20)
+        if w.sizeHint().height() + 20 > self.height():
+            self.setFixedHeight(w.sizeHint().height() + 20)
 
     def addStretch(self):
         self.layout().addStretch()
-        
+
+
 class SectionVWidget(QWidget):
     def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
         super().__init__()
@@ -374,24 +378,26 @@ class SectionVWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.setObjectName("stBtn")
         if smallerMargins:
-            self.setStyleSheet(self.styleSheet()+"#stBtn{margin: 0px;}")
+            self.setStyleSheet(self.styleSheet() + "#stBtn{margin: 0px;}")
             self.setContentsMargins(5, 0, 0, 0)
         else:
             self.setContentsMargins(40, 0, 0, 0)
 
     def addWidget(self, w: QWidget):
         self.layout().addWidget(w)
-        
+
     def addStretch(self):
         self.layout().addStretch()
 
+
 class SectionButton(QWidget):
     clicked = Signal()
-    def __init__(self, text="", btntext="", parent=None, h = 30):
+
+    def __init__(self, text="", btntext="", parent=None, h: int = 30):
         super().__init__(parent)
         self.fh = h
         self.setAttribute(Qt.WA_StyledBackground)
-        self.button = QPushButton(btntext+" ", self)
+        self.button = QPushButton(btntext + " ", self)
         self.button.setLayoutDirection(Qt.RightToLeft)
         self.setObjectName("stBtn")
         self.button.setMinimumWidth(250)
@@ -421,9 +427,11 @@ class SectionButton(QWidget):
     def text(self) -> str:
         return self.label.text() + " " + self.button.text()
 
+
 class SectionComboBox(QWidget):
     textChanged = Signal(str)
     valueChanged = Signal(str)
+
     def __init__(self, text="", parent=None, buttonEnabled: bool = True):
         super().__init__(parent)
         self.buttonOn = buttonEnabled
@@ -461,7 +469,7 @@ class SectionComboBox(QWidget):
         self.layout().setContentsMargins(70, 0, 20, 0)
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
     def loadItems(self, items: list, index: int = -1) -> None:
         return self.setItems(items, index)
@@ -477,16 +485,11 @@ class SectionComboBox(QWidget):
         self.combobox.currentTextChanged.connect(self.textChanged.emit)
         self.combobox.currentTextChanged.connect(self.valueChanged.emit)
 
-
-    def setIcon(self, icon: QIcon) -> None:
-        pass
-        #self.button.setIcon(icon)
-
-    def toggleRestartButton(self, force = None) -> None:
+    def toggleRestartButton(self, force=None) -> None:
         if self.buttonOn:
-            if (force == None):
+            if force is None:
                 force = self.restartButton.isHidden
-            if (force == True):
+            if force is True:
                 self.restartButton.show()
             else:
                 self.restartButton.hide()
@@ -494,9 +497,11 @@ class SectionComboBox(QWidget):
     def text(self) -> str:
         return self.label.text() + " " + self.combobox.currentText()
 
+
 class SectionCheckBox(QWidget):
     stateChanged = Signal(bool)
-    def __init__(self, text="", parent=None, margin=70, bigfont = False):
+
+    def __init__(self, text="", parent=None, margin=70, bigfont: bool = False):
         self.margin = margin
         super().__init__(parent)
         self.setAttribute(Qt.WA_StyledBackground)
@@ -522,9 +527,11 @@ class SectionCheckBox(QWidget):
         return self.checkbox.isChecked()
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
     def text(self) -> str:
         return self.checkbox.text()
+
 
 class SectionCheckBoxTextBox(SectionCheckBox):
     stateChanged = Signal(bool)
@@ -545,9 +552,7 @@ class SectionCheckBoxTextBox(SectionCheckBox):
         self.checkbox.move((70), 10)
         self.checkbox.setFixedHeight(30)
         self.setFixedHeight(50)
-        #self.lineedit.setFixedHeight(30)
-        #self.helplabel.setFixedHeight(30)
-        
+
         self.setLayout(QHBoxLayout())
         self.layout().addWidget(self.checkbox)
         self.layout().addStretch()
@@ -579,6 +584,7 @@ class SectionCheckBoxTextBox(SectionCheckBox):
             self.lineedit.setToolTip("")
             self.lineedit.setPlaceholderText(self.oldtext)
             self.valueChanged.emit(self.lineedit.text())
+
 
 if __name__ == "__main__":
     import __init__
