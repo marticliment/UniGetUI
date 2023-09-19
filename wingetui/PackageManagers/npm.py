@@ -9,7 +9,6 @@ This file holds the Npm Package Manager related code.
 import os
 import re
 import subprocess
-import sys
 
 from PySide6.QtCore import *
 from tools import *

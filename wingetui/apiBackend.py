@@ -7,8 +7,8 @@ This file contains the API used to communicate with https://marticliment.com/win
 """
 
 
-from flask import Flask, Response, jsonify, request
-from flask_cors import CORS, cross_origin
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 from PySide6.QtCore import Signal
 
 globalsignal: Signal = None

@@ -10,9 +10,7 @@ This file contains the code that handles the Welcome Wizard
 import ctypes
 import os
 import time
-from threading import Thread
 
-import globals
 from Interface.CustomWidgets.SpecificWidgets import *
 from lang.languages import *
 from PySide6.QtCore import *

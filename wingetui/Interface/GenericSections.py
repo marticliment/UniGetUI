@@ -7,11 +7,9 @@ This file contains the code for miscellanious User Interface sections, such as t
 """
 
 import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import json
 import os
 import subprocess
 import sys
-import time
 from threading import Thread
 import win32mica
 
@@ -19,7 +17,6 @@ import globals
 from Interface.CustomWidgets.SpecificWidgets import *
 from data.contributors import contributorsInfo
 from data.translations import languageCredits, untranslatedPercentage
-from PackageManagers import PackageClasses
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *

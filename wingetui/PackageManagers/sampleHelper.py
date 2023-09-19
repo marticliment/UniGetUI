@@ -8,8 +8,6 @@ This file holds a sample package manager implementation. The code here must be r
 
 import os
 import subprocess
-import sys
-import time
 
 from PySide6.QtCore import *
 from tools import *

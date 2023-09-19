@@ -8,7 +8,6 @@ This file contains the code that will migrate WingetUI to C:\\Program Files when
 
 
 import os
-import sys
 import winreg
 import glob
 

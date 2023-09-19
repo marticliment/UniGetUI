@@ -7,10 +7,7 @@ This file holds the Chocolatey Package Manager related code.
 """
 
 import os
-import re
 import subprocess
-import sys
-import time
 
 from PySide6.QtCore import *
 from tools import *

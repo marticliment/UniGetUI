@@ -7,7 +7,6 @@ This file holds the classes related to Packages and PackageManagers .
 """
 
 import subprocess
-from typing import Optional
 
 import PySide6.QtCore
 import PySide6.QtWidgets

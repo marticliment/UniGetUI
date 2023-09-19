@@ -8,8 +8,6 @@ This file holds the Winget Package Manager related code.
 
 import os
 import subprocess
-import sys
-import time
 
 from PySide6.QtCore import *
 from tools import *

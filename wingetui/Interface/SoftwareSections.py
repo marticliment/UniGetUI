@@ -13,20 +13,14 @@ The class PackageInfoPopupWindow contains the code for the Package Details windo
 
 """
 
-import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
-import json
 import os
-import subprocess
 import sys
 import time
 from threading import Thread
-import win32mica
 
 import globals
 from Interface.CustomWidgets.SpecificWidgets import *
-from data.contributors import contributorsInfo
-from data.translations import languageCredits, untranslatedPercentage
-from PackageManagers import PackageClasses
+from PackageManagers.PackageClasses import PackageManagerModule, DynamicPackageManager
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -507,14 +501,14 @@ class DiscoverSoftwareSection(SoftwareSection):
         options.SkipHashCheck = skiphash
         self.addInstallation(PackageInstallerWidget(package, options))
 
-    def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
+    def loadPackages(self, manager: PackageManagerModule) -> None:
         packages = manager.getAvailablePackages()
         for package in packages:
             self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
         self.finishLoading.emit()
 
-    def loadDynamicPackages(self, query: str, manager: PackageClasses.DynamicPackageManager) -> None:
+    def loadDynamicPackages(self, query: str, manager: DynamicPackageManager) -> None:
         self.runningThreads += 1
         packages = manager.getPackagesForQuery(query)
         for package in packages:
@@ -1121,7 +1115,7 @@ class UpdateSoftwareSection(SoftwareSection):
         if not asyncroutine:
             self.callInMain.emit(self.startLoadingPackages)
 
-    def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
+    def loadPackages(self, manager: PackageManagerModule) -> None:
         t = Thread(target=lambda: self.reloadSources(asyncroutine = True), daemon=True)
         t.start()
         t0 = int(time.time())
@@ -1567,7 +1561,7 @@ class UninstallSoftwareSection(SoftwareSection):
             options.RemoveDataOnUninstall = removeData
             self.addInstallation(PackageUninstallerWidget(package, options))
 
-    def loadPackages(self, manager: PackageClasses.PackageManagerModule) -> None:
+    def loadPackages(self, manager: PackageManagerModule) -> None:
         packages = manager.getInstalledPackages()
         for package in packages:
             self.addProgram.emit(package)

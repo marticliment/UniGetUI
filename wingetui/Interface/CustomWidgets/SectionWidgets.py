@@ -9,8 +9,6 @@ This file contains the classes for the set of Widgets used on:
 
 """
 
-from typing import Optional
-
 import PySide6.QtCore
 import PySide6.QtGui
 import PySide6.QtWidgets

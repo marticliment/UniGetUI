@@ -9,13 +9,9 @@ This file also contains the following classes:
 
 
 """
-import json
 import os
-import signal
 import subprocess
-import sys
 import time
-from functools import partial
 from threading import Thread
 
 import globals

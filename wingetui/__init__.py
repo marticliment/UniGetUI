@@ -68,7 +68,6 @@ def CheckProgramIntegrity():
     import hashlib
     import os
     import sys
-    import time
 
     root_dir = os.path.dirname(__file__)
     os.chdir(root_dir)
@@ -104,7 +103,6 @@ try:
         from urllib.request import urlopen
 
         import globals
-        import win32mica
         from apiBackend import runBackendApi
         from Interface.CustomWidgets.SpecificWidgets import *
         from ExternalLibraries.BlurWindow import ExtendFrameIntoClientArea, GlobalBlur

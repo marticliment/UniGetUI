@@ -8,14 +8,11 @@ This file contains the classes for miscellainous, custom made, specific-case-ori
 
 from datetime import datetime
 from functools import partial
-from typing import Optional
-from unicodedata import combining, normalize
 
 import PySide6.QtCore
 import PySide6.QtGui
 import PySide6.QtWidgets
 from Interface.CustomWidgets.SectionWidgets import *
-from PackageManagers import PackageClasses
 from PackageManagers.choco import Choco
 from PackageManagers.npm import Npm
 from PackageManagers.PackageClasses import *
@@ -29,7 +26,7 @@ from tools import *
 from tools import _
 from win32mica import *
 
-PackageManagersList: list[PackageClasses.PackageManagerModule] = [
+PackageManagersList: list[PackageManagerModule] = [
     Winget,
     Scoop,
     Choco,
@@ -37,7 +34,7 @@ PackageManagersList: list[PackageClasses.PackageManagerModule] = [
     Npm,
 ]
 
-PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+PackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Winget: False,
     Scoop: False,
     Choco: False,
@@ -45,13 +42,13 @@ PackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
     Npm: False,
 }
 
-StaticPackageManagersList: list[PackageClasses.PackageManagerModule] = [
+StaticPackageManagersList: list[PackageManagerModule] = [
 ]
 
-StaticPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+StaticPackagesLoadedDict: dict[PackageManagerModule:bool] = {
 }
 
-DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
+DynaimcPackageManagersList: list[DynamicPackageManager] = [
     Pip,
     Npm,
     Choco,
@@ -59,7 +56,7 @@ DynaimcPackageManagersList: list[PackageClasses.DynamicPackageManager] = [
     Scoop,
 ]
 
-DynamicPackagesLoadedDict: dict[PackageClasses.PackageManagerModule:bool] = {
+DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Pip: False,
     Npm: False,
     Winget: False,
