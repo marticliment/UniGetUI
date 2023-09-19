@@ -23,7 +23,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         print("🟡 System chocolatey used")
         EXECUTABLE = "choco.exe"
     else:
-        possiblePath =  os.path.join(os.path.expanduser("~"), "AppData/Local/Programs/WingetUI/choco-cli/choco.exe")
+        possiblePath = os.path.join(os.path.expanduser("~"), "AppData/Local/Programs/WingetUI/choco-cli/choco.exe")
         if os.path.isfile(possiblePath):
             print("🔵 Found default chocolatey installation on expected location")
             EXECUTABLE = possiblePath.replace("/", "\\")
@@ -39,9 +39,9 @@ class ChocoPackageManager(DynamicLoadPackageManager):
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
-    BLACKLISTED_PACKAGE_NAMES =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
-    BLACKLISTED_PACKAGE_IDS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
-    BLACKLISTED_PACKAGE_VERSIONS =  ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
+    BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
+    BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
+    BLACKLISTED_PACKAGE_VERSIONS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
 
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
@@ -62,7 +62,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         print(f"🔵 Searching packages on chocolatey for query {query}")
         packages: list[Package] = []
         try:
-            p = subprocess.Popen([self.EXECUTABLE, "search", query] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, env=os.environ.copy())
+            p = subprocess.Popen([self.EXECUTABLE, "search", query], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, env=os.environ.copy())
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
@@ -70,7 +70,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                         name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
-                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                        if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                             packages.append(Package(name, id, version, self.NAME, Choco))
             return packages
         except Exception as e:
@@ -85,14 +85,14 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         try:
             packages: list[UpgradablePackage] = []
             p = subprocess.Popen([self.EXECUTABLE, "outdated"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"+self.NAME
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
 
                     if len(line.split("|")) >= 3:
-                        #Replace these lines with the parse mechanism
+                        # Replace these lines with the parse mechanism
                         name = formatPackageIdAsName(line.split("|")[0])
                         id = line.split("|")[0]
                         version = line.split("|")[1]
@@ -101,7 +101,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                     else:
                         continue
 
-                    if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                    if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(name, id, version, newVersion, source, Choco))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -110,25 +110,25 @@ class ChocoPackageManager(DynamicLoadPackageManager):
             report(e)
             return []
 
-    def getInstalledPackages(self, second_attempt = False) -> list[Package]:
+    def getInstalledPackages(self, second_attempt=False) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
         print(f"🔵 Starting {self.NAME} search for installed packages")
         try:
             packages: list[Package] = []
-            p = subprocess.Popen([self.EXECUTABLE, "list"] , stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
-            rawoutput = "\n\n---------"+self.NAME
+            p = subprocess.Popen([self.EXECUTABLE, "list"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                rawoutput += "\n"+line
+                rawoutput += "\n" + line
                 if line:
                     if len(line.split(" ")) >= 2:
                         name = formatPackageIdAsName(line.split(" ")[0])
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
                         source = self.NAME
-                        if not name in self.BLACKLISTED_PACKAGE_NAMES and not id in self.BLACKLISTED_PACKAGE_IDS and not version in self.BLACKLISTED_PACKAGE_VERSIONS:
+                        if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                             packages.append(Package(name, id, version, source, Choco))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -161,12 +161,12 @@ class ChocoPackageManager(DynamicLoadPackageManager):
             for line in output:
                 if isReadingDescription:
                     if line.startswith("  "):
-                        details.Description += "<br>"+line[2:]
+                        details.Description += "<br>" + line[2:]
                     else:
                         isReadingDescription = False
                 if isReadingReleaseNotes:
                     if line.startswith("  "):
-                        details.ReleaseNotes += "<br>"+line[2:]
+                        details.ReleaseNotes += "<br>" + line[2:]
                     else:
                         isReadingReleaseNotes = False
                         if details.ReleaseNotes != "":
@@ -183,7 +183,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                 elif "Software License:" in line:
                     details.LicenseURL = line.replace("Software License:", "").strip()
                 elif "Package Checksum:" in line:
-                    details.InstallerHash = "<br>"+(line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", ""))
+                    details.InstallerHash = "<br>" + (line.replace("Package Checksum:", "").strip().replace("'", "").replace("(SHA512)", ""))
                 elif "Description:" in line:
                     details.Description = line.replace("Description:", "").strip()
                     isReadingDescription = True
@@ -194,10 +194,10 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                 elif "Tags" in line:
                     details.Tags = [tag for tag in line.replace("Tags:", "").strip().split(" ") if tag != ""]
             details.Versions = []
-            
+
             details.Description = ConvertMarkdownToHtml(details.Description)
             details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
-            
+
             p = subprocess.Popen([self.EXECUTABLE, "find", "-e", package.Id, "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             print(f"🟢 Starting get info for id {package.Id}")
             output = []
@@ -231,7 +231,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
         if options.SkipHashCheck:
             Parameters += ["--ignore-checksums", "--force"]
         if options.Version:
-            Parameters += ["--version="+options.Version, "--allow-downgrade"]
+            Parameters += ["--version=" + options.Version, "--allow-downgrade"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
@@ -262,7 +262,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                 widget.addInfoLine.emit(line)
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line+"\n"
+                output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if outputCode in (1641, 3010):
@@ -295,7 +295,7 @@ class ChocoPackageManager(DynamicLoadPackageManager):
                 widget.addInfoLine.emit(line)
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line+"\n"
+                output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if outputCode in (1605, 1614, 1641):
@@ -308,25 +308,26 @@ class ChocoPackageManager(DynamicLoadPackageManager):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) != None
+        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
-        
+
         if getSettings("ShownWelcomeWizard") and not getSettings("UseSystemChocolatey") and not getSettings("ChocolateyAddedToPath") and not os.path.isfile(r"C:\ProgramData\Chocolatey\bin\choco.exe"):
-            subprocess.run("powershell -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\""+ self.EXECUTABLE.replace('\\choco.exe', '\\bin')+";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
+            # If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
+            subprocess.run("powershell -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\"" + self.EXECUTABLE.replace('\\choco.exe', '\\bin') + ";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
             subprocess.run(f"powershell -Command [Environment]::SetEnvironmentVariable(\\\"chocolateyinstall\\\", \\\"{os.path.dirname(self.EXECUTABLE)}\\\", \\\"User\\\")", shell=True, check=False)
             print("🔵 Adding chocolatey to path...")
             setSettings("ChocolateyAddedToPath", True)
-        
+
         if signal:
             signal.emit()
 
     def updateSources(self, signal: Signal = None) -> None:
-        pass # Handled by the package manager, no need to manually reload
+        pass  # Handled by the package manager, no need to manually reload
         if signal:
             signal.emit()
 
+
 Choco = ChocoPackageManager()
 
-
-if(__name__=="__main__"):
+if __name__ == "__main__":
     import __init__
