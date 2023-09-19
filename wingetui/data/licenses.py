@@ -19,9 +19,13 @@ licenses = {
     "Windows Toasts":   "Apache v2",
     "Winget":           "MIT",
     "Scoop":            "MIT",
+    "Scoop Search":     "MIT",
     "Chocolatey":       "Apache v2",
     "Npm":              "Artistic License 2.0",
     "Pip":              "MIT",
+    "Parse Pip Search": "MIT",
+    "Dotnet Tool":      "Free (Proprietary license)",
+    "dotnet-tools-outdated": "MIT",
     "Gsudo":            "MIT",
     "Icons":            "By Icons8"
 }
@@ -37,9 +41,13 @@ licenseUrls = {
     "Windows Toasts":   "https://github.com/DatGuy1/Windows-Toasts/blob/main/LICENSE",
     "Winget":           "https://github.com/microsoft/winget-cli/blob/master/LICENSE",
     "Scoop":            "https://github.com/ScoopInstaller/Scoop/blob/master/LICENSE",
+    "Scoop Search":     "https://github.com/shilangyu/scoop-search/blob/master/LICENSE",
     "Chocolatey":       "https://github.com/chocolatey/choco/blob/develop/LICENSE",
     "Npm":              "https://github.com/npm/cli/blob/latest/LICENSE",
     "Pip":              "https://github.com/pypa/pip/blob/main/LICENSE.txt",
+    "Parse Pip Search": "https://github.com/marticliment/parseable_pip_search/blob/master/LICENSE.md",
+    "Dotnet Tool":      "https://dotnet.microsoft.com/en-us/platform/free",
+    "dotnet-tools-outdated": "https://github.com/rychlym/dotnet-tools-outdated/blob/master/LICENSE",
     "Gsudo":            "https://github.com/gerardog/gsudo/blob/master/LICENSE.txt",
     "Icons":            "https://icons8.com"
 }

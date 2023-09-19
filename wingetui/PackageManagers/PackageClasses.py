@@ -179,6 +179,7 @@ class PackageManagerModule():
     NAME: str
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
+    Icon: QIcon = None
 
     def __init__(self):
         pass

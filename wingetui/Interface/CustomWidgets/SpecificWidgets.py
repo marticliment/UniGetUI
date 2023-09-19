@@ -19,6 +19,7 @@ from PackageManagers.PackageClasses import *
 from PackageManagers.pip import Pip
 from PackageManagers.scoop import Scoop
 from PackageManagers.winget import Winget
+from PackageManagers.dotnet import Dotnet
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -32,6 +33,7 @@ PackageManagersList: list[PackageManagerModule] = [
     Choco,
     Pip,
     Npm,
+    Dotnet
 ]
 
 PackagesLoadedDict: dict[PackageManagerModule:bool] = {
@@ -40,6 +42,7 @@ PackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Choco: False,
     Pip: False,
     Npm: False,
+    Dotnet: False
 }
 
 StaticPackageManagersList: list[PackageManagerModule] = [
@@ -54,6 +57,7 @@ DynaimcPackageManagersList: list[DynamicPackageManager] = [
     Choco,
     Winget,
     Scoop,
+    Dotnet
 ]
 
 DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
@@ -61,7 +65,8 @@ DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Npm: False,
     Winget: False,
     Choco: False,
-    Scoop: False
+    Scoop: False,
+    Dotnet: False
 }
 
 

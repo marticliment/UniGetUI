@@ -544,7 +544,7 @@ def formatPackageIdAsName(id: str):
     """
     Returns a more beautiful name for the given ID
     """
-    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
+    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").replace(".", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
 
 
 def getMaskedIcon(iconName: str) -> QIcon:
