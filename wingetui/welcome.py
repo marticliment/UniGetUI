@@ -22,8 +22,10 @@ from win32mica import *
 
 dwm = ctypes.windll.dwmapi
 
+
 class WelcomeWindow(QMainWindow):
     callback: object = None
+
     def __init__(self, callback: object) -> None:
         super().__init__()
         self.callback = callback
@@ -44,9 +46,8 @@ class WelcomeWindow(QMainWindow):
         for w in self.widgetOrder:
             w.next.connect(self.nextWidget)
             w.previous.connect(self.previousWidget)
-            w.skipped.connect(self.lastWidget)
+            w.skipped.connect(self.vLayoutastWidget)
             w.finished.connect(self.close)
-
 
         self.currentIndex = -1
 
@@ -416,13 +417,12 @@ class WelcomeWindow(QMainWindow):
                 }}
                 """)
 
-
         self.nextWidget(anim=False)
 
         self.show()
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
     def setWidget(self, w: QWidget, back=False, anim=True) -> None:
         self.bgWidget.setCurrentIndex(self.bgWidget.addWidget(w))
@@ -433,7 +433,7 @@ class WelcomeWindow(QMainWindow):
                 w.inAnim()
 
     def nextWidget(self, anim: bool = True) -> None:
-        if self.currentIndex == len(self.widgetOrder)-1:
+        if self.currentIndex == len(self.widgetOrder) - 1:
             self.close()
         else:
             self.currentIndex += 1
@@ -452,7 +452,7 @@ class WelcomeWindow(QMainWindow):
             self.setWidget(w, back=True)
 
     def lastWidget(self) -> None:
-        self.currentIndex = len(self.widgetOrder)-1
+        self.currentIndex = len(self.widgetOrder) - 1
         w: BasicNavWidget = self.widgetOrder[-1]
         self.setWidget(w)
 
@@ -460,6 +460,7 @@ class WelcomeWindow(QMainWindow):
         if self.callback:
             self.callback()
         return super().close()
+
 
 class BasicNavWidget(QWidget):
     next = Signal()
@@ -470,10 +471,10 @@ class BasicNavWidget(QWidget):
 
     def __init__(self, parent: bool = None, startEnabled: bool = False, closeEnabled: bool = False, finishEnabled: bool = False, nextGreyed: bool = False, noNavBar: bool = False) -> None:
         super().__init__(parent=parent)
-        self.l = QVBoxLayout()
-        self.setLayout(self.l)
+        self.vLayout = QVBoxLayout()
+        self.setLayout(self.vLayout)
 
-        if(isDark()):
+        if isDark():
             self.iconMode = "white"
             self.negIconMode = "black"
         else:
@@ -495,7 +496,7 @@ class BasicNavWidget(QWidget):
                 startButton.setLayoutDirection(Qt.RightToLeft)
                 startButton.setIconSize(QSize(12, 12))
                 startButton.setFixedSize((96), (36))
-                startButton.setIcon(QIcon(getPath(f"next_black.png")))
+                startButton.setIcon(QIcon(getPath("next_black.png")))
                 startButton.clicked.connect(lambda: self.outAnim(self.next.emit))
                 startButton.setObjectName("AccentButton")
                 self.navLayout.addWidget(startButton)
@@ -519,8 +520,8 @@ class BasicNavWidget(QWidget):
                     self.nextButton.setEnabled(not nextGreyed)
                     self.nextButton.setIconSize(QSize(12, 12))
                     self.nextButton.setFixedSize((36), (36))
-                    self.nextButton.clicked.connect(lambda:self.outAnim(self.next.emit))
-                    self.nextButton.setIcon(QIcon(getPath(f"next_black.png")))
+                    self.nextButton.clicked.connect(lambda: self.outAnim(self.next.emit))
+                    self.nextButton.setIcon(QIcon(getPath("next_black.png")))
                     self.nextButton.setObjectName("AccentButton")
                     self.navLayout.addWidget(self.nextButton)
 
@@ -535,8 +536,8 @@ class BasicNavWidget(QWidget):
 
     def setCentralWidget(self, w: QWidget) -> QWidget:
         self.centralWidget = w
-        self.l.addWidget(w, stretch=1)
-        self.l.addLayout(self.navLayout, stretch=0)
+        self.vLayout.addWidget(w, stretch=1)
+        self.vLayout.addLayout(self.navLayout, stretch=0)
         self.opacityEffect = QGraphicsOpacityEffect(self.centralWidget)
         self.centralWidget.setGraphicsEffect(self.opacityEffect)
         self.opacityEffect.setOpacity(0)
@@ -545,14 +546,14 @@ class BasicNavWidget(QWidget):
         anim = QVariantAnimation(self.centralWidget)
         anim.setStartValue(0)
         anim.setEndValue(100)
-        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v / 100))
         anim.setEasingCurve(QEasingCurve.OutQuad)
         anim.setDuration(200)
         anim.start()
 
         bgAnim = QPropertyAnimation(self.centralWidget, b"pos", self.centralWidget)
         pos = self.centralWidget.pos()
-        pos.setX(pos.x()+(self.centralWidget.width()/20))
+        pos.setX(pos.x() + (self.centralWidget.width() / 20))
         bgAnim.setStartValue(pos)
         bgAnim.setEasingCurve(QEasingCurve.OutQuad)
         bgAnim.setEndValue(self.centralWidget.pos())
@@ -563,14 +564,14 @@ class BasicNavWidget(QWidget):
         anim = QVariantAnimation(self)
         anim.setStartValue(0)
         anim.setEndValue(100)
-        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v / 100))
         anim.setEasingCurve(QEasingCurve.OutQuad)
         anim.setDuration(20)
         anim.start()
 
         bgAnim = QPropertyAnimation(self.centralWidget, b"pos", self.centralWidget)
         pos = self.centralWidget.pos()
-        pos.setX(self.centralWidget.x()-(self.centralWidget.width()/20))
+        pos.setX(self.centralWidget.x() - (self.centralWidget.width() / 20))
         bgAnim.setStartValue(pos)
         bgAnim.setEndValue(self.centralWidget.pos())
         bgAnim.setEasingCurve(QEasingCurve.OutQuad)
@@ -581,7 +582,7 @@ class BasicNavWidget(QWidget):
         anim = QVariantAnimation(self)
         anim.setStartValue(100)
         anim.setEndValue(0)
-        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v / 100))
         anim.setEasingCurve(QEasingCurve.InQuad)
         anim.setDuration(100)
         anim.start()
@@ -591,18 +592,18 @@ class BasicNavWidget(QWidget):
         anim = QVariantAnimation(self)
         anim.setStartValue(100)
         anim.setEndValue(0)
-        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v/100))
+        anim.valueChanged.connect(lambda v: self.opacityEffect.setOpacity(v / 100))
         anim.setEasingCurve(QEasingCurve.InQuad)
         anim.setDuration(100)
         anim.start()
         anim.finished.connect(f)
 
-
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
     def window(self) -> WelcomeWindow:
         return super().window()
+
 
 class IconLabel(QWidget):
     def __init__(self, size=96, frame=True) -> None:
@@ -616,7 +617,7 @@ class IconLabel(QWidget):
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.iconLabel = QLabel()
-        self.iconLabel.setMinimumHeight((self.iconSize+40))
+        self.iconLabel.setMinimumHeight((self.iconSize + 40))
         self.iconLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.setMinimumHeight((self.iconSize))
         self.textLabel = QLabel()
@@ -624,11 +625,13 @@ class IconLabel(QWidget):
         self.textLabel.setWordWrap(True)
         self.textLabel.setStyleSheet("font-size: 10pt;")
         self.textLabel.setOpenExternalLinks(True)
-        if frame: self.layout().addSpacing((40/96*self.iconSize))
+        if frame:
+            self.layout().addSpacing((40 / 96 * self.iconSize))
         self.layout().addWidget(self.iconLabel, stretch=0)
-        self.layout().addSpacing((30/96*self.iconSize))
+        self.layout().addSpacing((30 / 96 * self.iconSize))
         self.layout().addWidget(self.textLabel, stretch=1)
-        if frame: self.layout().addSpacing((30/96*self.iconSize))
+        if frame:
+            self.layout().addSpacing((30 / 96 * self.iconSize))
 
     def setText(self, text: str) -> None:
         self.textLabel.setText(text)
@@ -637,10 +640,12 @@ class IconLabel(QWidget):
         self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap((self.iconSize), (self.iconSize)))
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class ButtonLabel(QWidget):
     clicked = Signal()
+
     def __init__(self, size=96) -> None:
         super().__init__()
         self.setAttribute(Qt.WA_StyledBackground)
@@ -649,7 +654,7 @@ class ButtonLabel(QWidget):
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.iconLabel = QLabel()
-        self.iconLabel.setMinimumHeight((self.iconSize+40))
+        self.iconLabel.setMinimumHeight(self.iconSize + 40)
         self.iconLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.setMinimumHeight((self.iconSize))
         self.textLabel = QLabel()
@@ -659,13 +664,13 @@ class ButtonLabel(QWidget):
         self.textLabel.setOpenExternalLinks(True)
         self.button = QPushButton()
         self.button.clicked.connect(self.clicked.emit)
-        self.layout().addSpacing((40/96*self.iconSize))
+        self.layout().addSpacing((40 / 96 * self.iconSize))
         self.layout().addWidget(self.iconLabel, stretch=0)
-        self.layout().addSpacing((20/96*self.iconSize))
+        self.layout().addSpacing((20 / 96 * self.iconSize))
         self.layout().addWidget(self.textLabel, stretch=1)
-        self.layout().addSpacing((20/96*self.iconSize))
+        self.layout().addSpacing((20 / 96 * self.iconSize))
         self.layout().addWidget(self.button, stretch=0)
-        self.layout().addSpacing((40/96*self.iconSize))
+        self.layout().addSpacing((40 / 96 * self.iconSize))
 
     def setText(self, text: str) -> None:
         self.textLabel.setText(text)
@@ -677,10 +682,12 @@ class ButtonLabel(QWidget):
         self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap((self.iconSize), (self.iconSize)))
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class ClickableLabel(QLabel):
     clicked = Signal()
+
     def __init__(self) -> None:
         super().__init__()
         self.setMouseTracking(True)
@@ -689,8 +696,10 @@ class ClickableLabel(QLabel):
         self.clicked.emit()
         return super().mousePressEvent(ev)
 
+
 class ClickableButtonLabel(QPushButton):
     clicked = Signal()
+
     def __init__(self, size=96) -> None:
         super().__init__()
         self.setAttribute(Qt.WA_StyledBackground)
@@ -708,11 +717,11 @@ class ClickableButtonLabel(QPushButton):
         self.textLabel.setWordWrap(True)
         self.textLabel.setStyleSheet("font-size: 10pt;")
         self.textLabel.setOpenExternalLinks(True)
-        self.layout().addSpacing((40/96*self.iconSize))
+        self.layout().addSpacing((40 / 96 * self.iconSize))
         self.layout().addWidget(self.iconLabel, stretch=0)
-        self.layout().addSpacing((20/96*self.iconSize))
+        self.layout().addSpacing((20 / 96 * self.iconSize))
         self.layout().addWidget(self.textLabel, stretch=1)
-        self.layout().addSpacing((40/96*self.iconSize))
+        self.layout().addSpacing((40 / 96 * self.iconSize))
 
     def setText(self, text: str) -> None:
         self.textLabel.setText(text)
@@ -724,7 +733,8 @@ class ClickableButtonLabel(QPushButton):
         self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap((self.iconSize), (self.iconSize), Mode=Qt.KeepAspectRatio))
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class MovableFocusSelector(QLabel):
     def __init__(self, parent: QWidget = None) -> None:
@@ -735,41 +745,43 @@ class MovableFocusSelector(QLabel):
         return super().move(x, y)
 
     def resize(self, w: int, h: int) -> None:
-        return super().resize(w+17, h+17)
+        return super().resize(w + 17, h + 17)
+
 
 class ClickableButtonLabelWithBiggerIcon(QPushButton):
     buttonClicked = Signal()
     lastClick = 0
+
     def __init__(self, size=96) -> None:
         super().__init__()
         self.setAttribute(Qt.WA_StyledBackground)
         self.setObjectName("ButtonItem")
-        self.iconSize = size
+        self.bIconSize = size
         self.setCheckable(True)
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.iconLabel = ClickableLabel()
-        self.iconLabel.setMinimumHeight((self.iconSize))
+        self.iconLabel.setMinimumHeight((self.bIconSize))
         self.iconLabel.setMinimumWidth(size)
         self.iconLabel.clicked.connect(self.animateClick)
         self.iconLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.setMinimumHeight(int(self.iconSize*1.5))
+        self.setMinimumHeight(int(self.bIconSize * 1.5))
         self.textLabel = ClickableLabel()
         self.textLabel.clicked.connect(self.animateClick)
         self.textLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
         self.textLabel.setWordWrap(True)
         self.textLabel.setStyleSheet("font-size: 10pt;")
         self.textLabel.setOpenExternalLinks(True)
-        self.layout().addSpacing((20/96*self.iconSize))
+        self.layout().addSpacing((20 / 96 * self.bIconSize))
         self.layout().addWidget(self.iconLabel, stretch=0)
-        self.layout().addSpacing((20/96*self.iconSize))
+        self.layout().addSpacing((20 / 96 * self.bIconSize))
         self.layout().addWidget(self.textLabel, stretch=1)
-        self.layout().addSpacing((40/96*self.iconSize))
+        self.layout().addSpacing((40 / 96 * self.bIconSize))
         self.clicked.connect(self.mightClick)
 
     def mightClick(self):
-        if time.time() - self.lastClick > 1:
-            self.lastClick = time.time()
+        if time.time() - self.vLayoutastClick > 1:
+            self.vLayoutastClick = time.time()
             self.buttonClicked.emit()
 
     def animateClick(self) -> None:
@@ -780,17 +792,18 @@ class ClickableButtonLabelWithBiggerIcon(QPushButton):
         self.textLabel.setText(text)
 
     def setIcon(self, path: str) -> None:
-        self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap(QSize((self.iconSize+20), (self.iconSize+20)), mode=QIcon.Normal))
+        self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap(QSize((self.bIconSize + 20), (self.bIconSize + 20)), mode=QIcon.Normal))
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class ClickableImageWithText(QPushButton):
     def __init__(self, size=96) -> None:
         super().__init__()
         self.setAttribute(Qt.WA_StyledBackground)
         self.setObjectName("ButtonItem")
-        self.iconSize = size
+        self.bIconSize = size
         self.setCheckable(True)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -799,7 +812,7 @@ class ClickableImageWithText(QPushButton):
         self.setMinimumWidth((size) * 2)
         self.iconLabel.clicked.connect(self.animateClick)
         self.iconLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.setMinimumHeight((self.iconSize + 50))
+        self.setMinimumHeight((self.bIconSize + 50))
         self.textLabel = ClickableLabel()
         self.textLabel.clicked.connect(self.animateClick)
         self.textLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
@@ -819,23 +832,24 @@ class ClickableImageWithText(QPushButton):
         self.button.setText(t)
 
     def setIcon(self, path: str) -> None:
-        self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap(QSize((self.iconSize+20), (self.iconSize+20)), mode=QIcon.Normal))
+        self.iconLabel.setPixmap(QIcon(getPath(path)).pixmap(QSize((self.bIconSize + 20), (self.bIconSize + 20)), mode=QIcon.Normal))
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class FirstRunSlide(BasicNavWidget):
     def __init__(self, parent=None) -> None:
-        super().__init__(parent=parent, noNavBar = True)
+        super().__init__(parent=parent, noNavBar=True)
         widget = QWidget()
-        l = QHBoxLayout()
-        l.setContentsMargins(0, 10, 0, 10)
-        widget.setLayout(l)
-        vl = QVBoxLayout()
-        vl.setContentsMargins(0, 0, 0, 0)
-        l.addSpacing(10)
-        l.addLayout(vl)
-        vl.addSpacing(0)
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 10, 0, 10)
+        widget.setLayout(hLayout)
+        vLayout = QVBoxLayout()
+        vLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.addSpacing(10)
+        hLayout.addLayout(vLayout)
+        vLayout.addSpacing(0)
 
         label1 = IconLabel(size=96, frame=False)
         label1.setIcon("icon.png")
@@ -874,7 +888,6 @@ class FirstRunSlide(BasicNavWidget):
 
         self.defaultPrefs.buttonClicked.connect(lambda: loadDefaultsAndSkip())
 
-
         self.hacker = ClickableButtonLabelWithBiggerIcon(64)
         self.hacker.setText(f"""
             <h3>{_("Customize WingetUI - for hackers and advanced users only")}</h3>
@@ -882,33 +895,32 @@ class FirstRunSlide(BasicNavWidget):
         self.hacker.setIcon("hacker.png")
         self.hacker.buttonClicked.connect(lambda: (self.outAnim(self.next.emit)))
 
-        vl.addWidget(label1)
-        #vl.addStretch()
-        vl.addWidget(label2)
-        vl.addStretch()
-        vl.addStretch()
-        vl.addStretch()
-        vl.addWidget(self.defaultPrefs)
-        vl.addWidget(self.hacker)
-        vl.addStretch()
-        #vl.addStretch()
+        vLayout.addWidget(label1)
+        vLayout.addWidget(label2)
+        vLayout.addStretch()
+        vLayout.addStretch()
+        vLayout.addStretch()
+        vLayout.addWidget(self.defaultPrefs)
+        vLayout.addWidget(self.hacker)
+        vLayout.addStretch()
         self.setCentralWidget(widget)
         self.opacityEffect.setOpacity(1)
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class LastSlide(BasicNavWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent, finishEnabled=True)
         widget = QWidget()
-        l = QHBoxLayout()
-        l.setContentsMargins(0, 0, 0, 10)
-        widget.setLayout(l)
-        vl = QVBoxLayout()
-        vl.setContentsMargins(0, 0, 0, 0)
-        l.addSpacing(10)
-        l.addLayout(vl)
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 0, 10)
+        widget.setLayout(hLayout)
+        vLayout = QVBoxLayout()
+        vLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.addSpacing(10)
+        hLayout.addLayout(vLayout)
 
         label1 = IconLabel(size=96, frame=False)
         label1.setIcon("finish.png")
@@ -939,42 +951,42 @@ class LastSlide(BasicNavWidget):
         report.setButtonText(_("Open GitHub"))
         report.clicked.connect(lambda: os.startfile("https://github.com/marticliment/WingetUI"))
 
-        vl.addWidget(label1)
-        vl.addStretch()
-        vl.addStretch()
-        vl.addWidget(youtube)
-        vl.addStretch()
-        vl.addWidget(donate)
-        vl.addStretch()
-        vl.addWidget(report)
-        vl.addStretch()
-        vl.addStretch()
+        vLayout.addWidget(label1)
+        vLayout.addStretch()
+        vLayout.addStretch()
+        vLayout.addWidget(youtube)
+        vLayout.addStretch()
+        vLayout.addWidget(donate)
+        vLayout.addStretch()
+        vLayout.addWidget(report)
+        vLayout.addStretch()
+        vLayout.addStretch()
         self.setCentralWidget(widget)
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
     def showEvent(self, event: QShowEvent) -> None:
         setSettings("ShownWelcomeWizard", True)
         return super().showEvent(event)
+
 
 class PackageManagersSlide(BasicNavWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent)
         self.defaultSelected = False
         widget = QWidget()
-        l = QHBoxLayout()
-        l.setContentsMargins(0, 0, 0, 0)
-        widget.setLayout(l)
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 0, 0)
+        widget.setLayout(hLayout)
         vl = QVBoxLayout()
         vl.setContentsMargins(0, 0, 0, 0)
-        l.addLayout(vl)
+        hLayout.addLayout(vl)
 
         label1 = IconLabel(size=(64), frame=False)
         label1.setIcon("console_color.png")
         label1.setText(f"""<h1>{_("Which package managers do you want to use?")}</h1>
                        {_("They are the programs in charge of installing, updating and removing packages.")}""")
-
 
         self.managers = DynamicScrollArea()
         winget = WelcomeWizardPackageManager("Winget", _("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"), getMedia("winget_color"))
@@ -992,7 +1004,7 @@ class PackageManagersSlide(BasicNavWidget):
             setSettings("DisableWinget", not winget.isChecked())
             setSettings("DisableChocolatey", not choco.isChecked())
             if choco.isChecked():
-                if shutil.which("choco.exe") != None:
+                if shutil.which("choco.exe") is not None:
                     setSettings("UseSystemChocolatey", True)
             setSettings("DisableScoop", not scoop.isChecked())
             setSettings("DisablePip", not pip.isChecked())
@@ -1002,9 +1014,9 @@ class PackageManagersSlide(BasicNavWidget):
 
         winget.setChecked(True)
         choco.setChecked(True)
-        scoop.setChecked(shutil.which("scoop") != None)
-        npm.setChecked(shutil.which("npm") != None)
-        pip.setChecked(shutil.which("pip") != None)
+        scoop.setChecked(shutil.which("scoop") is not None)
+        npm.setChecked(shutil.which("npm") is not None)
+        pip.setChecked(shutil.which("pip") is not None)
 
         vl.addWidget(label1)
         vl.addWidget(self.managers, stretch=1)
@@ -1016,22 +1028,23 @@ class PackageManagersSlide(BasicNavWidget):
         return super().showEvent(event)
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 class AdministratorPreferences(BasicNavWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent, nextGreyed=True)
         self.defaultSelected = False
         widget = QWidget()
-        l = QHBoxLayout()
-        l.setContentsMargins(0, 10, 0, 10)
-        widget.setLayout(l)
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 10, 0, 10)
+        widget.setLayout(hLayout)
         self.selector = MovableFocusSelector(self)
         self.selector.hide()
-        vl = QVBoxLayout()
-        vl.setContentsMargins(0, 0, 0, 0)
-        l.addSpacing(10)
-        l.addLayout(vl)
+        vLayout = QVBoxLayout()
+        vLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.addSpacing(10)
+        hLayout.addLayout(vLayout)
 
         label1 = IconLabel(size=(96), frame=False)
         label1.setIcon("admin_color.png")
@@ -1044,7 +1057,6 @@ class AdministratorPreferences(BasicNavWidget):
             {_("WingetUI will show a UAC prompt every time a package requires elevation to be installed.")+" "+_("This is the <b>default choice</b>.")}""")
         self.default.setIcon("shield_green.png")
         self.default.clicked.connect(lambda: self.toggleClockMode("hide", shouldChangePrefs=True))
-
 
         self.askOnce = ClickableButtonLabelWithBiggerIcon(64)
         self.askOnce.setText(f"""
@@ -1060,15 +1072,14 @@ class AdministratorPreferences(BasicNavWidget):
         self.askNever.setIcon("shield_red.png")
         self.askNever.clicked.connect(lambda: self.toggleClockMode("elevate", shouldChangePrefs=True))
 
-
-        vl.addWidget(label1)
-        vl.addStretch()
-        vl.addWidget(self.default)
-        vl.addStretch()
-        vl.addWidget(self.askOnce)
-        vl.addStretch()
-        vl.addWidget(self.askNever)
-        vl.addStretch()
+        vLayout.addWidget(label1)
+        vLayout.addStretch()
+        vLayout.addWidget(self.default)
+        vLayout.addStretch()
+        vLayout.addWidget(self.askOnce)
+        vLayout.addStretch()
+        vLayout.addWidget(self.askNever)
+        vLayout.addStretch()
         self.setCentralWidget(widget)
 
         self.clockMode = ""
@@ -1078,7 +1089,7 @@ class AdministratorPreferences(BasicNavWidget):
             self.enableNextButton()
         if shouldChangePrefs:
             self.defaultSelected = True
-        if mode == "hide" or mode=="hidedef":
+        if mode == "hide" or mode == "hidedef":
             self.clockMode = "hide"
             self.moveSelector(self.default)
             if shouldChangePrefs:
@@ -1102,12 +1113,6 @@ class AdministratorPreferences(BasicNavWidget):
         else:
             raise ValueError("Function toggleCheckMode() called with invalid arguments. Accepted values are: hide, show")
 
-    def showEvent(self, event) -> None:
-        if not self.defaultSelected:
-            pass
-            #self.toggleClockMode("hidedef")
-        return super().showEvent(event)
-
     def moveSelector(self, w: QWidget) -> None:
         if not self.selector.isVisible():
             self.selector.show()
@@ -1123,8 +1128,8 @@ class AdministratorPreferences(BasicNavWidget):
             sizeAnim = QPropertyAnimation(self.selector, b"size", self)
             sizeAnim.setStartValue(self.selector.size())
             s = w.size()
-            s.setWidth(s.width()+18)
-            s.setHeight(s.height()+18)
+            s.setWidth(s.width() + 18)
+            s.setHeight(s.height() + 18)
             sizeAnim.setEndValue(s)
             sizeAnim.setEasingCurve(QEasingCurve.InOutCirc)
             sizeAnim.setDuration(200)
@@ -1133,7 +1138,7 @@ class AdministratorPreferences(BasicNavWidget):
             sizeAnim.start()
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
 
 
 class UpdatesPreferences(BasicNavWidget):
@@ -1141,15 +1146,15 @@ class UpdatesPreferences(BasicNavWidget):
         super().__init__(parent=parent, nextGreyed=True)
         self.defaultSelected = False
         widget = QWidget()
-        l = QHBoxLayout()
-        l.setContentsMargins(0, 10, 0, 10)
-        widget.setLayout(l)
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 10, 0, 10)
+        widget.setLayout(hLayout)
         self.selector = MovableFocusSelector(self)
         self.selector.hide()
-        vl = QVBoxLayout()
-        vl.setContentsMargins(0, 0, 0, 0)
-        l.addSpacing(10)
-        l.addLayout(vl)
+        vLayout = QVBoxLayout()
+        vLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.addSpacing(10)
+        hLayout.addLayout(vLayout)
 
         label1 = IconLabel(size=(96), frame=False)
         label1.setIcon("update_pc_color.png")
@@ -1162,7 +1167,6 @@ class UpdatesPreferences(BasicNavWidget):
             {_("WingetUI will not check for updates periodically. They will still be checked at launch, but you won't be warned about them.")}""")
         self.default.setIcon("shield_yellow.png")
         self.default.clicked.connect(lambda: self.toggleClockMode("noupdates", shouldChangePrefs=True))
-
 
         self.askOnce = ClickableButtonLabelWithBiggerIcon(64)
         self.askOnce.setText(f"""
@@ -1178,15 +1182,14 @@ class UpdatesPreferences(BasicNavWidget):
         self.askNever.setIcon("shield_reload.png")
         self.askNever.clicked.connect(lambda: self.toggleClockMode("installupdates", shouldChangePrefs=True))
 
-
-        vl.addWidget(label1)
-        vl.addStretch()
-        vl.addWidget(self.default)
-        vl.addStretch()
-        vl.addWidget(self.askOnce)
-        vl.addStretch()
-        vl.addWidget(self.askNever)
-        vl.addStretch()
+        vLayout.addWidget(label1)
+        vLayout.addStretch()
+        vLayout.addWidget(self.default)
+        vLayout.addStretch()
+        vLayout.addWidget(self.askOnce)
+        vLayout.addStretch()
+        vLayout.addWidget(self.askNever)
+        vLayout.addStretch()
         self.setCentralWidget(widget)
 
         self.clockMode = ""
@@ -1196,7 +1199,7 @@ class UpdatesPreferences(BasicNavWidget):
             self.enableNextButton()
         if shouldChangePrefs:
             self.defaultSelected = True
-        if mode == "noupdates" or mode=="hidedef":
+        if mode == "noupdates" or mode == "hidedef":
             self.clockMode = "noupdates"
             self.moveSelector(self.default)
             if shouldChangePrefs:
@@ -1220,12 +1223,6 @@ class UpdatesPreferences(BasicNavWidget):
         else:
             raise ValueError("Function toggleCheckMode() called with invalid arguments. Accepted values are: hide, show")
 
-    def showEvent(self, event) -> None:
-        if not self.defaultSelected:
-            pass
-            #self.toggleClockMode("hidedef")
-        return super().showEvent(event)
-
     def moveSelector(self, w: QWidget) -> None:
         if not self.selector.isVisible():
             self.selector.show()
@@ -1241,8 +1238,8 @@ class UpdatesPreferences(BasicNavWidget):
             sizeAnim = QPropertyAnimation(self.selector, b"size", self)
             sizeAnim.setStartValue(self.selector.size())
             s = w.size()
-            s.setWidth(s.width()+18)
-            s.setHeight(s.height()+18)
+            s.setWidth(s.width() + 18)
+            s.setHeight(s.height() + 18)
             sizeAnim.setEndValue(s)
             sizeAnim.setEasingCurve(QEasingCurve.InOutCirc)
             sizeAnim.setDuration(200)
@@ -1251,7 +1248,8 @@ class UpdatesPreferences(BasicNavWidget):
             sizeAnim.start()
 
     def get6px(self, i: int) -> int:
-        return round(i*self.screen().devicePixelRatio())
+        return round(i * self.screen().devicePixelRatio())
+
 
 if __name__ == "__main__":
     from ctypes import c_int, windll
