@@ -366,10 +366,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         print(f"🟢 Searching for string \"{self.query.text()}\"")
 
         def waitAndFilter(query: str):
-            time.sleep(0.1)
+            time.sleep(0.5)
             if query == self.query.text():
                 self.callInMain.emit(partial(self.finishFiltering, query))
 
+        self.callInMain.emit(self.loadingProgressBar.show)
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
 
     def finishFiltering(self, text: str) -> None:
