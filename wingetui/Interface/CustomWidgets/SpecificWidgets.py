@@ -6,6 +6,13 @@ This file contains the classes for miscellainous, custom made, specific-case-ori
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+
+
 from datetime import datetime
 from functools import partial
 

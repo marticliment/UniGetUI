@@ -9,6 +9,13 @@ This file contains the classes for the set of Widgets used on:
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+
+
 import PySide6.QtCore
 import PySide6.QtGui
 import PySide6.QtWidgets
@@ -582,7 +589,3 @@ class SectionCheckBoxTextBox(SectionCheckBox):
             self.lineedit.setToolTip("")
             self.lineedit.setPlaceholderText(self.oldtext)
             self.valueChanged.emit(self.lineedit.text())
-
-
-if __name__ == "__main__":
-    import __init__

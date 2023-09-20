@@ -6,6 +6,13 @@ This file holds the Winget Package Manager related code.
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+
+
 import os
 import subprocess
 
@@ -683,7 +690,7 @@ class WingetPackageManager(DynamicPackageManager):
 
     def loadSources(self, sourceSignal: Signal, finishSignal: Signal) -> None:
         print("🟢 Starting winget source search...")
-        p = subprocess.Popen(f"{self.EXECUTABLE} source list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        p = subprocess.Popen([self.EXECUTABLE, "source", "list"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
         dashesPassed = False
         while p.poll() is None:
@@ -721,7 +728,3 @@ class WingetPackageManager(DynamicPackageManager):
 
 
 Winget = WingetPackageManager()
-
-if __name__ == "__main__":
-    os.chdir("..")
-    os.system("cd ..;python -m __init__.py")

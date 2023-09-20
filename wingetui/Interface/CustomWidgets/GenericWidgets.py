@@ -9,6 +9,12 @@ Generally they are optimized versions of Qt standard widgets.
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+
 
 import PySide6.QtCore
 import PySide6.QtGui
@@ -1051,7 +1057,3 @@ class FlowLayout(QLayout):
             item: QLayoutItem
             self.removeWidget(item.widget())
             self.removeItem(item)
-
-
-if __name__ == "__main__":
-    import __init__
