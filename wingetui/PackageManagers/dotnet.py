@@ -26,7 +26,7 @@ from .PackageClasses import *
 class DotNetToolPackageManager(DynamicPackageManager):
 
     EXECUTABLE = "dotnet.exe"
-    NAME = ".Net Tool"
+    NAME = ".NET Tool"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
     CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 

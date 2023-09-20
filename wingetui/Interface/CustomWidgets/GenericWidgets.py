@@ -159,8 +159,11 @@ class SmoothScrollArea(QScrollArea):
 
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
-            self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            try:
+                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                self.registeredThemeEvent = False
+            except AttributeError:
+                pass
             self.ApplyIcons()
         return super().showEvent(event)
 
@@ -296,8 +299,11 @@ class TreeWidget(QTreeWidget):
 
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
-            self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            try:
+                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                self.registeredThemeEvent = False
+            except AttributeError:
+                pass
             self.ApplyIcons()
         return super().showEvent(event)
 
@@ -490,8 +496,11 @@ class CustomComboBox(QComboBox):
 
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
-            self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
+            try:
+                globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
+                self.registeredThemeEvent = False
+            except AttributeError:
+                pass
         return super().showEvent(event)
 
     def ApplyBackdrop(self):
@@ -799,8 +808,11 @@ class MovableFramelessWindow(DraggableWindow):
 
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
-            self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            try:
+                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                self.registeredThemeEvent = False
+            except AttributeError:
+                pass
             self.ApplyIcons()
         ApplyMica(self.winId(), MicaTheme.DARK if isDark() else MicaTheme.LIGHT)
 
