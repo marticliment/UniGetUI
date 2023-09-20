@@ -6,6 +6,13 @@ This file holds a sample package manager implementation. The code here must be r
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+
+
 import os
 import subprocess
 
@@ -286,7 +293,3 @@ class DotNetToolPackageManager(DynamicPackageManager):
 
 
 Dotnet = DotNetToolPackageManager()
-
-
-if __name__ == "__main__":
-    import __init__
