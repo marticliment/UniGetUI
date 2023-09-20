@@ -927,6 +927,27 @@ class SettingsSection(SmoothScrollArea):
         disableNpm.setStyleSheet(
             "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
 
+        # Dotnet preferences
+
+        self.dotnetPreferences = CollapsableSection(_("{pm} preferences").format(pm=".NET Tool"), getMedia(
+            "dotnet"), _("{pm} package manager specific preferences").format(pm=".NET Tool"))
+        self.mainLayout.addWidget(self.dotnetPreferences)
+
+        path = SectionButton(Dotnet.EXECUTABLE, _("Copy"), h=50)
+        path.clicked.connect(
+            lambda: globals.app.clipboard().setText(Dotnet.EXECUTABLE + " tool"))
+        path.setStyleSheet(
+            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
+        self.dotnetPreferences.addWidget(path)
+
+        disableDotnet = SectionCheckBox(_("Enable {pm}").format(pm=Dotnet.NAME))
+        disableDotnet.setChecked(not getSettings(f"Disable{Dotnet.NAME}"))
+        disableDotnet.stateChanged.connect(lambda v: (setSettings(f"Disable{Dotnet.NAME}", not bool(
+            v)), self.inform(_("Restart WingetUI to fully apply changes"))))
+        self.dotnetPreferences.addWidget(disableDotnet)
+        disableDotnet.setStyleSheet(
+            "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+
         self.mainLayout.addStretch()
 
         print("🟢 Settings tab loaded!")

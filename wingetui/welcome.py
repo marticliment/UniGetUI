@@ -46,7 +46,7 @@ class WelcomeWindow(QMainWindow):
         for w in self.widgetOrder:
             w.next.connect(self.nextWidget)
             w.previous.connect(self.previousWidget)
-            w.skipped.connect(self.vLayoutastWidget)
+            w.skipped.connect(self.lastWidget)
             w.finished.connect(self.close)
 
         self.currentIndex = -1
@@ -780,8 +780,8 @@ class ClickableButtonLabelWithBiggerIcon(QPushButton):
         self.clicked.connect(self.mightClick)
 
     def mightClick(self):
-        if time.time() - self.vLayoutastClick > 1:
-            self.vLayoutastClick = time.time()
+        if time.time() - self.lastClick > 1:
+            self.lastClick = time.time()
             self.buttonClicked.emit()
 
     def animateClick(self) -> None:
@@ -883,6 +883,7 @@ class FirstRunSlide(BasicNavWidget):
             setSettings("DisableScoop", True)
             setSettings("DisablePip", True)
             setSettings("DisableNpm", True)
+            setSettings("Disable.Net Tool", True)
 
             self.outAnim(self.skipped.emit)
 
@@ -994,8 +995,9 @@ class PackageManagersSlide(BasicNavWidget):
         choco = WelcomeWizardPackageManager("Chocolatey", _("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"), getMedia("choco_color"))
         pip = WelcomeWizardPackageManager("Pip", _("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"), getMedia("pip_color"))
         npm = WelcomeWizardPackageManager("Npm", _("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"), getMedia("node_color"))
+        dotnet = WelcomeWizardPackageManager(".NET Tool", _("A repository full of tools designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related Tools</b>"), getMedia("dotnet_color"))
 
-        managers = [winget, scoop, choco, pip, npm]
+        managers = [winget, scoop, choco, pip, npm, dotnet]
 
         for manager in managers:
             self.managers.addItem(manager)
@@ -1009,6 +1011,7 @@ class PackageManagersSlide(BasicNavWidget):
             setSettings("DisableScoop", not scoop.isChecked())
             setSettings("DisablePip", not pip.isChecked())
             setSettings("DisableNpm", not npm.isChecked())
+            setSettings("Disable.NET Tool", not npm.isChecked())
 
         self.nextButton.clicked.connect(lambda: enablePackageManagers())
 
@@ -1017,6 +1020,7 @@ class PackageManagersSlide(BasicNavWidget):
         scoop.setChecked(shutil.which("scoop") is not None)
         npm.setChecked(shutil.which("npm") is not None)
         pip.setChecked(shutil.which("pip") is not None)
+        dotnet.setChecked(shutil.which("dotnet") is not None)
 
         vl.addWidget(label1)
         vl.addWidget(self.managers, stretch=1)
