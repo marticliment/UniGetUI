@@ -36,11 +36,11 @@ class DotNetToolPackageManager(DynamicPackageManager):
 
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
+    Capabilities.CanSkipIntegrityChecks = False
     Capabilities.CanRunInteractively = False
     Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = False
+    Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = False
 
     LoadedIcons = False
@@ -95,7 +95,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
         try:
             if shutil.which("dotnet-tools-outdated") is None:
                 print("🟡 Installing dotnet-tools-outdated, that was missing...")
-                Command = [self.EXECUTABLE, "tool", "install", "-g", "dotnet-tools-outdated"] + self.getParameters(InstallationOptions())
+                Command = [self.EXECUTABLE, "tool", "install", "--global", "dotnet-tools-outdated"] + self.getParameters(InstallationOptions())
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 p.wait()
                 print(p.stdout.readlines())
@@ -130,7 +130,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
             report(e)
             return []
 
-    def getInstalledPackages(self) -> list[Package]:
+    def getInstalledPackages(self, second_attempt=False) -> list[Package]:
         f"""
         Will retieve the intalled packages by {self.NAME} in the format of a list[Package] object.
         """
@@ -138,7 +138,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
         try:
             rawoutput = "\n\n-------dotnet\n"
             packages: list[Package] = []
-            p = subprocess.Popen([self.EXECUTABLE, "tool", "list"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True)
+            p = subprocess.Popen([self.EXECUTABLE, "tool", "list", "--global"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, env=os.environ.copy())
             dashesPassed = False
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
@@ -157,28 +157,14 @@ class DotNetToolPackageManager(DynamicPackageManager):
                             source = self.NAME
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Dotnet))
-            p = subprocess.Popen([self.EXECUTABLE, "tool", "list", "--global"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, env=os.environ.copy())
-            dashesPassed = False
-            while p.poll() is None:
-                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
-                if line:
-                    print(line)
-                    rawoutput += line + "\n"
-                    if not dashesPassed:
-                        if "---" in line:
-                            dashesPassed = True
-                    else:
-                        if len(line.split(" ")) >= 2:
-                            package = list(filter(None, line.split(" ")))
-                            name = formatPackageIdAsName(package[0])
-                            id = package[0]
-                            version = package[1]
-                            source = self.NAME + " (Global)"
-                            if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
-                                packages.append(Package(name, id, version, source, Dotnet))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput + "\n\n"
-            return packages
+            if len(packages) <= 2 and not second_attempt:
+                print("🟠 Chocolatey got too few installed packages, retrying")
+                return self.getInstalledPackages(second_attempt=True)
+            else:
+                return packages
+
         except Exception as e:
             report(e)
             return []
@@ -206,26 +192,17 @@ class DotNetToolPackageManager(DynamicPackageManager):
         return self.Icon
 
     def getParameters(self, options: InstallationOptions) -> list[str]:
-        Parameters: list[str] = []
+        Parameters: list[str] = ["--global"]
         if options.Architecture:
             Parameters += ["-a", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
-        if options.InstallationScope:
-            Parameters += ["-s", options.InstallationScope]
-        if options.InteractiveInstallation:
-            Parameters.append("--interactive")
-        if options.RemoveDataOnUninstall:
-            Parameters.append("--remove-user-data")
-        if options.SkipHashCheck:
-            Parameters += ["--skip-integrity-checks", "--force"]
         if options.Version:
             Parameters += ["--version", options.Version]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        print("🔴 This function should be reimplented!")
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "tool", "install", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -234,8 +211,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
         return p
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        print("🔴 This function should be reimplented!")
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "tool", "update", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -250,16 +226,14 @@ class DotNetToolPackageManager(DynamicPackageManager):
             if line:
                 output += line + "\n"
                 widget.addInfoLine.emit(line)
-                if "downloading" in line:
-                    widget.counterSignal.emit(3)
-                elif "installing" in line:
-                    widget.counterSignal.emit(7)
-        print(p.returncode)
-        widget.finishInstallation.emit(p.returncode, output)
+        outputCode = p.returncode
+        if outputCode != 0:
+            if "is already installed" in output:
+                outputCode = RETURNCODE_OPERATION_SUCCEEDED
+        widget.finishInstallation.emit(outputCode, output)
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        print("🔴 This function should be reimplented!")
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "tool", "uninstall", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -274,8 +248,6 @@ class DotNetToolPackageManager(DynamicPackageManager):
             if line:
                 output += line + "\n"
                 widget.addInfoLine.emit(line)
-                if "removing" in line:
-                    widget.counterSignal.emit(5)
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
 
