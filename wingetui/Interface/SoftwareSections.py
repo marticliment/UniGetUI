@@ -2102,7 +2102,7 @@ class PackageInfoPopupWindow(QWidget):
                 lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
         self.lastver.setText(lastVerString)
 
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) or package.isManager(Dotnet) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
@@ -2185,7 +2185,7 @@ class PackageInfoPopupWindow(QWidget):
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) or package.isManager(Dotnet) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")

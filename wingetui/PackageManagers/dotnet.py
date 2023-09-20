@@ -177,7 +177,50 @@ class DotNetToolPackageManager(DynamicPackageManager):
         details = PackageDetails(package)
         try:
 
-            # The code that loads the package details goes here
+            details.ManifestUrl = "https://www.nuget.org/packages/" + package.Id
+            url = f"http://www.nuget.org/api/v2/Packages(Id='{package.Id}',Version='')"
+
+            apiContents = urlopen(url).read().decode("utf-8", errors="ignore")
+
+            details.InstallerURL = f"https://www.nuget.org/api/v2/package/{package.Id}/{package.Version}"
+            details.InstallerType = "NuPkg"
+            try:
+                details.InstallerSize = int(urlopen(details.InstallerURL).length / 1000000)
+            except Exception as e:
+                report(e)
+
+            for match in re.findall(r"<name>[^<>]+<\/name>", apiContents):
+                details.Author = match.replace("<name>", "").replace("</name>", "")
+                details.Publisher = match.replace("<name>", "").replace("</name>", "")
+                break
+
+            for match in re.findall(r"<d:Description>[^<>]+<\/d:Description>", apiContents):
+                details.Description = match.replace("<d:Description>", "").replace("</d:Description>", "")
+                break
+
+            for match in re.findall(r"<updated>[^<>]+<\/updated>", apiContents):
+                details.UpdateDate = match.replace("<d:LastUpdated>", "").replace("</d:LastUpdated>", "")
+                break
+
+            for match in re.findall(r"<d:ProjectUrl>[^<>]+<\/d:ProjectUrl>", apiContents):
+                details.HomepageURL = match.replace("<d:ProjectUrl>", "").replace("</d:ProjectUrl>", "")
+                break
+
+            for match in re.findall(r"<d:LicenseUrl>[^<>]+<\/d:LicenseUrl>", apiContents):
+                details.LicenseURL = match.replace("<d:LicenseUrl>", "").replace("</d:LicenseUrl>", "")
+                break
+
+            for match in re.findall(r"<d:PackageHash>[^<>]+<\/d:PackageHash>", apiContents):
+                details.InstallerHash = match.replace("<d:PackageHash>", "").replace("</d:PackageHash>", "")
+                break
+
+            for match in re.findall(r"<d:ReleaseNotes>[^<>]+<\/d:ReleaseNotes>", apiContents):
+                details.ReleaseNotes = match.replace("<d:ReleaseNotes>", "").replace("</d:ReleaseNotes>", "")
+                break
+
+            for match in re.findall(r"<d:LicenseNames>[^<>]+<\/d:LicenseNames>", apiContents):
+                details.License = match.replace("<d:LicenseNames>", "").replace("</d:LicenseNames>", "")
+                break
 
             print(f"🟢 Get info finished for {package.Name} on {self.NAME}")
             return details
