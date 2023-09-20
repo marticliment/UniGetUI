@@ -20,7 +20,9 @@ import PySide6.QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import _, blueColor, GetIgnoredPackageUpdates_Permanent
+from urllib.request import urlopen
+import os
+from tools import _, blueColor, GetIgnoredPackageUpdates_Permanent, cprint, report
 
 
 class Package():
@@ -56,6 +58,36 @@ class Package():
         elif self.isScoop():
             iconId = iconId.split("/")[-1]
         return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
+
+    def getPackageIcon(self) -> str:
+        try:
+            iconId = self.getIconId()
+            iconpath = os.path.join(os.path.expanduser(
+                "~"), f".wingetui/cachedmeta/{iconId}.icon.png")
+            if not os.path.exists(iconpath):
+                if "Net" in self.Source:
+                    iconurl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
+                elif "Chocolatey" in self.Source:
+                    iconurl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
+                else:
+                    iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                print("🔵 Found icon: ", iconurl)
+                if iconurl:
+                    icondata = urlopen(iconurl).read()
+                    with open(iconpath, "wb") as f:
+                        f.write(icondata)
+                else:
+                    print("🟡 Icon url empty")
+                    raise KeyError(f"{iconurl} was empty")
+            else:
+                cprint(f"🔵 Found cached image in {iconpath}")
+            return iconpath
+        except KeyError:
+            print(f"🟡 Icon {iconId} not found in json (KeyError)")
+            return ""
+        except Exception as e:
+            report(e)
+            return ""
 
     def getSourceIcon(self) -> QIcon:
         return self.PackageManager.getIcon(self.Source)
@@ -186,6 +218,7 @@ class PackageManagerModule():
     NAME: str
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
+    Icon: QIcon = None
 
     def __init__(self):
         pass

@@ -373,10 +373,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         print(f"🟢 Searching for string \"{self.query.text()}\"")
 
         def waitAndFilter(query: str):
-            time.sleep(0.1)
+            time.sleep(0.5)
             if query == self.query.text():
                 self.callInMain.emit(partial(self.finishFiltering, query))
 
+        self.callInMain.emit(self.loadingProgressBar.show)
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
 
     def finishFiltering(self, text: str) -> None:
@@ -2108,7 +2109,7 @@ class PackageInfoPopupWindow(QWidget):
                 lastVerString = f"<b>{_('Latest Version')}:</b> {package.Version}"
         self.lastver.setText(lastVerString)
 
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) or package.isManager(Dotnet) else _('Installer SHA256')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {_('Loading...')}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {package.Id}")
@@ -2191,7 +2192,7 @@ class PackageInfoPopupWindow(QWidget):
             self.license.setText(f"<b>{_('License')}:</b> {details.asUrl(details.License)}")
         else:
             self.license.setText(f"<b>{_('License')}:</b> {_('Not available')}")
-        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
+        self.sha.setText(f"<b>{_('Installer SHA512') if package.isManager(Choco) or package.isManager(Npm) or package.isManager(Dotnet) else _('Installer SHA256')} ({_('Latest Version')}):</b> {details.InstallerHash}")
         self.link.setText(f"<b>{_('Installer URL')} ({_('Latest Version')}):</b> {details.asUrl(details.InstallerURL)} {f'({details.InstallerSize} MB)' if details.InstallerSize > 0 else ''}")
         self.type.setText(f"<b>{_('Installer Type')} ({_('Latest Version')}):</b> {details.InstallerType}")
         self.packageId.setText(f"<b>{_('Package ID')}:</b> {details.Id}")
@@ -2231,35 +2232,16 @@ class PackageInfoPopupWindow(QWidget):
     def loadPackageIcon(self, package: Package) -> None:
         try:
             id = package.Id
-            iconId = package.getIconId()
-            iconpath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.icon.png")
-            if not os.path.exists(iconpath):
-                if package.isManager(Choco):
-                    iconurl = f"https://community.chocolatey.org/content/packageimages/{id}.{version}.png"
+            iconpath = package.getPackageIcon()
+            if iconpath:
+                if self.currentPackage.Id == id:
+                    self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
                 else:
-                    iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
-                print("🔵 Found icon: ", iconurl)
-                if iconurl:
-                    icondata = urlopen(iconurl).read()
-                    with open(iconpath, "wb") as f:
-                        f.write(icondata)
-                else:
-                    print("🟡 Icon url empty")
-                    raise KeyError(f"{iconurl} was empty")
+                    print("🟡 Icon arrived too late!")
             else:
-                cprint(f"🔵 Found cached image in {iconpath}")
-            if self.currentPackage.Id == id:
-                self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(iconpath).pixmap(64, 64)))
-            else:
-                print("Icon arrived too late!")
+                print("🟡 An empty icon path was received")
         except Exception as e:
-            try:
-                if type(e) != KeyError:
-                    report(e)
-                else:
-                    print(f"🟡 Icon {iconId} not found in json")
-            except Exception as e:
-                report(e)
+            report(e)
 
     def loadPackageScreenshots(self, package: Package) -> None:
         try:

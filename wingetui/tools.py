@@ -544,7 +544,7 @@ def formatPackageIdAsName(id: str):
     """
     Returns a more beautiful name for the given ID
     """
-    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
+    return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").replace(".", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
 
 
 def getMaskedIcon(iconName: str) -> QIcon:
@@ -574,32 +574,7 @@ def normalizeString(s, outliers=str.maketrans(dict(zip(LATIN.split(), ASCII.spli
 
 
 def getPackageIcon(package) -> str:
-    try:
-        iconId = package.getIconId()
-        iconpath = os.path.join(os.path.expanduser(
-            "~"), f".wingetui/cachedmeta/{iconId}.icon.png")
-        if not os.path.exists(iconpath):
-            iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
-            print("🔵 Found icon: ", iconurl)
-            if iconurl:
-                icondata = urlopen(iconurl).read()
-                with open(iconpath, "wb") as f:
-                    f.write(icondata)
-            else:
-                print("🟡 Icon url empty")
-                raise KeyError(f"{iconurl} was empty")
-        else:
-            cprint(f"🔵 Found cached image in {iconpath}")
-        return iconpath
-    except Exception as e:
-        try:
-            if type(e) != KeyError:
-                report(e)
-            else:
-                print(f"🟡 Icon {iconId} not found in json")
-        except Exception as e:
-            report(e)
-        return ""
+    return package.getPackageIcon()
 
 
 def ConvertMarkdownToHtml(content: str) -> str:
