@@ -6,6 +6,13 @@ This file holds the classes related to Packages and PackageManagers .
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+
+
 import subprocess
 
 import PySide6.QtCore

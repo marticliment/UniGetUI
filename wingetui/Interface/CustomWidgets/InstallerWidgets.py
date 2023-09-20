@@ -7,8 +7,15 @@ This file also contains the following classes:
  - ScoopBucketManager
  - WingetBucketManager
 
-
 """
+
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+
+
 import os
 import subprocess
 import time
@@ -1086,7 +1093,3 @@ class WingetBucketManager(QWidget):
 
     def wingetRemoveExtraSource(self, source: str) -> None:
         globals.installersWidget.addItem(CustomUninstallerWidget(f"{source} Winget source", [Winget.EXECUTABLE, "source", "remove", source], Winget, runAsAdministrator=True))
-
-
-if __name__ == "__main__":
-    import __init__

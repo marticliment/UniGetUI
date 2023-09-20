@@ -6,6 +6,12 @@ This file contains the code of the main WingetUI window.
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+
 
 import ctypes
 import os
@@ -416,7 +422,3 @@ class RootWindow(QMainWindow):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
         return super().mouseReleaseEvent(event)
-
-
-if __name__ == "__main__":
-    import __init__

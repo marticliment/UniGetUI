@@ -13,6 +13,13 @@ The class PackageInfoPopupWindow contains the code for the Package Details windo
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+
+
 import os
 import sys
 import time
@@ -2376,7 +2383,3 @@ class PackageInfoPopupWindow(QWidget):
             self.registeredThemeEvent = False
             self.window().OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
-
-
-if __name__ == "__main__":
-    import __init__

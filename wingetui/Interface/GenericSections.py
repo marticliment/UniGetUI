@@ -6,6 +6,13 @@ This file contains the code for miscellanious User Interface sections, such as t
 
 """
 
+if __name__ == "__main__":
+    import subprocess
+    import os
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+
+
 import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
 import os
 import subprocess
@@ -1081,7 +1088,3 @@ class PackageManagerLogSection(BaseLogSection):
             globals.PackageManagerOutput.replace("\n\n\n", ""))
         self.textEdit.verticalScrollBar().setValue(
             self.textEdit.verticalScrollBar().maximum())
-
-
-if __name__ == "__main__":
-    import __init__
