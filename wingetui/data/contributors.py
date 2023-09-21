@@ -31,7 +31,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1940
+    "contributions": 1955
   },
   {
     "name": "ppvnf",
