@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7616
+        "done": 7617
     },
     "icons_and_screenshots": {
         "115": {
@@ -6907,7 +6907,7 @@
             "images": []
         },
         "ohmyposh": {
-            "icon": "https://i.postimg.cc/x1gnCQxg/icon.png\n",
+            "icon": "https://i.postimg.cc/x1gnCQxg/icon.png",
             "images": [
                 "https://i.postimg.cc/PrstV2vb/1.png",
                 "https://i.postimg.cc/7ZqqwhVf/2.png",
@@ -10020,8 +10020,11 @@
             "images": []
         },
         "sengi": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/NicolasConstant/wingetui-illustration/master/pkgs/n/NicolasConstant/sengi/icon.png",
+            "images": [
+                "https://raw.githubusercontent.com/NicolasConstant/wingetui-illustration/master/pkgs/n/NicolasConstant/sengi/screen-1.png",
+                "https://raw.githubusercontent.com/NicolasConstant/wingetui-illustration/master/pkgs/n/NicolasConstant/sengi/screen-2.png"
+            ]
         },
         "react-explorer": {
             "icon": "",
