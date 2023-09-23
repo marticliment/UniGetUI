@@ -808,7 +808,7 @@ class SettingsSection(SmoothScrollArea):
 
         disableScoop = SectionCheckBox(_("Enable {pm}").format(pm="Scoop"))
         disableScoop.setChecked(not getSettings(f"Disable{Scoop.NAME}"))
-        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), scoopPreventCaps.setEnabled(v), bucketManager.setEnabled(
+        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), bucketManager.setEnabled(
             v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.scoopPreferences.addWidget(disableScoop)
 
@@ -840,7 +840,6 @@ class SettingsSection(SmoothScrollArea):
         uninstallScoop.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
 
-        scoopPreventCaps.setEnabled(disableScoop.isChecked())
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
         enableScoopCleanup.setEnabled(disableScoop.isChecked())
