@@ -794,7 +794,7 @@ class ScoopBucketManager(QWidget):
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
-        self.loadingProgressBar.hide()
+        self.loadingProgressBar.setVisible(False)
         self.finishLoading.connect(lambda: self.loadingProgressBar.hide())
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
@@ -812,8 +812,6 @@ class ScoopBucketManager(QWidget):
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
-        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-
         self.bucketList.label.setText(_("Loading buckets..."))
         self.bucketList.label.setVisible(True)
         self.bucketList.setColumnCount(4)
@@ -889,8 +887,8 @@ class ScoopBucketManager(QWidget):
             item = self.bucketList.takeTopLevelItem(0)
             del item
         Thread(target=Scoop.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
-        self.loadingProgressBar.show()
-        self.bucketList.label.show()
+        self.loadingProgressBar.setVisible(True)
+        self.bucketList.label.setVisible(True)
         self.bucketList.label.setText("Loading...")
         globals.scoopBuckets = {}
 
@@ -974,8 +972,6 @@ class WingetBucketManager(QWidget):
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
-        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-
         self.bucketList.label.setText(_("Loading sources..."))
         self.bucketList.label.show()
         self.bucketList.setColumnCount(3)

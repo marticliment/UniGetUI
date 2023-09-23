@@ -68,7 +68,6 @@ class CollapsableSection(QWidget):
         self.setAttribute(Qt.WA_StyledBackground)
         self.compressibleWidget = QWidget(self)
         self.compressibleWidget.show()
-        # self.compressibleWidget.setAutoFillBackground(True)
         self.compressibleWidget.setObjectName("compressibleWidget")
         self.compressibleWidget.setStyleSheet("#compressibleWidget{background-color: transparent;}")
 
@@ -144,12 +143,20 @@ class CollapsableSection(QWidget):
         time.sleep(0.2)
         self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.baseHeight))
+        for widget in self.childrenw:
+            widget: QWidget
+            widget.setUpdatesEnabled(False)
+            widget.setVisible(False)
 
     def showChildren(self) -> None:
         self.callInMain.emit(lambda: self.compressibleWidget.move(0, (self.baseHeight - 20)))
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.compressibleWidget.sizeHint().height()))
         self.callInMain.emit(lambda: self.compressibleWidget.show())
         self.callInMain.emit(self.newShowAnim.start)
+        for widget in self.childrenw:
+            widget: QWidget
+            widget.setUpdatesEnabled(True)
+            widget.setVisible(True)
 
     def setChildFixedHeight(self, h: int) -> None:
         self.compressibleWidget.setFixedHeight(h)
