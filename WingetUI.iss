@@ -64,6 +64,7 @@ Name: "Hebrew"; MessagesFile: "compiler:Languages\Hebrew.isl"
 Name: "Icelandic"; MessagesFile: "compiler:Languages\Icelandic.isl"
 Name: "Italian"; MessagesFile: "compiler:Languages\Italian.isl"
 Name: "Japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
 Name: "Norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
 Name: "Polish"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "Portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
@@ -72,7 +73,9 @@ Name: "Slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
 Name: "Spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "Turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl" 
-Name: "Korean"; MessagesFile: "compiler:Languages\Korean.isl"
+
+; Include installer's messages
+#include "custom_messages.iss"
 
 [InstallDelete]
 //[InstallDelete]
@@ -224,10 +227,10 @@ end;
 
 
 [Tasks]
-Name: "portableinstall"; Description: "Perform a portable installation"; GroupDescription: "Installation type"; Flags: unchecked exclusive
-Name: "regularinstall"; Description: "Perform a regular installation"; GroupDescription: "Installation type"; Flags: exclusive   
-Name: "regularinstall\startmenuicon"; Description: "Create a shortcut on the start menu"; GroupDescription: "Shortcuts"; 
-Name: "regularinstall\desktopicon"; Description: "Create a shortcut on the desktop"; GroupDescription: "Shortcuts"; Flags: unchecked; 
+Name: "portableinstall"; Description: "{cm:PortInst}"; GroupDescription: "{cm:InstallType}"; Flags: unchecked exclusive
+Name: "regularinstall"; Description: "{cm:RegInst}"; GroupDescription: "{cm:InstallType}"; Flags: exclusive   
+Name: "regularinstall\startmenuicon"; Description: "{cm:RegStartMmenuIcon}"; GroupDescription: "{cm:ShCuts}"; 
+Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDescription: "{cm:ShCuts}";
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
