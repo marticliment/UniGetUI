@@ -5,7 +5,7 @@
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
 
-The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/) and [Npm](https://www.npmjs.com/)
+The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/) and [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install)
 With this app, you'll be able to easily download, install, update and uninstall any software that's published on the supported package managers — and so much more.
 
 **This is WingetUI's official repository. If you are searching for WingetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)**
@@ -63,7 +63,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 
 ## Features
 
- - WingetUI has the ability to install, update and uninstall packages from Winget (including Microsoft Store), Scoop, Chocolatey, pip and npm. WingetUI will also detect if your manually-installed apps can be updated!
+ - WingetUI has the ability to install, update and uninstall packages from Winget (including Microsoft Store), Scoop, Chocolatey, pip, npm and .NET Tool. WingetUI will also detect if your manually-installed apps can be updated!
  - It can also upgrade and uninstall previously installed packages — as well as uninstall built-in Windows apps!
  - WingetUI has the ability to both import and export the packages of your choice, so that you can easily install them in the future.
  - WingetUI supports managing Scoop buckets with an interface.
