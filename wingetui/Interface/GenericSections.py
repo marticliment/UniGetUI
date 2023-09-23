@@ -583,27 +583,39 @@ class SettingsSection(SmoothScrollArea):
         self.trayTitle.addWidget(doCloseWingetUI)
         generalNotifications = SectionCheckBox(
             _("Enable WingetUI notifications"))
+
+        updatesNotifications = SectionCheckBox(
+            _("Show a notification when there are available updates"))
+        errorNotifications = SectionCheckBox(
+            _("Show a notification when an installation fails"))
+        successNotifications = SectionCheckBox(
+            _("Show a notification when an installation finishes successfully"))
+
+        def updateNotificationCheckboxes(v):
+            setSettings("DisableNotifications", not bool(v))
+            updatesNotifications.setEnabled(not getSettings("DisableNotifications"))
+            errorNotifications.setEnabled(not getSettings("DisableNotifications"))
+            successNotifications.setEnabled(not getSettings("DisableNotifications"))
+
+        updatesNotifications.setEnabled(not getSettings("DisableNotifications"))
+        errorNotifications.setEnabled(not getSettings("DisableNotifications"))
+        successNotifications.setEnabled(not getSettings("DisableNotifications"))
+
         generalNotifications.setChecked(
             not getSettings("DisableNotifications"))
         generalNotifications.stateChanged.connect(
-            lambda v: setSettings("DisableNotifications", not bool(v)))
+            lambda v: updateNotificationCheckboxes(v))
         self.trayTitle.addWidget(generalNotifications)
-        updatesNotifications = SectionCheckBox(
-            _("Show a notification when there are available updates"))
         updatesNotifications.setChecked(
             not getSettings("DisableUpdatesNotifications"))
         updatesNotifications.stateChanged.connect(
             lambda v: setSettings("DisableUpdatesNotifications", not bool(v)))
         self.trayTitle.addWidget(updatesNotifications)
-        errorNotifications = SectionCheckBox(
-            _("Show a notification when an installation fails"))
         errorNotifications.setChecked(
             not getSettings("DisableErrorNotifications"))
         errorNotifications.stateChanged.connect(
             lambda v: setSettings("DisableErrorNotifications", not bool(v)))
         self.trayTitle.addWidget(errorNotifications)
-        successNotifications = SectionCheckBox(
-            _("Show a notification when an installation finishes successfully"))
         successNotifications.setChecked(
             not getSettings("DisableSuccessNotifications"))
         successNotifications.stateChanged.connect(
