@@ -1266,8 +1266,6 @@ try:
     }}
     #subtitleLabel{{
         margin: 0px;
-        margin-bottom: 0;
-        margin-top: 0;
         padding-left: {(20)}px;
         padding-top: {(15)}px;
         padding-bottom: {(15)}px;

@@ -717,7 +717,7 @@ class SettingsSection(SmoothScrollArea):
             "UseSystemWinget", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.advancedOptions.addWidget(enableSystemWinget)
         enableSystemWinget = SectionCheckBox(
-            _("Use ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"))
+            _("Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"))
         enableSystemWinget.setChecked(getSettings("EnableArmWinget"))
         enableSystemWinget.stateChanged.connect(lambda v: (setSettings(
             "EnableArmWinget", bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
@@ -798,8 +798,6 @@ class SettingsSection(SmoothScrollArea):
             _("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
         button.clicked.connect(lambda: (os.startfile(
             os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
-        button.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.wingetPreferences.addWidget(button)
 
         parallelInstalls.setEnabled(disableWinget.isChecked())
@@ -849,8 +847,6 @@ class SettingsSection(SmoothScrollArea):
         uninstallScoop.clicked.connect(lambda: (setSettings("DisableScoop", True), disableScoop.setChecked(
             True), os.startfile(os.path.join(realpath, "resources/uninstall_scoop.cmd"))))
         self.scoopPreferences.addWidget(uninstallScoop)
-        uninstallScoop.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
 
         bucketManager.setEnabled(disableScoop.isChecked())
         uninstallScoop.setEnabled(disableScoop.isChecked())
@@ -881,6 +877,8 @@ class SettingsSection(SmoothScrollArea):
         enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
         enableSystemChocolatey.stateChanged.connect(
             lambda v: setSettings("UseSystemChocolatey", bool(v)))
+        enableSystemChocolatey.setStyleSheet(
+            "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         self.chocoPreferences.addWidget(enableSystemChocolatey)
 
         # Pip preferences
