@@ -812,13 +812,6 @@ class SettingsSection(SmoothScrollArea):
             v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.scoopPreferences.addWidget(disableScoop)
 
-        scoopPreventCaps = SectionCheckBox(
-            _("Show Scoop packages in lowercase"))
-        scoopPreventCaps.setChecked(getSettings("LowercaseScoopApps"))
-        scoopPreventCaps.stateChanged.connect(
-            lambda v: setSettings("LowercaseScoopApps", bool(v)))
-        self.scoopPreferences.addWidget(scoopPreventCaps)
-
         bucketManager = ScoopBucketManager()
         bucketManager.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
