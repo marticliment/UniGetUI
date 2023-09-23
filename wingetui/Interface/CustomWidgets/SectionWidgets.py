@@ -16,6 +16,7 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
 
 
+from functools import partial
 import PySide6.QtCore
 import PySide6.QtGui
 import PySide6.QtWidgets
@@ -144,9 +145,8 @@ class CollapsableSection(QWidget):
         self.callInMain.emit(lambda: self.compressibleWidget.move((-1500), (-1500)))
         self.callInMain.emit(lambda: self.setChildFixedHeight(self.baseHeight))
         for widget in self.childrenw:
-            widget: QWidget
-            widget.setUpdatesEnabled(False)
-            widget.setVisible(False)
+            self.callInMain.emit(partial(widget.setUpdatesEnabled, False))
+            self.callInMain.emit(partial(widget.setVisible, False))
 
     def showChildren(self) -> None:
         self.callInMain.emit(lambda: self.compressibleWidget.move(0, (self.baseHeight - 20)))
@@ -154,9 +154,8 @@ class CollapsableSection(QWidget):
         self.callInMain.emit(lambda: self.compressibleWidget.show())
         self.callInMain.emit(self.newShowAnim.start)
         for widget in self.childrenw:
-            widget: QWidget
-            widget.setUpdatesEnabled(True)
-            widget.setVisible(True)
+            self.callInMain.emit(partial(widget.setUpdatesEnabled, True))
+            self.callInMain.emit(partial(widget.setVisible, True))
 
     def setChildFixedHeight(self, h: int) -> None:
         self.compressibleWidget.setFixedHeight(h)
