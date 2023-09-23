@@ -6,7 +6,7 @@ untranslatedPercentage = {
   "bn": "14%",
   "da": "32%",
   "el": "80%",
-  "es": "95%",
+  "es": "99%",
   "fa": "75%",
   "he": "5%",
   "hi": "92%",
@@ -125,6 +125,10 @@ languageCredits = {
     {
       "name": "evaneliasyoung",
       "link": "https://github.com/evaneliasyoung"
+    },
+    {
+      "name": "guplem",
+      "link": "https://github.com/guplem"
     },
     {
       "name": "JMoreno97",
