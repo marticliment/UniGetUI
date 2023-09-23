@@ -142,6 +142,11 @@ class WingetPackageManager(DynamicPackageManager):
                                 else:
                                     source = "Winget"
 
+                            if "Tag" in source or "Moniker" in source or "Command" in source:
+                                source = "Winget"
+
+                            source = source.strip()
+
                             if "  " not in name:
                                 if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                     packages.append(Package(name, id, ver, source, Winget))
