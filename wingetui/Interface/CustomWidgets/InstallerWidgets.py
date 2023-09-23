@@ -944,6 +944,7 @@ class WingetBucketManager(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    sources = []
 
     def __init__(self):
         super().__init__()
@@ -1047,6 +1048,7 @@ class WingetBucketManager(QWidget):
         return super().showEvent(event)
 
     def loadSources(self):
+        self.sources = []
         if getSettings("DisableWinget"):
             return
         for i in range(self.bucketList.topLevelItemCount()):
@@ -1060,6 +1062,10 @@ class WingetBucketManager(QWidget):
 
     def addItem(self, name: str, url: str):
         self.bucketList.label.hide()
+        if name in self.sources:
+            return
+        
+        self.sources.append(name)
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setToolTip(0, name)
