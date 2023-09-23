@@ -891,14 +891,14 @@ class ScoopBucketManager(QWidget):
         Thread(target=Scoop.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
         self.loadingProgressBar.setVisible(True)
         self.bucketList.label.setVisible(True)
-        self.bucketList.label.setText("Loading...")
+        self.bucketList.label.setText(_("Loading..."))
         globals.scoopBuckets = {}
 
     def addItem(self, name: str, source: str, updatedate: str, manifests: str):
         self.bucketList.label.hide()
         if name in self.buckets:
             return
-        
+
         self.buckets.append(name)
         item = QTreeWidgetItem()
         item.setText(0, name)
@@ -1057,14 +1057,14 @@ class WingetBucketManager(QWidget):
         Thread(target=Winget.loadSources, args=(self.addSourceSignal, self.finishLoading), name="MAIN: Load winget buckets").start()
         self.loadingProgressBar.show()
         self.bucketList.label.show()
-        self.bucketList.label.setText("Loading...")
+        self.bucketList.label.setText(_("Loading..."))
         globals.wingetSources = {}
 
     def addItem(self, name: str, url: str):
         self.bucketList.label.hide()
         if name in self.sources:
             return
-        
+
         self.sources.append(name)
         item = QTreeWidgetItem()
         item.setText(0, name)
