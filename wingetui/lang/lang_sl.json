@@ -314,7 +314,7 @@
   "Systems are now ready to go!" : "Sistemi so zdaj pripravljeni za uporabo!",
   "Text file" : "Tekstovna datoteka",
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : "Kontrolna vsota namestitvenega programa ne sovpada s pričakovano vrednostjo in pristnosti namestitvenega programa ni mogoče preveriti. Če zaupate založniku, {0} paket znova brez preverjanje kontrolne vsote.",
-  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Klasični upravitelj paketov za Windows. Tam boste našli vse. <br>Vsebuje: <b>Splošno programsko opremo</b>",
+  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Klasični upravitelj paketov za Windows. Tukaj boste našli vse. <br>Vsebuje: <b>Splošno programsko opremo</b>",
   "The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved." : "Naslednji paketi bodo izvoženi v datoteko JSON. Nobeni uporabniški podatki ali binarne datoteke ne bodo shranjeni.",
   "The following packages are going to be installed on your system." : "Naslednji paketi bodo nameščeni v vašem sistemu.",
   "The icons and screenshots are maintained by users like you!" : "Ikone in posnetke zaslona vzdržujejo uporabniki, kot ste vi!",
