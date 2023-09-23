@@ -381,7 +381,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
 
     def finishFiltering(self, text: str) -> None:
-        if len(text) >= 2 or getSettings("AlwaysListPackages"):
+        if len(text) >= 2:
             if text != self.LastQueryDynamicallyLoaded:
                 self.LastQueryDynamicallyLoaded = text
                 self.startLoadingDyamicPackages(text)
