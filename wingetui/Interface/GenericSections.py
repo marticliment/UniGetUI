@@ -106,7 +106,7 @@ class AboutSection(SmoothScrollArea):
             table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
             table.setCornerWidget(QLabel(""))
             table.setCornerButtonEnabled(False)
-            table.setFixedHeight(260)
+            table.setFixedHeight(290)
             table.cornerWidget().setStyleSheet("background: transparent;")
             self.mainLayout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
