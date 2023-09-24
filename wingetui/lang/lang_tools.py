@@ -24,6 +24,7 @@ languageReference = {
     "fr"    : "French - Français",
     "hi"    : "Hindi - हिंदी",
     "hr"    : "Croatian - Hrvatski",
+    "he"    : "Hebrew - עִבְרִית‎",
     "hu"    : "Hungarian - Magyar",
     "it"    : "Italian - Italiano",
     "id"    : "Indonesian - Bahasa Indonesia",
@@ -41,6 +42,7 @@ languageReference = {
     "th"    : "Thai - ภาษาไทย",
     "tr"    : "Turkish - Türkçe",
     "ua"    : "Ukranian - Yкраї́нська",
+    "vi"    : "Vietnamese - Tiếng Việt",
     "zh_CN" : "Simplified Chinese (China)",
     "zh_TW" : "Traditional Chinese (Taiwan)",
 }
