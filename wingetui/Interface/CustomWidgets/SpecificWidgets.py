@@ -1575,6 +1575,7 @@ class PackageExporter(MovableFramelessWindow):
         chocoPackageList = []
         npmPackageList = []
         pipPackageList = []
+        dotnetPackageList = []
         try:
             for i in range(self.treewidget.topLevelItemCount()):
                 item = self.treewidget.topLevelItem(i)
@@ -1594,6 +1595,9 @@ class PackageExporter(MovableFramelessWindow):
                 elif "pip" in item.text(2).lower():
                     pipPackage = {"Name": item.text(1)}
                     pipPackageList.append(pipPackage)
+                elif ".net tool" in item.text(2).lower():
+                    dotnetPackage = {"Name": item.text(1)}
+                    dotnetPackageList.append(dotnetPackage)
             wingetDetails = {
                 "Argument": "https://cdn.winget.microsoft.com/cache",
                 "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
@@ -1625,12 +1629,16 @@ class PackageExporter(MovableFramelessWindow):
             npmExportSchema = {
                 "apps": npmPackageList,
             }
+            dotnetExportSchema = {
+                "apps": dotnetPackageList,
+            }
             overallSchema = {
                 "winget": wingetExportSchema,
                 "scoop": scoopExportSchema,
                 "chocolatey": chocoExportSchema,
                 "pip": pipExportSchema,
-                "npm": npmExportSchema
+                "npm": npmExportSchema,
+                ".net tool": dotnetExportSchema,
             }
             filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
             if filename[0] != "" and filename[1]:
@@ -1783,7 +1791,8 @@ class PackageImporter(MovableFramelessWindow):
                         Scoop: contents["scoop"]["apps"],
                         Choco: contents["chocolatey"]["apps"],
                         Npm: contents["pip"]["apps"],
-                        Pip: contents["npm"]["apps"]
+                        Pip: contents["npm"]["apps"],
+                        Dotnet: contents[".net tool"]["apps"],
                     }
                     for manager in Managers.keys():
                         for entry in Managers[manager]:

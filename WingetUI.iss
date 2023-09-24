@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "2.1.0-beta"
+#define MyAppVersion "2.1.0"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -250,7 +250,7 @@ Name: "{commonstartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Task
 Name: "{commondesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
-Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall and not CmdLineParamExists('/NoVCRedist');
+Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
 ; Check: not CmdLineParamExists('/NoAutoStart');
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory

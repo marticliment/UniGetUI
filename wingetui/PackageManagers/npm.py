@@ -29,7 +29,7 @@ class NPMPackageManager(DynamicPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-    EXECUTABLE = "npm.exe"
+    EXECUTABLE = "npm"
 
     NAME = "Npm"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")

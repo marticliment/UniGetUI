@@ -778,6 +778,7 @@ class ScoopBucketManager(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    buckets = []
 
     def __init__(self):
         super().__init__()
@@ -794,7 +795,7 @@ class ScoopBucketManager(QWidget):
         self.loadingProgressBar.setValue(0)
         self.loadingProgressBar.setFixedHeight(4)
         self.loadingProgressBar.setTextVisible(False)
-        self.loadingProgressBar.hide()
+        self.loadingProgressBar.setVisible(False)
         self.finishLoading.connect(lambda: self.loadingProgressBar.hide())
         self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
         self.startAnim.connect(lambda anim: anim.start())
@@ -806,14 +807,12 @@ class ScoopBucketManager(QWidget):
         self.reloadButton.setAccessibleName(_("Reload"))
         self.addBucketButton = QPushButton(_("Add bucket"))
         self.addBucketButton.setFixedHeight(30)
-        self.addBucketButton.clicked.connect(self.scoopAddExtraBucket)
+        self.addBucketButton.clicked.connect(self.scoopAddBucket)
         hLayout.addWidget(self.addBucketButton)
         hLayout.addWidget(self.reloadButton)
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
-        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-
         self.bucketList.label.setText(_("Loading buckets..."))
         self.bucketList.label.setVisible(True)
         self.bucketList.setColumnCount(4)
@@ -883,19 +882,24 @@ class ScoopBucketManager(QWidget):
         return super().showEvent(event)
 
     def loadBuckets(self):
+        self.buckets = []
         if getSettings("DisableScoop"):
             return
         for i in range(self.bucketList.topLevelItemCount()):
             item = self.bucketList.takeTopLevelItem(0)
             del item
         Thread(target=Scoop.loadBuckets, args=(self.addBucketsignal, self.finishLoading), name="MAIN: Load scoop buckets").start()
-        self.loadingProgressBar.show()
-        self.bucketList.label.show()
-        self.bucketList.label.setText("Loading...")
+        self.loadingProgressBar.setVisible(True)
+        self.bucketList.label.setVisible(True)
+        self.bucketList.label.setText(_("Loading..."))
         globals.scoopBuckets = {}
 
     def addItem(self, name: str, source: str, updatedate: str, manifests: str):
         self.bucketList.label.hide()
+        if name in self.buckets:
+            return
+
+        self.buckets.append(name)
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setToolTip(0, name)
@@ -908,13 +912,13 @@ class ScoopBucketManager(QWidget):
         item.setToolTip(3, manifests)
         self.bucketList.addTopLevelItem(item)
         btn = QPushButton()
-        btn.clicked.connect(lambda: (self.scoopRemoveExtraBucket(name), self.bucketList.takeTopLevelItem(self.bucketList.indexOfTopLevelItem(item))))
+        btn.clicked.connect(lambda: (self.scoopRemoveBucket(name), self.bucketList.takeTopLevelItem(self.bucketList.indexOfTopLevelItem(item))))
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
         self.bucketList.setItemWidget(item, 4, btn)
         globals.scoopBuckets[name] = source
 
-    def scoopAddExtraBucket(self) -> None:
+    def scoopAddBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another bucket")), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", _("Another bucket")], 1, editable=False)
         if r[1]:
             bName = r[0]
@@ -930,7 +934,7 @@ class ScoopBucketManager(QWidget):
                 globals.installersWidget.addItem(p)
                 p.finishInstallation.connect(self.loadBuckets)
 
-    def scoopRemoveExtraBucket(self, bucket: str) -> None:
+    def scoopRemoveBucket(self, bucket: str) -> None:
         globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
 
 
@@ -940,6 +944,7 @@ class WingetBucketManager(QWidget):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    sources = []
 
     def __init__(self):
         super().__init__()
@@ -974,8 +979,6 @@ class WingetBucketManager(QWidget):
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
         self.bucketList = TreeWidget()
-        self.bucketList.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-
         self.bucketList.label.setText(_("Loading sources..."))
         self.bucketList.label.show()
         self.bucketList.setColumnCount(3)
@@ -1045,6 +1048,7 @@ class WingetBucketManager(QWidget):
         return super().showEvent(event)
 
     def loadSources(self):
+        self.sources = []
         if getSettings("DisableWinget"):
             return
         for i in range(self.bucketList.topLevelItemCount()):
@@ -1053,11 +1057,15 @@ class WingetBucketManager(QWidget):
         Thread(target=Winget.loadSources, args=(self.addSourceSignal, self.finishLoading), name="MAIN: Load winget buckets").start()
         self.loadingProgressBar.show()
         self.bucketList.label.show()
-        self.bucketList.label.setText("Loading...")
+        self.bucketList.label.setText(_("Loading..."))
         globals.wingetSources = {}
 
     def addItem(self, name: str, url: str):
         self.bucketList.label.hide()
+        if name in self.sources:
+            return
+
+        self.sources.append(name)
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setToolTip(0, name)

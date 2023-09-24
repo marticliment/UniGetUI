@@ -11,7 +11,7 @@ import importlib, os
 a = Analysis(['__init__.py'],
              pathex=['Y:\WingetUI-Store\wingetui_bin'],
              binaries=[('*.pyc', '.')],
-             datas=[('resources/', 'resources/'), ("components/", "components/"), ("lang/", "lang/"), ("data/*.pyc", "data/"), ("choco-cli/", "choco-cli/"), ("PackageManagers/", "PackageManagers/")],
+             datas=[('choco-cli/', 'choco-cli/'), ("components/", "components/"), ("data/*.pyc", "data/"), ("ExternalLibraries/*.pyc", "ExternalLibraries/"), ("Interface/", "Interface/"), ("lang/", "lang/"), ("PackageManagers/", "PackageManagers/"), ("resources/", "resources")],
              hiddenimports=['pkg_resources.py2_warn', "win32gui", "cls"],
              hookspath=[],
              runtime_hooks=[],
