@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7617
+        "done": 7620
     },
     "icons_and_screenshots": {
         "115": {
@@ -5038,8 +5038,11 @@
             "images": []
         },
         "figma": {
-            "icon": "https://community.chocolatey.org/content/packageimages/figma.104.1.png",
-            "images": []
+            "icon": "https://i.imgur.com/4N8g5vs.png",
+            "images": [
+                "https://help.figma.com/hc/article_attachments/4411511018135/Select_page_as_a_viewer.png",
+                "https://help.figma.com/hc/article_attachments/4402389760919/mask-with-stroke.png"
+            ]
         },
         "fonthelper": {
             "icon": "",
@@ -10099,7 +10102,7 @@
             "images": []
         },
         "ntlite": {
-            "icon": "",
+            "icon": "https://www.ntlite.com/wp-content/uploads/2014/10/72-web-logo.png",
             "images": []
         },
         "duc": {
@@ -12757,8 +12760,12 @@
             "images": []
         },
         "slack": {
-            "icon": "https://community.chocolatey.org/content/packageimages/slack.4.29.149.png",
-            "images": []
+            "icon": "https://i.imgur.com/PHteKLC.png",
+            "images": [
+                "https://i.imgur.com/EyA9fI3.png",
+                "https://i.imgur.com/EX4lDVS.png",
+                "https://i.imgur.com/V8d0HAH.png"
+            ]
         },
         "slack-beta": {
             "icon": "",
