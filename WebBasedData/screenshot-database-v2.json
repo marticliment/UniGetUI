@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7620
+        "done": 7625
     },
     "icons_and_screenshots": {
         "115": {
@@ -4952,8 +4952,14 @@
             "images": []
         },
         "farmanager": {
-            "icon": "",
-            "images": []
+            "icon": "https://avatars.githubusercontent.com/u/3636093?s=200&v=4",
+            "images": [
+                "https://www.farmanager.com/img/screen/ctrll.png",
+                "https://www.farmanager.com/img/screen/colors.png",
+                "https://www.farmanager.com/img/screen/viewer.png",
+                "https://www.farmanager.com/img/screen/elevation.png",
+                "https://www.farmanager.com/img/screen/altf7.png"
+            ]
         },
         "fastcopy": {
             "icon": "https://community.chocolatey.org/content/packageimages/fastcopy.install.4.2.1.png",
@@ -9582,8 +9588,10 @@
             "images": []
         },
         "monkeysaudio": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.instalki.pl/wp-content/uploads/program/icons/Monkey_Audio.png",
+            "images": [
+                "https://monkeysaudio.com/images/screenshot.png"
+            ]
         },
         "notejoy": {
             "icon": "",
@@ -9675,8 +9683,14 @@
             "images": []
         },
         "mp3tag": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.mp3tag.de/images/logo.png",
+            "images": [
+                "https://www.mp3tag.de/images/sht_main.png",
+                "https://www.mp3tag.de/images/sht_optgen1.png",
+                "https://www.mp3tag.de/images/sht_optcon1.png",
+                "https://www.mp3tag.de/images/sht_export.png",
+                "https://www.mp3tag.de/images/sht_optfreedb1.png"
+            ]
         },
         "cbetar2": {
             "icon": "",
@@ -20998,8 +21012,10 @@
             "images": []
         },
         "freac": {
-            "icon": "https://community.chocolatey.org/content/packageimages/freac.portable.1.1.6.png",
-            "images": []
+            "icon": "https://images.sftcdn.net/images/t_app-icon-s/p/59daf2d0-96d4-11e6-a53e-00163ec9f5fa/379161326/freac-logo.png",
+            "images": [
+                "https://images.sftcdn.net/images/t_app-cover-l,f_auto/p/59daf2d0-96d4-11e6-a53e-00163ec9f5fa/748648210/freac-screenshot.png"
+            ]
         },
         "free-manga-downloader": {
             "icon": "",
