@@ -18,13 +18,12 @@ untranslatedPercentage = {
   "ja": "92%",
   "ko": "95%",
   "nb": "80%",
-  "nl": "95%",
   "pl": "99%",
   "ru": "95%",
   "sl": "95%",
   "sr": "10%",
   "tg": "22%",
-  "th": "29%",
+  "th": "66%",
   "tr": "91%",
   "ua": "91%",
   "vi": "95%",
@@ -362,6 +361,10 @@ languageCredits = {
     {
       "name": "apaeisara",
       "link": "https://github.com/apaeisara"
+    },
+    {
+      "name": "dulapahv",
+      "link": "https://github.com/dulapahv"
     }
   ],
   "tr": [
