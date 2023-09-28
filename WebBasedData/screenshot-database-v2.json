@@ -10117,7 +10117,10 @@
         },
         "ntlite": {
             "icon": "https://www.ntlite.com/wp-content/uploads/2014/10/72-web-logo.png",
-            "images": []
+            "images": [
+                "https://www.ntlite.com/wp-content/uploads/screen_source.png",
+                "https://www.ntlite.com/wp-content/uploads/screen_tweaks.png"
+            ]
         },
         "duc": {
             "icon": "",
@@ -13553,7 +13556,13 @@
         },
         "bulkrenameutility": {
             "icon": "https://community.chocolatey.org/content/packageimages/bulkrenameutility.portable.3.1.0.0.png",
-            "images": []
+            "images": [
+                "https://www.bulkrenameutility.co.uk/assets/img-bru/mainscr.png",
+                "https://www.bulkrenameutility.co.uk/assets/img-bru/bru_main1.png",
+                "https://www.bulkrenameutility.co.uk/assets/img-bru/bru_main2.png",
+                "https://www.bulkrenameutility.co.uk/assets/img-bru/bru_main3.png",
+                "https://www.bulkrenameutility.co.uk/assets/img-bru/bru_main4.png"
+            ]
         },
         "ths-hevo": {
             "icon": "",
@@ -14955,7 +14964,13 @@
         },
         "frescobaldi": {
             "icon": "https://community.chocolatey.org/content/packageimages/frescobaldi.3.2.0.png",
-            "images": []
+            "images": [
+                "https://www.frescobaldi.org/images/frescobaldi1-en.png",
+                "https://www.frescobaldi.org/images/magnifier1-en.png",
+                "https://www.frescobaldi.org/images/scorewiz1-en.png",
+                "https://www.frescobaldi.org/images/scorewiz2-en.png",
+                "https://www.frescobaldi.org/images/scorewiz3-en.png"
+            ]
         },
         "0ad": {
             "icon": "https://cdn.icon-icons.com/icons2/1381/PNG/512/0ad_93511.png",
