@@ -1,7 +1,7 @@
 {
     "package_count": {
         "total": 14025,
-        "done": 7625
+        "done": 7642
     },
     "icons_and_screenshots": {
         "115": {
@@ -3427,22 +3427,28 @@
             ]
         },
         "k-litecodecpack-basic": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "images": [
+                "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
+            ]
         },
         "k-litecodecpack-full": {
-            "icon": "",
+            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
             "images": [
-                "https://user-images.githubusercontent.com/73800734/200967040-8c06e7be-4937-4e98-b5b6-cc9960d8d12c.png"
+                "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
             ]
         },
         "k-litecodecpack-mega": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "images": [
+                "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
+            ]
         },
         "k-litecodecpack-standard": {
-            "icon": "https://community.chocolatey.org/content/packageimages/k-litecodecpack-standard.17.4.5.png",
-            "images": []
+            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "images": [
+                "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
+            ]
         },
         "sciencefair": {
             "icon": "https://community.chocolatey.org/content/packageimages/sciencefair.1.0.6.png",
@@ -3617,8 +3623,10 @@
             "images": []
         },
         "crowtranslate": {
-            "icon": "https://community.chocolatey.org/content/packageimages/crowtranslate.2.10.3.png",
-            "images": []
+            "icon": "https://crow-translate.github.io/favicon.png",
+            "images": [
+                "https://crow-translate.github.io/screenshots/plasma/main.png"
+            ]
         },
         "crowdsec": {
             "icon": "https://community.chocolatey.org/content/packageimages/crowdsec.1.4.2.png",
@@ -3956,8 +3964,10 @@
             "images": []
         },
         "barrier": {
-            "icon": "",
-            "images": []
+            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2019/07/icon.svg.png",
+            "images": [
+                "https://www.nextofwindows.com/wp-content/uploads/2020/06/2020-06-03_2134-640x455.png"
+            ]
         },
         "debian": {
             "icon": "https://i.ibb.co/WfRYYFs/debian-512x512.png",
@@ -4278,8 +4288,12 @@
             "images": []
         },
         "dropbox": {
-            "icon": "",
-            "images": []
+            "icon": "https://it.wizcase.com/wp-content/uploads/2021/05/Dropbox-logo.png",
+            "images": [
+                "https://aem.dropbox.com/cms/content/dam/dropbox/blog/files/2017/04/screenshot3_1300x760.png",
+                "https://images.ctfassets.net/lzny33ho1g45/5cVkOkmxG4o6iWCiISu5zA/cf60be1721f51cb5441ab5fd5541c96b/dropbox-hidden-features-09-notifications.png",
+                "https://techboomers.com/wp-content/uploads/2017/01/db-20a10-20settings-20ss6.png"
+            ]
         },
         "drovio": {
             "icon": "",
@@ -4970,8 +4984,14 @@
             "images": []
         },
         "capture": {
-            "icon": "",
-            "images": []
+            "icon": "https://e1.pngegg.com/pngimages/631/913/png-clipart-faststone-capture-256-icon-thumbnail.png",
+            "images": [
+                "https://screenrecorderpro.files.wordpress.com/2018/03/capture.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-auto-save-settings.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-editor.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-file-name-format.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-miscellaneous-settings.png"
+            ]
         },
         "viewer": {
             "icon": "",
@@ -5366,12 +5386,20 @@
             ]
         },
         "gimp": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/The_GIMP_icon_-_gnome.svg/1024px-The_GIMP_icon_-_gnome.svg.png",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/The_GIMP_icon_-_gnome.svg/316px-The_GIMP_icon_-_gnome.svg.png",
+            "images": [
+                "https://docs.gimp.org/2.10/en/images/using/multi-window.png",
+                "https://i.sooftcdn.com/screen/en/windows/gimp-1.png",
+                "https://www.ionos.it/digitalguide/fileadmin/DigitalGuide/Screenshots_2021/screenshot-funktion-von-gimp.png"
+            ]
         },
         "gimp-nightly": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/The_GIMP_icon_-_gnome.svg/316px-The_GIMP_icon_-_gnome.svg.png",
+            "images": [
+                "https://docs.gimp.org/2.10/en/images/using/multi-window.png",
+                "https://i.sooftcdn.com/screen/en/windows/gimp-1.png",
+                "https://www.ionos.it/digitalguide/fileadmin/DigitalGuide/Screenshots_2021/screenshot-funktion-von-gimp.png"
+            ]
         },
         "glab": {
             "icon": "https://community.chocolatey.org/content/packageimages/glab.portable.1.24.1.png",
@@ -11273,8 +11301,13 @@
             "images": []
         },
         "freetube": {
-            "icon": "",
-            "images": []
+            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2023/04/freetube.svg.png",
+            "images": [
+                "https://dl.flathub.org/repo/screenshots/io.freetubeapp.FreeTube-stable/1504x846/io.freetubeapp.FreeTube-907f16599bf6e4ccc54af956f74c9c82.png",
+                "https://dl.flathub.org/repo/screenshots/io.freetubeapp.FreeTube-stable/1504x846/io.freetubeapp.FreeTube-fb4cac2c93e0714c0f1e1bc9586120ec.png",
+                "https://dl.flathub.org/repo/screenshots/io.freetubeapp.FreeTube-stable/1504x846/io.freetubeapp.FreeTube-d19954df5ca9968a21c782ab4417c124.png",
+                "https://dl.flathub.org/repo/screenshots/io.freetubeapp.FreeTube-stable/1504x846/io.freetubeapp.FreeTube-867034d7732ac2bf68406732fbf06487.png"
+            ]
         },
         "pretixscan": {
             "icon": "",
@@ -16082,11 +16115,15 @@
         },
         "calibre": {
             "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759046134149253/Calibre_logo_3.png",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/4/4a/Calibre_Linux_2.38.png"
+            ]
         },
         "calibre-portable": {
             "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759046134149253/Calibre_logo_3.png",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/4/4a/Calibre_Linux_2.38.png"
+            ]
         },
         "champ-r": {
             "icon": "",
@@ -18302,7 +18339,7 @@
             "images": []
         },
         "everything": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Everything.1.4.11022.png",
+            "icon": "https://i.postimg.cc/rpwsh2hZ/everything-icon.png",
             "images": [
                 "https://i.postimg.cc/RZRL3w9Q/Everything-Search-Window.png"
             ]
@@ -21761,15 +21798,15 @@
             "images": []
         },
         "hibit-startup-manager": {
-            "icon": "",
+            "icon": "https://www.hibitsoft.ir/images/Startup-Manager-icon.png",
             "images": []
         },
         "hibit-system-information": {
-            "icon": "",
+            "icon": "https://www.hibitsoft.ir/images/System-Information-icon.png",
             "images": []
         },
         "hibit-uninstaller": {
-            "icon": "",
+            "icon": "https://www.hibitsoft.ir/images/Uninstaller-icon.png",
             "images": []
         },
         "highlight": {
