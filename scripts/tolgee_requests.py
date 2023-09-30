@@ -8,8 +8,8 @@ except ImportError:
     import requests
 
 
-__project_id = 1205 # wingetui
-__api_url = f"https://app.tolgee.io/v2/projects/{__project_id}"
+__project_id = 1 # wingetui
+__api_url = f"https://tolgee.marticliment.com//v2/projects/{__project_id}"
 __api_key = ""
 __headers: dict[str, str] = {}
 __all_keys: dict = None
