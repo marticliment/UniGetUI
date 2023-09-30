@@ -19,10 +19,10 @@ untranslatedPercentage = {
   "nb": "80%",
   "pl": "99%",
   "ru": "95%",
+  "si": "0%",
   "sl": "95%",
   "sr": "10%",
   "tg": "22%",
-  "th": "88%",
   "tr": "91%",
   "ua": "91%",
   "vi": "95%",
@@ -338,6 +338,7 @@ languageCredits = {
       "link": "https://github.com/sklart"
     }
   ],
+  "si": [],
   "sl": [
     {
       "name": "rumplin",
