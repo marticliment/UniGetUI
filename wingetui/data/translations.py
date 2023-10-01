@@ -19,7 +19,7 @@ untranslatedPercentage = {
   "nb": "80%",
   "pl": "99%",
   "ru": "95%",
-  "si": "0%",
+  "si": "5%",
   "sl": "95%",
   "sr": "10%",
   "tg": "22%",
@@ -338,7 +338,12 @@ languageCredits = {
       "link": "https://github.com/sklart"
     }
   ],
-  "si": [],
+  "si": [
+    {
+      "name": "SashikaSandeepa",
+      "link": "https://github.com/SashikaSandeepa"
+    }
+  ],
   "sl": [
     {
       "name": "rumplin",
