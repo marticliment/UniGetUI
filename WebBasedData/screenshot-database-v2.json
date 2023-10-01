@@ -1,17 +1,9 @@
 {
     "package_count": {
-        "total": 14026,
-        "done": 7693
+        "total": 14024,
+        "done": 7697
     },
     "icons_and_screenshots": {
-        "115": {
-            "icon": "",
-            "images": []
-        },
-        "": {
-            "icon": "",
-            "images": []
-        },
         "115chrome": {
             "icon": "https://i.imgur.com/5fSfmJl.png",
             "images": [
@@ -2961,43 +2953,49 @@
             "images": []
         },
         "cpu-z": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
-            "images": []
+            "icon": "https://i.postimg.cc/fWjrdd4c/cpu-z.png\n",
+            "images": [
+                "https://i.postimg.cc/ZKyF39Mb/cpu-z-1.png",
+                "https://i.postimg.cc/bwc0Rz7Q/cpu-z-2.png\n",
+                "https://i.postimg.cc/jjRzGMd2/cpu-z-3.png\n",
+                "https://i.postimg.cc/qvssbPrW/cpu-z-4.png\n",
+                "https://i.postimg.cc/fb5xZYJK/cpu-z-5.png\n"
+            ]
         },
         "cpu-z-aorus": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/5NcQhssJ/aorus.png\n",
             "images": []
         },
         "cpu-z-asr": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/2Srb6VpX/asr.png\n",
             "images": []
         },
         "cpu-z-cm": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/xTKNnLZz/cm.png",
             "images": []
         },
         "cpu-z-gbt": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/6pc7Gtt6/gbt.png",
             "images": []
         },
         "cpu-z-msi": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/FKKYy8Hy/msi.png\n",
             "images": []
         },
         "cpu-z-phantom": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/MTMX4BRX/phantom.png\n",
             "images": []
         },
         "cpu-z-rog": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/hG3fpsXH/rog.png\n",
             "images": []
         },
         "cpu-z-taichi": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/SsBjpK7d/taichi.png",
             "images": []
         },
         "hwmonitor": {
-            "icon": "https://tweakers.net/ext/i/2000563509.png",
+            "icon": "https://i.postimg.cc/65W1fQwD/hwmonitor.png\n",
             "images": []
         },
         "powermax": {
@@ -4994,7 +4992,7 @@
             "images": []
         },
         "capture": {
-            "icon": "https://e1.pngegg.com/pngimages/631/913/png-clipart-faststone-capture-256-icon-thumbnail.png",
+            "icon": "https://i.postimg.cc/j5Rcn5RS/faststone-capture.png",
             "images": [
                 "https://screenrecorderpro.files.wordpress.com/2018/03/capture.png",
                 "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-auto-save-settings.png",
@@ -5915,25 +5913,29 @@
         "chrome": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/2048px-Google_Chrome_icon_%28February_2022%29.svg.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
+                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
             ]
         },
         "chrome-beta": {
             "icon": "https://image.winudf.com/v2/image1/Y29tLmNocm9tZS5kZXZfaWNvbl8xNTYzNDkxNzUyXzA3Ng/icon.png?w=&fakeurl=1",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
+                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
             ]
         },
         "chrome-canary": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Chrome-canary-logo.svg/512px-Chrome-canary-logo.svg.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
+                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
             ]
         },
         "chrome-dev": {
             "icon": "",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Google_Chrome_75_screenshot.png/800px-Google_Chrome_75_screenshot.png"
+                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
+                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
             ]
         },
         "chromeremotedesktop": {
@@ -9030,7 +9032,9 @@
         "edge": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Microsoft_Edge_logo_%282019%29.png/240px-Microsoft_Edge_logo_%282019%29.png",
             "images": [
-                "https://news.itsfoss.com/content/images/size/w1304/wordpress/2021/10/microsoft-edge-beta-linux-ft.png"
+                "https://news.itsfoss.com/content/images/size/w1304/wordpress/2021/10/microsoft-edge-beta-linux-ft.png",
+                "https://i.pcmag.com/imagery/articles/05UJRafFxQoEPibVWOdgFp1-12.fit_lim.v1667832131.png",
+                "https://nexiality.github.io/documentation/tipsandtricks/image/CheckEdgeBrowserVersion_02.png"
             ]
         },
         "edge-beta": {
@@ -9150,7 +9154,7 @@
             "images": []
         },
         "powershell": {
-            "icon": "https://e7.pngegg.com/pngimages/624/943/png-clipart-powershell-psake-computer-icons-build-automation-system-center-configuration-manager-y-miscellaneous-angle.pngg",
+            "icon": "https://e7.pngegg.com/pngimages/624/943/png-clipart-powershell-psake-computer-icons-build-automation-system-center-configuration-manager-y-miscellaneous-angle.png",
             "images": [
                 "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-37.fit_lim.size_845x.png"
             ]
@@ -9160,16 +9164,16 @@
             "images": []
         },
         "powertoys": {
-            "icon": "https://i.imgur.com/SW1jH0O.png",
+            "icon": "https://i.postimg.cc/Rq5CRqGj/pticon.png",
             "images": [
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-37.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-38.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-40.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-45.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-54.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-73.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-60.fit_lim.size_845x.png",
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-68.fit_lim.size_845x.png"
+                "https://i.postimg.cc/KjdjH0cp/pt1.png\n",
+                "https://i.postimg.cc/KYZzwkFb/pt2.png",
+                "https://i.postimg.cc/x1VqGp4c/pt3.png",
+                "https://i.postimg.cc/XYKqsKRx/pt4.png",
+                "https://i.postimg.cc/fLPRV8dW/pt5.png",
+                "https://i.postimg.cc/SsRKQBJt/pt6.png",
+                "https://i.postimg.cc/br2Nk10x/pt7.png",
+                "https://i.postimg.cc/jqWzZ9ZX/pt8.png"
             ]
         },
         "projectmyscreen": {
@@ -9729,7 +9733,7 @@
         "firefox-developeredition": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Firefox_Developer_Edition_logo%2C_2019.svg/800px-Firefox_Developer_Edition_logo%2C_2019.svg.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.pngg"
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
             ]
         },
         "firefox-esr": {
@@ -12269,8 +12273,10 @@
             "images": []
         },
         "rufus": {
-            "icon": "https://community.chocolatey.org/content/packageimages/rufus.portable.3.21.png",
-            "images": []
+            "icon": "https://i.postimg.cc/VsS0dxJn/Rufus.png\n",
+            "images": [
+                "https://i.postimg.cc/02D6C7dN/Rufus1.png"
+            ]
         },
         "runelite": {
             "icon": "https://community.chocolatey.org/content/packageimages/runelite.2.6.2.png",
@@ -21187,8 +21193,14 @@
             "images": []
         },
         "fscapture": {
-            "icon": "https://community.chocolatey.org/content/packageimages/fscapture.9.0.png",
-            "images": []
+            "icon": "https://i.postimg.cc/j5Rcn5RS/faststone-capture.png",
+            "images": [
+                "https://screenrecorderpro.files.wordpress.com/2018/03/capture.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-auto-save-settings.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-editor.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-file-name-format.png",
+                "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-miscellaneous-settings.png"
+            ]
         },
         "fselect": {
             "icon": "https://community.chocolatey.org/content/packageimages/fselect.0.8.1.png",
@@ -21283,8 +21295,12 @@
             "images": []
         },
         "gdrive": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/1200px-Google_Drive_icon_%282020%29.svg.png",
+            "images": [
+                "https://fileinfo.com/img/sw/ss/lg/google_drive_357.png",
+                "https://ankurm.com/wp-content/uploads/2012/04/Google-Drive-Screenshot.png",
+                "https://media.gcflearnfree.org/ctassets/topics/194/2015_download_rightclick.png"
+            ]
         },
         "geany-plugins": {
             "icon": "https://community.chocolatey.org/content/packageimages/geany-plugins.1.38.png",
@@ -26811,8 +26827,12 @@
             "images": []
         },
         "vscode": {
-            "icon": "https://community.chocolatey.org/content/packageimages/vscode.install.1.75.1.png",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/langfr-800px-Visual_Studio_Code_1.35_icon.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Visual_Studio_Code_0.10.1_on_Windows_7%2C_with_search.png/1024px-Visual_Studio_Code_0.10.1_on_Windows_7%2C_with_search.png",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118"
+            ]
         },
         "vswhere": {
             "icon": "",
@@ -27275,13 +27295,13 @@
             "images": []
         },
         "xmousebuttoncontrol": {
-            "icon": "https://i.postimg.cc/pLrfhWyW/xmousebuttoncontrol.png",
+            "icon": "https://i.postimg.cc/q7GZk7Y4/xmousebuttoncontrol.png\n",
             "images": [
-                "https://www.highrez.co.uk/downloads/images/xmbc.png",
-                "https://www.highrez.co.uk/downloads/images/xmbc3.png",
-                "https://www.highrez.co.uk/downloads/images/xmbc7.png",
-                "https://www.highrez.co.uk/downloads/images/xmbc5.png",
-                "https://www.highrez.co.uk/downloads/images/xmbc4.png"
+                "https://i.postimg.cc/tJcMLmc6/xmouse1.png",
+                "https://i.postimg.cc/hPHYs6TW/xmouse2.png",
+                "https://i.postimg.cc/CLZtjSZs/xmouse3.png",
+                "https://i.postimg.cc/9QZnnbY4/xmouse4.png",
+                "https://i.postimg.cc/7L4W8zKK/xmouse5.png"
             ]
         },
         "xmplay": {
