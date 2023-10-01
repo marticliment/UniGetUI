@@ -1081,6 +1081,52 @@ class BaseLogSection(QWidget):
         return super().showEvent(event)
 
 
+class BaseBrowserSection(QWidget):
+    def __init__(self):
+
+        from ExternalLibraries.pyside6webview2 import WebView2
+        super().__init__()
+
+        self.setObjectName("background")
+
+        self.setLayout(QVBoxLayout())
+        self.setContentsMargins(0, 0, 0, 0)
+
+        self.webview = WebView2()
+
+        self.layout().setSpacing(0)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.layout().addWidget(self.webview, stretch=1)
+
+        self.setAutoFillBackground(True)
+
+        self.ApplyIcons()
+        self.registeredThemeEvent = False
+
+    def ApplyIcons(self):
+        if isDark():
+            self.webview.setStyleSheet(
+                "QPlainTextEdit{margin: 10px;border-radius: 6px;border: 1px solid #161616;}")
+        else:
+            self.webview.setStyleSheet(
+                "QPlainTextEdit{margin: 10px;border-radius: 6px;border: 1px solid #dddddd;}")
+
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
+        self.loadData()
+        return super().showEvent(event)
+
+    def loadData(self):
+        pass
+
+
+class WebHelpSection(BaseBrowserSection):
+    def loadData(self):
+        self.webview.setLocation("https://www.marticliment.com/wingetui/help")
+
+
 class OperationHistorySection(BaseLogSection):
 
     def loadData(self):

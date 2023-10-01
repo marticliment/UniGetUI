@@ -121,14 +121,16 @@ class RootWindow(QMainWindow):
         self.historySection = OperationHistorySection()
         self.widgets[self.historySection] = self.addTab(self.historySection, _("Operation history"), addToMenu=True, actionIcon="list")
         self.extrasMenu.addSeparator()
-        self.logSection = LogSection()
-        self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
+        self.helpSection = LogSection()
+        self.widgets[self.helpSection] = self.addTab(self.helpSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
+        self.helpSection = WebHelpSection()
+        self.widgets[self.helpSection] = self.addTab(self.helpSection, _("Help and documentation"), addToMenu=True, actionIcon="help")
 
-        self.helpAction = QAction(_("Help and documentation"), self)
-        self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
-        self.extrasMenu.addAction(self.helpAction)
+        # self.helpAction = QAction(_("Help and documentation"), self)
+        # self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        # self.extrasMenu.addAction(self.helpAction)
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
@@ -400,7 +402,7 @@ class RootWindow(QMainWindow):
 
     def ApplyIcons(self):
         globals.maskedImages = {}
-        self.helpAction.setIcon(QIcon(getMedia("help")))
+        # self.helpAction.setIcon(QIcon(getMedia("help")))
         self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         for widget in self.DynamicIconsToApply.keys():
