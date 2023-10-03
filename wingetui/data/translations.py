@@ -10,29 +10,23 @@ untranslatedPercentage = {
   "el": "76%",
   "es": "95%",
   "fa": "71%",
-  "fr": "95%",
-  "he": "5%",
+  "he": "67%",
   "hi": "87%",
   "hr": "92%",
-  "hu": "95%",
   "id": "95%",
-  "it": "95%",
   "ja": "92%",
   "ko": "95%",
   "nb": "80%",
-  "nl": "95%",
-  "pl": "92%",
-  "pt_BR": "95%",
-  "pt_PT": "95%",
+  "pl": "99%",
   "ru": "95%",
+  "si": "9%",
   "sl": "95%",
   "sr": "10%",
   "tg": "22%",
-  "th": "29%",
   "tr": "91%",
   "ua": "91%",
   "vi": "95%",
-  "zh_CN": "95%",
+  "zh_CN": "99%",
   "zh_TW": "91%"
 }
 
@@ -344,6 +338,12 @@ languageCredits = {
       "link": "https://github.com/sklart"
     }
   ],
+  "si": [
+    {
+      "name": "SashikaSandeepa",
+      "link": "https://github.com/SashikaSandeepa"
+    }
+  ],
   "sl": [
     {
       "name": "rumplin",
@@ -366,6 +366,10 @@ languageCredits = {
     {
       "name": "apaeisara",
       "link": "https://github.com/apaeisara"
+    },
+    {
+      "name": "dulapahv",
+      "link": "https://github.com/dulapahv"
     }
   ],
   "tr": [

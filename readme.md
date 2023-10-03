@@ -96,32 +96,32 @@ In order to translate WingetUI to other languages or to update an old translatio
 | <img src='https://flagcdn.com/gb.svg' width=20> &nbsp; English - English | 100% | [marticliment](https://github.com/marticliment), [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/es.svg' width=20> &nbsp; Spanish - Castellano | 95% | [apazga](https://github.com/apazga), [dalbitresb12](https://github.com/dalbitresb12), [evaneliasyoung](https://github.com/evaneliasyoung), [guplem](https://github.com/guplem), [JMoreno97](https://github.com/JMoreno97), [marticliment](https://github.com/marticliment), [rubnium](https://github.com/rubnium) |
 | <img src='https://flagcdn.com/ir.svg' width=20> &nbsp; Persian - فارسی‎ | 71% | [itsarian](https://github.com/itsarian), [Mahdi-Hazrati](https://github.com/Mahdi-Hazrati), [smsi2001](https://github.com/smsi2001) |
-| <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 95% | Evans Costa, Rémi Guerrero, [W1L7dev](https://github.com/W1L7dev) |
+| <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 100% | Evans Costa, Rémi Guerrero, [W1L7dev](https://github.com/W1L7dev) |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Hindi - हिंदी | 87% | [atharva_xoxo](https://github.com/atharva_xoxo), [satanarious](https://github.com/satanarious) |
 | <img src='https://flagcdn.com/hr.svg' width=20> &nbsp; Croatian - Hrvatski | 92% | Stjepan Treger |
-| <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 5% |  |
-| <img src='https://flagcdn.com/hu.svg' width=20> &nbsp; Hungarian - Magyar | 95% | [gidano](https://github.com/gidano) |
-| <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 95% | David Senoner, [giacobot](https://github.com/giacobot), [maicol07](https://github.com/maicol07), [mapi68](https://github.com/mapi68), [mrfranza](https://github.com/mrfranza), Rosario Di Mauro |
+| <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 67% |  |
+| <img src='https://flagcdn.com/hu.svg' width=20> &nbsp; Hungarian - Magyar | 100% | [gidano](https://github.com/gidano) |
+| <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 100% | David Senoner, [giacobot](https://github.com/giacobot), [maicol07](https://github.com/maicol07), [mapi68](https://github.com/mapi68), [mrfranza](https://github.com/mrfranza), Rosario Di Mauro |
 | <img src='https://flagcdn.com/id.svg' width=20> &nbsp; Indonesian - Bahasa Indonesia | 95% | [arthackrc](https://github.com/arthackrc), [joenior](https://github.com/joenior) |
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 92% | [nob-swik](https://github.com/nob-swik), sho9029, Yuki Takase |
 | <img src='https://flagcdn.com/kr.svg' width=20> &nbsp; Korean - 한국어 | 95% | [minbert](https://github.com/minbert), [shblue21](https://github.com/shblue21) |
 | <img src='https://flagcdn.com/no.svg' width=20> &nbsp; Norwegian (bokmål) | 80% | [jomaskm](https://github.com/jomaskm) |
-| <img src='https://flagcdn.com/nl.svg' width=20> &nbsp; Dutch - Nederlands | 95% | [abbydiode](https://github.com/abbydiode), [Stephan-P](https://github.com/Stephan-P) |
-| <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 92% | [KamilZielinski](https://github.com/KamilZielinski), [kwiateusz](https://github.com/kwiateusz), [RegularGvy13](https://github.com/RegularGvy13) |
-| <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 95% | [maisondasilva](https://github.com/maisondasilva), [ppvnf](https://github.com/ppvnf), [wanderleihuttel](https://github.com/wanderleihuttel) |
-| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 95% | [PoetaGA](https://github.com/PoetaGA), [ppvnf](https://github.com/ppvnf) |
+| <img src='https://flagcdn.com/nl.svg' width=20> &nbsp; Dutch - Nederlands | 100% | [abbydiode](https://github.com/abbydiode), [Stephan-P](https://github.com/Stephan-P) |
+| <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 99% | [KamilZielinski](https://github.com/KamilZielinski), [kwiateusz](https://github.com/kwiateusz), [RegularGvy13](https://github.com/RegularGvy13) |
+| <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | [maisondasilva](https://github.com/maisondasilva), [ppvnf](https://github.com/ppvnf), [wanderleihuttel](https://github.com/wanderleihuttel) |
+| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | [PoetaGA](https://github.com/PoetaGA), [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 95% | [bropines](https://github.com/bropines), [flatron4eg](https://github.com/flatron4eg), [katrovsky](https://github.com/katrovsky), Sergey, [sklart](https://github.com/sklart) |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 10% | Nemanja Djurcic |
 | <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 95% | [rumplin](https://github.com/rumplin) |
 | <img src='https://flagcdn.com/ph.svg' width=20> &nbsp; Tagalog - Tagalog | 22% | lasersPew |
-| <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 29% | [apaeisara](https://github.com/apaeisara) |
+| <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 100% | [apaeisara](https://github.com/apaeisara), [dulapahv](https://github.com/dulapahv) |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 91% | [ahmetozmtn](https://github.com/ahmetozmtn), [gokberkgs](https://github.com/gokberkgs) |
 | <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukranian - Yкраї́нська | 91% | Artem Moldovanenko, Operator404 |
 | <img src='https://flagcdn.com/vn.svg' width=20> &nbsp; Vietnamese - Tiếng Việt | 95% | [txavlog](https://github.com/txavlog) |
-| <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 95% | Aaron Liu, [adfnekc](https://github.com/adfnekc), BUGP Association, ciaran, CnYeSheng, Cololi |
+| <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 99% | Aaron Liu, [adfnekc](https://github.com/adfnekc), BUGP Association, ciaran, CnYeSheng, Cololi |
 | <img src='https://flagcdn.com/tw.svg' width=20> &nbsp; Traditional Chinese (Taiwan) | 91% | Aaron Liu, CnYeSheng, Cololi, [yrctw](https://github.com/yrctw) |
 
-Last updated: Sun Sep 24 10:57:37 2023
+Last updated: Mon Oct  2 00:48:55 2023
 <!-- END Autogenerated translations -->
 
 

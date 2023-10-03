@@ -692,6 +692,8 @@ class UpdateSoftwareSection(SoftwareSection):
         self.HelpMenuEntry1.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry4.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry5.setIcon(QIcon(getMedia("launch")))
 
         for item in self.packageItems:
             package: UpgradablePackage = self.ItemPackageReference[item]
@@ -821,19 +823,26 @@ class UpdateSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        self.HelpMenuEntry1 = QAction("")
-        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile(""))
-        self.HelpMenuEntry2 = QAction("Software Updates overview - every feature explained")
-        self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/updates-overview"))
-        self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
-        self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        self.HelpMenuEntry1 = QAction("How to upgrade a package with WingetUI")
+        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/"))
+        self.HelpMenuEntry2 = QAction("How to enable automatic updates")
+        self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#enable-updates"))
+        self.HelpMenuEntry3 = QAction("How to ignore updates for certain packages")
+        self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#ignore"))
+        self.HelpMenuEntry4 = QAction("How to manage ignored updates")
+        self.HelpMenuEntry4.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#manage-ignored"))
+        self.HelpMenuEntry5 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry5.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
             helpMenu = QMenu(self)
-            # helpMenu.addAction(self.HelpMenuEntry1)
+            helpMenu.addAction(self.HelpMenuEntry1)
             helpMenu.addAction(self.HelpMenuEntry2)
             helpMenu.addSeparator()
             helpMenu.addAction(self.HelpMenuEntry3)
+            helpMenu.addAction(self.HelpMenuEntry4)
+            helpMenu.addSeparator()
+            helpMenu.addAction(self.HelpMenuEntry5)
             ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
             helpMenu.exec(QCursor.pos())
 
