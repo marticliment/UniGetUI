@@ -9031,11 +9031,9 @@
             "images": []
         },
         "edge": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Microsoft_Edge_logo_%282019%29.png/240px-Microsoft_Edge_logo_%282019%29.png",
+            "icon": "https://i.postimg.cc/pd256kHk/logo.png",
             "images": [
-                "https://news.itsfoss.com/content/images/size/w1304/wordpress/2021/10/microsoft-edge-beta-linux-ft.png",
-                "https://i.pcmag.com/imagery/articles/05UJRafFxQoEPibVWOdgFp1-12.fit_lim.v1667832131.png",
-                "https://nexiality.github.io/documentation/tipsandtricks/image/CheckEdgeBrowserVersion_02.png"
+                "https://i.postimg.cc/52WCwbKh/edge.webp"
             ]
         },
         "edge-beta": {
@@ -10205,15 +10203,15 @@
             "images": []
         },
         "ntlite": {
-            "icon": "https://ibb.co/h2wP1N1",
+            "icon": "https://i.ibb.co/Zc7n1r1/ntliteicon.png",
             "images": [
-                "https://ibb.co/R3qLn7m",
-                "https://ibb.co/BtZKJ14",
-                "https://ibb.co/HNGM7XP",
-                "https://ibb.co/5ntFBmc",
-                "https://ibb.co/0KJZq13",
-                "https://ibb.co/p3cPXGn",
-                "https://ibb.co/gPFJnKJ"
+                "https://i.ibb.co/GWqgwFL/ntlite1.png",
+                "https://i.ibb.co/2ytYrb8/ntlite2.png",
+                "https://i.ibb.co/rb5Lkvp/ntlite3.png",
+                "https://i.ibb.co/jWBRgm4/ntlite4.png",
+                "https://i.ibb.co/hc8Hsrv/ntlite5.png",
+                "https://i.ibb.co/4jzfN9J/ntlite6.png",
+                "https://i.ibb.co/8d49hZ9/ntlite7.png"
             ]
         },
         "duc": {
