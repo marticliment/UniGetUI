@@ -236,13 +236,13 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
-Source: "Y:\WinGetUI-Store\wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
-Source: "Y:\WinGetUI-Store\wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "Y:\WinGetUI-Store\wingetuiBin\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
+Source: "wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Source: "wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+Source: "wingetuiBin\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
-Source: "Y:\WinGetUI-Store\vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
-Source: "Y:\WinGetUI-Store\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 ; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
