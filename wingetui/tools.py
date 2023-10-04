@@ -675,6 +675,15 @@ def ConvertMarkdownToHtml(content: str) -> str:
         return content
 
 
+def compressExcessSpaces(string: str) -> str:
+    """
+    Converts excess stacks of spaces in a string into a single space - I.e., `Some     string` becomes `Some string`.
+    """
+    while "  " in string:
+        string.replace("  ", " ")
+    return string
+
+
 globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
 globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
     "DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
