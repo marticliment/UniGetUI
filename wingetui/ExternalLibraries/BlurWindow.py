@@ -83,40 +83,43 @@ def HEXtoRGBAint(HEX: str):
 
 
 def ApplyBlur(hwnd, hexColor=False, Acrylic=False, Dark=False, smallCorners=False):
-    accent = ACCENTPOLICY()
-    accent.AccentState = 3  # Default window Blur #ACCENT_ENABLE_BLURBEHIND
+    try:
+        accent = ACCENTPOLICY()
+        accent.AccentState = 3  # Default window Blur #ACCENT_ENABLE_BLURBEHIND
 
-    gradientColor = 0
+        gradientColor = 0
 
-    if hexColor is not False:
-        gradientColor = HEXtoRGBAint(hexColor)
-        accent.AccentFlags = 2  # Window Blur With Accent Color #ACCENT_ENABLE_TRANSPARENTGRADIENT
+        if hexColor is not False:
+            gradientColor = HEXtoRGBAint(hexColor)
+            accent.AccentFlags = 2  # Window Blur With Accent Color #ACCENT_ENABLE_TRANSPARENTGRADIENT
 
-    if Acrylic:
-        accent.AccentState = 4  # UWP but LAG #ACCENT_ENABLE_ACRYLICBLURBEHIND
-        if hexColor is False:  # UWP without color is translucent
-            accent.AccentFlags = 2
-            gradientColor = HEXtoRGBAint('#12121240')  # placeholder color
+        if Acrylic:
+            accent.AccentState = 4  # UWP but LAG #ACCENT_ENABLE_ACRYLICBLURBEHIND
+            if hexColor is False:  # UWP without color is translucent
+                accent.AccentFlags = 2
+                gradientColor = HEXtoRGBAint('#12121240')  # placeholder color
 
-    accent.GradientColor = gradientColor
+        accent.GradientColor = gradientColor
 
-    data = WINDOWCOMPOSITIONATTRIBDATA()
-    data.Attribute = 19  # WCA_ACCENT_POLICY
-    data.SizeOfData = ctypes.sizeof(accent)
-    data.Data = ctypes.cast(ctypes.pointer(
-        accent), ctypes.POINTER(ctypes.c_int))
-
-    SetWindowCompositionAttribute(int(hwnd), data)
-
-    if Dark:
-        data.Attribute = 26  # WCA_USEDARKMODECOLORS
+        data = WINDOWCOMPOSITIONATTRIBDATA()
+        data.Attribute = 19  # WCA_ACCENT_POLICY
+        data.SizeOfData = ctypes.sizeof(accent)
+        data.Data = ctypes.cast(ctypes.pointer(
+            accent), ctypes.POINTER(ctypes.c_int))
 
         SetWindowCompositionAttribute(int(hwnd), data)
 
-    # Add rounded borders (My addition)
-    DwmSetWindowAttribute = dwm.DwmSetWindowAttribute
-    DwmSetWindowAttribute(int(hwnd), 33, ctypes.byref(ctypes.c_int(
-        3 if smallCorners else 2)), ctypes.sizeof(ctypes.c_int))  # Add rounded borders (My addition)
+        if Dark:
+            data.Attribute = 26  # WCA_USEDARKMODECOLORS
+
+            SetWindowCompositionAttribute(int(hwnd), data)
+
+        # Add rounded borders (My addition)
+        DwmSetWindowAttribute = dwm.DwmSetWindowAttribute
+        DwmSetWindowAttribute(int(hwnd), 33, ctypes.byref(ctypes.c_int(
+            3 if smallCorners else 2)), ctypes.sizeof(ctypes.c_int))  # Add rounded borders (My addition)
+    except OverflowError:
+        print("Can't set MenuBlur due to OverflowError")
 
 
 def GlobalBlur(HWND, hexColor=False, Acrylic=False, Dark=False, QWidget=None, smallCorners=False):
