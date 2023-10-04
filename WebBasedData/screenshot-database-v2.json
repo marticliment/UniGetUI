@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14022,
-        "done": 7698
+        "total": 14021,
+        "done": 7697
     },
     "icons_and_screenshots": {
         "115chrome": {
@@ -3970,9 +3970,10 @@
             "images": []
         },
         "barrier": {
-            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2019/07/icon.svg.png",
+            "icon": "https://i.postimg.cc/jjtTJ58S/barrier-icon.png",
             "images": [
-                "https://www.nextofwindows.com/wp-content/uploads/2020/06/2020-06-03_2134-640x455.png"
+                "https://i.postimg.cc/0QNqc41g/barrier1.png",
+                "https://i.postimg.cc/HLzg0gK4/barrier2.png"
             ]
         },
         "debian": {
