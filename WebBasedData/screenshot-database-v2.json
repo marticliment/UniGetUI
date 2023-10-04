@@ -1,6 +1,6 @@
 {
     "package_count": {
-        "total": 14024,
+        "total": 14021,
         "done": 7697
     },
     "icons_and_screenshots": {
@@ -3970,15 +3970,19 @@
             "images": []
         },
         "barrier": {
-            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2019/07/icon.svg.png",
+            "icon": "https://i.postimg.cc/jjtTJ58S/barrier-icon.png",
             "images": [
-                "https://www.nextofwindows.com/wp-content/uploads/2020/06/2020-06-03_2134-640x455.png"
+                "https://i.postimg.cc/0QNqc41g/barrier1.png",
+                "https://i.postimg.cc/HLzg0gK4/barrier2.png"
             ]
         },
         "debian": {
             "icon": "https://i.ibb.co/WfRYYFs/debian-512x512.png",
             "images": [
-                "https://devblogs.microsoft.com/wp-content/uploads/sites/33/2019/02/debian2-600x334.png"
+                "https://i.postimg.cc/KckNLQYg/Debian-12.png",
+                "https://i.postimg.cc/MTXY9mbN/debian-12book.png",
+                "https://i.postimg.cc/k4ZvzRT4/Debian12-Inst.png\n",
+                "https://i.postimg.cc/J0k5L7FQ/debian-12b.png\n"
             ]
         },
         "deepl": {
@@ -4296,11 +4300,11 @@
             "images": []
         },
         "dropbox": {
-            "icon": "https://it.wizcase.com/wp-content/uploads/2021/05/Dropbox-logo.png",
+            "icon": "https://i.postimg.cc/Yqgfh9Sc/Dropbox.png",
             "images": [
                 "https://aem.dropbox.com/cms/content/dam/dropbox/blog/files/2017/04/screenshot3_1300x760.png",
                 "https://images.ctfassets.net/lzny33ho1g45/5cVkOkmxG4o6iWCiISu5zA/cf60be1721f51cb5441ab5fd5541c96b/dropbox-hidden-features-09-notifications.png",
-                "https://techboomers.com/wp-content/uploads/2017/01/db-20a10-20settings-20ss6.png"
+                "https://i.postimg.cc/P5QWQRZ2/dropp.png\n"
             ]
         },
         "drovio": {
@@ -4992,7 +4996,7 @@
             "images": []
         },
         "capture": {
-            "icon": "https://i.postimg.cc/j5Rcn5RS/faststone-capture.png",
+            "icon": "https://i.postimg.cc/SRWPM8L5/faststone-capture.png",
             "images": [
                 "https://screenrecorderpro.files.wordpress.com/2018/03/capture.png",
                 "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-auto-save-settings.png",
@@ -5939,8 +5943,10 @@
             ]
         },
         "chromeremotedesktop": {
-            "icon": "https://play-lh.googleusercontent.com/I4DRWoABrUQsaAIQFVSKha98q1u2ilEdrwPJBaf9Mb8KdGZnXzs5DObrwcwUZovgOA",
-            "images": []
+            "icon": "https://i.postimg.cc/PJZQkFwv/cds.png",
+            "images": [
+                "https://i.postimg.cc/xTDPPYwv/srd1.png"
+            ]
         },
         "cloudsdk": {
             "icon": "",
@@ -6355,10 +6361,6 @@
             "images": []
         },
         "scidavis": {
-            "icon": "",
-            "images": []
-        },
-        "x-mousebuttoncontrol": {
             "icon": "",
             "images": []
         },
@@ -9030,11 +9032,9 @@
             "images": []
         },
         "edge": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Microsoft_Edge_logo_%282019%29.png/240px-Microsoft_Edge_logo_%282019%29.png",
+            "icon": "https://i.postimg.cc/pd256kHk/logo.png",
             "images": [
-                "https://news.itsfoss.com/content/images/size/w1304/wordpress/2021/10/microsoft-edge-beta-linux-ft.png",
-                "https://i.pcmag.com/imagery/articles/05UJRafFxQoEPibVWOdgFp1-12.fit_lim.v1667832131.png",
-                "https://nexiality.github.io/documentation/tipsandtricks/image/CheckEdgeBrowserVersion_02.png"
+                "https://i.postimg.cc/52WCwbKh/edge.webp"
             ]
         },
         "edge-beta": {
@@ -9100,9 +9100,9 @@
         "onedrive": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Microsoft_Office_OneDrive_%282019%E2%80%93present%29.svg/320px-Microsoft_Office_OneDrive_%282019%E2%80%93present%29.svg.png",
             "images": [
-                "https://support.content.office.net/en-us/media/b2cd13c5-7d45-4203-b09c-26a8780e589f.png",
-                "https://support.content.office.net/en-us/media/dbe71ebb-2728-45c1-9de6-00682f68abfa.png",
-                "https://support.content.office.net/en-us/media/fdd54453-2203-40c3-81b0-13806dafe026.png"
+                "https://i.postimg.cc/T3TKcYTW/365.png",
+                "https://i.postimg.cc/mrDh0XzL/offic.png",
+                "https://i.postimg.cc/BnNX79v7/OneD.png"
             ]
         },
         "onedrive-enterprise": {
@@ -9154,9 +9154,9 @@
             "images": []
         },
         "powershell": {
-            "icon": "https://e7.pngegg.com/pngimages/624/943/png-clipart-powershell-psake-computer-icons-build-automation-system-center-configuration-manager-y-miscellaneous-angle.png",
+            "icon": "https://i.postimg.cc/CLpdDqp4/ps-icon.png",
             "images": [
-                "https://i.pcmag.com/imagery/articles/00PCs1Z6TzwMeay0B71nmCL-37.fit_lim.size_845x.png"
+                "https://i.postimg.cc/3rBP8N2d/powershell.png"
             ]
         },
         "powershell-preview": {
@@ -9166,7 +9166,7 @@
         "powertoys": {
             "icon": "https://i.postimg.cc/Rq5CRqGj/pticon.png",
             "images": [
-                "https://i.postimg.cc/KjdjH0cp/pt1.png\n",
+                "https://i.postimg.cc/KjdjH0cp/pt1.png",
                 "https://i.postimg.cc/KYZzwkFb/pt2.png",
                 "https://i.postimg.cc/x1VqGp4c/pt3.png",
                 "https://i.postimg.cc/XYKqsKRx/pt4.png",
@@ -9708,9 +9708,9 @@
             "images": []
         },
         "mkvtoolnix": {
-            "icon": "https://ubuntuhandbook.org/wp-content/uploads/2016/12/mkvtoolnix-icon.png",
+            "icon": "https://i.postimg.cc/DzrFp15v/mkvtoolnix-icon.png",
             "images": [
-                "https://mkvtoolnix.download/images/mkvtoolnix-gui-official-screenshot.png"
+                "https://i.postimg.cc/TPMfctVN/mkvtoolnix-gui-official-screenshot.png"
             ]
         },
         "doublemousedownloader": {
@@ -10204,10 +10204,15 @@
             "images": []
         },
         "ntlite": {
-            "icon": "https://www.ntlite.com/wp-content/uploads/2014/10/72-web-logo.png",
+            "icon": "https://i.ibb.co/Zc7n1r1/ntliteicon.png",
             "images": [
-                "https://www.ntlite.com/wp-content/uploads/screen_source.png",
-                "https://www.ntlite.com/wp-content/uploads/screen_tweaks.png"
+                "https://i.ibb.co/GWqgwFL/ntlite1.png",
+                "https://i.ibb.co/2ytYrb8/ntlite2.png",
+                "https://i.ibb.co/rb5Lkvp/ntlite3.png",
+                "https://i.ibb.co/jWBRgm4/ntlite4.png",
+                "https://i.ibb.co/hc8Hsrv/ntlite5.png",
+                "https://i.ibb.co/4jzfN9J/ntlite6.png",
+                "https://i.ibb.co/8d49hZ9/ntlite7.png"
             ]
         },
         "duc": {
@@ -11837,10 +11842,6 @@
             "icon": "https://community.chocolatey.org/content/packageimages/sharpkeys.3.5.0.20180307.png",
             "images": []
         },
-        "raspberrypii\u2026": {
-            "icon": "",
-            "images": []
-        },
         "ravencore": {
             "icon": "",
             "images": []
@@ -12273,7 +12274,7 @@
             "images": []
         },
         "rufus": {
-            "icon": "https://i.postimg.cc/VsS0dxJn/Rufus.png\n",
+            "icon": "https://i.postimg.cc/VsS0dxJn/Rufus.png",
             "images": [
                 "https://i.postimg.cc/02D6C7dN/Rufus1.png"
             ]
@@ -16189,15 +16190,19 @@
             "images": []
         },
         "calibre": {
-            "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759046134149253/Calibre_logo_3.png",
+            "icon": "https://i.postimg.cc/ZKZnJMkP/cal.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/4/4a/Calibre_Linux_2.38.png"
+                "https://i.postimg.cc/5N7XpSGw/Calibre-Linux-2-38.png",
+                "https://i.postimg.cc/k4zjxSC9/edit-book.png",
+                "https://i.postimg.cc/pdV1xxkN/calibre-323.png"
             ]
         },
         "calibre-portable": {
-            "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759046134149253/Calibre_logo_3.png",
+            "icon": "https://i.postimg.cc/ZKZnJMkP/cal.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/4/4a/Calibre_Linux_2.38.png"
+                "https://i.postimg.cc/5N7XpSGw/Calibre-Linux-2-38.png",
+                "https://i.postimg.cc/k4zjxSC9/edit-book.png",
+                "https://i.postimg.cc/pdV1xxkN/calibre-323.png"
             ]
         },
         "champ-r": {
@@ -21193,7 +21198,7 @@
             "images": []
         },
         "fscapture": {
-            "icon": "https://i.postimg.cc/j5Rcn5RS/faststone-capture.png",
+            "icon": "https://i.postimg.cc/SRWPM8L5/faststone-capture.png",
             "images": [
                 "https://screenrecorderpro.files.wordpress.com/2018/03/capture.png",
                 "https://screenrecorderpro.files.wordpress.com/2018/03/fscapture-auto-save-settings.png",
@@ -21294,7 +21299,7 @@
             "icon": "",
             "images": []
         },
-        "gdrive": {
+        "googledrive": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/1200px-Google_Drive_icon_%282020%29.svg.png",
             "images": [
                 "https://fileinfo.com/img/sw/ss/lg/google_drive_357.png",
@@ -24881,10 +24886,14 @@
             "icon": "https://community.chocolatey.org/content/packageimages/RapidEE.9.2.937.png",
             "images": []
         },
-        "raspberry-pi-imager": {
-            "icon": "https://raw.githubusercontent.com/raspberrypi/rpi-imager/qml/src/icons/rpi-imager.png",
+        "raspberrypiimager": {
+            "icon": "https://i.postimg.cc/YS3H6YtJ/rasp-logo.png",
             "images": [
-                "https://raspberry-pi.it/wp-content/uploads/2020/03/IMAGING-UTILITY-WRITE-939x528.png"
+                "https://i.postimg.cc/DZwKB0Zm/rasp1.png",
+                "https://i.postimg.cc/269NJYbG/rasp2.png",
+                "https://i.postimg.cc/Zn9zzQ6S/rasp3.png",
+                "https://i.postimg.cc/QCRG8qqW/rasp4.png",
+                "https://i.postimg.cc/SQ5pfypN/rasp5.png"
             ]
         },
         "rathole": {
@@ -27294,7 +27303,7 @@
             "icon": "https://community.chocolatey.org/content/packageimages/xmlstarlet.portable.1.6.1.png",
             "images": []
         },
-        "xmousebuttoncontrol": {
+        "x-mousebuttoncontrol": {
             "icon": "https://i.postimg.cc/q7GZk7Y4/xmousebuttoncontrol.png\n",
             "images": [
                 "https://i.postimg.cc/tJcMLmc6/xmouse1.png",
@@ -48863,10 +48872,6 @@
         },
         "git-fork": {
             "icon": "https://community.chocolatey.org/content/packageimages/git-fork.1.82.1.png",
-            "images": []
-        },
-        "googledrive": {
-            "icon": "https://community.chocolatey.org/content/packageimages/googledrive.71.0.3.0.png",
             "images": []
         },
         "wwphone": {
