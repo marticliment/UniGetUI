@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14021,
-        "done": 7697
+        "total": 14023,
+        "done": 7703
     },
     "icons_and_screenshots": {
         "115chrome": {
@@ -9825,8 +9825,11 @@
             "images": []
         },
         "musescore": {
-            "icon": "https://community.chocolatey.org/content/packageimages/musescore.4.0.1.230121751.png",
-            "images": []
+            "icon": "https://i.imgur.com/gvC46W4.png",
+            "images": [
+                "https://i.imgur.com/zdv4ouw.png",
+                "https://i.imgur.com/Onb2nRv.png"
+            ]
         },
         "picard": {
             "icon": "",
@@ -11823,8 +11826,11 @@
             "images": []
         },
         "windhawk": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/Zp8Utej.png",
+            "images": [
+                "https://i.imgur.com/fszFq44.png",
+                "https://i.imgur.com/PlkUIje.png"
+            ]
         },
         "vidcoder": {
             "icon": "https://vidcoder.net/images/BannerLarge.png",
@@ -14717,7 +14723,7 @@
             "images": []
         },
         "poedit": {
-            "icon": "",
+            "icon": "https://poedit.net/images/icons/poedit/icon_128x128@2x.png",
             "images": []
         },
         "vajehdan": {
@@ -48938,6 +48944,22 @@
             "icon": "https://i.imgur.com/lwsJObd.png",
             "images": [
                 "https://user-images.githubusercontent.com/44692189/247650724-304fdbd8-ffd7-4127-96d2-23adf672724c.png"
+            ]
+        },
+        "qr-codereader": {
+            "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo.png",
+            "images": [
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_1.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_3.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5.png"
+            ]
+        },
+        "windowssubsystem\u2026": {
+            "icon": "https://i.postimg.cc/c4TB1sTf/wsl-icon.png",
+            "images": [
+                "https://i.postimg.cc/9QnPTJ6M/wsl1.png"
             ]
         }
     }
