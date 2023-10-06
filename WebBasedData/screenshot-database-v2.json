@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14023,
-        "done": 7703
+        "total": 14022,
+        "done": 7704
     },
     "icons_and_screenshots": {
         "115chrome": {
@@ -3658,11 +3658,11 @@
                 "https://tweakers.net/ext/i/2004681610.png"
             ]
         },
-        "crystaldiskinfo-ku\u2026": {
+        "crystaldiskinfo.kureikeiedition": {
             "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
-        "crystaldiskinfo-sh\u2026": {
+        "crystaldiskinfo.shizukuedition": {
             "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
@@ -3670,7 +3670,7 @@
             "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
-        "crystaldiskmark-sh\u2026": {
+        "crystaldiskmark.shizukuedition": {
             "icon": "https://tweakers.net/ext/i/2004637378.png",
             "images": []
         },
@@ -3708,9 +3708,11 @@
             "icon": "",
             "images": []
         },
-        "ampinstancemanag\u2026": {
-            "icon": "",
-            "images": []
+        "ampinstancemanager": {
+            "icon": "https://i.postimg.cc/fRRC2XL0/amp.png",
+            "images": [
+                "https://i.postimg.cc/wBJm0Thm/Setup.png"
+            ]
         },
         "cubeice": {
             "icon": "",
@@ -9034,7 +9036,7 @@
         "edge": {
             "icon": "https://i.postimg.cc/pd256kHk/logo.png",
             "images": [
-                "https://i.postimg.cc/52WCwbKh/edge.webp"
+                "https://i.postimg.cc/L56h1HsP/edge.png"
             ]
         },
         "edge-beta": {
@@ -9046,8 +9048,10 @@
             "images": []
         },
         "edgewebview2runtime": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/pd256kHk/logo.png",
+            "images": [
+                "https://i.postimg.cc/4yLyvrKS/webview.png\n"
+            ]
         },
         "gitcredentialmanagercore": {
             "icon": "",
@@ -9828,7 +9832,10 @@
             "icon": "https://i.imgur.com/gvC46W4.png",
             "images": [
                 "https://i.imgur.com/zdv4ouw.png",
-                "https://i.imgur.com/Onb2nRv.png"
+                "https://i.imgur.com/Onb2nRv.png",
+                "https://i.postimg.cc/wMqbcrRS/1.png",
+                "https://i.postimg.cc/y6jGY7wB/2.png",
+                "https://i.postimg.cc/5ysKPmwj/3.png"
             ]
         },
         "picard": {
@@ -13098,16 +13105,15 @@
             ]
         },
         "wingetuistore": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/resources/icon.png",
+            "icon": "https://i.postimg.cc/P5xKpnXC/wg-icon.png",
             "images": [
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_1.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_2.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_3.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_4.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_5.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_6.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_7.png",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_8.png"
+                "https://i.postimg.cc/MpF513Hd/winget1.png",
+                "https://i.postimg.cc/858b0Fhv/winget2.png",
+                "https://i.postimg.cc/FKkZpbJm/winget3.png",
+                "https://i.postimg.cc/mkByT0p2/winget4.png",
+                "https://i.postimg.cc/XqLcqQtK/winget5.png",
+                "https://i.postimg.cc/kMvyTgDV/winget6.png",
+                "https://i.postimg.cc/Kzn5SZNH/winget7.png"
             ]
         },
         "zipmanager": {
@@ -14724,7 +14730,9 @@
         },
         "poedit": {
             "icon": "https://poedit.net/images/icons/poedit/icon_128x128@2x.png",
-            "images": []
+            "images": [
+                "https://poedit.net/screenshots/mainwin_mac.png"
+            ]
         },
         "vajehdan": {
             "icon": "",
@@ -27110,16 +27118,8 @@
             "images": []
         },
         "wingetui": {
-            "icon": "https://github.com/martinet101/WingetUI/blob/main/wingetui/resources/icon.png?raw=true",
-            "images": [
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_1.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_2.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_4.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_5.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_6.png?raw=true",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_7.png",
-                "https://github.com/martinet101/WingetUI/blob/main/media/winget_8.png"
-            ]
+            "icon": "",
+            "images": []
         },
         "winmerge2011": {
             "icon": "https://community.chocolatey.org/content/packageimages/winmerge2011.portable.0.2011.007.44401.png",
