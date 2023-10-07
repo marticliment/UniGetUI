@@ -193,7 +193,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
 
         for item in self.packageItems:
-            package: Package = self.ItemPackageReference[item]
+            package: Package = item.Package
 
             item.setIcon(1, self.installIcon)
             item.setIcon(2, self.IDIcon)
@@ -215,7 +215,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
 
         try:
-            Capabilities: PackageManagerCapabilities = self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
+            Capabilities: PackageManagerCapabilities = self.packageList.currentItem().Package.PackageManager.Capabilities
             self.MenuAdministrator.setVisible(Capabilities.CanRunAsAdmin)
             self.MenuSkipHash.setVisible(Capabilities.CanSkipIntegrityChecks)
             self.MenuInteractive.setVisible(Capabilities.CanRunInteractively)
@@ -460,7 +460,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         """
         Initialize the install procedure for the given package item, passed as a PackageItem. Switches: admin, interactive, skiphash
         """
-        package: Package = self.ItemPackageReference[item]
+        package: Package = item.Package
         options = InstallationOptions()
         options.RunAsAdministrator = admin
         options.InteractiveInstallation = interactive
@@ -594,24 +594,20 @@ class UpdateSoftwareSection(SoftwareSection):
         def uninstallPackage():
             UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
             if self.packageList.currentItem():
-                id = self.ItemPackageReference[self.packageList.currentItem()].Id
+                id = self.packageList.currentItem().Package.Id
             UNINSTALL_SECTION.uninstallPackageItem(UNINSTALL_SECTION.IdPackageReference[id].PackageItem)
 
         self.MenuUninstall = QAction(_("Uninstall package"))
         self.MenuUninstall.triggered.connect(lambda: uninstallPackage())
 
-        def ignoreUpdates(item: UpgradablePackageItem):
-            package: UpgradablePackage = self.ItemPackageReference[item]
-            package.ignoreUpdatesPermanently()
-
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
-        self.MenuIgnoreUpdates.triggered.connect(lambda: ignoreUpdates(self.packageList.currentItem()))
+        self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
 
         self.MenuSkipVersion = QAction(_("Skip this version"))
-        self.MenuSkipVersion.triggered.connect(lambda: (IgnorePackageUpdates_SpecificVersion(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4), self.packageList.currentItem().text(5)), self.packageList.currentItem().setHidden(True), self.packageItems.remove(self.packageList.currentItem()), self.showableItems.remove(self.packageList.currentItem()), self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(self.packageList.currentItem())), self.updatePackageNumber()))
+        self.MenuSkipVersion.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesForVersion())
 
         self.MenuShare = QAction(_("Share this package"))
-        self.MenuShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
+        self.MenuShare.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
 
         self.installIcon = QIcon(getMedia("install"))
         self.updateIcon = getMaskedIcon("update_masked")
@@ -671,7 +667,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.HelpMenuEntry5.setIcon(QIcon(getMedia("launch")))
 
         for item in self.packageItems:
-            package: UpgradablePackage = self.ItemPackageReference[item]
+            package: UpgradablePackage = item.Package
 
             item.setIcon(1, self.installIcon)
             item.setIcon(2, self.IDIcon)
@@ -693,7 +689,7 @@ class UpdateSoftwareSection(SoftwareSection):
             return
 
         try:
-            Capabilities: PackageManagerCapabilities = self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
+            Capabilities: PackageManagerCapabilities = self.packageList.currentItem().Package.PackageManager.Capabilities
             self.MenuAdministrator.setVisible(Capabilities.CanRunAsAdmin)
             self.MenuSkipHash.setVisible(Capabilities.CanSkipIntegrityChecks)
             self.MenuInteractive.setVisible(Capabilities.CanRunInteractively)
@@ -707,22 +703,9 @@ class UpdateSoftwareSection(SoftwareSection):
     def getToolbar(self) -> QToolBar:
 
         def blacklistSelectedPackages():
-            for program in self.packageItems:
-                if not program.isHidden():
-                    try:
-                        if program.checkState(0) == Qt.CheckState.Checked:
-                            IgnorePackageUpdates_Permanent(program.text(2), program.text(5))
-                            program.setHidden(True)
-                            self.packageItems.remove(program)
-                            if program in self.showableItems:
-                                self.showableItems.remove(program)
-                            self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(program))
-                            INSTALLED: UninstallSoftwareSection = globals.uninstall
-                            if program.text(2) in INSTALLED.IdPackageReference:
-                                INSTALLED.showBlacklistedIcon(INSTALLED.IdPackageReference[program.text(2)].PackageItem)
-                    except AttributeError:
-                        pass
-            self.updatePackageNumber()
+            for packageItem in self.showableItems:
+                if packageItem.checkState(0) == Qt.CheckState.Checked:
+                    packageItem.Package.ignoreUpdatesPermanently()
 
         toolbar = QToolBar(self.window())
         toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -870,11 +853,11 @@ class UpdateSoftwareSection(SoftwareSection):
                     self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count) + ":")
                     packageList = ""
                     for item in self.packageItems:
-                        packageList += item.text(1) + ", "
+                        packageList += item.Package.Name + ", "
                     self.UpdatesNotification.setSmallText(packageList[:-2])
                 elif count == 1:
                     self.UpdatesNotification.setTitle(_("Update found!"))
-                    self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.text(1)))
+                    self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.Package.Name))
                 self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
                 if globals.ENABLE_UPDATES_NOTIFICATIONS:
                     self.UpdatesNotification.show()
@@ -887,11 +870,11 @@ class UpdateSoftwareSection(SoftwareSection):
                     self.UpdatesNotification.addAction(_("Update all"), self.updateAllPackageItems)
                     packageList = ""
                     for item in self.packageItems:
-                        packageList += item.text(1) + ", "
+                        packageList += item.Package.Name + ", "
                     self.UpdatesNotification.setSmallText(packageList[:-2])
                 elif count == 1:
                     self.UpdatesNotification.setTitle(_("Update found!"))
-                    self.UpdatesNotification.setDescription(_("{0} can be updated").format(lastVisibleItem.text(1)))
+                    self.UpdatesNotification.setDescription(_("{0} can be updated").format(lastVisibleItem.Package.Name))
                     self.UpdatesNotification.addAction(_("Update"), self.updateAllPackageItems)
                 self.UpdatesNotification.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
                 self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
@@ -951,19 +934,19 @@ class UpdateSoftwareSection(SoftwareSection):
             return " " if item.checkState(0) == Qt.CheckState.Checked else ""
 
         def getTitle(item: UpgradablePackageItem) -> str:
-            return item.text(1)
+            return item.Package.Name
 
         def getID(item: UpgradablePackageItem) -> str:
-            return item.text(2)
+            return item.Package.Id
 
         def getVersion(item: UpgradablePackageItem) -> str:
             return item.text(6)
 
         def getNewVersion(item: UpgradablePackageItem) -> str:
-            return item.text(4)
+            return item.Package.NewVersion
 
         def getSource(item: UpgradablePackageItem) -> str:
-            return item.text(5)
+            return item.Package.Source
 
         if self.query.text() != text:
             return
@@ -1047,7 +1030,7 @@ class UpdateSoftwareSection(SoftwareSection):
                 self.updatePackageItem(item, admin, skiphash, interactive)
 
     def updatePackageItem(self, item: UpgradablePackageItem, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
-        package: Package = self.ItemPackageReference[item]
+        package: Package = item.Package
         options = InstallationOptions()
         options.RunAsAdministrator = admin
         options.InteractiveInstallation = interactive
@@ -1084,9 +1067,9 @@ class UpdateSoftwareSection(SoftwareSection):
         globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
         return super().startLoadingPackages(force)
 
-    def sharePackage(self, package: UpgradablePackageItem):
-        url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}^&psource={package.text(5)}"
-        nativeWindowsShare(package.text(2), url, self.window())
+    def sharePackage(self, packageItem: UpgradablePackageItem):
+        url = f"https://marticliment.com/wingetui/share?pid={packageItem.Package.Id}^&pname={packageItem.Package.Name}^&psource={packageItem.Package.Source}"
+        nativeWindowsShare(packageItem.Package.Id, url, self.window())
 
 
 class UninstallSoftwareSection(SoftwareSection):
@@ -1143,7 +1126,6 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuInteractive = QAction(_("Interactive uninstall"))
         self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
-        # self.MenuIgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4)), self.showBlacklistedIcon(self.packageList.currentItem())))
         self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
         self.MenuDetails = QAction(_("Package details"))
         self.MenuDetails.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), uninstall=True))
@@ -1198,7 +1180,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
 
         for item in self.packageItems:
-            package: UpgradablePackage = self.ItemPackageReference[item]
+            package: UpgradablePackage = item.Package
 
             item.setIcon(1, self.installIcon)
             item.setIcon(2, self.IDIcon)
@@ -1222,9 +1204,13 @@ class UninstallSoftwareSection(SoftwareSection):
                 if discoverableItem in DISCOVER.packageItems:
                     discoverableItem.setIcon(1, self.installedIcon)
 
-    def showBlacklistedIcon(self, packageItem: QTreeWidgetItem):
+    def showBlacklistedIcon(self, packageItem: PackageItem):
+        try:
+            raise DeprecationWarning("DEPRECATED!")
+        except Exception as e:
+            report(e)
         packageItem.setIcon(1, self.pinnedIcon)
-        packageItem.setToolTip(1, _("Updates for this package are ignored") + " - " + packageItem.text(1))
+        packageItem.setToolTip(1, _("Updates for this package are ignored") + " - " + packageItem.Package.Name)
 
     def showContextMenu(self, pos: QPoint) -> None:
         if not self.packageList.currentItem():
@@ -1234,14 +1220,14 @@ class UninstallSoftwareSection(SoftwareSection):
         ApplyMenuBlur(self.contextMenu.winId().__int__(), self.contextMenu)
 
         try:
-            Capabilities: PackageManagerCapabilities = self.ItemPackageReference[self.packageList.currentItem()].PackageManager.Capabilities
+            Capabilities: PackageManagerCapabilities = self.packageList.currentItem().Package.PackageManager.Capabilities
             self.MenuAdministrator.setVisible(Capabilities.CanRunAsAdmin)
             self.MenuRemovePermaData.setVisible(Capabilities.CanRemoveDataOnUninstall)
             self.MenuInteractive.setVisible(Capabilities.CanRunInteractively)
         except Exception as e:
             report(e)
 
-        if self.ItemPackageReference[self.packageList.currentItem()].Source not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
+        if self.packageList.currentItem().Package.Source not in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect", _("Android Subsystem"))):
             self.MenuIgnoreUpdates.setVisible(True)
             self.MenuShare.setVisible(True)
             self.MenuDetails.setVisible(True)
@@ -1264,12 +1250,11 @@ class UninstallSoftwareSection(SoftwareSection):
         toolbar.addAction(self.ToolbarInstall)
 
         def blacklistSelectedPackages():
-            for program in self.packageItems:
-                if not program.isHidden():
+            for packageItem in self.packageItems:
+                if not packageItem.isHidden():
                     try:
-                        if program.checkState(0) == Qt.CheckState.Checked:
-                            IgnorePackageUpdates_Permanent(program.text(2), program.text(4))
-                            self.showBlacklistedIcon(program)
+                        if packageItem.checkState(0) == Qt.CheckState.Checked:
+                            packageItem.Package.ignoreUpdatesPermanently()
                     except AttributeError:
                         pass
             self.notif = InWindowNotification(self, _("The selected packages have been blacklisted"))
@@ -1278,14 +1263,14 @@ class UninstallSoftwareSection(SoftwareSection):
 
         def showInfo():
             item = self.packageList.currentItem()
-            if item.text(4) in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
+            if item.Package.Source in ((_("Local PC"), "Microsoft Store", "Steam", "GOG", "Ubisoft Connect")):
                 self.err = CustomMessageBox(self.window())
                 errorData = {
                     "titlebarTitle": _("Unable to load informarion"),
                     "mainTitle": _("Unable to load informarion"),
                     "mainText": _("We could not load detailed information about this package, because it was not installed from an available package manager."),
                     "buttonTitle": _("Ok"),
-                    "errorDetails": _("Uninstallable packages with the origin listed as \"{0}\" are not published on any package manager, so there's no information available to show about them.").format(item.text(4)),
+                    "errorDetails": _("Uninstallable packages with the origin listed as \"{0}\" are not published on any package manager, so there's no information available to show about them.").format(item.Package.Source),
                     "icon": QIcon(getMedia("notif_warn")),
                 }
                 self.err.showErrorMessage(errorData, showNotification=False)
@@ -1457,7 +1442,7 @@ class UninstallSoftwareSection(SoftwareSection):
         questionData = {
             "titlebarTitle": _("Uninstall"),
             "mainTitle": _("Are you sure?"),
-            "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].text(1)) if len(toUninstall) == 1 else _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
+            "mainText": _("Do you really want to uninstall {0}?").format(toUninstall[0].Package.Name) if len(toUninstall) == 1 else _("Do you really want to uninstall {0} packages?").format(len(toUninstall)),
             "acceptButtonTitle": _("Yes"),
             "cancelButtonTitle": _("No"),
             "icon": QIcon(),
@@ -1472,7 +1457,6 @@ class UninstallSoftwareSection(SoftwareSection):
         self.uninstallPackageItem(self.ItemPackageReference[self.IdPackageReference[id]], admin, removeData, interactive, avoidConfirm)
 
     def uninstallPackageItem(self, packageItem: InstalledPackageItem, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
-        package: Package = self.ItemPackageReference[packageItem]
         if not avoidConfirm:
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
@@ -1481,7 +1465,7 @@ class UninstallSoftwareSection(SoftwareSection):
             options.RunAsAdministrator = admin
             options.InteractiveInstallation = interactive
             options.RemoveDataOnUninstall = removeData
-            self.addInstallation(PackageUninstallerWidget(package, options))
+            self.addInstallation(PackageUninstallerWidget(packageItem.Package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:
         packages = manager.getInstalledPackages()

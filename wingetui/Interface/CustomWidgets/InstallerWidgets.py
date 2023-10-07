@@ -475,7 +475,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
                 self.progressbar.setInvertedAppearance(False)
 
             if self.Package.Version in (_("Unknown"), "Unknown") or (returncode == RETURNCODE_NO_APPLICABLE_UPDATE_FOUND and not self.canceled):
-                self.Package.ignoreUpdatesForVersion(self.Package.NewVersion)
+                self.Package.ignoreUpdatesForVersion()
 
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
                 self.Package.PackageItem.removeFromList()

@@ -171,7 +171,6 @@ class Package():
         return None
 
 
-
 class UpgradablePackage(Package):
     NewVersion = ""
     NewPackage: Package = None
@@ -181,10 +180,13 @@ class UpgradablePackage(Package):
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
 
-    def ignoreUpdatesForVersion(self):
+    def ignoreUpdatesForVersion(self, version: str = "current"):
+        if version == "current":
+            version = self.NewVersion
         super().ignoreUpdatesForVersion(self.NewVersion)
         if self.PackageItem:
             self.PackageItem.removeFromList()
+
 
 class PackageDetails(Package):
     Name: str = ""
