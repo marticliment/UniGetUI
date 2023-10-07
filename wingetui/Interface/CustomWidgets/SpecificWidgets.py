@@ -1870,7 +1870,7 @@ class PackageItem(QTreeWidgetItem):
         self.Package = package
         self.Package.PackageItem = self
         super().__init__()
-        self.setCheckState(0, Qt.CheckState.Checked)
+        self.setCheckState(0, Qt.CheckState.Unchecked)
         self.setText(1, self.Package.Name)
         self.setTag(PackageItem.Tag.Default)
         self.setText(2, self.Package.Id)
@@ -1975,6 +1975,7 @@ class UpgradablePackageItem(PackageItem):
     def __init__(self, package: 'UpgradablePackage'):
         self.SoftwareSection = globals.updates
         super().__init__(package)
+        self.setCheckState(0, Qt.CheckState.Checked)
 
         if package.isManager(Scoop):
             try:
