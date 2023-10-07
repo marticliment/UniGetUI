@@ -447,17 +447,7 @@ class DiscoverSoftwareSection(SoftwareSection):
     def addItem(self, package: Package) -> None:
         if "---" not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and version not in ("the", "is"):
 
-            item = TreeWidgetItemWithQAction(self)
-            item.setCheckState(0, Qt.CheckState.Unchecked)
-            item.setText(1, package.Name)
-            item.setIcon(1, self.installIcon)
-            item.setText(2, package.Id)
-            item.setIcon(2, self.IDIcon)
-            item.setText(3, package.Version)
-            item.setIcon(3, self.versionIcon)
-            item.setText(4, package.Source)
-            item.setIcon(4, package.getSourceIcon())
-            item.setText(6, package.getFloatVersion())
+            item = PackageItem(package)
 
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
@@ -467,17 +457,9 @@ class DiscoverSoftwareSection(SoftwareSection):
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
 
-            UNINSTALL: UninstallSoftwareSection = globals.uninstall
-            if package.Id in UNINSTALL.IdPackageReference.keys():
-                installedPackage: Package = UNINSTALL.IdPackageReference[package.Id]
-                installedItem = installedPackage.PackageItem
-                if installedItem in UNINSTALL.packageItems and package.Source == installedPackage.Source:
-                    item.setIcon(1, self.installedIcon)
-                    item.setToolTip(1, _("This package is already installed") + " - " + package.Name)
-
-    def installPackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+    def installPackageItem(self, item: PackageItem, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
-        Initialize the install procedure for the given package item, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
+        Initialize the install procedure for the given package item, passed as a PackageItem. Switches: admin, interactive, skiphash
         """
         package: Package = self.ItemPackageReference[item]
         options = InstallationOptions()
@@ -488,7 +470,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def installPackage(self, package: Package, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
-        Initialize the install procedure for the given package, passed as a TreeWidgetItemWithQAction. Switches: admin, interactive, skiphash
+        Initialize the install procedure for the given package, passed as a Package. Switches: admin, interactive, skiphash
         """
         options = InstallationOptions()
         options.RunAsAdministrator = admin
@@ -556,8 +538,8 @@ class UpdateSoftwareSection(SoftwareSection):
 
     addProgram = Signal(object)
     availableUpdates: int = 0
-    PackageItemReference: dict[UpgradablePackage:TreeWidgetItemWithQAction] = {}
-    ItemPackageReference: dict[TreeWidgetItemWithQAction:UpgradablePackage] = {}
+    PackageItemReference: dict[UpgradablePackage:UpgradablePackageItem] = {}
+    ItemPackageReference: dict[UpgradablePackageItem:UpgradablePackage] = {}
     IdPackageReference: dict[str:UpgradablePackage] = {}
     UpdatesNotification: ToastNotification = None
 
@@ -619,15 +601,9 @@ class UpdateSoftwareSection(SoftwareSection):
         self.MenuUninstall = QAction(_("Uninstall package"))
         self.MenuUninstall.triggered.connect(lambda: uninstallPackage())
 
-        def ignoreUpdates(item: TreeWidgetItemWithQAction):
-            IgnorePackageUpdates_Permanent(item.text(2), item.text(5))
-            item.setHidden(True)
-            self.packageItems.remove(item)
-            self.showableItems.remove(item)
-            self.packageList.takeTopLevelItem(self.packageList.indexOfTopLevelItem(item))
-            self.updatePackageNumber()
-            INSTALLED: UninstallSoftwareSection = globals.uninstall
-            INSTALLED.showBlacklistedIcon(INSTALLED.IdPackageReference[item.text(2)].PackageItem)
+        def ignoreUpdates(item: UpgradablePackageItem):
+            package: UpgradablePackage = self.ItemPackageReference[item]
+            package.ignoreUpdatesPermanently()
 
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
         self.MenuIgnoreUpdates.triggered.connect(lambda: ignoreUpdates(self.packageList.currentItem()))
@@ -949,40 +925,16 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def addItem(self, package: UpgradablePackage) -> None:
         if "---" not in package.Name and "The following packages" not in package.Name and "Name  " not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and package.Version.lower() not in ("the", "is", "install") and package.NewVersion not in ("Manifest", package.Version):
-            if [package.Id, package.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent():
-                print(f"🟡 Package {package.Id} is ignored")
+
+            if package.hasUpdatesIgnoredPermanently():
                 return
+
             if [package.Id, package.NewVersion.lower().replace(",", "."), package.Source.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
                 print(f"🟡 Package {package.Id} version {package.Version} is ignored")
                 return
-            if package.Id in self.LegacyBlacklist:
-                print(f"🟠 Package {package.Id} is legacy blacklisted")
-                return
-            item = TreeWidgetItemWithQAction()
-            item.setCheckState(0, Qt.CheckState.Checked)
-            item.setText(1, package.Name)
-            item.setIcon(1, self.installIcon)
-            item.setText(2, package.Id)
-            item.setIcon(2, self.IDIcon)
-            item.setText(3, package.Version if package.Version != "Unknown" else _("Unknown"))
-            item.setIcon(3, self.versionIcon)
-            item.setText(4, package.NewVersion)
-            item.setIcon(4, self.newVersionIcon)
-            item.setText(6, package.getFloatVersion())
-            package.PackageItem = item
-            if package.isManager(Scoop):
-                try:
-                    UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
-                    if package.Version == UNINSTALL_SECTION.IdPackageReference[package.Id].Version:
-                        package.Source = UNINSTALL_SECTION.IdPackageReference[package.Id].Source
-                    item.setText(5, package.Source)
-                except KeyError:
-                    item.setText(5, _("Loading..."))
-                    print(f"🟡 Package {package.Id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
-                    Thread(target=self.changeStore, args=(package,)).start()
-            else:
-                item.setText(5, package.Source)
-            item.setIcon(5, package.getSourceIcon())
+
+            item = UpgradablePackageItem(package)
+
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package
@@ -995,31 +947,23 @@ class UpdateSoftwareSection(SoftwareSection):
             item.setAction(action)
             globals.trayMenuUpdatesList.addAction(action)
 
-            UNINSTALL: UninstallSoftwareSection = globals.uninstall
-            if package.Id in UNINSTALL.IdPackageReference.keys():
-                installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
-                installedItem = installedPackage.PackageItem
-                if installedItem in UNINSTALL.packageItems:
-                    installedItem.setIcon(1, self.updateIcon)
-                    installedItem.setToolTip(1, _("This package can be updated to version {0}").format(package.NewVersion) + " - " + package.Name)
-
     def finishFiltering(self, text: str):
-        def getChecked(item: TreeWidgetItemWithQAction) -> str:
+        def getChecked(item: UpgradablePackageItem) -> str:
             return " " if item.checkState(0) == Qt.CheckState.Checked else ""
 
-        def getTitle(item: TreeWidgetItemWithQAction) -> str:
+        def getTitle(item: UpgradablePackageItem) -> str:
             return item.text(1)
 
-        def getID(item: TreeWidgetItemWithQAction) -> str:
+        def getID(item: UpgradablePackageItem) -> str:
             return item.text(2)
 
-        def getVersion(item: TreeWidgetItemWithQAction) -> str:
+        def getVersion(item: UpgradablePackageItem) -> str:
             return item.text(6)
 
-        def getNewVersion(item: TreeWidgetItemWithQAction) -> str:
+        def getNewVersion(item: UpgradablePackageItem) -> str:
             return item.text(4)
 
-        def getSource(item: TreeWidgetItemWithQAction) -> str:
+        def getSource(item: UpgradablePackageItem) -> str:
             return item.text(5)
 
         if self.query.text() != text:
@@ -1102,7 +1046,7 @@ class UpdateSoftwareSection(SoftwareSection):
             if not item.isHidden() and item.checkState(0) == Qt.CheckState.Checked:
                 self.updatePackageItem(item, admin, skiphash, interactive)
 
-    def updatePackageItem(self, item: TreeWidgetItemWithQAction, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+    def updatePackageItem(self, item: UpgradablePackageItem, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         package: Package = self.ItemPackageReference[item]
         options = InstallationOptions()
         options.RunAsAdministrator = admin
@@ -1140,7 +1084,7 @@ class UpdateSoftwareSection(SoftwareSection):
         globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
         return super().startLoadingPackages(force)
 
-    def sharePackage(self, package: TreeWidgetItemWithQAction):
+    def sharePackage(self, package: UpgradablePackageItem):
         url = f"https://marticliment.com/wingetui/share?pid={package.text(2)}^&pname={package.text(1)}^&psource={package.text(5)}"
         nativeWindowsShare(package.text(2), url, self.window())
 
@@ -1199,7 +1143,8 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuInteractive = QAction(_("Interactive uninstall"))
         self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
-        self.MenuIgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4)), self.showBlacklistedIcon(self.packageList.currentItem())))
+        # self.MenuIgnoreUpdates.triggered.connect(lambda: (IgnorePackageUpdates_Permanent(self.packageList.currentItem().text(2), self.packageList.currentItem().text(4)), self.showBlacklistedIcon(self.packageList.currentItem())))
+        self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
         self.MenuDetails = QAction(_("Package details"))
         self.MenuDetails.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), uninstall=True))
         self.MenuShare = QAction(_("Share this package"))
@@ -1490,37 +1435,8 @@ class UninstallSoftwareSection(SoftwareSection):
 
     def addItem(self, package: Package) -> None:
         if "---" not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and package.Version not in ("the", "is"):
-            item = TreeWidgetItemWithQAction()
-            item.setCheckState(0, Qt.CheckState.Unchecked)
-            item.setText(1, package.Name)
-            item.setIcon(1, self.installIcon)
-            item.setText(2, package.Id)
-            item.setIcon(2, self.IDIcon)
-            item.setText(3, package.Version)
-            item.setIcon(3, self.versionIcon)
-            item.setText(4, package.Source)
-            item.setIcon(4, package.getSourceIcon())
-            item.setText(6, package.getFloatVersion())
 
-            UPDATES: UpdateSoftwareSection = globals.updates
-            if package.hasUpdatesIgnoredPermanently():
-                item.setIcon(1, self.pinnedIcon)
-                item.setToolTip(1, _("Updates for this package are ignored") + " - " + package.Name)
-
-            if package.Id in UPDATES.IdPackageReference.keys():
-                updatePackage: UpgradablePackage = UPDATES.IdPackageReference[package.Id]
-                updateItem = updatePackage.PackageItem
-                if updateItem in UPDATES.packageItems:
-                    item.setIcon(1, self.updateIcon)
-                    item.setToolTip(1, _("This package can be updated to version {0}").format(updatePackage.NewVersion) + " - " + package.Name)
-
-            DISCOVER: UninstallSoftwareSection = globals.discover
-            if package.Id in DISCOVER.IdPackageReference.keys():
-                discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[package.Id]
-                discoverableItem = discoverablePackage.PackageItem
-                if discoverableItem in DISCOVER.packageItems:
-                    discoverableItem.setIcon(1, self.installedIcon)
-                    discoverableItem.setToolTip(1, _("This package is already installed") + " - " + package.Name)
+            item = InstalledPackageItem(package)
 
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
@@ -1536,7 +1452,7 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setAction(action)
             globals.trayMenuInstalledList.addAction(action)
 
-    def confirmUninstallSelected(self, toUninstall: list[TreeWidgetItemWithQAction], a: CustomMessageBox, admin: bool = False, interactive: bool = False, removeData: bool = False):
+    def confirmUninstallSelected(self, toUninstall: list[InstalledPackageItem], a: CustomMessageBox, admin: bool = False, interactive: bool = False, removeData: bool = False):
         questionData = {
             "titlebarTitle": _("Uninstall"),
             "mainTitle": _("Are you sure?"),
@@ -1554,7 +1470,7 @@ class UninstallSoftwareSection(SoftwareSection):
     def uninstall(self, id: str, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
         self.uninstallPackageItem(self.ItemPackageReference[self.IdPackageReference[id]], admin, removeData, interactive, avoidConfirm)
 
-    def uninstallPackageItem(self, packageItem: TreeWidgetItemWithQAction, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
+    def uninstallPackageItem(self, packageItem: InstalledPackageItem, admin: bool = False, removeData: bool = False, interactive: bool = False, avoidConfirm: bool = False) -> None:
         package: Package = self.ItemPackageReference[packageItem]
         if not avoidConfirm:
             a = CustomMessageBox(self)
@@ -2309,7 +2225,7 @@ class PackageInfoPopupWindow(QWidget):
 
         except Exception as e:
             try:
-                if type(e) != KeyError:
+                if type(e) is KeyError:
                     report(e)
                 else:
                     print(f"🟡 Image {iconId} not found in json")

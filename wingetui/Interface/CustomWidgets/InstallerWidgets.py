@@ -313,7 +313,7 @@ class PackageInstallerWidget(QWidget):
                 self.liveOutputButton.setText(_("Restart your PC to finish installation"))
                 globals.tray_is_needs_restart = True
                 update_tray_icon()
-            if type(self) == PackageInstallerWidget:
+            if type(self) is PackageInstallerWidget:
                 self.Package.PackageItem.setCheckState(0, Qt.CheckState.Unchecked)
                 self.Package.PackageItem.setIcon(1, getMaskedIcon("installed_masked"))
                 self.Package.PackageItem.setToolTip(1, _("This package is already installed") + " - " + self.Package.Name)
@@ -473,21 +473,16 @@ class PackageUpdaterWidget(PackageInstallerWidget):
             self.progressbar.setValue(1000)
             if self.progressbar.invertedAppearance():
                 self.progressbar.setInvertedAppearance(False)
-            if self.Package.Version in (_("Unknown"), "Unknown"):
-                IgnorePackageUpdates_SpecificVersion(self.Package.Id, self.Package.NewVersion, self.Package.Source)
-            if returncode == RETURNCODE_NO_APPLICABLE_UPDATE_FOUND and not self.canceled:
-                IgnorePackageUpdates_SpecificVersion(self.Package.Id, self.Package.NewVersion, self.Package.Source)
+
+            if self.Package.Version in (_("Unknown"), "Unknown") or (returncode == RETURNCODE_NO_APPLICABLE_UPDATE_FOUND and not self.canceled):
+                self.Package.ignoreUpdatesForVersion(self.Package.NewVersion)
+
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
-                UPDATES_SECTION: SoftwareSection = globals.updates
-                try:
-                    self.Package.PackageItem.setHidden(True)
-                    self.Package.PackageItem.treeWidget().takeTopLevelItem(self.Package.PackageItem.treeWidget().indexOfTopLevelItem(self.Package.PackageItem))
-                    UPDATES_SECTION.packageItems.remove(self.Package.PackageItem)
-                    if self.Package.PackageItem in UPDATES_SECTION.showableItems:
-                        UPDATES_SECTION.showableItems.remove(self.Package.PackageItem)
-                except Exception as e:
-                    report(e)
-                UPDATES_SECTION.updatePackageNumber()
+                self.Package.PackageItem.removeFromList()
+                InstalledItem = self.Package.PackageItem.getInstalledPackageItem()
+                if InstalledItem:
+                    InstalledItem.setTag(InstalledItem.Tag.Default)
+
             super().finish(returncode, output)
 
     def close(self):
@@ -590,38 +585,16 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             if self.progressbar.invertedAppearance():
                 self.progressbar.setInvertedAppearance(False)
             if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED and not self.canceled:
-                UPDATES_SECTION: SoftwareSection = globals.updates
-                UNINSTALL_SECTION: SoftwareSection = globals.uninstall
-                try:
-                    print(self.Package.PackageItem, UNINSTALL_SECTION.packageList.indexOfTopLevelItem(self.Package.PackageItem))
-                    self.Package.PackageItem.setHidden(True)
-                    i = UNINSTALL_SECTION.packageList.takeTopLevelItem(UNINSTALL_SECTION.packageList.indexOfTopLevelItem(self.Package.PackageItem))
-                    UNINSTALL_SECTION.packageItems.remove(self.Package.PackageItem)
-                    if self.Package.PackageItem in UNINSTALL_SECTION.showableItems:
-                        UNINSTALL_SECTION.showableItems.remove(self.Package.PackageItem)
-                    del i
-                    DISCOVER = globals.discover
-                    if self.Package.Id in DISCOVER.IdPackageReference.keys():
-                        discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[self.Package.Id]
-                        discoverableItem = discoverablePackage.PackageItem
-                        if discoverableItem in DISCOVER.packageItems:
-                            discoverableItem.setIcon(1, DISCOVER.installIcon)
-                            discoverableItem.setToolTip(1, self.Package.Name)
-                except Exception as e:
-                    report(e)
-                UNINSTALL_SECTION.updatePackageNumber()
-                if self.Package.Id in UPDATES_SECTION.IdPackageReference:
-                    packageItem = UPDATES_SECTION.PackageItemReference[UPDATES_SECTION.IdPackageReference[self.Package.Id]]
-                    packageItem.setHidden(True)
-                    i = UPDATES_SECTION.packageList.takeTopLevelItem(UPDATES_SECTION.packageList.indexOfTopLevelItem(packageItem))
-                    try:
-                        UPDATES_SECTION.packageItems.remove(packageItem)
-                        if i in UPDATES_SECTION.showableItems:
-                            UPDATES_SECTION.showableItems.remove(packageItem)
-                        del i
-                    except Exception as e:
-                        report(e)
-                    UPDATES_SECTION.updatePackageNumber()
+
+                self.Package.PackageItem.removeFromList()
+                AvailableItem = self.Package.PackageItem.getDiscoverPackageItem()
+                if AvailableItem:
+                    AvailableItem.setTag(AvailableItem.Tag.Default)
+
+                UpgradableItem = self.Package.PackageItem.getUpdatesPackageItem()
+                if UpgradableItem:
+                    UpgradableItem.removeFromList()
+
             self.finishedInstallation = True
             self.cancelButton.setEnabled(True)
             removeProgram(self.installId)
