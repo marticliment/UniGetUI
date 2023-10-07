@@ -384,19 +384,6 @@ def getint(s: str, fallback: int) -> int:
         return fallback
 
 
-def blacklistUpdatesForPackage(id: str):
-    """
-    THIS FUNCTION IS DEPRECATED. USE IgnorePackageUpdates_Permanent INSTEAD
-    """
-    setSettingsValue("BlacklistedUpdates", getSettingsValue(
-        "BlacklistedUpdates") + id + ",")
-    try:
-        raise Exception(
-            "This function has been deprecated, and shouldn't have been called")
-    except Exception as e:
-        report(e)
-
-
 def IgnorePackageUpdates_Permanent(id: str, store: str):
     """
     With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
@@ -553,7 +540,6 @@ def getMaskedIcon(iconName: str) -> QIcon:
     R, G, B = getColors()[2 if isDark() else 1].split(",")
     R, G, B = (int(R), int(G), int(B))
     base_img = QImage(getMedia(iconName))
-    print(getMedia(iconName))
     for x in range(base_img.width()):
         for y in range(base_img.height()):
             color = base_img.pixelColor(x, y)
@@ -562,6 +548,15 @@ def getMaskedIcon(iconName: str) -> QIcon:
     globals.maskedImages[getMedia(iconName)] = QIcon(
         QPixmap.fromImage(base_img))
     return globals.maskedImages[getMedia(iconName)]
+
+
+def getIcon(iconName: str) -> QIcon:
+    iconPath = getMedia(iconName)
+    if iconPath in globals.cachedIcons:
+        return globals.cachedIcons[iconPath]
+    else:
+        globals.cachedIcons[iconPath] = QIcon(iconPath)
+        return globals.cachedIcons[iconPath]
 
 
 LATIN = "ä  æ  ǽ  đ ð ƒ ħ ı ł ø ǿ ö  œ  ß  ŧ ü  Ä  Æ  Ǽ  Đ Ð Ƒ Ħ I Ł Ø Ǿ Ö  Œ  ẞ  Ŧ Ü "

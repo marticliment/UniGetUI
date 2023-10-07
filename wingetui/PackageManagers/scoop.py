@@ -298,6 +298,7 @@ class ScoopPackageManager(DynamicPackageManager):
         if options.InstallationScope:
             if options.InstallationScope.capitalize() in ("Global", _("Global")):
                 Parameters.append("--global")
+        if options.SkipHashCheck:
             Parameters.append("--skip")
         if options.RemoveDataOnUninstall:
             Parameters.append("--purge")

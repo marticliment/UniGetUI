@@ -101,3 +101,5 @@ PackageManagerOutput: str = "Outputs from package managers on the current sessio
 AUMID: str = ""
 
 maskedImages: dict[str:QIcon] = {}
+
+cachedIcons: dict[str:QIcon] = {}
