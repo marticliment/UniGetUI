@@ -377,7 +377,6 @@ class DiscoverSoftwareSection(SoftwareSection):
             if query == self.query.text():
                 self.callInMain.emit(partial(self.finishFiltering, query))
 
-        self.callInMain.emit(self.loadingProgressBar.show)
         Thread(target=lambda: waitAndFilter(self.query.text())).start()
 
     def finishFiltering(self, text: str) -> None:
@@ -433,13 +432,13 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def finishDynamicLoadingIfNeeded(self) -> None:
         self.finishFiltering(self.query.text())
-        if len(self.showableItems) == 0 and len(self.query.text()) >= 3:
-            self.packageList.label.setText(_("No packages found matching the input criteria"))
-        else:
-            self.packageList.label.setText(_(""))
 
         if not self.isLoadingDynamicPackages():
             self.loadingProgressBar.hide()
+            if len(self.showableItems) == 0 and len(self.query.text()) >= 3:
+                self.packageList.label.setText(_("No packages found matching the input criteria"))
+            else:
+                self.packageList.label.setText(_(""))
 
     def isLoadingDynamicPackages(self) -> bool:
         return self.runningThreads > 0
@@ -1035,6 +1034,7 @@ class UpdateSoftwareSection(SoftwareSection):
             globals.tray_is_available_updates = False
         globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)
         update_tray_icon()
+        self.updateFilterTable()
 
     def updateAllPackageItems(self, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         for item in self.packageItems:
@@ -1408,6 +1408,7 @@ class UninstallSoftwareSection(SoftwareSection):
         else:
             self.packageList.label.setText(_("{0} packages were found").format(0))
             self.packageList.label.show()
+        self.updateFilterTable()
 
     def finishLoadingIfNeeded(self) -> None:
         self.countLabel.setText(_("Found packages: {0}, not finished yet...").format(len(self.packageItems)))

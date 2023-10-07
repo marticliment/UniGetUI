@@ -896,7 +896,7 @@ class SoftwareSection(QWidget):
         self.filterList.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.filterList.setColumnWidth(2, 10)
         self.filterList.verticalScrollBar().setFixedWidth(12)
-        self.filterList.itemChanged.connect(lambda i, c: self.addItemsToTreeWidget(reset=True) if c == 0 else None)
+        self.filterList.itemChanged.connect(lambda i, c: (self.addItemsToTreeWidget(reset=True) if c == 0 else None))
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
 
         self.filterList.header().hide()
@@ -1087,8 +1087,10 @@ class SoftwareSection(QWidget):
         self.window().OnThemeChange.connect(self.ApplyIcons)
 
     def updatePackageNumber(self):
-        # TODO: Implement this function
-        pass
+        self.countLabel.setText(_("Packages found: {0}").format(len(self.packageItems)))
+        self.packageList.label.setText(_("No packages found matching the input criteria"))
+        self.packageList.label.setVisible(len(self.showableItems) == 0)
+        self.updateFilterTable()
 
     def ApplyIcons(self):
         self.OnThemeChange.emit()
@@ -1238,6 +1240,7 @@ class SoftwareSection(QWidget):
                 self.packageList.label.hide()
                 self.packageList.label.setText("")
         self.addItemsToTreeWidget(reset=True)
+        self.updatePackageNumber()
         self.packageList.scrollToItem(self.packageList.currentItem())
 
     def updateFilterTable(self):
@@ -1960,12 +1963,12 @@ class PackageItem(QTreeWidgetItem):
 
     def removeFromList(self) -> None:
         self.setHidden(True)
-        if self.treeWidget():
-            self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
         if self in self.SoftwareSection.packageItems:
             self.SoftwareSection.packageItems.remove(self)
         if self in self.SoftwareSection.showableItems:
             self.SoftwareSection.showableItems.remove(self)
+        if self.treeWidget():
+            self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
         self.SoftwareSection.updatePackageNumber()
 
 
@@ -1973,8 +1976,8 @@ class UpgradablePackageItem(PackageItem):
     Package: 'UpgradablePackage' = None
 
     def __init__(self, package: 'UpgradablePackage'):
-        self.SoftwareSection = globals.updates
         super().__init__(package)
+        self.SoftwareSection = globals.updates
         self.setCheckState(0, Qt.CheckState.Checked)
 
         if package.isManager(Scoop):
@@ -2016,8 +2019,8 @@ class UpgradablePackageItem(PackageItem):
 class InstalledPackageItem(PackageItem):
 
     def __init__(self, package: 'Package'):
-        self.SoftwareSection = globals.uninstall
         super().__init__(package)
+        self.SoftwareSection = globals.uninstall
         self.setIcon(3, getIcon("version"))
 
     def updateCorrespondingPackages(self) -> None:
