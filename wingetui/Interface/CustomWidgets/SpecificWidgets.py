@@ -3,6 +3,7 @@
 wingetui/Interface/CustomWidgets/SpecificWidgets.py
 
 This file contains the classes for miscellainous, custom made, specific-case-oriented widgets.
+It also defines the PackageItem, UpgradablePackageItem and InstalledPackageItem classes
 
 """
 
