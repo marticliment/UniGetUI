@@ -3614,7 +3614,7 @@
             "icon": "",
             "images": []
         },
-        "soundblastercom\u2026": {
+        "soundblastercommand": {
             "icon": "",
             "images": []
         },
@@ -3649,8 +3649,10 @@
             "images": []
         },
         "newsleecher": {
-            "icon": "https://media.itpro.co.uk/image/upload/s--X-WVjvBW--/f_auto,t_content-image-full-desktop@1/v1656493135/ITPP%20to%20ITP%20migration/Usenet/Newsleecher_logo.jpg",
-            "images": []
+            "icon": "https://i.postimg.cc/hvDFRpkW/News-Leecher-icon.png\n",
+            "images": [
+                "https://i.postimg.cc/KzrXWdsD/News-Leecher-1.png"
+            ]
         },
         "crystaldiskinfo": {
             "icon": "https://tweakers.net/ext/i/2004637378.png",
@@ -3658,20 +3660,22 @@
                 "https://tweakers.net/ext/i/2004681610.png"
             ]
         },
-        "crystaldiskinfo.kureikeiedition": {
-            "icon": "https://tweakers.net/ext/i/2004637378.png",
+        "kureikeiedition": {
+            "icon": "https://i.postimg.cc/Cxr9krCK/kureikei.png",
             "images": []
         },
-        "crystaldiskinfo.shizukuedition": {
-            "icon": "https://tweakers.net/ext/i/2004637378.png",
+        "shizukuedition": {
+            "icon": "https://i.postimg.cc/N0yS48bk/shizuku.png",
             "images": []
         },
         "crystaldiskmark": {
-            "icon": "https://tweakers.net/ext/i/2004637378.png",
-            "images": []
+            "icon": "https://i.postimg.cc/NMsCG9zH/cmark-icon.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/5/5b/CrystalDiskMark_8.0.4_x64.png"
+            ]
         },
         "crystaldiskmark.shizukuedition": {
-            "icon": "https://tweakers.net/ext/i/2004637378.png",
+            "icon": "https://i.postimg.cc/NMsCG9zH/cmark-icon.png",
             "images": []
         },
         "anytoiso": {
