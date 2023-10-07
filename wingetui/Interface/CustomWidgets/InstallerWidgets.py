@@ -482,6 +482,9 @@ class PackageUpdaterWidget(PackageInstallerWidget):
                 InstalledItem = self.Package.PackageItem.getInstalledPackageItem()
                 if InstalledItem:
                     InstalledItem.setTag(InstalledItem.Tag.Default)
+                AvailablePackage = self.Package.PackageItem.getDiscoverPackageItem()
+                if AvailablePackage:
+                    AvailablePackage.setTag(InstalledItem.Tag.Installed)
 
             super().finish(returncode, output)
 
