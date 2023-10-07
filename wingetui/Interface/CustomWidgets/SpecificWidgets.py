@@ -717,14 +717,14 @@ class SoftwareSection(QWidget):
     discoverLabelIsSmall: bool = False
     isToolbarSmall: bool = False
     toolbarDefaultWidth: int = 0
-    PackageItemReference: dict[Package:TreeWidgetItemWithQAction] = {}
-    ItemPackageReference: dict[TreeWidgetItemWithQAction:Package] = {}
+    PackageItemReference: dict[Package:'PackageItem'] = {}
+    ItemPackageReference: dict['PackageItem':Package] = {}
     IdPackageReference: dict[str:Package] = {}
     sectionName: str = ""
-    packageItems: list[TreeWidgetItemWithQAction] = []
-    showableItems: list[TreeWidgetItemWithQAction] = []
-    addedItems: list[TreeWidgetItemWithQAction] = []
-    shownItems: list[TreeWidgetItemWithQAction] = []
+    packageItems: list['PackageItem'] = []
+    showableItems: list['PackageItem'] = []
+    addedItems: list['PackageItem'] = []
+    shownItems: list['PackageItem'] = []
     nextItemToShow: int = 0
     OnThemeChange = Signal()
 
@@ -1085,6 +1085,10 @@ class SoftwareSection(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         self.window().OnThemeChange.connect(self.ApplyIcons)
+
+    def updatePackageNumber(self):
+        # TODO: Implement this function
+        pass
 
     def ApplyIcons(self):
         self.OnThemeChange.emit()
@@ -1847,6 +1851,185 @@ class PackageImporter(MovableFramelessWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         globals.discover.callInMain.emit(lambda: globals.discover.packageList.setEnabled(True))
         return super().closeEvent(event)
+
+
+class PackageItem(QTreeWidgetItem):
+    class Tag():
+        Default = 0
+        Installed = 1
+        Upgradable = 2
+        Pinned = 3
+
+    Package: 'Package' = None
+    IconType: 'Tag' = Tag.Default
+    __item_action: QAction = None
+    SoftwareSection: 'SoftwareSection' = None
+
+    def __init__(self, package: 'Package'):
+        self.SoftwareSection = globals.discover
+        self.Package = package
+        self.Package.PackageItem = self
+        super().__init__()
+        self.setCheckState(0, Qt.CheckState.Checked)
+        self.setText(1, self.Package.Name)
+        self.setTag(PackageItem.Tag.Default)
+        self.setText(2, self.Package.Id)
+        self.setIcon(2, getIcon("ID"))
+        self.setText(3, self.Package.Version if self.Package.Version != "Unknown" else _("Unknown"))
+        self.setIcon(3, getIcon("newversion"))
+        self.setText(4, package.Source)
+        self.setIcon(4, package.getSourceIcon())
+        self.setText(6, self.Package.getFloatVersion())
+        self.updateCorrespondingPackages()
+
+    def updateCorrespondingPackages(self) -> None:
+        UpgradableItem = self.getUpdatesPackageItem()
+        InstalledItem = self.getInstalledPackageItem()
+        if UpgradableItem:
+            self.setTag(PackageItem.Tag.Upgradable)
+        elif InstalledItem:
+            self.setTag(PackageItem.Tag.Installed)
+
+    def setTag(self, iconType: Tag, newVersion: str = "Unknown"):
+        self.IconType = iconType
+        match self.IconType:
+            case PackageItem.Tag.Default:
+                self.setIcon(1, getIcon("install"))
+                self.setToolTip(1, self.Package.Name)
+
+            case PackageItem.Tag.Installed:
+                self.setIcon(1, getMaskedIcon("installed_masked"))
+                self.setToolTip(1, _("This package is already installed") + " - " + self.Package.Name)
+
+            case PackageItem.Tag.Upgradable:
+                self.setIcon(1, getMaskedIcon("update_masked"))
+                self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
+
+            case PackageItem.Tag.Pinned:
+                self.setIcon(1, getMaskedIcon("pin_masked"))
+                self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
+
+    def getDiscoverPackageItem(self) -> 'PackageItem':
+        DISCOVER: 'SoftwareSection' = globals.discover
+        if self.Package.Id in DISCOVER.IdPackageReference:
+            package: Package = DISCOVER.IdPackageReference[self.Package.Id]
+            if package.Source == self.Package.Source:
+                if package.PackageItem in DISCOVER.packageItems:
+                    return package.PackageItem
+        return None
+
+    def getUpdatesPackageItem(self) -> 'UpgradablePackageItem':
+        UPDATES: 'SoftwareSection' = globals.updates
+        if self.Package.Id in UPDATES.IdPackageReference:
+            package: UpgradablePackage = UPDATES.IdPackageReference[self.Package.Id]
+            if package.Source == self.Package.Source:
+                if package.PackageItem in UPDATES.packageItems:
+                    return package.PackageItem
+        return None
+
+    def getInstalledPackageItem(self) -> 'InstalledPackageItem':
+        INSTALLED: 'SoftwareSection' = globals.uninstall
+        if self.Package.Id in INSTALLED.IdPackageReference:
+            package: Package = INSTALLED.IdPackageReference[self.Package.Id]
+            if package.Source == self.Package.Source:
+                if package.PackageItem in INSTALLED.packageItems:
+                    return package.PackageItem
+        return None
+
+    def setAction(self, action: QAction):
+        self.__item_action = action
+
+    def action(self) -> QAction:
+        return self.__item_action
+
+    def setHidden(self, hide: bool, forceShowAction: bool = False) -> None:
+        if not forceShowAction:
+            if self.__item_action:
+                self.__item_action.setVisible(not hide)
+        try:
+            return super().setHidden(hide)
+        except RuntimeError:
+            return False
+
+    def setText(self, column: int, text: str) -> None:
+        self.setToolTip(column, text)
+        return super().setText(column, text)
+
+    def treeWidget(self) -> TreeWidget:
+        return super().treeWidget()
+
+    def removeFromList(self) -> None:
+        self.setHidden(True)
+        if self.treeWidget():
+            self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
+        if self in self.SoftwareSection.packageItems:
+            self.SoftwareSection.packageItems.remove(self)
+        if self in self.SoftwareSection.showableItems:
+            self.SoftwareSection.showableItems.remove(self)
+        self.SoftwareSection.updatePackageNumber()
+
+
+class UpgradablePackageItem(PackageItem):
+    Package: 'UpgradablePackage' = None
+
+    def __init__(self, package: 'UpgradablePackage'):
+        self.SoftwareSection = globals.updates
+        super().__init__(package)
+
+        if package.isManager(Scoop):
+            try:
+                installedPackage = self.Package.getInstalledPackage()
+                if installedPackage:
+                    if self.Package.Version == installedPackage.Version:
+                        self.Package.Source = installedPackage.Source
+                    self.setText(5, self.Package.Source)
+            except KeyError:
+                self.setText(5, _("Loading..."))
+                print(f"🟡 Package {self.Package.Id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
+                Thread(target=self.updateStore).start()
+        else:
+            self.setText(5, self.Package.Source)
+
+        self.setIcon(3, getIcon("version"))
+        self.setIcon(4, getIcon("newversion"))
+        self.setText(2, package.Version)
+        self.setText(4, package.NewVersion)
+        self.setIcon(5, self.Package.getSourceIcon())
+
+    def updateStore(self):
+        time.sleep(3)
+        try:
+            installedPackage = self.Package.getInstalledPackage()
+            if installedPackage:
+                self.Package.Source = installedPackage.Source
+        except KeyError:
+            print(f"🟠 Package {self.Package.Id} found in the updates section but not in the installed one, happened again")
+        globals.updates.emit(partial(self.setText, 5, self.Package.Source))
+
+    def updateCorrespondingPackages(self) -> None:
+        InstalledItem = self.getInstalledPackageItem()
+        if InstalledItem:
+            InstalledItem.setTag(PackageItem.Tag.Upgradable, self.Package.NewVersion)
+
+
+class InstalledPackageItem(PackageItem):
+
+    def __init__(self, package: 'Package'):
+        self.SoftwareSection = globals.uninstall
+        super().__init__(package)
+        self.setIcon(3, getIcon("version"))
+
+    def updateCorrespondingPackages(self) -> None:
+        if self.Package.hasUpdatesIgnoredPermanently():
+            self.setTag(PackageItem.Tag.Pinned)
+
+        AvailableItem = self.getDiscoverPackageItem()
+        if AvailableItem is not None:
+            AvailableItem.setTag(PackageItem.Tag.Installed)
+
+        UpgradableItem = self.getUpdatesPackageItem()
+        if UpgradableItem:
+            self.setTag(PackageItem.Tag.Upgradable, UpgradableItem.Package.NewVersion)
 
 
 if __name__ == "__main__":
