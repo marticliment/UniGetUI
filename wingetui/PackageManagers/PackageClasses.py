@@ -171,6 +171,10 @@ class UpgradablePackage(Package):
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
 
+    def ignoreUpdatesForVersion(self):
+        super().ignoreUpdatesForVersion(self.NewVersion)
+        if self.PackageItem:
+            self.PackageItem.removeFromList()
 
 class PackageDetails(Package):
     Name: str = ""
