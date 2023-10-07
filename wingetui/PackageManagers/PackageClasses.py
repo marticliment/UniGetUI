@@ -140,7 +140,10 @@ class Package():
             version = self.Version
         IgnorePackageUpdates_SpecificVersion(self.Id, version, self.Source)
 
-    def getInstalledPackage(self) -> 'Package':
+    def getDiscoverPackage(self) -> 'Package':
+        if self.PackageItem:
+            # This function is more efficient if wanting to find the same item
+            return self.PackageItem.getDiscoverPackageItem().Package
         if self.Id in globals.discover.IdPackageReference:
             package: Package = globals.discover.IdPackageReference[self.Id]
             if package.Source == self.Source:
@@ -148,18 +151,25 @@ class Package():
         return None
 
     def getUpdatesPackage(self) -> 'UpgradablePackage':
+        if self.PackageItem:
+            # This function is more efficient if wanting to find the same item
+            return self.PackageItem.getUpdatesPackageItem().Package
         if self.Id in globals.updates.IdPackageReference:
             package: UpgradablePackage = globals.updates.IdPackageReference[self.Id]
             if package.Source == self.Source:
                 return package
         return None
 
-    def getDiscoverPackage(self) -> 'Package':
+    def getInstalledPackage(self) -> 'Package':
+        if self.PackageItem:
+            # This function is more efficient if wanting to find the same item
+            return self.PackageItem.getInstalledPackageItem().Package
         if self.Id in globals.uninstall.IdPackageReference:
             package: Package = globals.uninstall.IdPackageReference[self.Id]
             if package.Source == self.Source:
                 return package
         return None
+
 
 
 class UpgradablePackage(Package):
