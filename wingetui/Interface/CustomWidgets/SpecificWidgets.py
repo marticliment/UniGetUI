@@ -1913,6 +1913,8 @@ class PackageItem(QTreeWidgetItem):
                 self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
 
     def getDiscoverPackageItem(self) -> 'PackageItem':
+        if self.SoftwareSection == globals.discover:
+            return self
         DISCOVER: 'SoftwareSection' = globals.discover
         if self.Package.Id in DISCOVER.IdPackageReference:
             package: Package = DISCOVER.IdPackageReference[self.Package.Id]
@@ -1922,6 +1924,8 @@ class PackageItem(QTreeWidgetItem):
         return None
 
     def getUpdatesPackageItem(self) -> 'UpgradablePackageItem':
+        if self.SoftwareSection == globals.updates:
+            return self
         UPDATES: 'SoftwareSection' = globals.updates
         if self.Package.Id in UPDATES.IdPackageReference:
             package: UpgradablePackage = UPDATES.IdPackageReference[self.Package.Id]
@@ -1931,6 +1935,8 @@ class PackageItem(QTreeWidgetItem):
         return None
 
     def getInstalledPackageItem(self) -> 'InstalledPackageItem':
+        if self.SoftwareSection == globals.uninstall:
+            return self
         INSTALLED: 'SoftwareSection' = globals.uninstall
         if self.Package.Id in INSTALLED.IdPackageReference:
             package: Package = INSTALLED.IdPackageReference[self.Package.Id]
