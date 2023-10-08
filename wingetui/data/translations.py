@@ -7,7 +7,7 @@ untranslatedPercentage = {
   "cs": "95%",
   "da": "30%",
   "de": "95%",
-  "el": "76%",
+  "el": "77%",
   "es": "95%",
   "fa": "71%",
   "he": "67%",
@@ -16,7 +16,7 @@ untranslatedPercentage = {
   "id": "95%",
   "ja": "92%",
   "ko": "95%",
-  "nb": "80%",
+  "nb": "91%",
   "pl": "99%",
   "ru": "95%",
   "si": "10%",
@@ -107,8 +107,8 @@ languageCredits = {
   ],
   "el": [
     {
-      "name": "antwnhsx",
-      "link": "https://github.com/antwnhsx"
+      "name": "antwnhsx  @wobblerrrgg",
+      "link": "https://github.com/antwnhsx  @wobblerrrgg"
     }
   ],
   "en": [
