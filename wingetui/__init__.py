@@ -1866,7 +1866,7 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: rgba(200, 200, 200, 40%);
+        background-color: rgba(222, 222, 222, 35%);
         height: 25px;
         border-bottom: 1px solid rgba(222, 222, 222, 35%);
         border-top: 1px solid rgba(222, 222, 222, 35%);
