@@ -938,12 +938,12 @@ try:
         background: none;
     }}
     QHeaderView,QAbstractItemView {{
-        background-color: #55303030;
-        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 5%);
+        border-radius: 8px;
         border: none;
         padding: 1px;
-        height: 25px;
-        border: 1px solid #1f1f1f;
+        height: 35px;
+        border: 1px solid rgba(25, 25, 25, 50%);
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -953,16 +953,16 @@ try:
     }}
     QHeaderView::section {{
         background-color: transparent;
-        border-radius: 6px;
+        border-radius: 8px;
         padding: 4px;
-        height: 25px;
+        height: 35px;
         margin: 1px;
     }}
     QHeaderView::section:first {{
         background-color: transparent;
-        border-radius: 6px;
+        border-radius: 8px;
         padding: 4px;
-        height: 25px;
+        height: 35px;
         margin: 1px;
         margin-left: 0px;
         padding-left: 10px;
@@ -980,10 +980,10 @@ try:
         margin-bottom: 3px;
         padding-top: 3px;
         padding-bottom: 3px;
-        background-color: rgba(48, 48, 48, 20%);
+        background-color: rgba(255, 255, 255, 6);
         height: 25px;
-        border-bottom: 1px solid #1f1f1f;
-        border-top: 1px solid #1f1f1f;
+        border-bottom: 1px solid rgba(25, 25, 25, 50%);
+        border-top: 1px solid rgba(25, 25, 25, 50%);
     }}
     QTreeWidget#FlatTreeWidget::item,
     QTreeWidget#FlatTreeWidget::item:first {{
@@ -993,7 +993,7 @@ try:
         height: 30px;
         border: 0px;
         border-radius: 0px;
-        border-bottom: 1px solid #1f1f1f;
+        border-bottom: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget#FlatTreeWidget::item:last {{
         padding-right: 10px;
@@ -1013,10 +1013,10 @@ try:
         padding: 0px;
         padding-top: 3px;
         padding-bottom: 3px;
-        background-color: rgba(48, 48, 48, 35%);
+        background-color: rgba(255, 255, 255, 8);
         height: 25px;
-        border-bottom: 1px solid #303030;
-        border-top: 1px solid #303030;
+        border-bottom: 1px solid rgba(25, 25, 25, 25%);
+        border-top: 1px solid rgba(25, 25, 25, 25%);
         color: rgb({colors[2]});
     }}
     QTreeWidget::item:hover {{
@@ -1025,36 +1025,36 @@ try:
         padding: 0px;
         padding-top: 3px;
         padding-bottom: 3px;
-        background-color: rgba(48, 48, 48, 45%);
+        background-color: rgba(255, 255, 255, 12);
         height: 25px;
-        border-bottom: 1px solid #303030;
-        border-top: 1px solid #303030;
+        border-bottom: 1px solid rgba(25, 25, 25, 25%);
+        border-top: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:first {{
-        border-top-left-radius: 6px;
-        border-bottom-left-radius: 6px;
-        border-left: 1px solid #1f1f1f;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-left: 1px solid rgba(25, 25, 25, 25%);
         margin-left: 0px;
         padding-left: 0px;
     }}
     QTreeWidget::item:last {{
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-        border-right: 1px solid #1f1f1f;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        border-right: 1px solid rgba(25, 25, 25, 25%);
         padding-right: 0px;
         margin-right: 0px;
     }}
     QTreeWidget::item:first:selected {{
-        border-left: 1px solid #303030;
+        border-left: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:last:selected {{
-        border-right: 1px solid #303030;
+        border-right: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:first:hover {{
-        border-left: 1px solid #303030;
+        border-left: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:last:hover {{
-        border-right: 1px solid #303030;
+        border-right: 1px solid rgba(25, 25, 25, 25%);
     }}
     QProgressBar {{
         border-radius: 2px;
