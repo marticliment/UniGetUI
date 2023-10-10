@@ -415,7 +415,6 @@ class SettingsSection(SmoothScrollArea):
         self.theme.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
         self.generalTitle.addWidget(self.theme)
-        self.theme.restartButton.setText(_("Apply"))
 
         themes = {
             _("Light"): "light",
@@ -447,11 +446,9 @@ class SettingsSection(SmoothScrollArea):
                     mode = win32mica.MicaTheme.LIGHT
             win32mica.ApplyMica(globals.mainWindow.winId(), mode)
             globals.mainWindow.ApplyStyleSheetsAndIcons()
-            self.theme.restartButton.hide()
 
         self.theme.combobox.currentTextChanged.connect(lambda v: (
             setSettingsValue("PreferredTheme", themes[v]), applyTheme()))
-        self.theme.restartButton.clicked.connect(applyTheme)
 
         def exportSettings():
             nonlocal self
