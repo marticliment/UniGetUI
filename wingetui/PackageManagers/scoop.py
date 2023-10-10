@@ -197,7 +197,7 @@ class ScoopPackageManager(DynamicPackageManager):
             import json
             data: dict = json.load(mfest)
             if "description" in data.keys():
-                if type(data["description"]) == list:
+                if type(data["description"]) is list:
                     details.Description = "\n".join(data["description"])
                 else:
                     details.Description = data["description"]
@@ -220,19 +220,19 @@ class ScoopPackageManager(DynamicPackageManager):
                     details.Author = w.split("/")[0].capitalize()
 
             if "notes" in data.keys():
-                if type(data["notes"]) == list:
+                if type(data["notes"]) is list:
                     details.ReleaseNotes = "\n".join(data["notes"])
                 else:
                     details.ReleaseNotes = data["notes"]
             details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
 
             if "license" in data.keys():
-                details.License = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
-                details.LicenseURL = unknownStr if type(data["license"]) != dict else data["license"]["url"]
+                details.License = data["license"] if type(data["license"]) is not dict else data["license"]["identifier"]
+                details.LicenseURL = unknownStr if type(data["license"]) is not dict else data["license"]["url"]
 
             if "url" in data.keys():
-                details.InstallerHash = data["hash"][0] if type(data["hash"]) == list else data["hash"]
-                url = data["url"][0] if type(data["url"]) == list else data["url"]
+                details.InstallerHash = data["hash"][0] if type(data["hash"]) is list else data["hash"]
+                url = data["url"][0] if type(data["url"]) is list else data["url"]
                 details.InstallerURL = url
                 try:
                     details.InstallerSize = int(urlopen(url).length / 1000000)
@@ -246,11 +246,11 @@ class ScoopPackageManager(DynamicPackageManager):
                     details.InstallerSize = int(urlopen(url).length / 1000000)
                 except Exception as e:
                     print("🟠 Can't get installer size:", type(e), str(e))
-                if type(data["architecture"]) == dict:
+                if type(data["architecture"]) is dict:
                     details.Architectures = list(data["architecture"].keys())
 
             if "checkver" in data.keys():
-                if type(data["checkver"]) == dict:
+                if type(data["checkver"]) is not dict:
                     if "url" in data["checkver"].keys():
                         url = data["checkver"]["url"]
                         details.ReleaseNotesUrl = url
