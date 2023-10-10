@@ -755,7 +755,7 @@ except Exception as e:
     report(e)
     englang = {"locale": "en"}
 
-print(f"It took {time.time()-t0} to load all language files")
+print(f"🔵 It took {time.time()-t0} to load all language files")
 
 
 Thread(target=checkQueue, daemon=True).start()

@@ -74,13 +74,15 @@ def CheckProgramIntegrity():
                 bytes = f.read()  # read entire file as bytes
                 HASH = hashlib.sha256(bytes).hexdigest()
                 if HASH != HASHES[file]:
-                    print(f"🔴 File {file} HASH does not coincide!")
                     if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+                        print(f"🔴 File {file} HASH does not coincide!")
                         raise ModuleNotFoundError(f"The file {file} has an invalid hash, meaning that it has been likely modified. Please reinstall WingetUI")
+                    else:
+                        print(f"🔵 File {file} HASH does not coincide, but running unfrozen")
         else:
-            print(f"File {file} not in hashing list")
+            print(f"🔵 File {file} not in hashing list")
 
-    print("Hash check passed, coninuing execution...")
+    print("🟢 Hash check passed, coninuing execution...")
 
 
 _globals = globals

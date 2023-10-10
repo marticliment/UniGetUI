@@ -213,7 +213,7 @@ class TreeWidget(QTreeWidget):
         try:
             self.goTopButton.clicked.disconnect()
         except RuntimeError:
-            cprint("Can't disconnect")
+            pass
         scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v > 20 else self.hideTopButton())
         self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
 
