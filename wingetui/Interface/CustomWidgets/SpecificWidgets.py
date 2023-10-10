@@ -1102,7 +1102,7 @@ class SoftwareSection(QWidget):
         self.window().OnThemeChange.connect(self.ApplyIcons)
 
     def updatePackageNumber(self):
-        self.countLabel.setText(_("Packages found: {0}").format(len(self.packageItems)))
+        self.countLabel.setText(_("Packages found: {0}").format(len(self.showableItems)))
         self.packageList.label.setText(_("No packages found matching the input criteria"))
         self.packageList.label.setVisible(len(self.showableItems) == 0)
         self.updateFilterTable()
