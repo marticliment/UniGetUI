@@ -284,25 +284,22 @@ class SettingsSection(SmoothScrollArea):
         langDictWithPercentage = {}
         invertedLangDict = {}
         for key, value in languageReference.items():
-            if (key in untranslatedPercentage):
+            langValue = value
+            if key in untranslatedPercentage:
                 perc = untranslatedPercentage[key]
                 if perc == "0%":
                     continue
-                if key not in lang["locale"]:
-                    langListWithPercentage.append(f"{value} ({perc})")
-                    langDictWithPercentage[key] = f"{value} ({perc})"
-                    invertedLangDict[f"{value} ({perc})"] = key
-                else:
+                if key in lang["locale"]:
                     k = len(lang.keys())
-                    v = len([val for val in lang.values() if val is None])
-                    perc = f"{int(100-v/k*100)}%"
-                    langListWithPercentage.append(f"{value} ({perc})")
-                    langDictWithPercentage[key] = f"{value} ({perc})"
-                    invertedLangDict[f"{value} ({perc})"] = key
-            else:
-                invertedLangDict[value] = key
-                langDictWithPercentage[key] = value
-                langListWithPercentage.append(value)
+                    v = len([val for val in lang.values() if val != None])
+                    percNum = v / k
+                    perc = f"{percNum:.0%}"
+                    if (perc == "100%" and percNum < 1):
+                        perc = "99%"
+                langValue = f"{value} ({perc})"
+            langListWithPercentage.append(langValue)
+            langDictWithPercentage[key] = langValue
+            invertedLangDict[langValue] = key
         try:
             self.language.combobox.insertItems(0, langListWithPercentage)
             self.language.combobox.setCurrentIndex(
