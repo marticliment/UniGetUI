@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14022,
-        "done": 7704
+        "total": 14023,
+        "done": 7705
     },
     "icons_and_screenshots": {
         "115chrome": {
@@ -3674,7 +3674,7 @@
                 "https://upload.wikimedia.org/wikipedia/commons/5/5b/CrystalDiskMark_8.0.4_x64.png"
             ]
         },
-        "crystaldiskmark.shizukuedition": {
+        "crystaldiskmark-shizukuedition": {
             "icon": "https://i.postimg.cc/NMsCG9zH/cmark-icon.png",
             "images": []
         },
@@ -48965,6 +48965,10 @@
             "images": [
                 "https://i.postimg.cc/9QnPTJ6M/wsl1.png"
             ]
+        },
+        "ETHZurich.SafeExamBrowser": {
+            "icon": "https://raw.githubusercontent.com/SafeExamBrowser/seb-win-refactoring/master/SetupBundle/Resources/Logo.png",
+            "images": []
         }
     }
 }
