@@ -1882,12 +1882,14 @@ class PackageItem(QTreeWidgetItem):
     IconType: 'Tag' = Tag.Default
     __item_action: QAction = None
     SoftwareSection: 'SoftwareSection' = None
+    callInMain: Signal = None
 
     def __init__(self, package: 'Package'):
         if not self.SoftwareSection:
             self.SoftwareSection = globals.discover
         self.Package = package
         self.Package.PackageItem = self
+        self.callInMain: Signal = globals.mainWindow.callInMain
         super().__init__()
         self.setCheckState(0, Qt.CheckState.Unchecked)
         self.setText(1, self.Package.Name)
@@ -1909,7 +1911,7 @@ class PackageItem(QTreeWidgetItem):
         elif InstalledItem:
             self.setTag(PackageItem.Tag.Installed)
 
-    def setTag(self, iconType: Tag, newVersion: str = "Unknown"):
+    def setTag(self, iconType: Tag, newVersion: str = ""):
         self.IconType = iconType
         match self.IconType:
             case PackageItem.Tag.Default:
@@ -1922,7 +1924,10 @@ class PackageItem(QTreeWidgetItem):
 
             case PackageItem.Tag.Upgradable:
                 self.setIcon(1, getMaskedIcon("update_masked"))
-                self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
+                if newVersion:
+                    self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
+                else:
+                    self.setToolTip(1, _("This package can be updated") + " - " + self.Package.Name)
 
             case PackageItem.Tag.Pinned:
                 self.setIcon(1, getMaskedIcon("pin_masked"))
@@ -1956,7 +1961,7 @@ class PackageItem(QTreeWidgetItem):
             return self
         if self.Package.Id in INSTALLED.IdPackageReference:
             package: Package = INSTALLED.IdPackageReference[self.Package.Id]
-            if package.Source == self.Package.Source:
+            if self.Package.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 if package.PackageItem in INSTALLED.packageItems:
                     return package.PackageItem
         return None
@@ -2003,13 +2008,12 @@ class UpgradablePackageItem(PackageItem):
         self.setCheckState(0, Qt.CheckState.Checked)
 
         if package.isManager(Scoop):
-            try:
-                installedPackage = self.Package.getInstalledPackage()
-                if installedPackage:
-                    if self.Package.Version == installedPackage.Version:
-                        self.Package.Source = installedPackage.Source
-                    self.setText(5, self.Package.Source)
-            except KeyError:
+            installedPackage = self.Package.getInstalledPackage()
+            if installedPackage:
+                if self.Package.Version == installedPackage.Version:
+                    self.Package.Source = installedPackage.Source
+                self.setText(5, self.Package.Source)
+            else:
                 self.setText(5, _("Loading..."))
                 print(f"🟡 Package {self.Package.Id} found in the updates section but not in the installed one, might be a temporal issue, retrying in 3 seconds...")
                 Thread(target=self.updateStore).start()
@@ -2018,19 +2022,23 @@ class UpgradablePackageItem(PackageItem):
 
         self.setIcon(3, getIcon("version"))
         self.setIcon(4, getIcon("newversion"))
-        self.setText(2, package.Version)
+        self.setText(3, package.Version)
         self.setText(4, package.NewVersion)
         self.setIcon(5, self.Package.getSourceIcon())
 
     def updateStore(self):
+        """
+        Scoop does not report buckets when checking for updates. Therefore, this function handles this.
+        """
         time.sleep(3)
-        try:
-            installedPackage = self.Package.getInstalledPackage()
-            if installedPackage:
+        installedPackage = self.Package.getInstalledPackage()
+        if installedPackage:
+            if self.Package.Version == installedPackage.Version:
                 self.Package.Source = installedPackage.Source
-        except KeyError:
+        else:
             print(f"🟠 Package {self.Package.Id} found in the updates section but not in the installed one, happened again")
-        globals.updates.emit(partial(self.setText, 5, self.Package.Source))
+        self.callInMain.emit(partial(self.setText, 5, self.Package.Source))
+        self.callInMain.emit(self.updateCorrespondingPackages)
 
     def updateCorrespondingPackages(self) -> None:
         InstalledItem = self.getInstalledPackageItem()
@@ -2038,7 +2046,7 @@ class UpgradablePackageItem(PackageItem):
             InstalledItem.setTag(PackageItem.Tag.Upgradable, self.Package.NewVersion)
         AvailableWidget = self.getDiscoverPackageItem()
         if AvailableWidget:
-            InstalledItem.setTag(PackageItem.Tag.Upgradable, self.Package.NewVersion)
+            AvailableWidget.setTag(PackageItem.Tag.Upgradable, self.Package.NewVersion)
 
 
 class InstalledPackageItem(PackageItem):

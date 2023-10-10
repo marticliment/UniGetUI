@@ -143,7 +143,9 @@ class Package():
     def getDiscoverPackage(self) -> 'Package':
         if self.PackageItem:
             # This function is more efficient if wanting to find the same item
-            return self.PackageItem.getDiscoverPackageItem().Package
+            AvailablePackageItem = self.PackageItem.getDiscoverPackageItem()
+            if AvailablePackageItem:
+                return AvailablePackageItem.Package
         if self.Id in globals.discover.IdPackageReference:
             package: Package = globals.discover.IdPackageReference[self.Id]
             if package.Source == self.Source:
@@ -153,7 +155,9 @@ class Package():
     def getUpdatesPackage(self) -> 'UpgradablePackage':
         if self.PackageItem:
             # This function is more efficient if wanting to find the same item
-            return self.PackageItem.getUpdatesPackageItem().Package
+            UpgrdablePackageItem = self.PackageItem.getUpdatesPackageItem()
+            if UpgrdablePackageItem:
+                return UpgrdablePackageItem.Package
         if self.Id in globals.updates.IdPackageReference:
             package: UpgradablePackage = globals.updates.IdPackageReference[self.Id]
             if package.Source == self.Source:
@@ -163,10 +167,12 @@ class Package():
     def getInstalledPackage(self) -> 'Package':
         if self.PackageItem:
             # This function is more efficient if wanting to find the same item
-            return self.PackageItem.getInstalledPackageItem().Package
+            InstalledPackageItem = self.PackageItem.getInstalledPackageItem()
+            if InstalledPackageItem:
+                return InstalledPackageItem.Package
         if self.Id in globals.uninstall.IdPackageReference:
             package: Package = globals.uninstall.IdPackageReference[self.Id]
-            if package.Source == self.Source:
+            if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 return package
         return None
 

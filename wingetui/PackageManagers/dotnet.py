@@ -107,7 +107,6 @@ class DotNetToolPackageManager(DynamicPackageManager):
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
-                    print(line)
                     rawoutput += line + "\n"
                     if not dashesPassed:
                         if "---" in line:
@@ -143,7 +142,6 @@ class DotNetToolPackageManager(DynamicPackageManager):
             while p.poll() is None:
                 line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
                 if line:
-                    print(line)
                     rawoutput += line + "\n"
                     if not dashesPassed:
                         if "---" in line:
