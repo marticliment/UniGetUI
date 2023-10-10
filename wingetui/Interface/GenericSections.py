@@ -295,7 +295,7 @@ class SettingsSection(SmoothScrollArea):
                 else:
                     k = len(lang.keys())
                     v = len([val for val in lang.values() if val is None])
-                    perc = f"{int(v/k*100)}%"
+                    perc = f"{int(100-v/k*100)}%"
                     langListWithPercentage.append(f"{value} ({perc})")
                     langDictWithPercentage[key] = f"{value} ({perc})"
                     invertedLangDict[f"{value} ({perc})"] = key
