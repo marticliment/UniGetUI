@@ -135,6 +135,8 @@ class ChocoPackageManager(DynamicPackageManager):
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
                         source = self.NAME
+                        if id == "Chocolatey" and "v" in version:
+                            continue
                         if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                             packages.append(Package(name, id, version, source, Choco))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
