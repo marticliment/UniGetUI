@@ -1145,7 +1145,7 @@ class SoftwareSection(QWidget):
     def addItem(self, name: str, id: str, version: str, store: str) -> None:
         raise NotImplementedError("This function requires being reimplemented")
 
-    def addItemsToTreeWidget(self, reset: bool = False, itemsToAdd: int = 100):
+    def addItemsToTreeWidget(self, reset: bool = False, itemsToAdd: int = 50):
         self.setUpdatesEnabled(False)
         if reset:
             for itemToHide in self.shownItems:
