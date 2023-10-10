@@ -1793,8 +1793,8 @@ try:
         border-radius: 6px;
         border: none;
         padding: 1px;
-        height: 25px;
-        border: 1px solid rgba(220, 220, 220, 55%);
+        height: 35px;
+        border: 1px solid rgba(222, 222, 222, 25%);
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -1806,14 +1806,14 @@ try:
         background-color: transparent;
         border-radius: 6px;
         padding: 4px;
-        height: 25px;
+        height: 35px;
         margin: 1px;
     }}
     QHeaderView::section:first {{
         background-color: transparent;
         border-radius: 6px;
         padding: 4px;
-        height: 25px;
+        height: 35px;
         margin: 1px;
         margin-left: 0px;
         padding-left: 10px;
@@ -1834,8 +1834,8 @@ try:
         outline: none;
         height: 25px;
         background-color:rgba(255, 255, 255, 20%);
-        border-top: 1px solid rgba(220, 220, 220, 35%);
-        border-bottom: 1px solid rgba(220, 220, 220, 35%);
+        border-top: 1px solid rgba(222, 222, 222, 25%);
+        border-bottom: 1px solid rgba(222, 222, 222, 25%);
     }}
     QTreeWidget#FlatTreeWidget::item,
     QTreeWidget#FlatTreeWidget::item:first {{
@@ -1845,7 +1845,7 @@ try:
         height: 30px;
         border: 0px;
         border-radius: 0px;
-        border-bottom: 1px solid rgba(220, 220, 220, 35%);
+        border-bottom: 1px solid rgba(222, 222, 222, 25%);
     }}
     QTreeWidget#FlatTreeWidget::item:last {{
         padding-right: 10px;
@@ -1856,7 +1856,7 @@ try:
         margin-top: 0px;
         margin-bottom: 0px;
         background-color: rgba(255, 255, 255, 40%);
-        border: 1px solid rgba(220, 220, 220, 35%);
+        border: 1px solid rgba(222, 222, 222, 25%);
         border-radius: 8px;
     }}
     QTreeWidget::item:selected {{
@@ -1868,8 +1868,8 @@ try:
         outline: none;
         background-color: rgba(255, 255, 255, 90%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 80%);
-        border-top: 1px solid rgba(220, 220, 220, 80%);
+        border-bottom: 1px solid rgba(222, 222, 222, 25%);
+        border-top: 1px solid rgba(222, 222, 222, 25%);
         color: rgb({colors[3]});
     }}
     QTreeWidget::branch {{
@@ -1884,30 +1884,30 @@ try:
         outline: none;
         background-color: rgba(255, 255, 255, 70%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 80%);
-        border-top: 1px solid rgba(220, 220, 220, 80%);
+        border-bottom: 1px solid rgba(222, 222, 222, 25%);
+        border-top: 1px solid rgba(222, 222, 222, 25%);
     }}
     QTreeWidget::item:first {{
-        border-top-left-radius: 6px;
-        border-bottom-left-radius: 6px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
         border-left: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:last {{
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
         border-right: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:first:selected {{
-        border-left: 1px solid rgba(220, 220, 220, 80%);
+        border-left: 1px solid rgba(222, 222, 222, 25%);
     }}
     QTreeWidget::item:last:selected {{
-        border-right: 1px solid rgba(220, 220, 220, 80%);
+        border-right: 1px solid rgba(222, 222, 222, 25%);
     }}
     QTreeWidget::item:first:hover {{
-        border-left: 1px solid rgba(220, 220, 220, 80%);
+        border-left: 1px solid rgba(222, 222, 222, 25%);
     }}
     QTreeWidget::item:last:hover {{
-        border-right: 1px solid rgba(220, 220, 220, 80%);
+        border-right: 1px solid rgba(222, 222, 222, 25%);
     }}
     QProgressBar {{
         border-radius: 2px;
