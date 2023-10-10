@@ -625,58 +625,48 @@ try:
                     print(e)
                 time.sleep(0.5)
 
-        def updateIfPossible(self):
+        def updateIfPossible(self, round: int = 0):
             if not getSettings("DisableAutoUpdateWingetUI"):
                 print("🔵 Starting update check")
-                integrityPass = False
                 try:
-                    dmname = socket.gethostbyname_ex("versions.marticliment.com")[0]
-                    if dmname == dmname:  # Check provider IP to prevent exploits
-                        integrityPass = True
-                except Exception:
-                    pass
-                try:
-                    response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
+                    response = urlopen("https://www.marticliment.com/versions/wingetui.ver")
                 except Exception as e:
                     print(e)
-                    response = urlopen("http://www.marticliment.com/versions/wingetui.ver")
-                    integrityPass = True
+                    response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
                 print("🔵 Version URL:", response.url)
                 response = response.read().decode("utf8")
                 new_version_number = response.split("///")[0]
                 provided_hash = response.split("///")[1].replace("\n", "").lower()
                 if float(new_version_number) > version:
                     print("🟢 Updates found!")
-                    if integrityPass:
-                        url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
-                        filedata = urlopen(url)
-                        datatowrite = filedata.read()
-                        filename = ""
-                        downloadPath = os.environ["temp"] if "temp" in os.environ.keys() else os.path.expanduser("~")
-                        with open(os.path.join(downloadPath, "wingetui-updater.exe"), 'wb') as f:
-                            f.write(datatowrite)
-                            filename = f.name
-                        if hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash:
-                            print("🔵 Hash: ", provided_hash)
-                            print("🟢 Hash ok, starting update")
-                            globals.updatesAvailable = True
-                            while globals.mainWindow is None:
-                                time.sleep(1)
-                            globals.canUpdate = not globals.mainWindow.isVisible()
-                            while not globals.canUpdate:
-                                time.sleep(0.1)
-                            if not getSettings("DisableAutoUpdateWingetUI"):
-                                subprocess.run(f'start /B "" "{filename}" /silent', shell=True)
-                        else:
-                            print("🟠 Hash not ok")
-                            print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
-                            print("🟠 Provided hash: ", provided_hash)
+                    url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
+                    filedata = urlopen(url)
+                    datatowrite = filedata.read()
+                    filename = ""
+                    downloadPath = os.environ["temp"] if "temp" in os.environ.keys() else os.path.expanduser("~")
+                    with open(os.path.join(downloadPath, "wingetui-updater.exe"), 'wb') as f:
+                        f.write(datatowrite)
+                        filename = f.name
+                    if hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash:
+                        print("🔵 Hash: ", provided_hash)
+                        print("🟢 Hash ok, starting update")
+                        globals.updatesAvailable = True
+                        while globals.mainWindow is None:
+                            time.sleep(1)
+                        globals.canUpdate = not globals.mainWindow.isVisible()
+                        while not globals.canUpdate:
+                            time.sleep(0.1)
+                        if not getSettings("DisableAutoUpdateWingetUI"):
+                            subprocess.run(f'start /B "" "{filename}" /silent', shell=True)
                     else:
-                        print("🟠 Can't verify update server authenticity, aborting")
-                        print("🟠 Provided DmName:", dmname)
-                        print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
+                        print("🟠 Hash not ok")
+                        print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
+                        print("🟠 Provided hash: ", provided_hash)
                 else:
                     print("🟢 Updates not found")
+            if round <= 2:
+                time.sleep(6)
+                self.updateIfPossible(round + 1)
 
     colors = getColors()
     isW11 = False
