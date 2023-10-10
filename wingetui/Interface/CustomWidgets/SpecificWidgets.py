@@ -895,7 +895,7 @@ class SoftwareSection(QWidget):
         self.filterScrollArea.setFrameShape(QFrame.Shape.NoFrame)
         self.filterScrollArea.goTopButton.hide()
 
-        sourcesWidget = SmallCollapsableSection("Sources", getMedia("provider"))
+        sourcesWidget = SmallCollapsableSection(_("Sources"), getMedia("provider"))
         sourcesWidget.showHideButton.click()
 
         scrollWidget = QWidget()
@@ -933,7 +933,7 @@ class SoftwareSection(QWidget):
         filterLayout.addWidget(sourcesWidget)
         filterLayout.addSpacing(0)
 
-        optionsWidget = SmallCollapsableSection("Filters", getMedia("edit_filters"))
+        optionsWidget = SmallCollapsableSection(_("Filters"), getMedia("edit_filters"))
         optionsWidget.showHideButton.click()
 
         searchOptionsLayout = QVBoxLayout()
