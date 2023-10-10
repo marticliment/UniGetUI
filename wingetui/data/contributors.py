@@ -31,7 +31,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2034
+    "contributions": 2048
   },
   {
     "name": "ppvnf",
@@ -41,7 +41,7 @@ contributorsInfo = [
   {
     "name": "panther7",
     "link": "https://github.com/panther7",
-    "contributions": 66
+    "contributions": 67
   },
   {
     "name": "RavenMacDaddy",
