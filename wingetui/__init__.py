@@ -667,7 +667,7 @@ try:
                 else:
                     print("🟢 Updates not found")
             if round <= 2:
-                time.sleep(6)
+                time.sleep(600)
                 self.updateIfPossible(round + 1)
 
     colors = getColors()
