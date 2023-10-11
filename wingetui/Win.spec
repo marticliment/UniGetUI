@@ -9,7 +9,7 @@ import importlib, os
 
 
 a = Analysis(['__init__.py'],
-             pathex=['Y:\WingetUI-Store\wingetui_bin'],
+             pathex=['WingetUI-Store\wingetui_bin'],
              binaries=[('*.pyc', '.')],
              datas=[('choco-cli/', 'choco-cli/'), ("components/", "components/"), ("data/*.pyc", "data/"), ("ExternalLibraries/*.pyc", "ExternalLibraries/"), ("Interface/", "Interface/"), ("lang/", "lang/"), ("PackageManagers/", "PackageManagers/"), ("resources/", "resources")],
              hiddenimports=['pkg_resources.py2_warn', "win32gui", "cls"],
