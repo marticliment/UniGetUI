@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14023,
-        "done": 7705
+        "total": 14022,
+        "done": 7704
     },
     "icons_and_screenshots": {
         "115chrome": {
@@ -29947,10 +29947,6 @@
             "icon": "https://community.chocolatey.org/content/packageimages/OctopusDeploy.Tentacle.6.2.277.png",
             "images": []
         },
-        "treesizefree": {
-            "icon": "https://community.chocolatey.org/content/packageimages/treesizefree.portable.4.6.3.png",
-            "images": []
-        },
         "boost-msvc-14-3": {
             "icon": "https://community.chocolatey.org/content/packageimages/boost-msvc-14.3.1.81.0.png",
             "images": []
@@ -48528,6 +48524,16 @@
         "jetbrainstoolbox": {
             "icon": "https://community.chocolatey.org/content/packageimages/jetbrainstoolbox.1.27.2.13801.png",
             "images": []
+        },
+        "treesizefree": {
+            "icon": "https://community.chocolatey.org/content/packageimages/treesizefree.4.6.3.png",
+            "images": [
+                "https://www.jam-software.com/sites/default/files/treesize_free/online_manual/EN/TreeSizeFree-Classic-MainForm-Touch.png",
+                "https://www.jam-software.com/sites/default/files/treesize_free/online_manual/EN/TreeSizeFree-DirectoryTree-Pure.png",
+                "https://www.jam-software.com/sites/default/files/treesize_free/online_manual/EN/TreeSizeFree_3.png",
+                "https://www.jam-software.com/sites/default/files/treesize_free/online_manual/EN/TreeSizeFree-Treemap-Chart-3D.png",
+                "https://www.jam-software.com/sites/default/files/treesize_free/online_manual/EN/TreeSizeFree-DarkMode.png"
+            ]
         },
         "ledger-live": {
             "icon": "https://community.chocolatey.org/content/packageimages/ledger-live.2.51.0.png",
