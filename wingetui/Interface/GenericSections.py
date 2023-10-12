@@ -465,7 +465,7 @@ class SettingsSection(SmoothScrollArea):
                 fileName = QFileDialog.getSaveFileName(self, _("Export settings to a local file"), os.path.expanduser(
                     "~"), f"{_('WingetUI Settings File')} (*.conf);;{_('All files')} (*.*)")
                 if fileName[0] != "":
-                    oFile = open(fileName[0], "w")
+                    oFile = open(fileName[0], "w", encoding="utf-8", errors="ignore")
                     oFile.write(rawstr)
                     oFile.close()
                     subprocess.run(
