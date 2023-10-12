@@ -147,5 +147,10 @@ contributorsInfo = [
     "name": "quantumfallout",
     "link": "https://github.com/quantumfallout",
     "contributions": 1
+  },
+  {
+    "name": "uKER",
+    "link": "https://github.com/uKER",
+    "contributions": 1
   }
 ]
