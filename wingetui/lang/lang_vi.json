@@ -78,7 +78,7 @@
   "Default preferences - suitable for regular users" : "Tùy chọn mặc định - phù hợp với người dùng bình thường",
   "Description:" : "Mô tả: ",
   "Developing is hard, and this application is free. But if you liked the application, you can always <b>buy me a coffee</b> :)" : "Phát triển rất khó và ứng dụng này miễn phí. Nhưng nếu bạn thích ứng dụng này, bạn luôn có thể <b>mua cà phê cho tôi</b> :)",
-  "Directly install when double-clicking an item on the \"{discoveryTab}\" tab (instead of showing the package info)" : "Cài đặt trực tiếp khi nhấp đúp vào một mục trên tab \"{DiscoveryTab}\" (thay vì hiển thị thông tin gói)",
+  "Directly install when double-clicking an item on the \"{discoveryTab}\" tab (instead of showing the package info)" : "Cài đặt trực tiếp khi nhấp đúp vào một mục trên tab \"{discoveryTab}\" (thay vì hiển thị thông tin gói)",
   "Disable new share API (port 7058)" : "Vô hiệu hóa API chia sẻ(cổng 7058)",
   "Discover Packages" : "Kphá các gói",
   "Distinguish between\nuppercase and lowercase" : null,
