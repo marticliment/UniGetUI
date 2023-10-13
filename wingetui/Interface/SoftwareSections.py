@@ -290,11 +290,11 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        self.HelpMenuEntry1 = QAction("Guide for beginners on how to install a package")
+        self.HelpMenuEntry1 = QAction(_("Guide for beginners on how to install a package"))
         self.HelpMenuEntry1.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/install-a-program"))
-        self.HelpMenuEntry2 = QAction("Discover Packages overview - every feature explained")
+        self.HelpMenuEntry2 = QAction(_("Discover Packages overview - every feature explained"))
         self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/discover-overview"))
-        self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry3 = QAction(_("WingetUI Help and Documentation"))
         self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
@@ -781,15 +781,15 @@ class UpdateSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        self.HelpMenuEntry1 = QAction("How to upgrade a package with WingetUI")
+        self.HelpMenuEntry1 = QAction(_("How to upgrade a package with WingetUI"))
         self.HelpMenuEntry1.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/"))
-        self.HelpMenuEntry2 = QAction("How to enable automatic updates")
+        self.HelpMenuEntry2 = QAction(_("How to enable automatic updates"))
         self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#enable-updates"))
-        self.HelpMenuEntry3 = QAction("How to ignore updates for certain packages")
+        self.HelpMenuEntry3 = QAction(_("How to ignore updates for certain packages"))
         self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#ignore"))
-        self.HelpMenuEntry4 = QAction("How to manage ignored updates")
+        self.HelpMenuEntry4 = QAction(_("How to manage ignored updates"))
         self.HelpMenuEntry4.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#manage-ignored"))
-        self.HelpMenuEntry5 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry5 = QAction(_("WingetUI Help and Documentation"))
         self.HelpMenuEntry5.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
