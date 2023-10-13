@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 14022,
-        "done": 7704
+        "total": 14025,
+        "done": 7707
     },
     "icons_and_screenshots": {
         "115chrome": {
@@ -48975,6 +48975,30 @@
         "ETHZurich.SafeExamBrowser": {
             "icon": "https://raw.githubusercontent.com/SafeExamBrowser/seb-win-refactoring/master/SetupBundle/Resources/Logo.png",
             "images": []
+        },
+        "AnyDeskSoftwareGmbH.AnyDesk": {
+            "icon": "https://img.icons8.com/fluency/512/anydesk.png",
+            "images": [
+                "https://cdn.mos.cms.futurecdn.net/rGU2S5Jz22yFy28i5shEFL.jpg",
+                "https://blog.anydesk.com/wp-content/uploads/2019/04/anydesk-software-version-5.png",
+                "https://cdn.afterdawn.fi/screenshots/normal/20813.jpg",
+                "https://static.sitejabber.com/img/urls/1323983/picture_374006.1626670964.jpg",
+                "https://support.anydesk.com/hs-fs/hubfs/Help%20Center/Connecting%20to%20a%20Remote%20Client/VirtualBoxVM_bao5gPJz7u.png?width=475&name=VirtualBoxVM_bao5gPJz7u.png"
+            ]
+        },
+        "ETHZurich_SafeExamBrowser": {
+            "icon": "https://raw.githubusercontent.com/SafeExamBrowser/seb-win-refactoring/master/SetupBundle/Resources/Logo.png",
+            "images": []
+        },
+        "AnyDeskSoftwareGmbH_AnyDesk": {
+            "icon": "https://img.icons8.com/fluency/512/anydesk.png",
+            "images": [
+                "https://cdn.mos.cms.futurecdn.net/rGU2S5Jz22yFy28i5shEFL.jpg",
+                "https://blog.anydesk.com/wp-content/uploads/2019/04/anydesk-software-version-5.png",
+                "https://cdn.afterdawn.fi/screenshots/normal/20813.jpg",
+                "https://static.sitejabber.com/img/urls/1323983/picture_374006.1626670964.jpg",
+                "https://support.anydesk.com/hs-fs/hubfs/Help%20Center/Connecting%20to%20a%20Remote%20Client/VirtualBoxVM_bao5gPJz7u.png?width=475&name=VirtualBoxVM_bao5gPJz7u.png"
+            ]
         }
     }
 }
