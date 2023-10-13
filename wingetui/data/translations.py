@@ -7,7 +7,6 @@ untranslatedPercentage = {
   "da": "30%",
   "de": "97%",
   "el": "77%",
-  "es": "95%",
   "fa": "71%",
   "he": "67%",
   "hi": "87%",
@@ -148,6 +147,10 @@ languageCredits = {
     {
       "name": "rubnium",
       "link": "https://github.com/rubnium"
+    },
+    {
+      "name": "uKER",
+      "link": "https://github.com/uKER"
     }
   ],
   "fa": [

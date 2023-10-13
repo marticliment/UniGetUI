@@ -9,6 +9,7 @@ contributors = [
   "adripo",
   "MisterEvans78",
   "rumplin",
+  "uKER",
   "sklart",
   "aaronliu0130",
   "vedantmgoyal2009",
@@ -23,15 +24,14 @@ contributors = [
   "HorridModz",
   "reima",
   "Satanarious",
-  "vsilvar",
-  "quantumfallout"
+  "vsilvar"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2061
+    "contributions": 2068
   },
   {
     "name": "ppvnf",
@@ -66,6 +66,11 @@ contributorsInfo = [
   {
     "name": "rumplin",
     "link": "https://github.com/rumplin",
+    "contributions": 3
+  },
+  {
+    "name": "uKER",
+    "link": "https://github.com/uKER",
     "contributions": 3
   },
   {
@@ -141,16 +146,6 @@ contributorsInfo = [
   {
     "name": "vsilvar",
     "link": "https://github.com/vsilvar",
-    "contributions": 1
-  },
-  {
-    "name": "quantumfallout",
-    "link": "https://github.com/quantumfallout",
-    "contributions": 1
-  },
-  {
-    "name": "uKER",
-    "link": "https://github.com/uKER",
     "contributions": 1
   }
 ]
