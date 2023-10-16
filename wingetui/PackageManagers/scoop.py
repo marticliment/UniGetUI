@@ -29,7 +29,7 @@ class ScoopPackageManager(DynamicPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-    EXECUTABLE = "powershell -ExecutionPolicy ByPass -Command scoop"
+    EXECUTABLE = "powershell -NoProfile -ExecutionPolicy ByPass -Command scoop"
 
     NAME = "Scoop"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
