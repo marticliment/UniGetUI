@@ -322,8 +322,8 @@ class ChocoPackageManager(DynamicPackageManager):
 
         if getSettings("ShownWelcomeWizard") and not getSettings("UseSystemChocolatey") and not getSettings("ChocolateyAddedToPath") and not os.path.isfile(r"C:\ProgramData\Chocolatey\bin\choco.exe"):
             # If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            subprocess.run("powershell -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\"" + self.EXECUTABLE.replace('\\choco.exe', '\\bin') + ";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
-            subprocess.run(f"powershell -Command [Environment]::SetEnvironmentVariable(\\\"chocolateyinstall\\\", \\\"{os.path.dirname(self.EXECUTABLE)}\\\", \\\"User\\\")", shell=True, check=False)
+            subprocess.run("powershell -NoProfile -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\"" + self.EXECUTABLE.replace('\\choco.exe', '\\bin') + ";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
+            subprocess.run(f"powershell -NoProfile -Command [Environment]::SetEnvironmentVariable(\\\"chocolateyinstall\\\", \\\"{os.path.dirname(self.EXECUTABLE)}\\\", \\\"User\\\")", shell=True, check=False)
             print("🔵 Adding chocolatey to path...")
             setSettings("ChocolateyAddedToPath", True)
 

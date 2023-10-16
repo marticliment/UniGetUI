@@ -72,7 +72,7 @@ def getScoopPackages():
     pkgs = []
     print("🟢 Starting scoop search...")
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
-    p = subprocess.Popen(' '.join(["powershell", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+    p = subprocess.Popen(' '.join(["powershell", "-NoProfile", "-Command", "scoop", "search"]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
     output = []
     counter = 0
     while p.poll() is None:

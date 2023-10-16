@@ -310,7 +310,7 @@ try:
         def getAUMID(self):
             print("🔵 Loading WingetUI AUMID...")
             try:
-                output = str(subprocess.check_output(["powershell", "-Command", "Get-StartApps"], shell=True), encoding='utf-8', errors='ignore')
+                output = str(subprocess.check_output(["powershell", "-NoProfile", "-Command", "Get-StartApps"], shell=True), encoding='utf-8', errors='ignore')
                 for line in output.split("\n"):
                     if list(filter(None, line.split(" ")))[0] == "WingetUI":
                         globals.AUMID = list(filter(None, line.split(" ")))[1]
