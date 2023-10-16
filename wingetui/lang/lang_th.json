@@ -370,7 +370,7 @@
   "Which source do you want to add?" : "คุณต้องการจะเพิ่มซอร์ซอันไหน?",
   "Winget source manager" : "ตัวจัดการซอร์ซ Winget",
   "WingetUI - Everything is up to date" : "WingetUI - ทุกอย่างอัปเดตแล้ว",
-  "WingetUI - {0} updates are available" : "WingetUI - {0} พบการอัปเดต",
+  "WingetUI - {0} updates are available" : "WingetUI - พบ {0} อัปเดต",
   "WingetUI - {0} {1}" : "WingetUI - {0} {1}",
   "WingetUI Settings" : "ตั้งค่า WingetUI",
   "WingetUI Settings File" : "ไฟล์ตั้งค่า WingetUI",
