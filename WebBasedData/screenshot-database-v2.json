@@ -1,7 +1,7 @@
 {
     "package_count": {
-        "total": 13285,
-        "done": 7656
+        "total": 13093,
+        "done": 7523
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -2617,7 +2617,7 @@
             "images": []
         },
         "apo-ok": {
-            "icon": "https://community.chocolatey.org/content/packageimages/apo-ok.portable.5.22.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/apo-ok.5.22.png",
             "images": []
         },
         "app-shop": {
@@ -3527,7 +3527,7 @@
             "images": []
         },
         "autohotkey-l": {
-            "icon": "https://community.chocolatey.org/content/packageimages/autohotkey_l.install.1.1.14.20140119.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/autohotkey_l.1.1.14.20140119.png",
             "images": []
         },
         "autoit": {
@@ -5098,11 +5098,11 @@
             "images": []
         },
         "bitcoin": {
-            "icon": "https://community.chocolatey.org/content/packageimages/bitcoin.install.24.0.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/bitcoin.24.0.1.png",
             "images": []
         },
         "bitcoin-unlimited": {
-            "icon": "https://community.chocolatey.org/content/packageimages/bitcoin-unlimited.install.1.0.2.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/bitcoin-unlimited.1.0.2.0.png",
             "images": []
         },
         "bitcoincore": {
@@ -7972,7 +7972,7 @@
             "images": []
         },
         "colorconsole": {
-            "icon": "https://community.chocolatey.org/content/packageimages/colorconsole.install.4.03.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/colorconsole.2.51.png",
             "images": []
         },
         "colorcontrol": {
@@ -8084,7 +8084,7 @@
             "images": []
         },
         "commitmonitor": {
-            "icon": "https://community.chocolatey.org/content/packageimages/commitmonitor.portable.1.11.2.1123.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/commitmonitor.1.11.2.1123.png",
             "images": []
         },
         "communicator": {
@@ -8571,7 +8571,7 @@
             "images": []
         },
         "coyim": {
-            "icon": "https://community.chocolatey.org/content/packageimages/coyim.portable.0.4.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/coyim.0.4.1.png",
             "images": []
         },
         "cozydrive": {
@@ -10488,7 +10488,7 @@
             "images": []
         },
         "dispcalgui": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dispcalgui.portable.3.8.9.3.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/dispcalgui.3.8.9.3.png",
             "images": []
         },
         "display-changer": {
@@ -10837,7 +10837,7 @@
             "images": []
         },
         "dogecoin": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dogecoin.portable.1.14.6.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/dogecoin.1.14.6.png",
             "images": []
         },
         "dogecoincore": {
@@ -10929,7 +10929,7 @@
             "images": []
         },
         "dontsleep": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dontsleep.portable.9.29.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/dontsleep.9.29.png",
             "images": []
         },
         "doom-d64rtr": {
@@ -15265,7 +15265,7 @@
             "images": []
         },
         "fusioninventory-agent": {
-            "icon": "https://community.chocolatey.org/content/packageimages/fusioninventory-agent.portable.2.6.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/fusioninventory-agent.2.6.png",
             "images": []
         },
         "futurerestore-gui": {
@@ -15405,7 +15405,7 @@
             "images": []
         },
         "gamedownloader": {
-            "icon": "https://community.chocolatey.org/content/packageimages/gamedownloader.install.4.0.20150329.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/gamedownloader.4.0.20150329.png",
             "images": []
         },
         "gamemaker-studio-1": {
@@ -15511,7 +15511,7 @@
             "images": []
         },
         "gbstudio": {
-            "icon": "https://community.chocolatey.org/content/packageimages/gbstudio.install.1.2.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/gbstudio.1.2.1.png",
             "images": []
         },
         "gbt": {
@@ -15707,7 +15707,7 @@
             "images": []
         },
         "geosetter": {
-            "icon": "https://community.chocolatey.org/content/packageimages/geosetter.portable.3.4.16.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/geosetter.3.4.16.png",
             "images": []
         },
         "geostudio": {
@@ -17505,7 +17505,7 @@
             "images": []
         },
         "haku-neko": {
-            "icon": "https://community.chocolatey.org/content/packageimages/haku-neko.install.6.1.7.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/haku-neko.6.1.7.png",
             "images": []
         },
         "hakuneko": {
@@ -17745,7 +17745,7 @@
             "images": []
         },
         "hddguardian": {
-            "icon": "https://community.chocolatey.org/content/packageimages/hddguardian.install.0.7.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/hddguardian.0.7.1.png",
             "images": []
         },
         "hddllftool": {
@@ -18745,7 +18745,7 @@
             "images": []
         },
         "iconsext": {
-            "icon": "https://community.chocolatey.org/content/packageimages/iconsext.install.1.47.0.20150708.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/iconsext.1.47.0.20150708.png",
             "images": []
         },
         "iconsextract": {
@@ -18910,7 +18910,7 @@
             "images": []
         },
         "iepv": {
-            "icon": "https://community.chocolatey.org/content/packageimages/iepv.portable.1.40.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/iepv.1.35.png",
             "images": []
         },
         "ietab-chrome": {
@@ -22873,7 +22873,7 @@
             "images": []
         },
         "linqpad5": {
-            "icon": "https://community.chocolatey.org/content/packageimages/linqpad5.install.5.46.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/linqpad5.5.46.0.png",
             "images": []
         },
         "linqpad5-anycpu": {
@@ -22881,11 +22881,11 @@
             "images": []
         },
         "linqpad6": {
-            "icon": "https://community.chocolatey.org/content/packageimages/linqpad6.portable.6.15.12.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/linqpad6.6.15.12.png",
             "images": []
         },
         "linqpad7": {
-            "icon": "https://community.chocolatey.org/content/packageimages/linqpad7.portable.7.6.6.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/linqpad7.7.6.6.png",
             "images": []
         },
         "linqpadless": {
@@ -23107,7 +23107,7 @@
             "images": []
         },
         "log4om": {
-            "icon": "https://community.chocolatey.org/content/packageimages/log4om.portable.2.26.0.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/log4om.2.26.0.0.png",
             "images": []
         },
         "log4view": {
@@ -23409,7 +23409,7 @@
             ]
         },
         "luminance": {
-            "icon": "https://community.chocolatey.org/content/packageimages/luminance.portable.2.6.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/luminance.2.6.0.png",
             "images": []
         },
         "luminancehdr": {
@@ -23633,7 +23633,7 @@
             "images": []
         },
         "mailpv": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mailpv.install.1.86.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/mailpv.1.86.png",
             "images": []
         },
         "mailsend": {
@@ -23671,7 +23671,7 @@
             "images": []
         },
         "mairix": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mairix.0.22.png",
+            "icon": "https://i.postimg.cc/qBNbxzgn/mairix.png",
             "images": []
         },
         "majsoul-plus": {
@@ -24372,7 +24372,7 @@
             "images": []
         },
         "memurai-developer": {
-            "icon": "https://community.chocolatey.org/content/packageimages/memurai-developer.install.2.0.7.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/memurai-developer.2.0.7.png",
             "images": []
         },
         "memuraideveloper": {
@@ -25216,7 +25216,7 @@
             "images": []
         },
         "mongodb-cli": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mongodb-cli.install.1.27.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/mongodb-cli.1.27.0.png",
             "images": []
         },
         "mongodb-compass": {
@@ -25792,7 +25792,7 @@
             "images": []
         },
         "mspass": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mspass.portable.1.43.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/mspass.1.43.png",
             "images": []
         },
         "msspeech-sr-tele-en-us": {
@@ -26119,7 +26119,7 @@
             "images": []
         },
         "mweather": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mweather.install.1.76.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/mweather.1.73.png",
             "images": []
         },
         "mybox": {
@@ -26889,7 +26889,7 @@
             "images": []
         },
         "netscan": {
-            "icon": "https://community.chocolatey.org/content/packageimages/netscan.portable.6.2.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/netscan.6.2.1.20161101.png",
             "images": []
         },
         "netscan32": {
@@ -26917,7 +26917,7 @@
             "images": []
         },
         "netstat-agent": {
-            "icon": "https://community.chocolatey.org/content/packageimages/netstat-agent.portable.3.6.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/netstat-agent.3.6.png",
             "images": []
         },
         "netstat-viewer": {
@@ -27319,7 +27319,7 @@
             "images": []
         },
         "nordvpn": {
-            "icon": "https://s1.nordcdn.com/nordvpn/media/1.88.0/images/meta/nordvpn-default.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/nordvpn.6.40.5.png",
             "images": []
         },
         "nordvpn-teams": {
@@ -27535,11 +27535,11 @@
             "images": []
         },
         "npackd": {
-            "icon": "https://community.chocolatey.org/content/packageimages/npackd.install.1.20.5.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/npackd.1.20.5.png",
             "images": []
         },
         "npackd-cli": {
-            "icon": "https://community.chocolatey.org/content/packageimages/npackd-cli.install.1.20.5.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/npackd-cli.1.20.5.png",
             "images": []
         },
         "npiperelay": {
@@ -27567,7 +27567,7 @@
             "images": []
         },
         "nsbuilder": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nsbuilder.portable.2018.9.11.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/nsbuilder.2018.9.11.png",
             "images": []
         },
         "nservicebus": {
@@ -27741,7 +27741,7 @@
             ]
         },
         "nunit": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nunit.portable.3.4.0.20180717.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/nunit.3.4.0.20180717.png",
             "images": []
         },
         "nunit-console": {
@@ -28776,7 +28776,7 @@
             ]
         },
         "openorienteering-mapper": {
-            "icon": "https://community.chocolatey.org/content/packageimages/openorienteering-mapper.portable.0.9.5.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/openorienteering-mapper.0.9.5.png",
             "images": []
         },
         "openosrslauncher": {
@@ -29136,7 +29136,7 @@
             "images": []
         },
         "ospray": {
-            "icon": "https://community.chocolatey.org/content/packageimages/ospray.install.2.10.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/ospray.2.10.0.png",
             "images": []
         },
         "osquery": {
@@ -29422,7 +29422,7 @@
             "images": []
         },
         "pandabank": {
-            "icon": "https://community.chocolatey.org/content/packageimages/pandabank.portable.3.0.2.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/pandabank.3.0.2.0.png",
             "images": []
         },
         "pandafreeantivirus": {
@@ -29813,7 +29813,7 @@
             "images": []
         },
         "pcsx2": {
-            "icon": "https://community.chocolatey.org/content/packageimages/pcsx2.portable.1.6.0.20210414.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/pcsx2.1.6.0.png",
             "images": []
         },
         "pctransfree": {
@@ -30129,7 +30129,7 @@
             "images": []
         },
         "peerunity": {
-            "icon": "https://community.chocolatey.org/content/packageimages/peerunity.portable.0.1.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/peerunity.0.1.1.png",
             "images": []
         },
         "peexplorer": {
@@ -30569,7 +30569,7 @@
             "images": []
         },
         "pictus": {
-            "icon": "https://community.chocolatey.org/content/packageimages/pictus.install.1.7.0.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/pictus.1.7.0.png",
             "images": []
         },
         "picview": {
@@ -31730,7 +31730,7 @@
             "images": []
         },
         "proficad": {
-            "icon": "https://community.chocolatey.org/content/packageimages/proficad.install.12.2.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/proficad.12.2.1.png",
             "images": []
         },
         "profileswitcherforfirefox": {
@@ -31766,7 +31766,7 @@
             "images": []
         },
         "projectlibre": {
-            "icon": "https://community.chocolatey.org/content/packageimages/projectlibre.portable.1.9.3.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/projectlibre.1.9.3.png",
             "images": []
         },
         "projectmyscreen": {
@@ -31996,7 +31996,7 @@
             "images": []
         },
         "psi": {
-            "icon": "https://community.chocolatey.org/content/packageimages/psi.portable.1.4.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/psi.1.3.png",
             "images": []
         },
         "psievm": {
@@ -33826,7 +33826,7 @@
             "images": []
         },
         "reeeplayer": {
-            "icon": "https://community.chocolatey.org/content/packageimages/reeeplayer.install.0.4.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/reeeplayer.0.4.png",
             "images": []
         },
         "reflect-free": {
@@ -34258,7 +34258,7 @@
             "images": []
         },
         "resonic": {
-            "icon": "https://community.chocolatey.org/content/packageimages/resonic.install.0.9.1.1690.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/resonic.0.9.1.1690.png",
             "images": []
         },
         "resophnotes": {
@@ -36473,7 +36473,7 @@
             "images": []
         },
         "shexview": {
-            "icon": "https://community.chocolatey.org/content/packageimages/shexview.install.2.01.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/shexview.2.01.png",
             "images": []
         },
         "shfmt": {
@@ -37160,7 +37160,7 @@
             "images": []
         },
         "smsniff": {
-            "icon": "https://community.chocolatey.org/content/packageimages/smsniff.install.2.29.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/smsniff.2.27.png",
             "images": []
         },
         "smtube": {
@@ -37256,7 +37256,7 @@
             "images": []
         },
         "sniffpass": {
-            "icon": "https://community.chocolatey.org/content/packageimages/sniffpass.portable.1.13.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/sniffpass.1.13.png",
             "images": []
         },
         "snipaste": {
@@ -37940,7 +37940,7 @@
             "images": []
         },
         "splint": {
-            "icon": "https://community.chocolatey.org/content/packageimages/splint.install.3.1.2.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/splint.3.1.2.png",
             "images": []
         },
         "split": {
@@ -39122,7 +39122,7 @@
             "images": []
         },
         "subtitleworkshop": {
-            "icon": "https://community.chocolatey.org/content/packageimages/subtitleworkshop.install.6.0.131121.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/subtitleworkshop.6.0.131121.png",
             "images": []
         },
         "subversion": {
@@ -39174,7 +39174,7 @@
             "images": []
         },
         "sunset-screen": {
-            "icon": "https://community.chocolatey.org/content/packageimages/sunset-screen.install.1.50.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/sunset-screen.1.50.png",
             "images": []
         },
         "sunsetscreen": {
@@ -39626,7 +39626,7 @@
             "images": []
         },
         "systemninja": {
-            "icon": "https://community.chocolatey.org/content/packageimages/systemninja.portable.3.1.6.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/systemninja.3.1.6.png",
             "images": []
         },
         "systemtraymenu": {
@@ -40618,7 +40618,7 @@
             "images": []
         },
         "thebrain": {
-            "icon": "https://community.chocolatey.org/content/packageimages/thebrain.portable.9.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/thebrain.9.000.png",
             "images": []
         },
         "thecenter": {
@@ -40842,7 +40842,7 @@
             "images": []
         },
         "tidytabs": {
-            "icon": "https://community.chocolatey.org/content/packageimages/tidytabs.portable.1.3.5.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/tidytabs.1.3.5.png",
             "images": []
         },
         "tigervnc": {
@@ -43632,15 +43632,15 @@
             "images": []
         },
         "vim-tux": {
-            "icon": "https://community.chocolatey.org/content/packageimages/vim-tux.install.9.0.0828.png",
+            "icon": "",
             "images": []
         },
         "vim-x64": {
-            "icon": "https://community.chocolatey.org/content/packageimages/vim-x64.portable.7.4.1824.png",
+            "icon": "",
             "images": []
         },
         "vim-x86": {
-            "icon": "https://community.chocolatey.org/content/packageimages/vim-x86.install.7.4.1825.png",
+            "icon": "",
             "images": []
         },
         "vimtutor": {
@@ -45601,7 +45601,7 @@
             "images": []
         },
         "wc3270": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wc3270.portable.4.2.8.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/WC3270.4.2.8.png",
             "images": []
         },
         "wcat": {
@@ -45809,7 +45809,7 @@
             "images": []
         },
         "webvideocap": {
-            "icon": "https://community.chocolatey.org/content/packageimages/webvideocap.install.1.41.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/webvideocap.1.41.png",
             "images": []
         },
         "webview2-runtime": {
@@ -46509,7 +46509,7 @@
             "images": []
         },
         "windowsrepair": {
-            "icon": "https://community.chocolatey.org/content/packageimages/windowsrepair.portable.4.13.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/windowsrepair.4.13.1.png",
             "images": []
         },
         "windowssdk": {
@@ -47144,7 +47144,7 @@
             "images": []
         },
         "wnetwatcher": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wnetwatcher.install.2.30.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/wnetwatcher.2.30.png",
             "images": []
         },
         "wnr": {
@@ -48027,7 +48027,7 @@
             "images": []
         },
         "xrecode3": {
-            "icon": "https://community.chocolatey.org/content/packageimages/xrecode3.portable.1.54.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/xrecode3.1.54.png",
             "images": []
         },
         "xrmtoolbox": {
@@ -48661,7 +48661,7 @@
             "images": []
         },
         "zkanji": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zkanji.install.0.731.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/zkanji.0.731.png",
             "images": []
         },
         "zlib": {
@@ -48765,190 +48765,127 @@
             "images": []
         },
         "zulu": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu-11-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-11-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-13-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-13-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-15-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-15-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-16-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-16-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-17-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-17-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-18-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-18-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-19-jdk": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu-6-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-7-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-7-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-8-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-8-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-9-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu-9-jre": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulu11": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu11.11.50.19.0.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu12": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu12.12.2.3.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu13": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu13.13.42.17.0.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu14": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu14.14.29.23.0.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu15": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu15.15.34.17.0.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu16": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu16.16.32.15.0.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu7": {
-            "icon": "https://community.chocolatey.org/content/packageimages/zulu7.7.48.0.11.png",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulufx-17-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulufx-18-jdk": {
-            "icon": "https://i.imgur.com/HZVJwPC.png",
-            "images": [
-                "https://www.azul.com/wp-content/uploads/Java_Setup_macOS_1-1.jpeg",
-                "https://www.azul.com/wp-content/uploads/step3.png"
-            ]
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
         },
         "zulufx-19-jdk": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zwift": {
