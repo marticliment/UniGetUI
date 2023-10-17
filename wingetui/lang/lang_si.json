@@ -8,7 +8,7 @@
   "1 week" : "සති 1",
   "<b>{0}</b> needs to be enabled to change this setting" : null,
   "A repository full of tools designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related Tools</b>" : null,
-  "A restart is required" : null,
+  "A restart is required" : "පරිගණකය යලි පණගැන්වීමක් අවශයයි",
   "About Qt6" : "Qt6 පිළිබඳව ",
   "About WingetUI" : "WingetUI පිළිබඳව ",
   "About WingetUI version {0}" : "WingetUI {0} සංස්කරණය පිළිබඳව ",

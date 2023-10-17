@@ -21,17 +21,17 @@ contributors = [
   "sitiom",
   "joguarino",
   "neoOpus",
+  "Carterpersall",
   "HorridModz",
   "reima",
-  "Satanarious",
-  "vsilvar"
+  "Satanarious"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2075
+    "contributions": 2078
   },
   {
     "name": "ppvnf",
@@ -129,6 +129,11 @@ contributorsInfo = [
     "contributions": 1
   },
   {
+    "name": "Carterpersall",
+    "link": "https://github.com/Carterpersall",
+    "contributions": 1
+  },
+  {
     "name": "HorridModz",
     "link": "https://github.com/HorridModz",
     "contributions": 1
@@ -141,11 +146,6 @@ contributorsInfo = [
   {
     "name": "Satanarious",
     "link": "https://github.com/Satanarious",
-    "contributions": 1
-  },
-  {
-    "name": "vsilvar",
-    "link": "https://github.com/vsilvar",
     "contributions": 1
   }
 ]
