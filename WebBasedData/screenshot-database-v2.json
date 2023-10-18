@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11696,
-        "done": 7429,
-        "packages_with_icon": 7429,
+        "done": 7439,
+        "packages_with_icon": 7439,
         "packages_with_screenshot": 501,
         "total_screenshots": 1628
     },
@@ -20175,15 +20175,15 @@
             "images": []
         },
         "jdk-17": {
-            "icon": "",
+            "icon": "https://dl2.macupdate.com/images/icons256/63569.png?time=1642696591",
             "images": []
         },
         "jdk-18": {
-            "icon": "",
+            "icon": "https://dl2.macupdate.com/images/icons256/63569.png?time=1642696591",
             "images": []
         },
         "jdk-19": {
-            "icon": "",
+            "icon": "https://dl2.macupdate.com/images/icons256/63569.png?time=1642696591",
             "images": []
         },
         "jdminecraftlauncher": {
@@ -28643,15 +28643,15 @@
             ]
         },
         "openjdk-11-jdk": {
-            "icon": "",
+            "icon": "https://www.basis-europe.eu/wp-content/uploads/openjdk_Icon_logo.png",
             "images": []
         },
         "openjdk-11-jre": {
-            "icon": "",
+            "icon": "https://www.basis-europe.eu/wp-content/uploads/openjdk_Icon_logo.png",
             "images": []
         },
         "openjdk-13-jdk": {
-            "icon": "",
+            "icon": "https://www.basis-europe.eu/wp-content/uploads/openjdk_Icon_logo.png",
             "images": []
         },
         "openjdk-14": {
@@ -28662,7 +28662,7 @@
             ]
         },
         "openjdk-14-jdk": {
-            "icon": "",
+            "icon": "https://www.basis-europe.eu/wp-content/uploads/openjdk_Icon_logo.png",
             "images": []
         },
         "openjdk-15": {
@@ -28687,11 +28687,11 @@
             ]
         },
         "openjdk-17-jdk": {
-            "icon": "",
+            "icon": "https://www.basis-europe.eu/wp-content/uploads/openjdk_Icon_logo.png",
             "images": []
         },
         "openjdk-17-jre": {
-            "icon": "",
+            "icon": "https://www.basis-europe.eu/wp-content/uploads/openjdk_Icon_logo.png",
             "images": []
         },
         "openjdk-8": {
@@ -46652,7 +46652,7 @@
             "images": []
         },
         "winget": {
-            "icon": "",
+            "icon": "https://github.com/microsoft/winget-cli/raw/master/.github/images/WindowsPackageManager_Assets/ICO/PNG/_40.png",
             "images": []
         },
         "winget-ps": {
