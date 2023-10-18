@@ -27,7 +27,19 @@ from unicodedata import combining, normalize
 
 
 import globals
-import clr
+try:
+    import clr
+except RuntimeError:
+    print("🔴 .NET Runtime not found, aborting...")
+    import traceback
+    tb = traceback.format_exception(*sys.exc_info())
+    tracebacc = ""
+    for line in tb:
+        tracebacc += line + "\n"
+    import ctypes
+    ctypes.windll.user32.MessageBoxW(None, "WingetUI requires .NET to be installed on your machine. Please install .NET\n\n" + tracebacc, "WingetUI Crash handler", 0x00000010)
+
+    sys.exit(1)
 
 from ExternalLibraries.BlurWindow import GlobalBlur
 from lang.languages import *
