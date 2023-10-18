@@ -118,7 +118,7 @@ def ApplyBlur(hwnd, hexColor=False, Acrylic=False, Dark=False, smallCorners=Fals
         DwmSetWindowAttribute = dwm.DwmSetWindowAttribute
         DwmSetWindowAttribute(int(hwnd), 33, ctypes.byref(ctypes.c_int(
             3 if smallCorners else 2)), ctypes.sizeof(ctypes.c_int))  # Add rounded borders (My addition)
-    except OverflowError:
+    except (OverflowError, ctypes.ArgumentError):
         print("Can't set MenuBlur due to OverflowError")
 
 
