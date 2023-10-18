@@ -424,10 +424,10 @@
             "images": []
         },
         "abilityoffice": {
-            "icon": "https://community.chocolatey.org/content/packageimages/abilityoffice.10.0.3.0.png",
+            "icon": "https://i.postimg.cc/fbz5STZb/Ability-icon.png",
             "images": []
         },
-        "abilityoffice-10-professio\u2026": {
+        "abilityoffice-10-professional": {
             "icon": "https://i.postimg.cc/fbz5STZb/Ability-icon.png",
             "images": [
                 "https://i.postimg.cc/RZzg9LDK/Ability-1.png",
@@ -441,7 +441,7 @@
                 "https://i.postimg.cc/vBDzXq4F/Ability-2.png"
             ]
         },
-        "abilityoffice-8-profession\u2026": {
+        "abilityoffice-8-professional": {
             "icon": "https://i.postimg.cc/fbz5STZb/Ability-icon.png",
             "images": [
                 "https://i.postimg.cc/RZzg9LDK/Ability-1.png",
