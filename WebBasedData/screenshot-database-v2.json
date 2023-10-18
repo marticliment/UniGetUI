@@ -1,7 +1,10 @@
 {
     "package_count": {
-        "total": 13088,
-        "done": 7527
+        "total": 11696,
+        "done": 7429,
+        "packages_with_icon": 7429,
+        "packages_with_screenshot": 501,
+        "total_screenshots": 1624
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -902,8 +905,7 @@
                 "https://www.actualinstaller.com/images/screen/wizard_welcome_small.png",
                 "https://www.actualinstaller.com/images/screen/wizard_license_small.png",
                 "https://www.actualinstaller.com/images/screen/wizard_tasks_small.png",
-                "https://www.actualinstaller.com/images/screen/wizard_install_small.png",
-                "https://www.actualinstaller.com/images/screen/wizard_finish_small.png"
+                "https://www.actualinstaller.com/images/screen/wizard_install_small.png"
             ]
         },
         "acunetix-free": {
@@ -1256,8 +1258,7 @@
                 "https://advancedcombattracker.com/screenshots/2_1235-OpXmlShare.png",
                 "https://advancedcombattracker.com/screenshots/2_1238-OpXmlConfig.png",
                 "https://advancedcombattracker.com/screenshots/2_1240-OpG19.png",
-                "https://advancedcombattracker.com/screenshots/2_1241-OpEncTable.png",
-                "https://advancedcombattracker.com/screenshots/2_1256-OpMini.png"
+                "https://advancedcombattracker.com/screenshots/2_1241-OpEncTable.png"
             ]
         },
         "advanceddiskrecov\u2026": {
@@ -28255,7 +28256,7 @@
             ]
         },
         "okular-nightly": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/okular.22.08.1.png",
             "images": []
         },
         "oldcalc": {
@@ -46663,8 +46664,16 @@
             "images": []
         },
         "wingetui": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/P5xKpnXC/wg-icon.png",
+            "images": [
+                "https://i.postimg.cc/MpF513Hd/winget1.png",
+                "https://i.postimg.cc/858b0Fhv/winget2.png",
+                "https://i.postimg.cc/FKkZpbJm/winget3.png",
+                "https://i.postimg.cc/mkByT0p2/winget4.png",
+                "https://i.postimg.cc/XqLcqQtK/winget5.png",
+                "https://i.postimg.cc/kMvyTgDV/winget6.png",
+                "https://i.postimg.cc/Kzn5SZNH/winget7.png"
+            ]
         },
         "wingetuistore": {
             "icon": "https://i.postimg.cc/P5xKpnXC/wg-icon.png",

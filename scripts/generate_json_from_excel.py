@@ -31,31 +31,51 @@ worksheet = workbook.sheet_by_index(0)
 jsoncontent = {
     "package_count": {
         "total": 0,
-        "done": 0
+        "done": 0,
+        "packages_with_icon": 0,
+        "packages_with_screenshot": 0,
+        "total_screenshots": 0,
     },
     "icons_and_screenshots": {},
 }
 
 totalCount = 0
 doneCount = 0
+packagesWithIcon = 0
+packagesWithScreenshot = 0
+screenshotCount = 0
 arrivedAtTheEnd = False
 i = 2
 while not arrivedAtTheEnd:
     try:
         data = [worksheet.cell_value(i, 0), worksheet.cell_value(i, 1), []]
-        j = 2
-        while worksheet.cell_value(i, j) != "" and worksheet.cell_value(i, j) != None:
-            data[2].append(worksheet.cell_value(i, j))
-            j += 1
-            if j >22:
-                break
+        if len(worksheet.row_values(i)) >= 3:
+            packagesWithScreenshot += 1
+            j = 2
+            while j < len(worksheet.row_values(i)):
+                if worksheet.cell_value(i, j) is None or worksheet.cell_value(i, j) == "":
+                    if j == 2:
+                        packagesWithScreenshot -= 1
+                    break
+                data[2].append(worksheet.cell_value(i, j))
+                screenshotCount += 1
+                j += 1
+                if j > 23:
+                    break
         assert (type(data) == list)
         assert (len(data) == 3)
-        assert (type(data[0]) == str)
+        try:
+            assert (type(data[0]) == str)
+        except AssertionError as e:
+            if data[0] == 115.0:
+                data[0] = "115"
+            else:
+                raise e
         assert (type(data[1]) == str)
         assert (type(data[2]) == list)
         if data[1] != "":
             doneCount += 1
+            packagesWithIcon += 1
 
         if not data[0] in jsoncontent["icons_and_screenshots"].keys():
             jsoncontent["icons_and_screenshots"][data[0]] = {
@@ -74,6 +94,9 @@ while not arrivedAtTheEnd:
 
 jsoncontent["package_count"]["total"] = totalCount
 jsoncontent["package_count"]["done"] = doneCount
+jsoncontent["package_count"]["packages_with_icon"] = packagesWithIcon
+jsoncontent["package_count"]["packages_with_screenshot"] = packagesWithScreenshot
+jsoncontent["package_count"]["total_screenshots"] = screenshotCount
 
 with open("screenshot-database-v2.json", "w") as outfile:
     json.dump(jsoncontent, outfile, indent=4)
