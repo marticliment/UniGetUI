@@ -110,6 +110,23 @@ try:
     from tools import *
     from tools import _
 
+    print("---------------------------------------------------------------------------------------------------")
+    print("")
+    print(f"   WingetUI version {versionName} (version number {version}) log")
+    print("   All modules loaded successfully and sys.stdout patched correctly, starting main script")
+    print(f"   Translator function language set to \"{langName}\"")
+    print("")
+    print("---------------------------------------------------------------------------------------------------")
+    print("")
+    print(" Log legend:")
+    print(" 🔵: Verbose")
+    print(" 🟢: Information")
+    print(" 🟡: Warning")
+    print(" 🟠: Handled unexpected exception")
+    print(" 🔴: Unhandled unexpected exception")
+    print(" 🟣: Handled expected exception")
+    print("")
+
     class MainApplication(QApplication):
         kill = Signal()
         callInMain = Signal(object)
