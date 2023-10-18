@@ -130,7 +130,7 @@ try:
                 self.popup = DraggableWindow()
                 self.popup.FixLag = sys.getwindowsversion().build < 22000
                 self.popup.setFixedSize(QSize(600, 400))
-                self.popup.setWindowFlag(Qt.FramelessWindowHint)
+                self.popup.setWindowFlag(Qt.WindowType.FramelessWindowHint, on=True)
                 self.popup.setLayout(QVBoxLayout())
                 self.popup.layout().addStretch()
                 self.popup.setWindowTitle("WingetUI")
