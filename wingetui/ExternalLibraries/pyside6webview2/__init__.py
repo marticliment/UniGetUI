@@ -17,6 +17,7 @@ import time
 
 class WebView2(QWidget):
     hWnd: int = 0
+    callInMain = Signal(object)
     locationChanged = Signal(str)
     navigationStarted = Signal(str)
     navigationCompleted = Signal()
@@ -28,13 +29,20 @@ class WebView2(QWidget):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.callInMain.connect(lambda f: f())
         self.CustomLayout = QHBoxLayout()
         self.setLayout(self.CustomLayout)
         self.__webview_console = subprocess.Popen(executable=os.path.join(os.path.dirname(__file__), "Component", "WinFormsWebView.exe"), args=["about:blank", str(
             self.winId())], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
         threading.Thread(target=self.__handle_output, daemon=True).start()
+        threading.Thread(target=self.__wait_for_handle, daemon=True).start()
+
+    def __wait_for_handle(self):
         while self.hWnd == 0:
             time.sleep(0.001)
+        self.callInMain.emit(self.__set_main_widget)
+
+    def __set_main_widget(self):
         window = QWindow.fromWinId(self.hWnd)
         window.setFlags(Qt.WindowType.CustomizeWindowHint)
         self.__webview_widget = QWidget.createWindowContainer(window)

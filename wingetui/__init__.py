@@ -673,7 +673,7 @@ try:
                             print("🟠 Provided hash: ", provided_hash)
                     else:
                         print("🟠 Can't verify update server authenticity, aborting")
-                        print("🟠 Provided DmName:", dmname)
+                        print("🟠 Provided DmName:")
                         print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
                 else:
                     print("🟢 Updates not found")
