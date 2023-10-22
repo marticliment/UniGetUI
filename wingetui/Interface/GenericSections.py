@@ -115,8 +115,12 @@ class AboutSection(SmoothScrollArea):
                 f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
             self.mainLayout.addWidget(title)
             self.mainLayout.addSpacing(5)
-            description = CustomLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.") + "\n" + _(
-                "This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
+            description = CustomLabel(
+                _("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.") +
+                "\n" +
+                _("This project has no connection with the official {0} project — it's completely unofficial.").format(
+                    f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>")
+            )
             self.mainLayout.addWidget(description)
             self.mainLayout.addSpacing(5)
             self.mainLayout.addWidget(CustomLabel(
