@@ -1,12 +1,20 @@
 {
     "package_count": {
-        "total": 11696,
-        "done": 7439,
-        "packages_with_icon": 7439,
-        "packages_with_screenshot": 501,
-        "total_screenshots": 1628
+        "total": 11697,
+        "done": 7441,
+        "packages_with_icon": 7441,
+        "packages_with_screenshot": 502,
+        "total_screenshots": 1631
     },
     "icons_and_screenshots": {
+        "010editor": {
+            "icon": "https://i.postimg.cc/vmpdZxsY/010-editor.png",
+            "images": [
+                "https://www.sweetscape.com/screenshots/TourS.GIF",
+                "https://www.sweetscape.com/screenshots/010EdCalculator.GIF",
+                "https://www.sweetscape.com/screenshots/010EdCompareS.GIF"
+            ]
+        },
         "010memorizer": {
             "icon": "",
             "images": []
@@ -48,10 +56,6 @@
                 "https://0patch.com/img/extra/0patchCentral.jpg",
                 "https://0patch.com/img/extra/Windows_7_adopted.png"
             ]
-        },
-        "115": {
-            "icon": "",
-            "images": []
         },
         "115chrome": {
             "icon": "https://i.imgur.com/5fSfmJl.png",
@@ -21507,6 +21511,10 @@
         },
         "kinovea": {
             "icon": "https://community.chocolatey.org/content/packageimages/kinovea.0.9.5.png",
+            "images": []
+        },
+        "kirkajs": {
+            "icon": "https://client.kirka.io/images/icon.png",
             "images": []
         },
         "kis": {
