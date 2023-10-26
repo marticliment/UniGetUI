@@ -202,10 +202,10 @@ class RootWindow(QMainWindow):
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
-        self.theme_timer = QTimer()
-        self.theme_timer.setSingleShot(True)
-        self.theme_timer.setInterval(500)
-        self.theme_timer.timeout.connect(self.setBgTheme)
+        self.themeTimer = QTimer()
+        self.themeTimer.setSingleShot(True)
+        self.themeTimer.setInterval(1000)
+        self.themeTimer.timeout.connect(self.setBgTheme)
 
     def toggleInstallationsSection(self) -> None:
         if self.installationsWidget.isVisible():
@@ -275,7 +275,7 @@ class RootWindow(QMainWindow):
                                         DWMWA_USE_IMMERSIVE_DARK_MODE,
                                         ctypes.byref(value),
                                         ctypes.sizeof(value))
-            print(f"Theme: {value.value}")
+            #print(f"Theme: {value.value}")
             user32.SetWindowPos(int(self.winId()),
                                 0,0,0,0,0,
                                 0x0020 | 0x0002 | 0x0004 | 0x0001)
@@ -288,11 +288,11 @@ class RootWindow(QMainWindow):
         if eventType == b"windows_generic_MSG":
             msg = ctypes.wintypes.MSG.from_address(int(message))
             if msg.message == WM_DWMCOLORIZATIONCOLORCHANGED:
-                if self.theme_timer.isActive():
-                    self.theme_timer.stop()
-                    self.theme_timer.start()
+                if self.themeTimer.isActive():
+                    self.themeTimer.stop()
+                    self.themeTimer.start()
                 else:
-                    self.theme_timer.start()
+                    self.themeTimer.start()
                 return True, 0
         return False, 0
 
