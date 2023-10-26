@@ -19,6 +19,7 @@ import sys
 
 import globals
 import win32mica
+import winreg
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -27,6 +28,8 @@ from tools import *
 from tools import _
 from Interface.SoftwareSections import *
 
+WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320
+DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 
 class RootWindow(QMainWindow):
     callInMain = Signal(object)
@@ -199,6 +202,11 @@ class RootWindow(QMainWindow):
         sct = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() - 1) if self.mainWidget.currentIndex() > 0 else 3), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
+        self.theme_timer = QTimer()
+        self.theme_timer.setSingleShot(True)
+        self.theme_timer.setInterval(500)
+        self.theme_timer.timeout.connect(self.setBgTheme)
+
     def toggleInstallationsSection(self) -> None:
         if self.installationsWidget.isVisible():
             self.installationsWidget.setVisible(False)
@@ -237,6 +245,56 @@ class RootWindow(QMainWindow):
             self.buttonLayout.addWidget(btn)
             self.buttonBox.addButton(btn)
         return btn
+
+    def setBgTheme(self):
+        dwm = ctypes.windll.Dwmapi
+        user32 = ctypes.windll.User32
+        theme = getSettingsValue("PreferredTheme")
+        currentBgTheme = ctypes.c_int()
+        dwm.DwmGetWindowAttribute(int(self.winId()),
+                                  DWMWA_USE_IMMERSIVE_DARK_MODE,
+                                  ctypes.byref(currentBgTheme),
+                                  ctypes.sizeof(currentBgTheme))
+        print(currentBgTheme.value)
+        match theme:
+            case "dark":
+                value = ctypes.c_int(1)
+            case "light":
+                value = ctypes.c_int(0)
+            case "auto":
+                key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                    r"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+                themeVal = winreg.QueryValueEx(key,"AppsUseLightTheme")
+                if themeVal[0] == 0:
+                    value = ctypes.c_int(1)
+                else:
+                    value = ctypes.c_int(0)
+        #while val == 0:
+        if value.value != currentBgTheme.value:
+            dwm.DwmSetWindowAttribute(int(self.winId()),
+                                        DWMWA_USE_IMMERSIVE_DARK_MODE,
+                                        ctypes.byref(value),
+                                        ctypes.sizeof(value))
+            print(f"Theme: {value.value}")
+            user32.SetWindowPos(int(self.winId()),
+                                0,0,0,0,0,
+                                0x0020 | 0x0002 | 0x0004 | 0x0001)
+
+    def nativeEvent(self, eventType, message):
+        # Not using "ApplyStyleSheetsAndIcons" because it updates stylesheets and
+        # icons causing large cpu usage and this code is only used to set correct
+        # titlebar and mica background theme during accent color change
+        # Just for resolving the bug until the API is added in Qt
+        if eventType == b"windows_generic_MSG":
+            msg = ctypes.wintypes.MSG.from_address(int(message))
+            if msg.message == WM_DWMCOLORIZATIONCOLORCHANGED:
+                if self.theme_timer.isActive():
+                    self.theme_timer.stop()
+                    self.theme_timer.start()
+                else:
+                    self.theme_timer.start()
+                return True, 0
+        return False, 0
 
     def warnAboutAdmin(self):
         from tools import _
