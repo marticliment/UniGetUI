@@ -5940,7 +5940,7 @@
             "images": []
         },
         "bulkrenameutility": {
-            "icon": "https://community.chocolatey.org/content/packageimages/bulkrenameutility.portable.3.1.0.0.png",
+            "icon": "https://i.postimg.cc/d3kQmLP3/bulk-rename-utility.png",
             "images": [
                 "https://www.bulkrenameutility.co.uk/assets/img-bru/mainscr.png",
                 "https://www.bulkrenameutility.co.uk/assets/img-bru/bru_main1.png",
@@ -39160,7 +39160,7 @@
         "sumatrapdf": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sumatra_PDF_logo.png",
             "images": [
-                "https://www.sumatrapdfreader.org/docs/img/homepage.png"
+                "https://i.postimg.cc/0yfnDCYt/pdf.png"
             ]
         },
         "sumatrapdf-commandline": {
