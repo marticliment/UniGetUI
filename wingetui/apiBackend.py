@@ -50,6 +50,15 @@ def v2_show_package():
         return response
 
 
+@app.route('/v2/is-running', methods=['POST', 'GET', 'OPTIONS'])
+def v2_is_running():
+    try:
+        response = jsonify(status="success")
+        return response
+    except ValueError:
+        return response
+
+
 def runBackendApi(signal: Signal):
     global globalsignal
     globalsignal = signal
