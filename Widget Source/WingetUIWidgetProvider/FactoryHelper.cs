@@ -8,8 +8,6 @@ namespace COM
 {
     static class Guids
     {
-        // public const string IClassFactory = "34D3940F-84D6-47C5-B446-32D6865D8852";
-        // public const string IUnknown = "34D3940F-84D6-47C5-B446-32D6865D8852";
         public const string IClassFactory = "00000001-0000-0000-C000-000000000046";
         public const string IUnknown = "00000000-0000-0000-C000-000000000046";
 
