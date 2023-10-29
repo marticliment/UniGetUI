@@ -34,6 +34,7 @@ from PySide6.QtWidgets import *
 from Interface.CustomWidgets.InstallerWidgets import *
 from tools import *
 from tools import _
+import apiBackend
 
 from Interface.GenericSections import *
 
@@ -544,6 +545,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent, sectionName="Update")
+        apiBackend.availableUpdates = self.packageItems
 
         self.blacklistManager = IgnoredUpdatesManager(self.window())
         self.LegacyBlacklist = getSettingsValue("BlacklistedUpdates")
@@ -812,6 +814,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def finishLoadingIfNeeded(self) -> None:
         self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
+        apiBackend.availableUpdates = self.packageItems
         globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
         if len(self.packageItems) == 0:
             self.packageList.label.setText(self.countLabel.text())

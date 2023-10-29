@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+
+  IgnorableNamespaces="uap rescap">
+
+    <!-- Name="9b0c4abb-ca72-42ec-936a-02d4830a14a9" -->
+  <Identity
+    Name="34D3940F-84D6-47C5-B446-32D6865D8852"
+    Publisher="CN=marti"
+    Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>WingetUIWidgetProviderPackage</DisplayName>
+    <PublisherDisplayName>Martí Climent</PublisherDisplayName>
+    <Logo>Images\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+    <!-- PackageDependency Name="Microsoft.WindowsAppRuntime.1.4" MinVersion="231008000" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" / -->
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+	  <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="null">
+      <uap:VisualElements
+        DisplayName="WingetUI Updates Widget"
+        Description="A widget to manage your WingetUI updates from the Widgets Pane"
+        BackgroundColor="transparent"
+        Square150x150Logo="Images\icon.png"
+		AppListEntry="none"
+        Square44x44Logo="Images\icon.png">
+        <uap:DefaultTile Wide310x150Logo="Images\icon.png" />
+        <uap:SplashScreen Image="Images\icon.png" />
+      </uap:VisualElements>
+    <Extensions>
+        <com:Extension Category="windows.comServer">
+            <com:ComServer>
+                <com:ExeServer Executable="WingetUIWidgetProvider\WingetUIWidgetProvider.exe" DisplayName="WingetUI Updates Widget">
+                    <com:Class Id="34D3940F-84D6-47C5-B446-32D6865D8852" DisplayName="WingetUI Updates Widget" />
+                </com:ExeServer>
+            </com:ComServer>
+        </com:Extension>		
+		<uap3:Extension Category="windows.appExtension">
+        <uap3:AppExtension Name="com.microsoft.windows.widgets" DisplayName="WingetUI" Id="9b0c4abb-ca72-42ec-936a-02d4830a14a9" PublicFolder="Public">
+            <uap3:Properties>
+                <WidgetProvider>
+                    <ProviderIcons>
+                        <Icon Path="Images\icon.png" />
+                    </ProviderIcons>
+                    <Activation>
+                        <!-- Apps exports COM interface which implements IWidgetProvider -->
+                        <CreateInstance ClassId="34D3940F-84D6-47C5-B446-32D6865D8852" />
+                    </Activation>
+
+                    <TrustedPackageFamilyNames>
+                        <TrustedPackageFamilyName>Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe</TrustedPackageFamilyName>
+                    </TrustedPackageFamilyNames>
+
+                    <Definitions>
+                        <Definition Id="Updates_Widget"
+                            DisplayName="WingetUI"
+                            Description="Available updates found by WingetUI"
+                            AllowMultiple="true">
+                            <Capabilities>
+                                <Capability>
+                                    <Size Name="small" />
+                                </Capability>
+                                <Capability>
+                                    <Size Name="medium" />
+                                </Capability>
+                                <Capability>
+                                    <Size Name="large" />
+                                </Capability>
+                            </Capabilities>
+                            <ThemeResources>
+                                <Icons>
+                                    <Icon Path="Images\icon.png" />
+                                </Icons>
+                                <Screenshots>
+                                    <Screenshot Path="ProviderAssets\Weather_Screenshot.png" DisplayAltText="For accessibility" />
+                                </Screenshots>
+                                <!-- DarkMode and LightMode are optional -->
+                                <DarkMode />
+                                <LightMode />
+                            </ThemeResources>
+                        </Definition>
+                    </Definitions>
+                </WidgetProvider>
+            </uap3:Properties>
+        </uap3:AppExtension>
+    </uap3:Extension>
+
+
+    </Extensions>
+
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
