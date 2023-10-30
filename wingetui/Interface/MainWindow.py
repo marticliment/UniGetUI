@@ -204,7 +204,7 @@ class RootWindow(QMainWindow):
 
         self.themeTimer = QTimer()
         self.themeTimer.setSingleShot(True)
-        self.themeTimer.setInterval(1000)
+        self.themeTimer.setInterval(3000)
         self.themeTimer.timeout.connect(self.setBgTheme)
 
     def toggleInstallationsSection(self) -> None:
