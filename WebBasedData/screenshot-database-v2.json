@@ -3,8 +3,8 @@
         "total": 11697,
         "done": 7441,
         "packages_with_icon": 7441,
-        "packages_with_screenshot": 502,
-        "total_screenshots": 1631
+        "packages_with_screenshot": 503,
+        "total_screenshots": 1632
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -476,8 +476,10 @@
             ]
         },
         "absolute-uninstaller": {
-            "icon": "https://community.chocolatey.org/content/packageimages/absolute-uninstaller.5.3.1.47.png",
-            "images": []
+            "icon": "https://i.postimg.cc/qML9RYYM/Absolute-Uninstaller.png",
+            "images": [
+                "https://i.postimg.cc/GmvTGFF2/Absolute-Uninstaller-2.png"
+            ]
         },
         "abyssoverlay": {
             "icon": "https://user-images.githubusercontent.com/61895718/111565782-5ced2900-8772-11eb-9c43-c8801fc2a1a8.png",
