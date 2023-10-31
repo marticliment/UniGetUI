@@ -60,7 +60,7 @@ namespace WingetUIWidgetProvider
             WidgetUpdateRequestOptions updateOptions = new WidgetUpdateRequestOptions(widget.widgetId);
             updateOptions.Data = "{ \"IsLoading\": true }";
             Console.WriteLine("Starting load routine...");
-            updateOptions.Template = WidgetTemplates.BaseTemplate;
+            updateOptions.Template = Templates.BaseTemplate;
             wingetui.Connect(widget);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
@@ -78,17 +78,19 @@ namespace WingetUIWidgetProvider
              */
             if (!e.Succeeded)
             {
-                updateOptions.Data = "{ \"NoWingetUI\": true }";
+                updateOptions.Data = Templates.GetData_NoWingetUI();
                 Console.WriteLine("Could not connect to WingetUI");
             }
             else
             {
-                updateOptions.Data = "{ \"IsLoading\": true }";
+                updateOptions.Data = Templates.GetData_IsLoading();
                 Console.WriteLine("Connected to WingetUI");
                 wingetui.GetAvailableUpdates(e.widget);
             }
 
-            updateOptions.Template = WidgetTemplates.BaseTemplate;
+            updateOptions.Template = Templates.BaseTemplate;
+            Console.WriteLine(updateOptions.Template);
+            Console.WriteLine(updateOptions.Data);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 
@@ -96,24 +98,14 @@ namespace WingetUIWidgetProvider
         {
             WidgetUpdateRequestOptions updateOptions = new WidgetUpdateRequestOptions(e.widget.widgetId);
 
-
-            /* 
-             *      ${$root.IsLoading}
-             *      ${$root.NoUpdatesFound}
-             *      ${$root.UpdatesList} ${upgradablePackages} ${count}
-             *      ${$root.ErrorOccurred}  ${errorcode}
-             *      ${$root.NoWingetUI}
-             *      ${$root.UpdatesInCourse
-             */
-
             if (!e.Succeeded)
             {
-                updateOptions.Data = "{ \"ErrorOccurred\": true, \"errorcode\": \"UPDATE_CHECK_FAILED\" }";
+                updateOptions.Data = Templates.GetData_ErrorOccurred("UPDATE_CHECK_FAILED");
                 Console.WriteLine("Could not check for updates");
             }
             else if (e.Count == 0)
             {
-                updateOptions.Data = "{ \"NoUpdatesFound\": true }";
+                updateOptions.Data = Templates.GetData_NoUpdatesFound();
                 Console.WriteLine("No updates were found");
             }
             else
@@ -136,10 +128,10 @@ namespace WingetUIWidgetProvider
                         i = e.Count;
                     }
                 }
-                updateOptions.Data = "{ \"UpdatesList\": true, \"count\": \"" + e.Count.ToString() + "\", \"upgradablePackages\": \"" + packages + "\"}";
+                updateOptions.Data = Templates.GetData_UpdatesList(e.Count, packages);
             }
 
-            updateOptions.Template = WidgetTemplates.BaseTemplate;
+            updateOptions.Template = Templates.BaseTemplate;
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 
@@ -171,58 +163,38 @@ namespace WingetUIWidgetProvider
 
         public void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
         {
-            var verb = actionInvokedArgs.Verb;
-            if (verb == "reload")
+            var widgetId = actionInvokedArgs.WidgetContext.Id;
+            var data = actionInvokedArgs.Data;
+            WidgetUpdateRequestOptions updateOptions = new WidgetUpdateRequestOptions(widgetId);
+            if (RunningWidgets.ContainsKey(widgetId))
             {
-                var widgetId = actionInvokedArgs.WidgetContext.Id;
-                var data = actionInvokedArgs.Data;
-                if (RunningWidgets.ContainsKey(widgetId))
+                var localWidgetInfo = RunningWidgets[widgetId];
+                var verb = actionInvokedArgs.Verb;
+
+                switch (verb)
                 {
-                    var localWidgetInfo = RunningWidgets[widgetId];
-                    localWidgetInfo.customState = 0;
-                    StartLoadingRoutine(localWidgetInfo);
+                    case (Verbs.Reload):
+                        localWidgetInfo.customState = 0;
+                        StartLoadingRoutine(localWidgetInfo);
+                        break;
+
+                    case (Verbs.ViewUpdatesOnWingetUI):
+                        break;
+
+                    case (Verbs.OpenWingetUI):
+                        break;
+
+                    case (Verbs.UpdateAll):
+                        localWidgetInfo.customState = 1;
+                        updateOptions.Data = Templates.GetData_UpdatesInCourse();
+                        updateOptions.Template = Templates.BaseTemplate;
+                        WidgetManager.GetDefault().UpdateWidget(updateOptions);
+                        break;
+
 
                 }
             }
-            else if (verb == "softreload")
-            {
-                var widgetId = actionInvokedArgs.WidgetContext.Id;
-                var data = actionInvokedArgs.Data;
-                if (RunningWidgets.ContainsKey(widgetId))
-                {
-                    var localWidgetInfo = RunningWidgets[widgetId];
-                    localWidgetInfo.customState = 0;
-                }
-            }
-            else if (verb == "viewwingetui")
-            {
-                var widgetId = actionInvokedArgs.WidgetContext.Id;
-                var data = actionInvokedArgs.Data;
-                if (RunningWidgets.ContainsKey(widgetId))
-                {
-                    var localWidgetInfo = RunningWidgets[widgetId];
-                }
-            }
-            else if (verb == "showwingetui")
-            {
-                var widgetId = actionInvokedArgs.WidgetContext.Id;
-                var data = actionInvokedArgs.Data;
-                if (RunningWidgets.ContainsKey(widgetId))
-                {
-                    var localWidgetInfo = RunningWidgets[widgetId];
-                }
-            }
-            else if (verb == "updateall")
-            {
-                var widgetId = actionInvokedArgs.WidgetContext.Id;
-                var data = actionInvokedArgs.Data;
-                if (RunningWidgets.ContainsKey(widgetId))
-                {
-                    var localWidgetInfo = RunningWidgets[widgetId];
-                    localWidgetInfo.customState = 1;
-
-                }
-            }
+            
         }
 
         public void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs)
