@@ -68,14 +68,6 @@ namespace WingetUIWidgetProvider
         private void Wingetui_Connected(object? sender, ConnectionEventArgs e)
         {
             WidgetUpdateRequestOptions updateOptions = new WidgetUpdateRequestOptions(e.widget.widgetId);
-            /* 
-             *      ${$root.IsLoading}
-             *      ${$root.NoUpdatesFound}
-             *      ${$root.UpdatesList} ${upgradablePackages} ${count}
-             *      ${$root.ErrorOccurred}  ${errorcode}
-             *      ${$root.NoWingetUI}
-             *      ${$root.UpdatesInCourse
-             */
             if (!e.Succeeded)
             {
                 updateOptions.Data = Templates.GetData_NoWingetUI();
@@ -89,8 +81,6 @@ namespace WingetUIWidgetProvider
             }
 
             updateOptions.Template = Templates.BaseTemplate;
-            Console.WriteLine(updateOptions.Template);
-            Console.WriteLine(updateOptions.Data);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 
@@ -98,6 +88,7 @@ namespace WingetUIWidgetProvider
         {
             WidgetUpdateRequestOptions updateOptions = new WidgetUpdateRequestOptions(e.widget.widgetId);
 
+            updateOptions.Template = Templates.BaseTemplate;
             if (!e.Succeeded)
             {
                 updateOptions.Data = Templates.GetData_ErrorOccurred("UPDATE_CHECK_FAILED");
@@ -111,27 +102,32 @@ namespace WingetUIWidgetProvider
             else
             {
                 Console.WriteLine("Showing available updates...");
+                updateOptions.Template = Templates.UpdatesTemplate;
                 string packages = "";
+                string[,] upgradablePackages = new string[e.Count, 3];
                 for (int i = 0; i < e.Count; i++)
                 {
-                    packages += "  ●  " + e.Updates[i].ToString().Replace("\n", "") + "\\n";
-                    if (e.widget.size == WidgetSize.Medium && i == 5 && e.Count > 6)
+                    upgradablePackages[i,0] = e.Updates[i].Name;
+                    upgradablePackages[i, 1] = e.Updates[i].Version;
+                    upgradablePackages[i,2] = e.Updates[i].NewVersion;
+                    if (e.widget.size == WidgetSize.Medium && i == 3 && e.Count > 3)
                     {
                         i++;
                         packages += (e.Count - i).ToString() + " more packages can also be upgraded";
                         i = e.Count;
                     }
-                    else if (e.widget.size == WidgetSize.Large && i == 13 && e.Count > 14)
+                    else if (e.widget.size == WidgetSize.Large && i == 7 && e.Count > 7)
                     {
                         i++;
                         packages += (e.Count - i).ToString() + " more packages can also be upgraded";
                         i = e.Count;
                     }
                 }
-                updateOptions.Data = Templates.GetData_UpdatesList(e.Count, packages);
+                Console.WriteLine(updateOptions.Template);
+                Console.WriteLine(updateOptions.Data);
+                updateOptions.Data = Templates.GetData_UpdatesList(e.Count, upgradablePackages);
             }
-
-            updateOptions.Template = Templates.BaseTemplate;
+            Console.WriteLine(updateOptions.Data);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 

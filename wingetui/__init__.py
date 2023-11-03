@@ -427,6 +427,8 @@ try:
         def loadMainUI(self):
             print("🔵 Reached main ui load milestone")
             try:
+                setSettingsValue("CurrentSessionToken", globals.CurrentSessionToken)
+
                 globals.trayIcon = QSystemTrayIcon()
                 self.trayIcon = globals.trayIcon
                 globals.app = self

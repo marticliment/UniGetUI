@@ -15,9 +15,10 @@ if __name__ == "__main__":
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
+from globals import CurrentSessionToken
 
 globalsignal: Signal = None
 availableUpdates: list['UpgradablePackageItem'] = []
@@ -68,15 +69,29 @@ def v2_is_running():
         return response
 
 
-@app.route('/get-updates-stringlist', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/attempt_connection', methods=['POST', 'GET', 'OPTIONS'])
+def widgets_attempt_connection():
+    try:
+        if request.method in ('POST', 'GET') and request.args["token"] == CurrentSessionToken:
+            response = jsonify(status="success")
+        else:
+            abort(401, "Invalid session token")
+        return response
+    except ValueError:
+        return response
+
+@app.route('/widgets/get_updates', methods=['POST', 'GET', 'OPTIONS'])
 def get_updates():
     try:
-        packages = ""
-        for packageItem in availableUpdates:
-            packageItem: UpgradablePackageItem
-            packages += f"{packageItem.Package.Name} -> {packageItem.Package.NewVersion}#~#"
-        response = jsonify(status="success", packages=packages[:-3])
-        return response
+        if request.args["token"] != CurrentSessionToken:
+            abort(401, "Invalid session token")
+        else:
+            packages = ""
+            for packageItem in availableUpdates:
+                packageItem: UpgradablePackageItem
+                packages += f"{packageItem.Package.Name.replace('|', '-')}|{packageItem.Package.Id}|{packageItem.Package.Version}|{packageItem.Package.NewVersion}|{packageItem.Package.Source}|{packageItem.Package.PackageManager.NAME}||"
+            response = jsonify(status="success", packages=packages[:-2])
+            return response
     except ValueError:
         return response
 
@@ -85,6 +100,8 @@ def runBackendApi(signal: Signal):
     global globalsignal
     globalsignal = signal
 
+    print("🔵 Starting API with random session authentication token", CurrentSessionToken)
+    
     app.run(host="localhost", port=7058)
 
 
