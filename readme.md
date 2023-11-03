@@ -47,7 +47,11 @@ scoop bucket add extras
 scoop install extras/wingetui
 ```
 
-_Available soon on Chocolatey (hopefully)._
+**Install WingetUI through Chocolatey:**    
+```cmd
+choco install wingetui
+```
+
 
 ## Update WingetUI
 
