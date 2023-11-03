@@ -4,7 +4,7 @@
         "done": 7441,
         "packages_with_icon": 7441,
         "packages_with_screenshot": 512,
-        "total_screenshots": 1644
+        "total_screenshots": 1646
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -48014,7 +48014,9 @@
         "xnviewmp": {
             "icon": "https://www.xnview.com/img/app-xnviewmp-512.png",
             "images": [
-                "https://i.postimg.cc/wTF1L2yv/xnviewmp-win-01.jpg"
+                "https://i.postimg.cc/ZnwYJxhm/xnviewmp-win-01.png",
+                "https://i.postimg.cc/C1qBmtD2/xnviewmp-win-02.png",
+                "https://i.postimg.cc/QCgBrTfk/xnviewmp-win-03.png"
             ]
         },
         "xolidosigndesktop": {
