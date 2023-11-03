@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Printing.PrintSupport;
 
 namespace WingetUIWidgetProvider
 {
@@ -17,28 +19,6 @@ namespace WingetUIWidgetProvider
 
     public class Templates
     {
-        public const string BaseTemplate = @"
-            {
-                ""type"": ""AdaptiveCard"",
-                ""$schema"": ""http://adaptivecards.io/schemas/adaptive-card.json"",
-                ""version"": ""1.5"",
-                ""body"": [
-                    "+ NoWingetUI +@",
-                    "+ IsLoading +@",
-                    "+ NoUpdatesFound +@",
-                    "+ UpdatesList +@",
-                    "+ ErrorOccurred +@",
-                    "+ UpdatesInCourse +@"
-                ],
-                ""rtl"": false,
-                ""refresh"": {
-                    ""action"": {
-                        ""type"": ""Action.Execute"",
-                        ""verb"": """ + Verbs.Reload + @"""
-                    }
-                }
-            }";
-
 
         public static string GetData_NoWingetUI()
         {
@@ -206,11 +186,116 @@ namespace WingetUIWidgetProvider
             }";
 
 
-        public static string GetData_UpdatesList(int count, string packageList)
+        private static string GeneratePackageStructure(int index)
         {
-            return "{ \"UpdatesList\": true,  \"count\": \""+ count.ToString() + "\", \"upgradablePackages\": \"" + packageList + "\"}";
+            string package = @"
+                        {
+                            ""type"": ""TableRow"",
+                            ""cells"": [
+                                {
+                                    ""type"": ""TableCell"",
+                                    ""minHeight"": ""2px"",
+                                    ""items"": [
+                                        {
+                                            ""type"": ""Image"",
+                                            ""url"": ""https://marticliment.com/resources/package_white.png"",
+                                            ""horizontalAlignment"": ""Center""
+                                        }
+                                    ],
+                                    ""backgroundImage"": {
+                                        ""verticalAlignment"": ""Center""
+                                    }
+                                },
+                                {
+                                    ""type"": ""TableCell"",
+                                    ""items"": [
+                                        {
+                                            ""type"": ""Container"",
+                                            ""items"": [
+                                                {
+                                                    ""type"": ""TextBlock"",
+                                                    ""text"": ""${PackageName"+index.ToString()+ @"}"",
+                                                    ""wrap"": false,
+                                                    ""spacing"": ""None"",
+                                                    ""fontType"": ""Default"",
+                                                    ""size"": ""Small"",
+                                                    ""weight"": ""Bolder"",
+                                                    ""color"": ""Accent""
+                                                },
+                                                {
+                                                    ""type"": ""TextBlock"",
+                                                    ""text"": ""From ${Version"+index.ToString()+@"} to ${NewVersion"+index.ToString()+ @"}"",
+                                                    ""fontType"": ""Default"",
+                                                    ""size"": ""Small"",
+                                                    ""weight"": ""Lighter"",
+                                                    ""isSubtle"": true,
+                                                    ""spacing"": ""None"",
+                                                    ""wrap"": false,
+                                                    ""style"": ""default""
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    ""type"": ""TableCell"",
+                                    ""items"": [
+                                        {
+                                            ""type"": ""ActionSet"",
+                                            ""actions"": [
+                                                {
+                                                    ""type"": ""Action.Execute"",
+                                                    ""title"": ""↻"",
+                                                    ""verb"": ""Update"",
+                                                    ""data"": {},
+                                                    ""tooltip"": ""Update this package""
+                                                }
+                                            ],
+                                            ""horizontalAlignment"": ""Center""
+                                        }
+                                    ],
+                                    ""verticalContentAlignment"": ""Center"",
+                                    ""minHeight"": ""36px""
+                                }
+                            ],
+                        ""$when"": ""${$root.Package" + index.ToString()+@"Visisble}""
+                        }";
+            return package;
         }
-        private const string UpdatesList = @"
+
+        public static string GetData_UpdatesList(int count, string[,] upgradablePackages)
+        {
+            string data = @"
+                { 
+                    ""UpdatesList"": true,  
+                    ""count"": """ + count.ToString() + @"""";
+            int maxPos = 0;
+            for(int i = 0; i<upgradablePackages.GetLength(0); i++)
+            {
+                if (upgradablePackages[i,0] != null)
+                {
+                    data += @",
+                        ""Package"+i.ToString()+ @"Visisble"": true,
+                        ""PackageName"+i.ToString()+@""": """ + upgradablePackages[i, 0] + @""",
+                        ""Version"+i.ToString()+@""": """ + upgradablePackages[i, 1] + @""",
+                        ""NewVersion"+i.ToString()+@""": """ + upgradablePackages[i, 2] + @"""";
+                    maxPos = i;
+                }
+            }
+
+            if ((upgradablePackages.GetLength(0) - maxPos) > 1)
+            {
+                data += ",\"upgradablePackages\": \"" + (upgradablePackages.GetLength(0) - maxPos - 1) + " packages more can be updated\"}";
+            }
+            else
+            {
+                data += ",\"upgradablePackages\": \"\n\"}";
+            }
+
+            return data;
+        }
+
+        private static string UpdatesList = @"
             {
                 ""type"": ""Container"",
                 ""items"": [
@@ -222,15 +307,45 @@ namespace WingetUIWidgetProvider
                         ""size"": ""Medium""
                     },
                     {
-                        ""type"": ""RichTextBlock"",
-                        ""inlines"": [
+                        ""type"": ""Table"",
+                        ""columns"": [
                             {
-                                ""type"": ""TextRun"",
-                                ""text"": ""${upgradablePackages}"",
-                                ""$when"": ""${$host.widgetSize!=\""small\""}""
+                                ""width"": ""32px""
+                            },
+                            {
+                                ""width"": 1
+                            },
+                            {
+                                ""width"": ""34px""
                             }
                         ],
-                        ""height"": ""stretch""
+                        ""rows"": [
+                            " + GeneratePackageStructure(0) + @",
+                            " + GeneratePackageStructure(1) + @",
+                            " + GeneratePackageStructure(2) + @",
+                            " + GeneratePackageStructure(3) + @",
+                            " + GeneratePackageStructure(4) + @",
+                            " + GeneratePackageStructure(5) + @",
+                            " + GeneratePackageStructure(6) + @",
+                            " + GeneratePackageStructure(7) + @"
+                        ]
+                    },
+
+                    {
+                        ""type"": ""Container"",
+                        ""verticalContentAlignment"": ""Center"",
+                        ""items"": [
+                            {
+                                ""type"": ""TextBlock"",
+                                ""text"": ""${upgradablePackages}"",
+                                ""horizontalAlignment"": ""Center"",
+                                ""spacing"": ""None"",
+                                ""weight"": ""Lighter"",
+                                ""isSubtle"": true
+                            }
+                        ],
+                        ""height"": ""stretch"",
+                        ""spacing"": ""None""
                     },
                     {
                         ""type"": ""ActionSet"",
@@ -373,6 +488,46 @@ namespace WingetUIWidgetProvider
                 ""height"": ""stretch"",
                 ""$when"": ""${$root.UpdatesInCourse}""
             }";
+
+
+        public const string BaseTemplate = @"
+            {
+                ""type"": ""AdaptiveCard"",
+                ""$schema"": ""http://adaptivecards.io/schemas/adaptive-card.json"",
+                ""version"": ""1.5"",
+                ""body"": [
+                    " + NoWingetUI + @",
+                    " + IsLoading + @",
+                    " + NoUpdatesFound + @",
+                    " + UpdatesInCourse + @",
+                    " + ErrorOccurred + @"
+                ],
+                ""rtl"": false,
+                ""refresh"": {
+                    ""action"": {
+                        ""type"": ""Action.Execute"",
+                        ""verb"": """ + Verbs.Reload + @"""
+                    }
+                }
+            }";
+
+        public static string UpdatesTemplate = @"
+            {
+                ""type"": ""AdaptiveCard"",
+                ""$schema"": ""http://adaptivecards.io/schemas/adaptive-card.json"",
+                ""version"": ""1.5"",
+                ""body"": [
+                    " + UpdatesList + @"
+                ],
+                ""rtl"": false,
+                ""refresh"": {
+                    ""action"": {
+                        ""type"": ""Action.Execute"",
+                        ""verb"": """ + Verbs.Reload + @"""
+                    }
+                }
+            }";
+
 
     }
 }
