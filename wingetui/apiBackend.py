@@ -19,6 +19,7 @@ from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
 from globals import CurrentSessionToken
+import globals
 
 globalsignal: Signal = None
 availableUpdates: list['UpgradablePackageItem'] = []
@@ -80,8 +81,9 @@ def widgets_attempt_connection():
     except ValueError:
         return response
 
+
 @app.route('/widgets/get_updates', methods=['POST', 'GET', 'OPTIONS'])
-def get_updates():
+def widgets_get_updates():
     try:
         if request.args["token"] != CurrentSessionToken:
             abort(401, "Invalid session token")
@@ -96,12 +98,43 @@ def get_updates():
         return response
 
 
+@app.route('/widgets/open_wingetui', methods=['POST', 'GET', 'OPTIONS'])
+def widgets_open_wingetui():
+    try:
+        if request.args["token"] != CurrentSessionToken:
+            abort(401, "Invalid session token")
+        else:
+            try:
+                globals.mainWindow.callInMain.emit(globals.mainWindow.showWindow)
+            except AttributeError:
+                print("🔴 Could not show WingetUI (called from Widgets API)")
+            response = jsonify(status="success")
+            return response
+    except ValueError:
+        return response
+
+
+@app.route('/widgets/view_on_wingetui', methods=['POST', 'GET', 'OPTIONS'])
+def widgets_view_on_wingetui():
+    try:
+        if request.args["token"] != CurrentSessionToken:
+            abort(401, "Invalid session token")
+        else:
+            try:
+                globals.mainWindow.callInMain.emit(lambda: globals.mainWindow.showWindow(1))
+            except AttributeError:
+                print("🔴 Could not show WingetUI (called from Widgets API)")
+            response = jsonify(status="success")
+            return response
+    except ValueError:
+        return response
+
+
 def runBackendApi(signal: Signal):
     global globalsignal
     globalsignal = signal
 
     print("🔵 Starting API with random session authentication token", CurrentSessionToken)
-    
     app.run(host="localhost", port=7058)
 
 

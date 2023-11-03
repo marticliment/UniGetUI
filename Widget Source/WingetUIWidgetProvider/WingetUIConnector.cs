@@ -20,8 +20,15 @@ namespace WingetUIWidgetProvider
 
         private string SessionToken;
 
+        private bool was_connected = false;
+
         public WingetUIConnector() {
 
+        }
+
+        public void ResetConnection()
+        {
+            was_connected = false;
         }
 
         async public void Connect(CompactWidgetInfo widget)
@@ -30,26 +37,33 @@ namespace WingetUIWidgetProvider
             args.widget = widget;
             try
             {
-                StreamReader reader = new StreamReader(Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\.wingetui\\CurrentSessionToken");
-                SessionToken = reader.ReadToEnd().ToString().Replace("\n", "").Trim();
-                Console.WriteLine(SessionToken);
-                reader.Close();
+                if (!was_connected)
+                {
+                    StreamReader reader = new StreamReader(Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\.wingetui\\CurrentSessionToken");
+                    SessionToken = reader.ReadToEnd().ToString().Replace("\n", "").Trim();
+                    reader.Close();
+                    Console.WriteLine("Found token "+SessionToken);
 
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("http://localhost:7058//");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpClient client = new HttpClient();
+                    client.BaseAddress = new Uri("http://localhost:7058//");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage task = await client.GetAsync("/widgets/attempt_connection?token="+SessionToken);
-                if (task.IsSuccessStatusCode)
-                    args.Succeeded = true;
+                    HttpResponseMessage task = await client.GetAsync("/widgets/attempt_connection?token="+SessionToken);
+                    if (task.IsSuccessStatusCode)
+                        args.Succeeded = was_connected = true;
+                    else
+                        args.Succeeded = was_connected = false;
+                }
                 else
-                    args.Succeeded = false;
+                {
+                    args.Succeeded = true;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                args.Succeeded = false;
+                args.Succeeded = was_connected = false;
             }
             Connected(this, args);
         }
@@ -68,7 +82,7 @@ namespace WingetUIWidgetProvider
 
                 string outputString = await task.Content.ReadAsStringAsync();
 
-                string purifiedString = outputString.Replace("\",\"status\":\"success\"}", "").Replace("{\"packages\":\"", "");
+                string purifiedString = outputString.Replace("\",\"status\":\"success\"}", "").Replace("{\"packages\":\"", "").Replace("\n", "").Trim();
 
 
                 string[] packageStrings = purifiedString.Split("||");
@@ -94,7 +108,41 @@ namespace WingetUIWidgetProvider
             }
             UpdateCheckFinished(this, args);
 
-        }        
+        }
+        
+        async public void OpenWingetUI()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("http://localhost:7058//");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                await client.GetAsync("/widgets/open_wingetui?token=" + SessionToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        async public void ViewOnWingetUI()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("http://localhost:7058//");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                await client.GetAsync("/widgets/view_on_wingetui?token=" + SessionToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
     }
 
     public class Package

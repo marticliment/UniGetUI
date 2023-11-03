@@ -105,27 +105,45 @@ namespace WingetUIWidgetProvider
                 updateOptions.Template = Templates.UpdatesTemplate;
                 string packages = "";
                 string[,] upgradablePackages = new string[e.Count, 3];
+                int nullPackages = 0;
                 for (int i = 0; i < e.Count; i++)
                 {
-                    upgradablePackages[i,0] = e.Updates[i].Name;
-                    upgradablePackages[i, 1] = e.Updates[i].Version;
-                    upgradablePackages[i,2] = e.Updates[i].NewVersion;
-                    if (e.widget.size == WidgetSize.Medium && i == 3 && e.Count > 3)
+                    if (e.Updates[i].Name == "")
                     {
-                        i++;
-                        packages += (e.Count - i).ToString() + " more packages can also be upgraded";
-                        i = e.Count;
+                        nullPackages += 1;
                     }
-                    else if (e.widget.size == WidgetSize.Large && i == 7 && e.Count > 7)
+                    else
                     {
-                        i++;
-                        packages += (e.Count - i).ToString() + " more packages can also be upgraded";
-                        i = e.Count;
+                        upgradablePackages[i, 0] = e.Updates[i].Name;
+                        upgradablePackages[i, 1] = e.Updates[i].Version;
+                        upgradablePackages[i, 2] = e.Updates[i].NewVersion;
+                        if (e.widget.size == WidgetSize.Medium && i == (3 + nullPackages) && e.Count > (3 + nullPackages))
+                        {
+                            i++;
+                            packages += (e.Count - i).ToString() + " more packages can also be upgraded";
+                            i = e.Count;
+                        }
+                        else if (e.widget.size == WidgetSize.Large && i == (7 + nullPackages) && e.Count > (7 + nullPackages) && e.Count > 7)
+                        {
+                            i++;
+                            packages += (e.Count - i).ToString() + " more packages can also be upgraded";
+                            i = e.Count;
+                        }
                     }
                 }
-                Console.WriteLine(updateOptions.Template);
-                Console.WriteLine(updateOptions.Data);
-                updateOptions.Data = Templates.GetData_UpdatesList(e.Count, upgradablePackages);
+
+                Console.WriteLine(e.Count);
+                Console.WriteLine(nullPackages);
+
+                if ((e.Count - nullPackages) == 0)
+                {
+                    updateOptions.Template = Templates.BaseTemplate;
+                    updateOptions.Data = Templates.GetData_NoUpdatesFound();
+                } else {
+                    Console.WriteLine(updateOptions.Template);
+                    Console.WriteLine(updateOptions.Data);
+                    updateOptions.Data = Templates.GetData_UpdatesList(e.Count, upgradablePackages);
+                }
             }
             Console.WriteLine(updateOptions.Data);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
@@ -171,13 +189,16 @@ namespace WingetUIWidgetProvider
                 {
                     case (Verbs.Reload):
                         localWidgetInfo.customState = 0;
+                        wingetui.ResetConnection();
                         StartLoadingRoutine(localWidgetInfo);
                         break;
 
                     case (Verbs.ViewUpdatesOnWingetUI):
+                        wingetui.ViewOnWingetUI();
                         break;
 
                     case (Verbs.OpenWingetUI):
+                        wingetui.OpenWingetUI();
                         break;
 
                     case (Verbs.UpdateAll):

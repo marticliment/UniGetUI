@@ -289,7 +289,7 @@ namespace WingetUIWidgetProvider
             }
             else
             {
-                data += ",\"upgradablePackages\": \"\n\"}";
+                data += ",\"upgradablePackages\": \"\\n\"}";
             }
 
             return data;
