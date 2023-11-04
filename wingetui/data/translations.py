@@ -19,7 +19,7 @@ untranslatedPercentage = {
   "ru": "94%",
   "si": "10%",
   "sl": "94%",
-  "sr": "10%",
+  "sr": "99%",
   "tg": "22%",
   "tr": "91%",
   "ua": "90%",
@@ -352,6 +352,10 @@ languageCredits = {
     }
   ],
   "sr": [
+    {
+      "name": "daVinci13",
+      "link": "https://github.com/daVinci13"
+    },
     {
       "name": "Nemanja Djurcic",
       "link": ""

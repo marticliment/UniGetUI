@@ -3,8 +3,8 @@
         "total": 11697,
         "done": 7441,
         "packages_with_icon": 7441,
-        "packages_with_screenshot": 503,
-        "total_screenshots": 1632
+        "packages_with_screenshot": 512,
+        "total_screenshots": 1646
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -21528,8 +21528,10 @@
             "images": []
         },
         "kitty": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kitty.portable.0.67.0.0.png",
-            "images": []
+            "icon": "https://i.postimg.cc/NjSwt9n8/kitty-icon.png",
+            "images": [
+                "https://i.postimg.cc/bvnfwYX7/kitty-1.png"
+            ]
         },
         "kiwi-for-gmail": {
             "icon": "",
@@ -21592,8 +21594,12 @@
             "images": []
         },
         "kmymoney": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kmymoney.portable.4.8.2.png",
-            "images": []
+            "icon": "https://i.postimg.cc/BQbVh7Vt/kmymoney-icon.png",
+            "images": [
+                "https://i.postimg.cc/gk7B1yCs/kmymoney.png",
+                "https://i.postimg.cc/rm9PHBTR/kmm2.png",
+                "https://i.postimg.cc/44B0QRwr/kmm3.png"
+            ]
         },
         "knative": {
             "icon": "",
@@ -21729,8 +21735,10 @@
             "images": []
         },
         "kook": {
-            "icon": "",
-            "images": []
+            "icon": "https://saas.bk-cdn.com/1666170194529-KOOKLOGO.png",
+            "images": [
+                "https://saas.bk-cdn.com/t/901342ff-5949-41f1-b992-6101f871f04e/u/97b9cb94-fb1b-40f1-96fb-4d81eb1097e5/1656493066531/image.png"
+            ]
         },
         "kopano-ads-nightly": {
             "icon": "https://community.chocolatey.org/content/packageimages/kopano-ads-nightly.1.1.88.png",
@@ -21778,7 +21786,9 @@
         },
         "krita": {
             "icon": "https://i.imgur.com/ZIpIzyq.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/52xMNS7V/Krita.png"
+            ]
         },
         "kritashellextension": {
             "icon": "",
@@ -22803,12 +22813,16 @@
             "images": []
         },
         "lilypond": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lilypond.2.22.2.png",
-            "images": []
+            "icon": "https://i.postimg.cc/NFKh9R5j/lilypond-icon.png",
+            "images": [
+                "https://i.postimg.cc/3NVsgWvC/lilypond-large.png"
+            ]
         },
         "lilypond-unstable": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/NFKh9R5j/lilypond-icon.png",
+            "images": [
+                "https://i.postimg.cc/3NVsgWvC/lilypond-large.png"
+            ]
         },
         "limechat": {
             "icon": "https://community.chocolatey.org/content/packageimages/limechat.2.40.png",
@@ -23067,8 +23081,10 @@
             "images": []
         },
         "lmms": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lmms.1.2.2.20210505.png",
-            "images": []
+            "icon": "https://i.postimg.cc/T1NtbsBz/lmms-icon.png",
+            "images": [
+                "https://i.postimg.cc/RhZPNmp1/LMMS-1.png"
+            ]
         },
         "ln": {
             "icon": "",
@@ -33246,11 +33262,14 @@
             "images": []
         },
         "r-studio": {
-            "icon": "https://community.chocolatey.org/content/packageimages/R.Studio.2022.12.png",
-            "images": []
+            "icon": "https://i.postimg.cc/XJpRzw46/R-Studio-icon.png",
+            "images": [
+                "https://i.postimg.cc/vmqRhPRv/R-Studio-1.png",
+                "https://i.postimg.cc/d1pbPLVk/R-Studio-2.png"
+            ]
         },
         "r128gain": {
-            "icon": "https://community.chocolatey.org/content/packageimages/r128gain.1.0.6.png",
+            "icon": "",
             "images": []
         },
         "r6rc": {
@@ -33266,7 +33285,7 @@
             "images": []
         },
         "raccine": {
-            "icon": "https://community.chocolatey.org/content/packageimages/raccine.1.4.4.png",
+            "icon": "",
             "images": []
         },
         "rack": {
@@ -33696,8 +33715,10 @@
             "images": []
         },
         "realtek-hd-audio-driver": {
-            "icon": "https://community.chocolatey.org/content/packageimages/realtek-hd-audio-driver.2.82.0020200601.png",
-            "images": []
+            "icon": "https://i.postimg.cc/DzJZq4Hm/Realtek-icon.png",
+            "images": [
+                "https://i.postimg.cc/021P4H3k/Realtek-1.png"
+            ]
         },
         "realtemp": {
             "icon": "https://community.chocolatey.org/content/packageimages/realtemp.3.7.0.png",
@@ -47993,7 +48014,9 @@
         "xnviewmp": {
             "icon": "https://www.xnview.com/img/app-xnviewmp-512.png",
             "images": [
-                "https://i.postimg.cc/wTF1L2yv/xnviewmp-win-01.jpg"
+                "https://i.postimg.cc/ZnwYJxhm/xnviewmp-win-01.png",
+                "https://i.postimg.cc/C1qBmtD2/xnviewmp-win-02.png",
+                "https://i.postimg.cc/QCgBrTfk/xnviewmp-win-03.png"
             ]
         },
         "xolidosigndesktop": {
