@@ -7,6 +7,7 @@ contributors = [
   "RavenMacDaddy",
   "Mikey1993",
   "adripo",
+  "raghavdhingra24",
   "MisterEvans78",
   "rumplin",
   "uKER",
@@ -17,7 +18,6 @@ contributors = [
   "BastianKamp",
   "candrapersada",
   "elliot-100",
-  "raghavdhingra24",
   "sitiom",
   "joguarino",
   "neoOpus",
@@ -31,7 +31,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2105
+    "contributions": 2109
   },
   {
     "name": "ppvnf",
@@ -56,6 +56,11 @@ contributorsInfo = [
   {
     "name": "adripo",
     "link": "https://github.com/adripo",
+    "contributions": 6
+  },
+  {
+    "name": "raghavdhingra24",
+    "link": "https://github.com/raghavdhingra24",
     "contributions": 6
   },
   {
@@ -106,11 +111,6 @@ contributorsInfo = [
   {
     "name": "elliot-100",
     "link": "https://github.com/elliot-100",
-    "contributions": 2
-  },
-  {
-    "name": "raghavdhingra24",
-    "link": "https://github.com/raghavdhingra24",
     "contributions": 2
   },
   {
