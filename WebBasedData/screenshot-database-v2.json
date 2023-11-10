@@ -3,7 +3,7 @@
         "total": 11697,
         "done": 7441,
         "packages_with_icon": 7441,
-        "packages_with_screenshot": 512,
+        "packages_with_screenshot": 514,
         "total_screenshots": 1646
     },
     "icons_and_screenshots": {
@@ -994,28 +994,28 @@
         "adguard": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/4/48/AdGuard_Logo.png",
             "images": [
-                "https://adguard.com/img/social/og-main.png",
-                "https://cdn.adguard.com/public/Adguard/Common/adguard_home.gif",
-                "https://static.filehorse.com/screenshots/firewalls-and-security/adguard-screenshot-01.png",
-                "https://static.filehorse.com/screenshots/firewalls-and-security/adguard-screenshot-02.png"
+                "https://cdn.adguard.com/content/release_notes/ad_blocker/windows/v7.14/main_light_en.png",
+                "https://cdn.adguard.com/content/release_notes/ad_blocker/windows/v7.14/general_light_en.png"
             ]
         },
         "adguard-chrome": {
             "icon": "https://community.chocolatey.org/content/packageimages/adguard-chrome.3.0.13.png",
-            "images": []
+            "images": [
+                "https://cdn.adguard.com/public/Adguard/Common/adguard_extension_4_settings.png"
+            ]
         },
         "adguardhome": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/4/48/AdGuard_Logo.png",
             "images": [
-                "https://cdn.adtidy.org/public/Adguard/Blog/AGHome/dashboard.jpg"
+                "https://dashboard.snapcraft.io/site_media/appmedia/2020/04/agh1_Y8qX5Jf.png",
+                "https://dashboard.snapcraft.io/site_media/appmedia/2020/04/agh2_BF6Xfj2.png",
+                "https://dashboard.snapcraft.io/site_media/appmedia/2020/04/agh3_2Zqhv3A.png"
             ]
         },
         "adguardvpn": {
             "icon": "https://i.imgur.com/tvlrfxJ.png",
             "images": [
-                "https://ph-files.imgix.net/1d1c0f41-8752-4bcc-b469-93a569909b31.png",
-                "https://cdn.adguardvpn.com/website/adguard-vpn.com/products/win-mac.png",
-                "https://windows-cdn.softpedia.com/screenshots/AdGuard-VPN_1.png"
+                "https://cdn.adtidy.org/content/release_notes/vpn/windows/v2.0/main_screen_light_en.png"
             ]
         },
         "adif-master": {
@@ -9762,7 +9762,9 @@
         },
         "deepl": {
             "icon": "https://community.chocolatey.org/content/packageimages/deepl.4.0.6052.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/SK25T96P/Deepl.png"
+            ]
         },
         "deepstream": {
             "icon": "",
