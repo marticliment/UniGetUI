@@ -266,12 +266,14 @@ class ChocoPackageManager(DynamicPackageManager):
         counter = 0
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if outputCode in (1641, 3010):
@@ -297,14 +299,15 @@ class ChocoPackageManager(DynamicPackageManager):
         output = ""
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if outputCode in (1605, 1614, 1641):

@@ -438,19 +438,32 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     return [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
 
-def getLineFromStdout(p: subprocess.Popen) -> bytes:
+carriedChar = b""
+
+
+def getLineFromStdout(p: subprocess.Popen) -> (bytes, bool):
     """
     This function replaces p.stdout.readline(). Will return lines both from \\n-ending and \\r-ending character sequences.
     This function may be more resource-intensive, so it should be used only when live outputs must be analyzed in real time.
     """
+    global carriedChar
     stdout: IO[bytes] = p.stdout
+    is_newline: bool = False
     char = stdout.read(1)
-    line = b""
+    line = carriedChar
+    carriedChar = b""
     while char not in (b"\n", b"\r") and p.poll() is None:
         line += char
         char = stdout.read(1)
+    if b"\n" in char:
+        is_newline = True
+    elif b"\r" in char:
+        carriedChar = stdout.read(1)
+        if carriedChar == b"\n":
+            is_newline = True
+            carriedChar = b""
     line = line.replace(b"\r", b"").replace(b"\n", b"")
-    return line if (line or p.poll() is not None) else getLineFromStdout(p)
+    return (line, is_newline) if (line or p.poll() is not None) else getLineFromStdout(p)
 
 
 class KillableThread(Thread):

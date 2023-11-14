@@ -332,7 +332,7 @@ class ScoopPackageManager(DynamicPackageManager):
         output = ""
         outputCode = 1
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
@@ -342,12 +342,13 @@ class ScoopPackageManager(DynamicPackageManager):
                     widget.counterSignal.emit(4)
                 elif "was installed successfully!" in line:
                     widget.counterSignal.emit(6)
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit(line, is_newline)
                 if "was installed successfully" in line:
                     outputCode = 0
                 elif "is already installed" in line:
                     outputCode = 0
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         if "-g" in output and "successfully" not in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
@@ -372,7 +373,7 @@ class ScoopPackageManager(DynamicPackageManager):
         outputCode = 1
         output = ""
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
@@ -382,10 +383,11 @@ class ScoopPackageManager(DynamicPackageManager):
                     widget.counterSignal.emit(4)
                 elif "was uninstalled" in line:
                     widget.counterSignal.emit(6)
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 if "was uninstalled" in line:
                     outputCode = 0
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         if "-g" in output and "was uninstalled" not in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:

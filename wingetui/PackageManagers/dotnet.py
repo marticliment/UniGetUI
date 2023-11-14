@@ -263,10 +263,13 @@ class DotNetToolPackageManager(DynamicPackageManager):
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+
             if line:
-                output += line + "\n"
-                widget.addInfoLine.emit(line)
+                if is_newline:
+                    output += line + "\n"
+                widget.addInfoLine.emit((line, is_newline))
         outputCode = p.returncode
         if outputCode != 0:
             if "is already installed" in output:
@@ -285,10 +288,14 @@ class DotNetToolPackageManager(DynamicPackageManager):
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+
             if line:
-                output += line + "\n"
-                widget.addInfoLine.emit(line)
+
+                if is_newline:
+                    output += line + "\n"
+                widget.addInfoLine.emit((line, is_newline))
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
 

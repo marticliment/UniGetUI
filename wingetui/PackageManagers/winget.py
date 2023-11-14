@@ -160,7 +160,7 @@ class WingetPackageManager(DynamicPackageManager):
                         except Exception as e:
                             report(e)
                             packages.append(Package(line[0:idPosition].strip(), line[idPosition:versionPosition].strip(), line[versionPosition:sourcePosition].strip(), f"Winget: {line[sourcePosition:].strip()}", Winget))
-                            if type(e) != IndexError:
+                            if type(e) is not IndexError:
                                 report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawOutput
@@ -253,9 +253,8 @@ class WingetPackageManager(DynamicPackageManager):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1] + id, ver, newver, source, Winget))
                     except Exception as e:
-                        report(e)
                         packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:sourcePosition].split(" ")[0].strip(), "Winget: " + element[sourcePosition:].split(" ")[0].strip(), Winget))
-                        if type(e) != IndexError:
+                        if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -384,7 +383,7 @@ class WingetPackageManager(DynamicPackageManager):
                                 packages.append(Package(name.split("#")[0], (name.split("#")[-1] + id).strip(), ver, source, Winget))
                     except Exception as e:
                         packages.append(Package(packageLine[0:idPosition].strip(), packageLine[idPosition:versionPosition].strip(), packageLine[versionPosition:sourcePosition].strip(), "Winget: " + packageLine[sourcePosition:].strip(), Winget))
-                        if type(e) != IndexError:
+                        if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -619,12 +618,14 @@ class WingetPackageManager(DynamicPackageManager):
         output = ""
         counter = 0
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         match p.returncode:
             case 0x8A150011:
@@ -652,12 +653,14 @@ class WingetPackageManager(DynamicPackageManager):
         counter = RETURNCODE_OPERATION_SUCCEEDED
         output = ""
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if "1603" in output or "0x80070005" in output or "Access is denied" in output:

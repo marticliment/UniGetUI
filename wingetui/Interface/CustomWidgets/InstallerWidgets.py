@@ -35,7 +35,7 @@ from tools import _
 class PackageInstallerWidget(QWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(str)
+    addInfoLine = Signal(tuple)
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     callInMain = Signal(object)
@@ -59,7 +59,7 @@ class PackageInstallerWidget(QWidget):
         self.liveOutputWindow.setReadOnly(True)
         self.liveOutputWindowWindow.resize(700, 400)
         self.liveOutputWindowWindow.setWindowTitle(_("Live command-line output"))
-        self.addInfoLine.connect(lambda s: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText() + "\n" + s), self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
+        self.addInfoLine.connect(lambda args: (self.liveOutputWindow.setPlainText(self.liveOutputWindow.toPlainText() + "\n" + args[0]) if args[1] else None, self.liveOutputWindow.verticalScrollBar().setValue(self.liveOutputWindow.verticalScrollBar().maximum())))
 
         if getSettings(f"AlwaysElevate{self.Package.PackageManager.NAME}"):
             print(f"🟡 {self.Package.PackageManager.NAME} installation automatically elevated!")
@@ -98,7 +98,7 @@ class PackageInstallerWidget(QWidget):
         self.progressbar.setFixedHeight(2)
         self.changeBarOrientation.connect(lambda: self.progressbar.setInvertedAppearance(not self.progressbar.invertedAppearance()))
         self.finishInstallation.connect(self.finish)
-        self.addInfoLine.connect(lambda text: self.liveOutputButton.setText(text))
+        self.addInfoLine.connect(lambda args: self.liveOutputButton.setText(args[0]))
         self.counterSignal.connect(self.counter)
         self.liveOutputButton = ButtonWithResizeSignal(QIcon(getMedia("console", autoIconMode=False)), "")
         self.liveOutputButton.clicked.connect(lambda: (self.liveOutputWindowWindow.show(), ApplyMica(self.liveOutputWindowWindow.winId(), isDark()), self.liveOutputWindowWindow.setWindowIcon(self.window().windowIcon())))
@@ -175,7 +175,7 @@ class PackageInstallerWidget(QWidget):
             except ValueError:
                 print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
             globals.pending_programs.index(self.installId)
-            self.addInfoLine.emit(_("Waiting for other installations to finish...") + append)
+            self.addInfoLine.emit((_("Waiting for other installations to finish...") + append))
         print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
@@ -201,7 +201,7 @@ class PackageInstallerWidget(QWidget):
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
-        self.addInfoLine.emit(_("Running the installer..."))
+        self.addInfoLine.emit((_("Running the installer..."), True))
         self.leftSlow.start()
         self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startInstallation(self.Package, self.Options, self)
@@ -334,7 +334,7 @@ class PackageInstallerWidget(QWidget):
             dialogData = {
                 "titlebarTitle": _("WingetUI - {0} {1}").format(self.Package.Name, self.actionName),
                 "buttonTitle": _("Close"),
-                "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                "errorDetails": output.replace("-\\|/", "").replace("▒", "").replace("█", ""),
                 "icon": warnIcon,
                 "notifTitle": _("Can't {0} {1}").format(self.actionVerb, self.Package.Name),
                 "notifIcon": warnIcon,
@@ -447,7 +447,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         globals.tray_is_installing = True
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
-        self.addInfoLine.emit(_("Running the updater..."))
+        self.addInfoLine.emit((_("Running the updater..."), True))
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
         self.leftSlow.start()
         self.setProgressbarColor(blueColor)
@@ -499,7 +499,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
 class PackageUninstallerWidget(PackageInstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(str)
+    addInfoLine = Signal(tuple[str, bool])
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
@@ -521,7 +521,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
         self.leftSlow.start()
-        self.addInfoLine.emit(_("Running the uninstaller..."))
+        self.addInfoLine.emit((_("Running the uninstaller..."), True))
         self.setProgressbarColor(blueColor)
         self.p = self.Package.PackageManager.startUninstallation(self.Package, self.Options, self)
         AddOperationToLog("installation", self.Package, '"' + ' '.join(self.p.args) + '"')
@@ -644,7 +644,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                         "mainTitle": _("{0} failed").format(self.actionName.capitalize()),
                         "mainText": _("We could not {action} {package}. Please try again later. Click on \"{showDetails}\" to get the logs from the uninstaller.").format(action=self.actionVerb, package=self.Package.Name, showDetails=_("Show details")),
                         "buttonTitle": _("Close"),
-                        "errorDetails": output.replace("-\|/", "").replace("▒", "").replace("█", ""),
+                        "errorDetails": output.replace("-\\|/", "").replace("▒", "").replace("█", ""),
                         "icon": QIcon(getMedia("notif_warn")),
                     }
                     if globals.ENABLE_ERROR_NOTIFICATIONS:
@@ -662,7 +662,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
 class CustomInstallerWidget(PackageInstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(str)
+    addInfoLine = Signal(tuple[str, bool])
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     callInMain = Signal(object)
@@ -682,7 +682,7 @@ class CustomInstallerWidget(PackageInstallerWidget):
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
-        self.addInfoLine.emit(_("Running the installer..."))
+        self.addInfoLine.emit((_("Running the installer..."), True))
         self.leftSlow.start()
         self.setProgressbarColor(blueColor)
         Command = self.command
@@ -699,14 +699,14 @@ class CustomInstallerWidget(PackageInstallerWidget):
             line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
             if line:
                 output += line + "\n"
-                self.addInfoLine.emit(line)
+                self.addInfoLine.emit((line, True))
         self.finishInstallation.emit(p.returncode, output)
 
 
 class CustomUninstallerWidget(PackageUninstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(str)
+    addInfoLine = Signal(tuple[str, bool])
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     callInMain = Signal(object)
@@ -727,7 +727,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
         self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
-        self.addInfoLine.emit(_("Running the uninstaller..."))
+        self.addInfoLine.emit((_("Running the uninstaller..."), True))
         self.leftSlow.start()
         self.setProgressbarColor(blueColor)
         Command = self.command
@@ -744,7 +744,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
             line = str(p.stdout.readline(), encoding='utf-8', errors="ignore").strip()
             if line:
                 output += line + "\n"
-                self.addInfoLine.emit(line)
+                self.addInfoLine.emit((line, True))
         self.finishInstallation.emit(p.returncode, output)
 
 
