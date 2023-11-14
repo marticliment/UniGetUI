@@ -285,6 +285,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         }
 
         for action in tooltips.keys():
+            action.setToolTip(tooltips[action])
             toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
             toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
@@ -776,6 +777,7 @@ class UpdateSoftwareSection(SoftwareSection):
         }
 
         for action in tooltips.keys():
+            action.setToolTip(tooltips[action])
             toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
             toolbar.widgetForAction(action).setToolTip(tooltips[action])
 
@@ -1334,6 +1336,7 @@ class UninstallSoftwareSection(SoftwareSection):
         }
 
         for action in tooltips.keys():
+            action.setToolTip(tooltips[action])
             toolbar.widgetForAction(action).setToolTip(tooltips[action])
             toolbar.widgetForAction(action).setAccessibleName(tooltips[action])
 
