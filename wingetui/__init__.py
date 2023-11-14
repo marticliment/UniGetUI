@@ -947,12 +947,12 @@ try:
         background: none;
     }}
     QHeaderView,QAbstractItemView {{
-        background-color: rgba(255, 255, 255, 5%);
+        background-color: transparent;
         border-radius: 8px;
         border: none;
-        padding: 1px;
+        padding: 0px;
         height: 35px;
-        border: 1px solid rgba(25, 25, 25, 50%);
+        border: 0px solid black;
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -961,20 +961,25 @@ try:
         padding-right: 0px;
     }}
     QHeaderView::section {{
-        background-color: transparent;
-        border-radius: 8px;
-        padding: 4px;
+        background-color: rgba(255, 255, 255, 5%);
+        border-top: 1px solid rgba(25, 25, 25, 50%);
+        border-bottom: 1px solid rgba(25, 25, 25, 50%);
+        padding: 0px;
         height: 35px;
-        margin: 1px;
+        border-radius: 0px;
+        margin: 0px;
+        padding-bottom: 4px;
+        padding-top: 4px;
     }}
     QHeaderView::section:first {{
-        background-color: transparent;
-        border-radius: 8px;
-        padding: 4px;
-        height: 35px;
-        margin: 1px;
-        margin-left: 0px;
-        padding-left: 10px;
+        border-left: 1px solid rgba(25, 25, 25, 50%);
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }}
+    QHeaderView::section:last {{
+        border-right: 1px solid rgba(25, 25, 25, 50%);
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
     }}
     QTreeWidget {{
         show-decoration-selected: 0;
@@ -1798,12 +1803,12 @@ try:
         background: none;
     }}
     QHeaderView,QAbstractItemView {{
-        background-color: rgba(255, 255, 255, 55%);
+        background-color: transparent;
         border-radius: 6px;
         border: none;
-        padding: 1px;
+        padding: 0px;
         height: 35px;
-        border: 1px solid rgba(222, 222, 222, 35%);
+        border: 0px solid rgba(222, 222, 222, 35%);
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -1811,22 +1816,28 @@ try:
     QHeaderView {{
         padding-right: 0px;
     }}
-    QHeaderView::section {{
-        background-color: transparent;
-        border-radius: 6px;
-        padding: 4px;
+        QHeaderView::section {{
+        background-color: rgba(255, 255, 255, 55%);
+        border-top: 1px solid rgba(222, 222, 222, 35%);
+        border-bottom: 1px solid rgba(222, 222, 222, 35%);
+        padding: 0px;
         height: 35px;
-        margin: 1px;
+        border-radius: 0px;
+        margin: 0px;
+        padding-bottom: 4px;
+        padding-top: 4px;
     }}
     QHeaderView::section:first {{
-        background-color: transparent;
-        border-radius: 6px;
-        padding: 4px;
-        height: 35px;
-        margin: 1px;
-        margin-left: 0px;
-        padding-left: 10px;
+        border-left: 1px solid rgba(222, 222, 222, 35%);
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
     }}
+    QHeaderView::section:last {{
+        border-right: 1px solid rgba(222, 222, 222, 35%);
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }}
+
     QTreeWidget {{
         show-decoration-selected: 0;
         background-color: transparent;
