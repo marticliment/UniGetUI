@@ -304,15 +304,15 @@ def AddResultToLog(output: list, package, result: int):
 
 
 def update_tray_icon():
-    if globals.tray_is_error:
+    if globals.tray_is_installing:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
+        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
+    elif globals.tray_is_error:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_orange")))
         globals.trayIcon.setToolTip(f"{_('Attention required')} - WingetUI")
     elif globals.tray_is_needs_restart:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_turquoise")))
         globals.trayIcon.setToolTip(f"{_('Restart required')} - WingetUI")
-    elif globals.tray_is_installing:
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
-        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
     elif globals.tray_is_available_updates:
         try:
             if globals.updates.availableUpdates == 1:
