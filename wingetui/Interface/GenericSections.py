@@ -295,7 +295,7 @@ class SettingsSection(SmoothScrollArea):
                     continue
                 if key in lang["locale"]:
                     k = len(lang.keys())
-                    v = len([val for val in lang.values() if val != None])
+                    v = len([val for val in lang.values() if val is not None])
                     percNum = v / k
                     perc = f"{percNum:.0%}"
                     if (perc == "100%" and percNum < 1):
@@ -807,9 +807,11 @@ class SettingsSection(SmoothScrollArea):
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm="Scoop"), getMedia(
             "scoop"), _("{pm} package manager specific preferences").format(pm="Scoop"))
         self.mainLayout.addWidget(self.scoopPreferences)
-        path = SectionButton(Scoop.EXECUTABLE, _("Copy"), h=50)
+
+        pathvar = Scoop.EXECUTABLE.replace("scoop", str(shutil.which("scoop"))) if shutil.which("scoop") is not None else Scoop.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Scoop.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         self.scoopPreferences.addWidget(path)
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
@@ -856,9 +858,10 @@ class SettingsSection(SmoothScrollArea):
             "choco"), _("{pm} package manager specific preferences").format(pm="Chocolatey"))
         self.mainLayout.addWidget(self.chocoPreferences)
 
-        path = SectionButton(Choco.EXECUTABLE, _("Copy"), h=50)
+        pathvar = str(shutil.which(Choco.EXECUTABLE)) if shutil.which(Choco.EXECUTABLE) else Choco.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Choco.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         self.chocoPreferences.addWidget(path)
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
@@ -885,9 +888,10 @@ class SettingsSection(SmoothScrollArea):
             "python"), _("{pm} package manager specific preferences").format(pm="Pip"))
         self.mainLayout.addWidget(self.pipPreferences)
 
-        path = SectionButton(Pip.EXECUTABLE, _("Copy"), h=50)
+        pathvar = str(shutil.which(Pip.EXECUTABLE.split(' ')[0]) + " -m pip") if shutil.which(Pip.EXECUTABLE.split(' ')[0]) else Pip.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Pip.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         self.pipPreferences.addWidget(path)
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
@@ -906,9 +910,10 @@ class SettingsSection(SmoothScrollArea):
             "node"), _("{pm} package manager specific preferences").format(pm="Npm"))
         self.mainLayout.addWidget(self.npmPreferences)
 
-        path = SectionButton(Npm.EXECUTABLE, _("Copy"), h=50)
+        pathvar = str(shutil.which(Npm.EXECUTABLE)) if shutil.which(Npm.EXECUTABLE) else Npm.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Npm.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.npmPreferences.addWidget(path)
@@ -927,9 +932,10 @@ class SettingsSection(SmoothScrollArea):
             "dotnet"), _("{pm} package manager specific preferences").format(pm=".NET Tool"))
         self.mainLayout.addWidget(self.dotnetPreferences)
 
-        path = SectionButton(Dotnet.EXECUTABLE, _("Copy"), h=50)
+        pathvar = (str(shutil.which(Dotnet.EXECUTABLE)) if shutil.which(Dotnet.EXECUTABLE) else Dotnet.EXECUTABLE) + " tool"
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Dotnet.EXECUTABLE + " tool"))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.dotnetPreferences.addWidget(path)
