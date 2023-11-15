@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7441,
-        "packages_with_icon": 7441,
+        "done": 7453,
+        "packages_with_icon": 7453,
         "packages_with_screenshot": 514,
         "total_screenshots": 1646
     },
@@ -11185,19 +11185,19 @@
             "images": []
         },
         "dotnet-aspnetcore-3-1": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-aspnetruntime.3.1.32.png",
             "images": []
         },
         "dotnet-aspnetcore-5": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-aspnetruntime.5.0.17.png",
             "images": []
         },
         "dotnet-aspnetcore-6": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-aspnetruntime.6.0.24.png",
             "images": []
         },
         "dotnet-aspnetcore-7": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-aspnetruntime.7.0.13.png",
             "images": []
         },
         "dotnet-aspnetcore-preview": {
@@ -11265,19 +11265,19 @@
             "images": []
         },
         "dotnet-runtime-3-1": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-3.1-runtime.3.1.32.png",
             "images": []
         },
         "dotnet-runtime-5": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-runtime.5.0.17.png",
             "images": []
         },
         "dotnet-runtime-6": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-runtime.6.0.24.png",
             "images": []
         },
         "dotnet-runtime-7": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-runtime.7.0.13.png",
             "images": []
         },
         "dotnet-runtime-preview": {
@@ -11293,19 +11293,19 @@
             "images": []
         },
         "dotnet-sdk-3-1": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-3.1-sdk.3.1.426.png",
             "images": []
         },
         "dotnet-sdk-5": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-sdk.5.0.408.png",
             "images": []
         },
         "dotnet-sdk-6": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-sdk.6.0.416.png",
             "images": []
         },
         "dotnet-sdk-7": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-sdk.7.0.403.png",
             "images": []
         },
         "dotnet-sdk-preview": {
