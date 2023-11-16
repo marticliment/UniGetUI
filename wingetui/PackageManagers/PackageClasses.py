@@ -63,14 +63,16 @@ class Package():
     def getPackageIconUrl(self) -> str:
         try:
             iconId = self.getIconId()
-            if "Net" in self.Source:
-                iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
-            elif "Chocolatey" in self.Source:
-                iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
-            else:
-                try:
-                    iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
-                except KeyError:
+            try:
+                iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                if iconUrl.strip() == "":
+                    raise KeyError("Key found but content was empty")
+            except KeyError:
+                if "Net" in self.Source:
+                    iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
+                elif "Chocolatey" in self.Source:
+                    iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
+                else:
                     iconUrl = ""
         except Exception as e:
             report(e)
