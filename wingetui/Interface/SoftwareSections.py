@@ -1040,6 +1040,10 @@ class UpdateSoftwareSection(SoftwareSection):
         options.SkipHashCheck = skiphash
         self.addInstallation(PackageUpdaterWidget(package, options))
 
+    def updatePackageForGivenId(self, id: str):
+        package: Package = self.IdPackageReference[id]
+        self.updatePackageItem(self.PackageItemReference[package])
+
     def reloadSources(self, asyncroutine: bool = False):
         print("🔵 Reloading sources...")
         try:

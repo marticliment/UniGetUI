@@ -19,6 +19,7 @@ from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
 from globals import CurrentSessionToken
+from tools import *
 import globals
 
 globalsignal: Signal = None
@@ -73,6 +74,8 @@ def v2_is_running():
 @app.route('/widgets/attempt_connection', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_attempt_connection():
     try:
+        if "token" not in request.args.keys():
+            abort(422, "Required parameter(s): token")
         if request.method in ('POST', 'GET') and request.args["token"] == CurrentSessionToken:
             response = jsonify(status="success")
         else:
@@ -85,6 +88,8 @@ def widgets_attempt_connection():
 @app.route('/widgets/get_updates', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_get_updates():
     try:
+        if "token" not in request.args.keys():
+            abort(422, "Required parameter(s): token")
         if request.args["token"] != CurrentSessionToken:
             abort(401, "Invalid session token")
         else:
@@ -101,6 +106,8 @@ def widgets_get_updates():
 @app.route('/widgets/open_wingetui', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_open_wingetui():
     try:
+        if "token" not in request.args.keys():
+            abort(422, "Required parameter(s): token")
         if request.args["token"] != CurrentSessionToken:
             abort(401, "Invalid session token")
         else:
@@ -117,6 +124,8 @@ def widgets_open_wingetui():
 @app.route('/widgets/view_on_wingetui', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_view_on_wingetui():
     try:
+        if "token" not in request.args.keys():
+            abort(422, "Required parameter(s): token")
         if request.args["token"] != CurrentSessionToken:
             abort(401, "Invalid session token")
         else:
@@ -124,6 +133,25 @@ def widgets_view_on_wingetui():
                 globals.mainWindow.callInMain.emit(lambda: globals.mainWindow.showWindow(1))
             except AttributeError:
                 print("🔴 Could not show WingetUI (called from Widgets API)")
+            response = jsonify(status="success")
+            return response
+    except ValueError:
+        return response
+
+
+@app.route('/widgets/update_package', methods=['POST', 'GET', 'OPTIONS'])
+def widgets_update_app():
+    try:
+        if "token" not in request.args.keys() or "id" not in request.args.keys():
+            abort(422, "Required parameter(s): token, id")
+        if request.args["token"] != CurrentSessionToken:
+            abort(401, "Invalid session token")
+        else:
+            try:
+                globals.mainWindow.callInMain.emit(lambda id=request.args["id"]: globals.updates.updatePackageForGivenId(id))
+            except Exception as e:
+                report(e)
+                abort(500, "Internal server error: " + str(e))
             response = jsonify(status="success")
             return response
     except ValueError:
