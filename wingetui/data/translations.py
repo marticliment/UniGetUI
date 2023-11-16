@@ -15,6 +15,7 @@ untranslatedPercentage = {
   "ko": "94%",
   "nb": "91%",
   "pl": "98%",
+  "ro": "12%",
   "ru": "94%",
   "si": "10%",
   "sl": "94%",
@@ -320,6 +321,7 @@ languageCredits = {
       "link": "https://github.com/ppvnf"
     }
   ],
+  "ro": [],
   "ru": [
     {
       "name": "bropines",
