@@ -23,6 +23,7 @@ namespace WingetUIWidgetProvider
         private bool was_connected = false;
 
         public WingetUIConnector() {
+            Connect(null);
 
         }
 
@@ -33,8 +34,7 @@ namespace WingetUIWidgetProvider
 
         async public void Connect(CompactWidgetInfo widget)
         {
-            ConnectionEventArgs args = new ConnectionEventArgs();
-            args.widget = widget;
+            ConnectionEventArgs args = new ConnectionEventArgs(widget);
             try
             {
                 if (!was_connected)
@@ -230,6 +230,11 @@ namespace WingetUIWidgetProvider
 
     public class ConnectionEventArgs : EventArgs
     {
+        public ConnectionEventArgs(CompactWidgetInfo widget)
+        {
+            this.widget = widget;
+        }
+
         public bool Succeeded = true;
         public CompactWidgetInfo widget { get; set; }
     }
