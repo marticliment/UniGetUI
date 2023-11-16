@@ -60,18 +60,30 @@ class Package():
             iconId = iconId.split("/")[-1]
         return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
 
+    def getPackageIconUrl(self) -> str:
+        try:
+            iconId = self.getIconId()
+            if "Net" in self.Source:
+                iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
+            elif "Chocolatey" in self.Source:
+                iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
+            else:
+                try:
+                    iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                except KeyError:
+                    iconUrl = ""
+        except Exception as e:
+            report(e)
+            iconUrl = ""
+        return iconUrl
+
     def getPackageIcon(self) -> str:
         try:
             iconId = self.getIconId()
             iconPath = os.path.join(os.path.expanduser(
                 "~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconPath):
-                if "Net" in self.Source:
-                    iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
-                elif "Chocolatey" in self.Source:
-                    iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
-                else:
-                    iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                iconUrl = self.getPackageIconUrl()
                 print("🔵 Found icon: ", iconUrl)
                 if iconUrl:
                     iconData = urlopen(iconUrl).read()

@@ -112,7 +112,7 @@ namespace WingetUIWidgetProvider
             Console.WriteLine("Showing available updates...");
             updateOptions.Template = Templates.UpdatesTemplate;
             string packages = "";
-            string[,] upgradablePackages = new string[widget.AvailableUpdates.Length, 3];
+            Package[] upgradablePackages = new Package[widget.AvailableUpdates.Length];
             int nullPackages = 0;
             for (int i = 0; i < widget.AvailableUpdates.Length; i++)
             {
@@ -122,9 +122,7 @@ namespace WingetUIWidgetProvider
                 }
                 else
                 {
-                    upgradablePackages[i, 0] = widget.AvailableUpdates[i].Name;
-                    upgradablePackages[i, 1] = widget.AvailableUpdates[i].Version;
-                    upgradablePackages[i, 2] = widget.AvailableUpdates[i].NewVersion;
+                    upgradablePackages[i] = widget.AvailableUpdates[i];
                     if (widget.size == WidgetSize.Medium && i == (3 + nullPackages) && widget.AvailableUpdates.Length > (3 + nullPackages))
                     {
                         i++;
@@ -222,6 +220,7 @@ namespace WingetUIWidgetProvider
                         {
                             int index = int.Parse(verb.Replace(Verbs.UpdatePackage, ""));
                             Console.WriteLine(index);
+                            wingetui.UpdatePackage(localWidgetInfo.AvailableUpdates[index]);
                             localWidgetInfo.AvailableUpdates = localWidgetInfo.AvailableUpdates.Where((val, idx) => idx != index).ToArray(); // Remove that widget from the current list
                             DrawUpdates(localWidgetInfo);
                         } else
