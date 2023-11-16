@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Chat;
 using Windows.Management.Deployment;
+using Windows.Security.Cryptography.Core;
 using Windows.Storage.Pickers;
 
 namespace WingetUIWidgetProvider
@@ -35,13 +36,9 @@ namespace WingetUIWidgetProvider
                 var widgetName = widgetContext.DefinitionId;
                 if (!RunningWidgets.ContainsKey(widgetId))
                 {
-                    CompactWidgetInfo runningWidgetInfo = new CompactWidgetInfo() { widgetId = widgetId, widgetName = widgetName };
+                    CompactWidgetInfo runningWidgetInfo = new CompactWidgetInfo(widgetId, widgetName);
                     try
                     {
-                        // If we had any save state (in this case we might have some state saved for Counting widget)
-                        // convert string to required type if needed.
-                        //int count = Convert.ToInt32(customState.ToString());
-                        //runningWidgetInfo.customState = count;
                         runningWidgetInfo.isActive = true;
                         runningWidgetInfo.size = widgetInfo.WidgetContext.Size;
                         runningWidgetInfo.customState = 0;
@@ -93,67 +90,78 @@ namespace WingetUIWidgetProvider
             {
                 updateOptions.Data = Templates.GetData_ErrorOccurred("UPDATE_CHECK_FAILED");
                 Console.WriteLine("Could not check for updates");
+                WidgetManager.GetDefault().UpdateWidget(updateOptions);
             }
             else if (e.Count == 0)
             {
                 updateOptions.Data = Templates.GetData_NoUpdatesFound();
                 Console.WriteLine("No updates were found");
+                WidgetManager.GetDefault().UpdateWidget(updateOptions);
             }
             else
             {
-                Console.WriteLine("Showing available updates...");
-                updateOptions.Template = Templates.UpdatesTemplate;
-                string packages = "";
-                string[,] upgradablePackages = new string[e.Count, 3];
-                int nullPackages = 0;
-                for (int i = 0; i < e.Count; i++)
+                e.widget.AvailableUpdates = e.Updates;
+                DrawUpdates(e.widget);
+            }
+        }
+
+        private void DrawUpdates(CompactWidgetInfo widget)
+        { 
+            WidgetUpdateRequestOptions updateOptions = new WidgetUpdateRequestOptions(widget.widgetId);
+            
+            Console.WriteLine("Showing available updates...");
+            updateOptions.Template = Templates.UpdatesTemplate;
+            string packages = "";
+            string[,] upgradablePackages = new string[widget.AvailableUpdates.Length, 3];
+            int nullPackages = 0;
+            for (int i = 0; i < widget.AvailableUpdates.Length; i++)
+            {
+                if (widget.AvailableUpdates[i].Name == "")
                 {
-                    if (e.Updates[i].Name == "")
-                    {
-                        nullPackages += 1;
-                    }
-                    else
-                    {
-                        upgradablePackages[i, 0] = e.Updates[i].Name;
-                        upgradablePackages[i, 1] = e.Updates[i].Version;
-                        upgradablePackages[i, 2] = e.Updates[i].NewVersion;
-                        if (e.widget.size == WidgetSize.Medium && i == (3 + nullPackages) && e.Count > (3 + nullPackages))
-                        {
-                            i++;
-                            packages += (e.Count - i).ToString() + " more packages can also be upgraded";
-                            i = e.Count;
-                        }
-                        else if (e.widget.size == WidgetSize.Large && i == (7 + nullPackages) && e.Count > (7 + nullPackages) && e.Count > 7)
-                        {
-                            i++;
-                            packages += (e.Count - i).ToString() + " more packages can also be upgraded";
-                            i = e.Count;
-                        }
-                    }
+                    nullPackages += 1;
                 }
-
-                Console.WriteLine(e.Count);
-                Console.WriteLine(nullPackages);
-
-                if ((e.Count - nullPackages) == 0)
+                else
                 {
-                    updateOptions.Template = Templates.BaseTemplate;
-                    updateOptions.Data = Templates.GetData_NoUpdatesFound();
-                } else {
-                    Console.WriteLine(updateOptions.Template);
-                    Console.WriteLine(updateOptions.Data);
-                    updateOptions.Data = Templates.GetData_UpdatesList(e.Count, upgradablePackages);
+                    upgradablePackages[i, 0] = widget.AvailableUpdates[i].Name;
+                    upgradablePackages[i, 1] = widget.AvailableUpdates[i].Version;
+                    upgradablePackages[i, 2] = widget.AvailableUpdates[i].NewVersion;
+                    if (widget.size == WidgetSize.Medium && i == (3 + nullPackages) && widget.AvailableUpdates.Length > (3 + nullPackages))
+                    {
+                        i++;
+                        packages += (widget.AvailableUpdates.Length - i).ToString() + " more packages can also be upgraded";
+                        i = widget.AvailableUpdates.Length;
+                    }
+                    else if (widget.size == WidgetSize.Large && i == (7 + nullPackages) && widget.AvailableUpdates.Length > (7 + nullPackages) && widget.AvailableUpdates.Length > 7)
+                    {
+                        i++;
+                        packages += (widget.AvailableUpdates.Length - i).ToString() + " more packages can also be upgraded";
+                        i = widget.AvailableUpdates.Length;
+                    }
                 }
             }
+
+            Console.WriteLine(widget.AvailableUpdates.Length);
+            Console.WriteLine(nullPackages);
+
+            if ((widget.AvailableUpdates.Length - nullPackages) == 0)
+            {
+                updateOptions.Template = Templates.BaseTemplate;
+                updateOptions.Data = Templates.GetData_NoUpdatesFound();
+            } else {
+                Console.WriteLine(updateOptions.Template);
+                Console.WriteLine(updateOptions.Data);
+                updateOptions.Data = Templates.GetData_UpdatesList(widget.AvailableUpdates.Length, upgradablePackages);
+            }
+
             Console.WriteLine(updateOptions.Data);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 
         public void CreateWidget(WidgetContext widgetContext)
         {
-            var widgetId = widgetContext.Id; // To save RPC calls
+            var widgetId = widgetContext.Id;
             var widgetName = widgetContext.DefinitionId;
-            CompactWidgetInfo runningWidgetInfo = new CompactWidgetInfo() { widgetId = widgetId, widgetName = widgetName };
+            CompactWidgetInfo runningWidgetInfo = new CompactWidgetInfo(widgetId, widgetName);
             RunningWidgets[widgetId] = runningWidgetInfo;
             StartLoadingRoutine(runningWidgetInfo);
         }
@@ -203,11 +211,25 @@ namespace WingetUIWidgetProvider
 
                     case (Verbs.UpdateAll):
                         localWidgetInfo.customState = 1;
+                        wingetui.UpdateAllPackages();
                         updateOptions.Data = Templates.GetData_UpdatesInCourse();
                         updateOptions.Template = Templates.BaseTemplate;
                         WidgetManager.GetDefault().UpdateWidget(updateOptions);
                         break;
 
+                    default:
+                        if (verb.Contains(Verbs.UpdatePackage))
+                        {
+                            int index = int.Parse(verb.Replace(Verbs.UpdatePackage, ""));
+                            Console.WriteLine(index);
+                            localWidgetInfo.AvailableUpdates = localWidgetInfo.AvailableUpdates.Where((val, idx) => idx != index).ToArray();
+                            DrawUpdates(localWidgetInfo);
+                        } else
+                        {
+                            Console.WriteLine("INVALID VERB " + verb);
+                            StartLoadingRoutine(localWidgetInfo);
+                        }
+                        break;
 
                 }
             }
@@ -252,11 +274,18 @@ namespace WingetUIWidgetProvider
 
     public class CompactWidgetInfo
     {
+        public CompactWidgetInfo(string widgetId, string widgetName) {
+            AvailableUpdates = new Package[0];
+            this.widgetId = widgetId;
+            this.widgetName = widgetName;
+        }
+
         public string widgetId { get; set; }
         public string widgetName { get; set; }
         public WidgetSize size { get; set; }
         public int customState = 0;
         public bool isActive = false;
+        public Package[] AvailableUpdates { get; set; }
 
     }
 

@@ -15,6 +15,7 @@ namespace WingetUIWidgetProvider
         public const string OpenWingetUI = "openwingetui";
         public const string ViewUpdatesOnWingetUI = "viewupdatesonwingetui";
         public const string UpdateAll = "updateall";
+        public const string UpdatePackage = "updateindex";
     }
 
     public class Templates
@@ -246,7 +247,7 @@ namespace WingetUIWidgetProvider
                                                 {
                                                     ""type"": ""Action.Execute"",
                                                     ""title"": ""↻"",
-                                                    ""verb"": ""Update"",
+                                                    ""verb"": """ + Verbs.UpdatePackage + index.ToString() + @""",
                                                     ""data"": {},
                                                     ""tooltip"": ""Update this package""
                                                 }
