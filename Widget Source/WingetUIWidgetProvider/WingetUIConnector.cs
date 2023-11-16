@@ -23,8 +23,6 @@ namespace WingetUIWidgetProvider
         private bool was_connected = false;
 
         public WingetUIConnector() {
-            Connect(null);
-
         }
 
         public void ResetConnection()

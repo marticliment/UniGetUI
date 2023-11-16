@@ -10,7 +10,7 @@ if __name__ == "__main__":
     import os
     import sys
     import __init__
-    sys.exit(0)
+    sys.exit(0)  # This code is here to allow vscode syntax highlighting to find the classes required 
     from wingetui.PackageManagers.PackageClasses import UpgradablePackage
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 

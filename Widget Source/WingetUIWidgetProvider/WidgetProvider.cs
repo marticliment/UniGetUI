@@ -222,7 +222,7 @@ namespace WingetUIWidgetProvider
                         {
                             int index = int.Parse(verb.Replace(Verbs.UpdatePackage, ""));
                             Console.WriteLine(index);
-                            localWidgetInfo.AvailableUpdates = localWidgetInfo.AvailableUpdates.Where((val, idx) => idx != index).ToArray();
+                            localWidgetInfo.AvailableUpdates = localWidgetInfo.AvailableUpdates.Where((val, idx) => idx != index).ToArray(); // Remove that widget from the current list
                             DrawUpdates(localWidgetInfo);
                         } else
                         {
