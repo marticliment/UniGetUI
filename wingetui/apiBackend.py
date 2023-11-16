@@ -158,6 +158,25 @@ def widgets_update_app():
         return response
 
 
+@app.route('/widgets/update_all_packages', methods=['POST', 'GET', 'OPTIONS'])
+def widgets_update_all_app():
+    try:
+        if "token" not in request.args.keys():
+            abort(422, "Required parameter(s): token")
+        if request.args["token"] != CurrentSessionToken:
+            abort(401, "Invalid session token")
+        else:
+            try:
+                globals.mainWindow.callInMain.emit(globals.updates.updateAllPackageItems)
+            except Exception as e:
+                report(e)
+                abort(500, "Internal server error: " + str(e))
+            response = jsonify(status="success")
+            return response
+    except ValueError:
+        return response
+
+
 def runBackendApi(signal: Signal):
     global globalsignal
     globalsignal = signal
