@@ -21,6 +21,8 @@ from PySide6.QtCore import Signal
 from globals import CurrentSessionToken
 from tools import *
 import globals
+from waitress import serve
+
 
 globalsignal: Signal = None
 availableUpdates: list['UpgradablePackageItem'] = []
@@ -182,7 +184,7 @@ def runBackendApi(signal: Signal):
     globalsignal = signal
 
     print("🔵 Starting API with random session authentication token", CurrentSessionToken)
-    app.run(host="localhost", port=7058)
+    serve(app, host="localhost", port=7058)
 
 
 if __name__ == "__main__":

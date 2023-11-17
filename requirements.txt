@@ -6,3 +6,4 @@ Flask>=2.3.3
 flask-cors>=4.0.0
 windows_toasts>=1.0.0
 pythonnet>=3.0.2
+waitress>=2.1.2
