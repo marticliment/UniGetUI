@@ -137,21 +137,16 @@ namespace WingetUIWidgetProvider
                     }
                 }
             }
-
-            Console.WriteLine(widget.AvailableUpdates.Length);
-            Console.WriteLine(nullPackages);
-
             if ((widget.AvailableUpdates.Length - nullPackages) == 0)
             {
                 updateOptions.Template = Templates.BaseTemplate;
                 updateOptions.Data = Templates.GetData_NoUpdatesFound();
             } else {
-                Console.WriteLine(updateOptions.Template);
-                Console.WriteLine(updateOptions.Data);
                 updateOptions.Data = Templates.GetData_UpdatesList(widget.AvailableUpdates.Length, upgradablePackages);
             }
-
-            Console.WriteLine(updateOptions.Data);
+            Console.WriteLine(widget.widgetName);
+            Console.WriteLine(updateOptions.Template.Replace("\n", ""));
+            Console.WriteLine(updateOptions.Data.Replace("\n", ""));
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 

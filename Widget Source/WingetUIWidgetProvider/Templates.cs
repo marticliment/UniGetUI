@@ -18,6 +18,17 @@ namespace WingetUIWidgetProvider
         public const string UpdatePackage = "updateindex";
     }
 
+    public class Widgets
+    {
+        public const string All = "updates_all";
+        public const string Winget = "updates_winget";
+        public const string Scoop = "updates_scoop";
+        public const string Chocolatey = "updates_chocolatey";
+        public const string Pip = "updates_pip";
+        public const string Npm = "updates_npm";
+        public const string Dotnet = "updates_dotnet";
+    }
+
     public class Templates
     {
 

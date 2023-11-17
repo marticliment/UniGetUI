@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingetUIWidgetProvider", "WingetUIWidgetProvider.csproj", "{D8495D3C-3169-4A08-B0C4-F5EEE5117C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingetUIWidgetProvider", "WingetUIWidgetProvider.csproj", "{D8495D3C-3169-4A08-B0C4-F5EEE5117C0E}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "WingetUIWidgetProviderPackage", "..\WingetUIWidgetProviderPackage\WingetUIWidgetProviderPackage.wapproj", "{0CB7BF44-2619-4597-82C4-75F513345EBA}"
 EndProject

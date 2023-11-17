@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -71,6 +72,35 @@ namespace WingetUIWidgetProvider
             UpdatesCheckFinishedEventArgs args = new UpdatesCheckFinishedEventArgs(widget);
             try
             {
+                string AllowedSource = "";
+
+                switch (widget.widgetName)
+                {
+                    case (Widgets.Winget):
+                        AllowedSource = "Winget";
+                        break;
+
+                    case (Widgets.Scoop):
+                        AllowedSource = "Scoop";
+                        break;
+
+                    case (Widgets.Chocolatey):
+                        AllowedSource = "Chocolatey";
+                        break;
+
+                    case (Widgets.Dotnet):
+                        AllowedSource = ".NET Tool";
+                        break;
+
+                    case (Widgets.Npm):
+                        AllowedSource = "Npm";
+                        break;
+
+                    case (Widgets.Pip):
+                        AllowedSource = "Pip";
+                        break;
+                }
+
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("http://localhost:7058//");
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -86,12 +116,22 @@ namespace WingetUIWidgetProvider
                 string[] packageStrings = purifiedString.Split("&&");
                 int updateCount = packageStrings.Length;
 
-                Package[] updates = new Package[updateCount];
+                Package[] temp_updates = new Package[updateCount];
+
+                int skippedPackages = 0;
                 
                 for(int i = 0; i < updateCount; i++)
                 {
-                    updates[i] = new Package(packageStrings[i]);
+                    Package package = new Package(packageStrings[i]);
+                    if (AllowedSource == "" || AllowedSource == package.ManagerName)
+                        temp_updates[i - skippedPackages] = package;
+                    else
+                        skippedPackages++;
                 }
+
+                Package[] updates = new Package[updateCount - skippedPackages];
+                for(int i = 0;i < updateCount - skippedPackages; i++)
+                    updates[i] = temp_updates[i];
 
                 args.Updates = updates;
                 args.Count = updateCount;
