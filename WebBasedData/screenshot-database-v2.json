@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7453,
-        "packages_with_icon": 7453,
+        "done": 7454,
+        "packages_with_icon": 7454,
         "packages_with_screenshot": 514,
         "total_screenshots": 1646
     },
@@ -14107,7 +14107,7 @@
             "images": []
         },
         "filezilla": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/filezilla.server.1.6.7.png",
             "images": []
         },
         "filezilla-server": {
