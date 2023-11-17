@@ -199,13 +199,16 @@ namespace WingetUIWidgetProvider
                                     ""items"": [
                                         {
                                             ""type"": ""Image"",
-                                            ""url"": ""https://marticliment.com/resources/package_white.png"",
-                                            ""horizontalAlignment"": ""Center""
+                                            ""url"": ""${Icon"+index.ToString()+ @"}"",
+                                            ""horizontalAlignment"": ""Center"",
+                                            ""width"": ""24px"",
+                                            ""spacing"": ""Padding""
                                         }
                                     ],
                                     ""backgroundImage"": {
                                         ""verticalAlignment"": ""Center""
-                                    }
+                                    },
+                                    ""verticalContentAlignment"": ""Center""
                                 },
                                 {
                                     ""type"": ""TableCell"",
@@ -215,7 +218,7 @@ namespace WingetUIWidgetProvider
                                             ""items"": [
                                                 {
                                                     ""type"": ""TextBlock"",
-                                                    ""text"": ""${PackageName"+index.ToString()+ @"}"",
+                                                    ""text"": ""${PackageName" + index.ToString()+ @"}"",
                                                     ""wrap"": false,
                                                     ""spacing"": ""None"",
                                                     ""fontType"": ""Default"",
@@ -264,22 +267,23 @@ namespace WingetUIWidgetProvider
             return package;
         }
 
-        public static string GetData_UpdatesList(int count, string[,] upgradablePackages)
+        public static string GetData_UpdatesList(int count, Package[] upgradablePackages)
         {
             string data = @"
                 { 
                     ""UpdatesList"": true,  
                     ""count"": """ + count.ToString() + @"""";
             int maxPos = 0;
-            for(int i = 0; i<upgradablePackages.GetLength(0); i++)
+            for(int i = 0; i<upgradablePackages.Length; i++)
             {
-                if (upgradablePackages[i,0] != null)
+                if (upgradablePackages[i] != null)
                 {
                     data += @",
                         ""Package"+i.ToString()+ @"Visisble"": true,
-                        ""PackageName"+i.ToString()+@""": """ + upgradablePackages[i, 0] + @""",
-                        ""Version"+i.ToString()+@""": """ + upgradablePackages[i, 1] + @""",
-                        ""NewVersion"+i.ToString()+@""": """ + upgradablePackages[i, 2] + @"""";
+                        ""PackageName"+i.ToString()+@""": """ + upgradablePackages[i].Name + @""",
+                        ""Version"+i.ToString()+@""": """ + upgradablePackages[i].Version + @""",
+                        ""Icon"+i.ToString()+@""": """ + upgradablePackages[i].Icon + @""",
+                        ""NewVersion"+i.ToString()+@""": """ + upgradablePackages[i].NewVersion + @"""";
                     maxPos = i;
                 }
             }

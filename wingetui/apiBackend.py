@@ -10,7 +10,7 @@ if __name__ == "__main__":
     import os
     import sys
     import __init__
-    sys.exit(0)  # This code is here to allow vscode syntax highlighting to find the classes required 
+    sys.exit(0)  # This code is here to allow vscode syntax highlighting to find the classes required
     from wingetui.PackageManagers.PackageClasses import UpgradablePackage
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 
@@ -98,7 +98,7 @@ def widgets_get_updates():
             packages = ""
             for packageItem in availableUpdates:
                 packageItem: UpgradablePackageItem
-                packages += f"{packageItem.Package.Name.replace('|', '-')}|{packageItem.Package.Id}|{packageItem.Package.Version}|{packageItem.Package.NewVersion}|{packageItem.Package.Source}|{packageItem.Package.PackageManager.NAME}||"
+                packages += f"{packageItem.Package.Name.replace('|', '-')}|{packageItem.Package.Id}|{packageItem.Package.Version}|{packageItem.Package.NewVersion}|{packageItem.Package.Source}|{packageItem.Package.PackageManager.NAME}|{packageItem.Package.getPackageIconUrl()}&&"
             response = jsonify(status="success", packages=packages[:-2])
             return response
     except ValueError:

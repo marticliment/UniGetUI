@@ -83,7 +83,7 @@ namespace WingetUIWidgetProvider
                 string purifiedString = outputString.Replace("\",\"status\":\"success\"}", "").Replace("{\"packages\":\"", "").Replace("\n", "").Trim();
 
 
-                string[] packageStrings = purifiedString.Split("||");
+                string[] packageStrings = purifiedString.Split("&&");
                 int updateCount = packageStrings.Length;
 
                 Package[] updates = new Package[updateCount];
@@ -142,7 +142,7 @@ namespace WingetUIWidgetProvider
             }
         }
 
-        async public void UpdatePackageFromId(string id)
+        async public void UpdatePackage(Package package)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace WingetUIWidgetProvider
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                await client.GetAsync("/widgets/update_package?token=" + SessionToken + "&id=" + id);
+                await client.GetAsync("/widgets/update_package?token=" + SessionToken + "&id=" + package.Id);
             }
             catch (Exception ex)
             {
@@ -185,6 +185,7 @@ namespace WingetUIWidgetProvider
         public string NewVersion{ get; set; }
         public string Source { get; set; }
         public string ManagerName { get; set; }
+        public string Icon {  get; set; }
         public bool isValid = true;
 
         public Package(string packageString)
@@ -198,6 +199,10 @@ namespace WingetUIWidgetProvider
                 NewVersion = packageParts[3];
                 Source = packageParts[4];
                 ManagerName = packageParts[5];
+                if (packageParts[6] != "")
+                    Icon = packageParts[6];
+                else
+                    Icon = "https://marticliment.com/resources/package_white.png";
             } catch
             {
                 isValid = false;
@@ -207,6 +212,7 @@ namespace WingetUIWidgetProvider
                 NewVersion = "";
                 Source = "";
                 ManagerName = "";
+                Icon = "https://marticliment.com/resources/package_white.png";
                 Console.WriteLine("Can't construct package, given packageString=" + packageString);
             }
         }
