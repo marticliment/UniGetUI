@@ -68,14 +68,14 @@
 								</TrustedPackageFamilyNames>
 
 								<Definitions>
-									<Definition Id="Updates_Widget"
-										DisplayName="WingetUI"
-										Description="Available updates found by WingetUI"
-										AllowMultiple="true">
+
+									
+									
+									<Definition Id="updates_all"
+											DisplayName="Package updates"
+											Description="Available updates found by WingetUI"
+											AllowMultiple="true">
 										<Capabilities>
-											<Capability>
-												<Size Name="small" />
-											</Capability>
 											<Capability>
 												<Size Name="medium" />
 											</Capability>
@@ -87,14 +87,192 @@
 											<Icons>
 												<Icon Path="Images\icon.png" />
 											</Icons>
-											<Screenshots>
-												<Screenshot Path="ProviderAssets\Weather_Screenshot.png" DisplayAltText="For accessibility" />
-											</Screenshots>
-											<!-- DarkMode and LightMode are optional -->
-											<DarkMode />
-											<LightMode />
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\all_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\all_light.png" />
+												</Screenshots>
+											</LightMode>
 										</ThemeResources>
 									</Definition>
+
+									<Definition Id="updates_winget"
+										DisplayName="Winget updates"
+										Description="Available Winget updates found by WingetUI"
+										AllowMultiple="true">
+										<Capabilities>
+											<Capability>
+												<Size Name="medium" />
+											</Capability>
+											<Capability>
+												<Size Name="large" />
+											</Capability>
+										</Capabilities>
+										<ThemeResources>
+											<Icons>
+												<Icon Path="Images\winget_color.png" />
+											</Icons>
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\winget_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\winget_light.png" />
+												</Screenshots>
+											</LightMode>
+										</ThemeResources>
+									</Definition>
+
+									<Definition Id="updates_chocolatey"
+										DisplayName="Chocolatey updates"
+										Description="Available Chocolatey updates found by WingetUI"
+										AllowMultiple="true">
+										<Capabilities>
+											<Capability>
+												<Size Name="medium" />
+											</Capability>
+											<Capability>
+												<Size Name="large" />
+											</Capability>
+										</Capabilities>
+										<ThemeResources>
+											<Icons>
+												<Icon Path="Images\choco_color.png" />
+											</Icons>
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\choco_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\choco_light.png" />
+												</Screenshots>
+											</LightMode>
+										</ThemeResources>
+									</Definition>
+
+									<Definition Id="updates_scoop"
+											DisplayName="Scoop updates"
+											Description="Available Scoop updates found by WingetUI"
+											AllowMultiple="true">
+										<Capabilities>
+											<Capability>
+												<Size Name="medium" />
+											</Capability>
+											<Capability>
+												<Size Name="large" />
+											</Capability>
+										</Capabilities>
+										<ThemeResources>
+											<Icons>
+												<Icon Path="Images\scoop_color.png" />
+											</Icons>
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\scoop_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\scoop_light.png" />
+												</Screenshots>
+											</LightMode>
+										</ThemeResources>
+									</Definition>
+
+									<Definition Id="updates_pip"
+										   DisplayName="Pip updates"
+										   Description="Available Pip updates found by WingetUI"
+										   AllowMultiple="true">
+										<Capabilities>
+											<Capability>
+												<Size Name="medium" />
+											</Capability>
+											<Capability>
+												<Size Name="large" />
+											</Capability>
+										</Capabilities>
+										<ThemeResources>
+											<Icons>
+												<Icon Path="Images\pip_color.png" />
+											</Icons>
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\pip_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\pip_light.png" />
+												</Screenshots>
+											</LightMode>
+										</ThemeResources>
+									</Definition>
+									<Definition Id="updates_npm"
+										   DisplayName="NPM Updates"
+										   Description="Available NPM updates found by WingetUI"
+										   AllowMultiple="true">
+										<Capabilities>
+											<Capability>
+												<Size Name="medium" />
+											</Capability>
+											<Capability>
+												<Size Name="large" />
+											</Capability>
+										</Capabilities>
+										<ThemeResources>
+											<Icons>
+												<Icon Path="Images\node_color.png" />
+											</Icons>
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\npm_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\npm_light.png" />
+												</Screenshots>
+											</LightMode>
+										</ThemeResources>
+									</Definition>
+									<Definition Id="updates_dotnet"
+										   DisplayName=".NET Tool updates"
+										   Description="Available .NET Tool updates found by WingetUI"
+										   AllowMultiple="true">
+										<Capabilities>
+											<Capability>
+												<Size Name="medium" />
+											</Capability>
+											<Capability>
+												<Size Name="large" />
+											</Capability>
+										</Capabilities>
+										<ThemeResources>
+											<Icons>
+												<Icon Path="Images\dotnet_color.png" />
+											</Icons>
+											<DarkMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\dotnet_dark.png" />
+												</Screenshots>
+											</DarkMode>
+											<LightMode>
+												<Screenshots>
+													<Screenshot Path="Images\WidgetCovers\dotnet_light.png" />
+												</Screenshots>
+											</LightMode>
+										</ThemeResources>
+									</Definition>
+
+
 								</Definitions>
 							</WidgetProvider>
 						</uap3:Properties>

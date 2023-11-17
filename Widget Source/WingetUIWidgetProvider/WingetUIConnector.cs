@@ -242,7 +242,7 @@ namespace WingetUIWidgetProvider
                 if (packageParts[6] != "")
                     Icon = packageParts[6];
                 else
-                    Icon = "https://marticliment.com/resources/package_white.png";
+                    Icon = "https://marticliment.com/resources/widgets/package_color.png";
             } catch
             {
                 isValid = false;
@@ -252,7 +252,7 @@ namespace WingetUIWidgetProvider
                 NewVersion = "";
                 Source = "";
                 ManagerName = "";
-                Icon = "https://marticliment.com/resources/package_white.png";
+                Icon = "https://marticliment.com/resources/widgets/package_color.png";
                 Console.WriteLine("Can't construct package, given packageString=" + packageString);
             }
         }

@@ -64,7 +64,12 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\choco_color.png" />
+    <Content Include="Images\dotnet_color.png" />
     <Content Include="Images\icon.png" />
+    <Content Include="Images\node_color.png" />
+    <Content Include="Images\pip_color.png" />
+    <Content Include="Images\scoop_color.png" />
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
     <Content Include="Images\Square150x150Logo.scale-200.png" />
@@ -72,6 +77,21 @@
     <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Images\StoreLogo.png" />
     <Content Include="Images\Wide310x150Logo.scale-200.png" />
+    <Content Include="Images\WidgetCovers\all_dark.png" />
+    <Content Include="Images\WidgetCovers\all_light.png" />
+    <Content Include="Images\WidgetCovers\choco_dark.png" />
+    <Content Include="Images\WidgetCovers\choco_light.png" />
+    <Content Include="Images\WidgetCovers\dotnet_dark.png" />
+    <Content Include="Images\WidgetCovers\dotnet_light.png" />
+    <Content Include="Images\WidgetCovers\npm_dark.png" />
+    <Content Include="Images\WidgetCovers\npm_light.png" />
+    <Content Include="Images\WidgetCovers\pip_dark.png" />
+    <Content Include="Images\WidgetCovers\pip_light.png" />
+    <Content Include="Images\WidgetCovers\scoop_dark.png" />
+    <Content Include="Images\WidgetCovers\scoop_light.png" />
+    <Content Include="Images\WidgetCovers\winget_dark.png" />
+    <Content Include="Images\WidgetCovers\winget_light.png" />
+    <Content Include="Images\winget_color.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WingetUIWidgetProvider\WingetUIWidgetProvider.csproj" />

@@ -250,7 +250,8 @@ namespace WingetUIWidgetProvider
                                                 }
                                             ]
                                         }
-                                    ]
+                                    ],
+                                    ""verticalContentAlignment"": ""Center""
                                 },
                                 {
                                     ""type"": ""TableCell"",
@@ -260,7 +261,7 @@ namespace WingetUIWidgetProvider
                                             ""actions"": [
                                                 {
                                                     ""type"": ""Action.Execute"",
-                                                    ""title"": ""↻"",
+                                                    ""title"": ""🡇"",
                                                     ""verb"": """ + Verbs.UpdatePackage + index.ToString() + @""",
                                                     ""data"": {},
                                                     ""tooltip"": ""Update this package""

@@ -145,8 +145,8 @@ namespace WingetUIWidgetProvider
                 updateOptions.Data = Templates.GetData_UpdatesList(widget.AvailableUpdates.Length, upgradablePackages);
             }
             Console.WriteLine(widget.widgetName);
-            Console.WriteLine(updateOptions.Template.Replace("\n", ""));
-            Console.WriteLine(updateOptions.Data.Replace("\n", ""));
+            Console.WriteLine(updateOptions.Template);
+            Console.WriteLine(updateOptions.Data);
             WidgetManager.GetDefault().UpdateWidget(updateOptions);
         }
 
