@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7441,
-        "packages_with_icon": 7441,
-        "packages_with_screenshot": 502,
-        "total_screenshots": 1631
+        "done": 7454,
+        "packages_with_icon": 7454,
+        "packages_with_screenshot": 516,
+        "total_screenshots": 1650
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -476,8 +476,10 @@
             ]
         },
         "absolute-uninstaller": {
-            "icon": "https://community.chocolatey.org/content/packageimages/absolute-uninstaller.5.3.1.47.png",
-            "images": []
+            "icon": "https://i.postimg.cc/qML9RYYM/Absolute-Uninstaller.png",
+            "images": [
+                "https://i.postimg.cc/GmvTGFF2/Absolute-Uninstaller-2.png"
+            ]
         },
         "abyssoverlay": {
             "icon": "https://user-images.githubusercontent.com/61895718/111565782-5ced2900-8772-11eb-9c43-c8801fc2a1a8.png",
@@ -992,28 +994,28 @@
         "adguard": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/4/48/AdGuard_Logo.png",
             "images": [
-                "https://adguard.com/img/social/og-main.png",
-                "https://cdn.adguard.com/public/Adguard/Common/adguard_home.gif",
-                "https://static.filehorse.com/screenshots/firewalls-and-security/adguard-screenshot-01.png",
-                "https://static.filehorse.com/screenshots/firewalls-and-security/adguard-screenshot-02.png"
+                "https://cdn.adguard.com/content/release_notes/ad_blocker/windows/v7.14/main_light_en.png",
+                "https://cdn.adguard.com/content/release_notes/ad_blocker/windows/v7.14/general_light_en.png"
             ]
         },
         "adguard-chrome": {
             "icon": "https://community.chocolatey.org/content/packageimages/adguard-chrome.3.0.13.png",
-            "images": []
+            "images": [
+                "https://cdn.adguard.com/public/Adguard/Common/adguard_extension_4_settings.png"
+            ]
         },
         "adguardhome": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/4/48/AdGuard_Logo.png",
             "images": [
-                "https://cdn.adtidy.org/public/Adguard/Blog/AGHome/dashboard.jpg"
+                "https://dashboard.snapcraft.io/site_media/appmedia/2020/04/agh1_Y8qX5Jf.png",
+                "https://dashboard.snapcraft.io/site_media/appmedia/2020/04/agh2_BF6Xfj2.png",
+                "https://dashboard.snapcraft.io/site_media/appmedia/2020/04/agh3_2Zqhv3A.png"
             ]
         },
         "adguardvpn": {
             "icon": "https://i.imgur.com/tvlrfxJ.png",
             "images": [
-                "https://ph-files.imgix.net/1d1c0f41-8752-4bcc-b469-93a569909b31.png",
-                "https://cdn.adguardvpn.com/website/adguard-vpn.com/products/win-mac.png",
-                "https://windows-cdn.softpedia.com/screenshots/AdGuard-VPN_1.png"
+                "https://cdn.adtidy.org/content/release_notes/vpn/windows/v2.0/main_screen_light_en.png"
             ]
         },
         "adif-master": {
@@ -3344,7 +3346,7 @@
             "images": []
         },
         "audacity": {
-            "icon": "https://www.audacityteam.org/wp-content/themes/wp_audacity/img/logo.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Audacity_Logo.svg/128px-Audacity_Logo.svg.png",
             "images": [
                 "https://www.audacityteam.org/wp-content/uploads/2017/12/Theme_Dark.png",
                 "https://www.audacityteam.org/wp-content/uploads/2020/10/01-Audacity-Rhythm-Track-and-mono-vocal-track-waveform-view-768x586.png",
@@ -5940,7 +5942,7 @@
             "images": []
         },
         "bulkrenameutility": {
-            "icon": "https://community.chocolatey.org/content/packageimages/bulkrenameutility.portable.3.1.0.0.png",
+            "icon": "https://i.postimg.cc/d3kQmLP3/bulk-rename-utility.png",
             "images": [
                 "https://www.bulkrenameutility.co.uk/assets/img-bru/mainscr.png",
                 "https://www.bulkrenameutility.co.uk/assets/img-bru/bru_main1.png",
@@ -9759,8 +9761,10 @@
             "images": []
         },
         "deepl": {
-            "icon": "https://community.chocolatey.org/content/packageimages/deepl.4.0.6052.png",
-            "images": []
+            "icon": "https://i.postimg.cc/FFkmhyn6/deepl-icon.png",
+            "images": [
+                "https://i.postimg.cc/nrmtTxDx/deepl-1.png"
+            ]
         },
         "deepstream": {
             "icon": "",
@@ -9979,11 +9983,11 @@
             "images": []
         },
         "desktopapp": {
-            "icon": "https://www.logolynx.com/images/logolynx/38/384353c7d320c8c409fd75fd9200037d.png",
+            "icon": "https://i.postimg.cc/ydcHyB9H/desktopapp-icon.png",
             "images": [
-                "https://i0.wp.com/blogs.autodesk.com/autocad/wp-content/uploads/sites/35/2020/04/DesktopApp-1_zfu9dz.png?resize=800%2C388&ssl=1",
-                "https://knowledge.autodesk.com/akn-aknsite-ckeditor-image-uploads/c3f89b07-9104-4b90-81a0-99df550dd393.PNG",
-                "https://www.mgfx.co.za/wp-content/uploads/2019/09/Autodesk-Desktop-App-1.Screenshot.jpg"
+                "https://i.postimg.cc/FK2vS1Yp/desktopapp-1.png",
+                "https://i.postimg.cc/QCqZvb0Y/desktopapp-2.png",
+                "https://i.postimg.cc/wMzdWPcs/desktopapp-3.png"
             ]
         },
         "desktopeditors": {
@@ -11181,19 +11185,19 @@
             "images": []
         },
         "dotnet-aspnetcore-3-1": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-aspnetruntime.3.1.32.png",
             "images": []
         },
         "dotnet-aspnetcore-5": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-aspnetruntime.5.0.17.png",
             "images": []
         },
         "dotnet-aspnetcore-6": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-aspnetruntime.6.0.24.png",
             "images": []
         },
         "dotnet-aspnetcore-7": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-aspnetruntime.7.0.13.png",
             "images": []
         },
         "dotnet-aspnetcore-preview": {
@@ -11261,19 +11265,19 @@
             "images": []
         },
         "dotnet-runtime-3-1": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-3.1-runtime.3.1.32.png",
             "images": []
         },
         "dotnet-runtime-5": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-runtime.5.0.17.png",
             "images": []
         },
         "dotnet-runtime-6": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-runtime.6.0.24.png",
             "images": []
         },
         "dotnet-runtime-7": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-runtime.7.0.13.png",
             "images": []
         },
         "dotnet-runtime-preview": {
@@ -11289,19 +11293,19 @@
             "images": []
         },
         "dotnet-sdk-3-1": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-3.1-sdk.3.1.426.png",
             "images": []
         },
         "dotnet-sdk-5": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-sdk.5.0.408.png",
             "images": []
         },
         "dotnet-sdk-6": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-sdk.6.0.416.png",
             "images": []
         },
         "dotnet-sdk-7": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-sdk.7.0.403.png",
             "images": []
         },
         "dotnet-sdk-preview": {
@@ -14103,7 +14107,7 @@
             "images": []
         },
         "filezilla": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/filezilla.server.1.6.7.png",
             "images": []
         },
         "filezilla-server": {
@@ -21526,8 +21530,10 @@
             "images": []
         },
         "kitty": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kitty.portable.0.67.0.0.png",
-            "images": []
+            "icon": "https://i.postimg.cc/NjSwt9n8/kitty-icon.png",
+            "images": [
+                "https://i.postimg.cc/bvnfwYX7/kitty-1.png"
+            ]
         },
         "kiwi-for-gmail": {
             "icon": "",
@@ -21590,8 +21596,12 @@
             "images": []
         },
         "kmymoney": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kmymoney.portable.4.8.2.png",
-            "images": []
+            "icon": "https://i.postimg.cc/BQbVh7Vt/kmymoney-icon.png",
+            "images": [
+                "https://i.postimg.cc/gk7B1yCs/kmymoney.png",
+                "https://i.postimg.cc/rm9PHBTR/kmm2.png",
+                "https://i.postimg.cc/44B0QRwr/kmm3.png"
+            ]
         },
         "knative": {
             "icon": "",
@@ -21727,8 +21737,10 @@
             "images": []
         },
         "kook": {
-            "icon": "",
-            "images": []
+            "icon": "https://saas.bk-cdn.com/1666170194529-KOOKLOGO.png",
+            "images": [
+                "https://saas.bk-cdn.com/t/901342ff-5949-41f1-b992-6101f871f04e/u/97b9cb94-fb1b-40f1-96fb-4d81eb1097e5/1656493066531/image.png"
+            ]
         },
         "kopano-ads-nightly": {
             "icon": "https://community.chocolatey.org/content/packageimages/kopano-ads-nightly.1.1.88.png",
@@ -21776,7 +21788,9 @@
         },
         "krita": {
             "icon": "https://i.imgur.com/ZIpIzyq.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/52xMNS7V/Krita.png"
+            ]
         },
         "kritashellextension": {
             "icon": "",
@@ -22801,12 +22815,16 @@
             "images": []
         },
         "lilypond": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lilypond.2.22.2.png",
-            "images": []
+            "icon": "https://i.postimg.cc/NFKh9R5j/lilypond-icon.png",
+            "images": [
+                "https://i.postimg.cc/3NVsgWvC/lilypond-large.png"
+            ]
         },
         "lilypond-unstable": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/NFKh9R5j/lilypond-icon.png",
+            "images": [
+                "https://i.postimg.cc/3NVsgWvC/lilypond-large.png"
+            ]
         },
         "limechat": {
             "icon": "https://community.chocolatey.org/content/packageimages/limechat.2.40.png",
@@ -23065,8 +23083,10 @@
             "images": []
         },
         "lmms": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lmms.1.2.2.20210505.png",
-            "images": []
+            "icon": "https://i.postimg.cc/T1NtbsBz/lmms-icon.png",
+            "images": [
+                "https://i.postimg.cc/RhZPNmp1/LMMS-1.png"
+            ]
         },
         "ln": {
             "icon": "",
@@ -33244,11 +33264,14 @@
             "images": []
         },
         "r-studio": {
-            "icon": "https://community.chocolatey.org/content/packageimages/R.Studio.2022.12.png",
-            "images": []
+            "icon": "https://i.postimg.cc/XJpRzw46/R-Studio-icon.png",
+            "images": [
+                "https://i.postimg.cc/vmqRhPRv/R-Studio-1.png",
+                "https://i.postimg.cc/d1pbPLVk/R-Studio-2.png"
+            ]
         },
         "r128gain": {
-            "icon": "https://community.chocolatey.org/content/packageimages/r128gain.1.0.6.png",
+            "icon": "",
             "images": []
         },
         "r6rc": {
@@ -33264,7 +33287,7 @@
             "images": []
         },
         "raccine": {
-            "icon": "https://community.chocolatey.org/content/packageimages/raccine.1.4.4.png",
+            "icon": "",
             "images": []
         },
         "rack": {
@@ -33694,8 +33717,10 @@
             "images": []
         },
         "realtek-hd-audio-driver": {
-            "icon": "https://community.chocolatey.org/content/packageimages/realtek-hd-audio-driver.2.82.0020200601.png",
-            "images": []
+            "icon": "https://i.postimg.cc/DzJZq4Hm/Realtek-icon.png",
+            "images": [
+                "https://i.postimg.cc/021P4H3k/Realtek-1.png"
+            ]
         },
         "realtemp": {
             "icon": "https://community.chocolatey.org/content/packageimages/realtemp.3.7.0.png",
@@ -34855,7 +34880,9 @@
         },
         "rsilauncher": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.imgur.com/uVnyK5g.png"
+            ]
         },
         "rss-builder": {
             "icon": "https://community.chocolatey.org/content/packageimages/rss-builder.2.1.8.png",
@@ -39160,7 +39187,7 @@
         "sumatrapdf": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sumatra_PDF_logo.png",
             "images": [
-                "https://www.sumatrapdfreader.org/docs/img/homepage.png"
+                "https://i.postimg.cc/0yfnDCYt/pdf.png"
             ]
         },
         "sumatrapdf-commandline": {
@@ -39667,7 +39694,11 @@
         },
         "tabby": {
             "icon": "https://images2.imgbox.com/2a/52/v1amOUOt_o.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/cLcimm5.png",
+                "https://i.imgur.com/f2pYj6e.png",
+                "https://i.imgur.com/vABjYDB.png"
+            ]
         },
         "tablacus": {
             "icon": "https://community.chocolatey.org/content/packageimages/tablacus.23.1.31.png",
@@ -47991,7 +48022,9 @@
         "xnviewmp": {
             "icon": "https://www.xnview.com/img/app-xnviewmp-512.png",
             "images": [
-                "https://i.postimg.cc/wTF1L2yv/xnviewmp-win-01.jpg"
+                "https://i.postimg.cc/ZnwYJxhm/xnviewmp-win-01.png",
+                "https://i.postimg.cc/C1qBmtD2/xnviewmp-win-02.png",
+                "https://i.postimg.cc/QCgBrTfk/xnviewmp-win-03.png"
             ]
         },
         "xolidosigndesktop": {

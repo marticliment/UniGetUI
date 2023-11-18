@@ -5,29 +5,25 @@ untranslatedPercentage = {
   "bg": "70%",
   "bn": "21%",
   "da": "30%",
-  "de": "96%",
   "el": "77%",
   "fa": "70%",
-  "he": "66%",
+  "he": "77%",
   "hi": "87%",
   "hr": "92%",
-  "hu": "99%",
   "id": "94%",
   "ja": "92%",
   "ko": "94%",
   "nb": "91%",
-  "nl": "99%",
   "pl": "98%",
+  "ro": "27%",
   "ru": "94%",
   "si": "10%",
   "sl": "94%",
-  "sr": "10%",
+  "sr": "99%",
   "tg": "22%",
-  "th": "99%",
   "tr": "91%",
   "ua": "90%",
-  "vi": "94%",
-  "zh_TW": "91%"
+  "vi": "94%"
 }
 
 languageCredits = {
@@ -183,7 +179,12 @@ languageCredits = {
       "link": "https://github.com/W1L7dev"
     }
   ],
-  "he": [],
+  "he": [
+    {
+      "name": "Oryan",
+      "link": ""
+    }
+  ],
   "hi": [
     {
       "name": "atharva_xoxo",
@@ -320,6 +321,7 @@ languageCredits = {
       "link": "https://github.com/ppvnf"
     }
   ],
+  "ro": [],
   "ru": [
     {
       "name": "bropines",
@@ -355,6 +357,10 @@ languageCredits = {
     }
   ],
   "sr": [
+    {
+      "name": "daVinci13",
+      "link": "https://github.com/daVinci13"
+    },
     {
       "name": "Nemanja Djurcic",
       "link": ""

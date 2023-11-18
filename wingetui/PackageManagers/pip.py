@@ -279,12 +279,13 @@ class PipPackageManager(DynamicPackageManager):
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
-                output += line + "\n"
+                widget.addInfoLine.emit((line, is_newline))
+                if is_newline:
+                    output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
@@ -308,11 +309,11 @@ class PipPackageManager(DynamicPackageManager):
         outputCode = 1
         output = ""
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 output += line + "\n"
         match p.returncode:
             case 0:
