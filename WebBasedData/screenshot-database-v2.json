@@ -3,8 +3,8 @@
         "total": 11697,
         "done": 7454,
         "packages_with_icon": 7454,
-        "packages_with_screenshot": 514,
-        "total_screenshots": 1646
+        "packages_with_screenshot": 516,
+        "total_screenshots": 1650
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -3346,7 +3346,7 @@
             "images": []
         },
         "audacity": {
-            "icon": "https://www.audacityteam.org/wp-content/themes/wp_audacity/img/logo.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Audacity_Logo.svg/128px-Audacity_Logo.svg.png",
             "images": [
                 "https://www.audacityteam.org/wp-content/uploads/2017/12/Theme_Dark.png",
                 "https://www.audacityteam.org/wp-content/uploads/2020/10/01-Audacity-Rhythm-Track-and-mono-vocal-track-waveform-view-768x586.png",
@@ -34880,7 +34880,9 @@
         },
         "rsilauncher": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.imgur.com/uVnyK5g.png"
+            ]
         },
         "rss-builder": {
             "icon": "https://community.chocolatey.org/content/packageimages/rss-builder.2.1.8.png",
@@ -39692,7 +39694,11 @@
         },
         "tabby": {
             "icon": "https://images2.imgbox.com/2a/52/v1amOUOt_o.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/cLcimm5.png",
+                "https://i.imgur.com/f2pYj6e.png",
+                "https://i.imgur.com/vABjYDB.png"
+            ]
         },
         "tablacus": {
             "icon": "https://community.chocolatey.org/content/packageimages/tablacus.23.1.31.png",
