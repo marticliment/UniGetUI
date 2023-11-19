@@ -4,7 +4,7 @@
         "done": 7454,
         "packages_with_icon": 7454,
         "packages_with_screenshot": 516,
-        "total_screenshots": 1650
+        "total_screenshots": 1647
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -3348,12 +3348,9 @@
         "audacity": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Audacity_Logo.svg/128px-Audacity_Logo.svg.png",
             "images": [
-                "https://www.audacityteam.org/wp-content/uploads/2017/12/Theme_Dark.png",
-                "https://www.audacityteam.org/wp-content/uploads/2020/10/01-Audacity-Rhythm-Track-and-mono-vocal-track-waveform-view-768x586.png",
-                "https://www.audacityteam.org/wp-content/uploads/2020/10/02-Recording-with-Audacity-in-Dark-theme-768x586.png",
-                "https://www.audacityteam.org/wp-content/uploads/2020/10/03-Audacity-in-Multi-view-with-a-spectral-selection-768x586.png",
-                "https://www.audacityteam.org/wp-content/uploads/2020/10/04-Note-track-playing-in-Audacity-768x586.png",
-                "https://www.audacityteam.org/wp-content/uploads/2020/10/05-Audio-and-MIDI-on-Linux-768x567.png"
+                "https://i.postimg.cc/zf3bxXFw/audacity-1.png",
+                "https://i.postimg.cc/63v7NjSy/audacity-2.png",
+                "https://i.postimg.cc/28w1mBHF/audacity-3.png"
             ]
         },
         "audacium": {
