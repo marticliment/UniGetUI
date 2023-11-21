@@ -31,6 +31,7 @@ from Interface.SoftwareSections import *
 WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320
 DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 
+
 class RootWindow(QMainWindow):
     callInMain = Signal(object)
     pressed = False
@@ -255,7 +256,8 @@ class RootWindow(QMainWindow):
                                   DWMWA_USE_IMMERSIVE_DARK_MODE,
                                   ctypes.byref(currentBgTheme),
                                   ctypes.sizeof(currentBgTheme))
-        print(currentBgTheme.value)
+
+        value = ctypes.c_int(0)
         match theme:
             case "dark":
                 value = ctypes.c_int(1)
@@ -263,21 +265,21 @@ class RootWindow(QMainWindow):
                 value = ctypes.c_int(0)
             case "auto":
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                                    r"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
-                themeVal = winreg.QueryValueEx(key,"AppsUseLightTheme")
+                                     r"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+                themeVal = winreg.QueryValueEx(key, "AppsUseLightTheme")
                 if themeVal[0] == 0:
                     value = ctypes.c_int(1)
                 else:
                     value = ctypes.c_int(0)
-        #while val == 0:
+
         if value.value != currentBgTheme.value:
             dwm.DwmSetWindowAttribute(int(self.winId()),
-                                        DWMWA_USE_IMMERSIVE_DARK_MODE,
-                                        ctypes.byref(value),
-                                        ctypes.sizeof(value))
-            #print(f"Theme: {value.value}")
+                                      DWMWA_USE_IMMERSIVE_DARK_MODE,
+                                      ctypes.byref(value),
+                                      ctypes.sizeof(value))
+
             user32.SetWindowPos(int(self.winId()),
-                                0,0,0,0,0,
+                                0, 0, 0, 0, 0,
                                 0x0020 | 0x0002 | 0x0004 | 0x0001)
 
     def nativeEvent(self, eventType, message):
