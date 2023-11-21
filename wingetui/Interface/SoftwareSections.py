@@ -1029,6 +1029,12 @@ class UpdateSoftwareSection(SoftwareSection):
             if not item.isHidden():
                 self.updatePackageItem(item, admin, skiphash, interactive)
 
+    def updateAllPackageItemsForSource(self, source: str, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+        print(source)
+        for item in self.packageItems:
+            if not item.isHidden() and item.Package.PackageManager.NAME == source:
+                self.updatePackageItem(item, admin, skiphash, interactive)
+
     def updateSelectedPackageItems(self, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         for item in self.packageItems:
             if not item.isHidden() and item.checkState(0) == Qt.CheckState.Checked:
