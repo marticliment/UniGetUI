@@ -3,7 +3,7 @@
 untranslatedPercentage = {
   "ar": "93%",
   "bg": "70%",
-  "bn": "21%",
+  "bn": "45%",
   "da": "30%",
   "el": "77%",
   "fa": "70%",
@@ -15,7 +15,7 @@ untranslatedPercentage = {
   "ko": "94%",
   "nb": "91%",
   "pl": "98%",
-  "ro": "27%",
+  "ro": "69%",
   "ru": "94%",
   "si": "10%",
   "sl": "94%",
