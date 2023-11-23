@@ -73,7 +73,7 @@ def v2_is_running():
         return response
 
 
-@app.route('/widgets/attempt_connection', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/attempt_connection', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_attempt_connection():
     try:
         if "token" not in request.args.keys():
@@ -87,7 +87,7 @@ def widgets_attempt_connection():
         return response
 
 
-@app.route('/widgets/get_updates', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/get_updates', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_get_updates():
     try:
         if "token" not in request.args.keys():
@@ -105,7 +105,7 @@ def widgets_get_updates():
         return response
 
 
-@app.route('/widgets/open_wingetui', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/open_wingetui', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_open_wingetui():
     try:
         if "token" not in request.args.keys():
@@ -123,7 +123,7 @@ def widgets_open_wingetui():
         return response
 
 
-@app.route('/widgets/view_on_wingetui', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/view_on_wingetui', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_view_on_wingetui():
     try:
         if "token" not in request.args.keys():
@@ -141,7 +141,7 @@ def widgets_view_on_wingetui():
         return response
 
 
-@app.route('/widgets/update_package', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/update_package', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_update_app():
     try:
         if "token" not in request.args.keys() or "id" not in request.args.keys():
@@ -160,7 +160,7 @@ def widgets_update_app():
         return response
 
 
-@app.route('/widgets/update_all_packages', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/update_all_packages', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_update_all_apps():
     try:
         if "token" not in request.args.keys():
@@ -179,7 +179,7 @@ def widgets_update_all_apps():
         return response
 
 
-@app.route('/widgets/update_all_packages_for_source', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/update_all_packages_for_source', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_update_all_apps_for_source():
     try:
         if "token" not in request.args.keys() or "source" not in request.args.keys():
