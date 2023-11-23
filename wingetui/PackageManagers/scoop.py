@@ -342,7 +342,7 @@ class ScoopPackageManager(DynamicPackageManager):
                     widget.counterSignal.emit(4)
                 elif "was installed successfully!" in line:
                     widget.counterSignal.emit(6)
-                widget.addInfoLine.emit(line, is_newline)
+                widget.addInfoLine.emit((line, is_newline))
                 if "was installed successfully" in line:
                     outputCode = 0
                 elif "is already installed" in line:
