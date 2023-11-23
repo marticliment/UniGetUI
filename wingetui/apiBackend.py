@@ -73,13 +73,13 @@ def v2_is_running():
         return response
 
 
-@app.route('/widgets/v1/attempt_connection', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/widgets/v1/get_wingetui_version', methods=['POST', 'GET', 'OPTIONS'])
 def widgets_attempt_connection():
     try:
         if "token" not in request.args.keys():
             abort(422, "Required parameter(s): token")
         if request.method in ('POST', 'GET') and request.args["token"] == CurrentSessionToken:
-            response = jsonify(status="success")
+            response = str(version)
         else:
             abort(401, "Invalid session token")
         return response
