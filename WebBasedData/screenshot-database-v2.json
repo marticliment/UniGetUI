@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7454,
-        "packages_with_icon": 7454,
-        "packages_with_screenshot": 516,
-        "total_screenshots": 1647
+        "done": 7461,
+        "packages_with_icon": 7461,
+        "packages_with_screenshot": 517,
+        "total_screenshots": 1650
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -8744,7 +8744,7 @@
             "images": []
         },
         "creativeapp": {
-            "icon": "",
+            "icon": "https://d287ku8w5owj51.cloudfront.net/inline/products/23968/6_app_logo.png",
             "images": []
         },
         "creativecenter": {
@@ -10321,7 +10321,7 @@
             "images": []
         },
         "direnv": {
-            "icon": "",
+            "icon": "https://avatars.githubusercontent.com/u/13077327",
             "images": []
         },
         "direvents": {
@@ -15656,7 +15656,7 @@
             "images": []
         },
         "geforceexperience": {
-            "icon": "",
+            "icon": "https://styles.redditmedia.com/t5_2rlgy/styles/communityIcon_vjvyn29wsuj51.png",
             "images": []
         },
         "geforcenow": {
@@ -16168,8 +16168,12 @@
             ]
         },
         "githubdesktop-beta": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Github-desktop-logo-symbol.svg/128px-Github-desktop-logo-symbol.svg.png",
+            "images": [
+                "https://desktop.github.com/images/github-desktop-screenshot-windows.png",
+                "https://docs.github.com/assets/cb-23214/images/help/desktop/windows-choose-options.png",
+                "https://docs.github.com/assets/cb-62319/images/help/desktop/commit-revert-win.png"
+            ]
         },
         "githubforwindows": {
             "icon": "https://community.chocolatey.org/content/packageimages/githubforwindows.2.13.0.2.png",
@@ -20076,7 +20080,7 @@
             "images": []
         },
         "japaneseime": {
-            "icon": "",
+            "icon": "https://www.google.co.jp/ime/images/product-icon.png",
             "images": []
         },
         "jarfix": {
@@ -37608,7 +37612,7 @@
             "images": []
         },
         "soundblastercommand": {
-            "icon": "",
+            "icon": "https://d287ku8w5owj51.cloudfront.net/inline/products/23431/sbcommand_app_icon.png",
             "images": []
         },
         "soundboard": {
@@ -43900,7 +43904,7 @@
             "images": []
         },
         "visualstudio-2022-profes\u2026": {
-            "icon": "",
+            "icon": "https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RWLkzw",
             "images": []
         },
         "visualstudio-codealignment": {
