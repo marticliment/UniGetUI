@@ -125,7 +125,7 @@ class RootWindow(QMainWindow):
         self.widgets[self.helpSection] = self.addTab(self.helpSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
-        self.helpSection = WebHelpSection()
+        self.helpSection = BaseBrowserSection()
         self.widgets[self.helpSection] = self.addTab(self.helpSection, _("Help and documentation"), addToMenu=True, actionIcon="help")
 
         # self.helpAction = QAction(_("Help and documentation"), self)
@@ -209,6 +209,10 @@ class RootWindow(QMainWindow):
             self.installationsWidget.setVisible(True)
             self.resizewidget.setVisible(False)
             self.adjustInstallationsSize()
+
+    def showHelpUrl(self, url: str):
+        self.helpSection.changeHomeUrl(url)
+        self.widgets[self.helpSection].click()
 
     def adjustInstallationsSize(self, offset: int = 0) -> None:
         if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():

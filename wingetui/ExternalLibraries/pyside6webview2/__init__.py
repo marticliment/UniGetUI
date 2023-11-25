@@ -194,7 +194,7 @@ if __name__ == "__main__":
     win = QWidget()
     win.resize(800, 480)
     win32mica.ApplyMica(win.winId(), True)
-    wv = QWebView2Widget()
+    wv = WebView2()
     layout = QVBoxLayout()
     edit = QLineEdit()
 

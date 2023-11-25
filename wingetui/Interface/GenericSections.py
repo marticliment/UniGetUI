@@ -1082,6 +1082,7 @@ class BaseLogSection(QWidget):
 
 
 class BaseBrowserSection(QWidget):
+    HOME_URL = "https://www.marticliment.com/wingetui"
     def __init__(self):
 
         from ExternalLibraries.pyside6webview2 import WebView2
@@ -1089,13 +1090,29 @@ class BaseBrowserSection(QWidget):
 
         self.setObjectName("background")
 
+        hLayout = QHBoxLayout()
+
+        openBtn = QPushButton(_("Open in browser"))
+        openBtn.clicked.connect(lambda: os.startfile(self.webview.getUrl()))
+        openBtn.setFixedHeight(30)
+
+        hLayout.addWidget(openBtn)
+        hLayout.addStretch()
+
+        
+        loadBtn = QPushButton(_("Reload"))
+        loadBtn.clicked.connect(lambda: self.loadWebContents())
+        loadBtn.setFixedHeight(30)
+        hLayout.addWidget(loadBtn)
+
         self.setLayout(QVBoxLayout())
         self.setContentsMargins(0, 0, 0, 0)
 
         self.webview = WebView2()
 
-        self.layout().setSpacing(0)
+        self.layout().setSpacing(5)
         self.layout().setContentsMargins(5, 5, 5, 5)
+        self.layout().addLayout(hLayout)
         self.layout().addWidget(self.webview, stretch=1)
 
         self.setAutoFillBackground(True)
@@ -1105,26 +1122,23 @@ class BaseBrowserSection(QWidget):
 
     def ApplyIcons(self):
         if isDark():
-            self.webview.setStyleSheet(
-                "QPlainTextEdit{margin: 10px;border-radius: 6px;border: 1px solid #161616;}")
+            self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #161616;")
         else:
-            self.webview.setStyleSheet(
-                "QPlainTextEdit{margin: 10px;border-radius: 6px;border: 1px solid #dddddd;}")
+            self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #dddddd;")
 
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             self.window().OnThemeChange.connect(self.ApplyIcons)
-        self.loadData()
+        self.loadWebContents()
         return super().showEvent(event)
 
-    def loadData(self):
-        pass
+    def loadWebContents(self):
+        self.webview.setLocation(self.HOME_URL)
 
-
-class WebHelpSection(BaseBrowserSection):
-    def loadData(self):
-        self.webview.setLocation("https://www.marticliment.com/wingetui/help")
+    def changeHomeUrl(self, url: str):
+        self.HOME_URL = url
+        self.loadWebContents()
 
 
 class OperationHistorySection(BaseLogSection):
