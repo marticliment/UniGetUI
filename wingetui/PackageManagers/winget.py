@@ -160,7 +160,7 @@ class WingetPackageManager(DynamicPackageManager):
                         except Exception as e:
                             report(e)
                             packages.append(Package(line[0:idPosition].strip(), line[idPosition:versionPosition].strip(), line[versionPosition:sourcePosition].strip(), f"Winget: {line[sourcePosition:].strip()}", Winget))
-                            if type(e) != IndexError:
+                            if type(e) is not IndexError:
                                 report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawOutput
@@ -253,9 +253,8 @@ class WingetPackageManager(DynamicPackageManager):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name.split("#")[0], name.split("#")[-1] + id, ver, newver, source, Winget))
                     except Exception as e:
-                        report(e)
                         packages.append(UpgradablePackage(element[0:idPosition].strip(), element[idPosition:versionPosition].strip(), element[versionPosition:newVerPosition].split(" ")[0].strip(), element[newVerPosition:sourcePosition].split(" ")[0].strip(), "Winget: " + element[sourcePosition:].split(" ")[0].strip(), Winget))
-                        if type(e) != IndexError:
+                        if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -384,7 +383,7 @@ class WingetPackageManager(DynamicPackageManager):
                                 packages.append(Package(name.split("#")[0], (name.split("#")[-1] + id).strip(), ver, source, Winget))
                     except Exception as e:
                         packages.append(Package(packageLine[0:idPosition].strip(), packageLine[idPosition:versionPosition].strip(), packageLine[versionPosition:sourcePosition].strip(), "Winget: " + packageLine[sourcePosition:].strip(), Winget))
-                        if type(e) != IndexError:
+                        if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
             globals.PackageManagerOutput += rawoutput
@@ -571,9 +570,9 @@ class WingetPackageManager(DynamicPackageManager):
         else:
             return self.wingetIcon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = ["--accept-source-agreements"]
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             Parameters += ["--architecture", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
@@ -586,7 +585,7 @@ class WingetPackageManager(DynamicPackageManager):
                 Parameters.append("machine")
         if options.InteractiveInstallation:
             Parameters.append("--interactive")
-        if options.SkipHashCheck:
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters.append("--ignore-security-hash")
         if options.Version:
             Parameters += ["--version", options.Version, "--force"]
@@ -596,6 +595,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
+
+        if "64" in package.Name or "64" in package.Id:
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif ".x86" in package.Id or "32-bit" in package.Name:
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+
         Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -607,6 +614,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
+
+        if "64-bit" in package.Name or "x64" in package.Id.lower():
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif "32-bit" in package.Name or "x86" in package.Id.lower():
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+
         Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + ["--include-unknown"] + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -619,12 +634,14 @@ class WingetPackageManager(DynamicPackageManager):
         output = ""
         counter = 0
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         match p.returncode:
             case 0x8A150011:
@@ -640,7 +657,15 @@ class WingetPackageManager(DynamicPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package, installed=True)
-        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options)
+
+        if "64" in package.Name or "64" in package.Id:
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif ".x86" in package.Id or "32-bit" in package.Name:
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+        
+        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
@@ -652,12 +677,14 @@ class WingetPackageManager(DynamicPackageManager):
         counter = RETURNCODE_OPERATION_SUCCEEDED
         output = ""
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if "1603" in output or "0x80070005" in output or "Access is denied" in output:

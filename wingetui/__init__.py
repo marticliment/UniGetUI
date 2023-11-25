@@ -74,13 +74,15 @@ def CheckProgramIntegrity():
                 bytes = f.read()  # read entire file as bytes
                 HASH = hashlib.sha256(bytes).hexdigest()
                 if HASH != HASHES[file]:
-                    print(f"🔴 File {file} HASH does not coincide!")
                     if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+                        print(f"🔴 File {file} HASH does not coincide!")
                         raise ModuleNotFoundError(f"The file {file} has an invalid hash, meaning that it has been likely modified. Please reinstall WingetUI")
+                    else:
+                        print(f"🔵 File {file} HASH does not coincide, but running unfrozen")
         else:
-            print(f"File {file} not in hashing list")
+            print(f"🔵 File {file} not in hashing list")
 
-    print("Hash check passed, coninuing execution...")
+    print("🟢 Hash check passed, coninuing execution...")
 
 
 _globals = globals
@@ -108,6 +110,23 @@ try:
     from tools import *
     from tools import _
 
+    print("---------------------------------------------------------------------------------------------------")
+    print("")
+    print(f"   WingetUI version {versionName} (version number {version}) log")
+    print("   All modules loaded successfully and sys.stdout patched correctly, starting main script")
+    print(f"   Translator function language set to \"{langName}\"")
+    print("")
+    print("---------------------------------------------------------------------------------------------------")
+    print("")
+    print(" Log legend:")
+    print(" 🔵: Verbose")
+    print(" 🟢: Information")
+    print(" 🟡: Warning")
+    print(" 🟠: Handled unexpected exception")
+    print(" 🔴: Unhandled unexpected exception")
+    print(" 🟣: Handled expected exception")
+    print("")
+
     class MainApplication(QApplication):
         kill = Signal()
         callInMain = Signal(object)
@@ -128,7 +147,7 @@ try:
                 self.popup = DraggableWindow()
                 self.popup.FixLag = sys.getwindowsversion().build < 22000
                 self.popup.setFixedSize(QSize(600, 400))
-                self.popup.setWindowFlag(Qt.FramelessWindowHint)
+                self.popup.setWindowFlag(Qt.WindowType.FramelessWindowHint, on=True)
                 self.popup.setLayout(QVBoxLayout())
                 self.popup.layout().addStretch()
                 self.popup.setWindowTitle("WingetUI")
@@ -308,7 +327,7 @@ try:
         def getAUMID(self):
             print("🔵 Loading WingetUI AUMID...")
             try:
-                output = str(subprocess.check_output(["powershell", "-Command", "Get-StartApps"], shell=True), encoding='utf-8', errors='ignore')
+                output = str(subprocess.check_output(["powershell", "-NoProfile", "-Command", "Get-StartApps"], shell=True), encoding='utf-8', errors='ignore')
                 for line in output.split("\n"):
                     if list(filter(None, line.split(" ")))[0] == "WingetUI":
                         globals.AUMID = list(filter(None, line.split(" ")))[1]
@@ -372,7 +391,7 @@ try:
             global GSUDO_EXE_LOCATION
             try:
                 self.callInMain.emit(lambda: self.loadingText.setText(_("Locating {pm}...").format(pm="sudo")))
-                o = subprocess.run(f"{GSUDO_EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
+                o = subprocess.run([GSUDO_EXECUTABLE, '-v'], shell=True, stdout=subprocess.PIPE)
                 globals.componentStatus["sudoFound"] = shutil.which(GSUDO_EXECUTABLE) is not None
                 globals.componentStatus["sudoVersion"] = o.stdout.decode('utf-8').split("\n")[0]
                 self.callInMain.emit(lambda: self.loadingText.setText(_("{pm} found: {state}").format(pm="Sudo", state=_("Yes") if globals.componentStatus['sudoFound'] else _("No"))))
@@ -408,6 +427,8 @@ try:
         def loadMainUI(self):
             print("🔵 Reached main ui load milestone")
             try:
+                setSettingsValue("CurrentSessionToken", globals.CurrentSessionToken)
+
                 globals.trayIcon = QSystemTrayIcon()
                 self.trayIcon = globals.trayIcon
                 globals.app = self
@@ -625,58 +646,48 @@ try:
                     print(e)
                 time.sleep(0.5)
 
-        def updateIfPossible(self):
+        def updateIfPossible(self, round: int = 0):
             if not getSettings("DisableAutoUpdateWingetUI"):
                 print("🔵 Starting update check")
-                integrityPass = False
                 try:
-                    dmname = socket.gethostbyname_ex("versions.marticliment.com")[0]
-                    if dmname == dmname:  # Check provider IP to prevent exploits
-                        integrityPass = True
-                except Exception:
-                    pass
-                try:
-                    response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
+                    response = urlopen("https://www.marticliment.com/versions/wingetui.ver")
                 except Exception as e:
                     print(e)
-                    response = urlopen("http://www.marticliment.com/versions/wingetui.ver")
-                    integrityPass = True
+                    response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
                 print("🔵 Version URL:", response.url)
                 response = response.read().decode("utf8")
                 new_version_number = response.split("///")[0]
                 provided_hash = response.split("///")[1].replace("\n", "").lower()
                 if float(new_version_number) > version:
                     print("🟢 Updates found!")
-                    if integrityPass:
-                        url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
-                        filedata = urlopen(url)
-                        datatowrite = filedata.read()
-                        filename = ""
-                        downloadPath = os.environ["temp"] if "temp" in os.environ.keys() else os.path.expanduser("~")
-                        with open(os.path.join(downloadPath, "wingetui-updater.exe"), 'wb') as f:
-                            f.write(datatowrite)
-                            filename = f.name
-                        if hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash:
-                            print("🔵 Hash: ", provided_hash)
-                            print("🟢 Hash ok, starting update")
-                            globals.updatesAvailable = True
-                            while globals.mainWindow is None:
-                                time.sleep(1)
-                            globals.canUpdate = not globals.mainWindow.isVisible()
-                            while not globals.canUpdate:
-                                time.sleep(0.1)
-                            if not getSettings("DisableAutoUpdateWingetUI"):
-                                subprocess.run(f'start /B "" "{filename}" /silent', shell=True)
-                        else:
-                            print("🟠 Hash not ok")
-                            print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
-                            print("🟠 Provided hash: ", provided_hash)
+                    url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
+                    filedata = urlopen(url)
+                    datatowrite = filedata.read()
+                    filename = ""
+                    downloadPath = os.environ["temp"] if "temp" in os.environ.keys() else os.path.expanduser("~")
+                    with open(os.path.join(downloadPath, "wingetui-updater.exe"), 'wb') as f:
+                        f.write(datatowrite)
+                        filename = f.name
+                    if hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash:
+                        print("🔵 Hash: ", provided_hash)
+                        print("🟢 Hash ok, starting update")
+                        globals.updatesAvailable = True
+                        while globals.mainWindow is None:
+                            time.sleep(1)
+                        globals.canUpdate = not globals.mainWindow.isVisible()
+                        while not globals.canUpdate:
+                            time.sleep(0.1)
+                        if not getSettings("DisableAutoUpdateWingetUI"):
+                            subprocess.run(f'start /B "" "{filename}" /silent', shell=True)
                     else:
-                        print("🟠 Can't verify update server authenticity, aborting")
-                        print("🟠 Provided DmName:")
-                        print("🟠 Expected DmNane: 769432b9-3560-4f94-8f90-01c95844d994.id.repl.co")
+                        print("🟠 Hash not ok")
+                        print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
+                        print("🟠 Provided hash: ", provided_hash)
                 else:
                     print("🟢 Updates not found")
+            if round <= 2:
+                time.sleep(600)
+                self.updateIfPossible(round + 1)
 
     colors = getColors()
     isW11 = False
@@ -938,12 +949,12 @@ try:
         background: none;
     }}
     QHeaderView,QAbstractItemView {{
-        background-color: #55303030;
-        border-radius: 6px;
+        background-color: transparent;
+        border-radius: 8px;
         border: none;
-        padding: 1px;
-        height: 25px;
-        border: 1px solid #1f1f1f;
+        padding: 0px;
+        height: 35px;
+        border: 0px solid black;
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -952,20 +963,25 @@ try:
         padding-right: 0px;
     }}
     QHeaderView::section {{
-        background-color: transparent;
-        border-radius: 6px;
-        padding: 4px;
-        height: 25px;
-        margin: 1px;
+        background-color: rgba(255, 255, 255, 5%);
+        border-top: 1px solid rgba(25, 25, 25, 50%);
+        border-bottom: 1px solid rgba(25, 25, 25, 50%);
+        padding: 0px;
+        height: 35px;
+        border-radius: 0px;
+        margin: 0px;
+        padding-bottom: 4px;
+        padding-top: 4px;
     }}
     QHeaderView::section:first {{
-        background-color: transparent;
-        border-radius: 6px;
-        padding: 4px;
-        height: 25px;
-        margin: 1px;
-        margin-left: 0px;
-        padding-left: 10px;
+        border-left: 1px solid rgba(25, 25, 25, 50%);
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }}
+    QHeaderView::section:last {{
+        border-right: 1px solid rgba(25, 25, 25, 50%);
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
     }}
     QTreeWidget {{
         show-decoration-selected: 0;
@@ -980,10 +996,10 @@ try:
         margin-bottom: 3px;
         padding-top: 3px;
         padding-bottom: 3px;
-        background-color: rgba(48, 48, 48, 20%);
+        background-color: rgba(255, 255, 255, 6);
         height: 25px;
-        border-bottom: 1px solid #1f1f1f;
-        border-top: 1px solid #1f1f1f;
+        border-bottom: 1px solid rgba(25, 25, 25, 50%);
+        border-top: 1px solid rgba(25, 25, 25, 50%);
     }}
     QTreeWidget#FlatTreeWidget::item,
     QTreeWidget#FlatTreeWidget::item:first {{
@@ -993,7 +1009,7 @@ try:
         height: 30px;
         border: 0px;
         border-radius: 0px;
-        border-bottom: 1px solid #1f1f1f;
+        border-bottom: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget#FlatTreeWidget::item:last {{
         padding-right: 10px;
@@ -1013,10 +1029,10 @@ try:
         padding: 0px;
         padding-top: 3px;
         padding-bottom: 3px;
-        background-color: rgba(48, 48, 48, 35%);
+        background-color: rgba(255, 255, 255, 8);
         height: 25px;
-        border-bottom: 1px solid #303030;
-        border-top: 1px solid #303030;
+        border-bottom: 1px solid rgba(25, 25, 25, 25%);
+        border-top: 1px solid rgba(25, 25, 25, 25%);
         color: rgb({colors[2]});
     }}
     QTreeWidget::item:hover {{
@@ -1025,36 +1041,36 @@ try:
         padding: 0px;
         padding-top: 3px;
         padding-bottom: 3px;
-        background-color: rgba(48, 48, 48, 45%);
+        background-color: rgba(255, 255, 255, 12);
         height: 25px;
-        border-bottom: 1px solid #303030;
-        border-top: 1px solid #303030;
+        border-bottom: 1px solid rgba(25, 25, 25, 25%);
+        border-top: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:first {{
-        border-top-left-radius: 6px;
-        border-bottom-left-radius: 6px;
-        border-left: 1px solid #1f1f1f;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-left: 1px solid rgba(25, 25, 25, 25%);
         margin-left: 0px;
         padding-left: 0px;
     }}
     QTreeWidget::item:last {{
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-        border-right: 1px solid #1f1f1f;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        border-right: 1px solid rgba(25, 25, 25, 25%);
         padding-right: 0px;
         margin-right: 0px;
     }}
     QTreeWidget::item:first:selected {{
-        border-left: 1px solid #303030;
+        border-left: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:last:selected {{
-        border-right: 1px solid #303030;
+        border-right: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:first:hover {{
-        border-left: 1px solid #303030;
+        border-left: 1px solid rgba(25, 25, 25, 25%);
     }}
     QTreeWidget::item:last:hover {{
-        border-right: 1px solid #303030;
+        border-right: 1px solid rgba(25, 25, 25, 25%);
     }}
     QProgressBar {{
         border-radius: 2px;
@@ -1721,7 +1737,7 @@ try:
         border-radius: 12px;
     }}
     QLineEdit {{
-        background-color: rgba(255, 255, 255, 25%);
+        background-color: rgba(255, 255, 255, 100%);
         font-family: "Segoe UI Variable Text";
         font-size: 9pt;
         width: 300px;
@@ -1789,12 +1805,12 @@ try:
         background: none;
     }}
     QHeaderView,QAbstractItemView {{
-        background-color: rgba(255, 255, 255, 55%);
+        background-color: transparent;
         border-radius: 6px;
         border: none;
-        padding: 1px;
-        height: 25px;
-        border: 1px solid rgba(220, 220, 220, 55%);
+        padding: 0px;
+        height: 35px;
+        border: 0px solid rgba(222, 222, 222, 35%);
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -1802,22 +1818,28 @@ try:
     QHeaderView {{
         padding-right: 0px;
     }}
-    QHeaderView::section {{
-        background-color: transparent;
-        border-radius: 6px;
-        padding: 4px;
-        height: 25px;
-        margin: 1px;
+        QHeaderView::section {{
+        background-color: rgba(255, 255, 255, 55%);
+        border-top: 1px solid rgba(222, 222, 222, 35%);
+        border-bottom: 1px solid rgba(222, 222, 222, 35%);
+        padding: 0px;
+        height: 35px;
+        border-radius: 0px;
+        margin: 0px;
+        padding-bottom: 4px;
+        padding-top: 4px;
     }}
     QHeaderView::section:first {{
-        background-color: transparent;
-        border-radius: 6px;
-        padding: 4px;
-        height: 25px;
-        margin: 1px;
-        margin-left: 0px;
-        padding-left: 10px;
+        border-left: 1px solid rgba(222, 222, 222, 35%);
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
     }}
+    QHeaderView::section:last {{
+        border-right: 1px solid rgba(222, 222, 222, 35%);
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }}
+
     QTreeWidget {{
         show-decoration-selected: 0;
         background-color: transparent;
@@ -1833,9 +1855,9 @@ try:
         padding-bottom: 3px;
         outline: none;
         height: 25px;
-        background-color:rgba(255, 255, 255, 20%);
-        border-top: 1px solid rgba(220, 220, 220, 35%);
-        border-bottom: 1px solid rgba(220, 220, 220, 35%);
+        background-color: rgba(255, 255, 255, 55%);
+        border-top: 1px solid rgba(222, 222, 222, 35%);
+        border-bottom: 1px solid rgba(222, 222, 222, 35%);
     }}
     QTreeWidget#FlatTreeWidget::item,
     QTreeWidget#FlatTreeWidget::item:first {{
@@ -1845,7 +1867,7 @@ try:
         height: 30px;
         border: 0px;
         border-radius: 0px;
-        border-bottom: 1px solid rgba(220, 220, 220, 35%);
+        border-bottom: 1px solid rgba(222, 222, 222, 35%);
     }}
     QTreeWidget#FlatTreeWidget::item:last {{
         padding-right: 10px;
@@ -1856,7 +1878,7 @@ try:
         margin-top: 0px;
         margin-bottom: 0px;
         background-color: rgba(255, 255, 255, 40%);
-        border: 1px solid rgba(220, 220, 220, 35%);
+        border: 1px solid rgba(222, 222, 222, 35%);
         border-radius: 8px;
     }}
     QTreeWidget::item:selected {{
@@ -1866,10 +1888,10 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: rgba(255, 255, 255, 90%);
+        background-color: rgba(222, 222, 222, 35%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 80%);
-        border-top: 1px solid rgba(220, 220, 220, 80%);
+        border-bottom: 1px solid rgba(222, 222, 222, 35%);
+        border-top: 1px solid rgba(222, 222, 222, 35%);
         color: rgb({colors[3]});
     }}
     QTreeWidget::branch {{
@@ -1882,32 +1904,32 @@ try:
         padding-top: 3px;
         padding-bottom: 3px;
         outline: none;
-        background-color: rgba(255, 255, 255, 70%);
+        background-color: rgba(245, 245, 245, 70%);
         height: 25px;
-        border-bottom: 1px solid rgba(220, 220, 220, 80%);
-        border-top: 1px solid rgba(220, 220, 220, 80%);
+        border-bottom: 1px solid rgba(222, 222, 222, 35%);
+        border-top: 1px solid rgba(222, 222, 222, 35%);
     }}
     QTreeWidget::item:first {{
-        border-top-left-radius: 6px;
-        border-bottom-left-radius: 6px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
         border-left: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:last {{
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
         border-right: 1px solid rgba(220, 220, 220, 35%);
     }}
     QTreeWidget::item:first:selected {{
-        border-left: 1px solid rgba(220, 220, 220, 80%);
+        border-left: 1px solid rgba(222, 222, 222, 35%);
     }}
     QTreeWidget::item:last:selected {{
-        border-right: 1px solid rgba(220, 220, 220, 80%);
+        border-right: 1px solid rgba(222, 222, 222, 35%);
     }}
     QTreeWidget::item:first:hover {{
-        border-left: 1px solid rgba(220, 220, 220, 80%);
+        border-left: 1px solid rgba(222, 222, 222, 35%);
     }}
     QTreeWidget::item:last:hover {{
-        border-right: 1px solid rgba(220, 220, 220, 80%);
+        border-right: 1px solid rgba(222, 222, 222, 35%);
     }}
     QProgressBar {{
         border-radius: 2px;

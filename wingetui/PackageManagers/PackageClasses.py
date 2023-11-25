@@ -11,17 +11,17 @@ if __name__ == "__main__":
     import os
     import sys
     sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+    from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage  # Unreachable import used for the syntax highlighter
 
 
 import subprocess
 
-import PySide6.QtCore
-import PySide6.QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from urllib.request import urlopen
 import os
+from tools import *
 from tools import _, blueColor, GetIgnoredPackageUpdates_Permanent, cprint, report
 import globals
 
@@ -31,7 +31,7 @@ class Package():
     Id: str = ""
     Version: str = ""
     Source: str = ""
-    PackageItem: QTreeWidgetItem = None
+    PackageItem: 'PackageItem' = None
     PackageManager: 'PackageManagerModule' = None
 
     def __init__(self, Name: str, Id: str, Version: str, Source: str, PackageManager: 'PackageManagerModule'):
@@ -60,29 +60,43 @@ class Package():
             iconId = iconId.split("/")[-1]
         return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
 
+    def getPackageIconUrl(self) -> str:
+        try:
+            iconId = self.getIconId()
+            try:
+                iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                if iconUrl.strip() == "":
+                    raise KeyError("Key found but content was empty")
+            except KeyError:
+                if "Net" in self.Source:
+                    iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
+                elif "Chocolatey" in self.Source:
+                    iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
+                else:
+                    iconUrl = ""
+        except Exception as e:
+            report(e)
+            iconUrl = ""
+        return iconUrl
+
     def getPackageIcon(self) -> str:
         try:
             iconId = self.getIconId()
-            iconpath = os.path.join(os.path.expanduser(
+            iconPath = os.path.join(os.path.expanduser(
                 "~"), f".wingetui/cachedmeta/{iconId}.icon.png")
-            if not os.path.exists(iconpath):
-                if "Net" in self.Source:
-                    iconurl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
-                elif "Chocolatey" in self.Source:
-                    iconurl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
-                else:
-                    iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
-                print("🔵 Found icon: ", iconurl)
-                if iconurl:
-                    icondata = urlopen(iconurl).read()
-                    with open(iconpath, "wb") as f:
-                        f.write(icondata)
+            if not os.path.exists(iconPath):
+                iconUrl = self.getPackageIconUrl()
+                print("🔵 Found icon: ", iconUrl)
+                if iconUrl:
+                    iconData = urlopen(iconUrl).read()
+                    with open(iconPath, "wb") as f:
+                        f.write(iconData)
                 else:
                     print("🟡 Icon url empty")
-                    raise KeyError(f"{iconurl} was empty")
+                    raise KeyError(f"{iconUrl} was empty")
             else:
-                cprint(f"🔵 Found cached image in {iconpath}")
-            return iconpath
+                print(f"🔵 Found cached image in {iconPath}")
+            return iconPath
         except KeyError:
             print(f"🟡 Icon {iconId} not found in json (KeyError)")
             return ""
@@ -100,20 +114,20 @@ class Package():
         return manager == self.PackageManager
 
     def getFloatVersion(self) -> float:
-        newver = ""
+        newVer = ""
         dotAdded = False
         for char in self.Version:
             if char in "0123456789":
-                newver += char
+                newVer += char
             elif char == ".":
                 if not dotAdded:
-                    newver += "."
+                    newVer += "."
                     dotAdded = True
-        if newver and newver != ".":
-            strver = f"{float(newver):040.10f}"
+        if newVer and newVer != ".":
+            strVer = f"{float(newVer):040.10f}"
         else:
-            strver = f"{0.0:040.10f}"
-        return strver
+            strVer = f"{0.0:040.10f}"
+        return strVer
 
     def isTheSameAs(self, package: 'Package'):
         return self.Id == package.Id and self.Name == package.Name and package.Source == package.Source and package.PackageManager == package.PackageManager
@@ -124,6 +138,58 @@ class Package():
     def hasUpdatesIgnoredPermanently(self) -> bool:
         return [self.Id, self.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent()
 
+    def ignoreUpdatesPermanently(self) -> bool:
+        if not self.hasUpdatesIgnoredPermanently():
+            IgnorePackageUpdates_Permanent(self.Id, self.Source)
+        if self.PackageItem:
+            InstalledItem = self.PackageItem.getInstalledPackageItem()
+            if InstalledItem:
+                InstalledItem.setTag(InstalledItem.Tag.Pinned)
+            UpgradableItem = self.PackageItem.getUpdatesPackageItem()
+            if UpgradableItem:
+                UpgradableItem.removeFromList()
+
+    def ignoreUpdatesForVersion(self, version: str = "current"):
+        if version == "current":
+            version = self.Version
+        IgnorePackageUpdates_SpecificVersion(self.Id, version, self.Source)
+
+    def getDiscoverPackage(self) -> 'Package':
+        if self.PackageItem:
+            # This function is more efficient if wanting to find the same item
+            AvailablePackageItem = self.PackageItem.getDiscoverPackageItem()
+            if AvailablePackageItem:
+                return AvailablePackageItem.Package
+        if self.Id in globals.discover.IdPackageReference:
+            package: Package = globals.discover.IdPackageReference[self.Id]
+            if package.Source == self.Source:
+                return package
+        return None
+
+    def getUpdatesPackage(self) -> 'UpgradablePackage':
+        if self.PackageItem:
+            # This function is more efficient if wanting to find the same item
+            UpgrdablePackageItem = self.PackageItem.getUpdatesPackageItem()
+            if UpgrdablePackageItem:
+                return UpgrdablePackageItem.Package
+        if self.Id in globals.updates.IdPackageReference:
+            package: UpgradablePackage = globals.updates.IdPackageReference[self.Id]
+            if package.Source == self.Source:
+                return package
+        return None
+
+    def getInstalledPackage(self) -> 'Package':
+        if self.PackageItem:
+            # This function is more efficient if wanting to find the same item
+            InstalledPackageItem = self.PackageItem.getInstalledPackageItem()
+            if InstalledPackageItem:
+                return InstalledPackageItem.Package
+        if self.Id in globals.uninstall.IdPackageReference:
+            package: Package = globals.uninstall.IdPackageReference[self.Id]
+            if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
+                return package
+        return None
+
 
 class UpgradablePackage(Package):
     NewVersion = ""
@@ -133,6 +199,13 @@ class UpgradablePackage(Package):
         super().__init__(Name, Id, InstalledVersion, Source, PackageManager)
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
+
+    def ignoreUpdatesForVersion(self, version: str = "current"):
+        if version == "current":
+            version = self.NewVersion
+        super().ignoreUpdatesForVersion(self.NewVersion)
+        if self.PackageItem:
+            self.PackageItem.removeFromList()
 
 
 class PackageDetails(Package):
@@ -167,7 +240,7 @@ class PackageDetails(Package):
         self.Version = package.Version
         self.Source = package.Source
         self.PackageObject = package
-        if type(package) == UpgradablePackage:
+        if type(package) is UpgradablePackage:
             self.NewVersion = package.NewVersion
 
     def asUrl(self, url: str) -> str:
@@ -184,6 +257,41 @@ class InstallationOptions():
     CustomParameters: list[str] = []
     RemoveDataOnUninstall: bool = False
 
+    Package: 'Package' = None
+    __save_file_name: str = "Unknown.Unknown.InstallationOptions"
+    __data_to_save: list[str] = [
+            "SkipHashCheck",
+            "InteractiveInstallation",
+            "RunAsAdministrator",
+            "Architecture",
+            "InstallationScope",
+            "CustomParameters",
+        ]
+
+    def __init__(self, package: 'Package', reset: bool = False):
+        self.Package = package
+        self.__save_file_name = "InstallationOptions." + self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
+        if not reset:
+            self.LoadOptionsFromDisk()
+
+    def SaveOptionsToDisk(self):
+        """
+        Save current installation options to disk
+        """
+        optionsToSave = {}
+        for entry in self.__data_to_save:
+            optionsToSave[entry] = getattr(self, entry)
+        setJsonSettings(self.__save_file_name, optionsToSave)
+
+    def LoadOptionsFromDisk(self):
+        """
+        Get previously saved installation options from disk
+        """
+        newOptions = getJsonSettings(self.__save_file_name)
+        for entry in self.__data_to_save:
+            if entry in newOptions.keys():
+                setattr(self, entry, newOptions[entry])
+        
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
         str += f"InteractiveInstallation={self.InteractiveInstallation};"

@@ -135,6 +135,8 @@ class ChocoPackageManager(DynamicPackageManager):
                         id = line.split(" ")[0]
                         version = line.split(" ")[1]
                         source = self.NAME
+                        if id == "Chocolatey" and "v" in version:
+                            continue
                         if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                             packages.append(Package(name, id, version, source, Choco))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
@@ -226,18 +228,18 @@ class ChocoPackageManager(DynamicPackageManager):
             self.icon = QIcon(getMedia("choco"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             if options.Architecture == "x86":
                 Parameters.append("--forcex86")
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InteractiveInstallation:
             Parameters.append("--notsilent")
-        if options.SkipHashCheck:
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters += ["--ignore-checksums", "--force"]
-        if options.Version:
+        if options.Version and not isAnUninstall:
             Parameters += ["--version=" + options.Version, "--allow-downgrade"]
         return Parameters
 
@@ -264,12 +266,14 @@ class ChocoPackageManager(DynamicPackageManager):
         counter = 0
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = str(getLineFromStdout(p), encoding='utf-8', errors="ignore").strip()
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if outputCode in (1641, 3010):
@@ -295,14 +299,15 @@ class ChocoPackageManager(DynamicPackageManager):
         output = ""
         p.stdin = b"\r\n"
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 counter += 1
                 widget.counterSignal.emit(counter)
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         p.wait()
         outputCode = p.returncode
         if outputCode in (1605, 1614, 1641):
@@ -320,8 +325,8 @@ class ChocoPackageManager(DynamicPackageManager):
 
         if getSettings("ShownWelcomeWizard") and not getSettings("UseSystemChocolatey") and not getSettings("ChocolateyAddedToPath") and not os.path.isfile(r"C:\ProgramData\Chocolatey\bin\choco.exe"):
             # If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            subprocess.run("powershell -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\"" + self.EXECUTABLE.replace('\\choco.exe', '\\bin') + ";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
-            subprocess.run(f"powershell -Command [Environment]::SetEnvironmentVariable(\\\"chocolateyinstall\\\", \\\"{os.path.dirname(self.EXECUTABLE)}\\\", \\\"User\\\")", shell=True, check=False)
+            subprocess.run("powershell -NoProfile -Command [Environment]::SetEnvironmentVariable(\\\"PATH\\\", \\\"" + self.EXECUTABLE.replace('\\choco.exe', '\\bin') + ";\\\"+[Environment]::GetEnvironmentVariable(\\\"PATH\\\", \\\"User\\\"), \\\"User\\\")", shell=True, check=False)
+            subprocess.run(f"powershell -NoProfile -Command [Environment]::SetEnvironmentVariable(\\\"chocolateyinstall\\\", \\\"{os.path.dirname(self.EXECUTABLE)}\\\", \\\"User\\\")", shell=True, check=False)
             print("🔵 Adding chocolatey to path...")
             setSettings("ChocolateyAddedToPath", True)
 

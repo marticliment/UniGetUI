@@ -63,9 +63,9 @@ class AboutSection(SmoothScrollArea):
             table.setAutoFillBackground(True)
             table.setStyleSheet("*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;padding: 0px;margin: 0px;}QTableCornerButton::section,QHeaderView,QHeaderView::section,QTableWidget,QWidget,QTableWidget::item{background-color: transparent;border: 0px solid transparent}")
             table.setColumnCount(2)
-            table.setEnabled(False)
             table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             table.setShowGrid(False)
+            table.setEnabled(False)
             table.setHorizontalHeaderLabels([_("Status"), _("Version")])
             table.setColumnWidth(1, 500)
             table.setColumnWidth(0, 150)
@@ -106,7 +106,8 @@ class AboutSection(SmoothScrollArea):
             table.verticalHeaderItem(0).setTextAlignment(Qt.AlignRight)
             table.setCornerWidget(QLabel(""))
             table.setCornerButtonEnabled(False)
-            table.setFixedHeight(290)
+            table.setFixedHeight(330)
+            table.setEditTriggers(QAbstractItemView.NoEditTriggers)
             table.cornerWidget().setStyleSheet("background: transparent;")
             self.mainLayout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
@@ -114,8 +115,10 @@ class AboutSection(SmoothScrollArea):
                 f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
             self.mainLayout.addWidget(title)
             self.mainLayout.addSpacing(5)
-            description = CustomLabel(_("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.") + "\n" + _(
-                "This project has no connection with the official {0} project — it's completely unofficial.").format(f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>"))
+            description = CustomLabel(
+                _("The main goal of this project is to create an intuitive UI to manage the most common CLI package managers for Windows, such as Winget and Scoop.") + "\n" + _("This project has no connection with the official {0} project — it's completely unofficial.").format(
+                    f"<a style=\"color: {blueColor};\" href=\"https://github.com/microsoft/winget-cli\">Winget</a>")
+            )
             self.mainLayout.addWidget(description)
             self.mainLayout.addSpacing(5)
             self.mainLayout.addWidget(CustomLabel(
@@ -186,7 +189,6 @@ class AboutSection(SmoothScrollArea):
             licensesTable.setAutoFillBackground(True)
             licensesTable.setStyleSheet(
                 "*{border: 0px solid transparent; background-color: transparent;}QHeaderView{font-size: 13pt;padding: 0px;margin: 0px;}QTableCornerButton::section,QHeaderView,QHeaderView::section,QTableWidget,QWidget,QTableWidget::item{background-color: transparent;border: 0px solid transparent}")
-            licensesTable.setEnabled(True)
             licensesTable.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             licensesTable.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             licensesTable.setShowGrid(False)
@@ -284,25 +286,22 @@ class SettingsSection(SmoothScrollArea):
         langDictWithPercentage = {}
         invertedLangDict = {}
         for key, value in languageReference.items():
-            if (key in untranslatedPercentage):
+            langValue = value
+            if key in untranslatedPercentage:
                 perc = untranslatedPercentage[key]
                 if perc == "0%":
                     continue
-                if key not in lang["locale"]:
-                    langListWithPercentage.append(f"{value} ({perc})")
-                    langDictWithPercentage[key] = f"{value} ({perc})"
-                    invertedLangDict[f"{value} ({perc})"] = key
-                else:
+                if key in lang["locale"]:
                     k = len(lang.keys())
-                    v = len([val for val in lang.values() if val is None])
-                    perc = f"{int(v/k*100)}%"
-                    langListWithPercentage.append(f"{value} ({perc})")
-                    langDictWithPercentage[key] = f"{value} ({perc})"
-                    invertedLangDict[f"{value} ({perc})"] = key
-            else:
-                invertedLangDict[value] = key
-                langDictWithPercentage[key] = value
-                langListWithPercentage.append(value)
+                    v = len([val for val in lang.values() if val is not None])
+                    percNum = v / k
+                    perc = f"{percNum:.0%}"
+                    if (perc == "100%" and percNum < 1):
+                        perc = "99%"
+                langValue = f"{value} ({perc})"
+            langListWithPercentage.append(langValue)
+            langDictWithPercentage[key] = langValue
+            invertedLangDict[langValue] = key
         try:
             self.language.combobox.insertItems(0, langListWithPercentage)
             self.language.combobox.setCurrentIndex(
@@ -415,7 +414,6 @@ class SettingsSection(SmoothScrollArea):
         self.theme.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0px;}")
         self.generalTitle.addWidget(self.theme)
-        self.theme.restartButton.setText(_("Apply"))
 
         themes = {
             _("Light"): "light",
@@ -447,11 +445,9 @@ class SettingsSection(SmoothScrollArea):
                     mode = win32mica.MicaTheme.LIGHT
             win32mica.ApplyMica(globals.mainWindow.winId(), mode)
             globals.mainWindow.ApplyStyleSheetsAndIcons()
-            self.theme.restartButton.hide()
 
         self.theme.combobox.currentTextChanged.connect(lambda v: (
             setSettingsValue("PreferredTheme", themes[v]), applyTheme()))
-        self.theme.restartButton.clicked.connect(applyTheme)
 
         def exportSettings():
             nonlocal self
@@ -465,7 +461,7 @@ class SettingsSection(SmoothScrollArea):
                 fileName = QFileDialog.getSaveFileName(self, _("Export settings to a local file"), os.path.expanduser(
                     "~"), f"{_('WingetUI Settings File')} (*.conf);;{_('All files')} (*.*)")
                 if fileName[0] != "":
-                    oFile = open(fileName[0], "w")
+                    oFile = open(fileName[0], "w", encoding="utf-8", errors="ignore")
                     oFile.write(rawstr)
                     oFile.close()
                     subprocess.run(
@@ -809,9 +805,11 @@ class SettingsSection(SmoothScrollArea):
         self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm="Scoop"), getMedia(
             "scoop"), _("{pm} package manager specific preferences").format(pm="Scoop"))
         self.mainLayout.addWidget(self.scoopPreferences)
-        path = SectionButton(Scoop.EXECUTABLE, _("Copy"), h=50)
+
+        pathvar = Scoop.EXECUTABLE.replace("scoop", str(shutil.which("scoop"))) if shutil.which("scoop") is not None else Scoop.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Scoop.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         self.scoopPreferences.addWidget(path)
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
@@ -858,9 +856,10 @@ class SettingsSection(SmoothScrollArea):
             "choco"), _("{pm} package manager specific preferences").format(pm="Chocolatey"))
         self.mainLayout.addWidget(self.chocoPreferences)
 
-        path = SectionButton(Choco.EXECUTABLE, _("Copy"), h=50)
+        pathvar = str(shutil.which(Choco.EXECUTABLE)) if shutil.which(Choco.EXECUTABLE) else Choco.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Choco.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         self.chocoPreferences.addWidget(path)
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
@@ -887,9 +886,10 @@ class SettingsSection(SmoothScrollArea):
             "python"), _("{pm} package manager specific preferences").format(pm="Pip"))
         self.mainLayout.addWidget(self.pipPreferences)
 
-        path = SectionButton(Pip.EXECUTABLE, _("Copy"), h=50)
+        pathvar = str(shutil.which(Pip.EXECUTABLE.split(' ')[0]) + " -m pip") if shutil.which(Pip.EXECUTABLE.split(' ')[0]) else Pip.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Pip.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         self.pipPreferences.addWidget(path)
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
@@ -908,9 +908,10 @@ class SettingsSection(SmoothScrollArea):
             "node"), _("{pm} package manager specific preferences").format(pm="Npm"))
         self.mainLayout.addWidget(self.npmPreferences)
 
-        path = SectionButton(Npm.EXECUTABLE, _("Copy"), h=50)
+        pathvar = str(shutil.which(Npm.EXECUTABLE)) if shutil.which(Npm.EXECUTABLE) else Npm.EXECUTABLE
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Npm.EXECUTABLE))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.npmPreferences.addWidget(path)
@@ -929,9 +930,10 @@ class SettingsSection(SmoothScrollArea):
             "dotnet"), _("{pm} package manager specific preferences").format(pm=".NET Tool"))
         self.mainLayout.addWidget(self.dotnetPreferences)
 
-        path = SectionButton(Dotnet.EXECUTABLE, _("Copy"), h=50)
+        pathvar = (str(shutil.which(Dotnet.EXECUTABLE)) if shutil.which(Dotnet.EXECUTABLE) else Dotnet.EXECUTABLE) + " tool"
+        path = SectionButton(pathvar, _("Copy"), h=50)
         path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Dotnet.EXECUTABLE + " tool"))
+            lambda path=pathvar: globals.app.clipboard().setText(path))
         path.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.dotnetPreferences.addWidget(path)

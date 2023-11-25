@@ -7,8 +7,10 @@ contributors = [
   "RavenMacDaddy",
   "Mikey1993",
   "adripo",
+  "raghavdhingra24",
   "MisterEvans78",
   "rumplin",
+  "uKER",
   "sklart",
   "aaronliu0130",
   "vedantmgoyal2009",
@@ -16,22 +18,20 @@ contributors = [
   "BastianKamp",
   "candrapersada",
   "elliot-100",
-  "raghavdhingra24",
   "sitiom",
   "joguarino",
   "neoOpus",
+  "Carterpersall",
   "HorridModz",
   "reima",
-  "Satanarious",
-  "vsilvar",
-  "quantumfallout"
+  "Satanarious"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 1995
+    "contributions": 2159
   },
   {
     "name": "ppvnf",
@@ -41,7 +41,7 @@ contributorsInfo = [
   {
     "name": "panther7",
     "link": "https://github.com/panther7",
-    "contributions": 66
+    "contributions": 71
   },
   {
     "name": "RavenMacDaddy",
@@ -59,6 +59,11 @@ contributorsInfo = [
     "contributions": 6
   },
   {
+    "name": "raghavdhingra24",
+    "link": "https://github.com/raghavdhingra24",
+    "contributions": 6
+  },
+  {
     "name": "MisterEvans78",
     "link": "https://github.com/MisterEvans78",
     "contributions": 4
@@ -66,6 +71,11 @@ contributorsInfo = [
   {
     "name": "rumplin",
     "link": "https://github.com/rumplin",
+    "contributions": 3
+  },
+  {
+    "name": "uKER",
+    "link": "https://github.com/uKER",
     "contributions": 3
   },
   {
@@ -104,11 +114,6 @@ contributorsInfo = [
     "contributions": 2
   },
   {
-    "name": "raghavdhingra24",
-    "link": "https://github.com/raghavdhingra24",
-    "contributions": 2
-  },
-  {
     "name": "sitiom",
     "link": "https://github.com/sitiom",
     "contributions": 2
@@ -124,6 +129,11 @@ contributorsInfo = [
     "contributions": 1
   },
   {
+    "name": "Carterpersall",
+    "link": "https://github.com/Carterpersall",
+    "contributions": 1
+  },
+  {
     "name": "HorridModz",
     "link": "https://github.com/HorridModz",
     "contributions": 1
@@ -136,16 +146,6 @@ contributorsInfo = [
   {
     "name": "Satanarious",
     "link": "https://github.com/Satanarious",
-    "contributions": 1
-  },
-  {
-    "name": "vsilvar",
-    "link": "https://github.com/vsilvar",
-    "contributions": 1
-  },
-  {
-    "name": "quantumfallout",
-    "link": "https://github.com/quantumfallout",
     "contributions": 1
   }
 ]

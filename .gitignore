@@ -183,3 +183,11 @@ wingetui/choco-cli/extensions/chocolatey-dotnetfx/Get-NativeInstallerExitCode.ps
 wingetui/choco-cli/extensions/chocolatey-dotnetfx/Get-DefaultChocolateyLocalFilePath.ps1
 wingetui/choco-cli/extensions/chocolatey-dotnetfx/DotNetFrameworkHelpers.ps1
 wingetui/choco-cli/extensions/chocolatey-dotnetfx/chocolatey-dotnetfx.psm1
+Widget Source/WingetUiWidgetProvider/bin
+Widget Source/WingetUiWidgetProvider/obj
+Widget Source/WingetUiWidgetProviderPackage/obj
+Widget Source/WingetUiWidgetProviderPackage/bin
+Widget Source/WingetUiWidgetProviderPackage/.vs
+Widget Source/WingetUiWidgetProvider/.vs
+Widget Source/WingetUIWidgetProviderPackage/WingetUIWidgetProviderPackage.assets.cache
+Widget Source/WingetUiWidgetProvider/.vs

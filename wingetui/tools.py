@@ -27,7 +27,19 @@ from unicodedata import combining, normalize
 
 
 import globals
-import clr
+try:
+    import clr
+except RuntimeError:
+    print("🔴 .NET Runtime not found, aborting...")
+    import traceback
+    tb = traceback.format_exception(*sys.exc_info())
+    tracebacc = ""
+    for line in tb:
+        tracebacc += line + "\n"
+    import ctypes
+    ctypes.windll.user32.MessageBoxW(None, "WingetUI requires .NET to be installed on your machine. Please install .NET\n\n" + tracebacc, "WingetUI Crash handler", 0x00000010)
+
+    sys.exit(1)
 
 from ExternalLibraries.BlurWindow import GlobalBlur
 from lang.languages import *
@@ -150,9 +162,9 @@ def getSettingsValue(s: str) -> str:
     """
     globals.settingsCache
     try:
-        try:
+        if (s + "Value") in globals.settingsCache.keys():
             return str(globals.settingsCache[s + "Value"])
-        except KeyError:
+        else:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r", encoding="utf-8", errors="ignore") as sf:
                 v: str = sf.read()
                 globals.settingsCache[s + "Value"] = v
@@ -175,6 +187,40 @@ def setSettingsValue(s: str, v: str) -> None:
             sf.write(v)
     except Exception as e:
         print(e)
+
+
+def getJsonSettings(s: str) -> dict:
+    """
+    Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned
+    """
+    globals.settingsCache
+    try:
+        if (s + "JSON") in globals.settingsCache.keys():
+            return globals.settingsCache[s + "JSON"]
+        else:
+            with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "r", encoding="utf-8", errors="ignore") as file:
+                data: dict = json.load(file)
+                globals.settingsCache[s + "JSON"] = data
+                return data
+    except FileNotFoundError:
+        return {}
+    except Exception as e:
+        print(e)
+        return {}
+
+
+def setJsonSettings(s: str, data: dict) -> None:
+    """
+    Sets the stored value for the given JSON-stored setting. A string value is required.
+    """
+    globals.settingsCache
+    try:
+        globals.settingsCache = {}
+        with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "w", encoding="utf-8", errors="ignore") as file:
+            json.dump(data, file)
+    except Exception as e:
+        print(e)
+
 
 
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
@@ -292,15 +338,15 @@ def AddResultToLog(output: list, package, result: int):
 
 
 def update_tray_icon():
-    if globals.tray_is_error:
+    if globals.tray_is_installing:
+        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
+        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
+    elif globals.tray_is_error:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_orange")))
         globals.trayIcon.setToolTip(f"{_('Attention required')} - WingetUI")
     elif globals.tray_is_needs_restart:
         globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_turquoise")))
         globals.trayIcon.setToolTip(f"{_('Restart required')} - WingetUI")
-    elif globals.tray_is_installing:
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
-        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
     elif globals.tray_is_available_updates:
         try:
             if globals.updates.availableUpdates == 1:
@@ -384,19 +430,6 @@ def getint(s: str, fallback: int) -> int:
         return fallback
 
 
-def blacklistUpdatesForPackage(id: str):
-    """
-    THIS FUNCTION IS DEPRECATED. USE IgnorePackageUpdates_Permanent INSTEAD
-    """
-    setSettingsValue("BlacklistedUpdates", getSettingsValue(
-        "BlacklistedUpdates") + id + ",")
-    try:
-        raise Exception(
-            "This function has been deprecated, and shouldn't have been called")
-    except Exception as e:
-        report(e)
-
-
 def IgnorePackageUpdates_Permanent(id: str, store: str):
     """
     With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
@@ -439,19 +472,32 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     return [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
 
-def getLineFromStdout(p: subprocess.Popen) -> bytes:
+carriedChar = b""
+
+
+def getLineFromStdout(p: subprocess.Popen) -> (bytes, bool):
     """
     This function replaces p.stdout.readline(). Will return lines both from \\n-ending and \\r-ending character sequences.
     This function may be more resource-intensive, so it should be used only when live outputs must be analyzed in real time.
     """
+    global carriedChar
     stdout: IO[bytes] = p.stdout
+    is_newline: bool = False
     char = stdout.read(1)
-    line = b""
+    line = carriedChar
+    carriedChar = b""
     while char not in (b"\n", b"\r") and p.poll() is None:
         line += char
         char = stdout.read(1)
+    if b"\n" in char:
+        is_newline = True
+    elif b"\r" in char:
+        carriedChar = stdout.read(1)
+        if carriedChar == b"\n":
+            is_newline = True
+            carriedChar = b""
     line = line.replace(b"\r", b"").replace(b"\n", b"")
-    return line if (line or p.poll() is not None) else getLineFromStdout(p)
+    return (line, is_newline) if (line or p.poll() is not None) else getLineFromStdout(p)
 
 
 class KillableThread(Thread):
@@ -553,7 +599,6 @@ def getMaskedIcon(iconName: str) -> QIcon:
     R, G, B = getColors()[2 if isDark() else 1].split(",")
     R, G, B = (int(R), int(G), int(B))
     base_img = QImage(getMedia(iconName))
-    print(getMedia(iconName))
     for x in range(base_img.width()):
         for y in range(base_img.height()):
             color = base_img.pixelColor(x, y)
@@ -562,6 +607,15 @@ def getMaskedIcon(iconName: str) -> QIcon:
     globals.maskedImages[getMedia(iconName)] = QIcon(
         QPixmap.fromImage(base_img))
     return globals.maskedImages[getMedia(iconName)]
+
+
+def getIcon(iconName: str) -> QIcon:
+    iconPath = getMedia(iconName)
+    if iconPath in globals.cachedIcons:
+        return globals.cachedIcons[iconPath]
+    else:
+        globals.cachedIcons[iconPath] = QIcon(iconPath)
+        return globals.cachedIcons[iconPath]
 
 
 LATIN = "ä  æ  ǽ  đ ð ƒ ħ ı ł ø ǿ ö  œ  ß  ŧ ü  Ä  Æ  Ǽ  Đ Ð Ƒ Ħ I Ł Ø Ǿ Ö  Œ  ẞ  Ŧ Ü "
@@ -760,7 +814,7 @@ except Exception as e:
     report(e)
     englang = {"locale": "en"}
 
-print(f"It took {time.time()-t0} to load all language files")
+print(f"🔵 It took {time.time()-t0} to load all language files")
 
 
 Thread(target=checkQueue, daemon=True).start()

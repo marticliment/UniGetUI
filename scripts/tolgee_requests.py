@@ -9,7 +9,7 @@ except ImportError:
 
 
 __project_id = 1 # wingetui
-__api_url = f"https://tolgee.marticliment.com//v2/projects/{__project_id}"
+__api_url = f"https://tolgee.marticliment.com/v2/projects/{__project_id}"
 __api_key = ""
 __headers: dict[str, str] = {}
 __all_keys: dict = None
@@ -26,6 +26,16 @@ except FileNotFoundError:
     if not __api_key:
         __api_key = input("Write api key and press enter: ")
 __headers["X-API-Key"] = __api_key
+
+
+
+def check_api_key():
+    url = f"{__api_url}/activity"
+    response = requests.get(url, headers=__headers)
+    if (not response.ok):
+        print("Issue with API key!")
+        print("Error", response.status_code, response.json().get("error"))
+        exit(1)
 
 
 def export(format = "JSON", zip = True, langs: list[str] = []):
@@ -85,3 +95,6 @@ def delete_key(key):
     }
     response = requests.delete(url, headers=__headers, json=json)
     return response
+
+
+check_api_key()

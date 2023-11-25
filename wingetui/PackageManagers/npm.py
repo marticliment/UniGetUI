@@ -258,7 +258,7 @@ class NPMPackageManager(DynamicPackageManager):
             self.icon = QIcon(getMedia("node"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
         if options.CustomParameters:
             Parameters += options.CustomParameters
@@ -293,12 +293,13 @@ class NPMPackageManager(DynamicPackageManager):
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
         output = ""
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
-                output += line + "\n"
+                widget.addInfoLine.emit((line, is_newline))
+                if is_newline:
+                    output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
@@ -311,7 +312,7 @@ class NPMPackageManager(DynamicPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
-        Command = [self.EXECUTABLE, "uninstall", package.Id] + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall", package.Id] + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
@@ -323,12 +324,13 @@ class NPMPackageManager(DynamicPackageManager):
         outputCode = 1
         output = ""
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
-                widget.addInfoLine.emit(line)
-                output += line + "\n"
+                widget.addInfoLine.emit((line, is_newline))
+                if is_newline:
+                    output += line + "\n"
         match p.returncode:
             case 0:
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED

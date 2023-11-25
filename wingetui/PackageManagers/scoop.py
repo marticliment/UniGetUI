@@ -29,7 +29,7 @@ class ScoopPackageManager(DynamicPackageManager):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-    EXECUTABLE = "powershell -ExecutionPolicy ByPass -Command scoop"
+    EXECUTABLE = "powershell -NoProfile -ExecutionPolicy ByPass -Command scoop"
 
     NAME = "Scoop"
     CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
@@ -197,7 +197,7 @@ class ScoopPackageManager(DynamicPackageManager):
             import json
             data: dict = json.load(mfest)
             if "description" in data.keys():
-                if type(data["description"]) == list:
+                if type(data["description"]) is list:
                     details.Description = "\n".join(data["description"])
                 else:
                     details.Description = data["description"]
@@ -220,19 +220,19 @@ class ScoopPackageManager(DynamicPackageManager):
                     details.Author = w.split("/")[0].capitalize()
 
             if "notes" in data.keys():
-                if type(data["notes"]) == list:
+                if type(data["notes"]) is list:
                     details.ReleaseNotes = "\n".join(data["notes"])
                 else:
                     details.ReleaseNotes = data["notes"]
             details.ReleaseNotes = ConvertMarkdownToHtml(details.ReleaseNotes)
 
             if "license" in data.keys():
-                details.License = data["license"] if type(data["license"]) != dict else data["license"]["identifier"]
-                details.LicenseURL = unknownStr if type(data["license"]) != dict else data["license"]["url"]
+                details.License = data["license"] if type(data["license"]) is not dict else data["license"]["identifier"]
+                details.LicenseURL = unknownStr if type(data["license"]) is not dict else data["license"]["url"]
 
             if "url" in data.keys():
-                details.InstallerHash = data["hash"][0] if type(data["hash"]) == list else data["hash"]
-                url = data["url"][0] if type(data["url"]) == list else data["url"]
+                details.InstallerHash = data["hash"][0] if type(data["hash"]) is list else data["hash"]
+                url = data["url"][0] if type(data["url"]) is list else data["url"]
                 details.InstallerURL = url
                 try:
                     details.InstallerSize = int(urlopen(url).length / 1000000)
@@ -246,11 +246,11 @@ class ScoopPackageManager(DynamicPackageManager):
                     details.InstallerSize = int(urlopen(url).length / 1000000)
                 except Exception as e:
                     print("🟠 Can't get installer size:", type(e), str(e))
-                if type(data["architecture"]) == dict:
+                if type(data["architecture"]) is dict:
                     details.Architectures = list(data["architecture"].keys())
 
             if "checkver" in data.keys():
-                if type(data["checkver"]) == dict:
+                if type(data["checkver"]) is dict:
                     if "url" in data["checkver"].keys():
                         url = data["checkver"]["url"]
                         details.ReleaseNotesUrl = url
@@ -289,17 +289,18 @@ class ScoopPackageManager(DynamicPackageManager):
             self.icon = QIcon(getMedia("scoop"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             Parameters += ["--arch", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
             if options.InstallationScope.capitalize() in ("Global", _("Global")):
                 Parameters.append("--global")
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters.append("--skip")
-        if options.RemoveDataOnUninstall:
+        if options.RemoveDataOnUninstall and isAnUninstall:
             Parameters.append("--purge")
         return Parameters
 
@@ -331,7 +332,7 @@ class ScoopPackageManager(DynamicPackageManager):
         output = ""
         outputCode = 1
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
@@ -341,12 +342,13 @@ class ScoopPackageManager(DynamicPackageManager):
                     widget.counterSignal.emit(4)
                 elif "was installed successfully!" in line:
                     widget.counterSignal.emit(6)
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 if "was installed successfully" in line:
                     outputCode = 0
                 elif "is already installed" in line:
                     outputCode = 0
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         if "-g" in output and "successfully" not in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
@@ -359,7 +361,7 @@ class ScoopPackageManager(DynamicPackageManager):
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
-        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix + package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix + package.Id] + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} uninstall with Command", Command)
@@ -371,7 +373,7 @@ class ScoopPackageManager(DynamicPackageManager):
         outputCode = 1
         output = ""
         while p.poll() is None:
-            line = getLineFromStdout(p)
+            line, is_newline = getLineFromStdout(p)
             line = line.strip()
             line = str(line, encoding='utf-8', errors="ignore").strip()
             if line:
@@ -381,10 +383,11 @@ class ScoopPackageManager(DynamicPackageManager):
                     widget.counterSignal.emit(4)
                 elif "was uninstalled" in line:
                     widget.counterSignal.emit(6)
-                widget.addInfoLine.emit(line)
+                widget.addInfoLine.emit((line, is_newline))
                 if "was uninstalled" in line:
                     outputCode = 0
-                output += line + "\n"
+                if is_newline:
+                    output += line + "\n"
         if "-g" in output and "was uninstalled" not in output and not options.RunAsAdministrator:
             outputCode = RETURNCODE_NEEDS_SCOOP_ELEVATION
         elif "requires admin rights" in output or "requires administrator rights" in output or "you need admin rights to install global apps" in output:
