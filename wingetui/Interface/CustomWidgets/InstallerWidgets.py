@@ -167,15 +167,18 @@ class PackageInstallerWidget(QWidget):
         ApplyMica(self.liveOutputWindowWindow.winId(), MicaTheme.DARK)
 
     def startInstallation(self) -> None:
+        last_position_count = -1
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
             append = " "
-            try:
-                append += _("(Number {0} in the queue)").format(globals.pending_programs.index(self.installId))
-            except ValueError:
-                print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
-            globals.pending_programs.index(self.installId)
-            self.addInfoLine.emit((_("Waiting for other installations to finish...") + append))
+            if last_position_count != globals.pending_programs.index(self.installId):
+                last_position_count = globals.pending_programs.index(self.installId)
+                try:
+                    append += _("(Number {0} in the queue)").format(last_position_count)
+                except ValueError:
+                    print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
+                self.addInfoLine.emit((_("Waiting for other installations to finish...") + append, False))
+                
         print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
