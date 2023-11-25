@@ -289,18 +289,18 @@ class ScoopPackageManager(DynamicPackageManager):
             self.icon = QIcon(getMedia("scoop"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             Parameters += ["--arch", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
             if options.InstallationScope.capitalize() in ("Global", _("Global")):
                 Parameters.append("--global")
-        if options.SkipHashCheck:
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters.append("--skip")
-        if options.RemoveDataOnUninstall:
+        if options.RemoveDataOnUninstall and isAnUninstall:
             Parameters.append("--purge")
         return Parameters
 
@@ -361,7 +361,7 @@ class ScoopPackageManager(DynamicPackageManager):
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
-        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix + package.Id] + self.getParameters(options)
+        Command = self.EXECUTABLE.split(" ") + ["uninstall", bucket_prefix + package.Id] + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command + ["--global"]
         print(f"🔵 Starting {package} uninstall with Command", Command)

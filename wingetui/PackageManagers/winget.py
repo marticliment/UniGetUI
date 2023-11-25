@@ -570,9 +570,9 @@ class WingetPackageManager(DynamicPackageManager):
         else:
             return self.wingetIcon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = ["--accept-source-agreements"]
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             Parameters += ["--architecture", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
@@ -585,7 +585,7 @@ class WingetPackageManager(DynamicPackageManager):
                 Parameters.append("machine")
         if options.InteractiveInstallation:
             Parameters.append("--interactive")
-        if options.SkipHashCheck:
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters.append("--ignore-security-hash")
         if options.Version:
             Parameters += ["--version", options.Version, "--force"]
@@ -665,7 +665,7 @@ class WingetPackageManager(DynamicPackageManager):
             print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
             options.Architecture = "x86"
         
-        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options)
+        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)
