@@ -65,7 +65,7 @@ class PipPackageManager(DynamicPackageManager):
         try:
             if shutil.which("parse_pip_search") is None:
                 print("🟡 Installing pip-search, that was missing...")
-                Command = self.EXECUTABLE.split(" ") + ["install", "parse_pip_search"] + self.getParameters(InstallationOptions())
+                Command = self.EXECUTABLE.split(" ") + ["install", "parse_pip_search", "--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 p.wait()
             packages: list[Package] = []

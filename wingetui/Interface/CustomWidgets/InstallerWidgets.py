@@ -675,7 +675,7 @@ class CustomInstallerWidget(PackageInstallerWidget):
     def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
         self.Package.PackageItem = QTreeWidgetItem()
-        self.Options = InstallationOptions()
+        self.Options = InstallationOptions(self.Package, reset = True)
         self.command = command
         if runAsAdministrator:
             self.Options.RunAsAdministrator = True
@@ -719,7 +719,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
     def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
         self.Package.PackageItem = QTreeWidgetItem()
-        self.Options = InstallationOptions()
+        self.Options = InstallationOptions(self.Package, reset = True)
         if runAsAdministrator:
             self.Options.RunAsAdministrator = True
 

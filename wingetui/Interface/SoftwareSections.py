@@ -463,20 +463,26 @@ class DiscoverSoftwareSection(SoftwareSection):
         Initialize the install procedure for the given package item, passed as a PackageItem. Switches: admin, interactive, skiphash
         """
         package: Package = item.Package
-        options = InstallationOptions()
-        options.RunAsAdministrator = admin
-        options.InteractiveInstallation = interactive
-        options.SkipHashCheck = skiphash
+        options = InstallationOptions(package)
+        if admin:
+            options.RunAsAdministrator = True
+        if interactive:
+            options.InteractiveInstallation = True
+        if skiphash:
+            options.SkipHashCheck = True
         self.addInstallation(PackageInstallerWidget(package, options))
 
     def installPackage(self, package: Package, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
         Initialize the install procedure for the given package, passed as a Package. Switches: admin, interactive, skiphash
         """
-        options = InstallationOptions()
-        options.RunAsAdministrator = admin
-        options.InteractiveInstallation = interactive
-        options.SkipHashCheck = skiphash
+        options = InstallationOptions(package)
+        if admin:
+            options.RunAsAdministrator = True
+        if interactive:
+            options.InteractiveInstallation = True
+        if skiphash:
+            options.SkipHashCheck = True
         self.addInstallation(PackageInstallerWidget(package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:
@@ -1046,10 +1052,13 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def updatePackageItem(self, item: UpgradablePackageItem, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         package: Package = item.Package
-        options = InstallationOptions()
-        options.RunAsAdministrator = admin
-        options.InteractiveInstallation = interactive
-        options.SkipHashCheck = skiphash
+        options = InstallationOptions(item.Package)
+        if admin:
+            options.RunAsAdministrator = True
+        if interactive:
+            options.InteractiveInstallation = True
+        if skiphash:
+            options.SkipHashCheck = True
         self.addInstallation(PackageUpdaterWidget(package, options))
 
     def updatePackageForGivenId(self, id: str):
@@ -1481,10 +1490,13 @@ class UninstallSoftwareSection(SoftwareSection):
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
         else:
-            options = InstallationOptions()
-            options.RunAsAdministrator = admin
-            options.InteractiveInstallation = interactive
-            options.RemoveDataOnUninstall = removeData
+            options = InstallationOptions(packageItem.Package)
+            if admin:
+                options.RunAsAdministrator = True
+            if interactive:
+                options.InteractiveInstallation = True
+            if removeData:
+                options.RemoveDataOnUninstall = True
             self.addInstallation(PackageUninstallerWidget(packageItem.Package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:
@@ -1694,20 +1706,31 @@ class PackageInfoPopupWindow(QWidget):
 
         optionsSection = SmallCollapsableSection(_("Installation options"), getMedia("options"))
 
+        optionsheader = SectionHWidget()
+        optionsheader.setFixedHeight(40)
+        infolabel = QLabel(_("The following settings will be applied each time this package is installed, updated or removed. They will be saved automatically."))
+        infolabel.setWordWrap(True)
+        optionsheader.addWidget(infolabel)
+        saveButton = QPushButton(_("Save now"))
+        saveButton.setFixedSize(150, 30)
+        saveButton.clicked.connect(lambda: (self.getInstallationOptions().SaveOptionsToDisk(), InWindowNotification(self, _("Options saved")).show()))
+        optionsheader.addWidget(saveButton)
+        optionsSection.addWidget(optionsheader)
+
         self.hashCheckBox = QCheckBox()
         self.hashCheckBox.setText(_("Skip hash check"))
         self.hashCheckBox.setChecked(False)
-        self.hashCheckBox.clicked.connect(self.loadPackageCommandLine)
+        self.hashCheckBox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
         self.interactiveCheckbox.setChecked(False)
-        self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
+        self.interactiveCheckbox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
-        self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
+        self.adminCheckbox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         firstRow = SectionHWidget()
         firstRow.addWidget(self.hashCheckBox)
@@ -1763,7 +1786,7 @@ class PackageInfoPopupWindow(QWidget):
         customArgumentsSection = SectionHWidget()
         customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
         self.customArgumentsLineEdit = CustomLineEdit()
-        self.customArgumentsLineEdit.textChanged.connect(self.loadPackageCommandLine)
+        self.customArgumentsLineEdit.textChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
         self.customArgumentsLineEdit.setFixedHeight(30)
         customArgumentsSection.addWidget(customArgumentsLabel)
         customArgumentsSection.addWidget(self.customArgumentsLineEdit)
@@ -1906,9 +1929,9 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
 
-        self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-        self.architectureCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-        self.scopeCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
+        self.versionCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
+        self.architectureCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
+        self.scopeCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.ApplyIcons()
         self.registeredThemeEvent = False
@@ -1948,18 +1971,24 @@ class PackageInfoPopupWindow(QWidget):
             return super().resizeEvent(event)
 
     def getInstallationOptions(self) -> InstallationOptions:
-        options = InstallationOptions()
+        options = InstallationOptions(self.currentPackage)
         options.RunAsAdministrator = self.adminCheckbox.isChecked()
         options.InteractiveInstallation = self.interactiveCheckbox.isChecked()
         options.SkipHashCheck = self.hashCheckBox.isChecked()
         if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
             options.Version = self.versionCombo.currentText()
+        else:
+            options.Version = ""
         if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
             options.Architecture = self.architectureCombo.currentText()
             if options.Architecture in (_("Global"), "Global"):
                 options.RunAsAdministrator = True
+        else:
+            options.Architecture = ""
         if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
             options.InstallationScope = self.scopeCombo.currentText()
+        else:
+            options.InstallationScope = ""
         options.CustomParameters = [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
         return options
 
@@ -2074,6 +2103,7 @@ class PackageInfoPopupWindow(QWidget):
         Thread(target=self.loadPackageIcon, args=(package,)).start()
 
         Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
+        self.loadCachedInstallationOptions()
 
         self.tagsWidget.layout().clear()
 
@@ -2156,8 +2186,26 @@ class PackageInfoPopupWindow(QWidget):
         self.architectureLabel.setEnabled(Capabilities.SupportsCustomArchitectures)
         self.scopeCombo.setEnabled(Capabilities.SupportsCustomScopes)
         self.scopeLabel.setEnabled(Capabilities.SupportsCustomScopes)
-
+        
+        self.loadCachedInstallationOptions()
         self.loadPackageCommandLine()
+
+
+    def loadCachedInstallationOptions(self):
+        options = InstallationOptions(self.currentPackage)
+        self.adminCheckbox.setChecked(options.RunAsAdministrator)
+        self.interactiveCheckbox.setChecked(options.InteractiveInstallation)
+        self.hashCheckBox.setChecked(options.SkipHashCheck)
+        try:
+            self.architectureCombo.setCurrentText(options.Architecture)
+        except Exception as e:
+            report(e)        
+        try:
+            self.scopeCombo.setCurrentText(options.InstallationScope)
+        except Exception as e:
+            report(e)
+        self.customArgumentsLineEdit.setText(" ".join([c for c in options.CustomParameters if c]))
+
 
     def loadPackageIcon(self, package: Package) -> None:
         try:
@@ -2243,12 +2291,15 @@ class PackageInfoPopupWindow(QWidget):
             IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
 
+        options = self.getInstallationOptions()
+        options.SaveOptionsToDisk()
+
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(self.currentPackage, self.getInstallationOptions())
+            p = PackageUpdaterWidget(self.currentPackage, options)
         elif self.isAnUninstall:
-            p = PackageUninstallerWidget(self.currentPackage, self.getInstallationOptions())
+            p = PackageUninstallerWidget(self.currentPackage, options)
         else:
-            p = PackageInstallerWidget(self.currentPackage, self.getInstallationOptions())
+            p = PackageInstallerWidget(self.currentPackage, options)
         self.addProgram.emit(p)
         self.close()
 

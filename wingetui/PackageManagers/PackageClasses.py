@@ -257,6 +257,41 @@ class InstallationOptions():
     CustomParameters: list[str] = []
     RemoveDataOnUninstall: bool = False
 
+    Package: 'Package' = None
+    __save_file_name: str = "Unknown.Unknown.InstallationOptions"
+    __data_to_save: list[str] = [
+            "SkipHashCheck",
+            "InteractiveInstallation",
+            "RunAsAdministrator",
+            "Architecture",
+            "InstallationScope",
+            "CustomParameters",
+        ]
+
+    def __init__(self, package: 'Package', reset: bool = False):
+        self.Package = package
+        self.__save_file_name = "InstallationOptions." + self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
+        if not reset:
+            self.LoadOptionsFromDisk()
+
+    def SaveOptionsToDisk(self):
+        """
+        Save current installation options to disk
+        """
+        optionsToSave = {}
+        for entry in self.__data_to_save:
+            optionsToSave[entry] = getattr(self, entry)
+        setJsonSettings(self.__save_file_name, optionsToSave)
+
+    def LoadOptionsFromDisk(self):
+        """
+        Get previously saved installation options from disk
+        """
+        newOptions = getJsonSettings(self.__save_file_name)
+        for entry in self.__data_to_save:
+            if entry in newOptions.keys():
+                setattr(self, entry, newOptions[entry])
+        
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
         str += f"InteractiveInstallation={self.InteractiveInstallation};"

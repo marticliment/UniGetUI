@@ -95,7 +95,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
         try:
             if shutil.which("dotnet-tools-outdated") is None:
                 print("🟡 Installing dotnet-tools-outdated, that was missing...")
-                Command = [self.EXECUTABLE, "tool", "install", "--global", "dotnet-tools-outdated"] + self.getParameters(InstallationOptions())
+                Command = [self.EXECUTABLE, "tool", "install", "--global", "dotnet-tools-outdated", "--global"]
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 p.wait()
                 print(p.stdout.readlines())
