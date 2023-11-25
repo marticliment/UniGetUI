@@ -250,7 +250,7 @@ class ScoopPackageManager(DynamicPackageManager):
                     details.Architectures = list(data["architecture"].keys())
 
             if "checkver" in data.keys():
-                if type(data["checkver"]) is not dict:
+                if type(data["checkver"]) is dict:
                     if "url" in data["checkver"].keys():
                         url = data["checkver"]["url"]
                         details.ReleaseNotesUrl = url
