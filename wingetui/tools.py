@@ -196,7 +196,7 @@ def getJsonSettings(s: str) -> dict:
     globals.settingsCache
     try:
         if (s + "JSON") in globals.settingsCache.keys():
-            return str(globals.settingsCache[s + "JSON"])
+            return globals.settingsCache[s + "JSON"]
         else:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "r", encoding="utf-8", errors="ignore") as file:
                 data: dict = json.load(file)
