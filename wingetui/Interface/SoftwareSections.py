@@ -851,21 +851,22 @@ class UpdateSoftwareSection(SoftwareSection):
             except Exception as e:
                 report(e)
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
-                self.updateAllPackageItems()
-                self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
-                if count > 1:
-                    self.UpdatesNotification.setTitle(_("Updates found!"))
-                    self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count) + ":")
-                    packageList = ""
-                    for item in self.packageItems:
-                        packageList += item.Package.Name + ", "
-                    self.UpdatesNotification.setSmallText(packageList[:-2])
-                elif count == 1:
-                    self.UpdatesNotification.setTitle(_("Update found!"))
-                    self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.Package.Name))
-                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                if globals.ENABLE_UPDATES_NOTIFICATIONS:
-                    self.UpdatesNotification.show()
+                if not globals.tray_is_installing:
+                    self.updateAllPackageItems()
+                    self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
+                    if count > 1:
+                        self.UpdatesNotification.setTitle(_("Updates found!"))
+                        self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count) + ":")
+                        packageList = ""
+                        for item in self.packageItems:
+                            packageList += item.Package.Name + ", "
+                        self.UpdatesNotification.setSmallText(packageList[:-2])
+                    elif count == 1:
+                        self.UpdatesNotification.setTitle(_("Update found!"))
+                        self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.Package.Name))
+                    self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    if globals.ENABLE_UPDATES_NOTIFICATIONS:
+                        self.UpdatesNotification.show()
 
             else:
                 self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
