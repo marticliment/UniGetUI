@@ -911,7 +911,7 @@ class SoftwareSection(QWidget):
         self.filterList.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.filterList.setColumnWidth(2, 10)
         self.filterList.verticalScrollBar().setFixedWidth(12)
-        self.filterList.itemChanged.connect(lambda i, c: (self.addItemsToTreeWidget(reset=True) if c == 0 else None))
+        self.filterList.itemChanged.connect(lambda i, c: (self.addItemsToTreeWidget(reset = True) if c == 0 else None))
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
 
         self.filterList.header().hide()

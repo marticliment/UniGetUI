@@ -890,8 +890,11 @@ class UpdateSoftwareSection(SoftwareSection):
         else:
             globals.tray_is_available_updates = False
             update_tray_icon()
+        
         self.updatePackageNumber()
         self.filter()
+        self.addItemsToTreeWidget(reset = True)
+
         if not getSettings("DisableAutoCheckforUpdates"):
             try:
                 waitTime = int(getSettingsValue("UpdatesCheckInterval"))
@@ -1037,7 +1040,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def updateSelectedPackageItems(self, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         for item in self.packageItems:
-            if not item.isHidden() and item.checkState(0) == Qt.CheckState.Checked:
+            if not item.isHidden() and item.checkState(0) == Qt.CheckState.Checked and self.FilterItemForManager[item.Package.PackageManager].checkState(0) == Qt.CheckState.Checked:
                 self.updatePackageItem(item, admin, skiphash, interactive)
 
     def updatePackageItem(self, item: UpgradablePackageItem, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
