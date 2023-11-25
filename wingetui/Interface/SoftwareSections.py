@@ -1707,7 +1707,6 @@ class PackageInfoPopupWindow(QWidget):
         optionsSection = SmallCollapsableSection(_("Installation options"), getMedia("options"))
 
         optionsheader = SectionHWidget()
-        optionsheader.setFixedHeight(40)
         infolabel = QLabel(_("The following settings will be applied each time this package is installed, updated or removed. They will be saved automatically."))
         infolabel.setWordWrap(True)
         optionsheader.addWidget(infolabel)
