@@ -177,6 +177,7 @@ class PackageInstallerWidget(QWidget):
                     append += _("(Number {0} in the queue)").format(last_position_count)
                 except ValueError:
                     print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
+                print(type(self))
                 self.addInfoLine.emit((_("Waiting for other installations to finish...") + append, False))
                 
         print("🟢 Have permission to install, starting installation threads...")
@@ -502,7 +503,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
 class PackageUninstallerWidget(PackageInstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(tuple[str, bool])
+    addInfoLine = Signal(tuple)
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
@@ -665,7 +666,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
 class CustomInstallerWidget(PackageInstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(tuple[str, bool])
+    addInfoLine = Signal(tuple)
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     callInMain = Signal(object)
