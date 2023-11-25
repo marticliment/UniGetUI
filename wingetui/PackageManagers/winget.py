@@ -595,6 +595,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
+
+        if "64" in package.Name or "64" in package.Id:
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif ".x86" in package.Id or "32-bit" in package.Name:
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+
         Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -606,6 +614,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
+
+        if "64-bit" in package.Name or "x64" in package.Id.lower():
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif "32-bit" in package.Name or "x86" in package.Id.lower():
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+
         Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + ["--include-unknown"] + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -641,6 +657,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package, installed=True)
+
+        if "64" in package.Name or "64" in package.Id:
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif ".x86" in package.Id or "32-bit" in package.Name:
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+        
         Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
