@@ -1,9 +1,9 @@
-PySide6>=6.5.2
+PySide6>=6.6.0
 win32mica>=3.0
-PyInstaller==5.9.0
+PyInstaller>=6.2.0
 pywin32>=306
 Flask>=2.3.3
 flask-cors>=4.0.0
 windows_toasts>=1.0.0
-pythonnet>=3.0.2
+pythonnet>=3.0.3
 waitress>=2.1.2
