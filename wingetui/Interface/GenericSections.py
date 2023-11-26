@@ -1084,12 +1084,15 @@ class BaseLogSection(QWidget):
 
 
 class BaseBrowserSection(QWidget):
-    HOME_URL = "https://www.marticliment.com/wingetui"
+    HOME_URL = "https://www.marticliment.com/wingetui/help"
+    loaded = False
     def __init__(self):
 
-        from ExternalLibraries.pyside6webview2 import WebView2
         super().__init__()
 
+    def loadWebView(self):
+        self.loaded = True
+        from ExternalLibraries.pyside6webview2 import WebView2
         self.setObjectName("background")
 
         hLayout = QHBoxLayout()
@@ -1129,6 +1132,8 @@ class BaseBrowserSection(QWidget):
             self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #dddddd;")
 
     def showEvent(self, event: QShowEvent) -> None:
+        if not self.loaded:
+            self.loadWebView()
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
             self.window().OnThemeChange.connect(self.ApplyIcons)
@@ -1136,9 +1141,13 @@ class BaseBrowserSection(QWidget):
         return super().showEvent(event)
 
     def loadWebContents(self):
+        if not self.loaded:
+            self.loadWebView()
         self.webview.setLocation(self.HOME_URL)
 
     def changeHomeUrl(self, url: str):
+        if not self.loaded:
+            self.loadWebView()
         self.HOME_URL = url
         self.loadWebContents()
 

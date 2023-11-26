@@ -132,10 +132,6 @@ class RootWindow(QMainWindow):
         self.helpSection = BaseBrowserSection()
         self.widgets[self.helpSection] = self.addTab(self.helpSection, _("Help and documentation"), addToMenu=True, actionIcon="help")
 
-        # self.helpAction = QAction(_("Help and documentation"), self)
-        # self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
-        # self.extrasMenu.addAction(self.helpAction)
-
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()
@@ -467,7 +463,6 @@ class RootWindow(QMainWindow):
     def ApplyIcons(self):
         globals.maskedImages = {}
         globals.cachedIcons = {}
-        self.helpAction.setIcon(QIcon(getMedia("help")))
         self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         for widget in self.DynamicIconsToApply.keys():
