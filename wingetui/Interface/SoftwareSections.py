@@ -675,8 +675,6 @@ class UpdateSoftwareSection(SoftwareSection):
         self.HelpMenuEntry13.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
-        self.HelpMenuEntry4.setIcon(QIcon(getMedia("launch")))
-        self.HelpMenuEntry5.setIcon(QIcon(getMedia("launch")))
 
         for item in self.packageItems:
             package: UpgradablePackage = item.Package
@@ -817,9 +815,9 @@ class UpdateSoftwareSection(SoftwareSection):
             helpMenu.addSeparator()
             helpMenu.addAction(self.HelpMenuEntry2)
             helpMenu.addAction(self.HelpMenuEntry3)
-            helpMenu.addAction(self.HelpMenuEntry4)
-            helpMenu.addSeparator()
-            helpMenu.addAction(self.HelpMenuEntry5)
+            #helpMenu.addAction(self.HelpMenuEntry4)
+            #helpMenu.addSeparator()
+            #helpMenu.addAction(self.HelpMenuEntry5)
             ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
             helpMenu.exec(QCursor.pos())
 
