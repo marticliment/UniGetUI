@@ -1,19 +1,17 @@
-from typing import Optional
 from PySide6.QtCore import *
-import PySide6.QtCore
 from PySide6.QtGui import *
-import PySide6.QtGui
 from PySide6.QtWidgets import *
-import os
 import sys
-import win32mica
-import PySide6.QtWidgets
-import subprocess
-import threading
-import time
-import re
-import time
+import clr
+import os
 
+
+if hasattr(sys, 'frozen'):
+    BASE_PATH = sys._MEIPASS
+else:
+    BASE_PATH = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+
+DLL_PATH = os.path.join(BASE_PATH, "ExternalLibraries/PyWebView2/lib/WinFormsWebView.dll")
 
 class WebView2(QWidget):
     hWnd: int = 0
@@ -30,8 +28,7 @@ class WebView2(QWidget):
         self.CustomLayout = QHBoxLayout()
         self.setLayout(self.CustomLayout)
         
-        import clr
-        clr.AddReference(r"C:\SomePrograms\WingetUI-Store\wingetui\ExternalLibraries\pyside6webview2\Component\WinFormsWebView.dll")
+        clr.AddReference(DLL_PATH)
         import WinFormsWebView        
 
         self.webview = WinFormsWebView.Form1()
@@ -79,7 +76,7 @@ class WebView2(QWidget):
         return self.webview.getUrl()
 
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     a = QApplication(sys.argv)
 
     win = QWidget()
@@ -101,3 +98,4 @@ if __name__ == "__main__":
     win.setWindowTitle("Embed Qt")
     win.show()
     sys.exit(a.exec())
+"""
