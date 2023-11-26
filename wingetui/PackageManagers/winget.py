@@ -292,8 +292,20 @@ class WingetPackageManager(DynamicPackageManager):
             if s == _("Local PC"):
                 if id == "Steam":
                     s = "Steam"
+                if id.count("Steam App ") == 1:
+                    s = "Steam"
+                    for number in id.split("Steam App ")[1]:
+                        if number not in "0123456789":
+                            s = _("Local PC")
+                            break
                 if id == "Uplay":
                     s = "Ubisoft Connect"
+                if id.count("Uplay Install ") == 1:
+                    s = "Ubisoft Connect"
+                    for number in id.split("Uplay Install ")[1]:
+                        if number not in "0123456789":
+                            s = _("Local PC")
+                            break
                 if id.count("_is1") == 1:
                     s = "GOG"
                     for number in id.split("_is1")[0]:
@@ -552,7 +564,7 @@ class WingetPackageManager(DynamicPackageManager):
             self.localIcon = QIcon(getMedia("localpc"))
             self.msStoreIcon = QIcon(getMedia("msstore"))
             self.wsaIcon = QIcon(getMedia("android"))
-            self.SteamIcon = QIcon(getMedia("steam"))
+            self.steamIcon = QIcon(getMedia("steam"))
             self.gogIcon = QIcon(getMedia("gog"))
             self.uPlayIcon = QIcon(getMedia("uplay"))
         if "microsoft store" in source.lower():
