@@ -88,6 +88,17 @@ components/share-component/Release/*.pdb
 components/share-component/Release/*.config
 components/share-component/WingetUIShareComponent/obj/*
 components/share-component/packages/*
+components/webview2-component/c#/.vs
+components/webview2-component/c#/WingetUIShareComponent/bin/Debug/*
+components/webview2-component/c#/Release/System*.*
+components/webview2-component/c#/Release/Uno*.*
+components/webview2-component/c#/obj
+components/webview2-component/c#/bin
+components/webview2-component/c#/Release/Windows.winmd
+components/webview2-component/c#/Release/*.pdb
+components/webview2-component/c#/Release/*.config
+components/webview2-component/c#/WingetUIShareComponent/obj/*
+components/webview2-component/c#/packages/*
 wui-1.7.0-console.zip
 wui1.7.0-debug2.zip
 env/
