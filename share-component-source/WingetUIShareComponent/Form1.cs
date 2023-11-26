@@ -32,8 +32,20 @@ namespace WingetUIShareComponent
             StartSharingProcess(Environment.GetCommandLineArgs());
         }
 
+        public Form1(int hWnd)
+        {
+            InitializeComponent();
+            StartSharingProcess(hWnd);
+        }
+
+        public void StartSharingProcess(int hWnd)
+        {
+            IntPtr hwndPtr = new IntPtr(hWnd);
+            showShareInterface(hwndPtr);
+        }
+
         public void StartSharingProcess(string[] args)
-        { 
+        {
             Console.WriteLine(args);
 
             // args[0]: executable file (default argument)
@@ -76,8 +88,8 @@ namespace WingetUIShareComponent
                 Debug.WriteLine(rect.ToString());
             }
 
-            Height = height-1;
-            Width = width-1; // +-1 offsets to prevent the window from being detected as a fullscreen window
+            Height = height - 1;
+            Width = width - 1; // +-1 offsets to prevent the window from being detected as a fullscreen window
             this.Location = new Point(x, y);
             Text = "Sharing " + this.name;
 
@@ -86,6 +98,12 @@ namespace WingetUIShareComponent
             Activate();
 
             IntPtr hwnd = this.Handle;
+            showShareInterface(hwnd);
+
+        }
+
+        public void showShareInterface(IntPtr hwnd)
+        { 
             var dtm = DataTransferManagerHelper.GetForWindow(hwnd);
             dtm.DataRequested += OnDataRequested;
             DataTransferManagerHelper.ShowShareUIForWindow(hwnd);
