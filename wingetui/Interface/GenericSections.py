@@ -1092,7 +1092,7 @@ class BaseBrowserSection(QWidget):
 
     def loadWebView(self):
         self.loaded = True
-        from ExternalLibraries.pyside6webview2 import WebView2
+        from ExternalLibraries.PyWebView2 import WebView2
         self.setObjectName("background")
 
         hLayout = QHBoxLayout()
