@@ -22,7 +22,7 @@ from PySide6.QtWidgets import *
 from urllib.request import urlopen
 import os
 from tools import *
-from tools import _, blueColor, GetIgnoredPackageUpdates_Permanent, cprint, report
+from tools import _, blueColor
 import globals
 
 

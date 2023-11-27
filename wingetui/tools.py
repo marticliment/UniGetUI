@@ -225,7 +225,6 @@ def setJsonSettings(s: str, data: dict) -> None:
         print(e)
 
 
-
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
@@ -238,9 +237,6 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     else:
         print("🟡 Starting fallback wrapper window sharing")
         WingetUIShareComponent.Form1(["", text, url, coordinates])
-
-
-
 
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
