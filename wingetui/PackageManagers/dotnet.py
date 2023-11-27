@@ -95,7 +95,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
         try:
             if shutil.which("dotnet-tools-outdated") is None:
                 print("🟡 Installing dotnet-tools-outdated, that was missing...")
-                Command = [self.EXECUTABLE, "tool", "install", "--global", "dotnet-tools-outdated"] + self.getParameters(InstallationOptions())
+                Command = [self.EXECUTABLE, "tool", "install", "--global", "dotnet-tools-outdated", "--global"]
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 p.wait()
                 print(p.stdout.readlines())
@@ -232,13 +232,13 @@ class DotNetToolPackageManager(DynamicPackageManager):
             self.Icon = QIcon(getMedia("dotnet"))
         return self.Icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = ["--global"]
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             Parameters += ["-a", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
-        if options.Version:
+        if options.Version and not isAnUninstall:
             Parameters += ["--version", options.Version]
         return Parameters
 
@@ -277,7 +277,7 @@ class DotNetToolPackageManager(DynamicPackageManager):
         widget.finishInstallation.emit(outputCode, output)
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command: list[str] = [self.EXECUTABLE, "tool", "uninstall", package.Id] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "tool", "uninstall", package.Id] + self.getParameters(options, False)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)

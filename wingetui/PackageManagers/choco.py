@@ -228,18 +228,18 @@ class ChocoPackageManager(DynamicPackageManager):
             self.icon = QIcon(getMedia("choco"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             if options.Architecture == "x86":
                 Parameters.append("--forcex86")
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InteractiveInstallation:
             Parameters.append("--notsilent")
-        if options.SkipHashCheck:
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters += ["--ignore-checksums", "--force"]
-        if options.Version:
+        if options.Version and not isAnUninstall:
             Parameters += ["--version=" + options.Version, "--allow-downgrade"]
         return Parameters
 

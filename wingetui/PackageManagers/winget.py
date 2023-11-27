@@ -292,8 +292,20 @@ class WingetPackageManager(DynamicPackageManager):
             if s == _("Local PC"):
                 if id == "Steam":
                     s = "Steam"
+                if id.count("Steam App ") == 1:
+                    s = "Steam"
+                    for number in id.split("Steam App ")[1]:
+                        if number not in "0123456789":
+                            s = _("Local PC")
+                            break
                 if id == "Uplay":
                     s = "Ubisoft Connect"
+                if id.count("Uplay Install ") == 1:
+                    s = "Ubisoft Connect"
+                    for number in id.split("Uplay Install ")[1]:
+                        if number not in "0123456789":
+                            s = _("Local PC")
+                            break
                 if id.count("_is1") == 1:
                     s = "GOG"
                     for number in id.split("_is1")[0]:
@@ -552,7 +564,7 @@ class WingetPackageManager(DynamicPackageManager):
             self.localIcon = QIcon(getMedia("localpc"))
             self.msStoreIcon = QIcon(getMedia("msstore"))
             self.wsaIcon = QIcon(getMedia("android"))
-            self.SteamIcon = QIcon(getMedia("steam"))
+            self.steamIcon = QIcon(getMedia("steam"))
             self.gogIcon = QIcon(getMedia("gog"))
             self.uPlayIcon = QIcon(getMedia("uplay"))
         if "microsoft store" in source.lower():
@@ -570,9 +582,9 @@ class WingetPackageManager(DynamicPackageManager):
         else:
             return self.wingetIcon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = ["--accept-source-agreements"]
-        if options.Architecture:
+        if options.Architecture and not isAnUninstall:
             Parameters += ["--architecture", options.Architecture]
         if options.CustomParameters:
             Parameters += options.CustomParameters
@@ -585,7 +597,7 @@ class WingetPackageManager(DynamicPackageManager):
                 Parameters.append("machine")
         if options.InteractiveInstallation:
             Parameters.append("--interactive")
-        if options.SkipHashCheck:
+        if options.SkipHashCheck and not isAnUninstall:
             Parameters.append("--ignore-security-hash")
         if options.Version:
             Parameters += ["--version", options.Version, "--force"]
@@ -595,6 +607,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
+
+        if "64" in package.Name or "64" in package.Id:
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif ".x86" in package.Id or "32-bit" in package.Name:
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+
         Command = [self.EXECUTABLE, "install"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -606,6 +626,14 @@ class WingetPackageManager(DynamicPackageManager):
     def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
+
+        if "64-bit" in package.Name or "x64" in package.Id.lower():
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif "32-bit" in package.Name or "x86" in package.Id.lower():
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+
         Command = [self.EXECUTABLE, "upgrade"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + ["--include-unknown"] + self.getParameters(options) + ["--accept-package-agreements"]
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -641,7 +669,15 @@ class WingetPackageManager(DynamicPackageManager):
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package, installed=True)
-        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options)
+
+        if "64" in package.Name or "64" in package.Id:
+            print(f"🟠 Forcing 64bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x64"
+        elif ".x86" in package.Id or "32-bit" in package.Name:
+            print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
+            options.Architecture = "x86"
+        
+        Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)

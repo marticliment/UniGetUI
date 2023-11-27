@@ -31,6 +31,7 @@ from Interface.SoftwareSections import *
 WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320
 DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 
+
 class RootWindow(QMainWindow):
     callInMain = Signal(object)
     pressed = False
@@ -124,14 +125,12 @@ class RootWindow(QMainWindow):
         self.historySection = OperationHistorySection()
         self.widgets[self.historySection] = self.addTab(self.historySection, _("Operation history"), addToMenu=True, actionIcon="list")
         self.extrasMenu.addSeparator()
-        self.logSection = LogSection()
-        self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
+        self.helpSection = LogSection()
+        self.widgets[self.helpSection] = self.addTab(self.helpSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
-
-        self.helpAction = QAction(_("Help and documentation"), self)
-        self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
-        self.extrasMenu.addAction(self.helpAction)
+        self.helpSection = BaseBrowserSection()
+        self.widgets[self.helpSection] = self.addTab(self.helpSection, _("Help and documentation"), addToMenu=True, actionIcon="help")
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
@@ -216,6 +215,10 @@ class RootWindow(QMainWindow):
             self.resizewidget.setVisible(False)
             self.adjustInstallationsSize()
 
+    def showHelpUrl(self, url: str):
+        self.helpSection.changeHomeUrl(url)
+        self.widgets[self.helpSection].click()
+
     def adjustInstallationsSize(self, offset: int = 0) -> None:
         if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():
             self.installationsWidget.maxHeight = self.installationsWidget.getFullHeight()
@@ -255,7 +258,8 @@ class RootWindow(QMainWindow):
                                   DWMWA_USE_IMMERSIVE_DARK_MODE,
                                   ctypes.byref(currentBgTheme),
                                   ctypes.sizeof(currentBgTheme))
-        print(currentBgTheme.value)
+
+        value = ctypes.c_int(0)
         match theme:
             case "dark":
                 value = ctypes.c_int(1)
@@ -263,21 +267,21 @@ class RootWindow(QMainWindow):
                 value = ctypes.c_int(0)
             case "auto":
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                                    r"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
-                themeVal = winreg.QueryValueEx(key,"AppsUseLightTheme")
+                                     r"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+                themeVal = winreg.QueryValueEx(key, "AppsUseLightTheme")
                 if themeVal[0] == 0:
                     value = ctypes.c_int(1)
                 else:
                     value = ctypes.c_int(0)
-        #while val == 0:
+
         if value.value != currentBgTheme.value:
             dwm.DwmSetWindowAttribute(int(self.winId()),
-                                        DWMWA_USE_IMMERSIVE_DARK_MODE,
-                                        ctypes.byref(value),
-                                        ctypes.sizeof(value))
-            #print(f"Theme: {value.value}")
+                                      DWMWA_USE_IMMERSIVE_DARK_MODE,
+                                      ctypes.byref(value),
+                                      ctypes.sizeof(value))
+
             user32.SetWindowPos(int(self.winId()),
-                                0,0,0,0,0,
+                                0, 0, 0, 0, 0,
                                 0x0020 | 0x0002 | 0x0004 | 0x0001)
 
     def nativeEvent(self, eventType, message):
@@ -459,7 +463,6 @@ class RootWindow(QMainWindow):
     def ApplyIcons(self):
         globals.maskedImages = {}
         globals.cachedIcons = {}
-        self.helpAction.setIcon(QIcon(getMedia("help")))
         self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         for widget in self.DynamicIconsToApply.keys():

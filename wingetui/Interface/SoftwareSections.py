@@ -34,6 +34,7 @@ from PySide6.QtWidgets import *
 from Interface.CustomWidgets.InstallerWidgets import *
 from tools import *
 from tools import _
+import apiBackend
 
 from Interface.GenericSections import *
 
@@ -291,12 +292,12 @@ class DiscoverSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        self.HelpMenuEntry1 = QAction(_("Guide for beginners on how to install a package"))
-        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/install-a-program"))
-        self.HelpMenuEntry2 = QAction(_("Discover Packages overview - every feature explained"))
-        self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/discover-overview"))
-        self.HelpMenuEntry3 = QAction(_("WingetUI Help and Documentation"))
-        self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        self.HelpMenuEntry1 = QAction("Guide for beginners on how to install a package")
+        self.HelpMenuEntry1.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/install-a-program"))
+        self.HelpMenuEntry2 = QAction("Discover Packages overview - every feature explained")
+        self.HelpMenuEntry2.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/discover-overview"))
+        self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry3.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
             helpMenu = QMenu(self)
@@ -462,20 +463,26 @@ class DiscoverSoftwareSection(SoftwareSection):
         Initialize the install procedure for the given package item, passed as a PackageItem. Switches: admin, interactive, skiphash
         """
         package: Package = item.Package
-        options = InstallationOptions()
-        options.RunAsAdministrator = admin
-        options.InteractiveInstallation = interactive
-        options.SkipHashCheck = skiphash
+        options = InstallationOptions(package)
+        if admin:
+            options.RunAsAdministrator = True
+        if interactive:
+            options.InteractiveInstallation = True
+        if skiphash:
+            options.SkipHashCheck = True
         self.addInstallation(PackageInstallerWidget(package, options))
 
     def installPackage(self, package: Package, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
         """
         Initialize the install procedure for the given package, passed as a Package. Switches: admin, interactive, skiphash
         """
-        options = InstallationOptions()
-        options.RunAsAdministrator = admin
-        options.InteractiveInstallation = interactive
-        options.SkipHashCheck = skiphash
+        options = InstallationOptions(package)
+        if admin:
+            options.RunAsAdministrator = True
+        if interactive:
+            options.InteractiveInstallation = True
+        if skiphash:
+            options.SkipHashCheck = True
         self.addInstallation(PackageInstallerWidget(package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:
@@ -545,6 +552,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent, sectionName="Update")
+        apiBackend.availableUpdates = self.packageItems
 
         self.blacklistManager = IgnoredUpdatesManager(self.window())
         self.LegacyBlacklist = getSettingsValue("BlacklistedUpdates")
@@ -661,11 +669,12 @@ class UpdateSoftwareSection(SoftwareSection):
         self.ToolbarIgnoreSelected.setIcon(QIcon(getMedia("pin")))
         self.ToolbarManageBlacklist.setIcon(QIcon(getMedia("blacklist")))
 
-        self.HelpMenuEntry1.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry10.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry11.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry12.setIcon(QIcon(getMedia("launch")))
+        self.HelpMenuEntry13.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry2.setIcon(QIcon(getMedia("launch")))
         self.HelpMenuEntry3.setIcon(QIcon(getMedia("launch")))
-        self.HelpMenuEntry4.setIcon(QIcon(getMedia("launch")))
-        self.HelpMenuEntry5.setIcon(QIcon(getMedia("launch")))
 
         for item in self.packageItems:
             package: UpgradablePackage = item.Package
@@ -783,26 +792,32 @@ class UpdateSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        self.HelpMenuEntry1 = QAction(_("How to upgrade a package with WingetUI"))
-        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/"))
-        self.HelpMenuEntry2 = QAction(_("How to enable automatic updates"))
-        self.HelpMenuEntry2.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#enable-updates"))
-        self.HelpMenuEntry3 = QAction(_("How to ignore updates for certain packages"))
-        self.HelpMenuEntry3.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#ignore"))
-        self.HelpMenuEntry4 = QAction(_("How to manage ignored updates"))
-        self.HelpMenuEntry4.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help/update-software/#manage-ignored"))
-        self.HelpMenuEntry5 = QAction(_("WingetUI Help and Documentation"))
-        self.HelpMenuEntry5.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
+        self.HelpMenuEntry10 = QAction("Upgrading a package")
+        self.HelpMenuEntry10.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#upgrade-package"))
+        self.HelpMenuEntry11 = QAction("Enabling automatic updates")
+        self.HelpMenuEntry11.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#enable-updates"))
+        self.HelpMenuEntry12 = QAction("Ignoring updates for a package")
+        self.HelpMenuEntry12.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#ignore"))
+        self.HelpMenuEntry13 = QAction("Managing ignored updates")
+        self.HelpMenuEntry13.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#manage-ignored"))
+
+        self.HelpMenuEntry2 = QAction("Software Updates overview - every feature explained")
+        self.HelpMenuEntry2.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/updates-overview"))
+        self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry3.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
             helpMenu = QMenu(self)
-            helpMenu.addAction(self.HelpMenuEntry1)
+            helpMenu.addAction(self.HelpMenuEntry10)
+            helpMenu.addAction(self.HelpMenuEntry11)
+            helpMenu.addAction(self.HelpMenuEntry12)
+            helpMenu.addAction(self.HelpMenuEntry13)
+            helpMenu.addSeparator()
             helpMenu.addAction(self.HelpMenuEntry2)
-            helpMenu.addSeparator()
             helpMenu.addAction(self.HelpMenuEntry3)
-            helpMenu.addAction(self.HelpMenuEntry4)
-            helpMenu.addSeparator()
-            helpMenu.addAction(self.HelpMenuEntry5)
+            #helpMenu.addAction(self.HelpMenuEntry4)
+            #helpMenu.addSeparator()
+            #helpMenu.addAction(self.HelpMenuEntry5)
             ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
             helpMenu.exec(QCursor.pos())
 
@@ -814,6 +829,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def finishLoadingIfNeeded(self) -> None:
         self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
+        apiBackend.availableUpdates = self.packageItems
         globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
         if len(self.packageItems) == 0:
             self.packageList.label.setText(self.countLabel.text())
@@ -848,21 +864,22 @@ class UpdateSoftwareSection(SoftwareSection):
             except Exception as e:
                 report(e)
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
-                self.updateAllPackageItems()
-                self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
-                if count > 1:
-                    self.UpdatesNotification.setTitle(_("Updates found!"))
-                    self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count) + ":")
-                    packageList = ""
-                    for item in self.packageItems:
-                        packageList += item.Package.Name + ", "
-                    self.UpdatesNotification.setSmallText(packageList[:-2])
-                elif count == 1:
-                    self.UpdatesNotification.setTitle(_("Update found!"))
-                    self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.Package.Name))
-                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                if globals.ENABLE_UPDATES_NOTIFICATIONS:
-                    self.UpdatesNotification.show()
+                if not globals.tray_is_installing:
+                    self.updateAllPackageItems()
+                    self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
+                    if count > 1:
+                        self.UpdatesNotification.setTitle(_("Updates found!"))
+                        self.UpdatesNotification.setDescription(_("{0} packages are being updated").format(count) + ":")
+                        packageList = ""
+                        for item in self.packageItems:
+                            packageList += item.Package.Name + ", "
+                        self.UpdatesNotification.setSmallText(packageList[:-2])
+                    elif count == 1:
+                        self.UpdatesNotification.setTitle(_("Update found!"))
+                        self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.Package.Name))
+                    self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
+                    if globals.ENABLE_UPDATES_NOTIFICATIONS:
+                        self.UpdatesNotification.show()
 
             else:
                 self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
@@ -887,8 +904,11 @@ class UpdateSoftwareSection(SoftwareSection):
         else:
             globals.tray_is_available_updates = False
             update_tray_icon()
+        
         self.updatePackageNumber()
         self.filter()
+        self.addItemsToTreeWidget(reset = True)
+
         if not getSettings("DisableAutoCheckforUpdates"):
             try:
                 waitTime = int(getSettingsValue("UpdatesCheckInterval"))
@@ -1026,18 +1046,31 @@ class UpdateSoftwareSection(SoftwareSection):
             if not item.isHidden():
                 self.updatePackageItem(item, admin, skiphash, interactive)
 
+    def updateAllPackageItemsForSource(self, source: str, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
+        print(source)
+        for item in self.packageItems:
+            if not item.isHidden() and item.Package.PackageManager.NAME == source:
+                self.updatePackageItem(item, admin, skiphash, interactive)
+
     def updateSelectedPackageItems(self, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         for item in self.packageItems:
-            if not item.isHidden() and item.checkState(0) == Qt.CheckState.Checked:
+            if not item.isHidden() and item.checkState(0) == Qt.CheckState.Checked and self.FilterItemForManager[item.Package.PackageManager].checkState(0) == Qt.CheckState.Checked:
                 self.updatePackageItem(item, admin, skiphash, interactive)
 
     def updatePackageItem(self, item: UpgradablePackageItem, admin: bool = False, skiphash: bool = False, interactive: bool = False) -> None:
         package: Package = item.Package
-        options = InstallationOptions()
-        options.RunAsAdministrator = admin
-        options.InteractiveInstallation = interactive
-        options.SkipHashCheck = skiphash
+        options = InstallationOptions(item.Package)
+        if admin:
+            options.RunAsAdministrator = True
+        if interactive:
+            options.InteractiveInstallation = True
+        if skiphash:
+            options.SkipHashCheck = True
         self.addInstallation(PackageUpdaterWidget(package, options))
+
+    def updatePackageForGivenId(self, id: str):
+        package: Package = self.IdPackageReference[id]
+        self.updatePackageItem(self.PackageItemReference[package])
 
     def reloadSources(self, asyncroutine: bool = False):
         print("🔵 Reloading sources...")
@@ -1464,10 +1497,13 @@ class UninstallSoftwareSection(SoftwareSection):
             a = CustomMessageBox(self)
             Thread(target=self.confirmUninstallSelected, args=([packageItem], a, admin, interactive, removeData)).start()
         else:
-            options = InstallationOptions()
-            options.RunAsAdministrator = admin
-            options.InteractiveInstallation = interactive
-            options.RemoveDataOnUninstall = removeData
+            options = InstallationOptions(packageItem.Package)
+            if admin:
+                options.RunAsAdministrator = True
+            if interactive:
+                options.InteractiveInstallation = True
+            if removeData:
+                options.RemoveDataOnUninstall = True
             self.addInstallation(PackageUninstallerWidget(packageItem.Package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:
@@ -1677,20 +1713,30 @@ class PackageInfoPopupWindow(QWidget):
 
         optionsSection = SmallCollapsableSection(_("Installation options"), getMedia("options"))
 
+        optionsheader = SectionHWidget()
+        infolabel = QLabel(_("The following settings will be applied each time this package is installed, updated or removed. They will be saved automatically."))
+        infolabel.setWordWrap(True)
+        optionsheader.addWidget(infolabel)
+        saveButton = QPushButton(_("Save now"))
+        saveButton.setFixedSize(150, 30)
+        saveButton.clicked.connect(lambda: (self.getInstallationOptions().SaveOptionsToDisk(), InWindowNotification(self, _("Options saved")).show()))
+        optionsheader.addWidget(saveButton)
+        optionsSection.addWidget(optionsheader)
+
         self.hashCheckBox = QCheckBox()
         self.hashCheckBox.setText(_("Skip hash check"))
         self.hashCheckBox.setChecked(False)
-        self.hashCheckBox.clicked.connect(self.loadPackageCommandLine)
+        self.hashCheckBox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
         self.interactiveCheckbox.setChecked(False)
-        self.interactiveCheckbox.clicked.connect(self.loadPackageCommandLine)
+        self.interactiveCheckbox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
-        self.adminCheckbox.clicked.connect(self.loadPackageCommandLine)
+        self.adminCheckbox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         firstRow = SectionHWidget()
         firstRow.addWidget(self.hashCheckBox)
@@ -1746,7 +1792,7 @@ class PackageInfoPopupWindow(QWidget):
         customArgumentsSection = SectionHWidget()
         customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
         self.customArgumentsLineEdit = CustomLineEdit()
-        self.customArgumentsLineEdit.textChanged.connect(self.loadPackageCommandLine)
+        self.customArgumentsLineEdit.textChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
         self.customArgumentsLineEdit.setFixedHeight(30)
         customArgumentsSection.addWidget(customArgumentsLabel)
         customArgumentsSection.addWidget(self.customArgumentsLineEdit)
@@ -1889,9 +1935,9 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
 
-        self.versionCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-        self.architectureCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
-        self.scopeCombo.currentIndexChanged.connect(self.loadPackageCommandLine)
+        self.versionCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
+        self.architectureCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
+        self.scopeCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.ApplyIcons()
         self.registeredThemeEvent = False
@@ -1931,18 +1977,24 @@ class PackageInfoPopupWindow(QWidget):
             return super().resizeEvent(event)
 
     def getInstallationOptions(self) -> InstallationOptions:
-        options = InstallationOptions()
+        options = InstallationOptions(self.currentPackage)
         options.RunAsAdministrator = self.adminCheckbox.isChecked()
         options.InteractiveInstallation = self.interactiveCheckbox.isChecked()
         options.SkipHashCheck = self.hashCheckBox.isChecked()
         if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
             options.Version = self.versionCombo.currentText()
+        else:
+            options.Version = ""
         if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
             options.Architecture = self.architectureCombo.currentText()
             if options.Architecture in (_("Global"), "Global"):
                 options.RunAsAdministrator = True
+        else:
+            options.Architecture = ""
         if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
             options.InstallationScope = self.scopeCombo.currentText()
+        else:
+            options.InstallationScope = ""
         options.CustomParameters = [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
         return options
 
@@ -2057,6 +2109,7 @@ class PackageInfoPopupWindow(QWidget):
         Thread(target=self.loadPackageIcon, args=(package,)).start()
 
         Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
+        self.loadCachedInstallationOptions()
 
         self.tagsWidget.layout().clear()
 
@@ -2139,8 +2192,26 @@ class PackageInfoPopupWindow(QWidget):
         self.architectureLabel.setEnabled(Capabilities.SupportsCustomArchitectures)
         self.scopeCombo.setEnabled(Capabilities.SupportsCustomScopes)
         self.scopeLabel.setEnabled(Capabilities.SupportsCustomScopes)
-
+        
+        self.loadCachedInstallationOptions()
         self.loadPackageCommandLine()
+
+
+    def loadCachedInstallationOptions(self):
+        options = InstallationOptions(self.currentPackage)
+        self.adminCheckbox.setChecked(options.RunAsAdministrator)
+        self.interactiveCheckbox.setChecked(options.InteractiveInstallation)
+        self.hashCheckBox.setChecked(options.SkipHashCheck)
+        try:
+            self.architectureCombo.setCurrentText(options.Architecture)
+        except Exception as e:
+            report(e)        
+        try:
+            self.scopeCombo.setCurrentText(options.InstallationScope)
+        except Exception as e:
+            report(e)
+        self.customArgumentsLineEdit.setText(" ".join([c for c in options.CustomParameters if c]))
+
 
     def loadPackageIcon(self, package: Package) -> None:
         try:
@@ -2226,12 +2297,15 @@ class PackageInfoPopupWindow(QWidget):
             IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
 
+        options = self.getInstallationOptions()
+        options.SaveOptionsToDisk()
+
         if self.isAnUpdate:
-            p = PackageUpdaterWidget(self.currentPackage, self.getInstallationOptions())
+            p = PackageUpdaterWidget(self.currentPackage, options)
         elif self.isAnUninstall:
-            p = PackageUninstallerWidget(self.currentPackage, self.getInstallationOptions())
+            p = PackageUninstallerWidget(self.currentPackage, options)
         else:
-            p = PackageInstallerWidget(self.currentPackage, self.getInstallationOptions())
+            p = PackageInstallerWidget(self.currentPackage, options)
         self.addProgram.emit(p)
         self.close()
 

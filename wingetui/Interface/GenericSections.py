@@ -1083,6 +1083,75 @@ class BaseLogSection(QWidget):
         return super().showEvent(event)
 
 
+class BaseBrowserSection(QWidget):
+    HOME_URL = "https://www.marticliment.com/wingetui/help"
+    loaded = False
+    def __init__(self):
+
+        super().__init__()
+
+    def loadWebView(self):
+        self.loaded = True
+        from ExternalLibraries.PyWebView2 import WebView2
+        self.setObjectName("background")
+
+        hLayout = QHBoxLayout()
+
+        openBtn = QPushButton(_("Open in browser"))
+        openBtn.clicked.connect(lambda: os.startfile(self.webview.getUrl()))
+        openBtn.setFixedHeight(30)
+
+        hLayout.addWidget(openBtn)
+        hLayout.addStretch()
+
+        
+        loadBtn = QPushButton(_("Reload"))
+        loadBtn.clicked.connect(lambda: self.loadWebContents())
+        loadBtn.setFixedHeight(30)
+        hLayout.addWidget(loadBtn)
+
+        self.setLayout(QVBoxLayout())
+        self.setContentsMargins(0, 0, 0, 0)
+
+        self.webview = WebView2()
+
+        self.layout().setSpacing(5)
+        self.layout().setContentsMargins(5, 5, 5, 5)
+        self.layout().addLayout(hLayout)
+        self.layout().addWidget(self.webview, stretch=1)
+
+        self.setAutoFillBackground(True)
+
+        self.ApplyIcons()
+        self.registeredThemeEvent = False
+
+    def ApplyIcons(self):
+        if isDark():
+            self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #161616;")
+        else:
+            self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #dddddd;")
+
+    def showEvent(self, event: QShowEvent) -> None:
+        if not self.loaded:
+            self.loadWebView()
+        if not self.registeredThemeEvent:
+            self.registeredThemeEvent = False
+            self.window().OnThemeChange.connect(self.ApplyIcons)
+        self.loadWebContents()
+        return super().showEvent(event)
+
+    def loadWebContents(self):
+        if not self.loaded:
+            self.loadWebView()
+        self.webview.setLocation(self.HOME_URL)
+
+    def changeHomeUrl(self, url: str):
+        if not self.loaded:
+            self.loadWebView()
+        self.HOME_URL = url
+        self.loadWebContents()
+
+
 class OperationHistorySection(BaseLogSection):
 
     def loadData(self):

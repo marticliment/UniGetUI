@@ -60,18 +60,32 @@ class Package():
             iconId = iconId.split("/")[-1]
         return iconId.replace(" ", "-").replace("_", "-").replace(".", "-")
 
+    def getPackageIconUrl(self) -> str:
+        try:
+            iconId = self.getIconId()
+            try:
+                iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                if iconUrl.strip() == "":
+                    raise KeyError("Key found but content was empty")
+            except KeyError:
+                if "Net" in self.Source:
+                    iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
+                elif "Chocolatey" in self.Source:
+                    iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
+                else:
+                    iconUrl = ""
+        except Exception as e:
+            report(e)
+            iconUrl = ""
+        return iconUrl
+
     def getPackageIcon(self) -> str:
         try:
             iconId = self.getIconId()
             iconPath = os.path.join(os.path.expanduser(
                 "~"), f".wingetui/cachedmeta/{iconId}.icon.png")
             if not os.path.exists(iconPath):
-                if "Net" in self.Source:
-                    iconUrl = f"https://api.nuget.org/v3-flatcontainer/{self.Id}/{self.Version}/icon"
-                elif "Chocolatey" in self.Source:
-                    iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
-                else:
-                    iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                iconUrl = self.getPackageIconUrl()
                 print("🔵 Found icon: ", iconUrl)
                 if iconUrl:
                     iconData = urlopen(iconUrl).read()
@@ -243,6 +257,41 @@ class InstallationOptions():
     CustomParameters: list[str] = []
     RemoveDataOnUninstall: bool = False
 
+    Package: 'Package' = None
+    __save_file_name: str = "Unknown.Unknown.InstallationOptions"
+    __data_to_save: list[str] = [
+            "SkipHashCheck",
+            "InteractiveInstallation",
+            "RunAsAdministrator",
+            "Architecture",
+            "InstallationScope",
+            "CustomParameters",
+        ]
+
+    def __init__(self, package: 'Package', reset: bool = False):
+        self.Package = package
+        self.__save_file_name = "InstallationOptions." + self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
+        if not reset:
+            self.LoadOptionsFromDisk()
+
+    def SaveOptionsToDisk(self):
+        """
+        Save current installation options to disk
+        """
+        optionsToSave = {}
+        for entry in self.__data_to_save:
+            optionsToSave[entry] = getattr(self, entry)
+        setJsonSettings(self.__save_file_name, optionsToSave)
+
+    def LoadOptionsFromDisk(self):
+        """
+        Get previously saved installation options from disk
+        """
+        newOptions = getJsonSettings(self.__save_file_name)
+        for entry in self.__data_to_save:
+            if entry in newOptions.keys():
+                setattr(self, entry, newOptions[entry])
+        
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
         str += f"InteractiveInstallation={self.InteractiveInstallation};"

@@ -65,7 +65,7 @@ class PipPackageManager(DynamicPackageManager):
         try:
             if shutil.which("parse_pip_search") is None:
                 print("🟡 Installing pip-search, that was missing...")
-                Command = self.EXECUTABLE.split(" ") + ["install", "parse_pip_search"] + self.getParameters(InstallationOptions())
+                Command = self.EXECUTABLE.split(" ") + ["install", "parse_pip_search", "--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
                 p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
                 p.wait()
             packages: list[Package] = []
@@ -240,15 +240,15 @@ class PipPackageManager(DynamicPackageManager):
             self.icon = QIcon(getMedia("python"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions, removeprogressbar: bool = True) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
         if options.CustomParameters:
             Parameters += options.CustomParameters
-        if options.InstallationScope:
+        if options.InstallationScope and not isAnUninstall:
             if options.InstallationScope in ("User", _("User")):
                 Parameters.append("--user")
         Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
-        if removeprogressbar:
+        if not isAnUninstall:
             Parameters += ["--progress-bar", "off"]
         return Parameters
 
@@ -297,7 +297,7 @@ class PipPackageManager(DynamicPackageManager):
         widget.finishInstallation.emit(outputCode, output)
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
-        Command = self.EXECUTABLE.split(" ") + ["uninstall", package.Id, "-y"] + self.getParameters(options, removeprogressbar=False)
+        Command = self.EXECUTABLE.split(" ") + ["uninstall", package.Id, "-y"] + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} uninstall with Command", Command)

@@ -170,7 +170,7 @@ class SamplePackageManager(DynamicPackageManager):
             self.LoadedIcons = True
         return QIcon()
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
         if options.Architecture:
             Parameters += ["-a", options.Architecture]

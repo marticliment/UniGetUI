@@ -53,7 +53,7 @@ OLD_STDERR = sys.stderr
 stdout_buffer = io.StringIO()
 stderr_buffer = io.StringIO()
 MissingTranslationList = []
-realpath = 0
+realpath = ""
 blueColor = "blue"
 try:
     winver = int(platform.version().split('.')[2])
@@ -162,9 +162,9 @@ def getSettingsValue(s: str) -> str:
     """
     globals.settingsCache
     try:
-        try:
+        if (s + "Value") in globals.settingsCache.keys():
             return str(globals.settingsCache[s + "Value"])
-        except KeyError:
+        else:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r", encoding="utf-8", errors="ignore") as sf:
                 v: str = sf.read()
                 globals.settingsCache[s + "Value"] = v
@@ -189,13 +189,55 @@ def setSettingsValue(s: str, v: str) -> None:
         print(e)
 
 
+def getJsonSettings(s: str) -> dict:
+    """
+    Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned
+    """
+    globals.settingsCache
+    try:
+        if (s + "JSON") in globals.settingsCache.keys():
+            return globals.settingsCache[s + "JSON"]
+        else:
+            with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "r", encoding="utf-8", errors="ignore") as file:
+                data: dict = json.load(file)
+                globals.settingsCache[s + "JSON"] = data
+                return data
+    except FileNotFoundError:
+        return {}
+    except Exception as e:
+        print(e)
+        return {}
+
+
+def setJsonSettings(s: str, data: dict) -> None:
+    """
+    Sets the stored value for the given JSON-stored setting. A string value is required.
+    """
+    globals.settingsCache
+    try:
+        globals.settingsCache = {}
+        with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "w", encoding="utf-8", errors="ignore") as file:
+            json.dump(data, file)
+    except Exception as e:
+        print(e)
+
+
+
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
     clr.AddReference(SHARE_DLL_PATH)
     import WingetUIShareComponent
-    WingetUIShareComponent.Form1(["", text, url, coordinates])
+    if window.window().winId():
+        print("🔵 Starting hWnd native sharing")
+        WingetUIShareComponent.Form1(window.window().winId())
+    else:
+        print("🟡 Starting fallback wrapper window sharing")
+        WingetUIShareComponent.Form1(["", text, url, coordinates])
+
+
+
 
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):

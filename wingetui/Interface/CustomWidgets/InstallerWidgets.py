@@ -167,15 +167,19 @@ class PackageInstallerWidget(QWidget):
         ApplyMica(self.liveOutputWindowWindow.winId(), MicaTheme.DARK)
 
     def startInstallation(self) -> None:
+        last_position_count = -1
         while self.installId != globals.current_program and not getSettings("AllowParallelInstalls"):
             time.sleep(0.2)
             append = " "
-            try:
-                append += _("(Number {0} in the queue)").format(globals.pending_programs.index(self.installId))
-            except ValueError:
-                print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
-            globals.pending_programs.index(self.installId)
-            self.addInfoLine.emit((_("Waiting for other installations to finish...") + append))
+            if last_position_count != globals.pending_programs.index(self.installId):
+                last_position_count = globals.pending_programs.index(self.installId)
+                try:
+                    append += _("(Number {0} in the queue)").format(last_position_count)
+                except ValueError:
+                    print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
+                print(type(self))
+                self.addInfoLine.emit((_("Waiting for other installations to finish...") + append, False))
+                
         print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
@@ -499,7 +503,7 @@ class PackageUpdaterWidget(PackageInstallerWidget):
 class PackageUninstallerWidget(PackageInstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(tuple[str, bool])
+    addInfoLine = Signal(tuple)
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     changeBarOrientation = Signal()
@@ -662,7 +666,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
 class CustomInstallerWidget(PackageInstallerWidget):
     onCancel = Signal()
     killSubprocess = Signal()
-    addInfoLine = Signal(tuple[str, bool])
+    addInfoLine = Signal(tuple)
     finishInstallation = Signal(int, str)
     counterSignal = Signal(int)
     callInMain = Signal(object)
@@ -671,7 +675,7 @@ class CustomInstallerWidget(PackageInstallerWidget):
     def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
         self.Package.PackageItem = QTreeWidgetItem()
-        self.Options = InstallationOptions()
+        self.Options = InstallationOptions(self.Package, reset = True)
         self.command = command
         if runAsAdministrator:
             self.Options.RunAsAdministrator = True
@@ -715,7 +719,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
     def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
         self.Package.PackageItem = QTreeWidgetItem()
-        self.Options = InstallationOptions()
+        self.Options = InstallationOptions(self.Package, reset = True)
         if runAsAdministrator:
             self.Options.RunAsAdministrator = True
 
