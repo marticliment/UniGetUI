@@ -53,7 +53,7 @@ OLD_STDERR = sys.stderr
 stdout_buffer = io.StringIO()
 stderr_buffer = io.StringIO()
 MissingTranslationList = []
-realpath = 0
+realpath = ""
 blueColor = "blue"
 try:
     winver = int(platform.version().split('.')[2])

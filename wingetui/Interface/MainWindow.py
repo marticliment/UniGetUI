@@ -125,14 +125,12 @@ class RootWindow(QMainWindow):
         self.historySection = OperationHistorySection()
         self.widgets[self.historySection] = self.addTab(self.historySection, _("Operation history"), addToMenu=True, actionIcon="list")
         self.extrasMenu.addSeparator()
-        self.logSection = LogSection()
-        self.widgets[self.logSection] = self.addTab(self.logSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
+        self.helpSection = LogSection()
+        self.widgets[self.helpSection] = self.addTab(self.helpSection, _("WingetUI log"), addToMenu=True, actionIcon="buggy")
         self.clilogSection = PackageManagerLogSection()
         self.widgets[self.clilogSection] = self.addTab(self.clilogSection, _("Package Manager logs"), addToMenu=True, actionIcon="console")
-
-        self.helpAction = QAction(_("Help and documentation"), self)
-        self.helpAction.triggered.connect(lambda: os.startfile("https://marticliment.com/wingetui/help"))
-        self.extrasMenu.addAction(self.helpAction)
+        self.helpSection = BaseBrowserSection()
+        self.widgets[self.helpSection] = self.addTab(self.helpSection, _("Help and documentation"), addToMenu=True, actionIcon="help")
 
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
@@ -216,6 +214,10 @@ class RootWindow(QMainWindow):
             self.installationsWidget.setVisible(True)
             self.resizewidget.setVisible(False)
             self.adjustInstallationsSize()
+
+    def showHelpUrl(self, url: str):
+        self.helpSection.changeHomeUrl(url)
+        self.widgets[self.helpSection].click()
 
     def adjustInstallationsSize(self, offset: int = 0) -> None:
         if self.installationsWidget.maxHeight > self.installationsWidget.getFullHeight():
@@ -461,7 +463,6 @@ class RootWindow(QMainWindow):
     def ApplyIcons(self):
         globals.maskedImages = {}
         globals.cachedIcons = {}
-        self.helpAction.setIcon(QIcon(getMedia("help")))
         self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         for widget in self.DynamicIconsToApply.keys():
