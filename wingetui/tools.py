@@ -495,16 +495,6 @@ def GetIgnoredPackages() -> list[tuple[str, str, str]]:
     return packages
         
 
-"""def IgnorePackageUpdates_Permanent(id: str, store: str):
-    \"""
-    With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
-    \"""
-    ignoreEntry = [id, store.lower().split(':')[0]]
-    baseList = GetIgnoredPackageUpdates_Permanent()
-    if ignoreEntry not in baseList:
-        baseList.append(ignoreEntry)
-    setSettingsValue("PermanentlyIgnoredPackageUpdates", json.dumps(baseList))"""
-
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
@@ -512,17 +502,6 @@ def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     baseList = [v for v in getSettingsValue(
         "PermanentlyIgnoredPackageUpdates").split(";") if v]
     return [v.split(",") for v in baseList if len(v.split(",")) == 2]
-
-"""def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
-    \"""
-    With the given PACKAGE_ID, SKIPPED_VERSION and PACKAGE_STORE parameters, add the versions of the packages to the blacklist
-    \"""
-    ignoreEntry = [id, version.lower().replace(',', '.'), store.lower().split(':')[0]]
-    baseList = GetIgnoredPackageUpdates_SpecificVersion()
-    if ignoreEntry not in baseList:
-        baseList.append(ignoreEntry)
-    setSettingsValue("SingleVersionIgnoredPackageUpdates", json.dumps(baseList))"""
-
 
 def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """

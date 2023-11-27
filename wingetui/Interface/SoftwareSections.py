@@ -938,13 +938,6 @@ class UpdateSoftwareSection(SoftwareSection):
                 print(package.GetIgnoredUpatesVersion())
                 return
             
-            #if package.hasUpdatesIgnoredPermanently():
-            #    return
-
-            #if [package.Id, package.NewVersion.lower().replace(",", "."), package.Source.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
-            #    print(f"🟡 Package {package.Id} version {package.Version} is ignored")
-            #    return
-
             item = UpgradablePackageItem(package)
 
             self.PackageItemReference[package] = item

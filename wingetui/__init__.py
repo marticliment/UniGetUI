@@ -142,7 +142,6 @@ try:
                 package = Package(pkglist[0], pkglist[0], pkglist[1], pkglist[2], None)
                 package.AddToIgnoredUpdates(package.Version)
         setSettings("SingleVersionIgnoredPackageUpdates", False)
-
                 
     except Exception as e:
         report(e)

@@ -134,26 +134,6 @@ class Package():
 
     def __str__(self) -> str:
         return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
-    """
-    def hasUpdatesIgnoredPermanently(self) -> bool:
-        return [self.Id, self.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent()
-
-    def ignoreUpdatesPermanently(self) -> bool:
-        if not self.hasUpdatesIgnoredPermanently():
-            IgnorePackageUpdates_Permanent(self.Id, self.Source)
-        if self.PackageItem:
-            InstalledItem = self.PackageItem.getInstalledPackageItem()
-            if InstalledItem:
-                InstalledItem.setTag(InstalledItem.Tag.Pinned)
-            UpgradableItem = self.PackageItem.getUpdatesPackageItem()
-            if UpgradableItem:
-                UpgradableItem.removeFromList()
-    
-    def ignoreUpdatesForVersion(self, version: str = "current"):
-        if version == "current":
-            version = self.Version
-        IgnorePackageUpdates_SpecificVersion(self.Id, version, self.Source)
-        """
         
     def AddToIgnoredUpdates(self, version: str = "*"):
         """
@@ -477,10 +457,3 @@ RETURNCODE_INCORRECT_HASH = 2
 RETURNCODE_NEEDS_ELEVATION = 1603
 RETURNCODE_NEEDS_SCOOP_ELEVATION = -200
 RETURNCODE_NEEDS_PIP_ELEVATION = -100
-
-
-class BlacklistMethod():
-    Legacy = 0
-    SpecificVersion = 1
-    AllVersions = 2
-    JSON = 3
