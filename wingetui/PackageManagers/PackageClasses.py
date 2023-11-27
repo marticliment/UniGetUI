@@ -134,14 +134,18 @@ class Package():
 
     def __str__(self) -> str:
         return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
-
-    def hasUpdatesIgnoredPermanently(self) -> bool:
-        return [self.Id, self.Source.lower().split(":")[0]] in GetIgnoredPackageUpdates_Permanent()
-
-    def ignoreUpdatesPermanently(self) -> bool:
-        if not self.hasUpdatesIgnoredPermanently():
-            IgnorePackageUpdates_Permanent(self.Id, self.Source)
-        if self.PackageItem:
+        
+    def AddToIgnoredUpdates(self, version: str = "*"):
+        """
+        Add a package to the ignored package updates list.
+        If the parameter version is given, the given version will be ignored. Otherwise, all versions will.
+        """
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
+        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        ignoredPackages[ENTRY] = version
+        setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+        
+        if version == "*" and self.PackageItem is not None:
             InstalledItem = self.PackageItem.getInstalledPackageItem()
             if InstalledItem:
                 InstalledItem.setTag(InstalledItem.Tag.Pinned)
@@ -149,10 +153,47 @@ class Package():
             if UpgradableItem:
                 UpgradableItem.removeFromList()
 
-    def ignoreUpdatesForVersion(self, version: str = "current"):
-        if version == "current":
-            version = self.Version
-        IgnorePackageUpdates_SpecificVersion(self.Id, version, self.Source)
+
+    def RemoveFromIgnoredUpdates(self):
+        """
+        Remove a package (if present) from the ignored packages list.
+        """
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
+        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        if ENTRY in ignoredPackages.keys():
+            del ignoredPackages[ENTRY]
+                 
+        if self.PackageItem is not None:
+            InstalledItem = self.PackageItem.getInstalledPackageItem()
+            if InstalledItem:
+                InstalledItem.setTag(InstalledItem.Tag.Default)
+        
+        setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+        
+    def HasUpdatesIgnored(self, version: str = "*") -> bool:
+        """
+        Return if a package is being ignored for the given version.
+        If version is not given (or the wildcard "*" is used), all the versions will be checked.
+        """
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
+        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        if ENTRY in ignoredPackages.keys():
+            if ignoredPackages[ENTRY] == "*":
+                return True # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
+            elif ignoredPackages[ENTRY] == version:
+                return True
+        return False
+
+    def GetIgnoredUpatesVersion(self) -> str:
+        """
+        Returns the version for which a package has been ignored. Will return the wildcard "*" if all the versions are ignored.
+        If the package is not ignored returns an empty string.
+        """
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
+        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        if ENTRY in ignoredPackages.keys():
+            return ignoredPackages[ENTRY]
+        return ""
 
     def getDiscoverPackage(self) -> 'Package':
         if self.PackageItem:
@@ -200,12 +241,12 @@ class UpgradablePackage(Package):
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
 
-    def ignoreUpdatesForVersion(self, version: str = "current"):
+    """def ignoreUpdatesForVersion(self, version: str = "current"):
         if version == "current":
             version = self.NewVersion
         super().ignoreUpdatesForVersion(self.NewVersion)
         if self.PackageItem:
-            self.PackageItem.removeFromList()
+            self.PackageItem.removeFromList()"""
 
 
 class PackageDetails(Package):
@@ -422,9 +463,3 @@ RETURNCODE_INCORRECT_HASH = 2
 RETURNCODE_NEEDS_ELEVATION = 1603
 RETURNCODE_NEEDS_SCOOP_ELEVATION = -200
 RETURNCODE_NEEDS_PIP_ELEVATION = -100
-
-
-class BlacklistMethod():
-    Legacy = 0
-    SpecificVersion = 1
-    AllVersions = 2

@@ -609,91 +609,51 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         except AttributeError:
             pass  # This will be called before __init__ finished loading, so some attributes may not have been set when called
         return super().ApplyIcons()
+    
+    def GetIgnoredPackages(self) -> list[Package]:
+        packages = []
+        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        for ENTRY in ignoredPackages.keys():
+            ENTRY: str  # Formatted as source\package_id
+            if "\\" in ENTRY:
+                id, source, version = (ENTRY.split("\\")[1], ENTRY.split("\\")[0], ignoredPackages[ENTRY])
+                manager: PackageManagerModule = None
+                for _manager in PackageManagersList:
+                    if source.split(" ")[0] in _manager.NAME.lower():
+                        manager = _manager
+                        
+                if not manager:
+                    manager = Winget
+                packages.append(Package(id, id, version, source, manager))
+        return packages
 
     def loadItems(self):
         self.treewidget.clear()
-        for id in getSettingsValue("BlacklistedUpdates").split(","):
-            if id:
-                self.addItem(id, _("All versions"), _("Unknown"), BlacklistMethod.Legacy)
-        for id, store in GetIgnoredPackageUpdates_Permanent():
-            if id and store:
-                self.addItem(id, _("All versions"), store.capitalize(), BlacklistMethod.AllVersions)
-        for id, version, store in GetIgnoredPackageUpdates_SpecificVersion():
-            if id and store:
-                self.addItem(id, version, store.capitalize(), BlacklistMethod.SpecificVersion)
+        for package in self.GetIgnoredPackages():
+            self.addItem(package)
 
-    def addItem(self, id: str, version: str, store: str, blacklistMethod: BlacklistMethod):
+    def addItem(self, package: Package):
         item = TreeWidgetItemWithQAction()
-        item.setText(0, id)
-        item.setText(1, version)
-        item.setText(2, store)
+        item.setText(0, package.Id)
+        item.setText(1, _("All versions") if package.Version == "*" else package.Version)
+        item.setText(2, package.Source.capitalize())
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.versionIcon)
-        if "scoop" in store.lower():
-            item.setIcon(2, self.scoopIcon)
-        elif "winget" in store.lower():
-            item.setIcon(2, self.wingetIcon)
-        elif "choco" in store.lower():
-            item.setIcon(2, self.chocolateyIcon)
-        elif "pip" in store.lower():
-            item.setIcon(2, self.pipIcon)
-        elif "npm" in store.lower():
-            item.setIcon(2, self.npmIcon)
-        else:
-            item.setIcon(2, self.localIcon)
+        item.setIcon(2, package.PackageManager.getIcon(package.Source))
+        
         self.treewidget.addTopLevelItem(item)
         removeButton = QPushButton()
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
-        match blacklistMethod:
-            case BlacklistMethod.Legacy:
-                removeButton.clicked.connect(lambda: self.unBlackistLegacy(id, item))
-
-            case BlacklistMethod.SpecificVersion:
-                removeButton.clicked.connect(lambda: self.unBlackistSingleVersion(id, version, store, item))
-
-            case BlacklistMethod.AllVersions:
-                removeButton.clicked.connect(lambda: self.unBlackistAllVersions(id, store, item))
+        removeButton.clicked.connect(lambda: (package.RemoveFromIgnoredUpdates(), self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))))
 
         self.treewidget.setItemWidget(item, 3, removeButton)
-
+        
     def resetAll(self):
         for i in range(self.treewidget.topLevelItemCount()):
             self.treewidget.itemWidget(self.treewidget.topLevelItem(0), 3).click()
         self.close()
         globals.updates.startLoadingPackages(force=True)
-
-    def unBlackistLegacy(self, id: str, item: TreeWidgetItemWithQAction):
-        setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        del i
-
-    def unBlackistAllVersions(self, id: str, store: str, item: TreeWidgetItemWithQAction):
-        originalList: list[list[str]] = GetIgnoredPackageUpdates_Permanent()
-        setSettingsValue("PermanentlyIgnoredPackageUpdates", "")
-        for ignoredPackage in originalList:
-            if [id, store.lower()] == ignoredPackage:
-                continue
-            IgnorePackageUpdates_Permanent(ignoredPackage[0], ignoredPackage[1])
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-
-        INSTALLED: SoftwareSection = globals.uninstall
-        if id in INSTALLED.IdPackageReference:
-            package: Package = INSTALLED.IdPackageReference[id]
-            package.PackageItem.setIcon(1, INSTALLED.installIcon)
-            package.PackageItem.setToolTip(1, package.Name)
-
-        del i
-
-    def unBlackistSingleVersion(self, id: str, version: str, store: str, item: TreeWidgetItemWithQAction):
-        originalList: list[list[str]] = GetIgnoredPackageUpdates_SpecificVersion()
-        setSettingsValue("SingleVersionIgnoredPackageUpdates", "")
-        for ignoredPackage in originalList:
-            if [id, version, store.lower()] == ignoredPackage:
-                continue
-            IgnorePackageUpdates_SpecificVersion(ignoredPackage[0], ignoredPackage[1], ignoredPackage[2])
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        del i
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
@@ -2057,9 +2017,10 @@ class InstalledPackageItem(PackageItem):
         self.setIcon(3, getIcon("version"))
 
     def updateCorrespondingPackages(self) -> None:
-        if self.Package.hasUpdatesIgnoredPermanently():
-            self.setTag(PackageItem.Tag.Pinned)
-
+        if self.Package.HasUpdatesIgnored():
+            if self.Package.GetIgnoredUpatesVersion() == "*":
+                self.setTag(PackageItem.Tag.Pinned)
+        
         AvailableItem = self.getDiscoverPackageItem()
         if AvailableItem:
             AvailableItem.setTag(PackageItem.Tag.Installed)

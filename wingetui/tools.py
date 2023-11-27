@@ -25,6 +25,9 @@ from threading import Thread
 from urllib.request import urlopen
 from unicodedata import combining, normalize
 
+if 2 == 3:
+    from wingetui.PackageManagers.PackageClasses import Package # Enable syntax highlighting
+
 
 import globals
 try:
@@ -437,19 +440,6 @@ def getint(s: str, fallback: int) -> int:
         print("can't parse", s)
         return fallback
 
-
-def IgnorePackageUpdates_Permanent(id: str, store: str):
-    """
-    With the given PACKAGE_ID and PACKAGE_STORE parameters, add the packages to the blacklist
-    """
-    baseList = [v for v in getSettingsValue(
-        "PermanentlyIgnoredPackageUpdates").split(";") if v]
-    packageString = f"{id},{store.lower().split(':')[0]}"
-    if packageString not in baseList:
-        baseList.append(packageString)
-    setSettingsValue("PermanentlyIgnoredPackageUpdates", ";".join(baseList))
-
-
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
@@ -457,19 +447,6 @@ def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     baseList = [v for v in getSettingsValue(
         "PermanentlyIgnoredPackageUpdates").split(";") if v]
     return [v.split(",") for v in baseList if len(v.split(",")) == 2]
-
-
-def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
-    """
-    With the given PACKAGE_ID, SKIPPED_VERSION and PACKAGE_STORE parameters, add the versions of the packages to the blacklist
-    """
-    baseList = [v for v in getSettingsValue(
-        "SingleVersionIgnoredPackageUpdates").split(";") if v]
-    packageString = f"{id},{version.lower().replace(',', '.')},{store.lower().split(':')[0]}"
-    if packageString not in baseList:
-        baseList.append(packageString)
-    setSettingsValue("SingleVersionIgnoredPackageUpdates", ";".join(baseList))
-
 
 def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """
@@ -479,9 +456,7 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
         "SingleVersionIgnoredPackageUpdates").split(";") if v]
     return [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
-
 carriedChar = b""
-
 
 def getLineFromStdout(p: subprocess.Popen) -> (bytes, bool):
     """
