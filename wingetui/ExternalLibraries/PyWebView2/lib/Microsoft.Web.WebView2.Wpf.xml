@@ -63,6 +63,16 @@
             Gets or sets the value to use for the AdditionalBrowserArguments property of the CoreWebView2EnvironmentOptions parameter passed to <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateAsync(System.String,System.String,Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions)"/> when creating an environment with this instance.
             </summary>
         </member>
+        <member name="F:Microsoft.Web.WebView2.Wpf.CoreWebView2CreationProperties.AreBrowserExtensionsEnabledProperty">
+            <summary>
+            The WPF DependencyProperty which backs the <see cref="P:Microsoft.Web.WebView2.Wpf.CoreWebView2CreationProperties.AreBrowserExtensionsEnabled"/> property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Wpf.CoreWebView2CreationProperties.AreBrowserExtensionsEnabled">
+            <summary>
+            Gets or sets the value to use for the AreBrowserExtensionsEnabled property of the CoreWebView2EnvironmentOptions parameter passed to <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateAsync(System.String,System.String,Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions)"/> when creating an environment with this instance.
+            </summary>
+        </member>
         <member name="F:Microsoft.Web.WebView2.Wpf.CoreWebView2CreationProperties.ProfileNameProperty">
             <summary>
             The WPF DependencyProperty which backs the <see cref="P:Microsoft.Web.WebView2.Wpf.CoreWebView2CreationProperties.ProfileName"/> property.
@@ -850,7 +860,7 @@
             </summary>
             <seealso cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Controller.ZoomFactor"/>
         </member>
-        <member name="M:Microsoft.Web.WebView2.Wpf.WebView2.ZoomFactorPropertyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+        <member name="M:Microsoft.Web.WebView2.Wpf.WebView2.CoerceZoomFactorPropertyChanged(System.Windows.DependencyObject,System.Object)">
             <summary>
             This is a callback that WPF calls when our WPF ZoomFactor property's value changes.
             This might have been triggered by either:

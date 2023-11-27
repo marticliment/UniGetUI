@@ -227,6 +227,32 @@
             <summary>
             ProcessFailed is raised when a WebView process ends unexpectedly or becomes unresponsive.
             </summary>
+            <remarks>
+            <c>ProcessFailed</c> is raised when any of the processes in the <a href="/microsoft-edge/webview2/concepts/process-model?tabs=csharp#processes-in-the-webview2-runtime">WebView2 Process Group</a> encounters one of the following conditions:
+            
+            <list type="table">
+            <listheader>
+            <term>Condition</term>
+            <description>Details</description>
+            </listheader>
+            <item>
+            <term>Unexpected exit</term>
+            <description>
+            The process indicated by the event args has exited unexpectedly (usually due to a crash). The failure might or might not be recoverable, and some failures are auto-recoverable.
+            </description>
+            </item>
+            <item>
+            <term>Unresponsiveness</term>
+            <description>
+            The process indicated by the event args has become unresponsive to user input. This is only reported for renderer processes, and will run every few seconds until the process becomes responsive again.
+            </description>
+            </item>
+            </list>
+            
+            <b>Note:</b> When the failing process is the browser process, a <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2Environment.BrowserProcessExited"/> event will run too.
+            
+            Your application can use  <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to identify which condition and process the event is for, and to collect diagnostics and handle recovery if necessary. For more details about which cases need to be handled by your application, see  <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind"/>.
+            </remarks>
             <example>
             :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="ProcessFailed":::
             </example>
@@ -255,7 +281,7 @@
             If either <c>Handled</c> or <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.NewWindow"/> properties are not set, the target content will be opened on a popup window.
             If a deferral is not taken on the event args, scripts that resulted in the new window that are requested are blocked until the event handler returns. If a deferral is taken, then scripts are blocked until the deferral is completed.
             
-            On Hololens 2, if the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.NewWindow"/> property is not set and the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.Handled"/> property is not set to <c>true</c>, the WebView2 will navigate to the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.Uri"/>. 
+            On Hololens 2, if the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.NewWindow"/> property is not set and the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.Handled"/> property is not set to <c>true</c>, the WebView2 will navigate to the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.Uri"/>.
             If either of these properties are set, the WebView2 will not navigate to the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.Uri"/> and the the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NewWindowRequested"/> event will continue as normal.
             </remarks>
         </member>
@@ -287,7 +313,7 @@
             
             If this event is subscribed in the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NewWindowRequested"/> handler it should be called after the new window is set. For more details see <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.NewWindow"/>.
             
-            Currently this only supports file, http, and https URI schemes.
+            This event is by default raised for file, http, and https URI schemes. This is also raised for registered custome URI schemes. See <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2CustomSchemeRegistration"/> for more details.
             </remarks>
             <seealso cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.AddWebResourceRequestedFilter(System.String,Microsoft.Web.WebView2.Core.CoreWebView2WebResourceContext)"/>
         </member>
@@ -478,7 +504,7 @@
             
             JavaScript code in the WebView will be able to access appObject as following and then access attributes and methods of appObject.
             
-            Note that while simple types, <c>IDispatch</c> and array are supported, and <c>IUnknown</c> objects that also implement <c>IDispatch</c> are treated as <c>IDispatch</c>, generic <c>IUnknown</c>, <c>VT_DECIMAL</c>, or <c>VT_RECORD</c> variant is not supported. Remote JavaScript objects like callback functions are represented as an <c>VT_DISPATCH</c> VARIANT with the object implementing <c>IDispatch</c>. The JavaScript callback method may be invoked using DISPID_VALUE for the DISPID. Nested arrays are supported up to a depth of 3. Arrays of by reference types are not supported. <c>VT_EMPTY</c> and <c>VT_NULL</c> are mapped into JavaScript as <c>null</c>. In JavaScript <c>null</c> and <c>undefined</c> are mapped to <c>VT_EMPTY</c>.
+            Note that while simple types, <c>IDispatch</c> and array are supported, and <c>IUnknown</c> objects that also implement <c>IDispatch</c> are treated as <c>IDispatch</c>, generic <c>IUnknown</c>, <c>VT_DECIMAL</c>, or <c>VT_RECORD</c> variant is not supported. Remote JavaScript objects like callback functions are represented as an <c>VT_DISPATCH</c> VARIANT with the object implementing <c>IDispatch</c>. The JavaScript callback method may be invoked using DISPID_VALUE for the DISPID. Such callback method invocations will return immediately and will not wait for the JavaScript function to run and so will not provide the return value of the JavaScript function. Nested arrays are supported up to a depth of 3. Arrays of by reference types are not supported. <c>VT_EMPTY</c> and <c>VT_NULL</c> are mapped into JavaScript as <c>null</c>. In JavaScript <c>null</c> and <c>undefined</c> are mapped to <c>VT_EMPTY</c>.
             
             Additionally, all host objects are exposed as <c>window.chrome.webview.hostObjects.sync.{name}</c>. Here the host objects are exposed as synchronous host object proxies. These are not promises and calls to functions or property access synchronously block running script waiting to communicate cross process for the host code to run. Accordingly this can result in reliability issues and it is recommended that you use the promise based asynchronous <c>window.chrome.webview.hostObjects.{name}</c> API described above.
             
@@ -535,7 +561,7 @@
             </item>
             </list>
             
-            Host object proxies additionally have the following methods which run locally:
+            Host object proxies additionally have the following methods:
             
             <list type="table">
             <listheader>
@@ -552,6 +578,18 @@
             <term><c>getLocalProperty</c>, <c>setLocalProperty</c></term>
             <description>
             Perform property get, or property set locally. You can use these methods to force getting or setting a property on the host object proxy itself rather than on the host object it represents. For instance, <c>proxy.unknownProperty</c> will get the property named <c>unknownProperty</c> from the host proxied object. But <c>proxy.getLocalProperty('unknownProperty')</c> will get the value of the property <c>unknownProperty</c> on the proxy object itself.
+            </description>
+            </item>
+            <item>
+            <term><c>addEventListener</c></term>
+            <description>
+            This method only exists on proxies for .NET objects. Bind the JavaScript handler to the C# event, so that the JavaScript handler can be called through the C# event. For example, <c>chrome.webview.hostObjects.sample.addEventListener('TestEvent', () => { alert('Invoked from remote');});</c> bind an anonymous JavaScript function to a C# event called 'TestEvent'. When calling <c>TestEvent?.Invoke()</c> on C# side, the JavaScript function that was just bound will be called asynchronously. It allows adding more than one handler for an event, but if the handler is already in the list of event handler, it will not be added a second time. If the host object cannot find the event with the name passed in by the <c>addEventListener</c> function or it is no public or its return type is not void, an exception will be thrown. If the count and type of C# event's parameters do not match the count and type of JavaScript handler, invoke <c>addEventListener</c> will be successful but an exception will be passed to JavaScript when invoke the event on C# side. If the host object has defined <c>addEventListener</c> function, use the defined function rather than the additionally <c>addEventListener</c> function.
+            </description>
+            </item>
+            <item>
+            <term><c>removeEventListener</c></term>
+            <description>
+            This method only exists on proxies for .NET objects. Removes a handler previously bound with <c>addEventListener()</c>. If the handler does not exist in the list of event handler, nothing will happen. If the host object cannot find the event with the name passed in by the <c>removeEventListener</c> function or it is no public, an exception will be thrown. If the host object has defined <c>removeEventListener</c> function, use the defined function rather than the additionally <c>removeEventListener</c> function.
             </description>
             </item>
             <item>
@@ -618,7 +656,8 @@
             <code>
             webView.CoreWebView2.AddHostObjectToScript("bridge", new Bridge());
             </code>
-            And then in script you can call the methods, and access those properties of the objects added via <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.AddHostObjectToScript(System.String,System.Object)"/>:
+            And then in script you can call the methods, and access those properties of the objects added via <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.AddHostObjectToScript(System.String,System.Object)"/>.
+            Note that `CoreWebView2.AddHostObjectToScript` only applies to the top-level document and not to frames. To add host objects to frames use `CoreWebView2Frame.AddHostObjectToScript`.
             <code>
             // Find added objects on the hostObjects property
             const bridge = chrome.webview.hostObjects.bridge;
@@ -1063,7 +1102,7 @@
             The default download dialog corner alignment.
             </summary>
             <remarks>
-            The dialog can be aligned to any of the WebView corners (see <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2DefaultDownloadDialogCornerAlignment"/>). When the WebView or dialog changes size, the dialog keeps it position relative to the corner. The dialog may become partially or completely outside of the WebView bounds if the WebView is small enough. Set the margin from the corner with the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.DefaultDownloadDialogMargin"/> property. The corner alignment and margin should be set during initialization to ensure that they are correcly applied when the layout is first computed, otherwise they will not take effect until the next time the WebView position or size is updated.
+            The dialog can be aligned to any of the WebView corners (see <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2DefaultDownloadDialogCornerAlignment"/>). When the WebView or dialog changes size, the dialog keeps it position relative to the corner. The dialog may become partially or completely outside of the WebView bounds if the WebView is small enough. Set the margin from the corner with the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.DefaultDownloadDialogMargin"/> property. The corner alignment and margin should be set during initialization to ensure that they are correctly applied when the layout is first computed, otherwise they will not take effect until the next time the WebView position or size is updated.
             </remarks>
             <example>
             :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="SetDefaultDownloadDialogPosition":::
@@ -1074,7 +1113,7 @@
             The default download dialog margin relative to the WebView corner specified by <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.DefaultDownloadDialogCornerAlignment"/>.
             </summary>
             <remarks>
-            The margin is a point that describes the vertical and horizontal distances between the chosen WebView corner and the default download dialog corner nearest to it. Positive values move the dialog towards the center of the WebView from the chosen WebView corner, and negative values move the dialog away from it. Use (0, 0) to align the dialog to the WebView corner with no margin. The corner alignment and margin should be set during initialization to ensure that they are correcly applied when the layout is first computed, otherwise they will not take effect until the next time the WebView position or size is updated.
+            The margin is a point that describes the vertical and horizontal distances between the chosen WebView corner and the default download dialog corner nearest to it. Positive values move the dialog towards the center of the WebView from the chosen WebView corner, and negative values move the dialog away from it. Use (0, 0) to align the dialog to the WebView corner with no margin. The corner alignment and margin should be set during initialization to ensure that they are correctly applied when the layout is first computed, otherwise they will not take effect until the next time the WebView position or size is updated.
             </remarks>
         </member>
         <member name="E:Microsoft.Web.WebView2.Core.CoreWebView2.IsDefaultDownloadDialogOpenChanged">
@@ -1166,7 +1205,45 @@
             :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="Profile":::
             </example>
         </member>
-        <!-- Badly formed XML comment ignored for member "E:Microsoft.Web.WebView2.Core.CoreWebView2.ServerCertificateErrorDetected" -->
+        <member name="E:Microsoft.Web.WebView2.Core.CoreWebView2.ServerCertificateErrorDetected">
+            <summary>
+            The ServerCertificateErrorDetected event is raised when the WebView2 cannot verify server's digital certificate while loading a web page.
+            </summary>
+            <remarks>
+            This event will raise for all web resources and follows the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.WebResourceRequested"/> event.
+            
+            If you don't handle the event, WebView2 will show the default TLS interstitial error page to the user for navigations, and for non-navigations the web request is cancelled.
+            
+            Note that WebView2 before raising `ServerCertificateErrorDetected` raises a <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationCompleted"/> event with <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs.IsSuccess"/> as FALSE and any of the below WebErrorStatuses that indicate a certificate failure.
+            
+            <list type="bullet">
+            <item><description>
+            <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateCommonNameIsIncorrect"/>
+            </description></item>
+            <item><description>
+            <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateExpired"/>
+            </description></item>
+            <item><description>
+            <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ClientCertificateContainsErrors"/>
+            </description></item>
+            <item><description>
+            <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateRevoked"/>
+            </description></item>
+            <item><description>
+            <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateIsInvalid"/>
+            </description></item>
+            </list>
+            
+            For more details see <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs.IsSuccess"/> and handle ServerCertificateErrorDetected event or show the default TLS interstitial error page to the user according to the app needs.
+            
+            WebView2 caches the response when action is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ServerCertificateErrorAction.AlwaysAllow"/> for the RequestUri's host and the server certificate in the session and the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ServerCertificateErrorDetected"/> event won't be raised again.
+            
+            To raise the event again you must clear the cache using <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.ClearServerCertificateErrorActionsAsync"/>.
+            </remarks>
+            <example>
+            :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="ServerCertificateErrorDetected":::
+            </example>
+        </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2.ClearServerCertificateErrorActionsAsync">
             <summary>
             Clears all cached decisions to proceed with TLS certificate errors from the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ServerCertificateErrorDetected"/> event for all WebView2's sharing the same session.
@@ -1323,7 +1400,31 @@
             :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/assets/sharedBuffer.html" id="ShareBufferScriptCode_2":::
             </example>
         </member>
-        <!-- Badly formed XML comment ignored for member "E:Microsoft.Web.WebView2.Core.CoreWebView2.LaunchingExternalUriScheme" -->
+        <member name="E:Microsoft.Web.WebView2.Core.CoreWebView2.LaunchingExternalUriScheme">
+            <summary>
+            LaunchingExternalUriScheme is raised when a navigation request is made to a URI scheme that is registered with the OS.
+            </summary>
+            <remarks>
+            The <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.LaunchingExternalUriScheme"/> event handler may suppress the default dialog or replace the default dialog with a custom dialog.
+            If a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Deferral"/> is not taken on the event args, the external URI scheme launch is blocked until the event handler returns.
+            If a deferral is taken, the external URI scheme launch is blocked until the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Deferral"/> is completed.
+            The host also has the option to cancel the URI scheme launch.
+            
+            The <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationStarting"/> and <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationCompleted"/> events will be raised, regardless of whether the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs.Cancel"/> property is set to <c>true</c> or <c>false</c>.
+            The <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationCompleted"/> event will be raised with the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs.IsSuccess"/> property set to <c>false</c> and the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs.WebErrorStatus"/> property set to <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ConnectionAborted"/> regardless of whether the host sets the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2LaunchingExternalUriSchemeEventArgs.Cancel"/> property.
+            The <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.SourceChanged"/>, <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ContentLoading"/> and <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.HistoryChanged"/> events will not be raised for this navigation to the external URI scheme regardless of the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs.Cancel"/> property.
+            The <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.LaunchingExternalUriScheme"/> event will be raised after the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationStarting"/> event and before the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationCompleted"/> event.
+            
+            The default <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Settings"/> will also be updated upon navigation to an external URI scheme.
+            If a setting on the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Settings"/> interface has been changed, navigating to an external URI scheme will trigger the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Settings"/> to update.
+            
+            The WebView2 may not display the default dialog based on user settings, browser settings, and whether the origin is determined as a [trustworthy origin](https://w3c.github.io/webappsec-secure-contexts#potentially-trustworthy-origin); however, the event will still be raised.
+            If the request is initiated by a cross-origin frame without a user gesture, the request will be blocked and the `LaunchingExternalUriScheme` event will not be raised.
+            </remarks>
+            <example>
+            :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="LaunchingExternalUriScheme":::
+            </example>
+        </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2.MemoryUsageTargetLevel">
             <summary>
             Desired <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2MemoryUsageTargetLevel"/> of a WebView.
@@ -2675,6 +2776,10 @@
             <para>
             WebView creation fails if a running instance using the same user data folder exists, and the Environment objects have different <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions"/>. For example, if a WebView was created with one <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions.Language"/>, an attempt to create a WebView with a different <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions.Language"/> using the same user data folder fails.
             </para>
+            
+            <para>
+            WebView creation can fail with `E_UNEXPECTED` if runtime does not have permissions to the user data folder.
+            </para>
             </remarks>
         </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateWebResourceResponse(System.IO.Stream,System.Int32,System.String,System.String)">
@@ -2768,7 +2873,7 @@
         </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetProcessInfos">
             <summary>
-            Returns the list of <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessInfo"/>.
+            Returns the list of all <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessInfo"/> using same user data folder except for crashpad process.
             </summary>
             <example>
             :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="GetProcessInfos":::
@@ -2875,7 +2980,7 @@
             Gets or sets the default display language for WebView.
             </summary>
             <remarks>
-            It applies to browser UIs such as context menu and dialogs. It also applies to the <c>accept-languages</c> HTTP header that WebView sends to websites. It is in the format of <c>language[-country]</c> where <c>language</c> is the 2-letter code from [ISO 639](https://www.iso.org/iso-639-language-codes.html) and <c>country</c> is the 2-letter code from [ISO 3166](https://www.iso.org/standard/72482.html).
+            It applies to browser UIs such as context menu and dialogs. It also applies to the <c>accept-languages</c> HTTP header that WebView sends to websites. The intended locale value is in the format of BCP 47 Language Tags. More information can be found from [IETF BCP47](https://www.ietf.org/rfc/bcp/bcp47.html).
             </remarks>
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions.TargetCompatibleBrowserVersion">
@@ -3513,10 +3618,7 @@
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2SharedBuffer">
             <summary>
-            This class implements <see cref="T:System.IDisposable"/>.
-            </summary>
-            <summary>
-            A shared memory based buffer object that is created by <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateSharedBuffer(System.UInt64)"/>.
+            A shared memory based buffer object that is created by <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateSharedBuffer(System.UInt64)"/>. The object is presented to script as ArrayBuffer when posted to script with <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.PostSharedBufferToScript(Microsoft.Web.WebView2.Core.CoreWebView2SharedBuffer,Microsoft.Web.WebView2.Core.CoreWebView2SharedBufferAccess,System.String)"/>.
             </summary>
         </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2SharedBuffer.Dispose">
@@ -3918,16 +4020,8 @@
             An unexpected error occurred.
             </summary>
         </member>
-        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidAuthenticationCredentialsRequired">
-            <summary>
-            Indicates that user is prompted with a login, waiting on user action. Initial navigation to a login site will always return this even if app provides credential using <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.BasicAuthenticationRequested"/>. HTTP response status code in this case is 401. See status code reference here: https://developer.mozilla.org/docs/Web/HTTP/Status.
-            </summary>
-        </member>
-        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidProxyAuthenticationRequired">
-            <summary>
-            Indicates that user lacks proper authentication credentials for a proxy server. HTTP response status code in this case is 407. See status code reference here: https://developer.mozilla.org/docs/Web/HTTP/Status.
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidAuthenticationCredentialsRequired" -->
+        <!-- Badly formed XML comment ignored for member "F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidProxyAuthenticationRequired" -->
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2TrackingPreventionLevel">
             <summary>
             Tracking prevention levels.
@@ -4012,6 +4106,7 @@
             <summary>
             Indicates that the dialog uses <c>window.beforeunload</c> JavaScript event.
             </summary>
+            
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessKind">
             <summary>
@@ -4058,7 +4153,7 @@
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason">
             <summary>
-            Specifies the process failure reason used in <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/>.
+            Specifies the process failure reason used in <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/>. For process failures where a process has exited, it indicates the type of issue that produced the process exit.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason.Unexpected">
@@ -4078,7 +4173,7 @@
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason.Crashed">
             <summary>
-            Indicates that the process crashed.
+            Indicates that the process crashed. Most crashes will generate dumps in the location indicated by <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Environment.FailureReportFolderPath"/>.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason.LaunchFailed">
@@ -4103,6 +4198,7 @@
             <remarks>
             The values in this enum make reference to the process kinds in the Chromium architecture. For more information about what these processes are and what they do, see [Browser Architecture - Inside look at modern web browser](https://developers.google.com/web/updates/2018/09/inside-browser-part1).
             </remarks>
+            
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.BrowserProcessExited">
             <summary>
@@ -4111,47 +4207,64 @@
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.RenderProcessExited">
             <summary>
-            Indicates that the main frame's render process ended unexpectedly. A new render process is created automatically and navigated to an error page. You can use the <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.Reload"/> method to try reload the page that failed.
+            Indicates that the main frame's render process ended unexpectedly. Any subframes in the WebView will be gone too. A new render process is created automatically and navigated to an error page. You can use the <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.Reload"/> method to try to recover from this failure. Alternatively, you can use <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Controller.Close"/> and recreate the WebView.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.RenderProcessUnresponsive">
             <summary>
             Indicates that the main frame's render process is unresponsive.
             </summary>
+            Renderer process unresponsiveness can happen for the following reasons:
+            <remarks>
+            <list type="bullet">
+            <item>
+            <description>
+            There is a <b>long-running script</b> being executed. For example, the web content in your WebView might be performing a synchronous XHR, or have entered an infinite loop.
+            </description>
+            </item>
+            <item>
+            <description>
+            The system is busy.
+            </description>
+            </item>
+            </list>
+            </remarks>
+            The <c>ProcessFailed</c> event will continue to be raised every few seconds until the renderer procees has become responsive again. The application can consider taking action if the event keeps being raised. For example, the application might show UI for the user to decide to keep waiting or reload the page, or navigate away.
+            
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.FrameRenderProcessExited">
             <summary>
-            Indicates that a frame-only render process ended unexpectedly. The process exit does not affect the top-level document, only a subset of the subframes within it. The content in these frames is replaced with an error page in the frame.
+            Indicates that a frame-only render process ended unexpectedly. The process exit does not affect the top-level document, only a subset of the subframes within it. The content in these frames is replaced with an error page in the frame. Your application can communicate with the main frame to recover content in the impacted frames, using <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.FrameInfosForFailedProcess"/> to get information about the impacted frames.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.UtilityProcessExited">
             <summary>
-            Indicates that a utility process ended unexpectedly.
+            Indicates that a utility process ended unexpectedly. The failed process is recreated automatically. Your application does not need to handle recovery for this event, but can use <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to collect information about the failure, including <c>ProcessDescription</c>.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.SandboxHelperProcessExited">
             <summary>
-            Indicates that a sandbox helper process ended unexpectedly.
+            Indicates that a sandbox helper process ended unexpectedly. This failure is not fatal. Your application does not need to handle recovery for this event, but can use <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to collect information about the failure.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.GpuProcessExited">
             <summary>
-            Indicates that the GPU process ended unexpectedly.
+            Indicates that the GPU process ended unexpectedly. The failed process is recreated automatically. This failure is not fatal. Your application does not need to handle recovery for this event, but can use <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to collect information about the failure.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.PpapiPluginProcessExited">
             <summary>
-            Indicates that a PPAPI plugin process ended unexpectedly.
+            Indicates that a PPAPI plugin process ended unexpectedly. This failure is not fatal. Your application does not need to handle recovery for this event, but can use <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to collect information about the failure, including <c>ProcessDescription</c>.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.PpapiBrokerProcessExited">
             <summary>
-            Indicates that a PPAPI plugin broker process ended unexpectedly.
+            Indicates that a PPAPI plugin broker process ended unexpectedly. This failure is not fatal. Your application does not need to handle recovery for this event, but can use <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to collect information about the failure.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.UnknownProcessExited">
             <summary>
-            Indicates that a process of unspecified kind ended unexpectedly.
+            Indicates that a process of unspecified kind ended unexpectedly. Your application can use <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/> to collect information about the failure.
             </summary>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2PrintStatus">
@@ -4176,7 +4289,7 @@
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2PrintOrientation">
             <summary>
-            The orientation for printing, used by the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings.Orientation"/> property. Currently only printing to PDF is supported.
+            The orientation for printing, used by the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings.Orientation"/> property.
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2PrintOrientation.Portrait">
@@ -4504,6 +4617,26 @@
             The setting and more button on PDF toolbar.
             </summary>
         </member>
+        <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2NavigationKind">
+            <summary>
+            Specifies the navigation kind of each navigation.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2NavigationKind.Reload">
+            <summary>
+            A navigation caused by CoreWebView2.Reload(), location.reload(), the end user using F5 or other UX, or other reload mechanisms to reload the current document without modifying the navigation history.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2NavigationKind.BackOrForward">
+            <summary>
+            A navigation back or forward to a different entry in the session navigation history, like via CoreWebView2.Back(), location.back(), the end user pressing Alt+Left or other UX, or other mechanisms to navigate back or forward in the current session navigation history.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2NavigationKind.NewDocument">
+            <summary>
+            A navigation to another document, which can be caused by CoreWebView2.Navigate(),window.location.href = ..., or other WebView2 or DOM APIs that navigate to a new URI.
+            </summary>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2MoveFocusReason">
             <summary>
             Specifies the reason for moving focus.
@@ -4652,6 +4785,16 @@
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2MouseEventKind.XButtonUp">
             <summary>
             First or second X button up mouse event, <c>WM_XBUTTONUP</c>.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2MouseEventKind.NonClientRightButtonDown">
+            <summary>
+            R button down over non client area, <c>WM_NCRBUTTONDOWN</c>.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2MouseEventKind.NonClientRightButtonUp">
+            <summary>
+            R button up over non client area, <c>WM_NCRBUTTONUP</c>.
             </summary>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2MemoryUsageTargetLevel">
@@ -5105,7 +5248,7 @@
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.AllDomStorage">
             <summary>
-            Specifies DOM storage data, now and future. This browsing data kind is inclusive of CoreWebView2BrowsingDataKinds.FileSystems, CoreWebView2BrowsingDataKinds.IndexedDb, CoreWebView2BrowsingDataKinds.WebSql, CoreWebView2BrowsingDataKinds.CacheStorage. New DOM storage data types may be added to this data kind in the future.
+            Specifies DOM storage data, now and future. This browsing data kind is inclusive of CoreWebView2BrowsingDataKinds.FileSystems, CoreWebView2BrowsingDataKinds.IndexedDb, CoreWebView2BrowsingDataKinds.WebSql, CoreWebView2BrowsingDataKinds.ServiceWorkers, CoreWebView2BrowsingDataKinds.CacheStorage, and some other data kinds not listed yet to keep consistent with [DOM-accessible storage](https://www.w3.org/TR/clear-site-data/#storage).
             </summary>
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.Cookies">
@@ -5151,6 +5294,11 @@
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.AllProfile">
             <summary>
             Specifies profile data that should be wiped to make it look like a new profile. This does not delete account-scoped data like passwords but will remove access to account-scoped data by signing the user out. Specifies all profile data, now and future. New profile data types may be added to this data kind in the future. This browsing data kind is inclusive of <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.AllSite"/>, <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.DiskCache"/>, <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.DownloadHistory"/>, <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.GeneralAutofill"/>, <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.PasswordAutosave"/>, <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.BrowsingHistory"/>, <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.Settings"/>.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.ServiceWorkers">
+            <summary>
+            Specifies service workers registered for an origin, and clear will result in termination and deregistration of them.
             </summary>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2BrowserProcessExitKind">
@@ -5374,6 +5522,7 @@
             </summary>
             <remarks>
             Stream must have all the content data available by the time the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.WebResourceRequested"/> event deferral of this response is completed. Stream should be agile or be created from a background thread to prevent performance impact to the UI thread. <c>null</c> means no content data.
+            When providing the response data, you should consider relevant HTTP request headers just like an HTTP server would do. For example, if the request was for a video resource in a HTML video element, the request may contain the [Range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range) header to request only a part of the video that is streaming. In this case, your response stream should be only the portion of the video specified by the range HTTP request headers and you should set the appropriate [Content-Range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header in the response.
             </remarks>
             <seealso cref="T:System.IO.Stream"/>
         </member>
@@ -5809,6 +5958,7 @@
             If CoreWebView2Setting.IsReputationCheckingRequired is <c>true</c> for any CoreWebView2 using the same user data folder, then SmartScreen is enabled. If CoreWebView2Setting.IsReputationCheckingRequired is <c>false</c> for all CoreWebView2 using the same user data folder, then SmartScreen is disabled.
             When it is changed, the change will be applied to all WebViews using the same user data folder on the next navigation or download.
             If the newly created CoreWebview2 does not set SmartScreen to <c>false</c>, when navigating(Such as Navigate(), LoadDataUrl(), ExecuteScript(), etc.), the default value will be applied to all CoreWebview2 using the same user data folder.
+            SmartScreen of WebView2 apps can be controlled by Windows system setting "SmartScreen for Microsoft Edge", specially, for WebView2 in Windows Store apps, SmartScreen is controlled by another Windows system setting "SmartScreen for Microsoft Store apps". When the Windows setting is enabled, the SmartScreen operates under the control of the `IsReputationCheckingRequired`. When the Windows setting is disabled, the SmartScreen will be disabled regardless of the `IsReputationCheckingRequired` value set in WebView2 apps. In other words, under this circumstance the value of `IsReputationCheckingRequired` will be saved but overridden by system setting. Upon re-enabling the Windows setting, the CoreWebview2 will reference the `IsReputationCheckingRequired` to determine the SmartScreen status.
             </remarks>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2ServerCertificateErrorDetectedEventArgs">
@@ -5932,16 +6082,39 @@
             Gets the kind of process failure that has occurred.
             </summary>
             <remarks>
-            <c>ProcessFailedKind</c> is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.RenderProcessExited"/> if the failed process is the main frame's renderer, even if there were subframes rendered by such process; all frames are gone when this happens.
+            <c>ProcessFailedKind</c> is a combination of process kind (for example, browser, renderer, gpu) and failure (exit, unresponsiveness). Renderer processes are further divided in main frame renderer (<c>RenderProcessExited</c>, <c>RenderProcessUnresponsive</c>) and subframe renderer (<c>FrameRenderProcessExited</c>). To learn about the conditions under which each failure kind occurs, see <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind"/>.
             </remarks>
+            
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.Reason">
             <summary>
             Gets the reason for the process failure.
             </summary>
             <remarks>
-            The reason is always <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason.Unexpected"/> when <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.BrowserProcessExited"/>, and <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason.Unresponsive"/> when <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.RenderProcessUnresponsive"/>. For other process failure kinds, the reason may be any of the reason values.
+            Some of the reasons are only applicable to specific values of <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/>, and the following <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> values always return the indicated reason value:
+            
+            <list type="table">
+            <listheader>
+            <term>ProcessFailedKind</term>
+            <description>Reason</description>
+            </listheader>
+            <item>
+            <term><c>BrowserProcessExited</c></term>
+            <description>
+            <c>Unexpected</c>
+            </description>
+            </item>
+            <item>
+            <term><c>RenderProcessUnresponsive</c></term>
+            <description>
+            <c>Unresponsive</c>
+            </description>
+            </item>
+            </list>
+            
+            For other <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> values, the reason may be any of the reason values. To learn about what these values mean, see <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedReason"/>.
             </remarks>
+            
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ExitCode">
             <summary>
@@ -5950,6 +6123,7 @@
             <remarks>
             The exit code is always <c>1</c> when <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.BrowserProcessExited"/>, and <c>STILL_ACTIVE</c>(<c>259</c>) when <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.RenderProcessUnresponsive"/>.
             </remarks>
+            
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessDescription">
             <summary>
@@ -5970,10 +6144,10 @@
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings">
             <summary>
-            Settings used by the <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.PrintToPdfAsync(System.String,Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings)"/> method. Other programmatic printing is not currently supported.
+            Settings used by the <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.PrintToPdfAsync(System.String,Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings)"/> method.
             </summary>
             <summary>
-            Settings used by the <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.PrintToPdfAsync(System.String,Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings)"/> method. Other programmatic printing is not currently supported.
+            Settings used by the <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.PrintToPdfAsync(System.String,Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings)"/> method.
             </summary>
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings.Orientation">
@@ -6589,6 +6763,9 @@
             <summary>
             Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NewWindowRequested"/> event.
             </summary>
+            <summary>
+            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NewWindowRequested"/> event.
+            </summary>
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.Uri">
             <summary>
@@ -6644,7 +6821,18 @@
             Opening a window via Ctrl+clicking a link would result in the <c>Name</c> property being set to an empty string.
             </remarks>
         </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs.OriginalSourceFrameInfo">
+            <summary>
+            The frame info of the frame where the new window request originated.
+            </summary>
+            <remarks>
+            The <c>OriginalSourceFrameInfo</c> is a snapshot of frame information at the time when the new window was requested. See <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/> for details on frame properties.
+            </remarks>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs">
+            <summary>
+            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationStarting"/> event.
+            </summary>
             <summary>
             Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.NavigationStarting"/> event.
             </summary>
@@ -6714,6 +6902,11 @@
             
             This property is ignored for top level document navigation.
             </remarks>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs.NavigationKind">
+            <summary>
+            Gets the navigation kind of the navigation.
+            </summary>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs">
             <summary>
