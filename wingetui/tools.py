@@ -440,61 +440,6 @@ def getint(s: str, fallback: int) -> int:
         print("can't parse", s)
         return fallback
 
-def IgnoreUpdatesForPackage(package: 'Package', version: str = "*"):
-    """
-    Add a package to the ignored package updates list.
-    If the parameter version is given, the given version will be ignored. Otherwise, all versions will.
-    """
-    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
-    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
-    ignoredPackages[ENTRY] = version
-    setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
-
-def RemovePackageFromIgnoredUpdates(package: 'Package'):
-    """
-    Remove a package (if present) from the ignored packages list.
-    """
-    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
-    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
-    if ENTRY in ignoredPackages.keys():
-        del ignoredPackages[ENTRY]
-    setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
-    
-def IsPackageIgnored(package: 'Package', version: str = "*") -> bool:
-    """
-    Return if a package is being ignored for the given version.
-    If version is not given, all the versions will be checked.
-    """
-    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
-    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
-    if ENTRY in ignoredPackages.keys():
-        if version == "*":
-            return True # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
-        elif ignoredPackages[ENTRY] == version:
-            return True
-    return False
-
-def getIgnoredVersionsForPackage(package: 'Package') -> str:
-    """
-    Returns the version for which a package has been ignored. Will return the wildcard "*" if all the versions are ignored.
-    If the package is not ignored returns an empty string.
-    """
-    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
-    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
-    if ENTRY in ignoredPackages.keys():
-        return ignoredPackages[ENTRY]
-    return ""
-
-def GetIgnoredPackages() -> list[tuple[str, str, str]]:
-    packages = []
-    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
-    for ENTRY in ignoredPackages.keys():
-        ENTRY: str  # Formatted as source\package_id
-        if "\\" in ENTRY:
-            packages.append((ENTRY.split("\\")[1], ENTRY.split("\\")[0], ignoredPackages[ENTRY]))
-    return packages
-        
-
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
@@ -510,7 +455,6 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     baseList = [v for v in getSettingsValue(
         "SingleVersionIgnoredPackageUpdates").split(";") if v]
     return [v.split(",") for v in baseList if len(v.split(",")) == 3]
-
 
 carriedChar = b""
 

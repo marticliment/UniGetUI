@@ -609,18 +609,27 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         except AttributeError:
             pass  # This will be called before __init__ finished loading, so some attributes may not have been set when called
         return super().ApplyIcons()
+    
+    def GetIgnoredPackages(self) -> list[Package]:
+        packages = []
+        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        for ENTRY in ignoredPackages.keys():
+            ENTRY: str  # Formatted as source\package_id
+            if "\\" in ENTRY:
+                id, source, version = (ENTRY.split("\\")[1], ENTRY.split("\\")[0], ignoredPackages[ENTRY])
+                manager: PackageManagerModule = None
+                for _manager in PackageManagersList:
+                    if source.split(" ")[0] in _manager.NAME.lower():
+                        manager = _manager
+                        
+                if not manager:
+                    manager = Winget
+                packages.append(Package(id, id, version, source, manager))
+        return packages
 
     def loadItems(self):
         self.treewidget.clear()
-        for id, source, version in GetIgnoredPackages():
-            manager: PackageManagerModule = None
-            for _manager in PackageManagersList:
-                if source.split(" ")[0] in _manager.NAME.lower():
-                    manager = _manager
-                    
-            if not manager:
-                manager = Winget
-            package = Package(id, id, version, source, manager)
+        for package in self.GetIgnoredPackages():
             self.addItem(package)
 
     def addItem(self, package: Package):
@@ -645,38 +654,6 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
             self.treewidget.itemWidget(self.treewidget.topLevelItem(0), 3).click()
         self.close()
         globals.updates.startLoadingPackages(force=True)
-
-    """def unBlackistLegacy(self, id: str, item: TreeWidgetItemWithQAction):
-        setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        del i
-
-    def unBlackistAllVersions(self, id: str, store: str, item: TreeWidgetItemWithQAction):
-        originalList: list[list[str]] = GetIgnoredPackageUpdates_Permanent()
-        setSettingsValue("PermanentlyIgnoredPackageUpdates", "")
-        for ignoredPackage in originalList:
-            if [id, store.lower()] == ignoredPackage:
-                continue
-            IgnorePackageUpdates_Permanent(ignoredPackage[0], ignoredPackage[1])
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-
-        INSTALLED: SoftwareSection = globals.uninstall
-        if id in INSTALLED.IdPackageReference:
-            package: Package = INSTALLED.IdPackageReference[id]
-            package.PackageItem.setIcon(1, INSTALLED.installIcon)
-            package.PackageItem.setToolTip(1, package.Name)
-
-        del i
-
-    def unBlackistSingleVersion(self, id: str, version: str, store: str, item: TreeWidgetItemWithQAction):
-        originalList: list[list[str]] = GetIgnoredPackageUpdates_SpecificVersion()
-        setSettingsValue("SingleVersionIgnoredPackageUpdates", "")
-        for ignoredPackage in originalList:
-            if [id, version, store.lower()] == ignoredPackage:
-                continue
-            IgnorePackageUpdates_SpecificVersion(ignoredPackage[0], ignoredPackage[1], ignoredPackage[2])
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        del i"""
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
@@ -2040,9 +2017,10 @@ class InstalledPackageItem(PackageItem):
         self.setIcon(3, getIcon("version"))
 
     def updateCorrespondingPackages(self) -> None:
-        if self.Package.HasUpdatesIgnored() and self.Package.GetIgnoredUpatesVersion() == "*":
-            self.setTag(PackageItem.Tag.Pinned)
-
+        if self.Package.HasUpdatesIgnored():
+            if self.Package.GetIgnoredUpatesVersion() == "*":
+                self.setTag(PackageItem.Tag.Pinned)
+        
         AvailableItem = self.getDiscoverPackageItem()
         if AvailableItem:
             AvailableItem.setTag(PackageItem.Tag.Installed)

@@ -162,6 +162,12 @@ class Package():
         ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             del ignoredPackages[ENTRY]
+                 
+        if self.PackageItem is not None:
+            InstalledItem = self.PackageItem.getInstalledPackageItem()
+            if InstalledItem:
+                InstalledItem.setTag(InstalledItem.Tag.Default)
+        
         setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
         
     def HasUpdatesIgnored(self, version: str = "*") -> bool:
