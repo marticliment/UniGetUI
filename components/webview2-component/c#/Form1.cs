@@ -74,7 +74,7 @@ namespace WinFormsWebView
         public string getUrl()
         {
             if (loaded)
-                return webView.Location.ToString();
+                return webView.Source.ToString();
             else
                 return "";
         }
