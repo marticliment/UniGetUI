@@ -13,7 +13,7 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
 
 
-import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+import glob
 import os
 import subprocess
 import sys
