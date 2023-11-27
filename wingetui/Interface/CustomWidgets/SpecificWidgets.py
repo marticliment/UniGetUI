@@ -1466,6 +1466,7 @@ class ImageViewer(QWidget):
 
 
 class PackageExporter(MovableFramelessWindow):
+    ItemPackageReference: dict[QTreeWidgetItem:Package] = {}
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
@@ -1532,7 +1533,8 @@ class PackageExporter(MovableFramelessWindow):
         """
         self.treewidget.clear()
         for package in packageList:
-            item = TreeWidgetItemWithQAction()
+            item = QTreeWidgetItem()
+            self.ItemPackageReference[item] = package
             item.setText(0, package.Name)
             item.setText(1, package.Id)
             item.setText(2, package.Source)
@@ -1550,88 +1552,44 @@ class PackageExporter(MovableFramelessWindow):
             self.treewidget.setItemWidget(item, 3, removeButton)
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
+        
+    def generateExportJson(packageList: list[Package]) -> dict:
+        finalJson = {
+            "export_version": 2.0,
+            "packages": []
+        }
+        
+        for package in packageList:
+            installationOptions = InstallationOptions(package)
+            jsonPkg = {
+                "Id": package.Id,
+                "Name": package.Name,
+                "Version": package.Version,
+                "Source": package.Source,
+                "ManagerName": package.PackageManager.NAME,
+                "InstallationOptions": installationOptions.toJson(),
+                "Updates": {
+                    "UpdatesIgnored": package.HasUpdatesIgnored(),
+                    "IgnoredVersion": package.GetIgnoredUpatesVersion()
+                }
+            }
+            finalJson["packages"].append(jsonPkg)
+        return finalJson
 
     def exportPackages(self) -> None:
-        wingetPackagesList = []
-        scoopPackageList = []
-        chocoPackageList = []
-        npmPackageList = []
-        pipPackageList = []
-        dotnetPackageList = []
-        try:
-            for i in range(self.treewidget.topLevelItemCount()):
-                item = self.treewidget.topLevelItem(i)
-                if "winget" in item.text(2).lower():
-                    id = item.text(1).strip()
-                    wingetPackage = {"PackageIdentifier": id}
-                    wingetPackagesList.append(wingetPackage)
-                elif "scoop" in item.text(2).lower():
-                    scoopPackage = {"Name": item.text(1)}
-                    scoopPackageList.append(scoopPackage)
-                elif "chocolatey" in item.text(2).lower():
-                    chocoPackage = {"Name": item.text(1)}
-                    chocoPackageList.append(chocoPackage)
-                elif "npm" in item.text(2).lower():
-                    npmPackage = {"Name": item.text(1)}
-                    npmPackageList.append(npmPackage)
-                elif "pip" in item.text(2).lower():
-                    pipPackage = {"Name": item.text(1)}
-                    pipPackageList.append(pipPackage)
-                elif ".net tool" in item.text(2).lower():
-                    dotnetPackage = {"Name": item.text(1)}
-                    dotnetPackageList.append(dotnetPackage)
-            wingetDetails = {
-                "Argument": "https://cdn.winget.microsoft.com/cache",
-                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
-                "Name": "winget",
-                "Type": "Microsoft.PreIndexed.Package"
-            }
-            wingetVersion = "1.4"
-            try:
-                wingetVersion = globals.componentStatus["WingetVersion"] if globals.componentStatus["WingetVersion"] else wingetVersion
-            except Exception as e:
-                report(e)
-            wingetExportSchema = {
-                "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate": str(datetime.now()),
-                "Sources": [{
-                    "Packages": wingetPackagesList,
-                    "SourceDetails": wingetDetails}],
-                "WinGetVersion": wingetVersion
-            }
-            scoopExportSchema = {
-                "apps": scoopPackageList,
-            }
-            chocoExportSchema = {
-                "apps": chocoPackageList,
-            }
-            pipExportSchema = {
-                "apps": pipPackageList,
-            }
-            npmExportSchema = {
-                "apps": npmPackageList,
-            }
-            dotnetExportSchema = {
-                "apps": dotnetPackageList,
-            }
-            overallSchema = {
-                "winget": wingetExportSchema,
-                "scoop": scoopExportSchema,
-                "chocolatey": chocoExportSchema,
-                "pip": pipExportSchema,
-                "npm": npmExportSchema,
-                ".net tool": dotnetExportSchema,
-            }
-            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
-            if filename[0] != "" and filename[1]:
-                print(f"🔵 Saving JSON to {filename[0]}")
-                with open(filename[0], 'w') as f:
-                    f.write(json.dumps(overallSchema, indent=4))
-                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
-                self.hide()
-
-        except Exception as e:
-            report(e)
+        packagesToExport: list[Package] = []
+        for i in range(self.treewidget.topLevelItemCount()):
+            packagesToExport.append(self.ItemPackageReference[self.treewidget.topLevelItem(i)])
+            
+        fileContents = PackageExporter.generateExportJson(packagesToExport)
+        
+        filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
+        if filename[0] != "" and filename[1]:
+            print(f"🔵 Saving JSON to {filename[0]}")
+            with open(filename[0], 'w') as f:
+                f.write(json.dumps(fileContents, indent=4))
+            subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+            self.hide()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)

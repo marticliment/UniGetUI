@@ -220,7 +220,7 @@ def setJsonSettings(s: str, data: dict) -> None:
     try:
         globals.settingsCache = {}
         with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "w", encoding="utf-8", errors="ignore") as file:
-            json.dump(data, file)
+            file.write(json.dumps(data, indent=4))
     except Exception as e:
         print(e)
 

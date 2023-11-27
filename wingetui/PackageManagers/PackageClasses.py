@@ -314,15 +314,18 @@ class InstallationOptions():
         self.__save_file_name = "InstallationOptions." + self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
         if not reset:
             self.LoadOptionsFromDisk()
+            
+    def toJson(self) -> dict:
+        optionsToSave = {}
+        for entry in self.__data_to_save:
+            optionsToSave[entry] = getattr(self, entry)
+        return optionsToSave
 
     def SaveOptionsToDisk(self):
         """
         Save current installation options to disk
         """
-        optionsToSave = {}
-        for entry in self.__data_to_save:
-            optionsToSave[entry] = getattr(self, entry)
-        setJsonSettings(self.__save_file_name, optionsToSave)
+        setJsonSettings(self.__save_file_name, self.toJson())
 
     def LoadOptionsFromDisk(self):
         """
