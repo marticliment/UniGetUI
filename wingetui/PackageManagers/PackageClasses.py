@@ -483,3 +483,4 @@ class BlacklistMethod():
     Legacy = 0
     SpecificVersion = 1
     AllVersions = 2
+    JSON = 3

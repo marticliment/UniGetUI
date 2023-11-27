@@ -2302,7 +2302,8 @@ class PackageInfoPopupWindow(QWidget):
     def install(self):
         print(f"🟢 Starting installation of package {self.currentPackage.Name} with id {self.currentPackage.Id}")
         if self.ignoreFutureUpdates.isChecked():
-            IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
+            self.currentPackage.AddToIgnoredUpdates()
+            #IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
 
         options = self.getInstallationOptions()
