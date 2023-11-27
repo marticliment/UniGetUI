@@ -155,46 +155,55 @@ class Package():
         IgnorePackageUpdates_SpecificVersion(self.Id, version, self.Source)
         """
         
-    def SetUpdatesIgnored(self, version: str = "*"):
+    def AddToIgnoredUpdates(self, version: str = "*"):
         """
         Add a package to the ignored package updates list.
         If the parameter version is given, the given version will be ignored. Otherwise, all versions will.
         """
-        ENTRY = self.Source + "\\" + self.Id
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
         ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
         ignoredPackages[ENTRY] = version
         setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+        
+        if version == "*" and self.PackageItem is not None:
+            InstalledItem = self.PackageItem.getInstalledPackageItem()
+            if InstalledItem:
+                InstalledItem.setTag(InstalledItem.Tag.Pinned)
+            UpgradableItem = self.PackageItem.getUpdatesPackageItem()
+            if UpgradableItem:
+                UpgradableItem.removeFromList()
+
 
     def RemoveFromIgnoredUpdates(self):
         """
         Remove a package (if present) from the ignored packages list.
         """
-        ENTRY = package.Source + "\\" + package.Id
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
         ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             del ignoredPackages[ENTRY]
         setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
         
-    def IsPackageIgnored(self, version: str = "*") -> bool:
+    def HasUpdatesIgnored(self, version: str = "*") -> bool:
         """
         Return if a package is being ignored for the given version.
-        If version is not given, all the versions will be checked.
+        If version is not given (or the wildcard "*" is used), all the versions will be checked.
         """
-        ENTRY = package.Source + "\\" + package.Id
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
         ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
-            if version == "*":
+            if ignoredPackages[ENTRY] == "*":
                 return True # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
             elif ignoredPackages[ENTRY] == version:
                 return True
         return False
 
-    def getIgnoredVersionsForPackage(self) -> str:
+    def GetIgnoredUpatesVersion(self) -> str:
         """
         Returns the version for which a package has been ignored. Will return the wildcard "*" if all the versions are ignored.
         If the package is not ignored returns an empty string.
         """
-        ENTRY = package.Source + "\\" + package.Id
+        ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
         ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             return ignoredPackages[ENTRY]
@@ -246,12 +255,12 @@ class UpgradablePackage(Package):
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
 
-    def ignoreUpdatesForVersion(self, version: str = "current"):
+    """def ignoreUpdatesForVersion(self, version: str = "current"):
         if version == "current":
             version = self.NewVersion
         super().ignoreUpdatesForVersion(self.NewVersion)
         if self.PackageItem:
-            self.PackageItem.removeFromList()
+            self.PackageItem.removeFromList()"""
 
 
 class PackageDetails(Package):

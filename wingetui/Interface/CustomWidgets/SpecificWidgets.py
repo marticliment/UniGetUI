@@ -2057,7 +2057,7 @@ class InstalledPackageItem(PackageItem):
         self.setIcon(3, getIcon("version"))
 
     def updateCorrespondingPackages(self) -> None:
-        if self.Package.hasUpdatesIgnoredPermanently():
+        if self.Package.HasUpdatesIgnored() and self.Package.GetIgnoredUpatesVersion() == "*":
             self.setTag(PackageItem.Tag.Pinned)
 
         AvailableItem = self.getDiscoverPackageItem()

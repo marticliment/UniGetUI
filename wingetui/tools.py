@@ -445,7 +445,7 @@ def IgnoreUpdatesForPackage(package: 'Package', version: str = "*"):
     Add a package to the ignored package updates list.
     If the parameter version is given, the given version will be ignored. Otherwise, all versions will.
     """
-    ENTRY = package.Source + "\\" + package.Id
+    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
     ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
     ignoredPackages[ENTRY] = version
     setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
@@ -454,18 +454,18 @@ def RemovePackageFromIgnoredUpdates(package: 'Package'):
     """
     Remove a package (if present) from the ignored packages list.
     """
-    ENTRY = package.Source + "\\" + package.Id
+    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
     ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
     if ENTRY in ignoredPackages.keys():
         del ignoredPackages[ENTRY]
     setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
     
-def IsPackageIgnored(package: Package, version: str = "*") -> bool:
+def IsPackageIgnored(package: 'Package', version: str = "*") -> bool:
     """
     Return if a package is being ignored for the given version.
     If version is not given, all the versions will be checked.
     """
-    ENTRY = package.Source + "\\" + package.Id
+    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
     ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
     if ENTRY in ignoredPackages.keys():
         if version == "*":
@@ -474,12 +474,12 @@ def IsPackageIgnored(package: Package, version: str = "*") -> bool:
             return True
     return False
 
-def getIgnoredVersionsForPackage(package: Package) -> str:
+def getIgnoredVersionsForPackage(package: 'Package') -> str:
     """
     Returns the version for which a package has been ignored. Will return the wildcard "*" if all the versions are ignored.
     If the package is not ignored returns an empty string.
     """
-    ENTRY = package.Source + "\\" + package.Id
+    ENTRY = package.Source.lower().split(":")[0] + "\\" + package.Id
     ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
     if ENTRY in ignoredPackages.keys():
         return ignoredPackages[ENTRY]
@@ -499,11 +499,9 @@ def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
     """
-    try:
-        return json.loads(getSettingsValue("PermanentlyIgnoredPackageUpdates"))
-    except Exception:
-        return []
-
+    baseList = [v for v in getSettingsValue(
+        "PermanentlyIgnoredPackageUpdates").split(";") if v]
+    return [v.split(",") for v in baseList if len(v.split(",")) == 2]
 
 def IgnorePackageUpdates_SpecificVersion(id: str, version: str, store: str):
     """
@@ -520,11 +518,9 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """
     Returns a list in the following format [[packageId, skippedVersion, store], [packageId, skippedVersion, store], etc.] representing the packages that have a version skipped.
     """
-    try:
-        return json.loads(getSettingsValue("SingleVersionIgnoredPackageUpdates"))
-    except Exception:
-        return []
-
+    baseList = [v for v in getSettingsValue(
+        "SingleVersionIgnoredPackageUpdates").split(";") if v]
+    return [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
 carriedChar = b""
 

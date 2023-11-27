@@ -610,13 +610,13 @@ class UpdateSoftwareSection(SoftwareSection):
         self.MenuUninstall.triggered.connect(lambda: uninstallPackage())
 
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
-        self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
+        self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.AddToIgnoredUpdates())
 
         self.MenuSkipVersion = QAction(_("Skip this version"))
-        self.MenuSkipVersion.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesForVersion())
+        self.MenuSkipVersion.triggered.connect(lambda: self.packageList.currentItem().Package.AddToIgnoredUpdates(self.packageList.currentItem().Package.NewVersion))
 
         self.MenuShare = QAction(_("Share this package"))
-        self.MenuShare.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
+        self.MenuShare.triggered.connect(lambda: self.sharePackage(self.packageList.currentItem()))
 
         self.installIcon = QIcon(getMedia("install"))
         self.updateIcon = getMaskedIcon("update_masked")
@@ -715,7 +715,7 @@ class UpdateSoftwareSection(SoftwareSection):
         def blacklistSelectedPackages():
             for packageItem in self.showableItems:
                 if packageItem.checkState(0) == Qt.CheckState.Checked:
-                    packageItem.Package.ignoreUpdatesPermanently()
+                    packageItem.Package.AddToIgnoredUpdates()
 
         toolbar = QToolBar(self.window())
         toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -930,12 +930,20 @@ class UpdateSoftwareSection(SoftwareSection):
     def addItem(self, package: UpgradablePackage) -> None:
         if "---" not in package.Name and "The following packages" not in package.Name and "Name  " not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and package.Version.lower() not in ("the", "is", "install") and package.NewVersion not in ("Manifest", package.Version):
 
-            if package.hasUpdatesIgnoredPermanently():
+            if package.HasUpdatesIgnored(package.NewVersion):
+                print(f"🟡 Package {package.Id} has version {package.GetIgnoredUpatesVersion()} ignored")
                 return
+            
+            elif package.HasUpdatesIgnored():
+                print(package.GetIgnoredUpatesVersion())
+                return
+            
+            #if package.hasUpdatesIgnoredPermanently():
+            #    return
 
-            if [package.Id, package.NewVersion.lower().replace(",", "."), package.Source.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
-                print(f"🟡 Package {package.Id} version {package.Version} is ignored")
-                return
+            #if [package.Id, package.NewVersion.lower().replace(",", "."), package.Source.lower().lower().split(":")[0]] in GetIgnoredPackageUpdates_SpecificVersion():
+            #    print(f"🟡 Package {package.Id} version {package.Version} is ignored")
+            #    return
 
             item = UpgradablePackageItem(package)
 
@@ -1161,7 +1169,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuInteractive = QAction(_("Interactive uninstall"))
         self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
-        self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.ignoreUpdatesPermanently())
+        self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.AddToIgnoredUpdates())
         self.MenuDetails = QAction(_("Package details"))
         self.MenuDetails.triggered.connect(lambda: self.openInfo(self.packageList.currentItem(), uninstall=True))
         self.MenuShare = QAction(_("Share this package"))
@@ -1222,7 +1230,7 @@ class UninstallSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setIcon(4, package.getSourceIcon())
 
-            if package.hasUpdatesIgnoredPermanently():
+            if package.HasUpdatesIgnored():
                 item.setIcon(1, self.pinnedIcon)
 
             UPDATES: UpdateSoftwareSection = globals.updates
@@ -1289,7 +1297,7 @@ class UninstallSoftwareSection(SoftwareSection):
                 if not packageItem.isHidden():
                     try:
                         if packageItem.checkState(0) == Qt.CheckState.Checked:
-                            packageItem.Package.ignoreUpdatesPermanently()
+                            packageItem.Package.AddToIgnoredUpdates()
                     except AttributeError:
                         pass
             self.notif = InWindowNotification(self, _("The selected packages have been blacklisted"))

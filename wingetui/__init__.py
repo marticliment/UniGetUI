@@ -126,6 +126,22 @@ try:
     print(" 🔴: Unhandled unexpected exception")
     print(" 🟣: Handled expected exception")
     print("")
+    
+    legacy_ignored_updates = GetIgnoredPackageUpdates_Permanent()
+    legacy_ignored_updates_version = GetIgnoredPackageUpdates_SpecificVersion()
+    
+    print(legacy_ignored_updates)
+    
+    for pkglist in legacy_ignored_updates:
+        print(pkglist)
+        if len(pkglist) == 2:
+            package = Package(pkglist[0], pkglist[0], "", pkglist[1], None)
+            package.AddToIgnoredUpdates()
+            
+    for pkglist in legacy_ignored_updates_version:
+        if len(pkglist) == 3:
+            package = Package(pkglist[0], pkglist[0], pkglist[1], pkglist[2], None)
+            package.AddToIgnoredUpdates(package.Version)
 
     class MainApplication(QApplication):
         kill = Signal()
