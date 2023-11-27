@@ -25,6 +25,9 @@ from threading import Thread
 from urllib.request import urlopen
 from unicodedata import combining, normalize
 
+if 2 == 3:
+    from wingetui.PackageManagers.PackageClasses import Package # Enable syntax highlighting
+
 
 import globals
 try:
@@ -437,6 +440,50 @@ def getint(s: str, fallback: int) -> int:
         print("can't parse", s)
         return fallback
 
+def IgnoreUpdatesForPackage(package: 'Package', version: str = "*"):
+    """
+    Add a package to the ignored package updates list.
+    If the parameter version is given, the given version will be ignored. Otherwise, all versions will.
+    """
+    ENTRY = package.Source + "\\" + package.Id
+    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+    ignoredPackages[ENTRY] = version
+    setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+
+def RemovePackageFromIgnoredUpdates(package: 'Package'):
+    """
+    Remove a package (if present) from the ignored packages list.
+    """
+    ENTRY = package.Source + "\\" + package.Id
+    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+    if ENTRY in ignoredPackages.keys():
+        del ignoredPackages[ENTRY]
+    setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+    
+def IsPackageIgnored(package: Package, version: str = "*") -> bool:
+    """
+    Return if a package is being ignored for the given version.
+    If version is not given, all the versions will be checked.
+    """
+    ENTRY = package.Source + "\\" + package.Id
+    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+    if ENTRY in ignoredPackages.keys():
+        if version == "*":
+            return True # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
+        elif ignoredPackages[ENTRY] == version:
+            return True
+    return False
+
+def getIgnoredVersionsForPackage(package: Package) -> str:
+    """
+    Returns the version for which a package has been ignored. Will return the wildcard "*" if all the versions are ignored.
+    If the package is not ignored returns an empty string.
+    """
+    ENTRY = package.Source + "\\" + package.Id
+    ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+    if ENTRY in ignoredPackages.keys():
+        return ignoredPackages[ENTRY]
+    return ""
 
 def IgnorePackageUpdates_Permanent(id: str, store: str):
     """
@@ -447,7 +494,6 @@ def IgnorePackageUpdates_Permanent(id: str, store: str):
     if ignoreEntry not in baseList:
         baseList.append(ignoreEntry)
     setSettingsValue("PermanentlyIgnoredPackageUpdates", json.dumps(baseList))
-
 
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
