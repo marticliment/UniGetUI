@@ -1604,12 +1604,12 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
 
-    PackageItemReference: dict[TreeWidgetItemWithQAction:Package] = {}
+    PackageItemReference: dict[PackageItem:Package] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
     __importing_mechanism_is_v2: bool = False
-    __package_data: dict[Package:dict] = {}
+    __package_data: dict[str:dict] = {}
 
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1742,7 +1742,7 @@ class PackageImporter(MovableFramelessWindow):
 
                         self.__importing_mechanism_is_v2 = True
                         for package in contents["packages"]:
-                            self.__package_data[package] = package
+                            self.__package_data[package["Id"]] = package
                             packagesToInstall.append(Package(package["Name"], package["Id"], package["Version"], package["Source"], getManager(package["ManagerName"])))
 
                     else:
@@ -1762,7 +1762,7 @@ class PackageImporter(MovableFramelessWindow):
                                 packagesToInstall.append(Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager))
                                 
                     for package in packagesToInstall:
-                        item = TreeWidgetItemWithQAction()
+                        item = PackageItem(package)
                         package.PackageItem = item
                         
                         if package.PackageManager is None:
@@ -1806,12 +1806,12 @@ class PackageImporter(MovableFramelessWindow):
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
         for item in list(self.PackageItemReference.keys()):
-            item: QTreeWidgetItem
+            item: PackageItem
             package: Package = self.PackageItemReference[item]
             if not item.isDisabled():
                 if self.__importing_mechanism_is_v2:
                     # New import mechanism
-                    packageData = self.__package_data[package]
+                    packageData = self.__package_data[package.Id]
                     installationOptions = InstallationOptions(package)
                     installationOptions.LoadFromJson(packageData["InstallationOptions"])
                     installationOptions.SaveOptionsToDisk()
