@@ -1608,6 +1608,8 @@ class PackageImporter(MovableFramelessWindow):
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    importing_mechanism_is_v2: bool = False
+    packagesData: dict[str:dict] = {}
 
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1725,26 +1727,56 @@ class PackageImporter(MovableFramelessWindow):
             file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
-                contents = json.load(f)
+                contents: dict = json.load(f)
                 f.close()
                 try:
-                    Managers = {
-                        Winget: contents["winget"]["Sources"][0]["Packages"],
-                        Scoop: contents["scoop"]["apps"],
-                        Choco: contents["chocolatey"]["apps"],
-                        Npm: contents["pip"]["apps"],
-                        Pip: contents["npm"]["apps"],
-                        Dotnet: contents[".net tool"]["apps"],
-                    }
-                    for manager in Managers.keys():
-                        for entry in Managers[manager]:
-                            packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
-                            package = Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager)
-                            item = TreeWidgetItemWithQAction()
-                            package.PackageItem = item
-                            self.treewidget.addTopLevelItem(item)
-                            self.addItemFromPackage(package, item)
-                            self.ItemPackageReference[item] = package
+                    packagesToInstall: list[Package] = []
+                    if "export_version" in contents.keys() and contents["export_version"] == 2.0:
+                        print("🔵 Importing packages using package list version 2.0")
+                        self.packagesData = {}
+                        def getManager(managerName):
+                            for manager in PackageManagersList:
+                                if managerName == manager.NAME:
+                                    return manager
+                            return None
+
+                        self.importing_mechanism_is_v2 = True
+                        for package in contents["packages"]:
+                            self.packagesData[package["Id"]] = package
+                            packagesToInstall.append(Package(package["Name"], package["Id"], package["Version"], package["Source"], getManager(package["ManagerName"])))
+
+                    else:
+                        print("🟡 Importing packages using legacy package list version!")
+                        self.importing_mechanism_is_v2 = False
+                        Managers = {
+                            Winget: contents["winget"]["Sources"][0]["Packages"],
+                            Scoop: contents["scoop"]["apps"],
+                            Choco: contents["chocolatey"]["apps"],
+                            Npm: contents["pip"]["apps"],
+                            Pip: contents["npm"]["apps"],
+                            Dotnet: contents[".net tool"]["apps"],
+                        }
+                        for manager in Managers.keys():
+                            for entry in Managers[manager]:
+                                packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
+                                packagesToInstall.append(Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager))
+                                
+                    for package in packagesToInstall:
+                        item = TreeWidgetItemWithQAction()
+                        package.PackageItem = item
+                        
+                        if package.PackageManager is None:
+                            item.setDisabled(True) # If the manager for this package is not available
+                            package.Source = _("Unknown")
+                            package.PackageManager = Winget
+                        elif not package.PackageManager.isEnabled():
+                            item.setDisabled(True) # If the manager for this package is disabled
+                            
+                        self.treewidget.addTopLevelItem(item)
+                        self.addItemFromPackage(package, item)
+                        self.ItemPackageReference[item] = package
+                            
+
                 except Exception as e:
                     report(e)
 
@@ -1764,7 +1796,6 @@ class PackageImporter(MovableFramelessWindow):
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.idIcon)
         item.setIcon(2, self.versionIcon)
-        item.setDisabled(False)
         item.setIcon(3, package.getSourceIcon())
         removeButton = QPushButton()
         removeButton.setIcon(self.removeIcon)
