@@ -325,6 +325,11 @@ class InstallationOptions():
         for entry in self.__data_to_save:
             optionsToSave[entry] = getattr(self, entry)
         return optionsToSave
+    
+    def fromJson(self, data: dict):
+        for entry in self.__data_to_save:
+            if entry in data.keys():
+                setattr(self, entry, data[entry])
 
     def SaveOptionsToDisk(self):
         """
@@ -336,10 +341,7 @@ class InstallationOptions():
         """
         Get previously saved installation options from disk
         """
-        newOptions = getJsonSettings(self.__save_file_name)
-        for entry in self.__data_to_save:
-            if entry in newOptions.keys():
-                setattr(self, entry, newOptions[entry])
+        self.fromJson(getJsonSettings(self.__save_file_name))
         
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
