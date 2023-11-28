@@ -320,13 +320,13 @@ class InstallationOptions():
         if not reset:
             self.LoadOptionsFromDisk()
             
-    def toJson(self) -> dict:
+    def ToJson(self) -> dict:
         optionsToSave = {}
         for entry in self.__data_to_save:
             optionsToSave[entry] = getattr(self, entry)
         return optionsToSave
     
-    def fromJson(self, data: dict):
+    def LoadFromJson(self, data: dict):
         for entry in self.__data_to_save:
             if entry in data.keys():
                 setattr(self, entry, data[entry])
@@ -335,13 +335,13 @@ class InstallationOptions():
         """
         Save current installation options to disk
         """
-        setJsonSettings(self.__save_file_name, self.toJson())
+        setJsonSettings(self.__save_file_name, self.ToJson())
 
     def LoadOptionsFromDisk(self):
         """
         Get previously saved installation options from disk
         """
-        self.fromJson(getJsonSettings(self.__save_file_name))
+        self.LoadFromJson(getJsonSettings(self.__save_file_name))
         
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"

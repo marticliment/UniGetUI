@@ -472,17 +472,12 @@ class DiscoverSoftwareSection(SoftwareSection):
             options.SkipHashCheck = True
         self.addInstallation(PackageInstallerWidget(package, options))
 
-    def installPackage(self, package: Package, admin: bool = False, interactive: bool = False, skiphash: bool = False) -> None:
+    def installPackage(self, package: Package, options: InstallationOptions = None) -> None:
         """
         Initialize the install procedure for the given package, passed as a Package. Switches: admin, interactive, skiphash
         """
-        options = InstallationOptions(package)
-        if admin:
-            options.RunAsAdministrator = True
-        if interactive:
-            options.InteractiveInstallation = True
-        if skiphash:
-            options.SkipHashCheck = True
+        if not options:
+            options = InstallationOptions(package)
         self.addInstallation(PackageInstallerWidget(package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:

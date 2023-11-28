@@ -1567,7 +1567,7 @@ class PackageExporter(MovableFramelessWindow):
                 "Version": package.Version,
                 "Source": package.Source,
                 "ManagerName": package.PackageManager.NAME,
-                "InstallationOptions": installationOptions.toJson(),
+                "InstallationOptions": installationOptions.ToJson(),
                 "Updates": {
                     "UpdatesIgnored": package.HasUpdatesIgnored(),
                     "IgnoredVersion": package.GetIgnoredUpatesVersion()
@@ -1604,12 +1604,12 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
 
-    ItemPackageReference: dict[str:TreeWidgetItemWithQAction] = {}
+    PackageItemReference: dict[TreeWidgetItemWithQAction:Package] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
-    importing_mechanism_is_v2: bool = False
-    packagesData: dict[str:dict] = {}
+    __importing_mechanism_is_v2: bool = False
+    __package_data: dict[Package:dict] = {}
 
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1733,21 +1733,21 @@ class PackageImporter(MovableFramelessWindow):
                     packagesToInstall: list[Package] = []
                     if "export_version" in contents.keys() and contents["export_version"] == 2.0:
                         print("🔵 Importing packages using package list version 2.0")
-                        self.packagesData = {}
+                        self.__package_data = {}
                         def getManager(managerName):
                             for manager in PackageManagersList:
                                 if managerName == manager.NAME:
                                     return manager
                             return None
 
-                        self.importing_mechanism_is_v2 = True
+                        self.__importing_mechanism_is_v2 = True
                         for package in contents["packages"]:
-                            self.packagesData[package["Id"]] = package
+                            self.__package_data[package] = package
                             packagesToInstall.append(Package(package["Name"], package["Id"], package["Version"], package["Source"], getManager(package["ManagerName"])))
 
                     else:
                         print("🟡 Importing packages using legacy package list version!")
-                        self.importing_mechanism_is_v2 = False
+                        self.__importing_mechanism_is_v2 = False
                         Managers = {
                             Winget: contents["winget"]["Sources"][0]["Packages"],
                             Scoop: contents["scoop"]["apps"],
@@ -1774,7 +1774,7 @@ class PackageImporter(MovableFramelessWindow):
                             
                         self.treewidget.addTopLevelItem(item)
                         self.addItemFromPackage(package, item)
-                        self.ItemPackageReference[item] = package
+                        self.PackageItemReference[item] = package
                             
 
                 except Exception as e:
@@ -1805,8 +1805,32 @@ class PackageImporter(MovableFramelessWindow):
 
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
-        for package in list(self.ItemPackageReference.values()):
-            DISCOVER_SECTION.installPackage(package)
+        for item in list(self.PackageItemReference.keys()):
+            item: QTreeWidgetItem
+            package: Package = self.PackageItemReference[item]
+            if not item.isDisabled():
+                if self.__importing_mechanism_is_v2:
+                    # New import mechanism
+                    packageData = self.__package_data[package]
+                    installationOptions = InstallationOptions(package)
+                    installationOptions.LoadFromJson(packageData["InstallationOptions"])
+                    installationOptions.SaveOptionsToDisk()
+                    if packageData["Updates"]["UpdatesIgnored"]:
+                        if packageData["Updates"]["IgnoredVersion"] == "*":
+                            package.AddToIgnoredUpdates()
+                            installationOptions.Version = packageData["Version"]
+                            # If a specific version is installed and all new versions are ignored,
+                            # install that specific version and ignore future updates.
+                        else:
+                            package.AddToIgnoredUpdates(packageData["Updates"]["IgnoredVersion"])
+                    DISCOVER_SECTION.installPackage(package, installationOptions)
+                else:
+                    # Legacy method
+                    DISCOVER_SECTION.installPackage(package)
+
+            else:
+                print(f"🟠 Not importing package {package.Id} from source {package.Source} because it is not installable!")
+            
         self.close()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
