@@ -1541,7 +1541,7 @@ class PackageExporter(MovableFramelessWindow):
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.idIcon)
             item.setIcon(2, package.getSourceIcon())
-            if package.getSourceIcon() != Winget.wingetIcon and package.PackageManager == Winget:
+            if not "Winget" in package.Source and package.PackageManager == Winget:
                 # If the package is not available from winget servers, being the case that the package manager is winget:
                 item.setDisabled(True)
             removeButton = QPushButton()
@@ -1579,7 +1579,9 @@ class PackageExporter(MovableFramelessWindow):
     def exportPackages(self) -> None:
         packagesToExport: list[Package] = []
         for i in range(self.treewidget.topLevelItemCount()):
-            packagesToExport.append(self.ItemPackageReference[self.treewidget.topLevelItem(i)])
+            item = self.treewidget.topLevelItem(i)
+            if not item.isDisabled():
+                packagesToExport.append(self.ItemPackageReference[item])
             
         fileContents = PackageExporter.generateExportJson(packagesToExport)
         
