@@ -619,6 +619,53 @@ class SettingsSection(SmoothScrollArea):
         self.trayTitle.addWidget(successNotifications)
         successNotifications.setStyleSheet(
             "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+        
+        self.backupOptions = CollapsableSection(_("Backup"), getMedia(
+            "backup"), _("Automatically save a list of all your installed packages to easily restore them."))
+        self.mainLayout.addWidget(self.backupOptions)
+        enableBackups = SectionCheckBox(_("Automatically save a list of your installed packages on your computer."))
+        enableBackups.setChecked(getSettings("EnablePackageBackup"))
+        enableBackups.stateChanged.connect(lambda v: setSettings("EnablePackageBackup", v))
+        self.backupOptions.addWidget(enableBackups)
+        
+        backupTimestamping = SectionCheckBox(_("Add a timestamp to the backup file name"))
+        backupTimestamping.setChecked(getSettings("EnableBackupTimestamping"))
+        backupTimestamping.stateChanged.connect(lambda v: setSettings("EnableBackupTimestamping", v))
+        self.backupOptions.addWidget(backupTimestamping)
+        
+        backupFileName = SectionCheckBoxTextBox(_("Set custom backup file name"))
+        backupFileName.setChecked(getSettings("ChangeBackupFileName"))
+        backupFileName.stateChanged.connect(lambda v: setSettings("ChangeBackupFileName", v))
+        backupFileName.setText(getSettingsValue("ChangeBackupFileName"))
+        
+        def getSafeFileName(s: str) -> str:
+            for illegalchar in "#%&{}\\/<>*?$!'\":;@`|~":
+                s = s.replace(illegalchar, "")
+            return s
+        
+        backupFileName.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupFileName", getSafeFileName(v)))
+        self.backupOptions.addWidget(backupFileName)
+        
+        backupLocation = SectionCheckBoxDirPicker(_("Set output directory of path"))
+        backupLocation.setDefaultText(globals.DEFAULT_PACKAGE_BACKUP_DIR)
+        backupLocation.setChecked(getSettings("BackupOutputDirectory"))
+        backupLocation.stateChanged.connect(lambda v: setSettings("BackupOutputDirectory", v))
+        backupLocation.setText(getSettingsValue("BackupOutputDirectory"))
+        backupLocation.valueChanged.connect(lambda v: setSettingsValue("BackupOutputDirectory", v))
+        self.backupOptions.addWidget(backupLocation)
+        
+        openBackupDirectory = SectionButton(_("Open backup location"), _("Open"))
+        
+        def showBackupDir():
+            dir = getSettingsValue("BackupOutputDirectory")
+            if not dir:
+                dir = globals.DEFAULT_PACKAGE_BACKUP_DIR
+            if not os.path.exists(dir):
+                os.makedirs(dir)
+            os.startfile(dir)
+        
+        openBackupDirectory.clicked.connect(showBackupDir)
+        self.backupOptions.addWidget(openBackupDirectory)
 
         self.advancedOptions = CollapsableSection(_("Administrator privileges preferences"), getMedia(
             "runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))

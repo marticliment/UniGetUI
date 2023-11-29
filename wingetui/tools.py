@@ -716,6 +716,7 @@ globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
 globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
     "DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
 
+globals.DEFAULT_PACKAGE_BACKUP_DIR = os.path.join(readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "Personal", os.path.expanduser("~")), "Backups - WingetUI")
 
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stdout = stdout_buffer = io.StringIO()

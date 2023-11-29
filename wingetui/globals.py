@@ -15,6 +15,8 @@ from PySide6.QtWidgets import *
 
 from secrets import token_hex
 
+import os
+
 
 class DynamicScrollAreaType(QWidget):
     def __init__(self, parent=None) -> None:
@@ -107,3 +109,5 @@ maskedImages: dict[str:QIcon] = {}
 cachedIcons: dict[str:QIcon] = {}
 
 CurrentSessionToken: str = token_hex(32)
+
+DEFAULT_PACKAGE_BACKUP_DIR = ""
