@@ -35,6 +35,7 @@ languageReference = {
     "pl"    : "Polish - Polski",
     "pt_BR" : "Portuguese (Brazil)",
     "pt_PT" : "Portuguese (Portugal)",
+    "ro"    : "Romanian - Română",
     "ru"    : "Russian - Русский",
     "sr"    : "Serbian - Srpski",
     "si"    : "Sinhala - සිංහල",
