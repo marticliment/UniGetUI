@@ -620,7 +620,7 @@ class SettingsSection(SmoothScrollArea):
         successNotifications.setStyleSheet(
             "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
         
-        self.backupOptions = CollapsableSection(_("Backup"), getMedia(
+        self.backupOptions = CollapsableSection(_("Installed packages backup"), getMedia(
             "backup"), _("Automatically save a list of all your installed packages to easily restore them."))
         self.mainLayout.addWidget(self.backupOptions)
         enableBackups = SectionCheckBox(_("Automatically save a list of your installed packages on your computer."))
