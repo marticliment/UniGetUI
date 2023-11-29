@@ -648,16 +648,16 @@ class SettingsSection(SmoothScrollArea):
         
         backupLocation = SectionCheckBoxDirPicker(_("Set output directory of path"))
         backupLocation.setDefaultText(globals.DEFAULT_PACKAGE_BACKUP_DIR)
-        backupLocation.setChecked(getSettings("BackupOutputDirectory"))
-        backupLocation.stateChanged.connect(lambda v: setSettings("BackupOutputDirectory", v))
-        backupLocation.setText(getSettingsValue("BackupOutputDirectory"))
-        backupLocation.valueChanged.connect(lambda v: setSettingsValue("BackupOutputDirectory", v))
+        backupLocation.setChecked(getSettings("ChangeBackupOutputDirectory"))
+        backupLocation.stateChanged.connect(lambda v: setSettings("ChangeBackupOutputDirectory", v))
+        backupLocation.setText(getSettingsValue("ChangeBackupOutputDirectory"))
+        backupLocation.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupOutputDirectory", v))
         self.backupOptions.addWidget(backupLocation)
         
         openBackupDirectory = SectionButton(_("Open backup location"), _("Open"))
         
         def showBackupDir():
-            dir = getSettingsValue("BackupOutputDirectory")
+            dir = getSettingsValue("ChangeBackupOutputDirectory")
             if not dir:
                 dir = globals.DEFAULT_PACKAGE_BACKUP_DIR
             if not os.path.exists(dir):
