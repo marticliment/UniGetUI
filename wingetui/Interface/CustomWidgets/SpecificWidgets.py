@@ -1604,7 +1604,7 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
 
-    PackageItemReference: dict[PackageItem:Package] = {}
+    PackageItemReference: dict['PackageItem':Package] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
