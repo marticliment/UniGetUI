@@ -23,6 +23,7 @@ if __name__ == "__main__":
 import os
 import sys
 import time
+import socket
 from threading import Thread
 
 import globals
@@ -1108,6 +1109,7 @@ class UninstallSoftwareSection(SoftwareSection):
     PackageManagers = PackageManagersList.copy()
     PackagesLoaded = PackagesLoadedDict.copy()
     FilterItemForManager = {}
+    IsFirstPackageLoad: bool = True
 
     def __init__(self, parent=None):
         super().__init__(parent=parent, sectionName="Uninstall")
@@ -1450,6 +1452,35 @@ class UninstallSoftwareSection(SoftwareSection):
         self.countLabel.setText(_("Found packages: {0}").format(len(self.packageItems)))
         self.packageList.label.setText("")
         print("🟢 Total packages: " + str(len(self.packageItems)))
+        
+        if (self.IsFirstPackageLoad and getSettings("EnablePackageBackup")):
+            self.IsFirstPackageLoad = False
+            try:
+                print("🟢 Starting package backup...")
+                
+                dirName = getSettingsValue("ChangeBackupOutputDirectory")
+                if not dirName:
+                    dirName = globals.DEFAULT_PACKAGE_BACKUP_DIR
+                if not os.path.exists(dirName):
+                    os.makedirs(dirName)
+                
+                fileName = getSettingsValue("ChangeBackupFileName")
+                if not fileName:
+                    fileName = f"{socket.gethostname()} installed packages"
+                    
+                if getSettings("EnableBackupTimestamping"):
+                    fileName += f" {datetime.now().strftime('%d-%m-%Y %H.%M')}"
+                fileName += ".json"
+                
+                backupPath = os.path.join(dirName, fileName)
+                print("🔵 Backup path set to", backupPath)
+                data = self.packageExporter.generateExportJson(list(self.PackageItemReference.keys()))
+                with open(backupPath, "w", encoding = "utf-8", errors="ignore") as f:
+                    f.write(json.dumps(data, indent=4))
+                print("🟢 Package backup succeeded!")
+            except Exception as e:
+                report(e)
+            
 
     def addItem(self, package: Package) -> None:
         if "---" not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and package.Version not in ("the", "is"):

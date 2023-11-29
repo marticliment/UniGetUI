@@ -1553,7 +1553,7 @@ class PackageExporter(MovableFramelessWindow):
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
         
-    def generateExportJson(packageList: list[Package]) -> dict:
+    def generateExportJson(self, packageList: list[Package]) -> dict:
         finalJson = {
             "export_version": 2.0,
             "packages": []
@@ -1583,7 +1583,7 @@ class PackageExporter(MovableFramelessWindow):
             if not item.isDisabled():
                 packagesToExport.append(self.ItemPackageReference[item])
             
-        fileContents = PackageExporter.generateExportJson(packagesToExport)
+        fileContents = self.generateExportJson(packagesToExport)
         
         filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
         if filename[0] != "" and filename[1]:
