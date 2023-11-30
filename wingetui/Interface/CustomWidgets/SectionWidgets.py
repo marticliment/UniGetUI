@@ -348,7 +348,7 @@ class SmallCollapsableSection(CollapsableSection):
 
 
 class SectionHWidget(QWidget):
-    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
+    def __init__(self, lastOne: bool = False, smallerMargins: bool = False, biggerMargins: bool = False):
         super().__init__()
         if not lastOne:
             self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
@@ -360,6 +360,8 @@ class SectionHWidget(QWidget):
         if smallerMargins:
             self.setStyleSheet(self.styleSheet() + "#stBtn{margin: 0px;}")
             self.setContentsMargins(0, 0, 0, 0)
+        elif biggerMargins:
+            self.setContentsMargins(65, 0, 10, 0)
         else:
             self.setContentsMargins(40, 0, 0, 0)
 
@@ -588,3 +590,75 @@ class SectionCheckBoxTextBox(SectionCheckBox):
             self.lineedit.setToolTip("")
             self.lineedit.setPlaceholderText(self.oldtext)
             self.valueChanged.emit(self.lineedit.text())
+
+
+class SectionCheckBoxDirPicker(SectionCheckBox):
+    stateChanged = Signal(bool)
+    valueChanged = Signal(str)
+    defaultText: str
+    
+    def __init__(self, text: str, parent=None, helpLabel: str = ""):
+        super().__init__(text=text, parent=parent)
+        self.defaultText = _("Select")
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.pushButton = QPushButton(self)
+        self.pushButton.setFixedWidth(450)
+        self.oldtext = ""
+        self.pushButton.setObjectName("")
+        self.pushButton.clicked.connect(self.showDialog)
+        self.checkbox.stateChanged.connect(self.stateChangedEvent)
+        self.helplabel = QLabel(helpLabel, self)
+        self.helplabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.helplabel.setOpenExternalLinks(True)
+        self.stateChangedEvent(self.checkbox.isChecked())
+        self.checkbox.move((70), 10)
+        self.checkbox.setFixedHeight(30)
+        self.setFixedHeight(50)
+
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.checkbox)
+        self.layout().addStretch()
+        self.layout().addWidget(self.helplabel)
+        self.layout().addWidget(self.pushButton)
+        self.layout().setContentsMargins(70, 5, 20, 0)
+        
+    def showDialog(self):
+        folder = QFileDialog.getExistingDirectory(self, _("Select a folder"), os.path.expanduser("~"))
+        if folder:
+            self.valuechangedEvent(folder)
+            self.setText(folder)
+
+    def valuechangedEvent(self, text: str):
+        self.valueChanged.emit(text)
+
+    def setPlaceholderText(self, text: str):
+        self.pushButton.setText(text)
+        self.oldtext = text
+        
+    def setDefaultText(self, text: str):
+        self.defaultText = text
+
+    def setText(self, text: str):
+        if not self.checkbox.isChecked():
+            self.pushButton.setText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+        elif text:
+            self.pushButton.setText(text)
+        else:
+            self.pushButton.setText(self.defaultText)
+
+    def stateChangedEvent(self, v: bool):
+        self.pushButton.setEnabled(self.checkbox.isChecked())
+        if not self.checkbox.isChecked():
+            self.pushButton.setEnabled(False)
+            self.oldtext = self.pushButton.text()
+            self.pushButton.setToolTip(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()))
+            self.pushButton.setText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+            self.stateChanged.emit(v)
+        else:
+            self.stateChanged.emit(v)
+            self.pushButton.setEnabled(True)
+            self.pushButton.setToolTip("")
+            if not self.oldtext:
+                self.oldtext = self.defaultText
+            self.pushButton.setText(self.oldtext)
+            self.valueChanged.emit(self.pushButton.text())

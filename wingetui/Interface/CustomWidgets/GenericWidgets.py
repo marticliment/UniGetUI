@@ -178,6 +178,7 @@ class TreeWidget(QTreeWidget):
 
     def __init__(self, emptystr: str = "") -> None:
         super().__init__()
+        self.header().setDefaultAlignment(Qt.AlignmentFlag.AlignCenter)
         self.smoothScrollAnimation = QVariantAnimation(self)
         self.smoothScrollAnimation.setDuration(300)
         self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutQuart)

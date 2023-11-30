@@ -22,7 +22,7 @@ from PySide6.QtWidgets import *
 from urllib.request import urlopen
 import os
 from tools import *
-from tools import _, blueColor, GetIgnoredPackageUpdates_Permanent, cprint, report
+from tools import _, blueColor
 import globals
 
 
@@ -51,6 +51,9 @@ class Package():
         return self.Source.lower() == "chocolatey"
 
     def getIconId(self) -> str:
+        """
+        Returns the normalized id.
+        """
         iconId = self.Id.lower()
         if self.isWinget():
             iconId = ".".join(iconId.split(".")[1:])
@@ -80,6 +83,10 @@ class Package():
         return iconUrl
 
     def getPackageIcon(self) -> str:
+        """
+        Returns a string containing the complete path to a local PNG file containing this package's icon.
+        If needed, the icon will be downloaded. 
+        """
         try:
             iconId = self.getIconId()
             iconPath = os.path.join(os.path.expanduser(
@@ -105,6 +112,9 @@ class Package():
             return ""
 
     def getSourceIcon(self) -> QIcon:
+        """
+        Returns the icon of the PackageManager in the QIcon format
+        """
         return self.PackageManager.getIcon(self.Source)
 
     def isManager(self, manager: 'PackageManagerModule') -> bool:
@@ -114,6 +124,9 @@ class Package():
         return manager == self.PackageManager
 
     def getFloatVersion(self) -> float:
+        """
+        Returns a float number representing the version of the package.
+        """
         newVer = ""
         dotAdded = False
         for char in self.Version:
@@ -241,14 +254,6 @@ class UpgradablePackage(Package):
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
 
-    """def ignoreUpdatesForVersion(self, version: str = "current"):
-        if version == "current":
-            version = self.NewVersion
-        super().ignoreUpdatesForVersion(self.NewVersion)
-        if self.PackageItem:
-            self.PackageItem.removeFromList()"""
-
-
 class PackageDetails(Package):
     Name: str = ""
     Id: str = ""
@@ -314,24 +319,29 @@ class InstallationOptions():
         self.__save_file_name = "InstallationOptions." + self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
         if not reset:
             self.LoadOptionsFromDisk()
+            
+    def ToJson(self) -> dict:
+        optionsToSave = {}
+        for entry in self.__data_to_save:
+            optionsToSave[entry] = getattr(self, entry)
+        return optionsToSave
+    
+    def LoadFromJson(self, data: dict):
+        for entry in self.__data_to_save:
+            if entry in data.keys():
+                setattr(self, entry, data[entry])
 
     def SaveOptionsToDisk(self):
         """
         Save current installation options to disk
         """
-        optionsToSave = {}
-        for entry in self.__data_to_save:
-            optionsToSave[entry] = getattr(self, entry)
-        setJsonSettings(self.__save_file_name, optionsToSave)
+        setJsonSettings(self.__save_file_name, self.ToJson())
 
     def LoadOptionsFromDisk(self):
         """
         Get previously saved installation options from disk
         """
-        newOptions = getJsonSettings(self.__save_file_name)
-        for entry in self.__data_to_save:
-            if entry in newOptions.keys():
-                setattr(self, entry, newOptions[entry])
+        self.LoadFromJson(getJsonSettings(self.__save_file_name))
         
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"

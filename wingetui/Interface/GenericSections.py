@@ -13,7 +13,7 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
 
 
-import glob  # to fix NameError: name 'TreeWidgetItemWithQAction' is not defined
+import glob
 import os
 import subprocess
 import sys
@@ -619,6 +619,59 @@ class SettingsSection(SmoothScrollArea):
         self.trayTitle.addWidget(successNotifications)
         successNotifications.setStyleSheet(
             "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+        
+        self.backupOptions = CollapsableSection(_("Backup installed packages"), getMedia(
+            "disk"), _("Automatically save a list of all your installed packages to easily restore them."))
+        self.mainLayout.addWidget(self.backupOptions)
+        
+        backupInfo = SectionHWidget(biggerMargins=True)
+        backupInfo.addWidget(CustomLabel("&nbsp;●&nbsp;"+ _("The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved.")+"<br>&nbsp;●&nbsp;"+_("The backup will NOT include any binary file nor any program's saved data.")+"<br>&nbsp;●&nbsp;"+_("The size of the backup is estimated to be less than 1MB.")+"<br>&nbsp;●&nbsp;"+_("The backup will be performed after login.")))
+        self.backupOptions.addWidget(backupInfo)
+        backupInfo.setFixedHeight(100)
+        
+        enableBackups = SectionCheckBox(_("Automatically save a list of your installed packages on your computer."))
+        enableBackups.setChecked(getSettings("EnablePackageBackup"))
+        enableBackups.stateChanged.connect(lambda v: setSettings("EnablePackageBackup", v))
+        self.backupOptions.addWidget(enableBackups)
+        
+        backupTimestamping = SectionCheckBox(_("Add a timestamp to the backup files"))
+        backupTimestamping.setChecked(getSettings("EnableBackupTimestamping"))
+        backupTimestamping.stateChanged.connect(lambda v: setSettings("EnableBackupTimestamping", v))
+        self.backupOptions.addWidget(backupTimestamping)
+        
+        backupFileName = SectionCheckBoxTextBox(_("Set custom backup file name"))
+        backupFileName.setChecked(getSettings("ChangeBackupFileName"))
+        backupFileName.stateChanged.connect(lambda v: setSettings("ChangeBackupFileName", v))
+        backupFileName.setText(getSettingsValue("ChangeBackupFileName"))
+        
+        def getSafeFileName(s: str) -> str:
+            for illegalchar in "#%&{}\\/<>*?$!'\":;@`|~":
+                s = s.replace(illegalchar, "")
+            return s
+        
+        backupFileName.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupFileName", getSafeFileName(v)))
+        self.backupOptions.addWidget(backupFileName)
+        
+        backupLocation = SectionCheckBoxDirPicker(_("Change backup output directory"))
+        backupLocation.setDefaultText(globals.DEFAULT_PACKAGE_BACKUP_DIR)
+        backupLocation.setChecked(getSettings("ChangeBackupOutputDirectory"))
+        backupLocation.stateChanged.connect(lambda v: setSettings("ChangeBackupOutputDirectory", v))
+        backupLocation.setText(getSettingsValue("ChangeBackupOutputDirectory"))
+        backupLocation.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupOutputDirectory", v))
+        self.backupOptions.addWidget(backupLocation)
+        
+        openBackupDirectory = SectionButton(_("Open backup location"), _("Open"))
+        
+        def showBackupDir():
+            dir = getSettingsValue("ChangeBackupOutputDirectory")
+            if not dir:
+                dir = globals.DEFAULT_PACKAGE_BACKUP_DIR
+            if not os.path.exists(dir):
+                os.makedirs(dir)
+            os.startfile(dir)
+        
+        openBackupDirectory.clicked.connect(showBackupDir)
+        self.backupOptions.addWidget(openBackupDirectory)
 
         self.advancedOptions = CollapsableSection(_("Administrator privileges preferences"), getMedia(
             "runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))

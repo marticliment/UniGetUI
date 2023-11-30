@@ -220,10 +220,9 @@ def setJsonSettings(s: str, data: dict) -> None:
     try:
         globals.settingsCache = {}
         with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "w", encoding="utf-8", errors="ignore") as file:
-            json.dump(data, file)
+            file.write(json.dumps(data, indent=4))
     except Exception as e:
         print(e)
-
 
 
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
@@ -238,9 +237,6 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     else:
         print("🟡 Starting fallback wrapper window sharing")
         WingetUIShareComponent.Form1(["", text, url, coordinates])
-
-
-
 
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
@@ -720,6 +716,7 @@ globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
 globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
     "DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
 
+globals.DEFAULT_PACKAGE_BACKUP_DIR = os.path.join(readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "Personal", os.path.expanduser("~")), "WingetUI")
 
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stdout = stdout_buffer = io.StringIO()

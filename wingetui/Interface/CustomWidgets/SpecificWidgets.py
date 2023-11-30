@@ -572,16 +572,14 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         resetButton.clicked.connect(self.resetAll)
         hl.addWidget(resetButton)
         self.layout().addLayout(hl)
-        self.treewidget.setColumnCount(4)
+        self.treewidget.setColumnCount(3)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(1, QHeaderView.Fixed)
         self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
         self.treewidget.setColumnWidth(1, 150)
         self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 0)
-        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source"), ""])
+        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source")])
         self.treewidget.itemDoubleClicked.connect(lambda: self.treewidget.itemWidget(self.treewidget.currentItem(), 3).click())
 
         self.installIcon = QIcon(getMedia("install"))
@@ -642,12 +640,22 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         item.setIcon(2, package.PackageManager.getIcon(package.Source))
         
         self.treewidget.addTopLevelItem(item)
+
+        for i in range(3):
+            item.setToolTip(i, item.text(i))
+            
+        btnLayout = QHBoxLayout()
+        btnLayout.addStretch()
+        btnLayout.setContentsMargins(0, 0, 5, 0)
+        w = QWidget()
+        w.setLayout(btnLayout)
         removeButton = QPushButton()
+        btnLayout.addWidget(removeButton)
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: (package.RemoveFromIgnoredUpdates(), self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))))
 
-        self.treewidget.setItemWidget(item, 3, removeButton)
+        self.treewidget.setItemWidget(item, 2, w)
         
     def resetAll(self):
         for i in range(self.treewidget.topLevelItemCount()):
@@ -1466,6 +1474,7 @@ class ImageViewer(QWidget):
 
 
 class PackageExporter(MovableFramelessWindow):
+    ItemPackageReference: dict[QTreeWidgetItem:Package] = {}
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
@@ -1491,15 +1500,13 @@ class PackageExporter(MovableFramelessWindow):
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages selected"))
         self.layout().addWidget(self.treewidget)
-        self.treewidget.setColumnCount(4)
+        self.treewidget.setColumnCount(3)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
-        self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 0)
-        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source"), ""])
+        self.treewidget.setColumnWidth(2, 180)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source")])
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
@@ -1531,107 +1538,77 @@ class PackageExporter(MovableFramelessWindow):
         Receives a list composed of Package objects as the unique parameter
         """
         self.treewidget.clear()
+        self.ItemPackageReference = {}
         for package in packageList:
-            item = TreeWidgetItemWithQAction()
+            item = QTreeWidgetItem()
+            self.ItemPackageReference[item] = package
             item.setText(0, package.Name)
             item.setText(1, package.Id)
             item.setText(2, package.Source)
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.idIcon)
             item.setIcon(2, package.getSourceIcon())
-            if package.getSourceIcon() != Winget.wingetIcon and package.PackageManager == Winget:
+            if not "Winget" in package.Source and package.PackageManager == Winget:
                 # If the package is not available from winget servers, being the case that the package manager is winget:
                 item.setDisabled(True)
+
+            for i in range(3):
+                item.setToolTip(i, item.text(i))
+                
+            btnLayout = QHBoxLayout()
+            btnLayout.addStretch()
+            btnLayout.setContentsMargins(0, 0, 5, 0)
+            w = QWidget()
+            w.setLayout(btnLayout)
             removeButton = QPushButton()
+            btnLayout.addWidget(removeButton)
             removeButton.setIcon(self.removeIcon)
             removeButton.setFixedSize(QSize(24, 24))
             removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
             self.treewidget.addTopLevelItem(item)
-            self.treewidget.setItemWidget(item, 3, removeButton)
+            self.treewidget.setItemWidget(item, 2, w)
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
+        
+    def generateExportJson(self, packageList: list[Package]) -> dict:
+        finalJson = {
+            "export_version": 2.0,
+            "packages": []
+        }
+        
+        for package in packageList:
+            installationOptions = InstallationOptions(package)
+            jsonPkg = {
+                "Id": package.Id,
+                "Name": package.Name,
+                "Version": package.Version,
+                "Source": package.Source,
+                "ManagerName": package.PackageManager.NAME,
+                "InstallationOptions": installationOptions.ToJson(),
+                "Updates": {
+                    "UpdatesIgnored": package.HasUpdatesIgnored(),
+                    "IgnoredVersion": package.GetIgnoredUpatesVersion()
+                }
+            }
+            finalJson["packages"].append(jsonPkg)
+        return finalJson
 
     def exportPackages(self) -> None:
-        wingetPackagesList = []
-        scoopPackageList = []
-        chocoPackageList = []
-        npmPackageList = []
-        pipPackageList = []
-        dotnetPackageList = []
-        try:
-            for i in range(self.treewidget.topLevelItemCount()):
-                item = self.treewidget.topLevelItem(i)
-                if "winget" in item.text(2).lower():
-                    id = item.text(1).strip()
-                    wingetPackage = {"PackageIdentifier": id}
-                    wingetPackagesList.append(wingetPackage)
-                elif "scoop" in item.text(2).lower():
-                    scoopPackage = {"Name": item.text(1)}
-                    scoopPackageList.append(scoopPackage)
-                elif "chocolatey" in item.text(2).lower():
-                    chocoPackage = {"Name": item.text(1)}
-                    chocoPackageList.append(chocoPackage)
-                elif "npm" in item.text(2).lower():
-                    npmPackage = {"Name": item.text(1)}
-                    npmPackageList.append(npmPackage)
-                elif "pip" in item.text(2).lower():
-                    pipPackage = {"Name": item.text(1)}
-                    pipPackageList.append(pipPackage)
-                elif ".net tool" in item.text(2).lower():
-                    dotnetPackage = {"Name": item.text(1)}
-                    dotnetPackageList.append(dotnetPackage)
-            wingetDetails = {
-                "Argument": "https://cdn.winget.microsoft.com/cache",
-                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
-                "Name": "winget",
-                "Type": "Microsoft.PreIndexed.Package"
-            }
-            wingetVersion = "1.4"
-            try:
-                wingetVersion = globals.componentStatus["WingetVersion"] if globals.componentStatus["WingetVersion"] else wingetVersion
-            except Exception as e:
-                report(e)
-            wingetExportSchema = {
-                "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate": str(datetime.now()),
-                "Sources": [{
-                    "Packages": wingetPackagesList,
-                    "SourceDetails": wingetDetails}],
-                "WinGetVersion": wingetVersion
-            }
-            scoopExportSchema = {
-                "apps": scoopPackageList,
-            }
-            chocoExportSchema = {
-                "apps": chocoPackageList,
-            }
-            pipExportSchema = {
-                "apps": pipPackageList,
-            }
-            npmExportSchema = {
-                "apps": npmPackageList,
-            }
-            dotnetExportSchema = {
-                "apps": dotnetPackageList,
-            }
-            overallSchema = {
-                "winget": wingetExportSchema,
-                "scoop": scoopExportSchema,
-                "chocolatey": chocoExportSchema,
-                "pip": pipExportSchema,
-                "npm": npmExportSchema,
-                ".net tool": dotnetExportSchema,
-            }
-            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
-            if filename[0] != "" and filename[1]:
-                print(f"🔵 Saving JSON to {filename[0]}")
-                with open(filename[0], 'w') as f:
-                    f.write(json.dumps(overallSchema, indent=4))
-                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
-                self.hide()
-
-        except Exception as e:
-            report(e)
+        packagesToExport: list[Package] = []
+        for i in range(self.treewidget.topLevelItemCount()):
+            item = self.treewidget.topLevelItem(i)
+            if not item.isDisabled():
+                packagesToExport.append(self.ItemPackageReference[item])
+            
+        fileContents = self.generateExportJson(packagesToExport)
+        
+        filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
+        if filename[0] != "" and filename[1]:
+            print(f"🔵 Saving JSON to {filename[0]}")
+            with open(filename[0], 'w') as f:
+                f.write(json.dumps(fileContents, indent=4))
+            subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+            self.hide()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
@@ -1644,10 +1621,12 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
 
-    ItemPackageReference: dict[str:TreeWidgetItemWithQAction] = {}
+    PackageItemReference: dict['PackageItem':Package] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    __importing_mechanism_is_v2: bool = False
+    __package_data: dict[str:dict] = {}
 
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1671,7 +1650,7 @@ class PackageImporter(MovableFramelessWindow):
         desc.setContentsMargins(10, 0, 0, 0)
         self.layout().setContentsMargins(5, 5, 5, 5)
         self.setWindowTitle("\x20")
-        self.setMinimumSize(QSize(650, 400))
+        self.setMinimumSize(QSize(750, 450))
         self.treewidget = TreeWidget(_("No packages found"))
 
         self.loadingProgressBar = QProgressBar(self)
@@ -1712,17 +1691,15 @@ class PackageImporter(MovableFramelessWindow):
         self.layout().addWidget(self.loadingProgressBar)
         self.layout().addWidget(self.treewidget)
         self.treewidget.setColumnCount(4)
+        self.treewidget.header().setMinimumSectionSize(10)
         self.treewidget.header().setStretchLastSection(False)
-        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(4, QHeaderView.Fixed)
-        self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 100)
-        self.treewidget.setColumnHidden(2, True)
-        self.treewidget.setColumnWidth(4, 0)
-        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
+        self.treewidget.setColumnWidth(2, 100)
+        self.treewidget.setColumnWidth(3, 170)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
@@ -1765,26 +1742,55 @@ class PackageImporter(MovableFramelessWindow):
             file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
             if file != "":
                 f = open(file, "r")
-                contents = json.load(f)
+                contents: dict = json.load(f)
                 f.close()
                 try:
-                    Managers = {
-                        Winget: contents["winget"]["Sources"][0]["Packages"],
-                        Scoop: contents["scoop"]["apps"],
-                        Choco: contents["chocolatey"]["apps"],
-                        Npm: contents["pip"]["apps"],
-                        Pip: contents["npm"]["apps"],
-                        Dotnet: contents[".net tool"]["apps"],
-                    }
-                    for manager in Managers.keys():
-                        for entry in Managers[manager]:
-                            packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
-                            package = Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager)
-                            item = TreeWidgetItemWithQAction()
-                            package.PackageItem = item
-                            self.treewidget.addTopLevelItem(item)
-                            self.addItemFromPackage(package, item)
-                            self.ItemPackageReference[item] = package
+                    packagesToInstall: list[Package] = []
+                    if "export_version" in contents.keys() and contents["export_version"] == 2.0:
+                        print("🔵 Importing packages using package list version 2.0")
+                        self.__package_data = {}
+                        def getManager(managerName):
+                            for manager in PackageManagersList:
+                                if managerName == manager.NAME:
+                                    return manager
+                            return None
+
+                        self.__importing_mechanism_is_v2 = True
+                        for package in contents["packages"]:
+                            self.__package_data[package["Id"]] = package
+                            packagesToInstall.append(Package(package["Name"], package["Id"], package["Version"], package["Source"], getManager(package["ManagerName"])))
+
+                    else:
+                        print("🟡 Importing packages using legacy package list version!")
+                        self.__importing_mechanism_is_v2 = False
+                        Managers = {
+                            Winget: contents["winget"]["Sources"][0]["Packages"],
+                            Scoop: contents["scoop"]["apps"],
+                            Choco: contents["chocolatey"]["apps"],
+                            Npm: contents["pip"]["apps"],
+                            Pip: contents["npm"]["apps"],
+                            Dotnet: contents[".net tool"]["apps"],
+                        }
+                        for manager in Managers.keys():
+                            for entry in Managers[manager]:
+                                packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
+                                packagesToInstall.append(Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager))
+                                
+                    for package in packagesToInstall:
+                        item = QTreeWidgetItem()
+                        
+                        if not package.PackageManager:
+                            item.setDisabled(True) # If the manager for this package is not available
+                            package.Source = _("Unknown")
+                            package.PackageManager = Winget
+                        elif not package.PackageManager.isEnabled():
+                            item.setDisabled(True) # If the manager for this package is disabled
+                            
+                        self.treewidget.addTopLevelItem(item)
+                        self.addItemFromPackage(package, item)
+                        self.PackageItemReference[item] = package
+                            
+
                 except Exception as e:
                     report(e)
 
@@ -1799,23 +1805,61 @@ class PackageImporter(MovableFramelessWindow):
     def addItemFromPackage(self, package: Package, item: TreeWidgetItemWithQAction) -> None:
         item.setText(0, package.Name)
         item.setText(1, package.Id)
-        item.setText(2, package.Version)
+        if self.__importing_mechanism_is_v2:
+            hasUpdatesIgnored = self.__package_data[package.Id]["Updates"]["UpdatesIgnored"] and self.__package_data[package.Id]["Updates"]["IgnoredVersion"] == "*" 
+        else:
+            hasUpdatesIgnored = False
+        item.setText(2, _("Latest") if not hasUpdatesIgnored else package.Version)
         item.setText(3, package.Source)
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.idIcon)
         item.setIcon(2, self.versionIcon)
-        item.setDisabled(False)
         item.setIcon(3, package.getSourceIcon())
+        for i in range(4):
+            item.setToolTip(i, item.text(i))
+            
+        btnLayout = QHBoxLayout()
+        btnLayout.addStretch()
+        btnLayout.setContentsMargins(0, 0, 5, 0)
+        w = QWidget()
+        w.setLayout(btnLayout)
         removeButton = QPushButton()
+        btnLayout.addWidget(removeButton)
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
-        self.treewidget.setItemWidget(item, 4, removeButton)
+        self.treewidget.setItemWidget(item, 3, w)
 
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
-        for package in list(self.ItemPackageReference.values()):
-            DISCOVER_SECTION.installPackage(package)
+        for item in list(self.PackageItemReference.keys()):
+            item: PackageItem
+            package: Package = self.PackageItemReference[item]
+            if not item.isDisabled():
+                if self.__importing_mechanism_is_v2:
+                    # New import mechanism
+                    packageData = self.__package_data[package.Id]
+                    installationOptions = InstallationOptions(package)
+                    installationOptions.LoadFromJson(packageData["InstallationOptions"])
+                    installationOptions.SaveOptionsToDisk()
+                    if packageData["Updates"]["UpdatesIgnored"]:
+                        if packageData["Updates"]["IgnoredVersion"] == "*":
+                            package.AddToIgnoredUpdates()
+                            installationOptions.Version = packageData["Version"]
+                            # If a specific version is installed and all new versions are ignored,
+                            # install that specific version and ignore future updates.
+                        else:
+                            package.AddToIgnoredUpdates(packageData["Updates"]["IgnoredVersion"])
+                    package.PackageItem = PackageItem(package)
+                    DISCOVER_SECTION.installPackage(package, installationOptions)
+                else:
+                    # Legacy method
+                    package.PackageItem = PackageItem(package)
+                    DISCOVER_SECTION.installPackage(package)
+
+            else:
+                print(f"🟠 Not importing package {package.Id} from source {package.Source} because it is not installable!")
+            
         self.close()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
