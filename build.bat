@@ -38,6 +38,7 @@ rmdir /Q /S dist
 %py% -m PyInstaller "Win.spec"
 if %errorlevel% neq 0 goto:error
 
+pause
 timeout 5
 
 pushd dist\wingetuiBin\PySide6
