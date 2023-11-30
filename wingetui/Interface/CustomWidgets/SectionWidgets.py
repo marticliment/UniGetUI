@@ -348,7 +348,7 @@ class SmallCollapsableSection(CollapsableSection):
 
 
 class SectionHWidget(QWidget):
-    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
+    def __init__(self, lastOne: bool = False, smallerMargins: bool = False, biggerMargins: bool = False):
         super().__init__()
         if not lastOne:
             self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
@@ -360,6 +360,8 @@ class SectionHWidget(QWidget):
         if smallerMargins:
             self.setStyleSheet(self.styleSheet() + "#stBtn{margin: 0px;}")
             self.setContentsMargins(0, 0, 0, 0)
+        elif biggerMargins:
+            self.setContentsMargins(65, 0, 10, 0)
         else:
             self.setContentsMargins(40, 0, 0, 0)
 

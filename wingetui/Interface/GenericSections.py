@@ -623,12 +623,18 @@ class SettingsSection(SmoothScrollArea):
         self.backupOptions = CollapsableSection(_("Installed packages backup"), getMedia(
             "backup"), _("Automatically save a list of all your installed packages to easily restore them."))
         self.mainLayout.addWidget(self.backupOptions)
+        
+        backupInfo = SectionHWidget(biggerMargins=True)
+        backupInfo.addWidget(CustomLabel("&nbsp;●&nbsp;"+ _("The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved.")+"<br>&nbsp;●&nbsp;"+_("The backup will NOT include any binary file nor any program's saved data.")+"<br>&nbsp;●&nbsp;"+_("The size of the backup is estimated to be less than 1MB.")+"<br>&nbsp;●&nbsp;"+_("The backup will be performed after login.")))
+        self.backupOptions.addWidget(backupInfo)
+        backupInfo.setFixedHeight(100)
+        
         enableBackups = SectionCheckBox(_("Automatically save a list of your installed packages on your computer."))
         enableBackups.setChecked(getSettings("EnablePackageBackup"))
         enableBackups.stateChanged.connect(lambda v: setSettings("EnablePackageBackup", v))
         self.backupOptions.addWidget(enableBackups)
         
-        backupTimestamping = SectionCheckBox(_("Add a timestamp to the backup file name"))
+        backupTimestamping = SectionCheckBox(_("Add a timestamp to the backup files"))
         backupTimestamping.setChecked(getSettings("EnableBackupTimestamping"))
         backupTimestamping.stateChanged.connect(lambda v: setSettings("EnableBackupTimestamping", v))
         self.backupOptions.addWidget(backupTimestamping)
@@ -646,7 +652,7 @@ class SettingsSection(SmoothScrollArea):
         backupFileName.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupFileName", getSafeFileName(v)))
         self.backupOptions.addWidget(backupFileName)
         
-        backupLocation = SectionCheckBoxDirPicker(_("Set output directory of path"))
+        backupLocation = SectionCheckBoxDirPicker(_("Change backup output directory"))
         backupLocation.setDefaultText(globals.DEFAULT_PACKAGE_BACKUP_DIR)
         backupLocation.setChecked(getSettings("ChangeBackupOutputDirectory"))
         backupLocation.stateChanged.connect(lambda v: setSettings("ChangeBackupOutputDirectory", v))
