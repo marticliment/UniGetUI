@@ -572,16 +572,14 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         resetButton.clicked.connect(self.resetAll)
         hl.addWidget(resetButton)
         self.layout().addLayout(hl)
-        self.treewidget.setColumnCount(4)
+        self.treewidget.setColumnCount(3)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(1, QHeaderView.Fixed)
         self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
         self.treewidget.setColumnWidth(1, 150)
         self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 0)
-        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source"), ""])
+        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source")])
         self.treewidget.itemDoubleClicked.connect(lambda: self.treewidget.itemWidget(self.treewidget.currentItem(), 3).click())
 
         self.installIcon = QIcon(getMedia("install"))
@@ -642,12 +640,22 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         item.setIcon(2, package.PackageManager.getIcon(package.Source))
         
         self.treewidget.addTopLevelItem(item)
+
+        for i in range(3):
+            item.setToolTip(i, item.text(i))
+            
+        btnLayout = QHBoxLayout()
+        btnLayout.addStretch()
+        btnLayout.setContentsMargins(0, 0, 5, 0)
+        w = QWidget()
+        w.setLayout(btnLayout)
         removeButton = QPushButton()
+        btnLayout.addWidget(removeButton)
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: (package.RemoveFromIgnoredUpdates(), self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))))
 
-        self.treewidget.setItemWidget(item, 3, removeButton)
+        self.treewidget.setItemWidget(item, 2, w)
         
     def resetAll(self):
         for i in range(self.treewidget.topLevelItemCount()):
@@ -1492,15 +1500,13 @@ class PackageExporter(MovableFramelessWindow):
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages selected"))
         self.layout().addWidget(self.treewidget)
-        self.treewidget.setColumnCount(4)
+        self.treewidget.setColumnCount(3)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
-        self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 0)
-        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source"), ""])
+        self.treewidget.setColumnWidth(2, 180)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source")])
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
@@ -1532,6 +1538,7 @@ class PackageExporter(MovableFramelessWindow):
         Receives a list composed of Package objects as the unique parameter
         """
         self.treewidget.clear()
+        self.ItemPackageReference = {}
         for package in packageList:
             item = QTreeWidgetItem()
             self.ItemPackageReference[item] = package
@@ -1544,12 +1551,22 @@ class PackageExporter(MovableFramelessWindow):
             if not "Winget" in package.Source and package.PackageManager == Winget:
                 # If the package is not available from winget servers, being the case that the package manager is winget:
                 item.setDisabled(True)
+
+            for i in range(3):
+                item.setToolTip(i, item.text(i))
+                
+            btnLayout = QHBoxLayout()
+            btnLayout.addStretch()
+            btnLayout.setContentsMargins(0, 0, 5, 0)
+            w = QWidget()
+            w.setLayout(btnLayout)
             removeButton = QPushButton()
+            btnLayout.addWidget(removeButton)
             removeButton.setIcon(self.removeIcon)
             removeButton.setFixedSize(QSize(24, 24))
             removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
             self.treewidget.addTopLevelItem(item)
-            self.treewidget.setItemWidget(item, 3, removeButton)
+            self.treewidget.setItemWidget(item, 2, w)
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
         
@@ -1633,7 +1650,7 @@ class PackageImporter(MovableFramelessWindow):
         desc.setContentsMargins(10, 0, 0, 0)
         self.layout().setContentsMargins(5, 5, 5, 5)
         self.setWindowTitle("\x20")
-        self.setMinimumSize(QSize(650, 400))
+        self.setMinimumSize(QSize(750, 450))
         self.treewidget = TreeWidget(_("No packages found"))
 
         self.loadingProgressBar = QProgressBar(self)
@@ -1674,17 +1691,15 @@ class PackageImporter(MovableFramelessWindow):
         self.layout().addWidget(self.loadingProgressBar)
         self.layout().addWidget(self.treewidget)
         self.treewidget.setColumnCount(4)
+        self.treewidget.header().setMinimumSectionSize(10)
         self.treewidget.header().setStretchLastSection(False)
-        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(4, QHeaderView.Fixed)
-        self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 100)
-        self.treewidget.setColumnHidden(2, True)
-        self.treewidget.setColumnWidth(4, 0)
-        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
+        self.treewidget.setColumnWidth(2, 100)
+        self.treewidget.setColumnWidth(3, 170)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
@@ -1762,10 +1777,9 @@ class PackageImporter(MovableFramelessWindow):
                                 packagesToInstall.append(Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager))
                                 
                     for package in packagesToInstall:
-                        item = PackageItem(package)
-                        package.PackageItem = item
+                        item = QTreeWidgetItem()
                         
-                        if package.PackageManager is None:
+                        if not package.PackageManager:
                             item.setDisabled(True) # If the manager for this package is not available
                             package.Source = _("Unknown")
                             package.PackageManager = Winget
@@ -1791,17 +1805,30 @@ class PackageImporter(MovableFramelessWindow):
     def addItemFromPackage(self, package: Package, item: TreeWidgetItemWithQAction) -> None:
         item.setText(0, package.Name)
         item.setText(1, package.Id)
-        item.setText(2, package.Version)
+        if self.__importing_mechanism_is_v2:
+            hasUpdatesIgnored = self.__package_data[package.Id]["Updates"]["UpdatesIgnored"] and self.__package_data[package.Id]["Updates"]["IgnoredVersion"] == "*" 
+        else:
+            hasUpdatesIgnored = False
+        item.setText(2, _("Latest") if not hasUpdatesIgnored else package.Version)
         item.setText(3, package.Source)
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.idIcon)
         item.setIcon(2, self.versionIcon)
         item.setIcon(3, package.getSourceIcon())
+        for i in range(4):
+            item.setToolTip(i, item.text(i))
+            
+        btnLayout = QHBoxLayout()
+        btnLayout.addStretch()
+        btnLayout.setContentsMargins(0, 0, 5, 0)
+        w = QWidget()
+        w.setLayout(btnLayout)
         removeButton = QPushButton()
+        btnLayout.addWidget(removeButton)
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
-        self.treewidget.setItemWidget(item, 4, removeButton)
+        self.treewidget.setItemWidget(item, 3, w)
 
     def installPackages(self) -> None:
         DISCOVER_SECTION: SoftwareSection = globals.discover
@@ -1823,9 +1850,11 @@ class PackageImporter(MovableFramelessWindow):
                             # install that specific version and ignore future updates.
                         else:
                             package.AddToIgnoredUpdates(packageData["Updates"]["IgnoredVersion"])
+                    package.PackageItem = PackageItem(package)
                     DISCOVER_SECTION.installPackage(package, installationOptions)
                 else:
                     # Legacy method
+                    package.PackageItem = PackageItem(package)
                     DISCOVER_SECTION.installPackage(package)
 
             else:
