@@ -131,17 +131,18 @@ try:
     legacy_ignored_updates_version = GetIgnoredPackageUpdates_SpecificVersion()
     
     try:
-        for pkglist in legacy_ignored_updates:
-            if len(pkglist) == 2:
-                package = Package(pkglist[0], pkglist[0], "", pkglist[1], None)
-                package.AddToIgnoredUpdates()
-        setSettings("PermanentlyIgnoredPackageUpdates", False)
         
         for pkglist in legacy_ignored_updates_version:
             if len(pkglist) == 3:
                 package = Package(pkglist[0], pkglist[0], pkglist[1], pkglist[2], None)
                 package.AddToIgnoredUpdates(package.Version)
         setSettings("SingleVersionIgnoredPackageUpdates", False)
+        
+        for pkglist in legacy_ignored_updates:
+            if len(pkglist) == 2:
+                package = Package(pkglist[0], pkglist[0], "", pkglist[1], None)
+                package.AddToIgnoredUpdates()
+        setSettings("PermanentlyIgnoredPackageUpdates", False)
                 
     except Exception as e:
         report(e)
