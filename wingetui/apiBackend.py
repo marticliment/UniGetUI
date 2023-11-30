@@ -98,7 +98,8 @@ def widgets_get_updates():
             packages = ""
             for packageItem in availableUpdates:
                 packageItem: UpgradablePackageItem
-                packages += f"{packageItem.Package.Name.replace('|', '-')}|{packageItem.Package.Id}|{packageItem.Package.Version}|{packageItem.Package.NewVersion}|{packageItem.Package.Source}|{packageItem.Package.PackageManager.NAME}|{packageItem.Package.getPackageIconUrl()}&&"
+                if packageItem.CurrentTag not in (packageItem.Tag.Pending, packageItem.Tag.BeingProcessed):
+                    packages += f"{packageItem.Package.Name.replace('|', '-')}|{packageItem.Package.Id}|{packageItem.Package.Version}|{packageItem.Package.NewVersion}|{packageItem.Package.Source}|{packageItem.Package.PackageManager.NAME}|{packageItem.Package.getPackageIconUrl()}&&"
             response = jsonify(status="success", packages=packages[:-2])
             return response
     except ValueError:

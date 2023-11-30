@@ -1837,9 +1837,12 @@ class PackageItem(QTreeWidgetItem):
         Installed = 1
         Upgradable = 2
         Pinned = 3
+        Pending = 4
+        BeingProcessed = 5
+        Failed = 6
 
     Package: 'Package' = None
-    IconType: 'Tag' = Tag.Default
+    CurrentTag: 'Tag' = Tag.Default
     __item_action: QAction = None
     SoftwareSection: 'SoftwareSection' = None
     callInMain: Signal = None
@@ -1871,9 +1874,9 @@ class PackageItem(QTreeWidgetItem):
         elif InstalledItem:
             self.setTag(PackageItem.Tag.Installed)
 
-    def setTag(self, iconType: Tag, newVersion: str = ""):
-        self.IconType = iconType
-        match self.IconType:
+    def setTag(self, tag: Tag, newVersion: str = ""):
+        self.CurrentTag = tag
+        match self.CurrentTag:
             case PackageItem.Tag.Default:
                 self.setIcon(1, getIcon("install"))
                 self.setToolTip(1, self.Package.Name)
@@ -1892,6 +1895,19 @@ class PackageItem(QTreeWidgetItem):
             case PackageItem.Tag.Pinned:
                 self.setIcon(1, getMaskedIcon("pin_masked"))
                 self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
+                
+            case PackageItem.Tag.Pending:
+                self.setIcon(1, getIcon("queued"))
+                self.setToolTip(1, _("This package is on the queue") + " - " + self.Package.Name)
+                
+            case PackageItem.Tag.BeingProcessed:
+                self.setIcon(1, getMaskedIcon("gears_masked"))
+                self.setToolTip(1, _("This package is being processed") + " - " + self.Package.Name)
+                
+            case PackageItem.Tag.Failed:
+                self.setIcon(1, getMaskedIcon("warning_masked"))
+                self.setToolTip(1, _("An error occurred while processing this package") + " - " + self.Package.Name)
+                
 
     def getDiscoverPackageItem(self) -> 'PackageItem':
         DISCOVER: 'SoftwareSection' = globals.discover

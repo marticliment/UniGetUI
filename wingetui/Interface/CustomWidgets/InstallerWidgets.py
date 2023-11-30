@@ -156,6 +156,9 @@ class PackageInstallerWidget(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(self.update)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
+        
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.Pending)
 
         self.waitThread = KillableThread(target=self.startInstallation, daemon=True)
         self.waitThread.start()
@@ -201,6 +204,8 @@ class PackageInstallerWidget(QWidget):
         self.progressbar.setStyleSheet(f"QProgressBar::chunk{{border-top-left-radius: 0px;border-top-right-radius: 0px;margin-right: 2px;margin-left: 2px;background-color: {color}}}")
 
     def runInstallation(self) -> None:
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.BeingProcessed)
         globals.tray_is_installing = True
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
@@ -221,6 +226,8 @@ class PackageInstallerWidget(QWidget):
             self.progressbar.setValue(750)
 
     def cancel(self):
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.Default)
         print("🔵 Sending cancel signal...")
         self.leftSlow.stop()
         self.leftFast.stop()
@@ -295,7 +302,9 @@ class PackageInstallerWidget(QWidget):
         self.progressbar.setValue(1000)
         t = ToastNotification(self, self.callInMain.emit)
         t.addOnClickCallback(lambda: (globals.mainWindow.showWindow(-1)))
-        if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
+        if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:     
+            if self.Package.PackageItem:
+                self.Package.PackageItem.setTag(PackageItem.Tag.Default)
             self.setProgressbarColor("#11945a" if isDark() else "#11945a")
             if returncode in (RETURNCODE_OPERATION_SUCCEEDED, RETURNCODE_NO_APPLICABLE_UPDATE_FOUND):
                 t.setTitle(_("{0} succeeded").format(self.actionName.capitalize()))
@@ -327,6 +336,8 @@ class PackageInstallerWidget(QWidget):
                     globals.uninstall.addItem(self.Package)
                     globals.uninstall.updatePackageNumber()
         else:
+            if self.Package.PackageItem:
+                self.Package.PackageItem.setTag(PackageItem.Tag.Failed)   
             globals.tray_is_error = True
             update_tray_icon()
             self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
@@ -448,6 +459,8 @@ class PackageUpdaterWidget(PackageInstallerWidget):
         self.label.setText(_("{0} update").format(package.Name))
 
     def runInstallation(self) -> None:
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.BeingProcessed)
         globals.tray_is_installing = True
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
@@ -520,6 +533,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         self.label.setText(_("{0} Uninstallation").format(package.Name))
 
     def runInstallation(self) -> None:
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.BeingProcessed)
         globals.tray_is_installing = True
         self.callInMain.emit(update_tray_icon)
         self.finishedInstallation = False
@@ -540,6 +555,8 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             self.progressbar.setValue(750)
 
     def cancel(self):
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.Default)
         print("🔵 Sending cancel signal...")
         self.leftSlow.stop()
         self.leftFast.stop()
@@ -614,7 +631,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             except Exception:
                 pass
             if not self.canceled:
-                if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
+                if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:   
+                    if self.Package.PackageItem:
+                        self.Package.PackageItem.setTag(PackageItem.Tag.Default)
                     self.setProgressbarColor("#11945a" if isDark() else "#11945a")
                     self.cancelButton.setText(_("OK"))
                     self.cancelButton.setIcon(QIcon(getMedia("tick", autoIconMode=False)))
@@ -628,7 +647,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                     if globals.ENABLE_SUCCESS_NOTIFICATIONS:
                         t.show()
-                else:
+                else:            
+                    if self.Package.PackageItem:
+                        self.Package.PackageItem.setTag(PackageItem.Tag.Failed)
                     globals.tray_is_error = True
                     update_tray_icon()
                     self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
