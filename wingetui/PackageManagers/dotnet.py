@@ -27,8 +27,6 @@ class DotNetToolPackageManager(DynamicPackageManager):
 
     EXECUTABLE = "dotnet.exe"
     NAME = ".NET Tool"
-    CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
-    CAHCE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
@@ -41,12 +39,6 @@ class DotNetToolPackageManager(DynamicPackageManager):
     Capabilities.SupportsPreRelease = True
 
     LoadedIcons = False
-
-    if not os.path.exists(CAHCE_FILE_PATH):
-        try:
-            os.makedirs(CAHCE_FILE_PATH)
-        except FileExistsError:
-            pass
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

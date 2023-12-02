@@ -32,8 +32,6 @@ class ScoopPackageManager(DynamicPackageManager):
     EXECUTABLE = "powershell -NoProfile -ExecutionPolicy ByPass -Command scoop"
 
     NAME = "Scoop"
-    CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
-    CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
     BLACKLISTED_PACKAGE_NAMES = []
     BLACKLISTED_PACKAGE_IDS = []
@@ -48,9 +46,6 @@ class ScoopPackageManager(DynamicPackageManager):
 
     LoadedIcons = False
     icon = None
-
-    if not os.path.exists(CACHE_FILE_PATH):
-        os.makedirs(CACHE_FILE_PATH)
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

@@ -43,8 +43,6 @@ class ChocoPackageManager(DynamicPackageManager):
     icon = None
 
     NAME = "Chocolatey"
-    CACHE_FILE = os.path.join(os.path.expanduser("~"), f".wingetui/cacheddata/{NAME}CachedPackages")
-    CACHE_FILE_PATH = os.path.join(os.path.expanduser("~"), ".wingetui/cacheddata")
 
     BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
     BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
@@ -57,9 +55,6 @@ class ChocoPackageManager(DynamicPackageManager):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsPreRelease = True
-
-    if not os.path.exists(CACHE_FILE_PATH):
-        os.makedirs(CACHE_FILE_PATH)
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
