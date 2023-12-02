@@ -610,7 +610,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
     
     def GetIgnoredPackages(self) -> list[Package]:
         packages = []
-        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         for ENTRY in ignoredPackages.keys():
             ENTRY: str  # Formatted as source\package_id
             if "\\" in ENTRY:

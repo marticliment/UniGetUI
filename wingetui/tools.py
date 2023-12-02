@@ -192,18 +192,22 @@ def setSettingsValue(s: str, v: str) -> None:
         print(e)
 
 
-def getJsonSettings(s: str) -> dict:
+def GetJsonSettings(Name: str, Scope: str = "") -> dict:
     """
     Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned
     """
     globals.settingsCache
     try:
-        if (s + "JSON") in globals.settingsCache.keys():
-            return globals.settingsCache[s + "JSON"]
+        if (Name + "JSON") in globals.settingsCache.keys():
+            return globals.settingsCache[Name + "JSON"]
         else:
-            with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "r", encoding="utf-8", errors="ignore") as file:
+            if not Scope:
+                path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name+".json")
+            else:
+                path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name+".json")
+            with open(path, "r", encoding="utf-8", errors="ignore") as file:
                 data: dict = json.load(file)
-                globals.settingsCache[s + "JSON"] = data
+                globals.settingsCache[Name + "JSON"] = data
                 return data
     except FileNotFoundError:
         return {}
@@ -212,15 +216,21 @@ def getJsonSettings(s: str) -> dict:
         return {}
 
 
-def setJsonSettings(s: str, data: dict) -> None:
+def SetJsonSettings(Name: str, Data: dict, Scope: str = "") -> None:
     """
     Sets the stored value for the given JSON-stored setting. A string value is required.
     """
     globals.settingsCache
     try:
         globals.settingsCache = {}
-        with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s+".json"), "w", encoding="utf-8", errors="ignore") as file:
-            file.write(json.dumps(data, indent=4))
+        if not Scope:
+            path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name+".json")
+        else:
+            path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name+".json")
+        if not os.path.isdir(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8", errors="ignore") as file:
+            file.write(json.dumps(Data, indent=4))
     except Exception as e:
         print(e)
 

@@ -154,9 +154,9 @@ class Package():
         If the parameter version is given, the given version will be ignored. Otherwise, all versions will.
         """
         ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
-        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         ignoredPackages[ENTRY] = version
-        setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+        SetJsonSettings("IgnoredPackageUpdates", ignoredPackages)
         
         if version == "*" and self.PackageItem is not None:
             InstalledItem = self.PackageItem.getInstalledPackageItem()
@@ -172,7 +172,7 @@ class Package():
         Remove a package (if present) from the ignored packages list.
         """
         ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
-        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             del ignoredPackages[ENTRY]
                  
@@ -181,7 +181,7 @@ class Package():
             if InstalledItem:
                 InstalledItem.setTag(InstalledItem.Tag.Default)
         
-        setJsonSettings("IgnoredPackageUpdates", ignoredPackages)
+        SetJsonSettings("IgnoredPackageUpdates", ignoredPackages)
         
     def HasUpdatesIgnored(self, version: str = "*") -> bool:
         """
@@ -189,7 +189,7 @@ class Package():
         If version is not given (or the wildcard "*" is used), all the versions will be checked.
         """
         ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
-        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             if ignoredPackages[ENTRY] == "*":
                 return True # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
@@ -203,7 +203,7 @@ class Package():
         If the package is not ignored returns an empty string.
         """
         ENTRY = self.Source.lower().split(":")[0] + "\\" + self.Id
-        ignoredPackages = getJsonSettings("IgnoredPackageUpdates")
+        ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             return ignoredPackages[ENTRY]
         return ""
@@ -320,7 +320,7 @@ class InstallationOptions():
 
     def __init__(self, package: 'Package', reset: bool = False):
         self.Package = package
-        self.__save_file_name = "InstallationOptions." + self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
+        self.__save_file_name = self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
         if not reset:
             self.LoadOptionsFromDisk()
             
@@ -339,13 +339,13 @@ class InstallationOptions():
         """
         Save current installation options to disk
         """
-        setJsonSettings(self.__save_file_name, self.ToJson())
+        SetJsonSettings(Name=self.__save_file_name, Data=self.ToJson(), Scope="InstallationOptions")
 
     def LoadOptionsFromDisk(self):
         """
         Get previously saved installation options from disk
         """
-        self.LoadFromJson(getJsonSettings(self.__save_file_name))
+        self.LoadFromJson(GetJsonSettings(Name=self.__save_file_name, Scope="InstallationOptions"))
         
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
