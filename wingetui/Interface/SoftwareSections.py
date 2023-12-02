@@ -935,6 +935,11 @@ class UpdateSoftwareSection(SoftwareSection):
                 print(package.GetIgnoredUpatesVersion())
                 return
             
+            for match in package.getAllCorrespondingInstalledPackages():
+                if match.Version == package.NewVersion:
+                    print(f"🟡 Multiple versions of {package.Id} are installed, latest version is installed. Not showing the update")
+                    return
+            
             item = UpgradablePackageItem(package)
 
             self.PackageItemReference[package] = item

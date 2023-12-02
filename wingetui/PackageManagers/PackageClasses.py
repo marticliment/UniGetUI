@@ -243,6 +243,15 @@ class Package():
             if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 return package
         return None
+    
+    def getAllCorrespondingInstalledPackages(self) -> 'list[Package]':
+        matches = []
+        if self.Id in globals.uninstall.IdPackageReference:
+            package: Package = globals.uninstall.IdPackageReference[self.Id]
+            if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
+                matches.append(package)
+        return matches
+
 
 
 class UpgradablePackage(Package):
