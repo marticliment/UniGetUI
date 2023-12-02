@@ -2050,7 +2050,6 @@ class PackageInfoPopupWindow(QWidget):
 
     def loadPackageCommandLine(self, saveOptionsToDisk: bool = False):
         options = self.getInstallationOptions()
-        print("LPCL", self.isLoadingPackageDetails)
         if saveOptionsToDisk and not self.isLoadingPackageDetails:
             options.SaveOptionsToDisk()
             
