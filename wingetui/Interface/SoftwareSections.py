@@ -2307,7 +2307,9 @@ class PackageInfoPopupWindow(QWidget):
                 self.callInMain.emit(self.imagesCarrousel[i].hide)
             for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
-                    imagepath = os.path.join(os.path.expanduser("~"), f".wingetui/cachedmeta/{iconId}.screenshot.{i}.png")
+                    imagepath = os.path.join(ICON_TEMP_DIR, f"{iconId}.screenshot.{i}.png")
+                    if not os.path.exists(ICON_TEMP_DIR):
+                        os.makedirs(ICON_TEMP_DIR)
                     if not os.path.exists(imagepath):
                         iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["images"][i]
                         print("🔵 Found icon: ", iconurl)

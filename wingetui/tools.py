@@ -24,6 +24,7 @@ from pathlib import Path
 from threading import Thread
 from urllib.request import urlopen
 from unicodedata import combining, normalize
+import tempfile
 
 if 2 == 3:
     from wingetui.PackageManagers.PackageClasses import Package # Enable syntax highlighting
@@ -810,6 +811,9 @@ print(f"🔵 It took {time.time()-t0} to load all language files")
 Thread(target=checkQueue, daemon=True).start()
 Thread(target=foregroundWindowThread, daemon=True,
        name="Tools: get foreground window").start()
+
+TEMP_DIR = os.path.join(tempfile.gettempdir(), "WingetUI")
+ICON_TEMP_DIR = os.path.join(TEMP_DIR, "icons-and-screenshots")
 
 
 if __name__ == "__main__":

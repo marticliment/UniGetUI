@@ -792,8 +792,7 @@ class SettingsSection(SmoothScrollArea):
 
         resetyWingetUICache = SectionButton(
             _("Reset WingetUI icon and screenshot cache"), _("Reset"))
-        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(os.path.join(os.path.expanduser(
-            "~"), ".wingetui/cachedmeta/")), self.inform(_("Cache was reset successfully!"))))
+        resetyWingetUICache.clicked.connect(lambda: (shutil.rmtree(ICON_TEMP_DIR), self.inform(_("Cache was reset successfully!"))))
         resetyWingetUICache.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
         self.advancedOptions.addWidget(resetyWingetUICache)
