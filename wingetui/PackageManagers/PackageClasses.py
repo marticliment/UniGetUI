@@ -89,9 +89,9 @@ class Package():
         """
         try:
             iconId = self.getIconId()
-            iconPath = os.path.join(ICON_TEMP_DIR, f"{iconId}.icon.png")
-            if not os.path.exists(ICON_TEMP_DIR):
-                os.makedirs(ICON_TEMP_DIR)
+            iconPath = os.path.join(ICON_DIR, f"{iconId}.icon.png")
+            if not os.path.exists(ICON_DIR):
+                os.makedirs(ICON_DIR)
             if not os.path.exists(iconPath):
                 iconUrl = self.getPackageIconUrl()
                 print("🔵 Found icon: ", iconUrl)

@@ -426,18 +426,17 @@ try:
                 if getSettings("IconDataBaseURL"):
                     url = getSettingsValue("iconDataBaseURL")
                 data = urlopen(url).read()
-                try:
-                    os.makedirs(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta"))
-                except FileExistsError:
-                    pass
-                with open(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/packages.json"), "wb") as f:
+                
+                if not os.path.exists(CACHED_DIR):
+                    os.makedirs(CACHED_DIR)
+                with open(os.path.join(CACHED_DIR, "Icon Database.json"), "wb") as f:
                     f.write(data)
                 print(f"🟢 Downloaded latest metadata to local file from url {url}")
             except Exception as e:
                 print(f"🔴 Could not load latest metadata from remote file {url}")
                 report(e)
             try:
-                with open(os.path.join(os.path.expanduser("~"), ".wingetui/cachedmeta/packages.json"), "rb") as f:
+                with open(os.path.join(CACHED_DIR, "Icon Database.json"), "rb") as f:
                     globals.packageMeta = json.load(f)
                 print("🔵 Loaded metadata from local file")
             except Exception as e:

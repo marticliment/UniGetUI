@@ -813,7 +813,8 @@ Thread(target=foregroundWindowThread, daemon=True,
        name="Tools: get foreground window").start()
 
 TEMP_DIR = os.path.join(tempfile.gettempdir(), "WingetUI")
-ICON_TEMP_DIR = os.path.join(TEMP_DIR, "icons-and-screenshots")
+ICON_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedIcons")
+CACHED_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedDate")
 
 
 if __name__ == "__main__":
