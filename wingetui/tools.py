@@ -535,7 +535,7 @@ def foregroundWindowThread():
 
 def loadLangFile(file: str, bundled: bool = False) -> dict:
     try:
-        path = os.path.join(os.path.expanduser("~"), ".wingetui/lang/" + file)
+        path = os.path.join(LANG_DIR, file)
         if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled:
             print(f"🟡 Using bundled lang file (forced={bundled})")
             path = getPath("../lang/" + file)
@@ -552,20 +552,18 @@ def updateLangFile(file: str):
     global lang
     try:
         try:
-            oldlang = open(os.path.join(os.path.expanduser(
-                "~"), ".wingetui/lang/" + file), "rb").read()
+            oldlang = open(os.path.join(LANG_DIR, file), "rb").read()
         except FileNotFoundError:
             oldlang = ""
         newlang = urlopen(
             "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/" + file)
         if newlang.status == 200:
             langdata: bytes = newlang.read()
-            if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui/lang/")):
-                os.makedirs(os.path.join(
-                    os.path.expanduser("~"), ".wingetui/lang/"))
+            if not os.path.isdir(LANG_DIR):
+                os.makedirs(LANG_DIR)
             if oldlang != langdata:
                 print("🟢 Updating outdated language file...")
-                with open(os.path.join(os.path.expanduser("~"), ".wingetui/lang/" + file), "wb") as f:
+                with open(os.path.join(LANG_DIR, file), "wb") as f:
                     f.write(langdata)
                     f.close()
                     lang = loadLangFile(file) | {
@@ -729,6 +727,11 @@ globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
 
 globals.DEFAULT_PACKAGE_BACKUP_DIR = os.path.join(readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "Personal", os.path.expanduser("~")), "WingetUI")
 
+TEMP_DIR = os.path.join(tempfile.gettempdir(), "WingetUI")
+ICON_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedIcons")
+CACHED_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedData")
+LANG_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedLangFiles")
+
 if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stdout = stdout_buffer = io.StringIO()
     sys.stderr = stdout_buffer
@@ -811,10 +814,6 @@ print(f"🔵 It took {time.time()-t0} to load all language files")
 Thread(target=checkQueue, daemon=True).start()
 Thread(target=foregroundWindowThread, daemon=True,
        name="Tools: get foreground window").start()
-
-TEMP_DIR = os.path.join(tempfile.gettempdir(), "WingetUI")
-ICON_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedIcons")
-CACHED_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedDate")
 
 
 if __name__ == "__main__":
