@@ -41,12 +41,9 @@ class PipPackageManager(DynamicPackageManager):
 
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = False
-    Capabilities.CanRunInteractively = False
-    Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
+    Capabilities.SupportsPreRelease = True
 
     LoadedIcons = False
     icon = None
@@ -250,6 +247,8 @@ class PipPackageManager(DynamicPackageManager):
         Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
         if not isAnUninstall:
             Parameters += ["--progress-bar", "off"]
+            if options.PreRelease:
+                Parameters.append("--pre")
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:

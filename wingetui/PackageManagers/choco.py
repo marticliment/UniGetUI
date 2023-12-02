@@ -54,10 +54,9 @@ class ChocoPackageManager(DynamicPackageManager):
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = True
     Capabilities.CanRunInteractively = True
-    Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsCustomScopes = False
+    Capabilities.SupportsPreRelease = True
 
     if not os.path.exists(CACHE_FILE_PATH):
         os.makedirs(CACHE_FILE_PATH)
@@ -230,9 +229,11 @@ class ChocoPackageManager(DynamicPackageManager):
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
-        if options.Architecture and not isAnUninstall:
-            if options.Architecture == "x86":
+        if not isAnUninstall:
+            if options.Architecture and options.Architecture == "x86":
                 Parameters.append("--forcex86")
+            if options.PreRelease:
+                Parameters.append("--prerelease")
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InteractiveInstallation:

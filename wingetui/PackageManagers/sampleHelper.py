@@ -42,6 +42,7 @@ class SamplePackageManager(DynamicPackageManager):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = False
+    Capabilities.SupportsPreRelease = False
 
     LoadedIcons = False
 

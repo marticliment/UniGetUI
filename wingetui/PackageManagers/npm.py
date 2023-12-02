@@ -41,11 +41,7 @@ class NPMPackageManager(DynamicPackageManager):
 
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = False
-    Capabilities.CanRunInteractively = False
-    Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = False
     Capabilities.SupportsCustomScopes = True
 
     LoadedIcons = False

@@ -302,6 +302,7 @@ class InstallationOptions():
     InstallationScope: str = ""
     CustomParameters: list[str] = []
     RemoveDataOnUninstall: bool = False
+    PreRelease: bool = False
 
     Package: 'Package' = None
     __save_file_name: str = "Unknown.Unknown.InstallationOptions"
@@ -312,6 +313,7 @@ class InstallationOptions():
             "Architecture",
             "InstallationScope",
             "CustomParameters",
+            "PreRelease"
         ]
 
     def __init__(self, package: 'Package', reset: bool = False):
@@ -363,6 +365,7 @@ class PackageManagerCapabilities():
     SupportsCustomVersions: bool = False
     SupportsCustomArchitectures: bool = False
     SupportsCustomScopes: bool = False
+    SupportsPreRelease: bool = False
 
 
 class InstallationWidgetType(QWidget):

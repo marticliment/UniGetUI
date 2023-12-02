@@ -1753,17 +1753,14 @@ class PackageInfoPopupWindow(QWidget):
         self.hashCheckBox = QCheckBox()
         self.hashCheckBox.setText(_("Skip hash check"))
         self.hashCheckBox.setChecked(False)
-        self.hashCheckBox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.interactiveCheckbox = QCheckBox()
         self.interactiveCheckbox.setText(_("Interactive installation"))
         self.interactiveCheckbox.setChecked(False)
-        self.interactiveCheckbox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
-        self.adminCheckbox.clicked.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
 
         firstRow = SectionHWidget()
         firstRow.addWidget(self.hashCheckBox)
@@ -1795,6 +1792,13 @@ class PackageInfoPopupWindow(QWidget):
 
         ignoreUpdatesSection = SectionHWidget()
         ignoreUpdatesSection.addWidget(self.ignoreFutureUpdates)
+        
+        self.installPreRelease = QCheckBox()
+        self.installPreRelease.setText(_("Install the latest prerelease version"))
+        self.installPreRelease.setChecked(False)
+
+        prereleaseSection = SectionHWidget()
+        prereleaseSection.addWidget(self.installPreRelease)
 
         self.architectureLabel = QLabel(_("Architecture to install:"))
         self.architectureCombo = CustomComboBox()
@@ -1819,13 +1823,13 @@ class PackageInfoPopupWindow(QWidget):
         customArgumentsSection = SectionHWidget()
         customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
         self.customArgumentsLineEdit = CustomLineEdit()
-        self.customArgumentsLineEdit.textChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
         self.customArgumentsLineEdit.setFixedHeight(30)
         customArgumentsSection.addWidget(customArgumentsLabel)
         customArgumentsSection.addWidget(self.customArgumentsLineEdit)
         customArgumentsSection.setFixedHeight(50)
 
         optionsSection.addWidget(versionSection)
+        optionsSection.addWidget(prereleaseSection)
         optionsSection.addWidget(ignoreUpdatesSection)
         optionsSection.addWidget(architectureSection)
         optionsSection.addWidget(scopeSection)
@@ -1969,6 +1973,7 @@ class PackageInfoPopupWindow(QWidget):
         self.versionCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
         self.architectureCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
         self.scopeCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.installPreRelease.stateChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
 
         self.ApplyIcons()
         self.registeredThemeEvent = False
@@ -2012,6 +2017,7 @@ class PackageInfoPopupWindow(QWidget):
         options.RunAsAdministrator = self.adminCheckbox.isChecked()
         options.InteractiveInstallation = self.interactiveCheckbox.isChecked()
         options.SkipHashCheck = self.hashCheckBox.isChecked()
+        options.PreRelease = self.installPreRelease.isChecked()
         if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
             options.Version = self.versionCombo.currentText()
         else:
@@ -2056,7 +2062,8 @@ class PackageInfoPopupWindow(QWidget):
         if not PackageManager in baseCommands:
             print(f"🟠 Unknown Package Manager {self.currentPackage.Source}")
         else:
-            print(f"🟠 Unknown source {self.currentPackage.Source}")
+            self.CustomCommandLabel.setText(baseCommands[PackageManager] + " " + " ".join(PackageManager.getParameters(options, self.isAnUninstall)))
+
         self.CustomCommandLabel.setCursorPosition(0)
 
     def showPackageDetails(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
@@ -2223,6 +2230,7 @@ class PackageInfoPopupWindow(QWidget):
         self.hashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
         self.interactiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
         self.versionCombo.setEnabled(Capabilities.SupportsCustomVersions)
+        self.installPreRelease.setEnabled(Capabilities.SupportsPreRelease)
         self.versionLabel.setEnabled(Capabilities.SupportsCustomVersions)
         self.architectureCombo.setEnabled(Capabilities.SupportsCustomArchitectures)
         self.architectureLabel.setEnabled(Capabilities.SupportsCustomArchitectures)
@@ -2238,6 +2246,7 @@ class PackageInfoPopupWindow(QWidget):
         self.adminCheckbox.setChecked(options.RunAsAdministrator)
         self.interactiveCheckbox.setChecked(options.InteractiveInstallation)
         self.hashCheckBox.setChecked(options.SkipHashCheck)
+        self.installPreRelease.setChecked(options.PreRelease)
         try:
             self.architectureCombo.setCurrentText(options.Architecture)
         except Exception as e:

@@ -55,7 +55,6 @@ class WingetPackageManager(DynamicPackageManager):
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = True
     Capabilities.CanRunInteractively = True
-    Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = True
@@ -597,11 +596,12 @@ class WingetPackageManager(DynamicPackageManager):
                 Parameters.append("machine")
         if options.InteractiveInstallation:
             Parameters.append("--interactive")
+        else:
+            Parameters.append("--disable-interactivity")
         if options.SkipHashCheck and not isAnUninstall:
             Parameters.append("--ignore-security-hash")
         if options.Version:
             Parameters += ["--version", options.Version, "--force"]
-        Parameters += ["--disable-interactivity"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:

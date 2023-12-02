@@ -42,9 +42,7 @@ class ScoopPackageManager(DynamicPackageManager):
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
     Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRunInteractively = False
     Capabilities.CanRemoveDataOnUninstall = True
-    Capabilities.SupportsCustomVersions = False
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = True
 

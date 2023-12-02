@@ -36,12 +36,9 @@ class DotNetToolPackageManager(DynamicPackageManager):
 
     Capabilities = PackageManagerCapabilities()
     Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = False
-    Capabilities.CanRunInteractively = False
-    Capabilities.CanRemoveDataOnUninstall = False
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsCustomScopes = False
+    Capabilities.SupportsPreRelease = True
 
     LoadedIcons = False
 
@@ -234,12 +231,15 @@ class DotNetToolPackageManager(DynamicPackageManager):
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = ["--global"]
-        if options.Architecture and not isAnUninstall:
-            Parameters += ["-a", options.Architecture]
+        if not isAnUninstall:
+            if options.Architecture:
+                Parameters += ["-a", options.Architecture]
+            if options.Version:
+                Parameters += ["--version", options.Version]
+            if options.PreRelease:
+                Parameters += ["--prerelease"]
         if options.CustomParameters:
             Parameters += options.CustomParameters
-        if options.Version and not isAnUninstall:
-            Parameters += ["--version", options.Version]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
