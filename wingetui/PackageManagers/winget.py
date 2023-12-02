@@ -58,6 +58,7 @@ class WingetPackageManager(DynamicPackageManager):
     Capabilities.SupportsCustomVersions = True
     Capabilities.SupportsCustomArchitectures = True
     Capabilities.SupportsCustomScopes = True
+    Capabilities.SupportsCustomLocations = True
 
     LoadedIcons = False
     wingetIcon = None
@@ -588,6 +589,8 @@ class WingetPackageManager(DynamicPackageManager):
                 Parameters += ["--architecture", options.Architecture]
             if options.SkipHashCheck:
                 Parameters.append("--ignore-security-hash")
+            if options.CustomInstallLocation != "":
+                Parameters += ["--location", options.CustomInstallLocation]
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
@@ -601,8 +604,6 @@ class WingetPackageManager(DynamicPackageManager):
             Parameters.append("--interactive")
         else:
             Parameters.append("--disable-interactivity")
-        if options.SkipHashCheck and not isAnUninstall:
-            Parameters.append("--ignore-security-hash")
         if options.Version:
             Parameters += ["--version", options.Version, "--force"]
         return Parameters

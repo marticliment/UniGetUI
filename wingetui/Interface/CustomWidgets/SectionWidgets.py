@@ -597,12 +597,11 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
     valueChanged = Signal(str)
     defaultText: str
     
-    def __init__(self, text: str, parent=None, helpLabel: str = ""):
+    def __init__(self, text: str, parent=None, helpLabel: str = "", smallerMargins: bool = False):
         super().__init__(text=text, parent=parent)
         self.defaultText = _("Select")
         self.setAttribute(Qt.WA_StyledBackground)
         self.pushButton = QPushButton(self)
-        self.pushButton.setFixedWidth(450)
         self.oldtext = ""
         self.pushButton.setObjectName("")
         self.pushButton.clicked.connect(self.showDialog)
@@ -613,22 +612,36 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
         self.stateChangedEvent(self.checkbox.isChecked())
         self.checkbox.move((70), 10)
         self.checkbox.setFixedHeight(30)
-        self.setFixedHeight(50)
 
         self.setLayout(QHBoxLayout())
         self.layout().addWidget(self.checkbox)
         self.layout().addStretch()
         self.layout().addWidget(self.helplabel)
         self.layout().addWidget(self.pushButton)
-        self.layout().setContentsMargins(70, 5, 20, 0)
+        if smallerMargins:
+            self.layout().setContentsMargins(50, 2, 10, 0)
+            self.setFixedHeight(40)
+            self.pushButton.setFixedWidth(400)
+        else:
+            self.layout().setContentsMargins(70, 5, 20, 0)
+            self.setFixedHeight(50)
+            self.pushButton.setFixedWidth(450)
+        
+    def currentValue(self) -> str:
+        if self.pushButton.text() != self.defaultText:
+            return self.pushButton.text()
+        return ""
+    
+    def setValue(self, value: str) -> None:
+        self.setText(value)
         
     def showDialog(self):
         folder = QFileDialog.getExistingDirectory(self, _("Select a folder"), os.path.expanduser("~"))
         if folder:
             self.valuechangedEvent(folder)
-            self.setText(folder)
 
     def valuechangedEvent(self, text: str):
+        self.setText(text)
         self.valueChanged.emit(text)
 
     def setPlaceholderText(self, text: str):

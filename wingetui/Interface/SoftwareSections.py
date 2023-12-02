@@ -1568,6 +1568,7 @@ class PackageInfoPopupWindow(QWidget):
     isAnUpdate = False
     isAnUninstall = False
     currentPackage: Package = None
+    isLoadingPackageDetails: bool = False
 
     pressed = False
     oldPos = QPoint(0, 0)
@@ -1750,21 +1751,21 @@ class PackageInfoPopupWindow(QWidget):
         optionsheader.addWidget(saveButton)
         optionsSection.addWidget(optionsheader)
 
-        self.hashCheckBox = QCheckBox()
-        self.hashCheckBox.setText(_("Skip hash check"))
-        self.hashCheckBox.setChecked(False)
+        self.HashCheckBox = QCheckBox()
+        self.HashCheckBox.setText(_("Skip hash check"))
+        self.HashCheckBox.setChecked(False)
 
-        self.interactiveCheckbox = QCheckBox()
-        self.interactiveCheckbox.setText(_("Interactive installation"))
-        self.interactiveCheckbox.setChecked(False)
+        self.InteractiveCheckbox = QCheckBox()
+        self.InteractiveCheckbox.setText(_("Interactive installation"))
+        self.InteractiveCheckbox.setChecked(False)
 
         self.adminCheckbox = QCheckBox()
         self.adminCheckbox.setText(_("Run as admin"))
         self.adminCheckbox.setChecked(False)
 
         firstRow = SectionHWidget()
-        firstRow.addWidget(self.hashCheckBox)
-        firstRow.addWidget(self.interactiveCheckbox)
+        firstRow.addWidget(self.HashCheckBox)
+        firstRow.addWidget(self.InteractiveCheckbox)
         firstRow.addWidget(self.adminCheckbox)
 
         optionsSection.addWidget(firstRow)
@@ -1776,83 +1777,87 @@ class PackageInfoPopupWindow(QWidget):
         commandWidget.addWidget(self.CustomCommandLabel)
         commandWidget.setFixedHeight(70)
 
-        self.versionLabel = QLabel(_("Version to install:"))
-        self.versionCombo = CustomComboBox()
-        self.versionCombo.setFixedWidth(150)
-        self.versionCombo.setIconSize(QSize(24, 24))
-        self.versionCombo.setFixedHeight(30)
-        self.versionSection = SectionHWidget()
-        self.versionSection.addWidget(self.versionLabel)
-        self.versionSection.addWidget(self.versionCombo)
-        self.versionSection.setFixedHeight(50)
+        self.VersionLabel = QLabel(_("Version to install:"))
+        self.VersionCombo = CustomComboBox()
+        self.VersionCombo.setFixedWidth(150)
+        self.VersionCombo.setIconSize(QSize(24, 24))
+        self.VersionCombo.setFixedHeight(30)
+        self.VersionSection = SectionHWidget()
+        self.VersionSection.addWidget(self.VersionLabel)
+        self.VersionSection.addWidget(self.VersionCombo)
+        self.VersionSection.setFixedHeight(50)
 
-        self.ignoreFutureUpdates = QCheckBox()
-        self.ignoreFutureUpdates.setText(_("Ignore future updates for this package"))
-        self.ignoreFutureUpdates.setChecked(False)
+        self.IgnoreFutureUpdates = QCheckBox()
+        self.IgnoreFutureUpdates.setText(_("Ignore future updates for this package"))
+        self.IgnoreFutureUpdates.setChecked(False)
 
         ignoreUpdatesSection = SectionHWidget()
-        ignoreUpdatesSection.addWidget(self.ignoreFutureUpdates)
+        ignoreUpdatesSection.addWidget(self.IgnoreFutureUpdates)
         
-        self.installPreRelease = QCheckBox()
-        self.installPreRelease.setText(_("Install the latest prerelease version"))
-        self.installPreRelease.setChecked(False)
+        self.InstallPreRelease = QCheckBox()
+        self.InstallPreRelease.setText(_("Install the latest prerelease version"))
+        self.InstallPreRelease.setChecked(False)
 
         prereleaseSection = SectionHWidget()
-        prereleaseSection.addWidget(self.installPreRelease)
+        prereleaseSection.addWidget(self.InstallPreRelease)
 
-        self.architectureLabel = QLabel(_("Architecture to install:"))
-        self.architectureCombo = CustomComboBox()
-        self.architectureCombo.setFixedWidth(150)
-        self.architectureCombo.setIconSize(QSize(24, 24))
-        self.architectureCombo.setFixedHeight(30)
-        self.architectureSection = SectionHWidget()
-        self.architectureSection.addWidget(self.architectureLabel)
-        self.architectureSection.addWidget(self.architectureCombo)
-        self.architectureSection.setFixedHeight(50)
+        self.ArchLabel = QLabel(_("Architecture to install:"))
+        self.ArchCombo = CustomComboBox()
+        self.ArchCombo.setFixedWidth(150)
+        self.ArchCombo.setIconSize(QSize(24, 24))
+        self.ArchCombo.setFixedHeight(30)
+        self.ArchSection = SectionHWidget()
+        self.ArchSection.addWidget(self.ArchLabel)
+        self.ArchSection.addWidget(self.ArchCombo)
+        self.ArchSection.setFixedHeight(50)
 
         self.scopeLabel = QLabel(_("Installation scope:"))
-        self.scopeCombo = CustomComboBox()
-        self.scopeCombo.setFixedWidth(150)
-        self.scopeCombo.setIconSize(QSize(24, 24))
-        self.scopeCombo.setFixedHeight(30)
-        self.scopeSection = SectionHWidget()
-        self.scopeSection.addWidget(self.scopeLabel)
-        self.scopeSection.addWidget(self.scopeCombo)
-        self.scopeSection.setFixedHeight(50)
+        self.ScopeCombo = CustomComboBox()
+        self.ScopeCombo.setFixedWidth(150)
+        self.ScopeCombo.setIconSize(QSize(24, 24))
+        self.ScopeCombo.setFixedHeight(30)
+        self.ScopeSection = SectionHWidget()
+        self.ScopeSection.addWidget(self.scopeLabel)
+        self.ScopeSection.addWidget(self.ScopeCombo)
+        self.ScopeSection.setFixedHeight(50)
+        
+        self.LocationSection = SectionCheckBoxDirPicker(_("Change install location"), smallerMargins = True)
+        self.LocationSection.setDefaultText(_("Select"))
 
-        customArgumentsSection = SectionHWidget()
+        CustomArgsSection = SectionHWidget()
         customArgumentsLabel = QLabel(_("Custom command-line arguments:"))
-        self.customArgumentsLineEdit = CustomLineEdit()
-        self.customArgumentsLineEdit.setFixedHeight(30)
-        customArgumentsSection.addWidget(customArgumentsLabel)
-        customArgumentsSection.addWidget(self.customArgumentsLineEdit)
-        customArgumentsSection.setFixedHeight(50)
+        self.CustomArgsLineEdit = CustomLineEdit()
+        self.CustomArgsLineEdit.setFixedHeight(30)
+        CustomArgsSection.addWidget(customArgumentsLabel)
+        CustomArgsSection.addWidget(self.CustomArgsLineEdit)
+        CustomArgsSection.setFixedHeight(50)
 
-        optionsSection.addWidget(self.versionSection)
+        optionsSection.addWidget(self.VersionSection)
         optionsSection.addWidget(prereleaseSection)
         optionsSection.addWidget(ignoreUpdatesSection)
-        optionsSection.addWidget(self.architectureSection)
-        optionsSection.addWidget(self.scopeSection)
-        optionsSection.addWidget(customArgumentsSection)
+        optionsSection.addWidget(self.ArchSection)
+        optionsSection.addWidget(self.ScopeSection)
+        optionsSection.addWidget(self.LocationSection)
+        optionsSection.addWidget(CustomArgsSection)
         optionsSection.addWidget(commandWidget)
 
-        self.shareButton = QPushButton(_("Share this package"))
-        self.shareButton.setFixedWidth(200)
-        self.shareButton.setStyleSheet("border-radius: 8px;")
-        self.shareButton.setFixedHeight(35)
-        self.shareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}^&psource={self.currentPackage.Source}", self.window()))
-        self.installButton = QPushButton()
-        self.installButton.setText(_("Install"))
-        self.installButton.setObjectName("AccentButton")
-        self.installButton.setStyleSheet("border-radius: 8px;")
-        self.installButton.setIconSize(QSize(24, 24))
-        self.installButton.clicked.connect(self.install)
-        self.installButton.setFixedWidth(200)
-        self.installButton.setFixedHeight(35)
+        self.ShareButton = QPushButton(_("Share this package"))
+        self.ShareButton.setFixedWidth(200)
+        self.ShareButton.setStyleSheet("border-radius: 8px;")
+        self.ShareButton.setFixedHeight(35)
+        self.ShareButton.clicked.connect(lambda: nativeWindowsShare(self.title.text(), f"https://marticliment.com/wingetui/share?pid={self.currentPackage.Id}^&pname={self.currentPackage.Name}^&psource={self.currentPackage.Source}", self.window()))
+        self.InstallButton = QPushButton()
+        self.InstallButton.setText(_("Install"))
+        self.InstallButton.setObjectName("AccentButton")
+        self.InstallButton.setStyleSheet("border-radius: 8px;")
+        self.InstallButton.setIconSize(QSize(24, 24))
+        self.InstallButton.clicked.connect(self.install)
+        self.InstallButton.setFixedWidth(200)
+        self.InstallButton.setFixedHeight(35)
 
-        hLayout.addWidget(self.shareButton)
+        hLayout.addWidget(self.ShareButton)
         hLayout.addStretch()
-        hLayout.addWidget(self.installButton)
+        hLayout.addWidget(self.InstallButton)
 
         vl = QVBoxLayout()
         vl.addStretch()
@@ -1966,14 +1971,16 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
 
-        self.customArgumentsLineEdit.textChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.CustomArgsLineEdit.textChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
         self.adminCheckbox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
-        self.interactiveCheckbox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
-        self.hashCheckBox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
-        self.versionCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
-        self.architectureCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
-        self.scopeCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
-        self.installPreRelease.stateChanged.connect(lambda enabled: (self.loadPackageCommandLine(saveOptionsToDisk=True), self.versionCombo.setEnabled(not enabled)))
+        self.InteractiveCheckbox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.HashCheckBox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.VersionCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.ArchCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.ScopeCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.InstallPreRelease.stateChanged.connect(lambda enabled: (self.loadPackageCommandLine(saveOptionsToDisk=True), self.VersionCombo.setEnabled(not enabled)))
+        self.LocationSection.valueChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.LocationSection.stateChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
 
         self.ApplyIcons()
         self.registeredThemeEvent = False
@@ -1993,7 +2000,7 @@ class PackageInfoPopupWindow(QWidget):
         """)
         self.appIcon.setStyleSheet(f"padding: 16px; border-radius: 16px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};")
         self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64))
-        self.shareButton.setIcon(QIcon(getMedia("share")))
+        self.ShareButton.setIcon(QIcon(getMedia("share")))
         self.backButton.setIcon(QIcon(getMedia("close")))
         self.backButton.setStyleSheet("QPushButton{border: none;border-radius:0px;background:transparent;border-top-right-radius: 16px;}QPushButton:hover{background-color:red;}")
         self.screenshotsWidget.setStyleSheet(f"QScrollArea{{padding: 8px; border-radius: 8px; background-color: {'rgba(255, 255, 255, 5%)' if isDark() else 'rgba(255, 255, 255, 60%)'};border: 0px solid black;}};")
@@ -2015,29 +2022,36 @@ class PackageInfoPopupWindow(QWidget):
     def getInstallationOptions(self) -> InstallationOptions:
         options = InstallationOptions(self.currentPackage)
         options.RunAsAdministrator = self.adminCheckbox.isChecked()
-        options.InteractiveInstallation = self.interactiveCheckbox.isChecked()
-        options.SkipHashCheck = self.hashCheckBox.isChecked()
-        options.PreRelease = self.installPreRelease.isChecked()
-        if self.versionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
-            options.Version = self.versionCombo.currentText()
+        options.InteractiveInstallation = self.InteractiveCheckbox.isChecked()
+        options.SkipHashCheck = self.HashCheckBox.isChecked()
+        options.PreRelease = self.InstallPreRelease.isChecked()
+        
+        if self.LocationSection.isChecked() and self.LocationSection.currentValue() != "":
+            options.CustomInstallLocation = self.LocationSection.currentValue()
+        else:
+            options.CustomInstallLocation = ""
+        
+        if self.VersionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
+            options.Version = self.VersionCombo.currentText()
         else:
             options.Version = ""
-        if self.architectureCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
-            options.Architecture = self.architectureCombo.currentText()
+        if self.ArchCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
+            options.Architecture = self.ArchCombo.currentText()
             if options.Architecture in (_("Global"), "Global"):
                 options.RunAsAdministrator = True
         else:
             options.Architecture = ""
-        if self.scopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
-            options.InstallationScope = self.scopeCombo.currentText()
+        if self.ScopeCombo.currentText() not in (_("Default"), "Default", "Loading...", _("Loading..."), ""):
+            options.InstallationScope = self.ScopeCombo.currentText()
         else:
             options.InstallationScope = ""
-        options.CustomParameters = [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
+        options.CustomParameters = [c for c in self.CustomArgsLineEdit.text().split(" ") if c]
         return options
 
     def loadPackageCommandLine(self, saveOptionsToDisk: bool = False):
         options = self.getInstallationOptions()
-        if saveOptionsToDisk:
+        print("LPCL", self.isLoadingPackageDetails)
+        if saveOptionsToDisk and not self.isLoadingPackageDetails:
             options.SaveOptionsToDisk()
             
         PackageManager = self.currentPackage.PackageManager
@@ -2067,6 +2081,7 @@ class PackageInfoPopupWindow(QWidget):
         self.CustomCommandLabel.setCursorPosition(0)
 
     def showPackageDetails(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):
+        self.isLoadingPackageDetails = True
         self.isAnUpdate = update
         self.isAnUninstall = uninstall
         if self.currentPackage == package:
@@ -2077,27 +2092,22 @@ class PackageInfoPopupWindow(QWidget):
 
         self.iv.resetImages()
         if "…" in package.Id:
-            self.installButton.setEnabled(False)
-            self.installButton.setText(_("Please wait..."))
+            self.InstallButton.setEnabled(False)
+            self.InstallButton.setText(_("Please wait..."))
         else:
             if self.isAnUpdate:
-                self.installButton.setText(_("Update"))
+                self.InstallButton.setText(_("Update"))
             elif self.isAnUninstall:
-                self.installButton.setText(_("Uninstall"))
+                self.InstallButton.setText(_("Uninstall"))
             else:
-                self.installButton.setText(_("Install"))
+                self.InstallButton.setText(_("Install"))
 
         self.title.setText(package.Name)
 
         self.loadPackageCommandLine()
 
         self.loadingProgressBar.show()
-        self.hashCheckBox.setChecked(False)
-        self.interactiveCheckbox.setChecked(False)
-        self.adminCheckbox.setChecked(False)
-        self.architectureSection.setEnabled(False)
-        self.scopeSection.setEnabled(False)
-        self.versionSection.setEnabled(False)
+        
         self.description.setText(_("Loading..."))
         self.author.setText("<b>" + _("Author") + ":</b> " + _("Loading..."))
         self.publisher.setText(f"<b>{_('Publisher')}:</b> " + _("Loading..."))
@@ -2124,9 +2134,9 @@ class PackageInfoPopupWindow(QWidget):
         self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {_('Loading...')}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {_('Loading...')}")
         self.storeLabel.setText(f"<b>{_('Source')}:</b> {package.Source}")
-        self.versionCombo.addItems([_("Loading...")])
-        self.architectureCombo.addItems([_("Loading...")])
-        self.scopeCombo.addItems([_("Loading...")])
+        self.VersionCombo.addItems([_("Loading...")])
+        self.ArchCombo.addItems([_("Loading...")])
+        self.ScopeCombo.addItems([_("Loading...")])
 
         def resetLayoutWidget():
             p = QPixmap()
@@ -2136,22 +2146,24 @@ class PackageInfoPopupWindow(QWidget):
 
         Capabilities = package.PackageManager.Capabilities
         self.adminCheckbox.setEnabled(Capabilities.CanRunAsAdmin)
-        self.hashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
-        self.interactiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
-        self.versionSection.setEnabled(Capabilities.SupportsCustomVersions)
-        self.architectureSection.setEnabled(Capabilities.SupportsCustomArchitectures)
-        self.scopeSection.setEnabled(Capabilities.SupportsCustomScopes)
-
+        self.HashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
+        self.InteractiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
+        self.VersionSection.setEnabled(Capabilities.SupportsCustomVersions)
+        self.ArchSection.setEnabled(Capabilities.SupportsCustomArchitectures)
+        self.ScopeSection.setEnabled(Capabilities.SupportsCustomScopes)
+        self.LocationSection.setEnabled(Capabilities.SupportsCustomLocations)
+        self.loadCachedInstallationOptions()
+        
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
         Thread(target=self.loadPackageIcon, args=(package,)).start()
 
         Thread(target=self.loadPackageDetails, args=(package,), daemon=True, name=f"Loading details for {package}").start()
-        self.loadCachedInstallationOptions()
 
         self.tagsWidget.layout().clear()
 
         self.finishedCount = 0
+        self.isLoadingPackageDetails = False
 
     def reposition(self):
         self.setGeometry((self.parent().width() - self.width()) / 2,
@@ -2164,21 +2176,22 @@ class PackageInfoPopupWindow(QWidget):
         self.callInMain.emit(lambda: self.printData(details))
 
     def printData(self, details: PackageDetails) -> None:
+        self.isLoadingPackageDetails = True
         if details.PackageObject != self.currentPackage:
             return
         package = self.currentPackage
 
         self.loadingProgressBar.hide()
-        self.installButton.setEnabled(True)
+        self.InstallButton.setEnabled(True)
         self.adminCheckbox.setEnabled(True)
         if self.isAnUpdate:
-            self.installButton.setText(_("Update"))
+            self.InstallButton.setText(_("Update"))
         elif self.isAnUninstall:
-            self.installButton.setText(_("Uninstall"))
+            self.InstallButton.setText(_("Uninstall"))
         else:
-            self.installButton.setText(_("Install"))
+            self.InstallButton.setText(_("Install"))
 
-        self.interactiveCheckbox.setEnabled(not package.isManager(Scoop))
+        self.InteractiveCheckbox.setEnabled(not package.isManager(Scoop))
         self.title.setText(details.Name)
         self.description.setText(details.Description)
         if package.isManager(Winget):
@@ -2204,15 +2217,15 @@ class PackageInfoPopupWindow(QWidget):
         self.notes.setText(f"<b>{_('Notes:') if package.isManager(Scoop) else _('Release notes:')}</b> {details.ReleaseNotes}")
         self.notesurl.setText(f"<b>{_('Release notes URL:')}</b> {details.asUrl(details.ReleaseNotesUrl)}")
         self.manifest.setText(f"<b>{_('Manifest')}:</b> {details.asUrl(details.ManifestUrl)}")
-        while self.versionCombo.count() > 0:
-            self.versionCombo.removeItem(0)
-        self.versionCombo.addItems([_("Latest")] + details.Versions)
-        while self.architectureCombo.count() > 0:
-            self.architectureCombo.removeItem(0)
-        self.architectureCombo.addItems([_("Default")] + details.Architectures)
-        while self.scopeCombo.count() > 0:
-            self.scopeCombo.removeItem(0)
-        self.scopeCombo.addItems([_("Default")] + details.Scopes)
+        while self.VersionCombo.count() > 0:
+            self.VersionCombo.removeItem(0)
+        self.VersionCombo.addItems([_("Latest")] + details.Versions)
+        while self.ArchCombo.count() > 0:
+            self.ArchCombo.removeItem(0)
+        self.ArchCombo.addItems([_("Default")] + details.Architectures)
+        while self.ScopeCombo.count() > 0:
+            self.ScopeCombo.removeItem(0)
+        self.ScopeCombo.addItems([_("Default")] + details.Scopes)
 
         for tag in details.Tags:
             label = QLabel(tag)
@@ -2222,32 +2235,37 @@ class PackageInfoPopupWindow(QWidget):
 
         Capabilities = package.PackageManager.Capabilities
         self.adminCheckbox.setEnabled(Capabilities.CanRunAsAdmin)
-        self.hashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
-        self.interactiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
-        self.versionSection.setEnabled(Capabilities.SupportsCustomVersions)
-        self.installPreRelease.setEnabled(Capabilities.SupportsPreRelease)
-        self.architectureSection.setEnabled(Capabilities.SupportsCustomArchitectures)
-        self.scopeSection.setEnabled(Capabilities.SupportsCustomScopes)
+        self.HashCheckBox.setEnabled(Capabilities.CanSkipIntegrityChecks)
+        self.InteractiveCheckbox.setEnabled(Capabilities.CanRunInteractively)
+        self.VersionSection.setEnabled(Capabilities.SupportsCustomVersions)
+        self.InstallPreRelease.setEnabled(Capabilities.SupportsPreRelease)
+        self.ArchSection.setEnabled(Capabilities.SupportsCustomArchitectures)
+        self.ScopeSection.setEnabled(Capabilities.SupportsCustomScopes)
+        self.LocationSection.setEnabled(Capabilities.SupportsCustomLocations)
+        self.isLoadingPackageDetails = False
         
-        self.loadCachedInstallationOptions()
-        self.loadPackageCommandLine()
 
 
     def loadCachedInstallationOptions(self):
+        self.isLoadingPackageDetails = True
         options = InstallationOptions(self.currentPackage)
         self.adminCheckbox.setChecked(options.RunAsAdministrator)
-        self.interactiveCheckbox.setChecked(options.InteractiveInstallation)
-        self.hashCheckBox.setChecked(options.SkipHashCheck)
-        self.installPreRelease.setChecked(options.PreRelease)
+        self.InteractiveCheckbox.setChecked(options.InteractiveInstallation)
+        self.HashCheckBox.setChecked(options.SkipHashCheck)
+        self.InstallPreRelease.setChecked(options.PreRelease)
+        self.LocationSection.setChecked(options.CustomInstallLocation != "")
+        self.LocationSection.setValue(options.CustomInstallLocation)
         try:
-            self.architectureCombo.setCurrentText(options.Architecture)
+            self.ArchCombo.setCurrentText(options.Architecture)
         except Exception as e:
             report(e)        
         try:
-            self.scopeCombo.setCurrentText(options.InstallationScope)
+            self.ScopeCombo.setCurrentText(options.InstallationScope)
         except Exception as e:
             report(e)
-        self.customArgumentsLineEdit.setText(" ".join([c for c in options.CustomParameters if c]))
+        self.CustomArgsLineEdit.setText(" ".join([c for c in options.CustomParameters if c]))
+        self.isLoadingPackageDetails = False
+        self.loadPackageCommandLine()
 
 
     def loadPackageIcon(self, package: Package) -> None:
@@ -2330,9 +2348,8 @@ class PackageInfoPopupWindow(QWidget):
 
     def install(self):
         print(f"🟢 Starting installation of package {self.currentPackage.Name} with id {self.currentPackage.Id}")
-        if self.ignoreFutureUpdates.isChecked():
+        if self.IgnoreFutureUpdates.isChecked():
             self.currentPackage.AddToIgnoredUpdates()
-            #IgnorePackageUpdates_Permanent(self.currentPackage.Id, self.currentPackage.Source)
             print(f"🟡 Blacklising package {self.currentPackage.Id}")
 
         options = self.getInstallationOptions()
