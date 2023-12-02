@@ -158,7 +158,7 @@ class Package():
         ignoredPackages[ENTRY] = version
         SetJsonSettings("IgnoredPackageUpdates", ignoredPackages)
         
-        if version == "*" and self.PackageItem is not None:
+        if self.PackageItem is not None:
             InstalledItem = self.PackageItem.getInstalledPackageItem()
             if InstalledItem:
                 InstalledItem.setTag(InstalledItem.Tag.Pinned)
