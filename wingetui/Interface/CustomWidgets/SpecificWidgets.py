@@ -710,6 +710,7 @@ class SoftwareSection(QWidget):
     shownItems: list['PackageItem'] = []
     nextItemToShow: int = 0
     OnThemeChange = Signal()
+    AllItemsSelected: bool = False
 
     FilterItemForManager = {}
 
@@ -799,6 +800,20 @@ class SoftwareSection(QWidget):
 
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
+        
+        def toggleSelectAll():
+            index = self.packageList.currentIndex()
+            if self.AllItemsSelected:
+                for item in self.packageItems:
+                    item.setChecked(False)
+            else:
+                for item in self.packageItems:
+                    item.setChecked(True)
+            self.AllItemsSelected = not self.AllItemsSelected
+            self.packageList.setCurrentIndex(index)
+        
+        sct = QShortcut(QKeySequence("Ctrl+A"), self)
+        sct.activated.connect(toggleSelectAll)
 
         self.SectionImage = QLabel()
         self.SectionImage.setFixedWidth(80)
@@ -957,10 +972,10 @@ class SoftwareSection(QWidget):
 
         self.filterScrollArea.setWidget(scrollWidget)
 
-        def updateItemState(item: TreeWidgetItemWithQAction, column: int):
+        def updateItemState(item: PackageItem, column: int):
             if column == 0:
-                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
-                if item.checkState(0) == Qt.CheckState.Checked:
+                item.setText(0, " " if item.isChecked() else "")
+                if item.isChecked():
                     self.packageList.setCurrentItem(item)
 
         self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
@@ -970,8 +985,7 @@ class SoftwareSection(QWidget):
 
         def toggleItemState():
             item = self.packageList.currentItem()
-            checked = item.checkState(0) == Qt.CheckState.Checked
-            item.setCheckState(0, Qt.CheckState.Unchecked if checked else Qt.CheckState.Checked)
+            item.setChecked(not item.isChecked())
 
         sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
         sct.activated.connect(toggleItemState)
@@ -1171,7 +1185,7 @@ class SoftwareSection(QWidget):
 
     def finishFiltering(self, text: str):
         def getChecked(item: PackageItem) -> str:
-            return " " if item.checkState(0) == Qt.CheckState.Checked else ""
+            return " " if item.isChecked() else ""
 
         def getTitle(item: PackageItem) -> str:
             return item.Package.Name
@@ -1258,14 +1272,14 @@ class SoftwareSection(QWidget):
         """
         packagesToExport: list[Package] = []
         for item in self.packageItems:
-            if item.checkState(0) == Qt.CheckState.Checked or all:
+            if item.isChecked() or all:
                 packagesToExport.append(self.ItemPackageReference[item])
         self.packageExporter.showExportUI(packagesToExport)
 
     def setAllPackagesSelected(self, checked: bool) -> None:
         self.packageList.setSortingEnabled(False)
         for item in self.packageItems:
-            item.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+            item.setChecked(checked)
         self.packageList.setSortingEnabled(True)
 
     def startLoadingPackages(self, force: bool = False) -> None:
@@ -1898,7 +1912,7 @@ class PackageItem(QTreeWidgetItem):
         self.Package.PackageItem = self
         self.callInMain: Signal = globals.mainWindow.callInMain
         super().__init__()
-        self.setCheckState(0, Qt.CheckState.Unchecked)
+        self.setChecked(False)
         self.setText(1, self.Package.Name)
         self.setTag(PackageItem.Tag.Default)
         self.setText(2, self.Package.Id)
@@ -2000,6 +2014,12 @@ class PackageItem(QTreeWidgetItem):
             return super().setHidden(hide)
         except RuntimeError:
             return False
+        
+    def setChecked(self, checked: bool):
+        self.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+        
+    def isChecked(self) -> bool:
+        return self.checkState(0) == Qt.CheckState.Checked
 
     def setText(self, column: int, text: str) -> None:
         self.setToolTip(column, text)
@@ -2025,7 +2045,7 @@ class UpgradablePackageItem(PackageItem):
     def __init__(self, package: 'UpgradablePackage'):
         self.SoftwareSection = globals.updates
         super().__init__(package)
-        self.setCheckState(0, Qt.CheckState.Checked)
+        self.setChecked(True)
 
         if package.isManager(Scoop):
             installedPackage = self.Package.getInstalledPackage()

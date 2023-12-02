@@ -545,6 +545,7 @@ class UpdateSoftwareSection(SoftwareSection):
     ItemPackageReference: dict[UpgradablePackageItem:UpgradablePackage] = {}
     IdPackageReference: dict[str:UpgradablePackage] = {}
     UpdatesNotification: ToastNotification = None
+    AllItemsSelected = True
 
     def __init__(self, parent=None):
         super().__init__(parent=parent, sectionName="Update")
