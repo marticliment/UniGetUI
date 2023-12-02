@@ -79,7 +79,7 @@ class CollapsableSection(QWidget):
         vLayout = QVBoxLayout()
         vLayout.setSpacing(0)
         vLayout.setContentsMargins(0, 0, 0, 0)
-        self.childsVisible = False
+        self.childrenVisible = False
         self.compressibleWidget.setLayout(vLayout)
 
         self.setStyleSheet("QWidget#subtitleLabel{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}")
@@ -159,8 +159,8 @@ class CollapsableSection(QWidget):
         self.NotAnimated = not self.NotAnimated
 
     def toggleChilds(self):
-        if self.childsVisible:
-            self.childsVisible = False
+        if self.childrenVisible:
+            self.childrenVisible = False
             self.invertNotAnimated()
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
             Thread(target=lambda: (time.sleep(0.2), self.HoverableButton.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"), self.bg70.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
@@ -170,7 +170,7 @@ class CollapsableSection(QWidget):
             self.HoverableButton.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.bg70.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.invertNotAnimated()
-            self.childsVisible = True
+            self.childrenVisible = True
             Thread(target=self.showChildren).start()
 
     def get6px(self, i: int) -> int:
@@ -200,7 +200,7 @@ class CollapsableSection(QWidget):
 
             self.IconLabel.move(17, 20)
             self.IconLabel.setFixedHeight(30)
-            if self.childsVisible and self.NotAnimated:
+            if self.childrenVisible and self.NotAnimated:
                 self.setFixedHeight(self.compressibleWidget.sizeHint().height() + 70)
                 self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
             elif self.NotAnimated:
@@ -247,7 +247,7 @@ class CollapsableSection(QWidget):
             self.setIcon(self.icon.replace("black", "white"))
         else:
             self.setIcon(self.icon.replace("white", "black"))
-        if self.childsVisible:
+        if self.childrenVisible:
             self.showHideButton.setIcon(QIcon(getMedia("expand")))
         else:
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
@@ -290,8 +290,8 @@ class SmallCollapsableSection(CollapsableSection):
         self.NotAnimated = not self.NotAnimated
 
     def toggleChilds(self):
-        if self.childsVisible:
-            self.childsVisible = False
+        if self.childrenVisible:
+            self.childrenVisible = False
             self.invertNotAnimated()
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
             Thread(target=lambda: (time.sleep(0.2), self.HoverableButton.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"), self.bg70.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
@@ -301,7 +301,7 @@ class SmallCollapsableSection(CollapsableSection):
             self.HoverableButton.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.bg70.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.invertNotAnimated()
-            self.childsVisible = True
+            self.childrenVisible = True
             Thread(target=self.showChildren).start()
 
     def get6px(self, i: int) -> int:
@@ -326,7 +326,7 @@ class SmallCollapsableSection(CollapsableSection):
 
         self.IconLabel.move(10, 8)
         self.IconLabel.setFixedHeight(24)
-        if self.childsVisible and self.NotAnimated:
+        if self.childrenVisible and self.NotAnimated:
             self.setFixedHeight(self.compressibleWidget.sizeHint().height() + 40)
             self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
         elif self.NotAnimated:
