@@ -460,7 +460,7 @@ class AnnouncementsPane(QLabel):
                 response = urlopen(announcement_image_url)
                 print("🔵 Image URL:", response.url)
                 response = response.read()
-                self.file = open(os.path.join(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui")), "announcement.png"), "wb")
+                self.file = open(os.path.join(ICON_DIR, "announcement.png"), "wb")
                 self.file.write(response)
                 self.callInMain.emit(lambda: self.pictureLabel.setText(""))
                 self.file.close()
