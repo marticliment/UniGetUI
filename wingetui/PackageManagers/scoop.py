@@ -184,11 +184,8 @@ class ScoopPackageManager(DynamicPackageManager):
                 if line:
                     rawOutput += line + b"\n"
 
-            with open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "wb") as f:
-                f.write(rawOutput)
-            mfest = open(os.path.join(os.path.expanduser("~"), ".wingetui", "scooptemp.json"), "r")
-            import json
-            data: dict = json.load(mfest)
+            data: dict = json.loads(str(rawOutput, encoding='utf-8', errors="ignore"))
+            
             if "description" in data.keys():
                 if type(data["description"]) is list:
                     details.Description = "\n".join(data["description"])
