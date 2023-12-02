@@ -34,6 +34,7 @@ from PySide6.QtWidgets import *
 from tools import *
 from tools import _
 from win32mica import *
+import yaml
 
 PackageManagersList: list[PackageManagerModule] = [
     Winget,
@@ -1616,12 +1617,18 @@ class PackageExporter(MovableFramelessWindow):
             
         fileContents = self.generateExportJson(packagesToExport)
         
-        filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
-        if filename[0] != "" and filename[1]:
-            print(f"🔵 Saving JSON to {filename[0]}")
-            with open(filename[0], 'w') as f:
-                f.write(json.dumps(fileContents, indent=4))
-            subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+        filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json);; YAML (*.yaml)')
+        if filename[0] != "":
+            if "JSON" in filename[1]:
+                print(f"🔵 Saving JSON to {filename[0]}")
+                with open(filename[0], 'w') as f:
+                    f.write(json.dumps(fileContents, indent=4))
+                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+            elif "YAML" in filename[1]:
+                print(f"🔵 Saving YAML to {filename[0]}")
+                with open(filename[0], 'w') as f:
+                    f.write(yaml.dump(fileContents))
+                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
             self.hide()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -1753,10 +1760,13 @@ class PackageImporter(MovableFramelessWindow):
             self.pendingPackages = {}
             self.treewidget.clear()
             self.show()
-            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
+            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="Package files (*.json; *.yaml)")[0]
             if file != "":
                 f = open(file, "r")
-                contents: dict = json.load(f)
+                if file.lower()[-4:] in ("yaml", "yml"):
+                    contents: dict = yaml.load(f, yaml.CLoader)
+                else:
+                    contents: dict = json.load(f)
                 f.close()
                 try:
                     packagesToInstall: list[Package] = []

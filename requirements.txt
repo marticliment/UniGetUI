@@ -7,3 +7,4 @@ flask-cors>=4.0.0
 windows_toasts>=1.0.0
 pythonnet>=3.0.3
 waitress>=2.1.2
+PyYAML>=6.0.1
