@@ -241,14 +241,14 @@ class PipPackageManager(DynamicPackageManager):
         Parameters: list[str] = []
         if options.CustomParameters:
             Parameters += options.CustomParameters
-        if options.InstallationScope and not isAnUninstall:
-            if options.InstallationScope in ("User", _("User")):
-                Parameters.append("--user")
         Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
         if not isAnUninstall:
             Parameters += ["--progress-bar", "off"]
             if options.PreRelease:
                 Parameters.append("--pre")
+            if options.InstallationScope:
+                if options.InstallationScope in ("User", _("User")):
+                    Parameters.append("--user")
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:

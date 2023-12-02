@@ -583,8 +583,11 @@ class WingetPackageManager(DynamicPackageManager):
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = ["--accept-source-agreements"]
-        if options.Architecture and not isAnUninstall:
-            Parameters += ["--architecture", options.Architecture]
+        if not isAnUninstall:
+            if options.Architecture:
+                Parameters += ["--architecture", options.Architecture]
+            if options.SkipHashCheck:
+                Parameters.append("--ignore-security-hash")
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:

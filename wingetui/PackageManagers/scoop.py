@@ -289,17 +289,18 @@ class ScoopPackageManager(DynamicPackageManager):
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
         Parameters: list[str] = []
-        if options.Architecture and not isAnUninstall:
-            Parameters += ["--arch", options.Architecture]
+        if not isAnUninstall:
+            if options.Architecture:
+                Parameters += ["--arch", options.Architecture]
+            if options.SkipHashCheck:
+                Parameters.append("--skip")
+            if options.RemoveDataOnUninstall:
+                Parameters.append("--purge")
         if options.CustomParameters:
             Parameters += options.CustomParameters
         if options.InstallationScope:
             if options.InstallationScope.capitalize() in ("Global", _("Global")):
                 Parameters.append("--global")
-        if options.SkipHashCheck and not isAnUninstall:
-            Parameters.append("--skip")
-        if options.RemoveDataOnUninstall and isAnUninstall:
-            Parameters.append("--purge")
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
