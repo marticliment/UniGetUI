@@ -1962,9 +1962,13 @@ class PackageInfoPopupWindow(QWidget):
         self.verticalScrollbar.show()
         self.verticalScrollbar.setFixedWidth(12)
 
-        self.versionCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
-        self.architectureCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
-        self.scopeCombo.currentIndexChanged.connect(lambda: (self.loadPackageCommandLine(), self.getInstallationOptions().SaveOptionsToDisk()))
+        self.customArgumentsLineEdit.textChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.adminCheckbox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.interactiveCheckbox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.hashCheckBox.clicked.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.versionCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.architectureCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
+        self.scopeCombo.currentIndexChanged.connect(lambda: self.loadPackageCommandLine(saveOptionsToDisk=True))
 
         self.ApplyIcons()
         self.registeredThemeEvent = False
@@ -2025,27 +2029,32 @@ class PackageInfoPopupWindow(QWidget):
         options.CustomParameters = [c for c in self.customArgumentsLineEdit.text().split(" ") if c]
         return options
 
-    def getCommandLineParameters(self) -> list[str]:
-        return self.currentPackage.PackageManager.getParameters(self.getInstallationOptions())
+    def loadPackageCommandLine(self, saveOptionsToDisk: bool = False):
+        options = self.getInstallationOptions()
+        if saveOptionsToDisk:
+            options.SaveOptionsToDisk()
+            
+        PackageManager = self.currentPackage.PackageManager
+        
+        pipId = self.currentPackage.Id
+        if options.Version:
+            pipId += "==" + options.Version
 
-    def loadPackageCommandLine(self):
-        parameters = " ".join(self.getCommandLineParameters())
-        if self.currentPackage.isManager(Winget):
-            if "…" not in self.currentPackage.Id:
-                self.CustomCommandLabel.setText(f"winget {'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')} --id {self.currentPackage.Id} --exact {parameters} --accept-source-agreements --force ".strip().replace("  ", " ").replace("  ", " "))
-            else:
-                self.CustomCommandLabel.setText(_("Loading..."))
-        elif self.currentPackage.isManager(Scoop):
-            self.CustomCommandLabel.setText(f"scoop {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        elif self.currentPackage.isManager(Choco):
-            self.CustomCommandLabel.setText(f"choco {'upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} -y {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        elif self.currentPackage.isManager(Pip):
-            idtoInstall = self.currentPackage.Id
-            if self.versionCombo.currentText() not in ("Latest", _("Latest"), "Loading...", _("Loading...")):
-                idtoInstall += "==" + self.versionCombo.currentText()
-            self.CustomCommandLabel.setText(f"pip {'install --upgrade' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {idtoInstall} {parameters}".strip().replace("  ", " ").replace("  ", " "))
-        elif self.currentPackage.isManager(Npm):
-            self.CustomCommandLabel.setText(f"npm {'update' if self.isAnUpdate else  ('uninstall' if self.isAnUninstall else 'install')} {self.currentPackage.Id} {parameters}".strip().replace("  ", " ").replace("  ", " "))
+        CMD_UPDATE_VARIANT = 'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
+        CMD_UPGRADE_VARIANT = 'upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
+        CMD_PIP_VARIANT = 'install --upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
+        
+        baseCommands = {
+            Winget: f"winget {CMD_UPDATE_VARIANT} --id {self.currentPackage.Id} --exact",
+            Scoop: f"scoop {CMD_UPDATE_VARIANT} {self.currentPackage.Id}",
+            Choco: f"choco {CMD_UPGRADE_VARIANT} {self.currentPackage.Id} -y",
+            Npm: f"npm {CMD_UPDATE_VARIANT} {self.currentPackage.Id}",
+            Pip: f"pip {CMD_PIP_VARIANT} {pipId}",
+            Dotnet: f"dotnet tool {CMD_UPDATE_VARIANT}",
+        }
+        
+        if not PackageManager in baseCommands:
+            print(f"🟠 Unknown Package Manager {self.currentPackage.Source}")
         else:
             print(f"🟠 Unknown source {self.currentPackage.Source}")
         self.CustomCommandLabel.setCursorPosition(0)
