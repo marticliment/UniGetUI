@@ -618,7 +618,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
         self.MenuUninstall = QAction(_("Uninstall package"))
         self.MenuUninstall.triggered.connect(lambda: uninstallPackage())
-        self.MenuUninstallThenUpdate = QAction(_("Uninstall, then update"))
+        self.MenuUninstallThenUpdate = QAction(_("Uninstall package, then update it"))
         self.MenuUninstallThenUpdate.triggered.connect(lambda: uninstallThenUpdate())
 
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
@@ -1182,6 +1182,24 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuRemovePermaData.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), removeData=True))
         self.MenuInteractive = QAction(_("Interactive uninstall"))
         self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
+        
+        def reinstall():
+            INSTALL_SECTION: DiscoverSoftwareSection = globals.discover
+            packageItem = self.packageList.currentItem()
+            if packageItem:
+                INSTALL_SECTION.installPackageItem(packageItem)
+                    
+        def uninstallThenReinstall():
+            INSTALL_SECTION: DiscoverSoftwareSection = globals.discover
+            packageItem = self.packageList.currentItem()
+            if packageItem:
+                self.uninstallPackageItem(packageItem, avoidConfirm=True)
+                INSTALL_SECTION.installPackageItem(packageItem)
+
+        self.Reinstall = QAction(_("Reinstall package"))
+        self.Reinstall.triggered.connect(lambda: reinstall())
+        self.UninstallThenReinstall = QAction(_("Uninstall package, then reinstall it"))
+        self.UninstallThenReinstall.triggered.connect(lambda: uninstallThenReinstall())
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
         self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.AddToIgnoredUpdates())
         self.MenuDetails = QAction(_("Package details"))
@@ -1194,6 +1212,8 @@ class UninstallSoftwareSection(SoftwareSection):
         self.contextMenu.addAction(self.MenuRemovePermaData)
         self.contextMenu.addAction(self.MenuInteractive)
         self.contextMenu.addSeparator()
+        self.contextMenu.addAction(self.Reinstall)
+        self.contextMenu.addAction(self.UninstallThenReinstall)
         self.contextMenu.addSeparator()
         self.contextMenu.addAction(self.MenuIgnoreUpdates)
         self.contextMenu.addSeparator()
@@ -1220,6 +1240,8 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuDetails.setIcon(QIcon(getMedia("info")))
         self.MenuShare.setIcon(QIcon(getMedia("share")))
         self.MenuIgnoreUpdates.setIcon(QIcon(getMedia("pin")))
+        self.Reinstall.setIcon(QIcon(getMedia("newversion")))
+        self.UninstallThenReinstall.setIcon(QIcon(getMedia("undelete")))
 
         self.ToolbarInstall.setIcon(QIcon(getMedia("menu_uninstall")))
         self.ToolbarShowInfo.setIcon(QIcon(getMedia("info")))
@@ -1288,10 +1310,15 @@ class UninstallSoftwareSection(SoftwareSection):
             self.MenuIgnoreUpdates.setVisible(True)
             self.MenuShare.setVisible(True)
             self.MenuDetails.setVisible(True)
+            self.Reinstall.setVisible(True)
+            self.UninstallThenReinstall.setVisible(True)
+
         else:
             self.MenuIgnoreUpdates.setVisible(False)
             self.MenuShare.setVisible(False)
             self.MenuDetails.setVisible(False)
+            self.Reinstall.setVisible(False)
+            self.UninstallThenReinstall.setVisible(False)
 
         pos.setY(pos.y() + 35)
 
