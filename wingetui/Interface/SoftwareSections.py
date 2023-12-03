@@ -600,11 +600,26 @@ class UpdateSoftwareSection(SoftwareSection):
         def uninstallPackage():
             UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
             if self.packageList.currentItem():
-                id = self.packageList.currentItem().Package.Id
-            UNINSTALL_SECTION.uninstallPackageItem(UNINSTALL_SECTION.IdPackageReference[id].PackageItem)
+                installedItem = self.packageList.currentItem().getInstalledPackageItem()
+                if installedItem:
+                    UNINSTALL_SECTION.uninstallPackageItem(installedItem)
+                    
+        def uninstallThenUpdate():
+            UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
+            INSTALL_SECTION: DiscoverSoftwareSection = globals.discover
+            packageItem = self.packageList.currentItem()
+            if packageItem:
+                installedItem = self.packageList.currentItem().getInstalledPackageItem()
+                if installedItem:
+                    UNINSTALL_SECTION.uninstallPackageItem(installedItem, avoidConfirm=True)
+                else:
+                    UNINSTALL_SECTION.uninstallPackageItem(packageItem, avoidConfirm=True)
+                INSTALL_SECTION.installPackageItem(packageItem)
 
         self.MenuUninstall = QAction(_("Uninstall package"))
         self.MenuUninstall.triggered.connect(lambda: uninstallPackage())
+        self.MenuUninstallThenUpdate = QAction(_("Uninstall, then update"))
+        self.MenuUninstallThenUpdate.triggered.connect(lambda: uninstallThenUpdate())
 
         self.MenuIgnoreUpdates = QAction(_("Ignore updates for this package"))
         self.MenuIgnoreUpdates.triggered.connect(lambda: self.packageList.currentItem().Package.AddToIgnoredUpdates())
@@ -626,6 +641,8 @@ class UpdateSoftwareSection(SoftwareSection):
         self.contextMenu.addAction(self.MenuAdministrator)
         self.contextMenu.addAction(self.MenuInteractive)
         self.contextMenu.addAction(self.MenuSkipHash)
+        self.contextMenu.addSeparator()
+        self.contextMenu.addAction(self.MenuUninstallThenUpdate)
         self.contextMenu.addAction(self.MenuUninstall)
         self.contextMenu.addSeparator()
         self.contextMenu.addAction(self.MenuIgnoreUpdates)
@@ -653,6 +670,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.MenuSkipVersion.setIcon(QIcon(getMedia("skip")))
         self.MenuIgnoreUpdates.setIcon(QIcon(getMedia("pin")))
         self.MenuUninstall.setIcon(QIcon(getMedia("menu_uninstall")))
+        self.MenuUninstallThenUpdate.setIcon(QIcon(getMedia("undelete")))
 
         self.ToolbarInstall.setIcon(QIcon(getMedia("menu_updates")))
         self.ToolbarShowInfo.setIcon(QIcon(getMedia("info")))
