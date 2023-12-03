@@ -242,9 +242,9 @@ def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
         coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
     clr.AddReference(SHARE_DLL_PATH)
     import WingetUIShareComponent
-    if window.window().winId():
+    if window and window.window().winId():
         print("🔵 Starting hWnd native sharing")
-        WingetUIShareComponent.Form1(window.window().winId())
+        WingetUIShareComponent.Form1(window.window().winId(), text, url.replace("^&", "&"))
     else:
         print("🟡 Starting fallback wrapper window sharing")
         WingetUIShareComponent.Form1(["", text, url, coordinates])

@@ -31,9 +31,22 @@ namespace WingetUIShareComponent
             InitializeComponent();
             StartSharingProcess(Environment.GetCommandLineArgs());
         }
+        public Form1(int hWnd, string Name, string Url)
+        {
+            this.name = Name;
+            this.link = Url;
+            InitializeComponent();
+            StartSharingProcess(hWnd);
+        }
+
+        public void StartSharingProcess(int hWnd)
+        {
+            IntPtr hwndPtr = new IntPtr(hWnd);
+            showShareInterface(hwndPtr);
+        }
 
         public void StartSharingProcess(string[] args)
-        { 
+        {
             Console.WriteLine(args);
 
             // args[0]: executable file (default argument)
@@ -86,6 +99,11 @@ namespace WingetUIShareComponent
             Activate();
 
             IntPtr hwnd = this.Handle;
+            showShareInterface(hwnd);
+        }
+
+        public void showShareInterface(IntPtr hwnd)
+        {
             var dtm = DataTransferManagerHelper.GetForWindow(hwnd);
             dtm.DataRequested += OnDataRequested;
             DataTransferManagerHelper.ShowShareUIForWindow(hwnd);
