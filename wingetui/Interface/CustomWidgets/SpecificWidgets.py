@@ -1585,10 +1585,12 @@ class PackageExporter(MovableFramelessWindow):
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
         
-    def generateExportJson(self, packageList: list[Package]) -> dict:
+    def generateExportJson(self, packageList: list[Package], incompatiblePackageList: list[Package] = []) -> dict:
         finalJson = {
             "export_version": 2.0,
-            "packages": []
+            "packages": [],
+            "incompatible_packages_info": "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.",
+            "incompatible_packages": []
         }
         
         for package in packageList:
@@ -1606,16 +1608,29 @@ class PackageExporter(MovableFramelessWindow):
                 }
             }
             finalJson["packages"].append(jsonPkg)
+            
+        for package in incompatiblePackageList:
+            jsonPkg = {
+                "Id": package.Id,
+                "Name": package.Name,
+                "Version": package.Version,
+                "Source": package.Source,
+            }
+            finalJson["incompatible_packages"].append(jsonPkg)
+        
         return finalJson
 
     def exportPackages(self) -> None:
         packagesToExport: list[Package] = []
+        incompatiblePackagesToExport: list[Package] = []
         for i in range(self.treewidget.topLevelItemCount()):
             item = self.treewidget.topLevelItem(i)
             if not item.isDisabled():
                 packagesToExport.append(self.ItemPackageReference[item])
-            
-        fileContents = self.generateExportJson(packagesToExport)
+            else:
+                incompatiblePackagesToExport.append(self.ItemPackageReference[item])
+                
+        fileContents = self.generateExportJson(packagesToExport, incompatiblePackagesToExport)
         
         filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json);; YAML (*.yaml)')
         if filename[0] != "":
