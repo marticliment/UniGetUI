@@ -1788,13 +1788,14 @@ class PackageImporter(MovableFramelessWindow):
                     if "export_version" in contents.keys() and contents["export_version"] == 2.0:
                         print("🔵 Importing packages using package list version 2.0")
                         self.__package_data = {}
+                        self.__importing_mechanism_is_v2 = True
+                        
                         def getManager(managerName):
                             for manager in PackageManagersList:
                                 if managerName == manager.NAME:
                                     return manager
                             return None
-
-                        self.__importing_mechanism_is_v2 = True
+                        
                         for package in contents["packages"]:
                             self.__package_data[package["Id"]] = package
                             packagesToInstall.append(Package(package["Name"], package["Id"], package["Version"], package["Source"], getManager(package["ManagerName"])))
@@ -1845,7 +1846,7 @@ class PackageImporter(MovableFramelessWindow):
         item.setText(0, package.Name)
         item.setText(1, package.Id)
         if self.__importing_mechanism_is_v2:
-            hasUpdatesIgnored = self.__package_data[package.Id]["Updates"]["UpdatesIgnored"] and self.__package_data[package.Id]["Updates"]["IgnoredVersion"] == "*" 
+            hasUpdatesIgnored = self.__package_data[package.Id]["Updates"]["UpdatesIgnored"] 
         else:
             hasUpdatesIgnored = False
         item.setText(2, _("Latest") if not hasUpdatesIgnored else package.Version)
@@ -1882,13 +1883,8 @@ class PackageImporter(MovableFramelessWindow):
                     installationOptions.LoadFromJson(packageData["InstallationOptions"])
                     installationOptions.SaveOptionsToDisk()
                     if packageData["Updates"]["UpdatesIgnored"]:
-                        if packageData["Updates"]["IgnoredVersion"] == "*":
-                            package.AddToIgnoredUpdates()
-                            installationOptions.Version = packageData["Version"]
-                            # If a specific version is installed and all new versions are ignored,
-                            # install that specific version and ignore future updates.
-                        else:
-                            package.AddToIgnoredUpdates(packageData["Updates"]["IgnoredVersion"])
+                        package.AddToIgnoredUpdates(packageData["Updates"]["IgnoredVersion"])
+                        installationOptions.Version = packageData["Version"] # A skipped version could be the latest version available, therefore it is safre to force install the installed version and then updating.
                     package.PackageItem = PackageItem(package)
                     DISCOVER_SECTION.installPackage(package, installationOptions)
                 else:
