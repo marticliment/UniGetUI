@@ -1,6 +1,6 @@
 # <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/resources/icon.png" height="40">WingetUI
 
-[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/2.0.3/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
+[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/2.1.1/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
