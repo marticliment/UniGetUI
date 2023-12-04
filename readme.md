@@ -67,19 +67,17 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 
 ## Features
 
- - WingetUI has the ability to install, update and uninstall packages from Winget (including Microsoft Store), Scoop, Chocolatey, pip, npm and .NET Tool. WingetUI will also detect if your manually-installed apps can be updated!
- - It can also upgrade and uninstall previously installed packages — as well as uninstall built-in Windows apps!
- - WingetUI has the ability to both import and export the packages of your choice, so that you can easily install them in the future.
- - WingetUI supports managing Scoop buckets with an interface.
- - Install an older version of an app.
- - WingetUI shows a notification when there are available updates
- - Manage your updates and installed packages from its context menu
- - The user will be notified whether the installation/update/uninstallation of an app was completed successfully or not.
- - The ability to queue installations in order to prevent conflicts.
- - A dark theme is available to prevent you from burning your eyes. :sunglasses:
- - WingetUI has the ability to show package-related information (like its license, SHA256 hash, homepage, etc.) before installation.
- - There are more than 14000 packages available (if Winget, Scoop and Chocolatey are enabled)!
- - More features coming in the future!
+ - Install, update and remove software from your system easily at one click: WingetUI combines the packages from the most used package managers for windows: Winget, Chocolatey, Scoop, Pip, Npm and .NET Tool.
+ - Discover new packages and filter them to easily find the package you want.
+ - View detailed metadata about any package before installing it. Get the direct download URL or the name of the publisher, as well as the size of the download.
+ - Easily bulk-install, update or uninstall multiple packages at once selecting multiple packages before performing an operation
+ - Automatically update packages, or be notified when updates become available. Skip versions or completely ignore updates in a per-package basis.
+ - Manage your available updates at the touch of a button from the **Widgets pane** or from **Dev Home** pane with [WingetUI Widgets](https://apps.microsoft.com/detail/9NB9M5KZ8SLX)*.
+ - The system tray icon will also show the available updates and installed package, to efficiently update a program or remove a package from your system.
+ - Easily customize how and where packages are installed. Select different installation options and switches for each package. Install an older version or force to install a 32bit architecture. \[But don't worry, those options will be saved for future updates for this package*]
+ - Share packages with your friends to show them off that program you found. Here is an example: [Hey \@friend, Check out this program!](https://marticliment.com/wingetui/share/?pname=Google%20Chrome&pid=Google.Chrome&psource=Winget:%20winget)
+ - Export custom lists of packages to then import them to another machine and install those packages with previously-specified, custom installation parameters. Setting up machines or configuring a specific software setup has never been easier.
+ - Backup your packages to a local file to easily recover your setup in a matter of seconds when migrating to a new machine*
 
 # Translating WingetUI to other languages
 In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/marticliment/WingetUI/wiki#translating-wingetui) for more info.
