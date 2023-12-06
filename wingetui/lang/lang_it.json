@@ -37,7 +37,7 @@
   "Ask only once for administrator privileges (not recommended)" : "Richiedi una sola volta i privilegi di amministratore (non consigliato)",
   "Attention required" : "Occorre prestare attenzione",
   "Author" : "Autore",
-  "Automatically save a list of your installed packages on your computer." : "Salva automaticamente un elenco dei pacchetti installati sul computer.",
+  "Automatically save a list of your installed packages on your computer." : "Salva automaticamente l'elenco dei pacchetti installati sul computer.",
   "Autostart WingetUI in the notifications area" : "Avvia automaticamente WingetUI nell'area delle notifiche",
   "Available updates: {0}" : "Aggiornamenti disponibili: {0}",
   "Available updates: {0}, not finished yet..." : "Aggiornamenti disponibili: {0}, ma non ho ancora terminato il controllo...",
