@@ -27,7 +27,7 @@ untranslatedPercentage = {
   "th": "96%",
   "tr": "87%",
   "ua": "86%",
-  "vi": "90%",
+  "vi": "99%",
   "zh_CN": "96%",
   "zh_TW": "96%"
 }
@@ -418,6 +418,10 @@ languageCredits = {
     }
   ],
   "vi": [
+    {
+      "name": "legendsjoon",
+      "link": "https://github.com/legendsjoon"
+    },
     {
       "name": "txavlog",
       "link": "https://github.com/txavlog"
