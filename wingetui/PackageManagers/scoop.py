@@ -43,6 +43,18 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
+        
+        self.KnownSources = {
+            ManagerSource(self, "main", ""),
+            ManagerSource(self, "extras", ""),
+            ManagerSource(self, "versions", ""),
+            ManagerSource(self, "nirsoft", ""),
+            ManagerSource(self, "php", ""),
+            ManagerSource(self, "nerd-fonts", ""),
+            ManagerSource(self, "java", ""),
+            ManagerSource(self, "nonportable", ""),
+            ManagerSource(self, "games", ""),
+        }
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

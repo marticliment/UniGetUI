@@ -507,10 +507,12 @@ class PackageManagerModule():
 class PackageManagerWithSources(PackageManagerModule):
     
     Sources: list[ManagerSource]
+    KnownSources: list[ManagerSource]
     
     def __init__(self):
         super().__init__()
         self.Sources = []
+        self.KnownSources = []
     
     def getSources(self) -> list[ManagerSource]:
         pass

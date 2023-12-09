@@ -1146,6 +1146,7 @@ class SourceManagerWidget(QWidget):
     changeBarOrientation = Signal()
     Sources = []
     Manager: PackageManagerWithSources = None
+    IsLoading = False
 
     def __init__(self, manager: PackageManagerWithSources):
         super().__init__()
@@ -1181,8 +1182,8 @@ class SourceManagerWidget(QWidget):
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
         self.TreeWidget = TreeWidget(EnableTopButton = False)
-        self.TreeWidget.setColumnCount(4)
-        self.TreeWidget.setHeaderLabels([_("Name"), _("Update date"), _("Manifests"), _("Url"), _("Remove")])
+        self.TreeWidget.setColumnCount(3)
+        self.TreeWidget.setHeaderLabels([_("Name"), _("Update date"), _("Manifests"), _("Url")])
         self.TreeWidget.sortByColumn(0, Qt.SortOrder.AscendingOrder)
         self.TreeWidget.setSortingEnabled(True)
         self.TreeWidget.setVerticalScrollMode(QTreeWidget.ScrollMode.ScrollPerPixel)
@@ -1195,6 +1196,7 @@ class SourceManagerWidget(QWidget):
         self.TreeWidget.setColumnWidth(1, 80)
         self.TreeWidget.setColumnWidth(2, 120)
         self.TreeWidget.setColumnWidth(4, 24)
+        self.TreeWidget.setFixedHeight(300)
         
         layout.addLayout(hLayout)
         layout.addWidget(self.loadingProgressBar)
@@ -1241,7 +1243,7 @@ class SourceManagerWidget(QWidget):
         else:
             self.TreeWidget.setStyleSheet("QTreeWidget{border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 50%); border-radius: 8px; padding: 8px; margin-right: 15px;}")
         self.reloadButton.setIcon(QIcon(getMedia("reload")))
-        self.bucketIcon = QIcon(getMedia("bucket"))
+        self.bucketIcon = QIcon(getMedia("list"))
         self.reloadButton.click()
 
     def showEvent(self, event: QShowEvent) -> None:
@@ -1252,6 +1254,8 @@ class SourceManagerWidget(QWidget):
         return super().showEvent(event)
 
     def LoadSources(self):
+        if self.IsLoading:
+            return
         self.Sources = []
         self.TreeWidget.clear()
         self.loadingProgressBar.show()
@@ -1260,6 +1264,7 @@ class SourceManagerWidget(QWidget):
         Thread(target=self.WaitForSources, name=f"Loading {self.Manager.NAME} sources").start()        
         
     def WaitForSources(self):
+        self.IsLoading = True
         if not self.Manager.isEnabled():
             self.callInMain.emit(lambda: self.loadingProgressBar.hide())
             self.callInMain.emit(self.TreeWidget.label.setText(_(f"{self.Manager.NAME} is not enabled")))
@@ -1270,7 +1275,8 @@ class SourceManagerWidget(QWidget):
                     
         if len(self.Sources) == 0:
             self.callInMain.emit(lambda: self.TreeWidget.label.setText(_("No sources were found")))
-            
+        
+        self.IsLoading = False
         self.callInMain.emit(lambda: self.loadingProgressBar.hide())
 
     def AddSource(self, source: ManagerSource):
@@ -1286,17 +1292,42 @@ class SourceManagerWidget(QWidget):
         item.setText(2, str(source.PackageCount))
         item.setToolTip(2, str(source.PackageCount))
         self.TreeWidget.addTopLevelItem(item)
+        
+        layout = QHBoxLayout()
+        layout.addStretch()
+        layout.setContentsMargins(8, 1, 8, 1)
         btn = QPushButton()
+        layout.addWidget(btn)
         btn.clicked.connect(lambda: (self.UninstallSource(source), self.TreeWidget.takeTopLevelItem(self.TreeWidget.indexOfTopLevelItem(item))))
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
-        self.TreeWidget.setItemWidget(item, 4, btn)
+        
+        w = QWidget()
+        w.setLayout(layout)
+        
+        self.TreeWidget.setItemWidget(item, 3, w)
         
         if self.Manager == Scoop:
             globals.scoopBuckets[source.Name] = source
 
     def InstallSource(self) -> None:
-        #globals.installersWidget.addItem(CustomUninstallerWidget(f"{source} Winget source", [Winget.EXECUTABLE, "source", "remove", source], Winget, runAsAdministrator=True))
+        sourceReference = {source.Name: source for source in self.Manager.KnownSources}
+        r = QInputDialog.getItem(self, _("Add a source to {0}").format(self.Manager.NAME), _("Which source do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another source")), list(sourceReference.keys()) + [_("Another source")], 1, editable=False)
+        if r[1]:
+            if r[0] == _("Another source"):
+                r2 = QInputDialog.getText(self, _("Add a source to {0}").format(self.Manager.NAME), _("Type here the name and the URL of the source you want to add, separed by a space."), text="sourcename https://somewhere.net/your-custom/source-endpoint")
+                if r2[1]:
+                    name = r2[0].split(" ")[0]
+                    url = r2[0].split(" ")[1]
+                    source = ManagerSource(self.Manager, name, url)
+                    p = SourceInstallerWidget(source)
+                    globals.installersWidget.addItem(p)
+                    p.finishInstallation.connect(self.LoadSources)
+            else:
+                source = sourceReference[r[0]]
+                p = SourceInstallerWidget(source)
+                globals.installersWidget.addItem(p)
+                p.finishInstallation.connect(self.LoadSources)
         pass
 
     def UninstallSource(self, source: ManagerSource) -> None:
