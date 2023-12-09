@@ -45,15 +45,17 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.Sources.KnowsUpdateDate = True
         
         self.KnownSources = {
-            ManagerSource(self, "main", ""),
-            ManagerSource(self, "extras", ""),
-            ManagerSource(self, "versions", ""),
-            ManagerSource(self, "nirsoft", ""),
-            ManagerSource(self, "php", ""),
-            ManagerSource(self, "nerd-fonts", ""),
-            ManagerSource(self, "java", ""),
-            ManagerSource(self, "nonportable", ""),
-            ManagerSource(self, "games", ""),
+            # This list should reflect the one published on https://github.com/ScoopInstaller/Scoop/blob/master/buckets.json
+            ManagerSource(self, "main", "https://github.com/ScoopInstaller/Main"),
+            ManagerSource(self, "extras", "https://github.com/ScoopInstaller/Extras"),
+            ManagerSource(self, "versions", "https://github.com/ScoopInstaller/Versions"),
+            ManagerSource(self, "nirsoft", "https://github.com/kodybrown/scoop-nirsoft"),
+            ManagerSource(self, "sysinternals", "https://github.com/niheaven/scoop-sysinternals"),
+            ManagerSource(self, "php", "https://github.com/ScoopInstaller/PHP"),
+            ManagerSource(self, "nerd-fonts", "https://github.com/matthewjberger/scoop-nerd-fonts"),
+            ManagerSource(self, "nonportable", "https://github.com/ScoopInstaller/Nonportable"),
+            ManagerSource(self, "java", "https://github.com/ScoopInstaller/Java"),
+            ManagerSource(self, "games", "https://github.com/Calinou/scoop-games"),
         }
 
     def isEnabled(self) -> bool:
