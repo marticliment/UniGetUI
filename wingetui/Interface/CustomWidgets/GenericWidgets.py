@@ -93,11 +93,15 @@ class SmoothScrollArea(QScrollArea):
 
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
+        maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        self.doSmoothScroll(currentPos, finalPos)
-        e.angleDelta().setX(0)
-        e.angleDelta().setY(0)
-        e.accept()
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+            e.ignore()
+        else:
+            e.angleDelta().setX(0)
+            e.angleDelta().setY(0)
+            e.accept()
+            self.doSmoothScroll(currentPos, finalPos)
 
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
@@ -265,11 +269,15 @@ class TreeWidget(QTreeWidget):
 
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
+        maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        e.angleDelta().setX(0)
-        e.angleDelta().setX(0)
-        e.accept()
-        self.doSmoothScroll(currentPos, finalPos)
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+            e.ignore()
+        else:
+            e.angleDelta().setX(0)
+            e.angleDelta().setY(0)
+            e.accept()
+            self.doSmoothScroll(currentPos, finalPos)
 
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
