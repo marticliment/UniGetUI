@@ -41,17 +41,19 @@ class ChocoPackageManager(PackageManagerModule):
 
     NAME = "Chocolatey"
 
-    BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
-    BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
-    BLACKLISTED_PACKAGE_VERSIONS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
-
     def __init__(self):
+        super().__init__()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsPreRelease = True
+        
+        self.BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
+        self.BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
+        self.BLACKLISTED_PACKAGE_VERSIONS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
+
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

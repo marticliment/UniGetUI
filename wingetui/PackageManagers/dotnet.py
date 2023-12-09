@@ -29,6 +29,7 @@ class DotNetToolPackageManager(PackageManagerModule):
     NAME = ".NET Tool"
 
     def __init__(self):
+        super().__init__()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomArchitectures = True

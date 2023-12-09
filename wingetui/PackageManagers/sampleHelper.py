@@ -28,11 +28,8 @@ class SamplePackageManager(PackageManagerModule):
     EXECUTABLE = "pacman.exe"
     NAME = "PackageManager"
 
-    BLACKLISTED_PACKAGE_NAMES = []
-    BLACKLISTED_PACKAGE_IDS = []
-    BLACKLISTED_PACKAGE_VERSIONS = []
-
     def __init__(self):
+        super().__init__()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True

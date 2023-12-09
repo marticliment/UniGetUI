@@ -34,12 +34,12 @@ class ScoopPackageManager(PackageManagerWithSources):
     NAME = "Scoop"
 
     def __init__(self):
+        super().__init__()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRemoveDataOnUninstall = True
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsCustomScopes = True
-        
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
@@ -382,10 +382,11 @@ class ScoopPackageManager(PackageManagerWithSources):
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
 
-    def loadBuckets(self, packageSignal: Signal, finishSignal: Signal) -> None:
-        print("🟢 Starting scoop search...")
+    def getSources(self) -> None:
+        print(f"🔵 Starting {self.NAME} source search...")
         p = subprocess.Popen(f"{self.EXECUTABLE} bucket list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
+        sources: list[ManagerSource] = []
         counter = 0
         while p.poll() is None:
             line = p.stdout.readline()
@@ -401,14 +402,21 @@ class ScoopPackageManager(PackageManagerWithSources):
                 while "  " in element.strip():
                     element = element.strip().replace("  ", " ")
                 element: list[str] = element.split(" ")
-                packageSignal.emit(element[0].strip(), element[1].strip(), element[2].strip() + " " + element[3].strip(), element[4].strip())
+                sources.append(ManagerSource(self, element[0].strip(), element[1].strip(), element[2].strip() + " " + element[3].strip(), element[4].strip()))
             except IndexError as e:
                 try:
-                    packageSignal.emit(element[0].strip(), element[1].strip(), "Unknown", "Unknown")
+                    sources.append(ManagerSource(element[0].strip(), element[1].strip(), "Unknown", "Unknown"))
                 except IndexError as f:
                     print(e, f)
                 print("IndexError: " + str(e))
 
+        print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
+        return sources
+
+
+    def loadBuckets(self, packageSignal: Signal, finishSignal: Signal) -> None:
+        print("🟢 Starting scoop search...")
+        
         print("🟢 Scoop bucket search finished")
         finishSignal.emit()
 

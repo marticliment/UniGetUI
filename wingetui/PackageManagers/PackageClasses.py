@@ -399,7 +399,10 @@ class PackageManagerCapabilities():
     SupportsPreRelease: bool = False
     SupportsCustomLocations: bool = False
     SupportsCustomSources: bool = False
-    Sources: ManagerSource.Capabilities = ManagerSource.Capabilities()
+    Sources: ManagerSource.Capabilities
+    
+    def __init__(self):
+        self.Sources = ManagerSource.Capabilities()
 
 
 class InstallationWidgetType(QWidget):
@@ -413,18 +416,25 @@ class InstallationWidgetType(QWidget):
 
 class PackageManagerModule():
     NAME: str
-    Capabilities: PackageManagerCapabilities = PackageManagerCapabilities()
-    LoadedIcons: bool = False
-    Icon: QIcon = None
-    icon = Icon
+    EXECUTABLE: str
     
-    BLACKLISTED_PACKAGE_NAMES: list[str] = []
-    BLACKLISTED_PACKAGE_IDS: list[str] = []
-    BLACKLISTED_PACKAGE_VERSIONS: list[str] = []
-
-
+    Capabilities: PackageManagerCapabilities
+    LoadedIcons: bool
+    Icon: QIcon
+    icon: QIcon
+    
+    BLACKLISTED_PACKAGE_NAMES: list[str]
+    BLACKLISTED_PACKAGE_IDS: list[str]
+    BLACKLISTED_PACKAGE_VERSIONS: list[str]
+    
     def __init__(self):
-        pass
+        self.Capabilities = PackageManagerCapabilities()
+        self.BLACKLISTED_PACKAGE_NAMES: list[str] = []
+        self.BLACKLISTED_PACKAGE_IDS: list[str] = []
+        self.BLACKLISTED_PACKAGE_VERSIONS: list[str] = []
+        self.LoadedIcons = None
+        self.Icon = None
+        self.icon = None
 
     def isEnabled() -> bool:
         pass
@@ -496,7 +506,16 @@ class PackageManagerModule():
 
 class PackageManagerWithSources(PackageManagerModule):
     
-    pass
+    Sources: list[ManagerSource]
+    
+    def __init__(self):
+        super().__init__()
+        self.Sources = []
+    
+    def getSources(self) -> list[ManagerSource]:
+        pass
+    
+    
 
 
 RETURNCODE_OPERATION_SUCCEEDED = 0

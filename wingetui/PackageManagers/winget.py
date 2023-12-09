@@ -45,8 +45,6 @@ class WingetPackageManager(PackageManagerWithSources):
 
     NAME = "Winget"
 
-    BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
-    BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
 
     wingetIcon = None
     localIcon = None
@@ -56,16 +54,20 @@ class WingetPackageManager(PackageManagerWithSources):
     msStoreIcon = None
     wsaIcon = None
     
-    def __init__(self): 
+    def __init__(self):
+        super().__init__()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomArchitectures = True
-        
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsCustomLocations = True
         self.Capabilities.SupportsCustomSources = True
+        self.Capabilities.Sources.KnowsPackageCount = False
+        self.Capabilities.Sources.KnowsUpdateDate = False
+        self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
+        self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -731,11 +733,12 @@ class WingetPackageManager(PackageManagerWithSources):
         globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
 
-    def loadSources(self, sourceSignal: Signal, finishSignal: Signal) -> None:
-        print("🟢 Starting winget source search...")
+    def getSources(self) -> None:
+        print(f"🔵 Starting {self.NAME} source search...")
         p = subprocess.Popen([self.EXECUTABLE, "source", "list"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
         dashesPassed = False
+        sources: list[ManagerSource] = []
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
@@ -750,11 +753,11 @@ class WingetPackageManager(PackageManagerWithSources):
                 while "  " in element.strip():
                     element = element.strip().replace("  ", " ")
                 element: list[str] = element.split(" ")
-                sourceSignal.emit(element[0].strip(), element[1].strip())
+                sources.append(ManagerSource(self, element[0].strip(), element[1].strip()))
             except Exception as e:
                 report(e)
-        print("🟢 winget source search finished")
-        finishSignal.emit()
+        print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
+        return sources
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run([self.EXECUTABLE, "-v"], shell=True, stdout=subprocess.PIPE)
