@@ -758,6 +758,35 @@ class WingetPackageManager(PackageManagerWithSources):
                 report(e)
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
+    
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "add", "--name", source.Name, "--arg", source.Url, "--accept-source-agreements", "--disable-interactivity"]
+        print(f"🔵 Starting source {source.Name} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+    
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "remove", "--name", source.Name, "--disable-interactivity"]
+        print(f"🔵 Starting source {source.Name} removal with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+        output = ""
+        counter = 0
+        while p.poll() is None:
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+            if line:
+                widget.addInfoLine.emit((line, is_newline))
+                counter += 1
+                widget.counterSignal.emit(counter)
+                if is_newline:
+                    output += line + "\n"
+        p.wait()
+        widget.finishInstallation.emit(p.returncode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run([self.EXECUTABLE, "-v"], shell=True, stdout=subprocess.PIPE)

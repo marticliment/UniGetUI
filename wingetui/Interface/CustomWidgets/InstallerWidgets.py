@@ -180,7 +180,6 @@ class PackageInstallerWidget(QWidget):
                     append += _("(Number {0} in the queue)").format(last_position_count)
                 except ValueError:
                     print(f"🔴 Package {self.Package.Id} not in globals.pending_programs")
-                print(type(self))
                 self.addInfoLine.emit((_("Waiting for other installations to finish...") + append, False))
                 
         print("🟢 Have permission to install, starting installation threads...")
@@ -683,15 +682,9 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         super().close()
         super().destroy()
 
+""" for future use
 
 class CustomInstallerWidget(PackageInstallerWidget):
-    onCancel = Signal()
-    killSubprocess = Signal()
-    addInfoLine = Signal(tuple)
-    finishInstallation = Signal(int, str)
-    counterSignal = Signal(int)
-    callInMain = Signal(object)
-    changeBarOrientation = Signal()
 
     def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
@@ -729,13 +722,6 @@ class CustomInstallerWidget(PackageInstallerWidget):
 
 
 class CustomUninstallerWidget(PackageUninstallerWidget):
-    onCancel = Signal()
-    killSubprocess = Signal()
-    addInfoLine = Signal(tuple[str, bool])
-    finishInstallation = Signal(int, str)
-    counterSignal = Signal(int)
-    callInMain = Signal(object)
-    changeBarOrientation = Signal()
 
     def __init__(self, name: str, command: list, packageManager: PackageManagerModule, runAsAdministrator: bool = False):
         self.Package = Package(name, name, "N/A", packageManager.NAME, packageManager)
@@ -772,8 +758,57 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
                 self.addInfoLine.emit((line, True))
         self.finishInstallation.emit(p.returncode, output)
 
+"""
 
-class SourceManagerWidget(QWidget):
+class SourceInstallerWidget(PackageInstallerWidget):
+    Source: ManagerSource = None
+
+    def __init__(self, source: ManagerSource):
+        self.Source = source
+        self.Package = Package(self.Source.Name, self.Source.Name, "", self.Source.Manager.NAME, self.Source.Manager)
+        self.Package.PackageItem = PackageItem(self.Package)
+        self.Options = InstallationOptions(self.Package, reset = True)
+        super().__init__(self.Package, self.Options)
+
+    def runInstallation(self) -> None:
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.BeingProcessed)
+        globals.tray_is_installing = True
+        self.callInMain.emit(update_tray_icon)
+        self.finishedInstallation = False
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
+        self.addInfoLine.emit((_("Running the installer..."), True))
+        self.leftSlow.start()
+        self.setProgressbarColor(blueColor)
+        self.p = self.Source.Manager.installSource(self.Source, self.Options, self)
+        AddOperationToLog("installation", self.Package, '"' + ' '.join(self.p.args) + '"')
+
+
+class SourceUninstallerWidget(PackageUninstallerWidget):
+    Source: ManagerSource = None
+
+    def __init__(self, source: ManagerSource):
+        self.Source = source
+        self.Package = Package(self.Source.Name, self.Source.Name, "", self.Source.Manager.NAME, self.Source.Manager)
+        self.Package.PackageItem = PackageItem(self.Package)
+        self.Options = InstallationOptions(self.Package, reset = True)
+        super().__init__(self.Package, self.Options)
+
+    def runInstallation(self) -> None:
+        if self.Package.PackageItem:
+            self.Package.PackageItem.setTag(PackageItem.Tag.BeingProcessed)
+        globals.tray_is_installing = True
+        self.callInMain.emit(update_tray_icon)
+        self.finishedInstallation = False
+        self.callInMain.emit(lambda: self.liveOutputWindow.setPlainText(""))
+        self.leftSlow.start()
+        self.addInfoLine.emit((_("Running the uninstaller..."), True))
+        self.setProgressbarColor(blueColor)
+        self.p = self.Source.Manager.uninstallSource(self.Source, self.Options, self)
+        AddOperationToLog("installation", self.Package, '"' + ' '.join(self.p.args) + '"')
+
+
+class ScoopManagerWidget(QWidget):
     addBucketsignal = Signal(str, str, str, str)
     finishLoading = Signal()
     setLoadBarValue = Signal(str)
@@ -917,7 +952,6 @@ class SourceManagerWidget(QWidget):
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
         self.bucketList.setItemWidget(item, 4, btn)
-        globals.scoopBuckets[name] = source
 
     def scoopAddBucket(self) -> None:
         r = QInputDialog.getItem(self, _("Scoop bucket manager"), _("Which bucket do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another bucket")), ["main", "extras", "versions", "nirsoft", "php", "nerd-fonts", "nonportable", "java", "games", _("Another bucket")], 1, editable=False)
@@ -927,16 +961,16 @@ class SourceManagerWidget(QWidget):
                 r2 = QInputDialog.getText(self, _("Scoop bucket manager"), _("Type here the name and the URL of the bucket you want to add, separated by a space."), text="extras https://github.com/ScoopInstaller/Extras")
                 if r2[1]:
                     bName = r2[0].split(" ")[0]
-                    p = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r2[0]}", Scoop)
-                    globals.installersWidget.addItem(p)
-                    p.finishInstallation.connect(self.loadBuckets)
+                    #p = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r2[0]}", Scoop)
+                    #globals.installersWidget.addItem(p)
+                    #p.finishInstallation.connect(self.loadBuckets)
             else:
-                p = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r[0]}", Scoop)
-                globals.installersWidget.addItem(p)
-                p.finishInstallation.connect(self.loadBuckets)
+                pass# = CustomInstallerWidget(f"{bName} Scoop bucket", f"scoop bucket add {r[0]}", Scoop)
+                #globals.installersWidget.addItem(p)
+                #p.finishInstallation.connect(self.loadBuckets)
 
     def scoopRemoveBucket(self, bucket: str) -> None:
-        globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
+        pass#globals.installersWidget.addItem(CustomUninstallerWidget(f"{bucket} Scoop bucket", f"scoop bucket rm {bucket}", Scoop))
 
 
 class WingetBucketManager(QWidget):
@@ -1092,16 +1126,19 @@ class WingetBucketManager(QWidget):
             if sourcename == _("Another source"):
                 r2 = QInputDialog.getText(self, _("Winget source manager"), _("Type here the name and the URL of the source you want to add, separated by a space."), text="msstore https://storeedgefd.dsx.mp.microsoft.com/v9.0")
                 if r2[1]:
-                    p = CustomInstallerWidget(f"{sourcename} Winget source", [Winget.EXECUTABLE, "source", "add", r2[0].split(" ")[0], r2[0].split(" ")[1]], Winget, runAsAdministrator=True)
-                    globals.installersWidget.addItem(p)
-                    p.finishInstallation.connect(self.loadSources)
+                    pass
+                    #p = CustomInstallerWidget(f"{sourcename} Winget source", [Winget.EXECUTABLE, "source", "add", r2[0].split(" ")[0], r2[0].split(" ")[1]], Winget, runAsAdministrator=True)
+                    #globals.installersWidget.addItem(p)
+                    #p.finishInstallation.connect(self.loadSources)
             else:
-                p = CustomInstallerWidget(f"{sourcename} Winget source", [Winget.EXECUTABLE, "source", "add", sourcename, sources[sourcename]], Winget, runAsAdministrator=True)
-                globals.installersWidget.addItem(p)
-                p.finishInstallation.connect(self.loadSources)
+                pass
+                #p = CustomInstallerWidget(f"{sourcename} Winget source", [Winget.EXECUTABLE, "source", "add", sourcename, sources[sourcename]], Winget, runAsAdministrator=True)
+                #globals.installersWidget.addItem(p)
+                #p.finishInstallation.connect(self.loadSources)
 
     def wingetRemoveExtraSource(self, source: str) -> None:
-        globals.installersWidget.addItem(CustomUninstallerWidget(f"{source} Winget source", [Winget.EXECUTABLE, "source", "remove", source], Winget, runAsAdministrator=True))
+        pass#globals.installersWidget.addItem(CustomUninstallerWidget(f"{source} Winget source", [Winget.EXECUTABLE, "source", "remove", source], Winget, runAsAdministrator=True))
+
 
 class SourceManagerWidget(QWidget):
     setLoadBarValue = Signal(str)
@@ -1154,9 +1191,9 @@ class SourceManagerWidget(QWidget):
         self.TreeWidget.setColumnHidden(1, not self.Manager.Capabilities.Sources.KnowsUpdateDate)
         self.TreeWidget.setColumnHidden(2, not self.Manager.Capabilities.Sources.KnowsPackageCount)
         self.TreeWidget.setColumnWidth(0, 120)
-        self.TreeWidget.setColumnWidth(1, 280)
+        self.TreeWidget.setColumnWidth(3, 280)
+        self.TreeWidget.setColumnWidth(1, 80)
         self.TreeWidget.setColumnWidth(2, 120)
-        self.TreeWidget.setColumnWidth(3, 80)
         self.TreeWidget.setColumnWidth(4, 24)
         
         layout.addLayout(hLayout)
@@ -1250,7 +1287,7 @@ class SourceManagerWidget(QWidget):
         item.setToolTip(2, str(source.PackageCount))
         self.TreeWidget.addTopLevelItem(item)
         btn = QPushButton()
-        btn.clicked.connect(lambda: (self.UninstallSource(source.Name), self.TreeWidget.takeTopLevelItem(self.TreeWidget.indexOfTopLevelItem(item))))
+        btn.clicked.connect(lambda: (self.UninstallSource(source), self.TreeWidget.takeTopLevelItem(self.TreeWidget.indexOfTopLevelItem(item))))
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
         self.TreeWidget.setItemWidget(item, 4, btn)
@@ -1259,7 +1296,8 @@ class SourceManagerWidget(QWidget):
             globals.scoopBuckets[source.Name] = source
 
     def InstallSource(self) -> None:
+        #globals.installersWidget.addItem(CustomUninstallerWidget(f"{source} Winget source", [Winget.EXECUTABLE, "source", "remove", source], Winget, runAsAdministrator=True))
         pass
-    
-    def UninstallSource(self, bucket: str) -> None:
-        pass
+
+    def UninstallSource(self, source: ManagerSource) -> None:
+        globals.installersWidget.addItem(SourceUninstallerWidget(source))

@@ -515,6 +515,11 @@ class PackageManagerWithSources(PackageManagerModule):
     def getSources(self) -> list[ManagerSource]:
         pass
     
+    def installSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        pass
+    
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        pass
     
 
 
