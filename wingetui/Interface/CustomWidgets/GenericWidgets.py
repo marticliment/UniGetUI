@@ -249,8 +249,10 @@ class TreeWidget(QTreeWidget):
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
         finalPos = currentPos - e.angleDelta().y()
+        e.angleDelta().setX(0)
+        e.angleDelta().setX(0)
+        e.accept()
         self.doSmoothScroll(currentPos, finalPos)
-        e.ignore()
 
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
