@@ -24,7 +24,7 @@ from .PackageClasses import *
 from .sampleHelper import *
 
 
-class WingetPackageManager(DynamicPackageManager):
+class WingetPackageManager(PackageManagerWithSources):
 
     IS_ARM = False
     try:

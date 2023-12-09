@@ -402,13 +402,6 @@ class PackageManagerModule():
     def isEnabled() -> bool:
         pass
 
-    def getAvailablePackages(self) -> list[Package]:
-        """
-        Will retieve the cached packages for the package manager  in the format of a list[Package] object.
-        If the cache is empty, will forcefully cache the packages and return a valid list[Package] object.
-        Finally, it will start a background cacher thread.
-        """
-
     def getAvailableUpdates(self) -> list[UpgradablePackage]:
         """
         Will retieve the upgradable packages by the package manager in the format of a list[UpgradablePackage] object.

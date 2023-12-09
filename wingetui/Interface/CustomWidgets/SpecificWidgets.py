@@ -54,13 +54,7 @@ PackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Dotnet: False
 }
 
-StaticPackageManagersList: list[PackageManagerModule] = [
-]
-
-StaticPackagesLoadedDict: dict[PackageManagerModule:bool] = {
-}
-
-DynaimcPackageManagersList: list[DynamicPackageManager] = [
+DynaimcPackageManagersList: list[PackageManagerModule] = [
     Pip,
     Npm,
     Choco,

@@ -41,8 +41,8 @@ from Interface.GenericSections import *
 
 
 class DiscoverSoftwareSection(SoftwareSection):
-    PackageManagers = StaticPackageManagersList.copy()
-    PackagesLoaded = StaticPackagesLoadedDict.copy()
+    PackageManagers = DynaimcPackageManagersList.copy()
+    PackagesLoaded = DynaimcPackageManagersList.copy()
 
     DynaimcPackageManagers = DynaimcPackageManagersList.copy()
     DynamicPackagesLoaded = DynamicPackagesLoadedDict.copy()

@@ -773,7 +773,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
         self.finishInstallation.emit(p.returncode, output)
 
 
-class ScoopBucketManager(QWidget):
+class SourceManagerWidget(QWidget):
     addBucketsignal = Signal(str, str, str, str)
     finishLoading = Signal()
     setLoadBarValue = Signal(str)

@@ -23,7 +23,7 @@ from tools import _
 from .PackageClasses import *
 
 
-class SamplePackageManager(DynamicPackageManager):
+class SamplePackageManager(PackageManagerModule):
 
     EXECUTABLE = "pacman.exe"
     NAME = "PackageManager"

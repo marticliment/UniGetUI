@@ -23,7 +23,7 @@ from tools import _
 from .PackageClasses import *
 
 
-class DotNetToolPackageManager(DynamicPackageManager):
+class DotNetToolPackageManager(PackageManagerModule):
 
     EXECUTABLE = "dotnet.exe"
     NAME = ".NET Tool"

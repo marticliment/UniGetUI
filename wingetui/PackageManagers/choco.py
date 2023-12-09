@@ -24,7 +24,7 @@ from .PackageClasses import *
 from .sampleHelper import *
 
 
-class ChocoPackageManager(DynamicPackageManager):
+class ChocoPackageManager(PackageManagerModule):
 
     if getSettings("UseSystemChocolatey"):
         print("🟡 System chocolatey used")

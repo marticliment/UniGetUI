@@ -872,7 +872,7 @@ class SettingsSection(SmoothScrollArea):
             v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.scoopPreferences.addWidget(disableScoop)
 
-        bucketManager = ScoopBucketManager()
+        bucketManager = SourceManagerWidget()
         bucketManager.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.scoopPreferences.addWidget(bucketManager)
