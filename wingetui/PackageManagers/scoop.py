@@ -425,7 +425,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                 print("IndexError: " + str(e))
 
         for source in sources:
-            globals.scoopBuckets[source.Name] = source
+            globals.scoopBuckets[source.Name] = source.Url
 
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources

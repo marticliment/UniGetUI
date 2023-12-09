@@ -922,6 +922,12 @@ class SettingsSection(SmoothScrollArea):
         disableChocolatey.stateChanged.connect(lambda v: (setSettings(
             f"Disable{Choco.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.chocoPreferences.addWidget(disableChocolatey)
+        
+        bucketManager = SourceManagerWidget(Choco)
+        bucketManager.setStyleSheet(
+            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        self.chocoPreferences.addWidget(bucketManager)
+
 
         enableSystemChocolatey = SectionCheckBox(
             _("Use system Chocolatey (Needs a restart)"))
