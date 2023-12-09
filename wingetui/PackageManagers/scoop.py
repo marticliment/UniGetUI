@@ -33,19 +33,16 @@ class ScoopPackageManager(PackageManagerWithSources):
 
     NAME = "Scoop"
 
-    BLACKLISTED_PACKAGE_NAMES = []
-    BLACKLISTED_PACKAGE_IDS = []
-    BLACKLISTED_PACKAGE_VERSIONS = []
-
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRemoveDataOnUninstall = True
-    Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsCustomScopes = True
-
-    LoadedIcons = False
-    icon = None
+    def __init__(self):
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.CanSkipIntegrityChecks = True
+        self.Capabilities.CanRemoveDataOnUninstall = True
+        self.Capabilities.SupportsCustomArchitectures = True
+        self.Capabilities.SupportsCustomScopes = True
+        
+        self.Capabilities.SupportsCustomSources = True
+        self.Capabilities.Sources.KnowsPackageCount = True
+        self.Capabilities.Sources.KnowsUpdateDate = True
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

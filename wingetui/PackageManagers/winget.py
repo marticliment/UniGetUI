@@ -45,20 +45,9 @@ class WingetPackageManager(PackageManagerWithSources):
 
     NAME = "Winget"
 
-    BLACKLISTED_PACKAGE_NAMES = [""]
     BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
     BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
 
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRunInteractively = True
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsCustomScopes = True
-    Capabilities.SupportsCustomLocations = True
-
-    LoadedIcons = False
     wingetIcon = None
     localIcon = None
     steamIcon = None
@@ -66,6 +55,17 @@ class WingetPackageManager(PackageManagerWithSources):
     uPlayIcon = None
     msStoreIcon = None
     wsaIcon = None
+    
+    def __init__(self): 
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.CanSkipIntegrityChecks = True
+        self.Capabilities.CanRunInteractively = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomArchitectures = True
+        
+        self.Capabilities.SupportsCustomScopes = True
+        self.Capabilities.SupportsCustomLocations = True
+        self.Capabilities.SupportsCustomSources = True
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

@@ -28,17 +28,11 @@ class DotNetToolPackageManager(PackageManagerModule):
     EXECUTABLE = "dotnet.exe"
     NAME = ".NET Tool"
 
-    BLACKLISTED_PACKAGE_NAMES = []
-    BLACKLISTED_PACKAGE_IDS = []
-    BLACKLISTED_PACKAGE_VERSIONS = []
-
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsPreRelease = True
-
-    LoadedIcons = False
+    def __init__(self):
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomArchitectures = True
+        self.Capabilities.SupportsPreRelease = True
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

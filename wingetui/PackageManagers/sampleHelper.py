@@ -32,15 +32,15 @@ class SamplePackageManager(PackageManagerModule):
     BLACKLISTED_PACKAGE_IDS = []
     BLACKLISTED_PACKAGE_VERSIONS = []
 
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRunInteractively = False
-    Capabilities.CanRemoveDataOnUninstall = False
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = False
-    Capabilities.SupportsCustomScopes = False
-    Capabilities.SupportsPreRelease = False
+    def __init__(self):
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.CanSkipIntegrityChecks = True
+        self.Capabilities.CanRunInteractively = True
+        self.Capabilities.CanRemoveDataOnUninstall = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomArchitectures = True
+        self.Capabilities.SupportsCustomScopes = True
+        self.Capabilities.SupportsPreRelease = True
 
     LoadedIcons = False
 

@@ -33,17 +33,11 @@ class NPMPackageManager(PackageManagerModule):
 
     NAME = "Npm"
 
-    BLACKLISTED_PACKAGE_NAMES = []
-    BLACKLISTED_PACKAGE_IDS = []
-    BLACKLISTED_PACKAGE_VERSIONS = []
-
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomScopes = True
-
-    LoadedIcons = False
-    icon = None
+    def __init__(self):
+        self.Capabilities = PackageManagerCapabilities()
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomScopes = True
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

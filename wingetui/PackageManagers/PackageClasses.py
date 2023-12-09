@@ -368,6 +368,25 @@ class InstallationOptions():
         str += f"RemoveDataOnUninstall={self.RemoveDataOnUninstall}>"
         return str
 
+class ManagerSource:
+    
+    class Capabilities:
+        KnowsUpdateDate: bool = False
+        KnowsPackageCount: bool = False
+    
+    Manager: 'PackageManagerWithSources' = None
+    Name: str = ""
+    Url: str = ""
+    PackageCount: int = 0
+    UpdateDate: str = ""
+    
+    def __init__(self, Manager: 'PackageManagerWithSources', Name: str, Url: str, PackageCount: int = 0, UpdateDate: str = ""):
+        self.Manager = Manager
+        self.Name = Name
+        self.Url = Url
+        self.PackageCount = PackageCount
+        self.UpdateDate = UpdateDate
+    
 
 class PackageManagerCapabilities():
     CanRunAsAdmin: bool = False
@@ -379,6 +398,8 @@ class PackageManagerCapabilities():
     SupportsCustomScopes: bool = False
     SupportsPreRelease: bool = False
     SupportsCustomLocations: bool = False
+    SupportsCustomSources: bool = False
+    Sources: ManagerSource.Capabilities = ManagerSource.Capabilities()
 
 
 class InstallationWidgetType(QWidget):
@@ -392,9 +413,15 @@ class InstallationWidgetType(QWidget):
 
 class PackageManagerModule():
     NAME: str
-    Capabilities: PackageManagerCapabilities
-    LoadedIcons: bool
+    Capabilities: PackageManagerCapabilities = PackageManagerCapabilities()
+    LoadedIcons: bool = False
     Icon: QIcon = None
+    icon = Icon
+    
+    BLACKLISTED_PACKAGE_NAMES: list[str] = []
+    BLACKLISTED_PACKAGE_IDS: list[str] = []
+    BLACKLISTED_PACKAGE_VERSIONS: list[str] = []
+
 
     def __init__(self):
         pass
@@ -462,13 +489,14 @@ class PackageManagerModule():
         Force update package manager's sources
         """
 
-
-class DynamicPackageManager(PackageManagerModule):
-
     def getPackagesForQuery(self, query: str) -> list[Package]:
         f"""
         Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
+
+class PackageManagerWithSources(PackageManagerModule):
+    
+    pass
 
 
 RETURNCODE_OPERATION_SUCCEEDED = 0

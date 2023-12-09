@@ -37,14 +37,11 @@ class PipPackageManager(PackageManagerModule):
     BLACKLISTED_PACKAGE_IDS = ["WARNING:", "[notice]", "Package"]
     BLACKLISTED_PACKAGE_VERSIONS = ["Ignoring", "invalie"]
 
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomScopes = True
-    Capabilities.SupportsPreRelease = True
-
-    LoadedIcons = False
-    icon = None
+    def __init__(self):
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomScopes = True
+        self.Capabilities.SupportsPreRelease = True
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
