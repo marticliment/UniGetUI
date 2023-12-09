@@ -1,6 +1,6 @@
 PySide6>=6.6.0
 win32mica>=3.0
-PyInstaller>=6.2.0
+PyInstaller>=5.9.0
 pywin32>=306
 Flask>=2.3.3
 flask-cors>=4.0.0
