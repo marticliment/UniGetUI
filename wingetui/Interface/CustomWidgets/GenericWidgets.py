@@ -67,32 +67,41 @@ class SmoothScrollArea(QScrollArea):
     missingScroll = 0
     buttonVisible = False
     registeredThemeEvent = False
+    EnableTopButton: bool = True
 
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: QWidget = None, EnableTopButton: bool = True):
         super().__init__(parent)
+        self.EnableTopButton = EnableTopButton
         self.setAutoFillBackground(True)
         self.smoothScrollAnimation = QVariantAnimation(self)
         self.smoothScrollAnimation.setDuration(300)
         self.smoothScrollAnimation.setEasingCurve(QEasingCurve.OutQuart)
         self.smoothScrollAnimation.valueChanged.connect(lambda v: self.verticalScrollBar().setValue(v))
-        self.goTopButton = QPushButton(self)
-        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
-        self.goTopButton.setToolTip(_("Return to top"))
-        self.goTopButton.setAccessibleDescription(_("Return to top"))
-        self.goTopButton.setFixedSize(24, 32)
-        self.buttonOpacity = QGraphicsOpacityEffect()
-        self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start(), self.hideTopButton()))
-        self.goTopButton.setGraphicsEffect(self.buttonOpacity)
-        self.buttonOpacity.setOpacity(0)
-        self.buttonAnimation = QVariantAnimation(self)
-        self.buttonAnimation.setDuration(100)
-        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v / 100))
+        if self.EnableTopButton:
+            self.goTopButton = QPushButton(self)
+            self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+            self.goTopButton.setToolTip(_("Return to top"))
+            self.goTopButton.setAccessibleDescription(_("Return to top"))
+            self.goTopButton.setFixedSize(24, 32)
+            self.buttonOpacity = QGraphicsOpacityEffect()
+            self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start(), self.hideTopButton()))
+            self.goTopButton.setGraphicsEffect(self.buttonOpacity)
+            self.buttonOpacity.setOpacity(0)
+            self.buttonAnimation = QVariantAnimation(self)
+            self.buttonAnimation.setDuration(100)
+            self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v / 100))
 
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
+        maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        self.doSmoothScroll(currentPos, finalPos)
-        e.ignore()
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+            e.ignore()
+        else:
+            e.angleDelta().setX(0)
+            e.angleDelta().setY(0)
+            e.accept()
+            self.doSmoothScroll(currentPos, finalPos)
 
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
@@ -140,21 +149,24 @@ class SmoothScrollArea(QScrollArea):
 
     def showTopButton(self):
         if not self.buttonVisible:
-            self.buttonVisible = True
-            self.goTopButton.raise_()
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
-            self.buttonAnimation.setEndValue(100)
-            self.buttonAnimation.start()
+            self.buttonVisible = True    
+            if self.EnableTopButton:
+                self.goTopButton.raise_()
+                self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
+                self.buttonAnimation.setEndValue(100)
+                self.buttonAnimation.start()
 
     def hideTopButton(self):
         if self.buttonVisible:
             self.buttonVisible = False
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
-            self.buttonAnimation.setEndValue(0)
-            self.buttonAnimation.start()
+            if self.EnableTopButton:
+                self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
+                self.buttonAnimation.setEndValue(0)
+                self.buttonAnimation.start()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.goTopButton.move(self.width() - 48, self.height() - 48)
+        if self.EnableTopButton:
+            self.goTopButton.move(self.width() - 48, self.height() - 48)
         return super().resizeEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
@@ -168,16 +180,19 @@ class SmoothScrollArea(QScrollArea):
         return super().showEvent(event)
 
     def ApplyIcons(self):
-        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+        if self.EnableTopButton:
+            self.goTopButton.setIcon(QIcon(getMedia("gotop")))
 
 
 class TreeWidget(QTreeWidget):
     missingScroll: int = 0
     buttonVisible: bool = False
     registeredThemeEvent = False
+    EnableTopButton: bool
 
-    def __init__(self, emptystr: str = "") -> None:
+    def __init__(self, emptystr: str = "", EnableTopButton: bool = True) -> None:
         super().__init__()
+        self.EnableTopButton = EnableTopButton
         self.header().setDefaultAlignment(Qt.AlignmentFlag.AlignCenter)
         self.smoothScrollAnimation = QVariantAnimation(self)
         self.smoothScrollAnimation.setDuration(300)
@@ -197,30 +212,34 @@ class TreeWidget(QTreeWidget):
         self.label.setFont(font)
         self.label.setFixedWidth(2050)
         self.label.setFixedHeight(50)
-        self.goTopButton = QPushButton(self)
-        self.goTopButton.setToolTip(_("Return to top"))
-        self.goTopButton.setAccessibleDescription(_("Return to top"))
-        self.goTopButton.setFixedSize(24, 32)
-        self.connectCustomScrollbar(self.verticalScrollBar())
-        self.buttonOpacity = QGraphicsOpacityEffect(self.goTopButton)
-        self.buttonOpacity.setOpacity(0)
-        self.goTopButton.setGraphicsEffect(self.buttonOpacity)
-        self.buttonAnimation = QVariantAnimation(self)
-        self.buttonAnimation.setDuration(100)
-        self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v / 100))
-        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+        if self.EnableTopButton:
+            self.goTopButton = QPushButton(self)
+            self.goTopButton.setToolTip(_("Return to top"))
+            self.goTopButton.setAccessibleDescription(_("Return to top"))
+            self.goTopButton.setFixedSize(24, 32)
+            self.connectCustomScrollbar(self.verticalScrollBar())
+            self.buttonOpacity = QGraphicsOpacityEffect(self.goTopButton)
+            self.buttonOpacity.setOpacity(0)
+            self.goTopButton.setGraphicsEffect(self.buttonOpacity)
+            self.buttonAnimation = QVariantAnimation(self)
+            self.buttonAnimation.setDuration(100)
+            self.buttonAnimation.valueChanged.connect(lambda v: self.buttonOpacity.setOpacity(v / 100))
+            self.goTopButton.setIcon(QIcon(getMedia("gotop")))
 
     def connectCustomScrollbar(self, scrollbar: QScrollBar):
-        try:
-            self.goTopButton.clicked.disconnect()
-        except RuntimeError:
-            pass
+        if self.EnableTopButton:
+            try:
+                self.goTopButton.clicked.disconnect()
+            except RuntimeError:
+                pass
+            self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
         scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v > 20 else self.hideTopButton())
-        self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
+
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.label.move((self.width() - self.label.width()) // 2, (self.height() - self.label.height()) // 2,)
-        self.goTopButton.move(self.width() - 24, self.height() - 48)
+        if self.EnableTopButton:
+            self.goTopButton.move(self.width() - 24, self.height() - 48)
         return super().resizeEvent(event)
 
     def addTopLevelItem(self, item: QTreeWidgetItem) -> None:
@@ -228,19 +247,21 @@ class TreeWidget(QTreeWidget):
         return super().addTopLevelItem(item)
 
     def showTopButton(self):
-        if not self.buttonVisible:
-            self.buttonVisible = True
-            self.goTopButton.raise_()
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
-            self.buttonAnimation.setEndValue(100)
-            self.buttonAnimation.start()
+        if self.EnableTopButton:
+            if not self.buttonVisible:
+                self.buttonVisible = True
+                self.goTopButton.raise_()
+                self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
+                self.buttonAnimation.setEndValue(100)
+                self.buttonAnimation.start()
 
     def hideTopButton(self):
-        if self.buttonVisible:
-            self.buttonVisible = False
-            self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
-            self.buttonAnimation.setEndValue(0)
-            self.buttonAnimation.start()
+        if self.EnableTopButton:
+            if self.buttonVisible:
+                self.buttonVisible = False
+                self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
+                self.buttonAnimation.setEndValue(0)
+                self.buttonAnimation.start()
 
     def clear(self) -> None:
         self.label.show()
@@ -248,9 +269,15 @@ class TreeWidget(QTreeWidget):
 
     def wheelEvent(self, e: QWheelEvent) -> None:
         currentPos = self.verticalScrollBar().value()
+        maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        self.doSmoothScroll(currentPos, finalPos)
-        e.ignore()
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+            e.ignore()
+        else:
+            e.angleDelta().setX(0)
+            e.angleDelta().setY(0)
+            e.accept()
+            self.doSmoothScroll(currentPos, finalPos)
 
     def doSmoothScroll(self, currentPos: int, finalPos: int):
         if self.smoothScrollAnimation.state() == QAbstractAnimation.Running:
@@ -298,7 +325,8 @@ class TreeWidget(QTreeWidget):
     def showEvent(self, event: QShowEvent) -> None:
         self.setUpdatesEnabled(True)
         self.label.setUpdatesEnabled(True)
-        self.goTopButton.setUpdatesEnabled(True)
+        if self.EnableTopButton:
+            self.goTopButton.setUpdatesEnabled(True)
         if not self.registeredThemeEvent:
             try:
                 globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
@@ -309,7 +337,8 @@ class TreeWidget(QTreeWidget):
         return super().showEvent(event)
 
     def ApplyIcons(self):
-        self.goTopButton.setIcon(QIcon(getMedia("gotop")))
+        if self.EnableTopButton:
+            self.goTopButton.setIcon(QIcon(getMedia("gotop")))
 
 
 class PackageListSortingModel(QAbstractItemModel):
@@ -373,12 +402,13 @@ class DynamicScrollArea(QWidget):
     maxHeight = 200
     items = []
 
-    def __init__(self, resizeBar: QWidget = None, parent: QWidget = None) -> None:
+    def __init__(self, resizeBar: QWidget = None, parent: QWidget = None, EnableTopButton: bool = True) -> None:
         super().__init__(parent)
+        self.EnableTopButton = EnableTopButton
         vLayout = QVBoxLayout()
         self.resizeBar = resizeBar
         vLayout.setContentsMargins(5, 0, 5, 5)
-        self.scrollArea = SmoothScrollArea()
+        self.scrollArea = SmoothScrollArea(EnableTopButton=EnableTopButton)
         self.coushinWidget = QWidget()
         vLayout.addWidget(self.coushinWidget)
         vLayout.addWidget(self.scrollArea)

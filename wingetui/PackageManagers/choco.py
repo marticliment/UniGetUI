@@ -24,7 +24,7 @@ from .PackageClasses import *
 from .sampleHelper import *
 
 
-class ChocoPackageManager(PackageManagerModule):
+class ChocoPackageManager(PackageManagerWithSources):
 
     if getSettings("UseSystemChocolatey"):
         print("🟡 System chocolatey used")
@@ -39,22 +39,26 @@ class ChocoPackageManager(PackageManagerModule):
             EXECUTABLE = os.path.join(os.path.join(realpath, "choco-cli"), "choco.exe").replace("/", "\\")
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
-    LoadedIcons = False
-    icon = None
-
     NAME = "Chocolatey"
 
-    BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
-    BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
-    BLACKLISTED_PACKAGE_VERSIONS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
+    def __init__(self):
+        super().__init__()
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.CanSkipIntegrityChecks = True
+        self.Capabilities.CanRunInteractively = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomArchitectures = True
+        self.Capabilities.SupportsPreRelease = True
+        self.Capabilities.SupportsCustomSources = True
+        
+        self.KnownSources = {
+            ManagerSource(self, "chocolatey", "https://community.chocolatey.org/api/v2/")
+        }
+        
+        self.BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
+        self.BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
+        self.BLACKLISTED_PACKAGE_VERSIONS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
 
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRunInteractively = True
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsPreRelease = True
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -313,6 +317,63 @@ class ChocoPackageManager(PackageManagerModule):
         elif "Run as administrator" in output or "The requested operation requires elevation" in output:
             outputCode = RETURNCODE_NEEDS_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
+
+    def getSources(self) -> None:
+        print(f"🔵 Starting {self.NAME} source search...")
+        p = subprocess.Popen(f"{self.EXECUTABLE} source list", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        output = []
+        sources: list[ManagerSource] = []
+        counter = 0
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            if line:
+                if counter > 1 and b"---" not in line:
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
+                else:
+                    counter += 1
+        counter = 0
+        for element in output:
+            try:
+                while "  " in element.strip():
+                    element = element.strip().replace("  ", " ")
+                element: list[str] = element.split("|")
+                sources.append(ManagerSource(self, element[0].strip().split(" - ")[0], element[0].strip().split(" - ")[1]))
+            except IndexError:
+                continue
+
+        print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
+        return sources
+
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "source", "add", "--name", source.Name, "--source", source.Url, "-y"]
+        print(f"🔵 Starting source {source.Name} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+    
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "source", "remove", "--name", source.Name, "-y"]
+        print(f"🔵 Starting source {source.Name} removal with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+        output = ""
+        counter = 0
+        p.stdin = b"\r\n"
+        while p.poll() is None:
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+            if line:
+                widget.addInfoLine.emit((line, is_newline))
+                counter += 1
+                widget.counterSignal.emit(counter)
+                if is_newline:
+                    output += line + "\n"
+        p.wait()
+        widget.finishInstallation.emit(p.returncode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)

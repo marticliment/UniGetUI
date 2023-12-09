@@ -734,7 +734,7 @@ class SoftwareSection(QWidget):
         self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setAccessibleName(_("Reload"))
 
-        self.filterScrollArea = SmoothScrollArea(self)
+        self.filterScrollArea = SmoothScrollArea(self, EnableTopButton=False)
         self.filterScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.filterScrollArea.setWidgetResizable(True)
 
@@ -871,7 +871,6 @@ class SoftwareSection(QWidget):
 
         self.filterScrollArea.setFixedWidth(220)
         self.filterScrollArea.setFrameShape(QFrame.Shape.NoFrame)
-        self.filterScrollArea.goTopButton.hide()
 
         sourcesWidget = SmallCollapsableSection(_("Sources"), getMedia("provider"))
         sourcesWidget.showHideButton.click()

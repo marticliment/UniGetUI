@@ -45,20 +45,7 @@ class WingetPackageManager(PackageManagerWithSources):
 
     NAME = "Winget"
 
-    BLACKLISTED_PACKAGE_NAMES = [""]
-    BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
-    BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
 
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRunInteractively = True
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = True
-    Capabilities.SupportsCustomScopes = True
-    Capabilities.SupportsCustomLocations = True
-
-    LoadedIcons = False
     wingetIcon = None
     localIcon = None
     steamIcon = None
@@ -66,6 +53,26 @@ class WingetPackageManager(PackageManagerWithSources):
     uPlayIcon = None
     msStoreIcon = None
     wsaIcon = None
+    
+    def __init__(self):
+        super().__init__()
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.CanSkipIntegrityChecks = True
+        self.Capabilities.CanRunInteractively = True
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomArchitectures = True
+        self.Capabilities.SupportsCustomScopes = True
+        self.Capabilities.SupportsCustomLocations = True
+        self.Capabilities.SupportsCustomSources = True
+        self.Capabilities.Sources.KnowsPackageCount = False
+        self.Capabilities.Sources.KnowsUpdateDate = False
+        self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
+        self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
+        
+        self.KnownSources = {
+            ManagerSource(self, "winget", "https://cdn.winget.microsoft.com/cache"),
+            ManagerSource(self, "msstore", "https://storeedgefd.dsx.mp.microsoft.com/v9.0"),
+        }
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -731,11 +738,12 @@ class WingetPackageManager(PackageManagerWithSources):
         globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
 
-    def loadSources(self, sourceSignal: Signal, finishSignal: Signal) -> None:
-        print("🟢 Starting winget source search...")
+    def getSources(self) -> None:
+        print(f"🔵 Starting {self.NAME} source search...")
         p = subprocess.Popen([self.EXECUTABLE, "source", "list"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
         dashesPassed = False
+        sources: list[ManagerSource] = []
         while p.poll() is None:
             line = p.stdout.readline()
             line = line.strip()
@@ -750,11 +758,40 @@ class WingetPackageManager(PackageManagerWithSources):
                 while "  " in element.strip():
                     element = element.strip().replace("  ", " ")
                 element: list[str] = element.split(" ")
-                sourceSignal.emit(element[0].strip(), element[1].strip())
+                sources.append(ManagerSource(self, element[0].strip(), element[1].strip()))
             except Exception as e:
                 report(e)
-        print("🟢 winget source search finished")
-        finishSignal.emit()
+        print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
+        return sources
+    
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "add", "--name", source.Name, "--arg", source.Url, "--accept-source-agreements", "--disable-interactivity"]
+        print(f"🔵 Starting source {source.Name} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+    
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+        Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "remove", "--name", source.Name, "--disable-interactivity"]
+        print(f"🔵 Starting source {source.Name} removal with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+        output = ""
+        counter = 0
+        while p.poll() is None:
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+            if line:
+                widget.addInfoLine.emit((line, is_newline))
+                counter += 1
+                widget.counterSignal.emit(counter)
+                if is_newline:
+                    output += line + "\n"
+        p.wait()
+        widget.finishInstallation.emit(p.returncode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run([self.EXECUTABLE, "-v"], shell=True, stdout=subprocess.PIPE)

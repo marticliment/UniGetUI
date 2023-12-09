@@ -28,7 +28,7 @@ from threading import Thread
 
 import globals
 from Interface.CustomWidgets.SpecificWidgets import *
-from PackageManagers.PackageClasses import PackageManagerModule, DynamicPackageManager
+from PackageManagers.PackageClasses import PackageManagerModule
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -41,8 +41,8 @@ from Interface.GenericSections import *
 
 
 class DiscoverSoftwareSection(SoftwareSection):
-    PackageManagers = DynaimcPackageManagersList.copy()
-    PackagesLoaded = DynaimcPackageManagersList.copy()
+    PackageManagers = PackageManagersList.copy()
+    PackagesLoaded = PackagesLoadedDict.copy()
 
     DynaimcPackageManagers = DynaimcPackageManagersList.copy()
     DynamicPackagesLoaded = DynamicPackagesLoadedDict.copy()
@@ -482,13 +482,10 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.addInstallation(PackageInstallerWidget(package, options))
 
     def loadPackages(self, manager: PackageManagerModule) -> None:
-        packages = manager.getAvailablePackages()
-        for package in packages:
-            self.addProgram.emit(package)
         self.PackagesLoaded[manager] = True
         self.finishLoading.emit()
 
-    def loadDynamicPackages(self, query: str, manager: DynamicPackageManager) -> None:
+    def loadDynamicPackages(self, query: str, manager: PackageManagerModule) -> None:
         self.runningThreads += 1
         packages = manager.getPackagesForQuery(query)
         for package in packages:

@@ -97,8 +97,7 @@ class RootWindow(QMainWindow):
         self.buttonier.setLayout(self.buttonLayout)
         self.extrasMenuButton = QPushButton()
         self.resizewidget = VerticallyDraggableWidget()
-        self.installationsWidget = DynamicScrollArea(self.resizewidget)
-        self.installationsWidget.scrollArea.goTopButton.setVisible(False)
+        self.installationsWidget = DynamicScrollArea(self.resizewidget, EnableTopButton=False)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
         globals.installersWidget = self.installationsWidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)

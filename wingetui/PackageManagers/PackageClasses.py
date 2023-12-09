@@ -368,6 +368,25 @@ class InstallationOptions():
         str += f"RemoveDataOnUninstall={self.RemoveDataOnUninstall}>"
         return str
 
+class ManagerSource:
+    
+    class Capabilities:
+        KnowsUpdateDate: bool = False
+        KnowsPackageCount: bool = False
+    
+    Manager: 'PackageManagerWithSources' = None
+    Name: str = ""
+    Url: str = ""
+    PackageCount: int = 0
+    UpdateDate: str = ""
+    
+    def __init__(self, Manager: 'PackageManagerWithSources', Name: str, Url: str, PackageCount: int = 0, UpdateDate: str = ""):
+        self.Manager = Manager
+        self.Name = Name
+        self.Url = Url
+        self.PackageCount = PackageCount
+        self.UpdateDate = UpdateDate
+    
 
 class PackageManagerCapabilities():
     CanRunAsAdmin: bool = False
@@ -379,6 +398,11 @@ class PackageManagerCapabilities():
     SupportsCustomScopes: bool = False
     SupportsPreRelease: bool = False
     SupportsCustomLocations: bool = False
+    SupportsCustomSources: bool = False
+    Sources: ManagerSource.Capabilities
+    
+    def __init__(self):
+        self.Sources = ManagerSource.Capabilities()
 
 
 class InstallationWidgetType(QWidget):
@@ -392,12 +416,25 @@ class InstallationWidgetType(QWidget):
 
 class PackageManagerModule():
     NAME: str
+    EXECUTABLE: str
+    
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
-    Icon: QIcon = None
-
+    Icon: QIcon
+    icon: QIcon
+    
+    BLACKLISTED_PACKAGE_NAMES: list[str]
+    BLACKLISTED_PACKAGE_IDS: list[str]
+    BLACKLISTED_PACKAGE_VERSIONS: list[str]
+    
     def __init__(self):
-        pass
+        self.Capabilities = PackageManagerCapabilities()
+        self.BLACKLISTED_PACKAGE_NAMES: list[str] = []
+        self.BLACKLISTED_PACKAGE_IDS: list[str] = []
+        self.BLACKLISTED_PACKAGE_VERSIONS: list[str] = []
+        self.LoadedIcons = None
+        self.Icon = None
+        self.icon = None
 
     def isEnabled() -> bool:
         pass
@@ -462,13 +499,30 @@ class PackageManagerModule():
         Force update package manager's sources
         """
 
-
-class DynamicPackageManager(PackageManagerModule):
-
     def getPackagesForQuery(self, query: str) -> list[Package]:
         f"""
         Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
+
+class PackageManagerWithSources(PackageManagerModule):
+    
+    Sources: list[ManagerSource]
+    KnownSources: list[ManagerSource]
+    
+    def __init__(self):
+        super().__init__()
+        self.Sources = []
+        self.KnownSources = []
+    
+    def getSources(self) -> list[ManagerSource]:
+        pass
+    
+    def installSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        pass
+    
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+        pass
+    
 
 
 RETURNCODE_OPERATION_SUCCEEDED = 0

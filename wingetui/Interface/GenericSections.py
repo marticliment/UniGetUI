@@ -837,7 +837,7 @@ class SettingsSection(SmoothScrollArea):
             v), button.setEnabled(v), enableSystemWinget.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.wingetPreferences.addWidget(disableWinget)
 
-        bucketManager = WingetBucketManager()
+        bucketManager = SourceManagerWidget(Winget)
         bucketManager.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.wingetPreferences.addWidget(bucketManager)
@@ -872,7 +872,7 @@ class SettingsSection(SmoothScrollArea):
             v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.scoopPreferences.addWidget(disableScoop)
 
-        bucketManager = SourceManagerWidget()
+        bucketManager = SourceManagerWidget(Scoop)
         bucketManager.setStyleSheet(
             "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         self.scoopPreferences.addWidget(bucketManager)
@@ -922,6 +922,12 @@ class SettingsSection(SmoothScrollArea):
         disableChocolatey.stateChanged.connect(lambda v: (setSettings(
             f"Disable{Choco.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
         self.chocoPreferences.addWidget(disableChocolatey)
+        
+        bucketManager = SourceManagerWidget(Choco)
+        bucketManager.setStyleSheet(
+            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        self.chocoPreferences.addWidget(bucketManager)
+
 
         enableSystemChocolatey = SectionCheckBox(
             _("Use system Chocolatey (Needs a restart)"))
