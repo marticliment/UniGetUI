@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7461,
-        "packages_with_icon": 7461,
-        "packages_with_screenshot": 517,
-        "total_screenshots": 1651
+        "done": 7462,
+        "packages_with_icon": 7462,
+        "packages_with_screenshot": 518,
+        "total_screenshots": 1657
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -32302,9 +32302,9 @@
             "images": []
         },
         "putty": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/PuTTY_Icon_upstream.svg/1200px-PuTTY_Icon_upstream.svg.png",
+            "icon": "https://i.postimg.cc/WzjtrBVC/putty-icon.png",
             "images": [
-                "https://docs.digitalocean.com/screenshots/droplets/putty/connect-config.399589842237e1bd21e24efe4d8052b5a5a77440462e3ab2f51a4c5019b74f19.png"
+                "https://i.postimg.cc/qR2zNkP2/putty.png"
             ]
         },
         "putty-cac": {
@@ -38677,8 +38677,15 @@
             "images": []
         },
         "startupmanager": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/QdTZ5skM/Startup-Manager-icon.png",
+            "images": [
+                "https://i.postimg.cc/TPDhNZV7/Screenshot-1.png",
+                "https://i.postimg.cc/RhMFFhjy/Screenshot-2.png",
+                "https://i.postimg.cc/63Vqtn1C/Screenshot-3.png",
+                "https://i.postimg.cc/BZgbz5F0/Screenshot-4.png",
+                "https://i.postimg.cc/76rhFmXx/Screenshot-5.png",
+                "https://i.postimg.cc/prqdnxvT/Screenshot-6.png"
+            ]
         },
         "staruml": {
             "icon": "https://community.chocolatey.org/content/packageimages/StarUML.5.0.2.png",
