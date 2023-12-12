@@ -67,7 +67,7 @@ namespace WinFormsWebView
 
         #endregion
 
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView;
+        public Microsoft.Web.WebView2.WinForms.WebView2 webView;
 
     }
 }

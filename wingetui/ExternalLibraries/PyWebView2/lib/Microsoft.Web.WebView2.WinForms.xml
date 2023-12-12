@@ -67,7 +67,7 @@
             Creates a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/> using the current values of this instance's properties.
             </summary>
             <returns>A <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/> object or null if no controller-related properties are set.</returns>
-            <exception cref="!:NullReferenceException">Thrown if the parameter environment is null.</exception>
+            <exception cref="T:System.NullReferenceException">Thrown if the parameter environment is null.</exception>
         </member>
         <member name="T:Microsoft.Web.WebView2.WinForms.WebView2">
             <summary>

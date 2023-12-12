@@ -65,6 +65,9 @@
             <summary>
             WebView2 enables you to host web content using the latest Microsoft Edge browser and web technology.
             </summary>
+            <summary>
+            WebView2 enables you to host web content using the latest Microsoft Edge browser and web technology.
+            </summary>
         </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2.PrintToPdfAsync(System.String,Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings)">
              <summary>
@@ -609,6 +612,12 @@
             <term><c>then</c></term>
             <description>
             Asynchronous host object proxies have a then method. This allows them to be awaitable. <c>then</c> will return a promise that resolves with a representation of the host object. If the proxy represents a JavaScript literal then a copy of that is returned locally. If the proxy represents a function then a non-awaitable proxy is returned. If the proxy represents a JavaScript object with a mix of literal properties and function properties, then the a copy of the object is returned with some properties as host object proxies.
+            </description>
+            </item>
+            <item>
+            <term><c>cancelPromise</c></term>
+            <description>
+            This method attempts to cancel the fulfillment of a promised value. If the promise hasn't already been fulfilled and cancelation is supported, the promise will get rejected. <c>cancelPromise</c> supports cancelation of IAsyncOperation and IAsyncAction methods. If the promise is successfully canceled, then calling await on the promise will throw. For example, <c>chrome.webview.hostObjects.cancelPromise(promise); await promise;</c> will throw with "Promise Canceled". Once a promise has been canceled, a subsequent cancel on the same promise will throw an exception as well.
             </description>
             </item>
             </list>
@@ -1448,6 +1457,14 @@
             The <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.TrySuspendAsync"/> and <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.Resume"/> methods will change the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.MemoryUsageTargetLevel"/>.
             <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.TrySuspendAsync"/> will automatically set <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.MemoryUsageTargetLevel"/> to <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2MemoryUsageTargetLevel.Low"/> while <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.Resume"/> on suspended WebView will automatically set <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.MemoryUsageTargetLevel"/> to <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2MemoryUsageTargetLevel.Normal"/>.
             Calling <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2.Resume"/> when the WebView is not suspended would not change <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.MemoryUsageTargetLevel"/>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2.FrameId">
+            <summary>
+            The unique identifier of the main frame. It's the same kind of ID as with the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Frame.FrameId"/> and <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo.FrameId"/>.
+            </summary>
+            <remarks>
+            FrameId may not be valid if <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2"/> has not done any navigation. It's safe to get this value during or after the first <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ContentLoading"/> event. Otherwise, it could return the invalid frame Id <c>0</c>.
             </remarks>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2Certificate">
@@ -2381,6 +2398,7 @@
             
             
             
+            
         </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateAsync(System.String,System.String,Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions)">
              <summary>
@@ -2905,6 +2923,14 @@
             There is currently a limitation that only size less than 2GB is supported.
             </remarks>
         </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetProcessExtendedInfosAsync">
+            <summary>
+            Returns a snapshot collection of <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessInfo"/> corresponding to all currently running processes associated with this <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Environment"/> excludes crashpad process. This provides the same list of <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessInfo"/> as what's provided in <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetProcessInfos"/>, but additionally provides a list of associated <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/> which are actively running (showing or hiding UI elements) in the renderer process. See <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo.AssociatedFrameInfos"/> for more information.
+            </summary>
+            <example>
+            :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="GetProcessExtendedInfos":::
+            </example>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions">
             <summary>
             Options used to create WebView2 Environment.
@@ -2913,6 +2939,7 @@
             Default values will use your defaulted Edge WebView2 Runtime binaries and
             user data folder.
             </remarks>
+            
             
             
             
@@ -3031,9 +3058,20 @@
             Tracking prevention protects users from online tracking by restricting the ability of trackers to access browser-based storage as well as the network. See [Tracking prevention](/microsoft-edge/web-platform/tracking-prevention).
             </remarks>
         </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions.AreBrowserExtensionsEnabled">
+            <summary>
+            Enable/disable browser extensions.
+            </summary>
+            <remarks>
+            When <c>AreBrowserExtensionsEnabled</c> is set to <c>true</c>, new extensions can be added to user profile and used. <c>AreBrowserExtensionsEnabled</c> is default to be <c>false</c>, in this case, new extensions can't be installed, and already installed extension won't be available to use in user profile. If connecting to an already running environment with a different value for <c>AreBrowserExtensionsEnabled</c> property, it will fail with <c>HRESULT_FROM_WIN32(ERROR_INVALID_STATE)</c>. See <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension"/> for Extensions API details.
+            </remarks>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2Frame">
             <summary>
             CoreWebView2Frame provides direct access to the iframes information and handling.
+            </summary>
+            <summary>
+            CoreWebView2Frame provides direct access to the iframes information and handling. You can get a CoreWebView2Frame by handling the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.FrameCreated"/> event.
             </summary>
             <summary>
             CoreWebView2Frame provides direct access to the iframes information and handling. You can get a CoreWebView2Frame by handling the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.FrameCreated"/> event.
@@ -3264,6 +3302,11 @@
             :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/assets/sharedBuffer.html" id="ShareBufferScriptCode_2":::
             </example>
         </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2Frame.FrameId">
+            <summary>
+            The unique identifier of the current frame. It's the same kind of ID as with the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.FrameId"/> and <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo.FrameId"/>.
+            </summary>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2HttpHeadersCollectionIterator">
             <inheritdoc/>
             <summary>
@@ -3452,6 +3495,12 @@
             <summary>
             Multiple profiles can be created under a single user data directory but with separated cookies, user preference settings, and various data storage etc.. If the CoreWebView2 was created with a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/>, the CoreWebView2Profile will match those specified options. Otherwise if this CoreWebView2 was created without a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/>, then this will be the default CoreWebView2Profile for the corresponding CoreWebView2Environment.
             </summary>
+            <summary>
+            Multiple profiles can be created under a single user data directory but with separated cookies, user preference settings, and various data storage etc.. If the CoreWebView2 was created with a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/>, the CoreWebView2Profile will match those specified options. Otherwise if this CoreWebView2 was created without a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/>, then this will be the default CoreWebView2Profile for the corresponding CoreWebView2Environment.
+            </summary>
+            <summary>
+            Multiple profiles can be created under a single user data directory but with separated cookies, user preference settings, and various data storage etc.. If the CoreWebView2 was created with a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/>, the CoreWebView2Profile will match those specified options. Otherwise if this CoreWebView2 was created without a <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ControllerOptions"/>, then this will be the default CoreWebView2Profile for the corresponding CoreWebView2Environment.
+            </summary>
         </member>
         <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Profile.ClearBrowsingDataAsync(Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds,System.DateTime,System.DateTime)">
             <summary>
@@ -3587,6 +3636,139 @@
             General autofill information includes information like names, street and email addresses, phone numbers, and arbitrary input. This excludes password information. When disabled, no suggestions appear, and no new information is saved.
             When enabled, information is saved, suggestions appear, and clicking on one will populate the form fields. The default value is <c>true</c>. It will apply immediately after setting.
             This property has the same value as <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Settings.IsGeneralAutofillEnabled"/>, and changing one will change the other. All WebView2s  with the same <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Profile"/> will share the same value for this property, so for the WebView2s with the same profile, their <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Settings.IsGeneralAutofillEnabled"/> and <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Profile.IsGeneralAutofillEnabled"/> will always have the same value.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Profile.AddBrowserExtensionAsync(System.String)">
+            <summary>
+            Add a browser extension to the current user profile from <c>extensionFolderPath</c>.
+            </summary>
+            <param name="extensionFolderPath">The manifest.json folder path.</param>
+            
+            See <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension"/> for descriptions of browser extensions.
+            <remarks>
+            Adds the [browser extension](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions) using the extension path for unpacked extensions from the local device. Extension is running right after installation.
+            The extension folder path is the topmost folder of an unpacked browser extension and contains the browser extension manifest file.
+            If the <c>extensionFolderPath</c> is an invalid path or doesn't contain the extension manifest.json file, this function will return <c>ERROR_FILE_NOT_FOUND</c> to callers.
+            Installed extension will default <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension.IsEnabled"/> to true. When <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2EnvironmentOptions.AreBrowserExtensionsEnabled"/>  is <c>false</c>, <c>AddBrowserExtension</c> will fail and return HRESULT <c>ERROR_NOT_SUPPORTED</c>.
+            During installation, the content of the extension is not copied to the user data folder. Once the extension is installed, changing the content of the extension will cause the extension to be removed from the installed profile.
+            When an extension is added the extension is persisted in the corresponding profile. The extension will still be installed the next time you use this profile.
+            When an extension is installed from a folder path, adding the same extension from the same folder path means reinstalleing this extension. When two extensions with the same Id are installed, only the later installed extension will be kept.
+            The following summarizes the possible error values that can be returned from <c>AddBrowserExtension</c> and a description of why these errors occur.
+            
+            <list type="table">
+            <listheader>
+            <description>Error value</description>
+            <description>Description</description>
+            </listheader>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED)</c></description>
+            <description>Extensions are disabled.</description>
+            </item>
+            <item>
+            <description><c>HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)</c></description>
+            <description>Cannot find <c>manifest.json</c> file or it is not a valid extension manifest.</description>
+            </item>
+            <item>
+            <description><c>E_ACCESSDENIED</c></description>
+            <description>Cannot load extension with file or directory name starting with <c>_</c>, reserved for use by the system.</description>
+            </item>
+            <item>
+            <description><c>E_FAIL</c></description>
+            <description>Extension failed to install with other unknown reasons.</description>
+            </item>
+            </list>
+            
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Profile.GetBrowserExtensionsAsync">
+            <summary>
+            Gets a snapshot of the set of extensions on current user profile.
+            </summary>
+            
+            See <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension"/> for descriptions of browser extensions.
+            <remarks>
+            Gets a snapshot of the set of extensions installed at the time <c>GetBrowserExtensions</c> is called. If an extension is installed or uninstalled after <c>GetBrowserExtensions</c> completes, the list returned by <c>GetBrowserExtensions</c> remains the same. When <c>AreBrowserExtensionsEnabled</c> is <c>false</c>, <c>GetBrowserExtensions</c> won't return any extensions on current user profile.
+            </remarks>
+        </member>
+        <member name="E:Microsoft.Web.WebView2.Core.CoreWebView2Profile.Deleted">
+            <summary>
+            Raised when profile is marked for deletion.
+            </summary>
+            <remarks>
+            When this event is raised, the CoreWebView2Profile and its corresponding CoreWebView2s have been closed, and cannot be used anymore.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2Profile.Delete">
+            <summary>
+            Delete this profile.
+            </summary>
+            <remarks>
+            After the API is called, the profile will be marked for deletion. The local profile's directory will be deleted at browser process exit. If it fails to delete, because something else is holding the files open, WebView2 will try to delete the profile at all future browser process starts until successful. The corresponding CoreWebView2s will be closed and the CoreWebView2Profile.Deleted event will be raised. See `CoreWebView2Profile.Deleted` for more information. If you try to create a new profile with the same name as an existing profile that has been marked as deleted but hasn't yet been deleted, profile creation will fail with HRESULT_FROM_WIN32(ERROR_DELETE_PENDING).
+            </remarks>
+        </member>
+        <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs">
+            <summary>
+            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.WebMessageReceived"/> event.
+            </summary>
+            <summary>
+            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.WebMessageReceived"/> event.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.Source">
+            <summary>
+            Gets the URI of the document that sent this web message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.WebMessageAsJson">
+            <summary>
+            Gets the message posted from the WebView content to the host converted to a JSON string.
+            </summary>
+            <remarks>
+            Run this operation to communicate using JavaScript objects.
+            </remarks>
+            <example>
+            For example, the following <c>postMessage</c> runs result in the following WebMessageAsJson values:
+            
+            <code>
+            postMessage({'a': 'b'})      "{\"a\": \"b\"}"
+            postMessage(1.2)             "1.2"
+            postMessage('example')       "\"example\""
+            </code>
+            </example>
+        </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.TryGetWebMessageAsString">
+            <summary>
+            Gets the message posted from the WebView content to the host as a string.
+            </summary>
+            <returns>The message posted from the WebView content to the host.</returns>
+            <exception cref="T:System.ArgumentException">The message posted is some other kind of JavaScript type.</exception>
+            <remarks>
+            Run this operation to communicate using simple strings.
+            </remarks>
+            <example>
+            For example the following <c>postMessage</c> runs result in the following values returned by TryWebMessageAsString:
+            
+            <code>
+            postMessage({'a': 'b'})      ArgumentException
+            postMessage(1.2)             ArgumentException
+            postMessage('example')       "example"
+            </code>
+            </example>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.AdditionalObjects">
+            <summary>
+            Additional received WebMessage objects.
+            </summary>
+            <remarks>
+            To pass <c>AdditionalObjects</c> via WebMessage to the app, use the <c>chrome.webview.postMessageWithAdditionalObjects</c> content API. Any DOM object type that can be natively representable that has been passed in to <c>additionalObjects</c> parameter will be accessible here. Currently a WebMessage object can be the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2File"/> type.
+            Entries in the collection can be <c>nullptr</c> if <c>null</c> or <c>undefined</c> was passed. Cast the object to the native type to access its specific properties.
+            <example>
+            object additionalObject = eventArgs.AdditionalObjects[0];
+            if (additionalObject is CoreWebView2File)
+            {
+              CoreWebView2File file = additionalObject as CoreWebView2File;
+            } else if ...
+            </example>
             </remarks>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2Deferral">
@@ -4020,8 +4202,16 @@
             An unexpected error occurred.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidAuthenticationCredentialsRequired" -->
-        <!-- Badly formed XML comment ignored for member "F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidProxyAuthenticationRequired" -->
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidAuthenticationCredentialsRequired">
+            <summary>
+            Indicates that user is prompted with a login, waiting on user action. Initial navigation to a login site will always return this even if app provides credential using <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.BasicAuthenticationRequested"/>. HTTP response status code in this case is 401. See [status code reference](https://developer.mozilla.org/docs/Web/HTTP/Status).
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ValidProxyAuthenticationRequired">
+            <summary>
+            Indicates that user lacks proper authentication credentials for a proxy server. HTTP response status code in this case is 407. See [status code reference](https://developer.mozilla.org/docs/Web/HTTP/Status).
+            </summary>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2TrackingPreventionLevel">
             <summary>
             Tracking prevention levels.
@@ -4193,12 +4383,8 @@
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind">
             <summary>
-            Specifies the process failure kind used in <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/>.
+            Specifies the process failure kind used in <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs"/>. The values in this enum make reference to the process kinds in the Chromium architecture. For more information about what these processes are and what they do, see [Browser Architecture - Inside look at modern web browser](https://developers.google.com/web/updates/2018/09/inside-browser-part1).
             </summary>
-            <remarks>
-            The values in this enum make reference to the process kinds in the Chromium architecture. For more information about what these processes are and what they do, see [Browser Architecture - Inside look at modern web browser](https://developers.google.com/web/updates/2018/09/inside-browser-part1).
-            </remarks>
-            
         </member>
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.BrowserProcessExited">
             <summary>
@@ -4880,6 +5066,36 @@
         <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.DenyCors">
             <summary>
             Cross origin resource access is allowed for normal sub resource access like as src of a script or image element, while any access that subjects to CORS check will be denied. See [Cross-Origin Resource Sharing](https://developer.mozilla.org/docs/Web/HTTP/CORS) for more information.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind">
+            <summary>
+            Specifies the frame kind used in <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/>.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind.Unknown">
+            <summary>
+            Indicates that the frame is an unknown type frame. We may extend this enum type to identify more frame kinds in the future. For example, if portal frame which current in experimental phase gets finalized, we may extend this to include a new frame kind `COREWEBVIEW2_FRAME_KIND_PORTAL`.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind.MainFrame">
+            <summary>
+            Indicates that the frame is a primary main frame(<see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2"/>).
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind.Iframe">
+            <summary>
+            Indicates that the frame is an iframe.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind.Embed">
+            <summary>
+            Indicates that the frame is an <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/embed">embed</see> element.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind.Object">
+            <summary>
+            Indicates that the frame is an <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/object">object</see> element.
             </summary>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat">
@@ -5605,71 +5821,6 @@
             Gets the mutable HTTP request headers.
             </summary>
         </member>
-        <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs">
-            <summary>
-            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.WebMessageReceived"/> event.
-            </summary>
-            <summary>
-            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.WebMessageReceived"/> event.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.Source">
-            <summary>
-            Gets the URI of the document that sent this web message.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.WebMessageAsJson">
-            <summary>
-            Gets the message posted from the WebView content to the host converted to a JSON string.
-            </summary>
-            <remarks>
-            Run this operation to communicate using JavaScript objects.
-            </remarks>
-            <example>
-            For example, the following <c>postMessage</c> runs result in the following WebMessageAsJson values:
-            
-            <code>
-            postMessage({'a': 'b'})      "{\"a\": \"b\"}"
-            postMessage(1.2)             "1.2"
-            postMessage('example')       "\"example\""
-            </code>
-            </example>
-        </member>
-        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.TryGetWebMessageAsString">
-            <summary>
-            Gets the message posted from the WebView content to the host as a string.
-            </summary>
-            <returns>The message posted from the WebView content to the host.</returns>
-            <exception cref="T:System.ArgumentException">The message posted is some other kind of JavaScript type.</exception>
-            <remarks>
-            Run this operation to communicate using simple strings.
-            </remarks>
-            <example>
-            For example the following <c>postMessage</c> runs result in the following values returned by TryWebMessageAsString:
-            
-            <code>
-            postMessage({'a': 'b'})      ArgumentException
-            postMessage(1.2)             ArgumentException
-            postMessage('example')       "example"
-            </code>
-            </example>
-        </member>
-        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs.AdditionalObjects">
-            <summary>
-            Additional received WebMessage objects.
-            </summary>
-            <remarks>
-            To pass <c>AdditionalObjects</c> via WebMessage to the app, use the <c>chrome.webview.postMessageWithAdditionalObjects</c> content API. Any DOM object type that can be natively representable that has been passed in to <c>additionalObjects</c> parameter will be accessible here. Currently a WebMessage object can be the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2File"/> type.
-            Entries in the collection can be <c>nullptr</c> if <c>null</c> or <c>undefined</c> was passed. Cast the object to the native type to access its specific properties.
-            <example>
-            object additionalObject = eventArgs.AdditionalObjects[0];
-            if (additionalObject is CoreWebView2File)
-            {
-              CoreWebView2File file = additionalObject as CoreWebView2File;
-            } else if ...
-            </example>
-            </remarks>
-        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2SourceChangedEventArgs">
             <summary>
             Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.SourceChanged"/> event.
@@ -6141,6 +6292,27 @@
             The content in these frames is replaced with an error page.
             This is only available when <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs.ProcessFailedKind"/> is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.FrameRenderProcessExited"/>; the returned collection is empty for all other process failure kinds, including the case in which the failed process was the renderer for the main frame and subframes within it, for which the failure kind is <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedKind.RenderProcessExited"/>.
             </remarks>
+        </member>
+        <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo">
+            <summary>
+            Provides a set of properties for a process list with extended information in the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2Environment"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo.ProcessInfo">
+            <summary>
+            Provides the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessInfo"/> of the current process.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo.AssociatedFrameInfos">
+            <summary>
+            Provides the collection of associated <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/>s which are actively running (showing or hiding UI elements) in this renderer process.
+            </summary>
+            <remarks>
+            AssociatedFrameInfos will only be populated when this <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo"/> corresponds to a renderer process. Non-renderer processes will always have an empty AssociatedFrameInfo. AssociatedFrameInfos may also be empty for renderer processes that have no active frames.
+            </remarks>
+            <example>
+            :::code language="csharp" source="../code/sample/SampleApps/WebView2WpfBrowser/MainWindow.xaml.cs" id="AssociatedFrameInfos":::
+            </example>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings">
             <summary>
@@ -7027,6 +7199,9 @@
             <summary>
             Provides a set of properties for a frame in the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2"/>.
             </summary>
+            <summary>
+            Provides a set of properties for a frame in the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2"/>.
+            </summary>
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo.Name">
             <summary>
@@ -7040,6 +7215,30 @@
             <summary>
             The URI of the document in the frame.
             </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo.ParentFrameInfo">
+            <summary>
+            This parent frame's <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/>. ParentFrameInfo will only be populated when obtained via calling <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo.AssociatedFrameInfos"/>. <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/> objects obtained via <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ProcessFailed"/> will always have a <c>null</c> ParentFrameInfo. This property is also <c>null</c> for the top most document in the <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2"/> which has no parent frame.
+            </summary>
+            <remarks>
+            ParentFrameInfo could be out of date as it's a snapshot.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo.FrameId">
+            <summary>
+            The unique identifier of the frame associated with the current <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/>. It's the same kind of ID as with the <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2.FrameId"/> and <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2Frame.FrameId"/>. FrameId will only be populated when obtained calling <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo.AssociatedFrameInfos"/>. <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/> objects obtained via <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ProcessFailed"/> will always have an invalid frame Id <c>0</c>.
+            </summary>
+            <remarks>
+            FrameId could be out of date as it's a snapshot. If there's <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2"/> created or destroyed or <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.FrameCreated"/> event or <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2Frame.Destroyed" /> event after the asynchronous call <see cref="M:Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetProcessExtendedInfosAsync"/> starts, you may want to call the asynchronous method again to get the updated `<see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/>s.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo.FrameKind">
+            <summary>
+            Gets the kind of the frame. FrameKind will only be populated when obtained calling <see cref="P:Microsoft.Web.WebView2.Core.CoreWebView2ProcessExtendedInfo.AssociatedFrameInfos"/>. <see cref="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameInfo"/>` objects obtained via <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2.ProcessFailed"/> will always have the default value <see cref="F:Microsoft.Web.WebView2.Core.CoreWebView2FrameKind.Unknown"/>.
+            </summary>
+            <remarks>
+            FrameKind could be out of date as it's a snapshot.
+            </remarks>
         </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2FrameCreatedEventArgs">
             <summary>
@@ -7537,6 +7736,36 @@
             The process ID of the browser process that has exited.
             </summary>
         </member>
+        <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension">
+            <summary>
+            Browser extension installed on current profile.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension.Id">
+            <summary>
+            This is the browser extension's ID. This is the same browser extension ID returned by the browser extension API [chrome.runtime.id](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/id). Please see that documentation for more details on how the ID is generated. After an extension is removed, calling <c>Id</c> will return the id of the extension that is removed.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension.Name">
+            <summary>
+            This is the browser extension's name. This value is defined in this browser extension's manifest.json file. If manifest.json define extension's localized name, this value will be the localized version of the name. Please see [Manifest.json name](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/name) for more details.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension.IsEnabled">
+            <summary>
+            If <c>IsEnabled</c> is true then the Extension is enabled and running in WebView instances. If it is false then the Extension is disabled and not running in WebView instances. When a Extension is first installed, <c>IsEnable</c> are default to be <c>true</c>. <c>IsEnabled</c> is persisted per profile. After an extension is removed, calling <c>IsEnabled</c> will return the value at the time it was removed.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension.RemoveAsync">
+            <summary>
+            Removes this browser extension from its WebView2 Profile. The browser extension is removed immediately including from all currently running HTML documents associated with this WebView2 Profile. The removal is persisted and future uses of this profile will not have this extension installed. After an extension is removed, calling <c>Remove</c> again will cause an exception.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Web.WebView2.Core.CoreWebView2BrowserExtension.EnableAsync(System.Boolean)">
+            <summary>
+            Sets whether this browser extension is enabled or disabled. This change applies immediately to the extension in all HTML documents in all WebView2s associated with this profile. After an extension is removed, calling <c>Enable</c> will not change the value of <c>IsEnabled</c>.
+            </summary>
+        </member>
         <member name="T:Microsoft.Web.WebView2.Core.CoreWebView2BasicAuthenticationResponse">
             <summary>
             Represents a Basic HTTP authentication response that contains a user name and a password as according to RFC7617 (https://tools.ietf.org/html/rfc7617)
@@ -7595,6 +7824,9 @@
             <summary>
             Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2Controller.AcceleratorKeyPressed"/> event.
             </summary>
+            <summary>
+            Event args for the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2Controller.AcceleratorKeyPressed"/> event.
+            </summary>
         </member>
         <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2AcceleratorKeyPressedEventArgs.KeyEventKind">
             <summary>
@@ -7626,8 +7858,37 @@
             <summary>
             Indicates whether the <see cref="E:Microsoft.Web.WebView2.Core.CoreWebView2Controller.AcceleratorKeyPressed"/> event is handled by host.
             </summary>
+            
             <remarks>
-            If set to <c>true</c> then this prevents the WebView from performing the default action for this accelerator key. Otherwise the WebView will perform the default action for the accelerator key.
+            For browser accelerator keys, when an accelerator key is pressed, the propagation and processing order is:
+            
+            1. A CoreWebView2Controller.AcceleratorKeyPressed event is raised
+            1. WebView2 browser feature accelerator key handling
+            1. Web Content Handling: If the key combination isn't reserved for browser actions, the key event propagates to the web content, where JavaScript event listeners can capture and respond to it.
+            
+            If `Handled` property is set to <c>true</c> anywhere along the path, the event propagation stops, and web content will not receive the key and this prevents the WebView from performing the default action for this accelerator key. Otherwise the WebView will perform the default action for the accelerator key.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Web.WebView2.Core.CoreWebView2AcceleratorKeyPressedEventArgs.IsBrowserAcceleratorKeyEnabled">
+            <summary>
+            This `IsBrowserAcceleratorKeyEnabled` property allows developers to control whether the browser handles accelerator keys such as Ctrl+P or F3, etc.
+            </summary>
+            <remarks>
+            The `CoreWebView2Settings.AreBrowserAcceleratorKeysEnabled` API is a convenient setting for developers to disable all the browser accelerator keys together. This setting also sets the default value for the `IsBrowserAcceleratorKeyEnabled` property.
+            
+            By default, `CoreWebView2Settings.AreBrowserAcceleratorKeysEnabled` is `TRUE` and `IsBrowserAcceleratorKeyEnabled` is `TRUE`. When developers change `CoreWebView2Settings.AreBrowserAcceleratorKeysEnabled` setting to `FALSE`, this will change default value for `IsBrowserAcceleratorKeyEnabled` to `FALSE`. If developers want specific keys to be handled by the browser after changing the `CoreWebView2Settings.AreBrowserAcceleratorKeysEnabled` setting to `FALSE`, they need to enable these keys by setting `IsBrowserAcceleratorKeyEnabled` to `TRUE`.
+            
+            The `CoreWebView2Controller.AcceleratorKeyPressed` event is raised any time an accelerator key is pressed, regardless of whether accelerator keys are enabled or not.
+            
+            This API will give the event arg higher priority over the `CoreWebView2Settings.AreBrowserAcceleratorKeysEnabled` setting when we handle the keys.
+            
+            With `IsBrowserAcceleratorKeyEnabled` property, if developers mark `IsBrowserAcceleratorKeyEnabled` as `FALSE`, the browser will skip the WebView2 browser feature accelerator key handling process, but the event propagation continues, and web content will receive the key combination.
+            
+            This property does not disable accelerator keys related to movement and text editing, such as:
+             - Home, End, Page Up, and Page Down
+             - Ctrl-X, Ctrl-C, Ctrl-V
+             - Ctrl-A for Select All
+             - Ctrl-Z for Undo
             </remarks>
         </member>
     </members>

@@ -17,8 +17,10 @@ namespace WinFormsWebView
     public partial class Form1 : Form
     {
         bool loaded = false;
-        public Form1()
+        bool contextMenuEnabled = true;
+        public Form1(bool contextMenuEnabled = true)
         {
+            this.contextMenuEnabled = contextMenuEnabled;
             InitializeComponent();
             loadWV();
             Hide();
@@ -85,6 +87,7 @@ namespace WinFormsWebView
             {
                 CoreWebView2Environment cwv2Environment = await CoreWebView2Environment.CreateAsync(null, Path.Combine(Path.GetTempPath(), pathAppend), new CoreWebView2EnvironmentOptions());
                 await webView.EnsureCoreWebView2Async(cwv2Environment);
+                webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = this.contextMenuEnabled;
                 loaded = true;
                 try
                 {

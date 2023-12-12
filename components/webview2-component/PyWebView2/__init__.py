@@ -31,8 +31,9 @@ class WebView2(QWidget):
         clr.AddReference(DLL_PATH)
         import WinFormsWebView        
 
-        self.webview = WinFormsWebView.Form1()
+        self.webview = WinFormsWebView.Form1(contextMenusEnabled=False)
         hWnd = self.webview.getHWND()
+        # self.webview.webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = False
         window = QWindow.fromWinId(hWnd)
         window.setFlags(Qt.WindowType.CustomizeWindowHint)
         self.__webview_widget = QWidget.createWindowContainer(window)
