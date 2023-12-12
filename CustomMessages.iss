@@ -30,7 +30,7 @@ Catalan.ShCuts=Dreceres
 Catalan.PortInst=Feu una instal·lació portàtil
 Catalan.RegInst=Feu una instal·lació regular
 Catalan.RegStartMmenuIcon=Creeu una drecera al menú Inici
-Catalan.RegDesktopIcon=Creeu una drecera a l'escriptori
+Catalan.RegDesktopIcon=Creeu una drecera a l'Escriptori
 
 ; Corsican
 Corsican.InstallType=Tipu d'installazione
