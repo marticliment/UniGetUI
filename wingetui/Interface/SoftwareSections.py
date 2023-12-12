@@ -448,7 +448,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def addItem(self, package: Package) -> None:
         if "---" not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and version not in ("the", "is"):
-
+                            
             item = PackageItem(package)
 
             self.PackageItemReference[package] = item
@@ -489,9 +489,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.runningThreads += 1
         packages = manager.getPackagesForQuery(query)
         for package in packages:
-            if package.Id not in self.IdPackageReference:
-                self.addProgram.emit(package)
-            elif package.Source != self.IdPackageReference[package.Id].Source:
+            if package.Id in self.IdPackageReference and package.Source == self.IdPackageReference[package.Id].Source and package.Version == self.IdPackageReference[package.Id].Version:
+                print(f"🟡 Not showing found result {package} because it is already present")
+            elif query != self.query.text():
+                print(f"🟡 Not showing found result {package} because the query changed") # thanks copilot :)
+            else:
                 self.addProgram.emit(package)
         self.DynamicPackagesLoaded[manager] = True
         self.runningThreads -= 1
