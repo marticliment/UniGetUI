@@ -35,6 +35,7 @@ class PipPackageManager(PackageManagerModule):
 
     def __init__(self):
         super().__init__()
+        self.IconPath = getMedia("python")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True

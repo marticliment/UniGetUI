@@ -35,6 +35,7 @@ class NPMPackageManager(PackageManagerModule):
 
     def __init__(self):
         super().__init__()
+        self.IconPath = getMedia("node")
         self.Capabilities = PackageManagerCapabilities()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True

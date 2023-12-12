@@ -786,192 +786,91 @@ class SettingsSection(SmoothScrollArea):
         self.mainLayout.addWidget(title)
         self.mainLayout.addSpacing(20)
 
-        # Winget Preferences
 
-        self.wingetPreferences = CollapsableSection(_("{pm} preferences").format(pm="Winget"), getMedia(
-            "winget"), _("{pm} package manager specific preferences").format(pm="Winget"))
-        self.mainLayout.addWidget(self.wingetPreferences)
-
-        path = SectionButton(Winget.EXECUTABLE, _("Copy"), h=50)
-        path.clicked.connect(
-            lambda: globals.app.clipboard().setText(Winget.EXECUTABLE))
-        self.wingetPreferences.addWidget(path)
-        path.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
-
-        disableWinget = SectionCheckBox(_("Enable {pm}").format(pm="Winget"))
-        disableWinget.setChecked(not getSettings(f"Disable{Winget.NAME}"))
-        disableWinget.stateChanged.connect(lambda v: (setSettings(f"Disable{Winget.NAME}", not bool(v)), parallelInstalls.setEnabled(
-            v), button.setEnabled(v), enableSystemWinget.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
-        self.wingetPreferences.addWidget(disableWinget)
-
-        bucketManager = SourceManagerWidget(Winget)
-        bucketManager.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
-        self.wingetPreferences.addWidget(bucketManager)
-
-        button = SectionButton(
-            _("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
-        button.clicked.connect(lambda: (os.startfile(
-            os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
-        self.wingetPreferences.addWidget(button)
-
-        parallelInstalls.setEnabled(disableWinget.isChecked())
-        button.setEnabled(disableWinget.isChecked())
-        enableSystemWinget.setEnabled(disableWinget.isChecked())
-
-        # Scoop Preferences
-
-        self.scoopPreferences = CollapsableSection(_("{pm} preferences").format(pm="Scoop"), getMedia(
-            "scoop"), _("{pm} package manager specific preferences").format(pm="Scoop"))
-        self.mainLayout.addWidget(self.scoopPreferences)
-
-        pathvar = Scoop.EXECUTABLE.replace("scoop", str(shutil.which("scoop"))) if shutil.which("scoop") is not None else Scoop.EXECUTABLE
-        path = SectionButton(pathvar, _("Copy"), h=50)
-        path.clicked.connect(
-            lambda path=pathvar: globals.app.clipboard().setText(path))
-        self.scoopPreferences.addWidget(path)
-        path.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
-
-        disableScoop = SectionCheckBox(_("Enable {pm}").format(pm="Scoop"))
-        disableScoop.setChecked(not getSettings(f"Disable{Scoop.NAME}"))
-        disableScoop.stateChanged.connect(lambda v: (setSettings(f"Disable{Scoop.NAME}", not bool(v)), bucketManager.setEnabled(
-            v), uninstallScoop.setEnabled(v), enableScoopCleanup.setEnabled(v), self.inform(_("Restart WingetUI to fully apply changes"))))
-        self.scoopPreferences.addWidget(disableScoop)
-
-        bucketManager = SourceManagerWidget(Scoop)
-        bucketManager.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
-        self.scoopPreferences.addWidget(bucketManager)
-
-        resetScoop = SectionButton(
-            _("Reset Scoop's global app cache"), _("Reset"))
-        resetScoop.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
-        resetScoop.clicked.connect(lambda: Thread(target=lambda: subprocess.Popen(
-            [GSUDO_EXECUTABLE, os.path.join(realpath, "resources", "scoop_cleanup.cmd")]), daemon=True).start())
-        self.scoopPreferences.addWidget(resetScoop)
-
-        installScoop = SectionButton(_("Install Scoop"), _("Install"))
-        installScoop.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
-        installScoop.clicked.connect(lambda: (setSettings("DisableScoop", False), disableScoop.setChecked(
-            False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
-        self.scoopPreferences.addWidget(installScoop)
-
-        uninstallScoop = SectionButton(
-            _("Uninstall Scoop (and its packages)"), _("Uninstall"))
-        uninstallScoop.clicked.connect(lambda: (setSettings("DisableScoop", True), disableScoop.setChecked(
-            True), os.startfile(os.path.join(realpath, "resources/uninstall_scoop.cmd"))))
-        self.scoopPreferences.addWidget(uninstallScoop)
-
-        bucketManager.setEnabled(disableScoop.isChecked())
-        uninstallScoop.setEnabled(disableScoop.isChecked())
-        enableScoopCleanup.setEnabled(disableScoop.isChecked())
-
-        # Chocolatey preferences
-
-        self.chocoPreferences = CollapsableSection(_("{pm} preferences").format(pm="Chocolatey"), getMedia(
-            "choco"), _("{pm} package manager specific preferences").format(pm="Chocolatey"))
-        self.mainLayout.addWidget(self.chocoPreferences)
-
-        pathvar = str(shutil.which(Choco.EXECUTABLE)) if shutil.which(Choco.EXECUTABLE) else Choco.EXECUTABLE
-        path = SectionButton(pathvar, _("Copy"), h=50)
-        path.clicked.connect(
-            lambda path=pathvar: globals.app.clipboard().setText(path))
-        self.chocoPreferences.addWidget(path)
-        path.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
-
-        disableChocolatey = SectionCheckBox(
-            _("Enable {pm}").format(pm="Chocolatey"))
-        disableChocolatey.setChecked(not getSettings(f"Disable{Choco.NAME}"))
-        disableChocolatey.stateChanged.connect(lambda v: (setSettings(
-            f"Disable{Choco.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
-        self.chocoPreferences.addWidget(disableChocolatey)
+        # Package Manager preferences
         
-        bucketManager = SourceManagerWidget(Choco)
-        bucketManager.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
-        self.chocoPreferences.addWidget(bucketManager)
+        self.ExtraManagerWidgets: dict[PackageManagerModule:list[QWidget]] = {manager: [] for manager in PackageManagersList}
+        
+        
+        # Winget extra settings
+        Winget_ResetSources = SectionButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
+        Winget_ResetSources.clicked.connect(lambda: (os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
+    
+        self.ExtraManagerWidgets[Winget] = [
+            Winget_ResetSources
+        ]
+        
+        # Scoop extra settings
+        Scoop_Install = SectionButton(_("Install Scoop"), _("Install"))
+        Scoop_Install.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        Scoop_Install.clicked.connect(lambda: (setSettings("DisableScoop", False), os.startfile(os.path.join(realpath, "resources/install_scoop.cmd"))))
 
+        Scoop_Remove = SectionButton(_("Uninstall Scoop (and its packages)"), _("Uninstall"))
+        Scoop_Remove.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
+        Scoop_Remove.clicked.connect(lambda: (setSettings("DisableScoop", True), os.startfile(os.path.join(realpath, "resources/uninstall_scoop.cmd"))))
+        
+        Scoop_ResetAppCache = SectionButton(_("Reset Scoop's global app cache"), _("Reset"))
+        Scoop_ResetAppCache.clicked.connect(lambda: Thread(target=lambda: subprocess.Popen([GSUDO_EXECUTABLE, os.path.join(realpath, "resources", "scoop_cleanup.cmd")]), daemon=True).start())
 
-        enableSystemChocolatey = SectionCheckBox(
-            _("Use system Chocolatey (Needs a restart)"))
-        enableSystemChocolatey.setChecked(getSettings("UseSystemChocolatey"))
-        enableSystemChocolatey.stateChanged.connect(
-            lambda v: setSettings("UseSystemChocolatey", bool(v)))
-        enableSystemChocolatey.setStyleSheet(
-            "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-        self.chocoPreferences.addWidget(enableSystemChocolatey)
+        self.ExtraManagerWidgets[Scoop] = [
+            Scoop_Install,
+            Scoop_Remove,
+            Scoop_ResetAppCache
+        ]
+        
+        # Chocolatey extra settings
+        Choco_UseSystemChoco = SectionCheckBox(_("Use system Chocolatey (Needs a restart)"))
+        Choco_UseSystemChoco.setChecked(getSettings("UseSystemChocolatey"))
+        Choco_UseSystemChoco.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
+        Choco_UseSystemChoco.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+        
+        self.ExtraManagerWidgets[Choco] = [
+            Choco_UseSystemChoco
+        ]
 
-        # Pip preferences
+        # Generic settings for all managers
+        self.ManagerSection: dict[PackageManagerModule:CollapsableSection] = {}
+        self.ManagerExecutable: dict[SectionButton:CollapsableSection] = {}
+        self.EnableManager: dict[SectionCheckBox:CollapsableSection] = {}
+        
+        for manager in PackageManagersList:
+            section = CollapsableSection(_("{pm} preferences").format(pm=manager.NAME), manager.IconPath, _("{pm} package manager specific preferences").format(pm=manager.NAME))
+            
+            # Show manager executable
+            pathVar = manager.EXECUTABLE
+            if manager is Scoop:
+                pathVar = Scoop.EXECUTABLE.replace("scoop", str(shutil.which("scoop"))) if shutil.which("scoop") is not None else Scoop.EXECUTABLE
+            executable = SectionButton(pathVar, _("Copy"), h=50)
+            executable.clicked.connect(lambda text=pathVar: globals.app.clipboard().setText(text))
+            executable.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
+            section.addWidget(executable)
+            
+            # Enable/disable manager
+            enable = SectionCheckBox(_("Enable {pm}").format(pm=manager.NAME))
+            enable.setChecked(not getSettings(f"Disable{manager.NAME}"))
+            enable.stateChanged.connect(lambda v, m=manager: (setSettings(f"Disable{m.NAME}", not bool(v)), self.inform(_("Restart WingetUI to fully apply changes"))))
+            if not manager.Capabilities.SupportsCustomSources and len(self.ExtraManagerWidgets[manager]) == 0:
+                enable.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
+            section.addWidget(enable)
+            
+            # Load source manager widget (if supported)
+            if manager.Capabilities.SupportsCustomSources:
 
-        self.pipPreferences = CollapsableSection(_("{pm} preferences").format(pm="Pip"), getMedia(
-            "python"), _("{pm} package manager specific preferences").format(pm="Pip"))
-        self.mainLayout.addWidget(self.pipPreferences)
+                sourceManager = SourceManagerWidget(manager)
+                section.addWidget(sourceManager)
+                if len(self.ExtraManagerWidgets[manager]) != 0:
+                    sourceManager.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
 
-        pathvar = str(shutil.which(Pip.EXECUTABLE.split(' ')[0]) + " -m pip") if shutil.which(Pip.EXECUTABLE.split(' ')[0]) else Pip.EXECUTABLE
-        path = SectionButton(pathvar, _("Copy"), h=50)
-        path.clicked.connect(
-            lambda path=pathvar: globals.app.clipboard().setText(path))
-        self.pipPreferences.addWidget(path)
-        path.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
-
-        disablePip = SectionCheckBox(_("Enable {pm}").format(pm="Pip"))
-        disablePip.setChecked(not getSettings(f"Disable{Pip.NAME}"))
-        disablePip.stateChanged.connect(lambda v: (setSettings(f"Disable{Pip.NAME}", not bool(
-            v)), self.inform(_("Restart WingetUI to fully apply changes"))))
-        self.pipPreferences.addWidget(disablePip)
-        disablePip.setStyleSheet(
-            "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-
-        # Npm preferences
-
-        self.npmPreferences = CollapsableSection(_("{pm} preferences").format(pm="Npm"), getMedia(
-            "node"), _("{pm} package manager specific preferences").format(pm="Npm"))
-        self.mainLayout.addWidget(self.npmPreferences)
-
-        pathvar = str(shutil.which(Npm.EXECUTABLE)) if shutil.which(Npm.EXECUTABLE) else Npm.EXECUTABLE
-        path = SectionButton(pathvar, _("Copy"), h=50)
-        path.clicked.connect(
-            lambda path=pathvar: globals.app.clipboard().setText(path))
-        path.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
-        self.npmPreferences.addWidget(path)
-
-        disableNpm = SectionCheckBox(_("Enable {pm}").format(pm=Npm.NAME))
-        disableNpm.setChecked(not getSettings(f"Disable{Npm.NAME}"))
-        disableNpm.stateChanged.connect(lambda v: (setSettings(f"Disable{Npm.NAME}", not bool(
-            v)), self.inform(_("Restart WingetUI to fully apply changes"))))
-        self.npmPreferences.addWidget(disableNpm)
-        disableNpm.setStyleSheet(
-            "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-
-        # Dotnet preferences
-
-        self.dotnetPreferences = CollapsableSection(_("{pm} preferences").format(pm=".NET Tool"), getMedia(
-            "dotnet"), _("{pm} package manager specific preferences").format(pm=".NET Tool"))
-        self.mainLayout.addWidget(self.dotnetPreferences)
-
-        pathvar = (str(shutil.which(Dotnet.EXECUTABLE)) if shutil.which(Dotnet.EXECUTABLE) else Dotnet.EXECUTABLE) + " tool"
-        path = SectionButton(pathvar, _("Copy"), h=50)
-        path.clicked.connect(
-            lambda path=pathvar: globals.app.clipboard().setText(path))
-        path.setStyleSheet(
-            "QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
-        self.dotnetPreferences.addWidget(path)
-
-        disableDotnet = SectionCheckBox(_("Enable {pm}").format(pm=Dotnet.NAME))
-        disableDotnet.setChecked(not getSettings(f"Disable{Dotnet.NAME}"))
-        disableDotnet.stateChanged.connect(lambda v: (setSettings(f"Disable{Dotnet.NAME}", not bool(
-            v)), self.inform(_("Restart WingetUI to fully apply changes"))))
-        self.dotnetPreferences.addWidget(disableDotnet)
-        disableDotnet.setStyleSheet(
-            "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-
+            # Load extra widgets (if present)
+            for widget in self.ExtraManagerWidgets[manager]:
+                section.addWidget(widget)
+            
+            # Save all widgets for later access
+            self.EnableManager[manager] = enable
+            self.ManagerExecutable[manager] = executable
+            self.ManagerSection[manager] = section
+            self.mainLayout.addWidget(section)
+        
         self.mainLayout.addStretch()
 
         print("🟢 Settings tab loaded!")

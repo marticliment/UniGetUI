@@ -56,6 +56,7 @@ class WingetPackageManager(PackageManagerWithSources):
     
     def __init__(self):
         super().__init__()
+        self.IconPath = getMedia("winget")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True

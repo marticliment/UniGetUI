@@ -30,6 +30,7 @@ class DotNetToolPackageManager(PackageManagerModule):
 
     def __init__(self):
         super().__init__()
+        self.IconPath = getMedia("dotnet")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomArchitectures = True

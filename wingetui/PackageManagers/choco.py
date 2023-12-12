@@ -40,9 +40,11 @@ class ChocoPackageManager(PackageManagerWithSources):
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
     NAME = "Chocolatey"
+    
 
     def __init__(self):
         super().__init__()
+        self.IconPath = getMedia("choco")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True
@@ -328,7 +330,7 @@ class ChocoPackageManager(PackageManagerWithSources):
             line = p.stdout.readline()
             line = line.strip()
             if line:
-                if counter > 1 and b"---" not in line:
+                if counter > 0 and b"---" not in line:
                     output.append(str(line, encoding='utf-8', errors="ignore"))
                 else:
                     counter += 1

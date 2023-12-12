@@ -419,6 +419,7 @@ class InstallationWidgetType(QWidget):
 class PackageManagerModule():
     NAME: str
     EXECUTABLE: str
+    IconPath: str
     
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
@@ -437,6 +438,7 @@ class PackageManagerModule():
         self.LoadedIcons = None
         self.Icon = None
         self.icon = None
+        self.IconPath = ""
 
     def isEnabled() -> bool:
         pass

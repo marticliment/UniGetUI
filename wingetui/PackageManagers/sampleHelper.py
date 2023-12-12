@@ -30,6 +30,7 @@ class SamplePackageManager(PackageManagerModule):
 
     def __init__(self):
         super().__init__()
+        self.IconPath = getMedia("PackageManagerIcon")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True
