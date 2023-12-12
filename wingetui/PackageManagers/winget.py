@@ -137,15 +137,30 @@ class WingetPackageManager(PackageManagerWithSources):
                                     source = "Winget: " + idVersionSubstr.split(" ")[iOffset + 2]
 
                             if noSourcesAvailable:
-                                source = "Winget"
+                                if "msstore" in line:
+                                    source = "Winget: msstore"
+                                elif "winget" in line:
+                                    source = "Winget: winget"
+                                else:
+                                    source = "Winget"
+
                             elif source.strip() == "":
-                                if len(globals.wingetSources.keys() >= 0):
+                                if "msstore" in line:
+                                    source = "Winget: msstore"
+                                elif "winget" in line:
+                                    source = "Winget: winget"
+                                elif len(globals.wingetSources.keys() >= 0):
                                     source = "Winget: " + list(globals.wingetSources.keys())[0]
                                 else:
                                     source = "Winget"
 
                             if "Tag" in source or "Moniker" in source or "Command" in source:
-                                source = "Winget"
+                                if "msstore" in line:
+                                    source = "Winget: msstore"
+                                elif "winget" in line:
+                                    source = "Winget: winget"
+                                else:
+                                    source = "Winget"
 
                             source = source.strip()
 

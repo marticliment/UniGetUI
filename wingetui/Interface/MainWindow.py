@@ -55,13 +55,14 @@ class RootWindow(QMainWindow):
             assert (len(rs) == 4), "Invalid window geometry format"
 
             geometry = QRect(int(rs[0]), int(rs[1]), int(rs[2]), int(rs[3]))
+            ShouldBeMaximized = getSettings("WindowWasMaximized")
             if QApplication.primaryScreen().availableVirtualGeometry().contains(geometry):
                 self.move(geometry.x(), geometry.y())
-                if getSettings("WindowWasMaximized"): #geometry.width() == self.screen().geometry().width() and geometry.x() == self.screen().geometry().x() and \
-                #   geometry.height() == (self.screen().geometry().height() - 71) and geometry.y() == (self.screen().geometry().y() + 22):
-                    self.setWindowState(Qt.WindowState.WindowMaximized)
-                else:
+                if not ShouldBeMaximized:
                     self.setGeometry(geometry)
+            if ShouldBeMaximized:
+                self.setWindowState(Qt.WindowState.WindowMaximized)
+
         except Exception as e:
             report(e)
         self.loadWidgets()
