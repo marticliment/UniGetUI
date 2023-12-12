@@ -70,10 +70,10 @@ class WingetPackageManager(PackageManagerWithSources):
         self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
         
-        self.KnownSources = {
+        self.KnownSources = [
             ManagerSource(self, "winget", "https://cdn.winget.microsoft.com/cache"),
             ManagerSource(self, "msstore", "https://storeedgefd.dsx.mp.microsoft.com/v9.0"),
-        }
+        ]
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

@@ -53,9 +53,9 @@ class ChocoPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsPreRelease = True
         self.Capabilities.SupportsCustomSources = True
         
-        self.KnownSources = {
+        self.KnownSources = [
             ManagerSource(self, "chocolatey", "https://community.chocolatey.org/api/v2/")
-        }
+        ]
         
         self.BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
         self.BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]

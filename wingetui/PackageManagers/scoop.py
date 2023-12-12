@@ -45,7 +45,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
         
-        self.KnownSources = {
+        self.KnownSources = [
             # This list should reflect the one published on https://github.com/ScoopInstaller/Scoop/blob/master/buckets.json
             ManagerSource(self, "main", "https://github.com/ScoopInstaller/Main"),
             ManagerSource(self, "extras", "https://github.com/ScoopInstaller/Extras"),
@@ -57,7 +57,7 @@ class ScoopPackageManager(PackageManagerWithSources):
             ManagerSource(self, "nonportable", "https://github.com/ScoopInstaller/Nonportable"),
             ManagerSource(self, "java", "https://github.com/ScoopInstaller/Java"),
             ManagerSource(self, "games", "https://github.com/Calinou/scoop-games"),
-        }
+        ]
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
