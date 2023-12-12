@@ -29,6 +29,7 @@ import globals
 class Package():
     Name: str = ""
     Id: str = ""
+    UniqueId: str = ""
     Version: str = ""
     Source: str = ""
     PackageItem: 'PackageItem' = None
@@ -40,6 +41,7 @@ class Package():
         self.Version = Version
         self.Source = Source
         self.PackageManager = PackageManager
+        self.UniqueId = self.PackageManager.NAME + "\\" + self.Id + "\\" + self.Version
 
     def isWinget(self) -> bool:
         return "winget" in self.Source.lower()

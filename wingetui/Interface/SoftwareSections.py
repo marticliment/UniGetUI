@@ -454,6 +454,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.PackageItemReference[package] = item
             self.ItemPackageReference[item] = package
             self.IdPackageReference[package.Id] = package
+            self.UniqueIdPackageReference[package.UniqueId] = package
             package.PackageItem = item
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
@@ -489,7 +490,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.runningThreads += 1
         packages = manager.getPackagesForQuery(query)
         for package in packages:
-            if package.Id in self.IdPackageReference and package.Source == self.IdPackageReference[package.Id].Source and package.Version == self.IdPackageReference[package.Id].Version:
+            if package.UniqueId in self.UniqueIdPackageReference and package.Source == self.UniqueIdPackageReference[package.UniqueId].Source and package.Version == self.UniqueIdPackageReference[package.UniqueId].Version:
                 print(f"🟡 Not showing found result {package} because it is already present")
             elif query != self.query.text():
                 print(f"🟡 Not showing found result {package} because the query changed") # thanks copilot :)

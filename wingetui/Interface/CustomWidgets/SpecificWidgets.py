@@ -698,6 +698,7 @@ class SoftwareSection(QWidget):
     PackageItemReference: dict[Package:'PackageItem'] = {}
     ItemPackageReference: dict['PackageItem':Package] = {}
     IdPackageReference: dict[str:Package] = {}
+    UniqueIdPackageReference: dict[str:Package] = {}
     sectionName: str = ""
     packageItems: list['PackageItem'] = []
     showableItems: list['PackageItem'] = []
@@ -1286,6 +1287,7 @@ class SoftwareSection(QWidget):
         self.PackageItemReference = {}
         self.ItemPackageReference = {}
         self.IdPackageReference = {}
+        self.UniqueIdPackageReference = {}
         self.shownItems = []
         self.addedItems = []
         self.loadingProgressBar.show()
