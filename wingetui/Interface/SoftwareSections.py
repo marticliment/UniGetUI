@@ -1829,7 +1829,7 @@ class PackageInfoPopupWindow(QWidget):
         commandWidget.setFixedHeight(70)
 
         self.VersionLabel = QLabel(_("Version to install:"))
-        self.VersionCombo = CustomComboBox()
+        self.VersionCombo = CustomComboBox(self)
         self.VersionCombo.setFixedWidth(150)
         self.VersionCombo.setIconSize(QSize(24, 24))
         self.VersionCombo.setFixedHeight(30)
@@ -1853,7 +1853,7 @@ class PackageInfoPopupWindow(QWidget):
         prereleaseSection.addWidget(self.InstallPreRelease)
 
         self.ArchLabel = QLabel(_("Architecture to install:"))
-        self.ArchCombo = CustomComboBox()
+        self.ArchCombo = CustomComboBox(self)
         self.ArchCombo.setFixedWidth(150)
         self.ArchCombo.setIconSize(QSize(24, 24))
         self.ArchCombo.setFixedHeight(30)
@@ -1863,7 +1863,7 @@ class PackageInfoPopupWindow(QWidget):
         self.ArchSection.setFixedHeight(50)
 
         self.scopeLabel = QLabel(_("Installation scope:"))
-        self.ScopeCombo = CustomComboBox()
+        self.ScopeCombo = CustomComboBox(self)
         self.ScopeCombo.setFixedWidth(150)
         self.ScopeCombo.setIconSize(QSize(24, 24))
         self.ScopeCombo.setFixedHeight(30)
@@ -1919,6 +1919,9 @@ class PackageInfoPopupWindow(QWidget):
         downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
         self.layout.addWidget(optionsSection)
+        
+        self.setStyleSheet("margin: 0px;")
+        self.setAttribute(Qt.WA_StyledBackground)
 
         self.layout.addSpacing(10)
 
@@ -1974,7 +1977,6 @@ class PackageInfoPopupWindow(QWidget):
         self.setLayout(tempHLayout)
 
         self.backButton = QPushButton("", self)
-        self.setStyleSheet("margin: 0px;")
         self.backButton.move(self.width() - 40, 0)
         self.backButton.resize(40, 40)
         self.backButton.setFlat(True)
