@@ -693,46 +693,14 @@ class SettingsSection(SmoothScrollArea):
         self.advancedOptions.addWidget(doCacheAdminPrivileges)
 
         # Due to lambda's nature, the following code can NOT be placed in a for loop
-
-        WINGET = Winget.NAME
-        alwaysRunAsAdmin = SectionCheckBox(
-            _("Always elevate {pm} installations by default").format(pm=WINGET))
-        alwaysRunAsAdmin.setChecked(getSettings("AlwaysElevate" + WINGET))
-        alwaysRunAsAdmin.stateChanged.connect(
-            lambda v: setSettings("AlwaysElevate" + WINGET, bool(v)))
-        self.advancedOptions.addWidget(alwaysRunAsAdmin)
-
-        SCOOP = Scoop.NAME
-        alwaysRunAsAdmin = SectionCheckBox(
-            _("Always elevate {pm} installations by default").format(pm=SCOOP))
-        alwaysRunAsAdmin.setChecked(getSettings("AlwaysElevate" + SCOOP))
-        alwaysRunAsAdmin.stateChanged.connect(
-            lambda v: setSettings("AlwaysElevate" + SCOOP, bool(v)))
-        self.advancedOptions.addWidget(alwaysRunAsAdmin)
-
-        CHOCO = Choco.NAME
-        alwaysRunAsAdmin = SectionCheckBox(
-            _("Always elevate {pm} installations by default").format(pm=CHOCO))
-        alwaysRunAsAdmin.setChecked(getSettings("AlwaysElevate" + CHOCO))
-        alwaysRunAsAdmin.stateChanged.connect(
-            lambda v: setSettings("AlwaysElevate" + CHOCO, bool(v)))
-        self.advancedOptions.addWidget(alwaysRunAsAdmin)
-
-        PIP = Pip.NAME
-        alwaysRunAsAdmin = SectionCheckBox(
-            _("Always elevate {pm} installations by default").format(pm=PIP))
-        alwaysRunAsAdmin.setChecked(getSettings("AlwaysElevate" + PIP))
-        alwaysRunAsAdmin.stateChanged.connect(
-            lambda v: setSettings("AlwaysElevate" + PIP, bool(v)))
-        self.advancedOptions.addWidget(alwaysRunAsAdmin)
-
-        NPM = Npm.NAME
-        alwaysRunAsAdmin = SectionCheckBox(
-            _("Always elevate {pm} installations by default").format(pm=NPM))
-        alwaysRunAsAdmin.setChecked(getSettings("AlwaysElevate" + NPM))
-        alwaysRunAsAdmin.stateChanged.connect(
-            lambda v: setSettings("AlwaysElevate" + NPM, bool(v)))
-        self.advancedOptions.addWidget(alwaysRunAsAdmin)
+        
+        for manager in PackageManagersList:
+            ManagerName = manager.NAME
+            alwaysRunAsAdmin = SectionCheckBox(
+                _("Always elevate {pm} installations by default").format(pm=ManagerName))
+            alwaysRunAsAdmin.setChecked(getSettings(f"AlwaysElevate{ManagerName}"))
+            alwaysRunAsAdmin.stateChanged.connect(lambda v, manager=ManagerName: setSettings(f"AlwaysElevate{manager}", bool(v)))
+            self.advancedOptions.addWidget(alwaysRunAsAdmin)
 
         dontUseBuiltInGsudo = SectionCheckBox(
             _("Use installed GSudo instead of the bundled one (requires app restart)"))
