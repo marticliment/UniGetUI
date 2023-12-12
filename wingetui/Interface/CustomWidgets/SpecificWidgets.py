@@ -1948,37 +1948,40 @@ class PackageItem(QTreeWidgetItem):
 
     def setTag(self, tag: Tag, newVersion: str = ""):
         self.CurrentTag = tag
-        match self.CurrentTag:
-            case PackageItem.Tag.Default:
-                self.setIcon(1, getIcon("install"))
-                self.setToolTip(1, self.Package.Name)
+        try:
+            match self.CurrentTag:
+                case PackageItem.Tag.Default:
+                    self.setIcon(1, getIcon("install"))
+                    self.setToolTip(1, self.Package.Name)
 
-            case PackageItem.Tag.Installed:
-                self.setIcon(1, getMaskedIcon("installed_masked"))
-                self.setToolTip(1, _("This package is already installed") + " - " + self.Package.Name)
+                case PackageItem.Tag.Installed:
+                    self.setIcon(1, getMaskedIcon("installed_masked"))
+                    self.setToolTip(1, _("This package is already installed") + " - " + self.Package.Name)
 
-            case PackageItem.Tag.Upgradable:
-                self.setIcon(1, getMaskedIcon("update_masked"))
-                if newVersion:
-                    self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
-                else:
-                    self.setToolTip(1, _("This package can be updated") + " - " + self.Package.Name)
+                case PackageItem.Tag.Upgradable:
+                    self.setIcon(1, getMaskedIcon("update_masked"))
+                    if newVersion:
+                        self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
+                    else:
+                        self.setToolTip(1, _("This package can be updated") + " - " + self.Package.Name)
 
-            case PackageItem.Tag.Pinned:
-                self.setIcon(1, getMaskedIcon("pin_masked"))
-                self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
-                
-            case PackageItem.Tag.Pending:
-                self.setIcon(1, getIcon("queued"))
-                self.setToolTip(1, _("This package is on the queue") + " - " + self.Package.Name)
-                
-            case PackageItem.Tag.BeingProcessed:
-                self.setIcon(1, getMaskedIcon("gears_masked"))
-                self.setToolTip(1, _("This package is being processed") + " - " + self.Package.Name)
-                
-            case PackageItem.Tag.Failed:
-                self.setIcon(1, getMaskedIcon("warning_masked"))
-                self.setToolTip(1, _("An error occurred while processing this package") + " - " + self.Package.Name)
+                case PackageItem.Tag.Pinned:
+                    self.setIcon(1, getMaskedIcon("pin_masked"))
+                    self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
+                    
+                case PackageItem.Tag.Pending:
+                    self.setIcon(1, getIcon("queued"))
+                    self.setToolTip(1, _("This package is on the queue") + " - " + self.Package.Name)
+                    
+                case PackageItem.Tag.BeingProcessed:
+                    self.setIcon(1, getMaskedIcon("gears_masked"))
+                    self.setToolTip(1, _("This package is being processed") + " - " + self.Package.Name)
+                    
+                case PackageItem.Tag.Failed:
+                    self.setIcon(1, getMaskedIcon("warning_masked"))
+                    self.setToolTip(1, _("An error occurred while processing this package") + " - " + self.Package.Name)      
+        except RuntimeError:
+            pass
                 
 
     def getDiscoverPackageItem(self) -> 'PackageItem':
@@ -2006,7 +2009,8 @@ class PackageItem(QTreeWidgetItem):
     def getInstalledPackageItem(self) -> 'InstalledPackageItem':
         INSTALLED: 'SoftwareSection' = globals.uninstall
         if self.SoftwareSection == INSTALLED:
-            return self
+                return self
+
         if self.Package.Id in INSTALLED.IdPackageReference:
             package: Package = INSTALLED.IdPackageReference[self.Package.Id]
             if self.Package.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
@@ -2043,13 +2047,16 @@ class PackageItem(QTreeWidgetItem):
         return super().treeWidget()
 
     def removeFromList(self) -> None:
-        self.setHidden(True)
-        if self in self.SoftwareSection.packageItems:
-            self.SoftwareSection.packageItems.remove(self)
-        if self in self.SoftwareSection.showableItems:
-            self.SoftwareSection.showableItems.remove(self)
-        if self.treeWidget():
-            self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
+        try:
+            self.setHidden(True)
+            if self in self.SoftwareSection.packageItems:
+                self.SoftwareSection.packageItems.remove(self)
+            if self in self.SoftwareSection.showableItems:
+                self.SoftwareSection.showableItems.remove(self)
+            if self.treeWidget():
+                self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
+        except RuntimeError:
+            pass
         self.SoftwareSection.updatePackageNumber()
 
 
