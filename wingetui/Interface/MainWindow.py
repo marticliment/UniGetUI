@@ -57,8 +57,8 @@ class RootWindow(QMainWindow):
             geometry = QRect(int(rs[0]), int(rs[1]), int(rs[2]), int(rs[3]))
             if QApplication.primaryScreen().availableVirtualGeometry().contains(geometry):
                 self.move(geometry.x(), geometry.y())
-                if geometry.width() == self.screen().geometry().width() and geometry.x() == self.screen().geometry().x() and \
-                   geometry.height() == (self.screen().geometry().height() - 71) and geometry.y() == (self.screen().geometry().y() + 22):
+                if getSettings("WindowWasMaximized"): #geometry.width() == self.screen().geometry().width() and geometry.x() == self.screen().geometry().x() and \
+                #   geometry.height() == (self.screen().geometry().height() - 71) and geometry.y() == (self.screen().geometry().y() + 22):
                     self.setWindowState(Qt.WindowState.WindowMaximized)
                 else:
                     self.setGeometry(geometry)
@@ -327,6 +327,7 @@ class RootWindow(QMainWindow):
         event.ignore()
         self.closedpos = self.pos()
         setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()},{self.closedpos.y()+30},{self.width()},{self.height()}")
+        setSettings("WindowWasMaximized", self.isMaximized())
         if globals.themeChanged:
             globals.themeChanged = False
             self.deleteChildren()
@@ -389,6 +390,7 @@ class RootWindow(QMainWindow):
         except AttributeError:
             pass
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
+        setSettings("WindowWasMaximized", self.isMaximized())
         return super().resizeEvent(event)
 
     def showWindow(self, index=-2):
@@ -482,4 +484,5 @@ class RootWindow(QMainWindow):
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         setSettingsValue("OldWindowGeometry", f"{self.x()},{self.y()+30},{self.width()},{self.height()}")
+        setSettings("WindowWasMaximized", self.isMaximized())
         return super().mouseReleaseEvent(event)
