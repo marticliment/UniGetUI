@@ -1155,18 +1155,35 @@ class BaseBrowserSection(QWidget):
 
         hLayout = QHBoxLayout()
 
-        openBtn = QPushButton(_("Open in browser"))
+        openBtn = QPushButton(_("View page on browser"))
         openBtn.clicked.connect(lambda: os.startfile(self.webview.getUrl()))
         openBtn.setFixedHeight(30)
 
-        hLayout.addWidget(openBtn)
+        
+        self.BackButton = QPushButton()
+        self.BackButton.clicked.connect(lambda: self.webview.goBack())
+        self.BackButton.setFixedSize(30, 30)
+        hLayout.addWidget(self.BackButton)
+        
+        self.ForwardButton = QPushButton()
+        self.ForwardButton.clicked.connect(lambda: self.webview.goForward())
+        self.ForwardButton.setFixedSize(30, 30)
+        hLayout.addWidget(self.ForwardButton)
+        
+        self.HomeButton = QPushButton()
+        self.HomeButton.clicked.connect(lambda: self.loadWebContents())
+        self.HomeButton.setFixedSize(30, 30)
+        hLayout.addWidget(self.HomeButton)
+        
+        self.ReloadButton = QPushButton()
+        self.ReloadButton.clicked.connect(lambda: self.webview.reload())
+        self.ReloadButton.setFixedSize(30, 30)
+        hLayout.addWidget(self.ReloadButton)
+        
         hLayout.addStretch()
 
+        hLayout.addWidget(openBtn)
         
-        loadBtn = QPushButton(_("Reload"))
-        loadBtn.clicked.connect(lambda: self.loadWebContents())
-        loadBtn.setFixedHeight(30)
-        hLayout.addWidget(loadBtn)
 
         self.setLayout(QVBoxLayout())
         self.setContentsMargins(0, 0, 0, 0)
@@ -1188,6 +1205,10 @@ class BaseBrowserSection(QWidget):
             self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #161616;")
         else:
             self.webview.setStyleSheet("margin: 10px;border-radius: 6px;border: 1px solid #dddddd;")
+        self.BackButton.setIcon(QIcon(getMedia("left")))
+        self.ForwardButton.setIcon(QIcon(getMedia("next")))
+        self.HomeButton.setIcon(QIcon(getMedia("home")))
+        self.ReloadButton.setIcon(QIcon(getMedia("reload")))
 
     def showEvent(self, event: QShowEvent) -> None:
         if not self.loaded:

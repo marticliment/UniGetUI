@@ -4,6 +4,8 @@ from PySide6.QtWidgets import *
 import sys
 import clr
 import os
+import time
+from threading import Thread
 
 
 if hasattr(sys, 'frozen'):
@@ -33,7 +35,6 @@ class WebView2(QWidget):
 
         self.webview = WinFormsWebView.Form1(contextMenuEnabled=False)
         hWnd = self.webview.getHWND()
-        #self.webview.webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = False
         window = QWindow.fromWinId(hWnd)
         window.setFlags(Qt.WindowType.CustomizeWindowHint)
         self.__webview_widget = QWidget.createWindowContainer(window)
@@ -44,6 +45,17 @@ class WebView2(QWidget):
         self.setMouseTracking(True)
         self.webview.uncoverWindow()
 
+    def goBack(self):
+        """
+        Navigate back in the browser history
+        """
+        self.webview.webView.GoBack()
+        
+    def goForward(self):
+        """
+        Navigate forward in the browser history
+        """
+        self.webview.webView.GoForward()
 
     def setLocation(self, url: str):
         """
