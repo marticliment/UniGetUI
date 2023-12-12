@@ -441,6 +441,11 @@ class RootWindow(QMainWindow):
             globals.uninstall.startLoadingPackages()
         except Exception as e:
             report(e)
+            
+        if not getSettings("ReleaseNotesVersion2.1.2-beta2"):
+            setSettings("ReleaseNotesVersion2.1.2-beta2", True)
+            self.showHelpUrl("https://www.marticliment.com/wingetui/notes/2.1.2-beta2.php")
+        
         return super().showEvent(event)
 
     def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):

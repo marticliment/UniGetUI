@@ -1142,7 +1142,7 @@ class BaseLogSection(QWidget):
 
 
 class BaseBrowserSection(QWidget):
-    HOME_URL = "https://www.marticliment.com/wingetui/help"
+    HOME_URL = "https://www.marticliment.com/wingetui/help?isWingetUIIframe"
     loaded = False
     def __init__(self):
 
@@ -1156,7 +1156,7 @@ class BaseBrowserSection(QWidget):
         hLayout = QHBoxLayout()
 
         openBtn = QPushButton(_("View page on browser"))
-        openBtn.clicked.connect(lambda: os.startfile(self.webview.getUrl()))
+        openBtn.clicked.connect(lambda: os.startfile(self.webview.getUrl().replace("isWingetUIIframe", "")))
         openBtn.setFixedHeight(30)
 
         
@@ -1227,6 +1227,11 @@ class BaseBrowserSection(QWidget):
     def changeHomeUrl(self, url: str):
         if not self.loaded:
             self.loadWebView()
+        if "marticliment.com" in url:
+            if "?" in url:
+                url += "&isWingetUIIframe"
+            else:
+                url += "?isWingetUIIframe"
         self.HOME_URL = url
         self.loadWebContents()
 
