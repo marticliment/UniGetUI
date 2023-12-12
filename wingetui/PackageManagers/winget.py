@@ -814,6 +814,7 @@ class WingetPackageManager(PackageManagerWithSources):
         globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
+        globals.wingetSources = {source.Name: source.Url for source in self.getSources()}
 
     def updateSources(self, signal: Signal = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")
