@@ -132,7 +132,7 @@ class WingetPackageManager(PackageManagerWithSources):
                                     source = "Winget: " + idVersionSubstr.split(" ")[iOffset + 2]
                             if ver.strip() in ("<", "-"):
                                 iOffset += 1
-                                ver = idVersionSubstr.split(" ")[iOffset + 1]
+                                ver = ver.strip() + " " + idVersionSubstr.split(" ")[iOffset + 1]
                                 if not noSourcesAvailable:
                                     source = "Winget: " + idVersionSubstr.split(" ")[iOffset + 2]
 
@@ -230,7 +230,7 @@ class WingetPackageManager(PackageManagerWithSources):
                                 source = "Winget: " + verElement.split(" ")[iOffset + 3]
                         if ver.strip() in ("<", ">", "-"):
                             iOffset += 1
-                            ver = verElement.split(" ")[iOffset + 1]
+                            ver = ver.strip() + " " + verElement.split(" ")[iOffset + 1]
                             newver = verElement.split(" ")[iOffset + 2]
                             if not noSourcesAvailable:
                                 source = "Winget: " + verElement.split(" ")[iOffset + 3]
@@ -374,7 +374,7 @@ class WingetPackageManager(PackageManagerWithSources):
                             ver = verElement.split(" ")[iOffset + 1]
                         if ver.strip() in ("<", "-", ">"):
                             iOffset += 1
-                            ver = verElement.split(" ")[iOffset + 1]
+                            ver = ver.strip() + " " + verElement.split(" ")[iOffset + 1]
                         name = packageLine[0:idPosition].strip()
 
                         if name.strip() == "":
