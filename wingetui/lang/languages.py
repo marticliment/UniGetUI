@@ -1,4 +1,4 @@
-from lang.lang_tools import languageReference
+from wingetui.lang.lang_tools import languageReference
 
 lang = {}
 englang = {}

@@ -7,11 +7,11 @@ It also defines the PackageItem, UpgradablePackageItem and InstalledPackageItem 
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
+
 
 
 from datetime import datetime
@@ -20,19 +20,19 @@ from functools import partial
 import PySide6.QtCore
 import PySide6.QtGui
 import PySide6.QtWidgets
-from Interface.CustomWidgets.SectionWidgets import *
-from PackageManagers.choco import Choco
-from PackageManagers.npm import Npm
-from PackageManagers.PackageClasses import *
-from PackageManagers.pip import Pip
-from PackageManagers.scoop import Scoop
-from PackageManagers.winget import Winget
-from PackageManagers.dotnet import Dotnet
+from wingetui.Interface.CustomWidgets.SectionWidgets import *
+from wingetui.PackageManagers.choco import Choco
+from wingetui.PackageManagers.npm import Npm
+from wingetui.PackageManagers.PackageClasses import *
+from wingetui.PackageManagers.pip import Pip
+from wingetui.PackageManagers.scoop import Scoop
+from wingetui.PackageManagers.winget import Winget
+from wingetui.PackageManagers.dotnet import Dotnet
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
+from wingetui.tools import *
+from wingetui.tools import _
 from win32mica import *
 import yaml
 

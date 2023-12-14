@@ -6,11 +6,10 @@ This file holds the classes related to Packages and PackageManagers .
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
     from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage  # Unreachable import used for the syntax highlighter
 
 
@@ -21,9 +20,9 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from urllib.request import urlopen
 import os
-from tools import *
-from tools import _, blueColor
-import globals
+from wingetui.tools import *
+from wingetui.tools import _, blueColor
+from wingetui import globals
 
 
 class Package():

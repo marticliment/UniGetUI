@@ -7,18 +7,16 @@ This file holds the Winget Package Manager related code.
 """
 
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
 
 
 import os
 import subprocess
 
 from PySide6.QtCore import *
-from tools import *
-from tools import _
+from wingetui.tools import *
+from wingetui.tools import _
 
 from .PackageClasses import *
 from .sampleHelper import *

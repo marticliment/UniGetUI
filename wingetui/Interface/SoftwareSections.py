@@ -13,11 +13,11 @@ The class PackageInfoPopupWindow contains the code for the Package Details windo
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
+
 
 
 import os
@@ -26,18 +26,18 @@ import time
 import socket
 from threading import Thread
 
-import globals
-from Interface.CustomWidgets.SpecificWidgets import *
-from PackageManagers.PackageClasses import PackageManagerModule
+from wingetui import globals
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.PackageManagers.PackageClasses import PackageManagerModule
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from Interface.CustomWidgets.InstallerWidgets import *
-from tools import *
-from tools import _
-import apiBackend
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+from wingetui.tools import *
+from wingetui.tools import _
+from wingetui import apiBackend
 
-from Interface.GenericSections import *
+from wingetui.Interface.GenericSections import *
 
 
 class DiscoverSoftwareSection(SoftwareSection):

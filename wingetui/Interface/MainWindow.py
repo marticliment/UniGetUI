@@ -6,27 +6,27 @@ This file contains the code of the main WingetUI window.
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
+
 
 
 import ctypes
 import os
 import sys
 
-import globals
+from wingetui import globals
 import win32mica
 import winreg
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from Interface.CustomWidgets.InstallerWidgets import *
-from tools import *
-from tools import _
-from Interface.SoftwareSections import *
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+from wingetui.tools import *
+from wingetui.tools import _
+from wingetui.Interface.SoftwareSections import *
 
 WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320
 DWMWA_USE_IMMERSIVE_DARK_MODE = 20

@@ -9,11 +9,11 @@ This file also contains the following classes:
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
+
 
 
 import os
@@ -21,15 +21,15 @@ import subprocess
 import time
 from threading import Thread
 
-import globals
+from wingetui import globals
 import PySide6.QtGui
-from Interface.CustomWidgets.SpecificWidgets import *
-from PackageManagers.PackageClasses import Package, PackageDetails, UpgradablePackage
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.PackageManagers.PackageClasses import Package, PackageDetails, UpgradablePackage
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
+from wingetui.tools import *
+from wingetui.tools import _
 
 
 class PackageInstallerWidget(QWidget):

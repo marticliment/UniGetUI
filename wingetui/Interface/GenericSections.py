@@ -6,11 +6,11 @@ This file contains the code for miscellanious User Interface sections, such as t
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
+
 
 
 import glob
@@ -20,16 +20,16 @@ import sys
 from threading import Thread
 import win32mica
 
-import globals
-from Interface.CustomWidgets.SpecificWidgets import *
-from data.contributors import contributorsInfo
-from data.translations import languageCredits, untranslatedPercentage
+from wingetui import globals
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.data.contributors import contributorsInfo
+from wingetui.data.translations import languageCredits, untranslatedPercentage
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from Interface.CustomWidgets.InstallerWidgets import *
-from tools import *
-from tools import _
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+from wingetui.tools import *
+from wingetui.tools import _
 
 
 class AboutSection(SmoothScrollArea):
@@ -206,7 +206,7 @@ class AboutSection(SmoothScrollArea):
             licensesTable.setCornerButtonEnabled(False)
             licensesTable.cornerWidget().setStyleSheet("background: transparent;")
 
-            from data.licenses import licenses, licenseUrls
+            from wingetui.data.licenses import licenses, licenseUrls
 
             licensesTable.setRowCount(len(list(licenses.keys())))
             licensesTable.setFixedHeight(len(list(licenses.keys())) * 32)
@@ -1017,7 +1017,7 @@ class BaseBrowserSection(QWidget):
 
     def loadWebView(self):
         self.loaded = True
-        from ExternalLibraries.PyWebView2 import WebView2
+        from wingetui.ExternalLibraries.PyWebView2 import WebView2
         self.setObjectName("background")
 
         hLayout = QHBoxLayout()

@@ -30,7 +30,7 @@ if 2 == 3:
     from wingetui.PackageManagers.PackageClasses import Package # Enable syntax highlighting
 
 
-import globals
+from wingetui import globals
 try:
     import clr
 except RuntimeError:
@@ -45,12 +45,12 @@ except RuntimeError:
 
     sys.exit(1)
 
-from ExternalLibraries.BlurWindow import GlobalBlur
-from lang.languages import *
+from wingetui.ExternalLibraries.BlurWindow import GlobalBlur
+from wingetui.lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from data.versions import *
+from wingetui.data.versions import *
 
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr
@@ -739,7 +739,8 @@ if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
-    realpath = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+    realpath = os.path.dirname(os.path.abspath(__file__))
+
 
 if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     try:

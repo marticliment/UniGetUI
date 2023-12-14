@@ -11,13 +11,13 @@ import ctypes
 import os
 import time
 
-from Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
+from wingetui.tools import *
+from wingetui.tools import _
 from win32mica import *
 
 dwm = ctypes.windll.dwmapi

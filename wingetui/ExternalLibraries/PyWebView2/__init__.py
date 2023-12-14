@@ -1,3 +1,7 @@
+if __name__ == "__main__":
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -7,13 +11,12 @@ import os
 import time
 from threading import Thread
 
-
 if hasattr(sys, 'frozen'):
     BASE_PATH = sys._MEIPASS
 else:
-    BASE_PATH = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+    BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-DLL_PATH = os.path.join(BASE_PATH, "ExternalLibraries/PyWebView2/lib/WinFormsWebView.dll")
+DLL_PATH = os.path.join(BASE_PATH, "lib/WinFormsWebView.dll")
 
 class WebView2(QWidget):
     hWnd: int = 0

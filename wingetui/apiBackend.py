@@ -18,9 +18,9 @@ if __name__ == "__main__":
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
-from globals import CurrentSessionToken
-from tools import *
-import globals
+from wingetui.globals import CurrentSessionToken
+from wingetui.tools import *
+from wingetui import globals
 from waitress import serve
 
 

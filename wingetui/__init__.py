@@ -99,16 +99,16 @@ try:
     from threading import Thread
     from urllib.request import urlopen
 
-    import globals
-    from apiBackend import runBackendApi
-    from Interface.CustomWidgets.SpecificWidgets import *
-    from ExternalLibraries.BlurWindow import ExtendFrameIntoClientArea, GlobalBlur
-    from Interface.MainWindow import *
+    from wingetui import globals
+    from wingetui.apiBackend import runBackendApi
+    from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+    from wingetui.ExternalLibraries.BlurWindow import ExtendFrameIntoClientArea, GlobalBlur
+    from wingetui.Interface.MainWindow import *
     from PySide6.QtCore import *
     from PySide6.QtGui import *
     from PySide6.QtWidgets import *
-    from tools import *
-    from tools import _
+    from wingetui.tools import *
+    from wingetui.tools import _
 
     print("---------------------------------------------------------------------------------------------------")
     print("")

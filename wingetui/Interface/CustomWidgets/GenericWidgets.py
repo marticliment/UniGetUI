@@ -9,11 +9,11 @@ Generally they are optimized versions of Qt standard widgets.
 
 """
 
+
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
+
 
 
 import PySide6.QtCore
@@ -23,8 +23,8 @@ import windows_toasts
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
+from wingetui.tools import *
+from wingetui.tools import _
 from win32mica import *
 
 
