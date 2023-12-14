@@ -36,7 +36,7 @@ With this app, you'll be able to easily download, install, update and uninstall 
 
 **Install WingetUI through Winget:**    
 ```cmd
-winget install wingetui
+winget install SomePythonThings.WingetUIStore
 ```
 
 **Install WingetUI through Scoop:**
