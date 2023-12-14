@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7462,
-        "packages_with_icon": 7462,
-        "packages_with_screenshot": 518,
-        "total_screenshots": 1657
+        "done": 7464,
+        "packages_with_icon": 7464,
+        "packages_with_screenshot": 522,
+        "total_screenshots": 1662
     },
     "icons_and_screenshots": {
         "010editor": {
@@ -6327,8 +6327,10 @@
             "images": []
         },
         "canva": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/lkKNh5X.png",
+            "images": [
+                "https://i.imgur.com/9BlUW6o.png"
+            ]
         },
         "capa": {
             "icon": "https://community.chocolatey.org/content/packageimages/capa.1.2.0.png",
@@ -23123,8 +23125,11 @@
             "images": []
         },
         "localsend": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/JZiGU2w.png",
+            "images": [
+                "https://i.imgur.com/ZUmvRlJ.png",
+                "https://i.imgur.com/tzapdEs.png"
+            ]
         },
         "lockhunter": {
             "icon": "https://lockhunter.com/assets/images/lockhunter_icon_large_128_sh.png",
@@ -29916,7 +29921,9 @@
         },
         "pdf24": {
             "icon": "https://community.chocolatey.org/content/packageimages/pdf24.11.10.2.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/MgPtCdQ.png"
+            ]
         },
         "pdf24creator": {
             "icon": "",
@@ -30100,7 +30107,9 @@
         },
         "pdfxchangeeditor": {
             "icon": "https://community.chocolatey.org/content/packageimages/PDFXchangeEditor.9.5.366.0.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/VajKqLl.png"
+            ]
         },
         "pdfxchangelite": {
             "icon": "https://community.chocolatey.org/content/packageimages/pdfxchangelite.6.0.322.5.png",
