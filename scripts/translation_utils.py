@@ -41,7 +41,7 @@ def get_all_strings():
 
 
 def get_all_translations(lang = "en"):
-    with open(f"lang/lang_{lang}.json", "r", encoding="utf-8") as f:
+    with open(f"Core/Languages/lang_{lang}.json", "r", encoding="utf-8") as f:
         lang_strings: dict[str, str] = json.load(f)
     return lang_strings
 

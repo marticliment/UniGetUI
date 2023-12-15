@@ -8,9 +8,9 @@ import tolgee_requests
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(root_dir) # move to root project
 
-sys.path.append("wingetui")
+sys.path.append("./")
 
-from lang.lang_tools import *
+from wingetui.Core.Languages.LangData import *
 
 # Update contributors
 os.system("python scripts/get_contributors.py")
@@ -31,7 +31,7 @@ if len(sys.argv)>1:
 import glob
 import zipfile
 
-os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/lang")))
+os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/Core/Languages")))
 
 print()
 print("-------------------------------------------------------")
@@ -135,7 +135,7 @@ untranslatedPercentage = {json.dumps(langPerc, indent=2, ensure_ascii=False)}
 languageCredits = {json.dumps(langCredits, indent=2, ensure_ascii=False)}
 """
 
-translations_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/data/translations.py"))
+translations_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/Core/Data/Translations.py"))
 with open(translations_filepath, "w", encoding="utf-8") as f:
     f.write(outputString.strip())
 

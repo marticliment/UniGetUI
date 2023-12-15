@@ -6,7 +6,7 @@ os.chdir(os.path.join(os.path.dirname(__file__), "..")) # move to root project
 try:
     sys.path.append("wingetui")
 
-    from data.versions import *
+    from Core.Data.Versions import *
 
 
     def fileReplaceLinesWith(filename: str, list: dict[str, str], encoding="utf-8"):
