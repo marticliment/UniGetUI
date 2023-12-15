@@ -1,5 +1,5 @@
 #
-# WARNING! Please do not run this script directly, as it will not work. 
+# WARNING! Please do not run this script directly, as it will not work.
 # Instead, import the wingetui module or execute any other .py file in the wingetui directory.
 #
 
