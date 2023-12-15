@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
@@ -29,7 +30,6 @@ class ChocoPackageManager(PackageManagerWithSources):
         os.environ["chocolateyinstall"] = os.path.dirname(EXECUTABLE)
 
     NAME = "Chocolatey"
-    
 
     def __init__(self):
         super().__init__()
@@ -41,15 +41,14 @@ class ChocoPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsPreRelease = True
         self.Capabilities.SupportsCustomSources = True
-        
+
         self.KnownSources = [
             ManagerSource(self, "chocolatey", "https://community.chocolatey.org/api/v2/")
         ]
-        
+
         self.BLACKLISTED_PACKAGE_NAMES = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output Is Package name ", "'chocolatey'", "Operable"]
         self.BLACKLISTED_PACKAGE_IDS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"]
-
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -342,7 +341,7 @@ class ChocoPackageManager(PackageManagerWithSources):
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
-    
+
     def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = [self.EXECUTABLE, "source", "remove", "--name", source.Name, "-y"]
         print(f"🔵 Starting source {source.Name} removal with Command", Command)

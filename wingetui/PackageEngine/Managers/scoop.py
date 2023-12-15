@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
@@ -32,7 +33,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
-        
+
         self.KnownSources = [
             # This list should reflect the one published on https://github.com/ScoopInstaller/Scoop/blob/master/buckets.json
             ManagerSource(self, "main", "https://github.com/ScoopInstaller/Main"),
@@ -185,7 +186,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                     rawOutput += line + b"\n"
 
             data: dict = json.loads(str(rawOutput, encoding='utf-8', errors="ignore"))
-            
+
             if "description" in data.keys():
                 if type(data["description"]) is list:
                     details.Description = "\n".join(data["description"])
@@ -418,14 +419,14 @@ class ScoopPackageManager(PackageManagerWithSources):
 
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
-    
+
     def installSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["bucket", "add", source.Name, source.Url]
         print(f"🔵 Starting source {source.Name} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
-    
+
     def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["bucket", "rm", source.Name]
         print(f"🔵 Starting source {source.Name} removal with Command", Command)

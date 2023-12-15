@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
@@ -82,7 +83,8 @@ class SmoothScrollArea(QScrollArea):
         currentPos = self.verticalScrollBar().value()
         maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos):
+            # If there are no scrollable contents:
             e.ignore()
         else:
             e.angleDelta().setX(0)
@@ -136,7 +138,7 @@ class SmoothScrollArea(QScrollArea):
 
     def showTopButton(self):
         if not self.buttonVisible:
-            self.buttonVisible = True    
+            self.buttonVisible = True
             if self.EnableTopButton:
                 self.goTopButton.raise_()
                 self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
@@ -222,7 +224,6 @@ class TreeWidget(QTreeWidget):
             self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
         scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v > 20 else self.hideTopButton())
 
-
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.label.move((self.width() - self.label.width()) // 2, (self.height() - self.label.height()) // 2,)
         if self.EnableTopButton:
@@ -258,7 +259,8 @@ class TreeWidget(QTreeWidget):
         currentPos = self.verticalScrollBar().value()
         maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos):
+            # If there are no scrollable contents:
             e.ignore()
         else:
             e.angleDelta().setX(0)

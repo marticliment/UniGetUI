@@ -1,9 +1,10 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-    
+
 
 import io
 import json
@@ -195,9 +196,9 @@ def GetJsonSettings(Name: str, Scope: str = "") -> dict:
             return Globals.settingsCache[Name + "JSON"]
         else:
             if not Scope:
-                path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name+".json")
+                path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name + ".json")
             else:
-                path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name+".json")
+                path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name + ".json")
             with open(path, "r", encoding="utf-8", errors="ignore") as file:
                 data: dict = json.load(file)
                 Globals.settingsCache[Name + "JSON"] = data
@@ -217,15 +218,16 @@ def SetJsonSettings(Name: str, Data: dict, Scope: str = "") -> None:
     try:
         Globals.settingsCache = {}
         if not Scope:
-            path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name+".json")
+            path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name + ".json")
         else:
-            path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name+".json")
+            path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name + ".json")
         if not os.path.isdir(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path))
         with open(path, "w", encoding="utf-8", errors="ignore") as file:
             file.write(json.dumps(Data, indent=4))
     except Exception as e:
         print(e)
+
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
@@ -263,6 +265,7 @@ def getColors() -> list:
         i += 4
     return colors
 
+
 def isDark() -> bool:
     prefs = getSettingsValue("PreferredTheme")
     match prefs:
@@ -272,11 +275,14 @@ def isDark() -> bool:
             return False
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) == 0
 
+
 def isTaskbarDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 1) == 0
 
+
 def queueProgram(id: str):
     Globals.pending_programs.append(id)
+
 
 def removeProgram(id: str):
     try:
@@ -301,12 +307,14 @@ def checkQueue():
 
 operationsToAdd: dict[object:str] = {}
 
+
 def AddOperationToLog(operation: str, package, commandline: str):
     global operationsToAdd
     stringToAdd = f" Operation: {operation} - Perform date {str(datetime.now())}\n"
     stringToAdd += f" Package: {str(package)}\n"
     stringToAdd += f" Command-line call: {commandline}"
     operationsToAdd[package] = stringToAdd
+
 
 def AddResultToLog(output: list, package, result: int):
     print(output)
@@ -363,6 +371,7 @@ def getint(s: str, fallback: int) -> int:
         print("can't parse", s)
         return fallback
 
+
 def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     """
     Returns a list in the following format [[packageId, store], [packageId, store], etc.] representing the permanently ignored packages.
@@ -370,6 +379,7 @@ def GetIgnoredPackageUpdates_Permanent() -> list[list[str, str]]:
     baseList = [v for v in getSettingsValue(
         "PermanentlyIgnoredPackageUpdates").split(";") if v]
     return [v.split(",") for v in baseList if len(v.split(",")) == 2]
+
 
 def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
     """
@@ -379,7 +389,9 @@ def GetIgnoredPackageUpdates_SpecificVersion() -> list[list[str, str, str]]:
         "SingleVersionIgnoredPackageUpdates").split(";") if v]
     return [v.split(",") for v in baseList if len(v.split(",")) == 3]
 
+
 carriedChar = b""
+
 
 def getLineFromStdout(p: subprocess.Popen) -> (bytes, bool):
     """
@@ -467,7 +479,7 @@ def updateLangFile(file: str):
             oldlang = ""
         try:
             newlang = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/Core/Languages/" + file)
-        except Exception as e:
+        except Exception:
             newlang = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/" + file)
         if newlang.status == 200:
             langdata: bytes = newlang.read()
@@ -602,6 +614,7 @@ def ConvertMarkdownToHtml(content: str) -> str:
     except Exception as e:
         report(e)
         return content
+
 
 colors = getColors()
 

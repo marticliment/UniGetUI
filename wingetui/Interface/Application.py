@@ -1,9 +1,9 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-
 
 
 import glob
@@ -27,6 +27,7 @@ from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from wingetui.Interface.MainWindow import *
 from wingetui.Interface.WelcomeWizard import WelcomeWindow
 
+
 def RunMainApplication() -> int:
     """
     Runs the main WingetUI Graphical Application
@@ -35,6 +36,7 @@ def RunMainApplication() -> int:
     OutputCode: int = Application.exec()
     Application.running = False
     return OutputCode
+
 
 class WingetUIApplication(QApplication):
     kill = Signal()
@@ -52,14 +54,14 @@ class WingetUIApplication(QApplication):
     def __init__(self):
         try:
             super().__init__(sys.argv)
-            
+
             try:
                 translator = QTranslator()
                 translator.load(f"qtbase_{langName}.qm", QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath))
                 self.installTranslator(translator)
             except Exception as e:
                 report(e)
-            
+
             self.isDaemon: bool = "--daemon" in sys.argv
             self.popup = DraggableWindow()
             self.popup.FixLag = sys.getwindowsversion().build < 22000
@@ -322,7 +324,7 @@ class WingetUIApplication(QApplication):
             if getSettings("IconDataBaseURL"):
                 url = getSettingsValue("iconDataBaseURL")
             data = urlopen(url).read()
-            
+
             if not os.path.exists(CACHED_DIR):
                 os.makedirs(CACHED_DIR)
             with open(os.path.join(CACHED_DIR, "Icon Database.json"), "wb") as f:
@@ -603,6 +605,7 @@ class WingetUIApplication(QApplication):
         if round <= 2:
             time.sleep(600)
             self.updateIfPossible(round + 1)
+
 
 darkCSS = f"""
 * {{

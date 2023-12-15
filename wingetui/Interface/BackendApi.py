@@ -1,10 +1,11 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-    
-    from wingetui.PackageManagers.PackageClasses import UpgradablePackage
+
+    from wingetui.PackageEngine.Classes import UpgradablePackage
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 
 
@@ -17,7 +18,6 @@ import wingetui.Core.Globals as Globals
 from wingetui.Core.Globals import CurrentSessionToken
 from wingetui.Interface.Tools import *
 from wingetui.Interface.Tools import _
-
 
 
 globalsignal: Signal = None

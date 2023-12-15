@@ -1,9 +1,10 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-    
+
     from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage
     from Interface.CustomWidgets.InstallerWidgets import PackageInstallerWidget
     # TODO: Check this import hierarchy
@@ -81,7 +82,7 @@ class Package():
     def getPackageIcon(self) -> str:
         """
         Returns a string containing the complete path to a local PNG file containing this package's icon.
-        If needed, the icon will be downloaded. 
+        If needed, the icon will be downloaded.
         """
         try:
             iconId = self.getIconId()
@@ -144,7 +145,7 @@ class Package():
 
     def __str__(self) -> str:
         return f"<Package: {self.Name};{self.Id};{self.Version};{self.Source};{self.PackageManager};{self.PackageItem}>"
-        
+
     def AddToIgnoredUpdates(self, version: str = "*"):
         """
         Add a package to the ignored package updates list.
@@ -154,7 +155,7 @@ class Package():
         ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         ignoredPackages[ENTRY] = version
         SetJsonSettings("IgnoredPackageUpdates", ignoredPackages)
-        
+
         if self.PackageItem is not None:
             InstalledItem = self.PackageItem.getInstalledPackageItem()
             if InstalledItem:
@@ -162,7 +163,6 @@ class Package():
             UpgradableItem = self.PackageItem.getUpdatesPackageItem()
             if UpgradableItem:
                 UpgradableItem.removeFromList()
-
 
     def RemoveFromIgnoredUpdates(self):
         """
@@ -172,14 +172,14 @@ class Package():
         ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             del ignoredPackages[ENTRY]
-                 
+
         if self.PackageItem is not None:
             InstalledItem = self.PackageItem.getInstalledPackageItem()
             if InstalledItem:
                 InstalledItem.setTag(InstalledItem.Tag.Default)
-        
+
         SetJsonSettings("IgnoredPackageUpdates", ignoredPackages)
-        
+
     def HasUpdatesIgnored(self, version: str = "*") -> bool:
         """
         Return if a package is being ignored for the given version.
@@ -189,7 +189,7 @@ class Package():
         ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
         if ENTRY in ignoredPackages.keys():
             if ignoredPackages[ENTRY] == "*":
-                return True # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
+                return True  # Will take into account the case where the package has been ignored for all versions but a specific version is checked.
             elif ignoredPackages[ENTRY] == version:
                 return True
         return False
@@ -240,7 +240,7 @@ class Package():
             if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 return package
         return None
-    
+
     def getAllCorrespondingInstalledPackages(self) -> 'list[Package]':
         matches = []
         if self.Id in Globals.uninstall.IdPackageReference:
@@ -248,7 +248,6 @@ class Package():
             if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 matches.append(package)
         return matches
-
 
 
 class UpgradablePackage(Package):
@@ -259,6 +258,7 @@ class UpgradablePackage(Package):
         super().__init__(Name, Id, InstalledVersion, Source, PackageManager)
         self.NewVersion = NewVersion
         self.NewPackage = Package(Name, Id, NewVersion, Source, PackageManager)
+
 
 class PackageDetails(Package):
     Name: str = ""
@@ -314,28 +314,28 @@ class InstallationOptions():
     Package: 'Package' = None
     __save_file_name: str = "Unknown.Unknown.InstallationOptions"
     __data_to_save: list[str] = [
-            "SkipHashCheck",
-            "InteractiveInstallation",
-            "RunAsAdministrator",
-            "Architecture",
-            "InstallationScope",
-            "CustomParameters",
-            "PreRelease",
-            "CustomInstallLocation"
-        ]
+        "SkipHashCheck",
+        "InteractiveInstallation",
+        "RunAsAdministrator",
+        "Architecture",
+        "InstallationScope",
+        "CustomParameters",
+        "PreRelease",
+        "CustomInstallLocation"
+    ]
 
     def __init__(self, package: 'Package', reset: bool = False):
         self.Package = package
-        self.__save_file_name = self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." +  self.Package.Id
+        self.__save_file_name = self.Package.PackageManager.NAME.replace(" ", "").replace(".", "") + "." + self.Package.Id
         if not reset:
             self.LoadOptionsFromDisk()
-            
+
     def ToJson(self) -> dict:
         optionsToSave = {}
         for entry in self.__data_to_save:
             optionsToSave[entry] = getattr(self, entry)
         return optionsToSave
-    
+
     def LoadFromJson(self, data: dict):
         for entry in self.__data_to_save:
             if entry in data.keys():
@@ -352,7 +352,7 @@ class InstallationOptions():
         Get previously saved installation options from disk
         """
         self.LoadFromJson(GetJsonSettings(Name=self.__save_file_name, Scope="InstallationOptions"))
-        
+
     def __str__(self) -> str:
         str = f"<InstallationOptions: SkipHashCheck={self.SkipHashCheck};"
         str += f"InteractiveInstallation={self.InteractiveInstallation};"
@@ -364,25 +364,26 @@ class InstallationOptions():
         str += f"RemoveDataOnUninstall={self.RemoveDataOnUninstall}>"
         return str
 
+
 class ManagerSource:
-    
+
     class Capabilities:
         KnowsUpdateDate: bool = False
         KnowsPackageCount: bool = False
-    
+
     Manager: 'PackageManagerWithSources' = None
     Name: str = ""
     Url: str = ""
     PackageCount: int = 0
     UpdateDate: str = ""
-    
+
     def __init__(self, Manager: 'PackageManagerWithSources', Name: str, Url: str, PackageCount: int = 0, UpdateDate: str = ""):
         self.Manager = Manager
         self.Name = Name
         self.Url = Url
         self.PackageCount = PackageCount
         self.UpdateDate = UpdateDate
-    
+
 
 class PackageManagerCapabilities():
     CanRunAsAdmin: bool = False
@@ -396,7 +397,7 @@ class PackageManagerCapabilities():
     SupportsCustomLocations: bool = False
     SupportsCustomSources: bool = False
     Sources: ManagerSource.Capabilities
-    
+
     def __init__(self):
         self.Sources = ManagerSource.Capabilities()
 
@@ -405,16 +406,16 @@ class PackageManagerModule():
     NAME: str
     EXECUTABLE: str
     IconPath: str
-    
+
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
     Icon: QIcon
     icon: QIcon
-    
+
     BLACKLISTED_PACKAGE_NAMES: list[str]
     BLACKLISTED_PACKAGE_IDS: list[str]
     BLACKLISTED_PACKAGE_VERSIONS: list[str]
-    
+
     def __init__(self):
         self.Capabilities = PackageManagerCapabilities()
         self.BLACKLISTED_PACKAGE_NAMES: list[str] = []
@@ -493,25 +494,25 @@ class PackageManagerModule():
         Will retieve the packages for the given "query: str" from the package manager {self.NAME} in the format of a list[Package] object.
         """
 
+
 class PackageManagerWithSources(PackageManagerModule):
-    
+
     Sources: list[ManagerSource]
     KnownSources: list[ManagerSource]
-    
+
     def __init__(self):
         super().__init__()
         self.Sources = []
         self.KnownSources = []
-    
+
     def getSources(self) -> list[ManagerSource]:
         pass
-    
+
     def installSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         pass
-    
+
     def uninstallSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         pass
-    
 
 
 RETURNCODE_OPERATION_SUCCEEDED = 0

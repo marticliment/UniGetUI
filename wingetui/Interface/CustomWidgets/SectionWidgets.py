@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
@@ -581,7 +582,7 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
     stateChanged = Signal(bool)
     valueChanged = Signal(str)
     defaultText: str
-    
+
     def __init__(self, text: str, parent=None, helpLabel: str = "", smallerMargins: bool = False):
         super().__init__(text=text, parent=parent)
         self.defaultText = _("Select")
@@ -611,15 +612,15 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
             self.layout().setContentsMargins(70, 5, 20, 0)
             self.setFixedHeight(50)
             self.pushButton.setFixedWidth(450)
-        
+
     def currentValue(self) -> str:
         if self.pushButton.text() != self.defaultText:
             return self.pushButton.text()
         return ""
-    
+
     def setValue(self, value: str) -> None:
         self.setText(value)
-        
+
     def showDialog(self):
         folder = QFileDialog.getExistingDirectory(self, _("Select a folder"), os.path.expanduser("~"))
         if folder:
@@ -632,7 +633,7 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
     def setPlaceholderText(self, text: str):
         self.pushButton.setText(text)
         self.oldtext = text
-        
+
     def setDefaultText(self, text: str):
         self.defaultText = text
 

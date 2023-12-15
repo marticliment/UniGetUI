@@ -1,9 +1,9 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-
 
 import os
 import subprocess
@@ -34,7 +34,6 @@ class WingetPackageManager(PackageManagerWithSources):
 
     NAME = "Winget"
 
-
     wingetIcon = None
     localIcon = None
     steamIcon = None
@@ -42,7 +41,7 @@ class WingetPackageManager(PackageManagerWithSources):
     uPlayIcon = None
     msStoreIcon = None
     wsaIcon = None
-    
+
     def __init__(self):
         super().__init__()
         self.IconPath = getMedia("winget")
@@ -58,7 +57,7 @@ class WingetPackageManager(PackageManagerWithSources):
         self.Capabilities.Sources.KnowsUpdateDate = False
         self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
-        
+
         self.KnownSources = [
             ManagerSource(self, "winget", "https://cdn.winget.microsoft.com/cache"),
             ManagerSource(self, "msstore", "https://storeedgefd.dsx.mp.microsoft.com/v9.0"),
@@ -687,7 +686,7 @@ class WingetPackageManager(PackageManagerWithSources):
         elif ".x86" in package.Id or "32-bit" in package.Name:
             print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
             options.Architecture = "x86"
-        
+
         Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -768,14 +767,14 @@ class WingetPackageManager(PackageManagerWithSources):
                 report(e)
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
-    
+
     def installSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "add", "--name", source.Name, "--arg", source.Url, "--accept-source-agreements", "--disable-interactivity"]
         print(f"🔵 Starting source {source.Name} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
-    
+
     def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "remove", "--name", source.Name, "--disable-interactivity"]
         print(f"🔵 Starting source {source.Name} removal with Command", Command)

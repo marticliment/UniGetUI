@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import ctypes
@@ -431,11 +432,11 @@ class RootWindow(QMainWindow):
             Globals.uninstall.startLoadingPackages()
         except Exception as e:
             report(e)
-            
+
         if not getSettings("ReleaseNotesVersion2.1.2-beta2"):
             setSettings("ReleaseNotesVersion2.1.2-beta2", True)
             self.showHelpUrl("https://www.marticliment.com/wingetui/notes/2.1.2-beta2.php")
-        
+
         return super().showEvent(event)
 
     def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):

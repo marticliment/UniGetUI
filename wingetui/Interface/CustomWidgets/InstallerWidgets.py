@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
@@ -144,7 +145,7 @@ class PackageInstallerWidget(QWidget):
         self.rightFast.setDuration(300)
         self.rightFast.valueChanged.connect(self.update)
         self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-        
+
         if self.Package.PackageItem:
             self.Package.PackageItem.setTag(PackageItem.Tag.Pending)
 
@@ -169,7 +170,7 @@ class PackageInstallerWidget(QWidget):
                 except ValueError:
                     print(f"🔴 Package {self.Package.Id} not in Globals.pending_programs")
                 self.addInfoLine.emit((_("Waiting for other installations to finish...") + append, False))
-                
+
         print("🟢 Have permission to install, starting installation threads...")
         self.callInMain.emit(self.runInstallation)
 
@@ -289,7 +290,7 @@ class PackageInstallerWidget(QWidget):
         self.progressbar.setValue(1000)
         t = ToastNotification(self, self.callInMain.emit)
         t.addOnClickCallback(lambda: (Globals.mainWindow.showWindow(-1)))
-        if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:     
+        if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
             if self.Package.PackageItem:
                 self.Package.PackageItem.setTag(PackageItem.Tag.Default)
             self.setProgressbarColor("#11945a" if isDark() else "#11945a")
@@ -324,7 +325,7 @@ class PackageInstallerWidget(QWidget):
                     Globals.uninstall.updatePackageNumber()
         else:
             if self.Package.PackageItem:
-                self.Package.PackageItem.setTag(PackageItem.Tag.Failed)   
+                self.Package.PackageItem.setTag(PackageItem.Tag.Failed)
             Globals.tray_is_error = True
             update_tray_icon()
             self.setProgressbarColor("#fec10b" if isDark() else "#fec10b")
@@ -618,7 +619,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
             except Exception:
                 pass
             if not self.canceled:
-                if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:   
+                if returncode in LIST_RETURNCODES_OPERATION_SUCCEEDED:
                     if self.Package.PackageItem:
                         self.Package.PackageItem.setTag(PackageItem.Tag.Default)
                     self.setProgressbarColor("#11945a" if isDark() else "#11945a")
@@ -634,7 +635,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
                     t.setDescription(_("{0} was {1} successfully!").format(self.Package.Name, self.actionDone).replace("!", "."))
                     if Globals.ENABLE_SUCCESS_NOTIFICATIONS:
                         t.show()
-                else:            
+                else:
                     if self.Package.PackageItem:
                         self.Package.PackageItem.setTag(PackageItem.Tag.Failed)
                     Globals.tray_is_error = True
@@ -669,6 +670,7 @@ class PackageUninstallerWidget(PackageInstallerWidget):
         Globals.installersWidget.removeItem(self)
         super().close()
         super().destroy()
+
 
 """ for future use
 
@@ -748,6 +750,7 @@ class CustomUninstallerWidget(PackageUninstallerWidget):
 
 """
 
+
 class SourceInstallerWidget(PackageInstallerWidget):
     Source: ManagerSource = None
 
@@ -755,7 +758,7 @@ class SourceInstallerWidget(PackageInstallerWidget):
         self.Source = source
         self.Package = Package(self.Source.Name, self.Source.Name, "", self.Source.Manager.NAME, self.Source.Manager)
         self.Package.PackageItem = PackageItem(self.Package)
-        self.Options = InstallationOptions(self.Package, reset = True)
+        self.Options = InstallationOptions(self.Package, reset=True)
         super().__init__(self.Package, self.Options)
 
     def runInstallation(self) -> None:
@@ -779,7 +782,7 @@ class SourceUninstallerWidget(PackageUninstallerWidget):
         self.Source = source
         self.Package = Package(self.Source.Name, self.Source.Name, "", self.Source.Manager.NAME, self.Source.Manager)
         self.Package.PackageItem = PackageItem(self.Package)
-        self.Options = InstallationOptions(self.Package, reset = True)
+        self.Options = InstallationOptions(self.Package, reset=True)
         super().__init__(self.Package, self.Options)
 
     def runInstallation(self) -> None:
@@ -837,14 +840,14 @@ class SourceManagerWidget(QWidget):
         hLayout.addWidget(self.reloadButton)
         hLayout.setContentsMargins(10, 0, 15, 0)
         layout.setContentsMargins(60, 10, 5, 10)
-        self.TreeWidget = TreeWidget(EnableTopButton = False)
+        self.TreeWidget = TreeWidget(EnableTopButton=False)
         self.TreeWidget.setColumnCount(3)
         self.TreeWidget.setHeaderLabels([_("Name"), _("Update date"), _("Manifests"), _("Url")])
         self.TreeWidget.sortByColumn(0, Qt.SortOrder.AscendingOrder)
         self.TreeWidget.setSortingEnabled(True)
         self.TreeWidget.setVerticalScrollMode(QTreeWidget.ScrollMode.ScrollPerPixel)
         self.TreeWidget.setIconSize(QSize(24, 24))
-        
+
         self.TreeWidget.setColumnHidden(1, not self.Manager.Capabilities.Sources.KnowsUpdateDate)
         self.TreeWidget.setColumnHidden(2, not self.Manager.Capabilities.Sources.KnowsPackageCount)
         self.TreeWidget.setColumnWidth(0, 120)
@@ -853,7 +856,7 @@ class SourceManagerWidget(QWidget):
         self.TreeWidget.setColumnWidth(2, 120)
         self.TreeWidget.setColumnWidth(4, 24)
         self.TreeWidget.setFixedHeight(300)
-        
+
         layout.addLayout(hLayout)
         layout.addWidget(self.loadingProgressBar)
         layout.addWidget(self.TreeWidget)
@@ -917,21 +920,21 @@ class SourceManagerWidget(QWidget):
         self.loadingProgressBar.show()
         self.TreeWidget.label.show()
         self.TreeWidget.label.setText(_("Loading..."))
-        Thread(target=self.WaitForSources, name=f"Loading {self.Manager.NAME} sources").start()        
-        
+        Thread(target=self.WaitForSources, name=f"Loading {self.Manager.NAME} sources").start()
+
     def WaitForSources(self):
         self.IsLoading = True
         if not self.Manager.isEnabled():
             self.callInMain.emit(lambda: self.loadingProgressBar.hide())
             self.callInMain.emit(self.TreeWidget.label.setText(_(f"{self.Manager.NAME} is not enabled")))
-        
+
         self.Sources = self.Manager.getSources()
         for source in self.Sources:
             self.callInMain.emit(partial(self.AddSource, source))
-                    
+
         if len(self.Sources) == 0:
             self.callInMain.emit(lambda: self.TreeWidget.label.setText(_("No sources were found")))
-        
+
         self.IsLoading = False
         self.callInMain.emit(lambda: self.loadingProgressBar.hide())
 
@@ -948,7 +951,7 @@ class SourceManagerWidget(QWidget):
         item.setText(2, str(source.PackageCount))
         item.setToolTip(2, str(source.PackageCount))
         self.TreeWidget.addTopLevelItem(item)
-        
+
         layout = QHBoxLayout()
         layout.addStretch()
         layout.setContentsMargins(8, 1, 8, 1)
@@ -957,12 +960,12 @@ class SourceManagerWidget(QWidget):
         btn.clicked.connect(lambda: (self.UninstallSource(source), self.TreeWidget.takeTopLevelItem(self.TreeWidget.indexOfTopLevelItem(item))))
         btn.setFixedSize(24, 24)
         btn.setIcon(QIcon(getMedia("menu_uninstall")))
-        
+
         w = QWidget()
         w.setLayout(layout)
-        
+
         self.TreeWidget.setItemWidget(item, 3, w)
-        
+
     def InstallSource(self) -> None:
         sourceReference = {source.Name: source for source in self.Manager.KnownSources}
         r = QInputDialog.getItem(self, _("Add a source to {0}").format(self.Manager.NAME), _("Which source do you want to add?") + " " + _("Select \"{item}\" to add your custom bucket").format(item=_("Another source")), list(sourceReference.keys()) + [_("Another source")], 1, editable=False)

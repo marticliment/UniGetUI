@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
@@ -22,7 +23,6 @@ from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from wingetui.Interface.CustomWidgets.InstallerWidgets import *
 from wingetui.Interface.GenericSections import *
 from wingetui.PackageEngine.Classes import PackageManagerModule
-
 
 
 class DiscoverSoftwareSection(SoftwareSection):
@@ -433,7 +433,7 @@ class DiscoverSoftwareSection(SoftwareSection):
 
     def addItem(self, package: Package) -> None:
         if "---" not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and version not in ("the", "is"):
-                            
+
             item = PackageItem(package)
 
             self.PackageItemReference[package] = item
@@ -478,7 +478,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             if package.UniqueId in self.UniqueIdPackageReference and package.Source == self.UniqueIdPackageReference[package.UniqueId].Source and package.Version == self.UniqueIdPackageReference[package.UniqueId].Version:
                 print(f"🟡 Not showing found result {package} because it is already present")
             elif query != self.query.text():
-                print(f"🟡 Not showing found result {package} because the query changed") # thanks copilot :)
+                print(f"🟡 Not showing found result {package} because the query changed")  # thanks copilot :)
             else:
                 self.addProgram.emit(package)
         self.DynamicPackagesLoaded[manager] = True
@@ -588,7 +588,7 @@ class UpdateSoftwareSection(SoftwareSection):
                 installedItem = self.packageList.currentItem().getInstalledPackageItem()
                 if installedItem:
                     UNINSTALL_SECTION.uninstallPackageItem(installedItem)
-                    
+
         def uninstallThenUpdate():
             UNINSTALL_SECTION: UninstallSoftwareSection = Globals.uninstall
             INSTALL_SECTION: DiscoverSoftwareSection = Globals.discover
@@ -815,9 +815,9 @@ class UpdateSoftwareSection(SoftwareSection):
             helpMenu.addSeparator()
             helpMenu.addAction(self.HelpMenuEntry2)
             helpMenu.addAction(self.HelpMenuEntry3)
-            #helpMenu.addAction(self.HelpMenuEntry4)
-            #helpMenu.addSeparator()
-            #helpMenu.addAction(self.HelpMenuEntry5)
+            # helpMenu.addAction(self.HelpMenuEntry4)
+            # helpMenu.addSeparator()
+            # helpMenu.addAction(self.HelpMenuEntry5)
             ApplyMenuBlur(helpMenu.winId().__int__(), self.contextMenu)
             helpMenu.exec(QCursor.pos())
 
@@ -904,10 +904,10 @@ class UpdateSoftwareSection(SoftwareSection):
         else:
             Globals.tray_is_available_updates = False
             update_tray_icon()
-        
+
         self.updatePackageNumber()
         self.filter()
-        self.addItemsToTreeWidget(reset = True)
+        self.addItemsToTreeWidget(reset=True)
 
         if not getSettings("DisableAutoCheckforUpdates"):
             try:
@@ -933,16 +933,16 @@ class UpdateSoftwareSection(SoftwareSection):
             if package.HasUpdatesIgnored(package.NewVersion):
                 print(f"🟡 Package {package.Id} has version {package.GetIgnoredUpatesVersion()} ignored")
                 return
-            
+
             elif package.HasUpdatesIgnored():
                 print(package.GetIgnoredUpatesVersion())
                 return
-            
+
             for match in package.getAllCorrespondingInstalledPackages():
                 if match.Version == package.NewVersion:
                     print(f"🟡 Multiple versions of {package.Id} are installed, latest version is installed. Not showing the update")
                     return
-            
+
             item = UpgradablePackageItem(package)
 
             self.PackageItemReference[package] = item
@@ -1167,13 +1167,13 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuRemovePermaData.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), removeData=True))
         self.MenuInteractive = QAction(_("Interactive uninstall"))
         self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
-        
+
         def reinstall():
             INSTALL_SECTION: DiscoverSoftwareSection = Globals.discover
             packageItem = self.packageList.currentItem()
             if packageItem:
                 INSTALL_SECTION.installPackageItem(packageItem)
-                    
+
         def uninstallThenReinstall():
             INSTALL_SECTION: DiscoverSoftwareSection = Globals.discover
             packageItem = self.packageList.currentItem()
@@ -1488,35 +1488,34 @@ class UninstallSoftwareSection(SoftwareSection):
         self.countLabel.setText(_("Found packages: {0}").format(len(self.packageItems)))
         self.packageList.label.setText("")
         print("🟢 Total packages: " + str(len(self.packageItems)))
-        
+
         if (self.IsFirstPackageLoad and getSettings("EnablePackageBackup")):
             self.IsFirstPackageLoad = False
             try:
                 print("🟢 Starting package backup...")
-                
+
                 dirName = getSettingsValue("ChangeBackupOutputDirectory")
                 if not dirName:
                     dirName = Globals.DEFAULT_PACKAGE_BACKUP_DIR
                 if not os.path.exists(dirName):
                     os.makedirs(dirName)
-                
+
                 fileName = getSettingsValue("ChangeBackupFileName")
                 if not fileName:
                     fileName = f"{socket.gethostname()} installed packages"
-                    
+
                 if getSettings("EnableBackupTimestamping"):
                     fileName += f" {datetime.now().strftime('%d-%m-%Y %H.%M')}"
                 fileName += ".json"
-                
+
                 backupPath = os.path.join(dirName, fileName)
                 print("🔵 Backup path set to", backupPath)
                 data = self.packageExporter.generateExportJson(list(self.PackageItemReference.keys()))
-                with open(backupPath, "w", encoding = "utf-8", errors="ignore") as f:
+                with open(backupPath, "w", encoding="utf-8", errors="ignore") as f:
                     f.write(json.dumps(data, indent=4))
                 print("🟢 Package backup succeeded!")
             except Exception as e:
                 report(e)
-            
 
     def addItem(self, package: Package) -> None:
         if "---" not in package.Name and package.Name not in ("+", "Scoop", "At", "The", "But", "Au") and package.Version not in ("the", "is"):
@@ -1829,7 +1828,7 @@ class PackageInfoPopupWindow(QWidget):
 
         ignoreUpdatesSection = SectionHWidget()
         ignoreUpdatesSection.addWidget(self.IgnoreFutureUpdates)
-        
+
         self.InstallPreRelease = QCheckBox()
         self.InstallPreRelease.setText(_("Install the latest prerelease version"))
         self.InstallPreRelease.setChecked(False)
@@ -1856,8 +1855,8 @@ class PackageInfoPopupWindow(QWidget):
         self.ScopeSection.addWidget(self.scopeLabel)
         self.ScopeSection.addWidget(self.ScopeCombo)
         self.ScopeSection.setFixedHeight(50)
-        
-        self.LocationSection = SectionCheckBoxDirPicker(_("Change install location"), smallerMargins = True)
+
+        self.LocationSection = SectionCheckBoxDirPicker(_("Change install location"), smallerMargins=True)
         self.LocationSection.setDefaultText(_("Select"))
 
         CustomArgsSection = SectionHWidget()
@@ -1904,7 +1903,7 @@ class PackageInfoPopupWindow(QWidget):
         downloadGroupBox.setLayout(vl)
         self.layout.addWidget(downloadGroupBox)
         self.layout.addWidget(optionsSection)
-        
+
         self.setStyleSheet("margin: 0px;")
         self.setAttribute(Qt.WA_StyledBackground)
 
@@ -2063,12 +2062,12 @@ class PackageInfoPopupWindow(QWidget):
         options.InteractiveInstallation = self.InteractiveCheckbox.isChecked()
         options.SkipHashCheck = self.HashCheckBox.isChecked()
         options.PreRelease = self.InstallPreRelease.isChecked()
-        
+
         if self.LocationSection.isChecked() and self.LocationSection.currentValue() != "":
             options.CustomInstallLocation = self.LocationSection.currentValue()
         else:
             options.CustomInstallLocation = ""
-        
+
         if self.VersionCombo.currentText() not in (_("Latest"), "Latest", "Loading...", _("Loading..."), ""):
             options.Version = self.VersionCombo.currentText()
         else:
@@ -2090,9 +2089,9 @@ class PackageInfoPopupWindow(QWidget):
         options = self.getInstallationOptions()
         if saveOptionsToDisk and not self.isLoadingPackageDetails:
             options.SaveOptionsToDisk()
-            
+
         PackageManager = self.currentPackage.PackageManager
-        
+
         pipId = self.currentPackage.Id
         if options.Version:
             pipId += "==" + options.Version
@@ -2100,7 +2099,7 @@ class PackageInfoPopupWindow(QWidget):
         CMD_UPDATE_VARIANT = 'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
         CMD_UPGRADE_VARIANT = 'upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
         CMD_PIP_VARIANT = 'install --upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
-        
+
         baseCommands = {
             Winget: f"winget {CMD_UPDATE_VARIANT} --id {self.currentPackage.Id} --exact",
             Scoop: f"scoop {CMD_UPDATE_VARIANT} {self.currentPackage.Id}",
@@ -2109,8 +2108,8 @@ class PackageInfoPopupWindow(QWidget):
             Pip: f"pip {CMD_PIP_VARIANT} {pipId}",
             Dotnet: f"dotnet tool {CMD_UPDATE_VARIANT}",
         }
-        
-        if not PackageManager in baseCommands:
+
+        if PackageManager not in baseCommands:
             print(f"🟠 Unknown Package Manager {self.currentPackage.Source}")
         else:
             self.CustomCommandLabel.setText(baseCommands[PackageManager] + " " + " ".join(PackageManager.getParameters(options, self.isAnUninstall)))
@@ -2144,7 +2143,7 @@ class PackageInfoPopupWindow(QWidget):
         self.loadPackageCommandLine()
 
         self.loadingProgressBar.show()
-        
+
         self.description.setText(_("Loading..."))
         self.author.setText("<b>" + _("Author") + ":</b> " + _("Loading..."))
         self.publisher.setText(f"<b>{_('Publisher')}:</b> " + _("Loading..."))
@@ -2190,7 +2189,7 @@ class PackageInfoPopupWindow(QWidget):
         self.ScopeSection.setEnabled(Capabilities.SupportsCustomScopes)
         self.LocationSection.setEnabled(Capabilities.SupportsCustomLocations)
         self.loadCachedInstallationOptions()
-        
+
         self.callInMain.emit(lambda: resetLayoutWidget())
         self.callInMain.emit(lambda: self.appIcon.setPixmap(QIcon(getMedia("install")).pixmap(64, 64)))
         Thread(target=self.loadPackageIcon, args=(package,)).start()
@@ -2280,8 +2279,6 @@ class PackageInfoPopupWindow(QWidget):
         self.ScopeSection.setEnabled(Capabilities.SupportsCustomScopes)
         self.LocationSection.setEnabled(Capabilities.SupportsCustomLocations)
         self.isLoadingPackageDetails = False
-        
-
 
     def loadCachedInstallationOptions(self):
         self.isLoadingPackageDetails = True
@@ -2295,7 +2292,7 @@ class PackageInfoPopupWindow(QWidget):
         try:
             self.ArchCombo.setCurrentText(options.Architecture)
         except Exception as e:
-            report(e)        
+            report(e)
         try:
             self.ScopeCombo.setCurrentText(options.InstallationScope)
         except Exception as e:
@@ -2303,7 +2300,6 @@ class PackageInfoPopupWindow(QWidget):
         self.CustomArgsLineEdit.setText(" ".join([c for c in options.CustomParameters if c]))
         self.isLoadingPackageDetails = False
         self.loadPackageCommandLine()
-
 
     def loadPackageIcon(self, package: Package) -> None:
         try:

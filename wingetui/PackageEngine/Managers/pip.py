@@ -1,7 +1,8 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
@@ -28,11 +29,10 @@ class PipPackageManager(PackageManagerModule):
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsPreRelease = True
-        
+
         self.BLACKLISTED_PACKAGE_NAMES = ["WARNING:", "[notice]", "Package"]
         self.BLACKLISTED_PACKAGE_IDS = ["WARNING:", "[notice]", "Package"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["Ignoring", "invalie"]
-
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

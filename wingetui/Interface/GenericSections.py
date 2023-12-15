@@ -1,9 +1,9 @@
 if __name__ == "__main__":
-    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
-    print("redirecting...")
-    import subprocess, os, sys
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-
 
 
 import glob
@@ -612,39 +612,39 @@ class SettingsSection(SmoothScrollArea):
         self.trayTitle.addWidget(successNotifications)
         successNotifications.setStyleSheet(
             "QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-        
+
         self.backupOptions = CollapsableSection(_("Backup installed packages"), getMedia(
             "disk"), _("Automatically save a list of all your installed packages to easily restore them."))
         self.mainLayout.addWidget(self.backupOptions)
-        
+
         backupInfo = SectionHWidget(biggerMargins=True)
-        backupInfo.addWidget(CustomLabel("&nbsp;●&nbsp;"+ _("The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved.")+"<br>&nbsp;●&nbsp;"+_("The backup will NOT include any binary file nor any program's saved data.")+"<br>&nbsp;●&nbsp;"+_("The size of the backup is estimated to be less than 1MB.")+"<br>&nbsp;●&nbsp;"+_("The backup will be performed after login.")))
+        backupInfo.addWidget(CustomLabel("&nbsp;●&nbsp;" + _("The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved.") + "<br>&nbsp;●&nbsp;" + _("The backup will NOT include any binary file nor any program's saved data.") + "<br>&nbsp;●&nbsp;" + _("The size of the backup is estimated to be less than 1MB.") + "<br>&nbsp;●&nbsp;" + _("The backup will be performed after login.")))
         self.backupOptions.addWidget(backupInfo)
         backupInfo.setFixedHeight(100)
-        
+
         enableBackups = SectionCheckBox(_("Automatically save a list of your installed packages on your computer."))
         enableBackups.setChecked(getSettings("EnablePackageBackup"))
         enableBackups.stateChanged.connect(lambda v: setSettings("EnablePackageBackup", v))
         self.backupOptions.addWidget(enableBackups)
-        
+
         backupTimestamping = SectionCheckBox(_("Add a timestamp to the backup files"))
         backupTimestamping.setChecked(getSettings("EnableBackupTimestamping"))
         backupTimestamping.stateChanged.connect(lambda v: setSettings("EnableBackupTimestamping", v))
         self.backupOptions.addWidget(backupTimestamping)
-        
+
         backupFileName = SectionCheckBoxTextBox(_("Set custom backup file name"))
         backupFileName.setChecked(getSettings("ChangeBackupFileName"))
         backupFileName.stateChanged.connect(lambda v: setSettings("ChangeBackupFileName", v))
         backupFileName.setText(getSettingsValue("ChangeBackupFileName"))
-        
+
         def getSafeFileName(s: str) -> str:
             for illegalchar in "#%&{}\\/<>*?$!'\":;@`|~":
                 s = s.replace(illegalchar, "")
             return s
-        
+
         backupFileName.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupFileName", getSafeFileName(v)))
         self.backupOptions.addWidget(backupFileName)
-        
+
         backupLocation = SectionCheckBoxDirPicker(_("Change backup output directory"))
         backupLocation.setDefaultText(Globals.DEFAULT_PACKAGE_BACKUP_DIR)
         backupLocation.setChecked(getSettings("ChangeBackupOutputDirectory"))
@@ -652,9 +652,9 @@ class SettingsSection(SmoothScrollArea):
         backupLocation.setText(getSettingsValue("ChangeBackupOutputDirectory"))
         backupLocation.valueChanged.connect(lambda v: setSettingsValue("ChangeBackupOutputDirectory", v))
         self.backupOptions.addWidget(backupLocation)
-        
+
         openBackupDirectory = SectionButton(_("Open backup location"), _("Open"))
-        
+
         def showBackupDir():
             dir = getSettingsValue("ChangeBackupOutputDirectory")
             if not dir:
@@ -662,7 +662,7 @@ class SettingsSection(SmoothScrollArea):
             if not os.path.exists(dir):
                 os.makedirs(dir)
             os.startfile(dir)
-        
+
         openBackupDirectory.clicked.connect(showBackupDir)
         self.backupOptions.addWidget(openBackupDirectory)
 
@@ -686,7 +686,7 @@ class SettingsSection(SmoothScrollArea):
         self.advancedOptions.addWidget(doCacheAdminPrivileges)
 
         # Due to lambda's nature, the following code can NOT be placed in a for loop
-        
+
         for manager in PackageManagersList:
             ManagerName = manager.NAME
             alwaysRunAsAdmin = SectionCheckBox(
@@ -779,20 +779,18 @@ class SettingsSection(SmoothScrollArea):
         self.mainLayout.addWidget(title)
         self.mainLayout.addSpacing(20)
 
-
         # Package Manager preferences
-        
+
         self.ExtraManagerWidgets: dict[PackageManagerModule:list[QWidget]] = {manager: [] for manager in PackageManagersList}
-        
-        
+
         # Winget extra settings
         Winget_ResetSources = SectionButton(_("Reset Winget sources (might help if no packages are listed)"), _("Reset"))
         Winget_ResetSources.clicked.connect(lambda: (os.startfile(os.path.join(realpath, "resources/reset_winget_sources.cmd"))))
-    
+
         self.ExtraManagerWidgets[Winget] = [
             Winget_ResetSources
         ]
-        
+
         # Scoop extra settings
         Scoop_Install = SectionButton(_("Install Scoop"), _("Install"))
         Scoop_Install.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
@@ -801,7 +799,7 @@ class SettingsSection(SmoothScrollArea):
         Scoop_Remove = SectionButton(_("Uninstall Scoop (and its packages)"), _("Uninstall"))
         Scoop_Remove.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0;border-bottom-right-radius: 0;border-bottom: 0;}")
         Scoop_Remove.clicked.connect(lambda: (setSettings("DisableScoop", True), os.startfile(os.path.join(realpath, "resources/uninstall_scoop.cmd"))))
-        
+
         Scoop_ResetAppCache = SectionButton(_("Reset Scoop's global app cache"), _("Reset"))
         Scoop_ResetAppCache.clicked.connect(lambda: Thread(target=lambda: subprocess.Popen([GSUDO_EXECUTABLE, os.path.join(realpath, "resources", "scoop_cleanup.cmd")]), daemon=True).start())
 
@@ -810,13 +808,13 @@ class SettingsSection(SmoothScrollArea):
             Scoop_Remove,
             Scoop_ResetAppCache
         ]
-        
+
         # Chocolatey extra settings
         Choco_UseSystemChoco = SectionCheckBox(_("Use system Chocolatey (Needs a restart)"))
         Choco_UseSystemChoco.setChecked(getSettings("UseSystemChocolatey"))
         Choco_UseSystemChoco.stateChanged.connect(lambda v: setSettings("UseSystemChocolatey", bool(v)))
         Choco_UseSystemChoco.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
-        
+
         self.ExtraManagerWidgets[Choco] = [
             Choco_UseSystemChoco
         ]
@@ -825,10 +823,10 @@ class SettingsSection(SmoothScrollArea):
         self.ManagerSection: dict[PackageManagerModule:CollapsableSection] = {}
         self.ManagerExecutable: dict[SectionButton:CollapsableSection] = {}
         self.EnableManager: dict[SectionCheckBox:CollapsableSection] = {}
-        
+
         for manager in PackageManagersList:
             section = CollapsableSection(_("{pm} preferences").format(pm=manager.NAME), manager.IconPath, _("{pm} package manager specific preferences").format(pm=manager.NAME))
-            
+
             # Show manager executable
             pathVar = manager.EXECUTABLE
             if manager is Scoop:
@@ -837,7 +835,7 @@ class SettingsSection(SmoothScrollArea):
             executable.clicked.connect(lambda text=pathVar: Globals.app.clipboard().setText(text))
             executable.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
             section.addWidget(executable)
-            
+
             # Enable/disable manager
             enable = SectionCheckBox(_("Enable {pm}").format(pm=manager.NAME))
             enable.setChecked(not getSettings(f"Disable{manager.NAME}"))
@@ -845,7 +843,7 @@ class SettingsSection(SmoothScrollArea):
             if not manager.Capabilities.SupportsCustomSources and len(self.ExtraManagerWidgets[manager]) == 0:
                 enable.setStyleSheet("QWidget#stChkBg{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;border-bottom: 1px;}")
             section.addWidget(enable)
-            
+
             # Load source manager widget (if supported)
             if manager.Capabilities.SupportsCustomSources:
 
@@ -857,13 +855,13 @@ class SettingsSection(SmoothScrollArea):
             # Load extra widgets (if present)
             for widget in self.ExtraManagerWidgets[manager]:
                 section.addWidget(widget)
-            
+
             # Save all widgets for later access
             self.EnableManager[manager] = enable
             self.ManagerExecutable[manager] = executable
             self.ManagerSection[manager] = section
             self.mainLayout.addWidget(section)
-        
+
         self.mainLayout.addStretch()
 
         print("🟢 Settings tab loaded!")
@@ -1004,8 +1002,8 @@ class BaseLogSection(QWidget):
 class BaseBrowserSection(QWidget):
     HOME_URL = "https://www.marticliment.com/wingetui/help?isWingetUIIframe"
     loaded = False
-    def __init__(self):
 
+    def __init__(self):
         super().__init__()
 
     def loadWebView(self):
@@ -1018,31 +1016,29 @@ class BaseBrowserSection(QWidget):
         openBtn.clicked.connect(lambda: os.startfile(self.webview.getUrl().replace("isWingetUIIframe", "")))
         openBtn.setFixedHeight(30)
 
-        
         self.BackButton = QPushButton()
         self.BackButton.clicked.connect(lambda: self.webview.goBack())
         self.BackButton.setFixedSize(30, 30)
         hLayout.addWidget(self.BackButton)
-        
+
         self.ForwardButton = QPushButton()
         self.ForwardButton.clicked.connect(lambda: self.webview.goForward())
         self.ForwardButton.setFixedSize(30, 30)
         hLayout.addWidget(self.ForwardButton)
-        
+
         self.HomeButton = QPushButton()
         self.HomeButton.clicked.connect(lambda: self.loadWebContents())
         self.HomeButton.setFixedSize(30, 30)
         hLayout.addWidget(self.HomeButton)
-        
+
         self.ReloadButton = QPushButton()
         self.ReloadButton.clicked.connect(lambda: self.webview.reload())
         self.ReloadButton.setFixedSize(30, 30)
         hLayout.addWidget(self.ReloadButton)
-        
+
         hLayout.addStretch()
 
         hLayout.addWidget(openBtn)
-        
 
         self.setLayout(QVBoxLayout())
         self.setContentsMargins(0, 0, 0, 0)

@@ -1,3 +1,10 @@
+if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
+
 
 from wingetui.PackageEngine.Managers.choco import Choco
 from wingetui.PackageEngine.Managers.npm import Npm
