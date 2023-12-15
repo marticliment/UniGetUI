@@ -1,15 +1,8 @@
-"""
-
-wingetui/Interface/GenericSections.py
-
-This file contains the code for miscellanious User Interface sections, such as the about tab, the settings and the logs.
-
-"""
-
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 

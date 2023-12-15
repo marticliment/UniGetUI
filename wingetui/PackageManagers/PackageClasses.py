@@ -1,16 +1,10 @@
-"""
-
-wingetui/PackageManagers/PackageClasses.py
-
-This file holds the classes related to Packages and PackageManagers .
-
-"""
-
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
     from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage  # Unreachable import used for the syntax highlighter
+    # TODO: Check this import hierarchy
 
 
 import subprocess

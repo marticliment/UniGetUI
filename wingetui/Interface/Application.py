@@ -1,3 +1,10 @@
+if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
+
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *

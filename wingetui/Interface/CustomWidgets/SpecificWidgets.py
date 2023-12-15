@@ -1,16 +1,8 @@
-"""
-
-wingetui/Interface/CustomWidgets/SpecificWidgets.py
-
-This file contains the classes for miscellainous, custom made, specific-case-oriented widgets.
-It also defines the PackageItem, UpgradablePackageItem and InstalledPackageItem classes
-
-"""
-
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 

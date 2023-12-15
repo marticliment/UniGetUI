@@ -1,14 +1,8 @@
-"""
-
-wingetui/PackageManagers/sampleHelper.py
-
-This file holds a sample package manager implementation. The code here must be reimplemented before being used
-
-"""
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 import os

@@ -1,23 +1,8 @@
-"""
-
-wingetui/Interface/SoftwareSections.py
-
-This file contains the code for the following classes:
- - DiscoverSoftwareSection
- - UpdateSoftwareSection
- - UninstallSoftwareSection
- - PackageInfoPopupWindow
-
-Those classes are the classes that represent the three main tabs on WingetUI's interface.
-The class PackageInfoPopupWindow contains the code for the Package Details window.
-
-"""
-
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 import os

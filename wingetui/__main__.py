@@ -1,18 +1,11 @@
-"""
-
-wingetui/__init__.py
-
-This file handles:
- - The WingetUI initialization code
- - The system tray menu
- - The built-in updater
- - Loading the StyleSheet contents
-
-"""
+if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    import subprocess, os, sys
+    if not __file__ in sys.argv:
+        sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
 import sys
-
 
 if "--debugcrash" in sys.argv:
     import faulthandler

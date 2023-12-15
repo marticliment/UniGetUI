@@ -1,19 +1,8 @@
-"""
-
-wingetui/Interface/CustomWidgets/GenericWidgets.py
-
-This file contains the custom widgets that have been modified but that were not built for a singe purpose, since they are generic widgets.
-Generally they are optimized versions of Qt standard widgets.
-
-
-
-"""
-
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 import PySide6.QtCore

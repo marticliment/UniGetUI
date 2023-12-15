@@ -1,42 +1,36 @@
-"""
-
-wingetui/globals.py
-
-This file contains global variables and type definitons
-
-"""
+if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 from subprocess import Popen
-
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
 
 from secrets import token_hex
 
 import os
 
 
-class DynamicScrollAreaType(QWidget):
+class DynamicScrollAreaType('QWidget'):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
     def rss(self):
         pass
 
-    def removeItem(self, item: QWidget):
+    def removeItem(self, item: 'QWidget'):
         pass
 
-    def addItem(self, item: QWidget):
+    def addItem(self, item: 'QWidget'):
         pass
 
 
-class Section(QWidget):
+class Section('QWidget'):
     def __init__(self, parent=None) -> None:
         super().__init__(parent, parent)
 
-    def addTreeWidgetItem(item: QTreeWidgetItem):
+    def addTreeWidgetItem(item: 'QTreeWidgetItem'):
         pass
 
 
@@ -45,21 +39,21 @@ componentStatus: dict = {
     "sudoVersion": False
 }
 
-app: QApplication = None
+app: 'QApplication' = None
 installersWidget: DynamicScrollAreaType = None
-trayIcon: QSystemTrayIcon = None
-mainWindow: QMainWindow = None
-trayMenu: QMenu = None
-trayMenuInstalledList: QMenu = None
-trayMenuUpdatesList: QMenu = None
-extrasMenuButton: QPushButton = None
+trayIcon: 'QSystemTrayIcon' = None
+mainWindow: 'QMainWindow' = None
+trayMenu: 'QMenu' = None
+trayMenuInstalledList: 'QMenu' = None
+trayMenuUpdatesList: 'QMenu' = None
+extrasMenuButton: 'QPushButton' = None
 
 pending_programs: list = []
 current_program: str = ""
 
-updatesHeader: QAction = None
-installedHeader: QAction = None
-updatesAction: QAction = None
+updatesHeader: 'QAction' = None
+installedHeader: 'QAction' = None
+updatesAction: 'QAction' = None
 
 lightCSS: str = ""
 darkCSS: str = ""
@@ -75,9 +69,9 @@ canUpdate: bool = False
 adminRightsGranted: bool = False
 
 packageMeta: dict = {}
-infobox: QWidget = None
-centralWindowLayout: QWidget = None
-centralTextureImage: QLabel = None
+infobox: 'QWidget' = None
+centralWindowLayout: 'QWidget' = None
+centralTextureImage: 'QLabel' = None
 
 scoopBuckets: dict[str:str] = {}
 wingetSources: dict[str:str] = {}
@@ -104,9 +98,9 @@ PackageManagerOutput: str = "Outputs from package managers on the current sessio
 
 AUMID: str = ""
 
-maskedImages: dict[str:QIcon] = {}
+maskedImages: dict[str:'QIcon'] = {}
 
-cachedIcons: dict[str:QIcon] = {}
+cachedIcons: dict[str:'QIcon'] = {}
 
 CurrentSessionToken: str = token_hex(32)
 

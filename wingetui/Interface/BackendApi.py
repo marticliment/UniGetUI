@@ -1,16 +1,8 @@
-"""
-
-wingetui/apiBacked.py
-
-This file contains the API used to communicate with https://marticliment.com/wingetui/share
-
-"""
 if __name__ == "__main__":
-    import subprocess
-    import os
-    import sys
-    import __init__
-    sys.exit(0)  # This code is here to allow vscode syntax highlighting to find the classes required
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
+    import subprocess, os, sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
     from wingetui.PackageManagers.PackageClasses import UpgradablePackage
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 

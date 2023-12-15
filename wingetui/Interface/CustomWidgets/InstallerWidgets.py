@@ -1,18 +1,8 @@
-"""
-
-wingetui/Interface/CustomWidgets/InstallerWidgets.py
-
-This file contains the custom widgets that represent a package when it is being installed/updated/uninstalled.
-This file also contains the following classes:
- - ScoopBucketManager
- - WingetBucketManager
-
-"""
-
-
 if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module 
+    print("redirecting...")
     import subprocess, os, sys
-    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..\\..\\..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 
