@@ -7,7 +7,6 @@ if __name__ == "__main__":
 import os
 import re
 import subprocess
-from PySide6.QtCore import *
 
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
@@ -297,7 +296,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                 Parameters.append("--global")
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
@@ -309,7 +308,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
@@ -321,7 +320,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         outputCode = 1
         while p.poll() is None:
@@ -350,7 +349,7 @@ class ScoopPackageManager(PackageManagerWithSources):
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
@@ -362,7 +361,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         outputCode = 1
         output = ""
         while p.poll() is None:
@@ -421,21 +420,21 @@ class ScoopPackageManager(PackageManagerWithSources):
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
     
-    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["bucket", "add", source.Name, source.Url]
         print(f"🔵 Starting source {source.Name} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
     
-    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["bucket", "rm", source.Name]
         print(f"🔵 Starting source {source.Name} removal with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
 
-    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         counter = 0
         while p.poll() is None:

@@ -5,6 +5,7 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
     
     from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage
+    from Interface.CustomWidgets.InstallerWidgets import PackageInstallerWidget
     # TODO: Check this import hierarchy
 
 
@@ -12,7 +13,6 @@ import os
 import subprocess
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from PySide6.QtWidgets import *
 from urllib.request import urlopen
 
 import wingetui.Core.Globals as Globals
@@ -401,15 +401,6 @@ class PackageManagerCapabilities():
         self.Sources = ManagerSource.Capabilities()
 
 
-class InstallationWidgetType(QWidget):
-    finishInstallation: Signal
-    addInfoLine: Signal
-    counterSignal: Signal
-
-    def __init__(self) -> None:
-        raise RuntimeError("This class is a type declaration!")
-
-
 class PackageManagerModule():
     NAME: str
     EXECUTABLE: str
@@ -457,27 +448,27 @@ class PackageManagerModule():
         Will return a PackageDetails object containing the information of the given Package object
         """
 
-    def startInstallation(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         """
         Starts a thread that installs the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
         """
 
-    def startUpdate(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         """
         Starts a thread that updates the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
         """
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: 'PackageInstallerWidget'):
         """
         Internal method that handles the installation of the given package
         """
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         """
         Starts a thread that removes the specified Package, making use of the given options. Reports the progress through the given InstallationWidget
         """
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, installationWidget: 'PackageInstallerWidget'):
         """
         Internal method that handles the removal of the given package
         """
@@ -515,10 +506,10 @@ class PackageManagerWithSources(PackageManagerModule):
     def getSources(self) -> list[ManagerSource]:
         pass
     
-    def installSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+    def installSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         pass
     
-    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: InstallationWidgetType) -> subprocess.Popen:
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, installationWidget: 'PackageInstallerWidget') -> subprocess.Popen:
         pass
     
 

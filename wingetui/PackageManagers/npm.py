@@ -9,7 +9,6 @@ if __name__ == "__main__":
 import os
 import re
 import subprocess
-from PySide6.QtCore import *
 
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
@@ -247,7 +246,7 @@ class NPMPackageManager(PackageManagerModule):
         Parameters += []
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
         Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id + ("@latest" if options.Version == "" else f"@{options.Version}")] + self.getParameters(options)
@@ -258,7 +257,7 @@ class NPMPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: UpgradablePackage, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: UpgradablePackage, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
         Command = ["cmd.exe", "/C", self.EXECUTABLE, "install", package.Id + "@" + package.NewVersion] + self.getParameters(options)
@@ -269,7 +268,7 @@ class NPMPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -288,7 +287,7 @@ class NPMPackageManager(PackageManagerModule):
 
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         if "@global" in package.Source:
             options.InstallationScope = "Global"
         Command = [self.EXECUTABLE, "uninstall", package.Id] + self.getParameters(options, True)
@@ -299,7 +298,7 @@ class NPMPackageManager(PackageManagerModule):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         outputCode = 1
         output = ""
         while p.poll() is None:

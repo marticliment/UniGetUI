@@ -7,7 +7,6 @@ if __name__ == "__main__":
 
 import os
 import subprocess
-from PySide6.QtCore import *
 
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
@@ -222,7 +221,7 @@ class DotNetToolPackageManager(PackageManagerModule):
             Parameters += options.CustomParameters
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "tool", "install", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -231,7 +230,7 @@ class DotNetToolPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "tool", "update", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -240,7 +239,7 @@ class DotNetToolPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -256,7 +255,7 @@ class DotNetToolPackageManager(PackageManagerModule):
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "tool", "uninstall", package.Id] + self.getParameters(options, False)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -265,7 +264,7 @@ class DotNetToolPackageManager(PackageManagerModule):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)

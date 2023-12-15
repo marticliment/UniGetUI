@@ -7,7 +7,6 @@ if __name__ == "__main__":
 
 import os
 import subprocess
-from PySide6.QtCore import *
 
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
@@ -171,7 +170,7 @@ class SamplePackageManager(PackageManagerModule):
             Parameters += ["--version", options.Version]
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -181,7 +180,7 @@ class SamplePackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -191,7 +190,7 @@ class SamplePackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -208,7 +207,7 @@ class SamplePackageManager(PackageManagerModule):
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -218,7 +217,7 @@ class SamplePackageManager(PackageManagerModule):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
