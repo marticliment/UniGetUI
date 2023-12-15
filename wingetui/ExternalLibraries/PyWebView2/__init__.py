@@ -15,7 +15,7 @@ import time
 from threading import Thread
 
 if hasattr(sys, 'frozen'):
-    BASE_PATH = os.path.join(sys._MEIPASS, "wingetui")
+    BASE_PATH = os.path.join(sys._MEIPASS, "wingetui/ExternalLibraries/PyWebView2")
 else:
     BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 

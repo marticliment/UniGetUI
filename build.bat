@@ -18,7 +18,6 @@ IF EXIST %py% (
 
 rmdir /Q /S wingetuiBin
 
-%py% scripts\generate_integrity.py --buildfiles
 
 mkdir wingetui_bin
 xcopy wingetui wingetui_bin\wingetui /E /H /C /I /Y
@@ -30,7 +29,11 @@ if %errorlevel% neq 0 goto:error
 del /S *.py
 copy ..\..\wingetui\launcher.py .\
 del launcher.pyc
+
+%py% ..\..\scripts\generate_integrity.py --buildfiles
+
 rmdir /Q /S __pycache__
+rmdir /Q /S .vscode
 rmdir /Q /S ExternalLibraries\__pycache__
 rmdir /Q /S ExternalLibraries\PyWebView2\__pycache__
 rmdir /Q /S Core\__pycache__

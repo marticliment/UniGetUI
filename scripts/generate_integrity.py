@@ -6,36 +6,39 @@ import sys
 import time
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
-os.chdir(root_dir) # move to root project
+os.chdir(root_dir)  # move to root project
 
-#if not "--buildfiles" in sys.argv:
-sys.path.append("wingetui")
-os.chdir("wingetui")
-#else:
-#    sys.path.append("wingetui_bin")
-#    os.chdir("wingetui_bin")
+if "--buildfast" in sys.argv:
+    os.chdir("wingetui")
+    sys.path.append("wingetui")
+else:
+    os.chdir("wingetui_bin/wingetui")
+    sys.path.append("wingetui")
 
 HASHES: dict[str:str] = {}
 
 time0 = time.time()
 
-for file in glob.glob("./ExternalLibraries/PyWebView2/lib/**.dll") + glob.glob("./components/**.exe") + glob.glob("./components/**.dll") + glob.glob("./PackageEngine/Managers/**/**.dll") + glob.glob("./PackageEngine/Managers/**/**.exe"):
-    if "__init__" in file or "__pycache__" in file:
+for file in glob.glob('./**/*.pyc', recursive=True) + glob.glob("./ExternalLibraries/PyWebView2/lib/**.dll") + glob.glob("./components/**.exe") + glob.glob("./components/**.dll") + glob.glob("./PackageEngine/Managers/**/**.dll") + glob.glob("./PackageEngine/Managers/**/**.exe"):
+    print(file)
+    if "launcher" in file or "__pycache__" in file:
         continue
-    with open(file,"rb") as f:
-        bytes = f.read() # read entire file as bytes
+    file = file.replace("/", "\\")
+    print("Hashing file" + file)
+    with open(file, "rb") as f:
+        bytes = f.read()  # read entire file as bytes
         readable_hash = hashlib.sha256(bytes).hexdigest()
         HASHES[file] = readable_hash
 
-print(f"Elapsed {time.time()-time0} seconds")
+print(f"Elapsed {time.time() - time0} seconds")
 
 parsed_dict = "HASHES: dict[str:str] = " + json.dumps(HASHES, indent=4)
 savable_content = ""
 
 for line in parsed_dict.split("\n"):
-    savable_content += "    "+line+"\n"
+    savable_content += line + "\n"
 
-with open("__main__.py", "r+", encoding="utf-8") as f:
+with open("launcher.py", "r+", encoding="utf-8") as f:
     skip = False
     data = ""
     for line in f.readlines():
