@@ -93,7 +93,7 @@ try:
     from wingetui.Interface.Application import RunMainApplication
     from wingetui.Interface.Tools import *
     from wingetui.Interface.Tools import _
-    from wingetui.PackageManagers.PackageClasses import Package 
+    from wingetui.PackageEngine.Classes import Package 
 
     if "--daemon" in sys.argv:
         if getSettings("DisableAutostart"):

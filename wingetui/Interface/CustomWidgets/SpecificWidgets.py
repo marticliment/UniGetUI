@@ -14,51 +14,8 @@ from win32mica import *
 
 from wingetui.Interface.CustomWidgets.SectionWidgets import *
 from wingetui.Interface.Tools import *
-from wingetui.Interface.Tools import _
-from wingetui.PackageManagers.choco import Choco
-from wingetui.PackageManagers.npm import Npm
-from wingetui.PackageManagers.PackageClasses import *
-from wingetui.PackageManagers.pip import Pip
-from wingetui.PackageManagers.scoop import Scoop
-from wingetui.PackageManagers.winget import Winget
-from wingetui.PackageManagers.dotnet import Dotnet
-
-PackageManagersList: list[PackageManagerModule] = [
-    Winget,
-    Scoop,
-    Choco,
-    Pip,
-    Npm,
-    Dotnet
-]
-
-PackagesLoadedDict: dict[PackageManagerModule:bool] = {
-    Winget: False,
-    Scoop: False,
-    Choco: False,
-    Pip: False,
-    Npm: False,
-    Dotnet: False
-}
-
-DynaimcPackageManagersList: list[PackageManagerModule] = [
-    Pip,
-    Npm,
-    Choco,
-    Winget,
-    Scoop,
-    Dotnet
-]
-
-DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
-    Pip: False,
-    Npm: False,
-    Winget: False,
-    Choco: False,
-    Scoop: False,
-    Dotnet: False
-}
-
+from wingetui.Interface.Tools import _ 
+from wingetui.PackageEngine.Loader import *
 
 class CommandLineEdit(CustomLineEdit):
     registeredThemeEvent = False

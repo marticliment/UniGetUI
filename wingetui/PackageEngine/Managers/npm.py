@@ -12,7 +12,7 @@ import subprocess
 
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
-from wingetui.PackageManagers.PackageClasses import *
+from wingetui.PackageEngine.Classes import *
 
 
 class NPMPackageManager(PackageManagerModule):

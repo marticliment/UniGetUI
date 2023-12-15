@@ -21,7 +21,7 @@ from wingetui.Core.Tools import _
 from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from wingetui.Interface.CustomWidgets.InstallerWidgets import *
 from wingetui.Interface.GenericSections import *
-from wingetui.PackageManagers.PackageClasses import PackageManagerModule
+from wingetui.PackageEngine.Classes import PackageManagerModule
 
 
 

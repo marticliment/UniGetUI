@@ -17,7 +17,7 @@ import wingetui.Core.Globals as Globals
 from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from wingetui.Interface.Tools import *
 from wingetui.Interface.Tools import _
-from wingetui.PackageManagers.PackageClasses import Package, UpgradablePackage
+from wingetui.PackageEngine.Classes import *
 
 
 class PackageInstallerWidget(QWidget):
