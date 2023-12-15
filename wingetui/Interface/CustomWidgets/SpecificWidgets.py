@@ -408,11 +408,11 @@ class AnnouncementsPane(QLabel):
                 self.callInMain.emit(lambda: self.pictureLabel.setFixedHeight(h))
                 self.callInMain.emit(lambda: self.textLabel.setFixedHeight(h))
                 self.callInMain.emit(lambda: self.pictureLabel.setPixmap(QPixmap(self.file.name).scaledToHeight(h - self.getPx(8), Qt.SmoothTransformation)))
-            except Exception as ex:
-                s = "Couldn't load the announcement image" + "\n\n" + str(ex)
+            except Exception as e:
+                s = "Couldn't load the announcement image" + "\n\n" + str(e)
                 self.callInMain.emit(lambda: self.pictureLabel.setText(s))
                 print("🟠 Unable to retrieve announcement image")
-                print(ex)
+                report(e)
         except Exception as e:
             if useHttps:
                 self.loadAnnouncements(useHttps=False)
@@ -420,7 +420,7 @@ class AnnouncementsPane(QLabel):
                 s = "Couldn't load the announcements. Please try again later" + "\n\n" + str(e)
                 self.callInMain.emit(lambda: self.setTtext(s))
                 print("🟠 Unable to retrieve latest announcement")
-                print(e)
+                report(e)
 
     def showEvent(self, a0: QShowEvent) -> None:
         return super().showEvent(a0)
