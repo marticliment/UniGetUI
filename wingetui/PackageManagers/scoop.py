@@ -18,8 +18,8 @@ import re
 import subprocess
 
 from PySide6.QtCore import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
 
 from .PackageClasses import *
 from .sampleHelper import *
@@ -93,7 +93,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -129,7 +129,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -164,7 +164,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -179,8 +179,8 @@ class ScoopPackageManager(PackageManagerWithSources):
         try:
             unknownStr = _("Not available")
             bucket = "main" if len(package.Source.split(": ")) == 1 else package.Source.split(': ')[-1]
-            if bucket in globals.scoopBuckets:
-                bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
+            if bucket in Globals.scoopBuckets:
+                bucketRoot = Globals.scoopBuckets[bucket].replace(".git", "")
             else:
                 bucketRoot = f"https://github.com/ScoopInstaller/{bucket}"
             details.ManifestUrl = f"{bucketRoot}/blob/master/bucket/{package.Id.split('/')[-1]}.json"
@@ -426,7 +426,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                 print("IndexError: " + str(e))
 
         for source in sources:
-            globals.scoopBuckets[source.Name] = source.Url
+            Globals.scoopBuckets[source.Name] = source.Url
 
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
@@ -463,13 +463,13 @@ class ScoopPackageManager(PackageManagerWithSources):
     def detectManager(self, signal: Signal = None) -> None:
         try:
             o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-            globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") is not None
-            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").replace("\n", " ").replace("\r", " ")
+            Globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") is not None
+            Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").replace("\n", " ").replace("\r", " ")
             if signal:
                 signal.emit()
         except Exception:
-            globals.componentStatus[f"{self.NAME}Found"] = False
-            globals.componentStatus[f"{self.NAME}Version"] = _("{pm} could not be found").format(pm=self.NAME)
+            Globals.componentStatus[f"{self.NAME}Found"] = False
+            Globals.componentStatus[f"{self.NAME}Version"] = _("{pm} could not be found").format(pm=self.NAME)
             if signal:
                 signal.emit()
 

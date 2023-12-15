@@ -25,12 +25,17 @@ from threading import Thread
 from urllib.request import urlopen
 from unicodedata import combining, normalize
 import tempfile
+import win32gui
+import wingetui.Core.Globals as Globals
+from wingetui.ExternalLibraries.BlurWindow import GlobalBlur
+from wingetui.Core.Languages.LangReference import *
+from wingetui.Core.Data.Versions import *
+import traceback
 
 if 2 == 3:
     from wingetui.PackageManagers.PackageClasses import Package # Enable syntax highlighting
 
 
-from wingetui import globals
 try:
     import clr
 except RuntimeError:
@@ -44,13 +49,6 @@ except RuntimeError:
     ctypes.windll.user32.MessageBoxW(None, "WingetUI requires .NET to be installed on your machine. Please install .NET\n\n" + tracebacc, "WingetUI Crash handler", 0x00000010)
 
     sys.exit(1)
-
-from wingetui.ExternalLibraries.BlurWindow import GlobalBlur
-from wingetui.lang.languages import *
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
-from wingetui.data.versions import *
 
 OLD_STDOUT = sys.stdout
 OLD_STDERR = sys.stderr
@@ -72,7 +70,6 @@ def cprint(*args) -> None:
 
 
 def report(exception) -> None:  # Exception reporter
-    import traceback
     tb = traceback.format_exception(*sys.exc_info())
     try:
         for line in tb:
@@ -115,16 +112,16 @@ def getSettings(s: str, cache=True) -> bool:
     """
     Returns a boolean value representing if the given setting is enabled or not.
     """
-    globals.settingsCache
+    Globals.settingsCache
     try:
         try:
             if not cache:
                 raise KeyError("Cache disabled")
-            return globals.settingsCache[s]
+            return Globals.settingsCache[s]
         except KeyError:
             v = os.path.exists(os.path.join(os.path.join(
                 os.path.expanduser("~"), ".wingetui"), s))
-            globals.settingsCache[s] = v
+            Globals.settingsCache[s] = v
             return v
     except Exception as e:
         print(e)
@@ -135,9 +132,9 @@ def setSettings(s: str, v: bool) -> None:
     """
     Sets a boolean value for the given setting
     """
-    globals.settingsCache
+    Globals.settingsCache
     try:
-        globals.settingsCache = {}
+        Globals.settingsCache = {}
         if (v):
             open(os.path.join(os.path.join(
                 os.path.expanduser("~"), ".wingetui"), s), "w").close()
@@ -150,28 +147,28 @@ def setSettings(s: str, v: bool) -> None:
     except Exception as e:
         print(e)
     if "Notifications" in s:
-        globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings(
+        Globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings(
             "DisableNotifications")
-        globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
-            "DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-        globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
-            "DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-        globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
-            "DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+        Globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
+            "DisableSuccessNotifications") and Globals.ENABLE_WINGETUI_NOTIFICATIONS
+        Globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
+            "DisableErrorNotifications") and Globals.ENABLE_WINGETUI_NOTIFICATIONS
+        Globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
+            "DisableUpdatesNotifications") and Globals.ENABLE_WINGETUI_NOTIFICATIONS
 
 
 def getSettingsValue(s: str) -> str:
     """
     Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned
     """
-    globals.settingsCache
+    Globals.settingsCache
     try:
-        if (s + "Value") in globals.settingsCache.keys():
-            return str(globals.settingsCache[s + "Value"])
+        if (s + "Value") in Globals.settingsCache.keys():
+            return str(Globals.settingsCache[s + "Value"])
         else:
             with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "r", encoding="utf-8", errors="ignore") as sf:
                 v: str = sf.read()
-                globals.settingsCache[s + "Value"] = v
+                Globals.settingsCache[s + "Value"] = v
                 return v
     except FileNotFoundError:
         return ""
@@ -184,9 +181,9 @@ def setSettingsValue(s: str, v: str) -> None:
     """
     Sets the stored value for the given setting. A string value is required.
     """
-    globals.settingsCache
+    Globals.settingsCache
     try:
-        globals.settingsCache = {}
+        Globals.settingsCache = {}
         with open(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), s), "w", encoding="utf-8", errors="ignore") as sf:
             sf.write(v)
     except Exception as e:
@@ -197,10 +194,10 @@ def GetJsonSettings(Name: str, Scope: str = "") -> dict:
     """
     Returns the stored value for the given setting. If the setting is unset or the function fails an empty string will be returned
     """
-    globals.settingsCache
+    Globals.settingsCache
     try:
-        if (Name + "JSON") in globals.settingsCache.keys():
-            return globals.settingsCache[Name + "JSON"]
+        if (Name + "JSON") in Globals.settingsCache.keys():
+            return Globals.settingsCache[Name + "JSON"]
         else:
             if not Scope:
                 path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name+".json")
@@ -208,7 +205,7 @@ def GetJsonSettings(Name: str, Scope: str = "") -> dict:
                 path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui", Scope), Name+".json")
             with open(path, "r", encoding="utf-8", errors="ignore") as file:
                 data: dict = json.load(file)
-                globals.settingsCache[Name + "JSON"] = data
+                Globals.settingsCache[Name + "JSON"] = data
                 return data
     except FileNotFoundError:
         return {}
@@ -221,9 +218,9 @@ def SetJsonSettings(Name: str, Data: dict, Scope: str = "") -> None:
     """
     Sets the stored value for the given JSON-stored setting. A string value is required.
     """
-    globals.settingsCache
+    Globals.settingsCache
     try:
-        globals.settingsCache = {}
+        Globals.settingsCache = {}
         if not Scope:
             path = os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui"), Name+".json")
         else:
@@ -234,21 +231,6 @@ def SetJsonSettings(Name: str, Data: dict, Scope: str = "") -> None:
             file.write(json.dumps(Data, indent=4))
     except Exception as e:
         print(e)
-
-
-def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
-    coordinates = ""
-    if window:
-        coordinates = f"{window.mapToGlobal(QPoint(0, 0)).x()},{window.mapToGlobal(QPoint(0, 0)).y()},{window.width()},{window.height()}"
-    clr.AddReference(SHARE_DLL_PATH)
-    import WingetUIShareComponent
-    if window and window.window().winId():
-        print("🔵 Starting hWnd native sharing")
-        WingetUIShareComponent.Form1(window.window().winId(), text, url.replace("^&", "&"))
-    else:
-        print("🟡 Starting fallback wrapper window sharing")
-        WingetUIShareComponent.Form1(["", text, url, coordinates])
-
 
 def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
@@ -286,7 +268,6 @@ def getColors() -> list:
         i += 4
     return colors
 
-
 def isDark() -> bool:
     prefs = getSettingsValue("PreferredTheme")
     match prefs:
@@ -296,31 +277,28 @@ def isDark() -> bool:
             return False
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) == 0
 
-
 def isTaskbarDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 1) == 0
 
-
 def queueProgram(id: str):
-    globals.pending_programs.append(id)
-
+    Globals.pending_programs.append(id)
 
 def removeProgram(id: str):
     try:
-        globals.pending_programs.remove(id)
+        Globals.pending_programs.remove(id)
     except ValueError:
         pass
-    if (globals.current_program == id):
-        globals.current_program = ""
+    if (Globals.current_program == id):
+        Globals.current_program = ""
 
 
 def checkQueue():
     print("🟢 checkQueue Thread started!")
     while True:
-        if (globals.current_program == ""):
+        if (Globals.current_program == ""):
             try:
-                globals.current_program = globals.pending_programs[0]
-                print(f"🔵 Current program set to {globals.current_program}")
+                Globals.current_program = Globals.pending_programs[0]
+                print(f"🔵 Current program set to {Globals.current_program}")
             except IndexError:
                 pass
         time.sleep(0.2)
@@ -328,14 +306,12 @@ def checkQueue():
 
 operationsToAdd: dict[object:str] = {}
 
-
 def AddOperationToLog(operation: str, package, commandline: str):
     global operationsToAdd
     stringToAdd = f" Operation: {operation} - Perform date {str(datetime.now())}\n"
     stringToAdd += f" Package: {str(package)}\n"
     stringToAdd += f" Command-line call: {commandline}"
     operationsToAdd[package] = stringToAdd
-
 
 def AddResultToLog(output: list, package, result: int):
     print(output)
@@ -353,61 +329,6 @@ def AddResultToLog(output: list, package, result: int):
             ([stringToAdd] + currentInstallations)[0:100]))
     except Exception as e:
         report(e)
-
-
-def update_tray_icon():
-    if globals.tray_is_installing:
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_blue")))
-        globals.trayIcon.setToolTip(f"{_('Operation in progress')} - WingetUI")
-    elif globals.tray_is_error:
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_orange")))
-        globals.trayIcon.setToolTip(f"{_('Attention required')} - WingetUI")
-    elif globals.tray_is_needs_restart:
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_turquoise")))
-        globals.trayIcon.setToolTip(f"{_('Restart required')} - WingetUI")
-    elif globals.tray_is_available_updates:
-        try:
-            if globals.updates.availableUpdates == 1:
-                trayIconToolTip = _(
-                    "WingetUI - 1 update is available").replace("WingetUI - ", "")
-            else:
-                trayIconToolTip = _("WingetUI - {0} updates are available").format(
-                    globals.updates.availableUpdates).replace("WingetUI - ", "")
-        except Exception as e:
-            report(e)
-            trayIconToolTip = _("Updates available!").replace('"', '')
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_green")))
-        globals.trayIcon.setToolTip(f"{trayIconToolTip} - WingetUI")
-    else:
-        globals.trayIcon.setIcon(QIcon(getTaskbarMedia("tray_empty")))
-        globals.trayIcon.setToolTip(
-            f"{_('WingetUI - Everything is up to date').replace('WingetUI - ', '')} - WingetUI")
-
-
-def ApplyMenuBlur(hwnd: int, window: QWidget, smallCorners: bool = False, avoidOverrideStyleSheet: bool = False, shadow: bool = True, useTaskbarModeCheck: bool = False):
-    hwnd = int(hwnd)
-    mode = isDark()
-    if not avoidOverrideStyleSheet:
-        if window.objectName() == "":
-            window.setObjectName("MenuMenuMenuMenu")
-        if not isDark():
-            window.setStyleSheet(
-                f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(255, 255, 255, 30%);border-radius: 0px;" };}}')
-        else:
-            window.setStyleSheet(
-                f'#{window.objectName()}{{ background-color: {"transparent" if isWin11 else "rgba(20, 20, 20, 25%);border-radius: 0px;" };}}')
-    if mode:
-        try:
-            GlobalBlur(hwnd, Acrylic=True, hexColor="#21212140",
-                       Dark=True, smallCorners=smallCorners)
-        except OverflowError:
-            pass
-    else:
-        try:
-            GlobalBlur(hwnd, Acrylic=True, hexColor="#eeeeee40",
-                       Dark=True, smallCorners=smallCorners)
-        except OverflowError:
-            pass
 
 
 def getPath(s: str) -> str:
@@ -516,20 +437,14 @@ class KillableThread(Thread):
         return self.localtrace
 
 
-def notify(title: str, text: str, iconpath: str = getMedia("notif_info")) -> None:
-    if globals.ENABLE_WINGETUI_NOTIFICATIONS:
-        globals.trayIcon.showMessage(title, text, QIcon())
-
-
 def foregroundWindowThread():
     """
     This thread will periodically get the window focused by the user every 10 secs, so the tray icon can monitor wether the app should be shown or not.
     """
-    import win32gui
     while True:
         fw = win32gui.GetForegroundWindow()
         time.sleep(2)
-        globals.lastFocusedWindow = fw
+        Globals.lastFocusedWindow = fw
         time.sleep(8)
 
 
@@ -538,7 +453,7 @@ def loadLangFile(file: str, bundled: bool = False) -> dict:
         path = os.path.join(LANG_DIR, file)
         if not os.path.exists(path) or getSettings("DisableLangAutoUpdater") or bundled:
             print(f"🟡 Using bundled lang file (forced={bundled})")
-            path = getPath("../lang/" + file)
+            path = getPath("../Core/Languages/" + file)
         else:
             print("🟢 Using cached lang file")
         with open(path, "r", encoding='utf-8') as file:
@@ -555,8 +470,10 @@ def updateLangFile(file: str):
             oldlang = open(os.path.join(LANG_DIR, file), "rb").read()
         except FileNotFoundError:
             oldlang = ""
-        newlang = urlopen(
-            "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/" + file)
+        try:
+            newlang = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/Core/Languages/" + file)
+        except Exception as e:
+            newlang = urlopen("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/lang/" + file)
         if newlang.status == 200:
             langdata: bytes = newlang.read()
             if not os.path.isdir(LANG_DIR):
@@ -579,31 +496,6 @@ def formatPackageIdAsName(id: str):
     Returns a more beautiful name for the given ID
     """
     return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").replace(".", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
-
-
-def getMaskedIcon(iconName: str) -> QIcon:
-    if getMedia(iconName) in globals.maskedImages.keys():
-        return globals.maskedImages[getMedia(iconName)]
-    R, G, B = getColors()[2 if isDark() else 1].split(",")
-    R, G, B = (int(R), int(G), int(B))
-    base_img = QImage(getMedia(iconName))
-    for x in range(base_img.width()):
-        for y in range(base_img.height()):
-            color = base_img.pixelColor(x, y)
-            if color.green() >= 205 and color.red() <= 50 and color.blue() <= 50:
-                base_img.setPixelColor(x, y, QColor(R, G, B))
-    globals.maskedImages[getMedia(iconName)] = QIcon(
-        QPixmap.fromImage(base_img))
-    return globals.maskedImages[getMedia(iconName)]
-
-
-def getIcon(iconName: str) -> QIcon:
-    iconPath = getMedia(iconName)
-    if iconPath in globals.cachedIcons:
-        return globals.cachedIcons[iconPath]
-    else:
-        globals.cachedIcons[iconPath] = QIcon(iconPath)
-        return globals.cachedIcons[iconPath]
 
 
 LATIN = "ä  æ  ǽ  đ ð ƒ ħ ı ł ø ǿ ö  œ  ß  ŧ ü  Ä  Æ  Ǽ  Đ Ð Ƒ Ħ I Ł Ø Ǿ Ö  Œ  ẞ  Ŧ Ü "
@@ -716,16 +608,17 @@ def ConvertMarkdownToHtml(content: str) -> str:
         report(e)
         return content
 
+colors = getColors()
 
-globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
-globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
-    "DisableSuccessNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
-    "DisableErrorNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
-globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
-    "DisableUpdatesNotifications") and globals.ENABLE_WINGETUI_NOTIFICATIONS
+Globals.ENABLE_WINGETUI_NOTIFICATIONS = not getSettings("DisableNotifications")
+Globals.ENABLE_SUCCESS_NOTIFICATIONS = not getSettings(
+    "DisableSuccessNotifications") and Globals.ENABLE_WINGETUI_NOTIFICATIONS
+Globals.ENABLE_ERROR_NOTIFICATIONS = not getSettings(
+    "DisableErrorNotifications") and Globals.ENABLE_WINGETUI_NOTIFICATIONS
+Globals.ENABLE_UPDATES_NOTIFICATIONS = not getSettings(
+    "DisableUpdatesNotifications") and Globals.ENABLE_WINGETUI_NOTIFICATIONS
 
-globals.DEFAULT_PACKAGE_BACKUP_DIR = os.path.join(readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "Personal", os.path.expanduser("~")), "WingetUI")
+Globals.DEFAULT_PACKAGE_BACKUP_DIR = os.path.join(readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "Personal", os.path.expanduser("~")), "WingetUI")
 
 TEMP_DIR = os.path.join(tempfile.gettempdir(), "WingetUI")
 ICON_DIR = os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/CachedIcons")
@@ -739,7 +632,7 @@ if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
 if hasattr(sys, 'frozen'):
     realpath = sys._MEIPASS
 else:
-    realpath = os.path.dirname(os.path.abspath(__file__))
+    realpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
@@ -794,14 +687,14 @@ except Exception as e:
 langName: str = lang['locale']
 
 if "zh_CN" in langName:
-    globals.textfont: str = "Microsoft YaHei UI"
-    globals.dispfont: str = "Microsoft YaHei UI"
-    globals.dispfontsemib: str = "Microsoft YaHei UI"
+    Globals.textfont: str = "Microsoft YaHei UI"
+    Globals.dispfont: str = "Microsoft YaHei UI"
+    Globals.dispfontsemib: str = "Microsoft YaHei UI"
 
 if "zh_TW" in langName:
-    globals.textfont: str = "Microsoft JhengHei UI"
-    globals.dispfont: str = "Microsoft JhengHei UI"
-    globals.dispfontsemib: str = "Microsoft JhengHei UI"
+    Globals.textfont: str = "Microsoft JhengHei UI"
+    Globals.dispfont: str = "Microsoft JhengHei UI"
+    Globals.dispfontsemib: str = "Microsoft JhengHei UI"
 
 try:
     englang = loadLangFile(languages["en"], bundled=True) | {"locale": "en"}

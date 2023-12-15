@@ -18,8 +18,8 @@ import re
 import subprocess
 
 from PySide6.QtCore import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
 
 from .PackageClasses import *
 from .sampleHelper import *
@@ -101,7 +101,7 @@ class NPMPackageManager(PackageManagerModule):
                             source = self.NAME
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             p = subprocess.Popen(f"{self.EXECUTABLE} outdated -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             DashesPassed = False
             rawoutput = "\n\n---------" + self.NAME + "@global"
@@ -122,7 +122,7 @@ class NPMPackageManager(PackageManagerModule):
                             source = self.NAME + "@global"
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Npm))
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             return packages
         except Exception as e:
@@ -156,7 +156,7 @@ class NPMPackageManager(PackageManagerModule):
                     elif "@" in line.split(" ")[0]:
                         currentScope = "@" + line.split(" ")[0][:-1]
                         print("🔵 NPM changed scope to", currentScope)
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             p = subprocess.Popen(f"{self.EXECUTABLE} list -g", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.path.expanduser("~"), env=os.environ.copy(), shell=True)
             rawoutput = "\n\n---------" + self.NAME
             while p.poll() is None:
@@ -174,7 +174,7 @@ class NPMPackageManager(PackageManagerModule):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, self.NAME + "@global", Npm))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -328,8 +328,8 @@ class NPMPackageManager(PackageManagerModule):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} --version", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("npm") is not None
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
+        Globals.componentStatus[f"{self.NAME}Found"] = shutil.which("npm") is not None
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
 

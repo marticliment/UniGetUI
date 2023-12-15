@@ -6,7 +6,7 @@ This file contains a list of the used libraries and their licenses
 
 """
 
-from tools import _
+from wingetui.Core.Tools import _
 
 licenses = {
     "WingetUI":         "LGPL v2.1",

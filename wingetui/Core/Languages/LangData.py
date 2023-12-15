@@ -7,6 +7,8 @@ This file contains a list of the available languages and other related informati
 """
 
 import os
+from wingetui.Core.Data.Contributors import contributors
+from wingetui.Core.Data.Translations import languageCredits, untranslatedPercentage
 
 languageReference = {
     "default": "System language",
@@ -92,7 +94,6 @@ languageFlagsRemap = {
 
 
 def getMarkdownSupportLangs():
-    from data.translations import languageCredits, untranslatedPercentage
 
     readmeLangs = [
         "| Language | Translated | Translator(s) |",
@@ -114,7 +115,6 @@ def getMarkdownSupportLangs():
 
 
 def getTranslatorsFromCredits(translators: str) -> list:
-    from data.contributors import contributors
     if translators == None:
         return []
     credits: list = []

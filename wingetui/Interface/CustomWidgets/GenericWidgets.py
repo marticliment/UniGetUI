@@ -23,8 +23,8 @@ import windows_toasts
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 from win32mica import *
 
 
@@ -172,7 +172,7 @@ class SmoothScrollArea(QScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -329,7 +329,7 @@ class TreeWidget(QTreeWidget):
             self.goTopButton.setUpdatesEnabled(True)
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -528,7 +528,7 @@ class CustomComboBox(QComboBox):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -746,7 +746,7 @@ class ToastNotification(QObject):
         template.on_activated = self.onAction
         template.on_dismissed = lambda _1: self.onDismissFun()
         template.on_failed = lambda _1: self.reportException()
-        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=globals.AUMID if globals.AUMID != "" else None)
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=Globals.AUMID if Globals.AUMID != "" else None)
         self.toast.show_toast(template)
 
     def reportException(self, id):
@@ -840,7 +840,7 @@ class MovableFramelessWindow(DraggableWindow):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -875,12 +875,12 @@ class VerticallyDraggableWidget(QLabel):
         return super().mousePressEvent(event)
 
     def enterEvent(self, event: QEnterEvent) -> None:
-        globals.app.setOverrideCursor(QCursor(Qt.CursorShape.SizeVerCursor))
+        Globals.app.setOverrideCursor(QCursor(Qt.CursorShape.SizeVerCursor))
         return super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent) -> None:
         if not self.pressed:
-            globals.app.restoreOverrideCursor()
+            Globals.app.restoreOverrideCursor()
         return super().leaveEvent(event)
 
     def mouseMoveEvent(self, ev: QMouseEvent) -> None:
@@ -892,16 +892,16 @@ class VerticallyDraggableWidget(QLabel):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.pressed = False
         self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(QCursor.pos()).y()))
-        globals.app.restoreOverrideCursor()
+        Globals.app.restoreOverrideCursor()
         self.oldPos = QCursor.pos()
         return super().mouseReleaseEvent(event)
 
     def hideEvent(self, event: QHideEvent) -> None:
-        globals.app.restoreOverrideCursor()
+        Globals.app.restoreOverrideCursor()
         return super().hideEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        globals.app.restoreOverrideCursor()
+        Globals.app.restoreOverrideCursor()
         return super().closeEvent(event)
 
 

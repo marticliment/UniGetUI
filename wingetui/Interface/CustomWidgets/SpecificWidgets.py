@@ -31,9 +31,9 @@ from wingetui.PackageManagers.dotnet import Dotnet
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from wingetui.tools import *
-from wingetui.tools import _
 from win32mica import *
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 import yaml
 
 PackageManagersList: list[PackageManagerModule] = [
@@ -84,7 +84,7 @@ class CommandLineEdit(CustomLineEdit):
         self.copyButton.setIconSize(QSize(24, 24))
         self.setFixedHeight(50)
         self.copyButton.setFixedSize(42, 42)
-        self.copyButton.clicked.connect(lambda: globals.app.clipboard().setText(self.text()))
+        self.copyButton.clicked.connect(lambda: Globals.app.clipboard().setText(self.text()))
         self.copyButton.setObjectName("CommandLineEditCopyButton")
         self.ApplyIcons()
         self.setObjectName("CommandLineEdit")
@@ -95,7 +95,7 @@ class CommandLineEdit(CustomLineEdit):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = True
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
 
     def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
@@ -174,7 +174,7 @@ class CustomMessageBox(QMainWindow):
             if self.isQuestion:
                 self.qanswer = 1
                 self.close()
-            globals.tray_is_error = False
+            Globals.tray_is_error = False
             update_tray_icon()
 
         def returnFalse():
@@ -297,20 +297,20 @@ class CustomMessageBox(QMainWindow):
                 print("Parent has no window!")
         if showNotification:
             if not wVisible:
-                globals.trayIcon.showMessage(errorData["notifTitle"], errorData["notifText"], errorData["notifIcon"])
+                Globals.trayIcon.showMessage(errorData["notifTitle"], errorData["notifText"], errorData["notifIcon"])
         if wExists:
             if wVisible:
                 self.show()
-                globals.app.beep()
+                Globals.app.beep()
             else:
                 def waitNShow():
                     while not self.parent().window().isVisible():
                         time.sleep(0.5)
-                    self.callInMain.emit(lambda: (self.show(), globals.app.beep()))
+                    self.callInMain.emit(lambda: (self.show(), Globals.app.beep()))
                 Thread(target=waitNShow, daemon=True, name="Error message waiting to be shown").start()
         else:
             self.show()
-            globals.app.beep()
+            Globals.app.beep()
 
     def askQuestion(self, data: dict):
         self.buttonLayout.setDirection(QBoxLayout.Direction.RightToLeft)
@@ -368,14 +368,14 @@ class CustomMessageBox(QMainWindow):
         if wExists:
             if wVisible:
                 self.show()
-                globals.app.beep()
+                Globals.app.beep()
             else:
-                globals.mainWindow.showWindow()
+                Globals.mainWindow.showWindow()
                 self.show()
-                globals.app.beep()
+                Globals.app.beep()
         else:
             self.show()
-            globals.app.beep()
+            Globals.app.beep()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = True
@@ -542,7 +542,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.setObjectName("background")
         title = QLabel(_("Ignored updates"))
         title.setContentsMargins(10, 0, 0, 0)
-        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{Globals.dispfont}\";font-weight: bold;")
         image = QLabel()
         image.setPixmap(QPixmap(getMedia("pin_color")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
         image.setFixedWidth(32)
@@ -656,7 +656,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         for i in range(self.treewidget.topLevelItemCount()):
             self.treewidget.itemWidget(self.treewidget.topLevelItem(0), 3).click()
         self.close()
-        globals.updates.startLoadingPackages(force=True)
+        Globals.updates.startLoadingPackages(force=True)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
@@ -718,7 +718,7 @@ class SoftwareSection(QWidget):
     def __init__(self, parent: QWidget = None, sectionName: str = "Install"):
         super().__init__(parent=parent)
         self.sectionName = sectionName
-        self.infobox = globals.infobox
+        self.infobox = Globals.infobox
         self.packageExporter = PackageExporter(self)
         self.setStyleSheet("margin: 0px;")
 
@@ -819,7 +819,7 @@ class SoftwareSection(QWidget):
         v.setSpacing(0)
         v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel("SectionTitle")
-        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         self.titleWidget = QWidget()
@@ -1307,7 +1307,7 @@ class SoftwareSection(QWidget):
         self.finishLoadingIfNeeded()
 
     def addInstallation(self, p) -> None:
-        globals.installersWidget.addItem(p)
+        Globals.installersWidget.addItem(p)
 
     def destroyAnims(self) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
@@ -1328,11 +1328,11 @@ class SoftwareSection(QWidget):
         if self.discoverLabelDefaultWidth > self.titleWidget.width():
             if not self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = True
-                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         else:
             if self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = False
-                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
 
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width() + 10)
         if self.toolbarDefaultWidth == 0:
@@ -1491,7 +1491,7 @@ class PackageExporter(MovableFramelessWindow):
         self.setObjectName("background")
         title = QLabel(_("Export packages"))
         title.setContentsMargins(10, 0, 0, 0)
-        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{Globals.dispfont}\";font-weight: bold;")
         image = QLabel()
         image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
         image.setFixedWidth(32)
@@ -1665,7 +1665,7 @@ class PackageImporter(MovableFramelessWindow):
         self.setObjectName("background")
         title = QLabel(_("Import packages"))
         title.setContentsMargins(10, 0, 0, 0)
-        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{Globals.dispfont}\";font-weight: bold;")
         image = QLabel()
         image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
         image.setFixedWidth(32)
@@ -1866,7 +1866,7 @@ class PackageImporter(MovableFramelessWindow):
         self.treewidget.setItemWidget(item, 3, w)
 
     def installPackages(self) -> None:
-        DISCOVER_SECTION: SoftwareSection = globals.discover
+        DISCOVER_SECTION: SoftwareSection = Globals.discover
         for item in list(self.PackageItemReference.keys()):
             item: PackageItem
             package: Package = self.PackageItemReference[item]
@@ -1901,7 +1901,7 @@ class PackageImporter(MovableFramelessWindow):
         return super().showEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        globals.discover.callInMain.emit(lambda: globals.discover.packageList.setEnabled(True))
+        Globals.discover.callInMain.emit(lambda: Globals.discover.packageList.setEnabled(True))
         return super().closeEvent(event)
 
 
@@ -1923,10 +1923,10 @@ class PackageItem(QTreeWidgetItem):
 
     def __init__(self, package: 'Package'):
         if not self.SoftwareSection:
-            self.SoftwareSection = globals.discover
+            self.SoftwareSection = Globals.discover
         self.Package = package
         self.Package.PackageItem = self
-        self.callInMain: Signal = globals.mainWindow.callInMain
+        self.callInMain: Signal = Globals.mainWindow.callInMain
         super().__init__()
         self.setChecked(False)
         self.setText(1, self.Package.Name)
@@ -1987,7 +1987,7 @@ class PackageItem(QTreeWidgetItem):
                 
 
     def getDiscoverPackageItem(self) -> 'PackageItem':
-        DISCOVER: 'SoftwareSection' = globals.discover
+        DISCOVER: 'SoftwareSection' = Globals.discover
         if self.SoftwareSection == DISCOVER:
             return self
         if self.Package.Id in DISCOVER.IdPackageReference:
@@ -1998,7 +1998,7 @@ class PackageItem(QTreeWidgetItem):
         return None
 
     def getUpdatesPackageItem(self) -> 'UpgradablePackageItem':
-        UPDATES: 'SoftwareSection' = globals.updates
+        UPDATES: 'SoftwareSection' = Globals.updates
         if self.SoftwareSection == UPDATES:
             return self
         if self.Package.Id in UPDATES.IdPackageReference:
@@ -2009,7 +2009,7 @@ class PackageItem(QTreeWidgetItem):
         return None
 
     def getInstalledPackageItem(self) -> 'InstalledPackageItem':
-        INSTALLED: 'SoftwareSection' = globals.uninstall
+        INSTALLED: 'SoftwareSection' = Globals.uninstall
         if self.SoftwareSection == INSTALLED:
                 return self
 
@@ -2066,7 +2066,7 @@ class UpgradablePackageItem(PackageItem):
     Package: 'UpgradablePackage' = None
 
     def __init__(self, package: 'UpgradablePackage'):
-        self.SoftwareSection = globals.updates
+        self.SoftwareSection = Globals.updates
         super().__init__(package)
         self.setChecked(True)
 
@@ -2115,7 +2115,7 @@ class UpgradablePackageItem(PackageItem):
 class InstalledPackageItem(PackageItem):
 
     def __init__(self, package: 'Package'):
-        self.SoftwareSection = globals.uninstall
+        self.SoftwareSection = Globals.uninstall
         super().__init__(package)
         self.setIcon(3, getIcon("version"))
 

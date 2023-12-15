@@ -23,8 +23,8 @@ import PySide6.QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 from win32mica import *
 
 from wingetui.Interface.CustomWidgets.GenericWidgets import *
@@ -238,7 +238,7 @@ class CollapsableSection(QWidget):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
             self.ApplyIcons()
         return super().showEvent(event)
 

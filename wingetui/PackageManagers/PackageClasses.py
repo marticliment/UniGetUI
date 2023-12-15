@@ -20,9 +20,9 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from urllib.request import urlopen
 import os
-from wingetui.tools import *
-from wingetui.tools import _, blueColor
-from wingetui import globals
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _, blueColor
+import wingetui.Core.Globals as Globals
 
 
 class Package():
@@ -68,7 +68,7 @@ class Package():
         try:
             iconId = self.getIconId()
             try:
-                iconUrl = globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
+                iconUrl = Globals.packageMeta["icons_and_screenshots"][iconId]["icon"]
                 if iconUrl.strip() == "":
                     raise KeyError("Key found but content was empty")
             except KeyError:
@@ -216,8 +216,8 @@ class Package():
             AvailablePackageItem = self.PackageItem.getDiscoverPackageItem()
             if AvailablePackageItem:
                 return AvailablePackageItem.Package
-        if self.Id in globals.discover.IdPackageReference:
-            package: Package = globals.discover.IdPackageReference[self.Id]
+        if self.Id in Globals.discover.IdPackageReference:
+            package: Package = Globals.discover.IdPackageReference[self.Id]
             if package.Source == self.Source:
                 return package
         return None
@@ -228,8 +228,8 @@ class Package():
             UpgrdablePackageItem = self.PackageItem.getUpdatesPackageItem()
             if UpgrdablePackageItem:
                 return UpgrdablePackageItem.Package
-        if self.Id in globals.updates.IdPackageReference:
-            package: UpgradablePackage = globals.updates.IdPackageReference[self.Id]
+        if self.Id in Globals.updates.IdPackageReference:
+            package: UpgradablePackage = Globals.updates.IdPackageReference[self.Id]
             if package.Source == self.Source:
                 return package
         return None
@@ -240,16 +240,16 @@ class Package():
             InstalledPackageItem = self.PackageItem.getInstalledPackageItem()
             if InstalledPackageItem:
                 return InstalledPackageItem.Package
-        if self.Id in globals.uninstall.IdPackageReference:
-            package: Package = globals.uninstall.IdPackageReference[self.Id]
+        if self.Id in Globals.uninstall.IdPackageReference:
+            package: Package = Globals.uninstall.IdPackageReference[self.Id]
             if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 return package
         return None
     
     def getAllCorrespondingInstalledPackages(self) -> 'list[Package]':
         matches = []
-        if self.Id in globals.uninstall.IdPackageReference:
-            package: Package = globals.uninstall.IdPackageReference[self.Id]
+        if self.Id in Globals.uninstall.IdPackageReference:
+            package: Package = Globals.uninstall.IdPackageReference[self.Id]
             if self.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
                 matches.append(package)
         return matches

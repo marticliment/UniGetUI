@@ -17,8 +17,8 @@ import os
 import subprocess
 
 from PySide6.QtCore import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
 
 from .PackageClasses import *
 
@@ -108,7 +108,7 @@ class DotNetToolPackageManager(PackageManagerModule):
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Dotnet))
 
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -141,7 +141,7 @@ class DotNetToolPackageManager(PackageManagerModule):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Dotnet))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput + "\n\n"
+            Globals.PackageManagerOutput += rawoutput + "\n\n"
             if len(packages) <= 2 and not second_attempt:
                 print("🟠 Chocolatey got too few installed packages, retrying")
                 return self.getInstalledPackages(second_attempt=True)
@@ -289,8 +289,8 @@ class DotNetToolPackageManager(PackageManagerModule):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE}  --version", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        Globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
 

@@ -20,16 +20,18 @@ import sys
 from threading import Thread
 import win32mica
 
-from wingetui import globals
+import wingetui.Core.Globals as Globals
 from wingetui.Interface.CustomWidgets.SpecificWidgets import *
-from wingetui.data.contributors import contributorsInfo
-from wingetui.data.translations import languageCredits, untranslatedPercentage
+from wingetui.Core.Data.Contributors import contributorsInfo
+from wingetui.Core.Data.Translations import languageCredits, untranslatedPercentage
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from wingetui.Interface.CustomWidgets.InstallerWidgets import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.Core.Data.Licenses import licenses, licenseUrls
+from wingetui.ExternalLibraries.PyWebView2 import WebView2
 
 
 class AboutSection(SmoothScrollArea):
@@ -54,7 +56,7 @@ class AboutSection(SmoothScrollArea):
         self.mainLayout.addWidget(self.announcements)
         title = QLabel(_("Component Information"))
         title.setStyleSheet(
-            f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+            f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         self.mainLayout.addWidget(title)
 
         self.mainLayout.addSpacing(15)
@@ -75,17 +77,17 @@ class AboutSection(SmoothScrollArea):
                 ["Gsudo"] + [manager.NAME for manager in PackageManagersList])
             currentIndex: int = 0
             table.setItem(currentIndex, 0, QTableWidgetItem(
-                "  " + _("Found") if globals.componentStatus["sudoFound"] else _("Not found")))
+                "  " + _("Found") if Globals.componentStatus["sudoFound"] else _("Not found")))
             table.setItem(currentIndex, 1, QTableWidgetItem(
-                " " + str(globals.componentStatus["sudoVersion"])))
+                " " + str(Globals.componentStatus["sudoVersion"])))
 
             for manager in PackageManagersList:
                 try:
                     currentIndex += 1
                     table.setItem(currentIndex, 0, QTableWidgetItem(
-                        "  " + _("Found") if globals.componentStatus[f"{manager.NAME}Found"] else _("Not found")))
+                        "  " + _("Found") if Globals.componentStatus[f"{manager.NAME}Found"] else _("Not found")))
                     table.setItem(currentIndex, 1, QTableWidgetItem(
-                        " " + str(globals.componentStatus[f"{manager.NAME}Version"])))
+                        " " + str(Globals.componentStatus[f"{manager.NAME}Version"])))
                     table.verticalHeaderItem(
                         currentIndex).setTextAlignment(Qt.AlignRight)
                     table.setRowHeight(currentIndex, 35)
@@ -112,7 +114,7 @@ class AboutSection(SmoothScrollArea):
             self.mainLayout.addWidget(table)
             title = QLabel(_("About WingetUI version {0}").format(versionName))
             title.setStyleSheet(
-                f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+                f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
             self.mainLayout.addWidget(title)
             self.mainLayout.addSpacing(5)
             description = CustomLabel(
@@ -128,7 +130,7 @@ class AboutSection(SmoothScrollArea):
             self.mainLayout.addSpacing(30)
 
             self.mainLayout.addWidget(CustomLabel(
-                f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+                f"{_('Contributors')}:", f"font-size: 22pt;font-family: \"{Globals.dispfont}\";font-weight: bold;"))
             self.mainLayout.addWidget(CustomLabel(
                 _("WingetUI wouldn't have been possible with the help of our dear contributors. Check out their GitHub profile, WingetUI wouldn't be possible without them!")))
             contributorsHTMLList = "<ul>"
@@ -139,7 +141,7 @@ class AboutSection(SmoothScrollArea):
             self.mainLayout.addSpacing(15)
 
             self.mainLayout.addWidget(CustomLabel(
-                f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+                f"{_('Translators')}:", f"font-size: 22pt;font-family: \"{Globals.dispfont}\";font-weight: bold;"))
             self.mainLayout.addWidget(CustomLabel(
                 _("WingetUI has not been machine translated. The following users have been in charge of the translations:")))
             translatorsHTMLList = "<ul>"
@@ -167,7 +169,7 @@ class AboutSection(SmoothScrollArea):
             self.mainLayout.addSpacing(15)
 
             self.mainLayout.addWidget(CustomLabel(
-                f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+                f"{_('About the dev')}:", f"font-size: 22pt;font-family: \"{Globals.dispfont}\";font-weight: bold;"))
             self.mainLayout.addWidget(CustomLabel(
                 _("Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!")))
             try:
@@ -183,7 +185,7 @@ class AboutSection(SmoothScrollArea):
 
             self.mainLayout.addSpacing(15)
             self.mainLayout.addWidget(CustomLabel(
-                f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{globals.dispfont}\";font-weight: bold;"))
+                f"{_('Licenses')}:", f"font-size: 22pt;font-family: \"{Globals.dispfont}\";font-weight: bold;"))
 
             licensesTable = QTableWidget()
             licensesTable.setAutoFillBackground(True)
@@ -205,8 +207,6 @@ class AboutSection(SmoothScrollArea):
             licensesTable.setCornerWidget(QLabel(""))
             licensesTable.setCornerButtonEnabled(False)
             licensesTable.cornerWidget().setStyleSheet("background: transparent;")
-
-            from wingetui.data.licenses import licenses, licenseUrls
 
             licensesTable.setRowCount(len(list(licenses.keys())))
             licensesTable.setFixedHeight(len(list(licenses.keys())) * 32)
@@ -267,7 +267,7 @@ class SettingsSection(SmoothScrollArea):
         title = QLabel(_("WingetUI Settings"))
 
         title.setStyleSheet(
-            f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+            f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         self.mainLayout.addWidget(title)
         self.mainLayout.addSpacing(20)
 
@@ -322,7 +322,7 @@ class SettingsSection(SmoothScrollArea):
         def restartWingetUIByLangChange():
             subprocess.run(
                 str("start /B \"\" \"" + sys.executable) + "\"", shell=True)
-            globals.app.quit()
+            Globals.app.quit()
 
         self.language.restartButton.clicked.connect(
             restartWingetUIByLangChange)
@@ -334,7 +334,7 @@ class SettingsSection(SmoothScrollArea):
         def ww():
             subprocess.run(
                 str("start /B \"\" \"" + sys.executable) + "\" --welcome", shell=True)
-            globals.app.quit()
+            Globals.app.quit()
 
         self.wizardButton.clicked.connect(ww)
         self.wizardButton.button.setObjectName("AccentButton")
@@ -443,8 +443,8 @@ class SettingsSection(SmoothScrollArea):
                     mode = win32mica.MicaTheme.DARK
                 case "light":
                     mode = win32mica.MicaTheme.LIGHT
-            win32mica.ApplyMica(globals.mainWindow.winId(), mode)
-            globals.mainWindow.ApplyStyleSheetsAndIcons()
+            win32mica.ApplyMica(Globals.mainWindow.winId(), mode)
+            Globals.mainWindow.ApplyStyleSheetsAndIcons()
 
         self.theme.combobox.currentTextChanged.connect(lambda v: (
             setSettingsValue("PreferredTheme", themes[v]), applyTheme()))
@@ -486,7 +486,7 @@ class SettingsSection(SmoothScrollArea):
                             if pairValue[1] != "":
                                 setSettingsValue(pairValue[0], pairValue[1])
                     os.startfile(sys.executable)
-                    globals.app.quit()
+                    Globals.app.quit()
             except Exception as e:
                 report(e)
 
@@ -512,7 +512,7 @@ class SettingsSection(SmoothScrollArea):
         self.generalTitle.addWidget(self.exportSettings)
         self.resetButton = SectionButton(_("Reset WingetUI"), _("Reset"))
         self.resetButton.clicked.connect(
-            lambda: (resetSettings(), os.startfile(sys.executable), globals.app.quit()))
+            lambda: (resetSettings(), os.startfile(sys.executable), Globals.app.quit()))
         self.generalTitle.addWidget(self.resetButton)
 
         self.startup = CollapsableSection(_("Startup options"), getMedia(
@@ -653,7 +653,7 @@ class SettingsSection(SmoothScrollArea):
         self.backupOptions.addWidget(backupFileName)
         
         backupLocation = SectionCheckBoxDirPicker(_("Change backup output directory"))
-        backupLocation.setDefaultText(globals.DEFAULT_PACKAGE_BACKUP_DIR)
+        backupLocation.setDefaultText(Globals.DEFAULT_PACKAGE_BACKUP_DIR)
         backupLocation.setChecked(getSettings("ChangeBackupOutputDirectory"))
         backupLocation.stateChanged.connect(lambda v: setSettings("ChangeBackupOutputDirectory", v))
         backupLocation.setText(getSettingsValue("ChangeBackupOutputDirectory"))
@@ -665,7 +665,7 @@ class SettingsSection(SmoothScrollArea):
         def showBackupDir():
             dir = getSettingsValue("ChangeBackupOutputDirectory")
             if not dir:
-                dir = globals.DEFAULT_PACKAGE_BACKUP_DIR
+                dir = Globals.DEFAULT_PACKAGE_BACKUP_DIR
             if not os.path.exists(dir):
                 os.makedirs(dir)
             os.startfile(dir)
@@ -686,7 +686,7 @@ class SettingsSection(SmoothScrollArea):
             resetsudo = subprocess.Popen([GSUDO_EXECUTABLE, "-k"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                          stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
             resetsudo.wait()
-            globals.adminRightsGranted = False
+            Globals.adminRightsGranted = False
 
         doCacheAdminPrivileges.stateChanged.connect(lambda v: (
             setSettings("DoCacheAdminRights", bool(v)), resetAdminRightsCache()))
@@ -782,7 +782,7 @@ class SettingsSection(SmoothScrollArea):
         title = QLabel(_("Package manager preferences"))
         self.mainLayout.addSpacing(40)
         title.setStyleSheet(
-            f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+            f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         self.mainLayout.addWidget(title)
         self.mainLayout.addSpacing(20)
 
@@ -841,7 +841,7 @@ class SettingsSection(SmoothScrollArea):
             if manager is Scoop:
                 pathVar = Scoop.EXECUTABLE.replace("scoop", str(shutil.which("scoop"))) if shutil.which("scoop") is not None else Scoop.EXECUTABLE
             executable = SectionButton(pathVar, _("Copy"), h=50)
-            executable.clicked.connect(lambda text=pathVar: globals.app.clipboard().setText(text))
+            executable.clicked.connect(lambda text=pathVar: Globals.app.clipboard().setText(text))
             executable.setStyleSheet("QWidget#stBtn{border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;border-bottom: 0px;}")
             section.addWidget(executable)
             
@@ -964,7 +964,7 @@ class BaseLogSection(QWidget):
             try:
                 print("🔵 Copying log to the clipboard...")
                 self.loadData()
-                globals.app.clipboard().setText(self.textEdit.toPlainText())
+                Globals.app.clipboard().setText(self.textEdit.toPlainText())
                 print("🟢 Log copied to the clipboard successfully!")
             except Exception as e:
                 report(e)
@@ -1017,7 +1017,6 @@ class BaseBrowserSection(QWidget):
 
     def loadWebView(self):
         self.loaded = True
-        from wingetui.ExternalLibraries.PyWebView2 import WebView2
         self.setObjectName("background")
 
         hLayout = QHBoxLayout()
@@ -1124,6 +1123,6 @@ class PackageManagerLogSection(BaseLogSection):
     def loadData(self):
         print("🔵 Reloading Package Manager logs...")
         self.textEdit.setPlainText(
-            globals.PackageManagerOutput.replace("\n\n\n", ""))
+            Globals.PackageManagerOutput.replace("\n\n\n", ""))
         self.textEdit.verticalScrollBar().setValue(
             self.textEdit.verticalScrollBar().maximum())

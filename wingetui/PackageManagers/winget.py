@@ -15,8 +15,8 @@ import os
 import subprocess
 
 from PySide6.QtCore import *
-from wingetui.tools import *
-from wingetui.tools import _
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
 
 from .PackageClasses import *
 from .sampleHelper import *
@@ -148,8 +148,8 @@ class WingetPackageManager(PackageManagerWithSources):
                                     source = "Winget: msstore"
                                 elif "winget" in line:
                                     source = "Winget: winget"
-                                elif len(globals.wingetSources.keys() >= 0):
-                                    source = "Winget: " + list(globals.wingetSources.keys())[0]
+                                elif len(Globals.wingetSources.keys() >= 0):
+                                    source = "Winget: " + list(Globals.wingetSources.keys())[0]
                                 else:
                                     source = "Winget"
 
@@ -179,7 +179,7 @@ class WingetPackageManager(PackageManagerWithSources):
                             if type(e) is not IndexError:
                                 report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawOutput
+            Globals.PackageManagerOutput += rawOutput
             return packages
 
         except Exception as e:
@@ -253,9 +253,9 @@ class WingetPackageManager(PackageManagerWithSources):
                         if noSourcesAvailable:
                             source = "Winget"
                         elif source.strip() == "":
-                            if len(list(globals.wingetSources.keys()) >= 0):
+                            if len(list(Globals.wingetSources.keys()) >= 0):
                                 print("🟠 No source found on Winget.getAvailableUpdates()!")
-                                source = "Winget: " + list(globals.wingetSources.keys())[0]
+                                source = "Winget: " + list(Globals.wingetSources.keys())[0]
                             else:
                                 source = "Winget"
 
@@ -273,7 +273,7 @@ class WingetPackageManager(PackageManagerWithSources):
                         if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -394,7 +394,7 @@ class WingetPackageManager(PackageManagerWithSources):
                         if name.strip() == "":
                             continue
 
-                        if packageLine.strip().split(" ")[-1] in globals.wingetSources.keys():
+                        if packageLine.strip().split(" ")[-1] in Globals.wingetSources.keys():
                             source = "Winget: " + packageLine.split(" ")[-1]
                         else:
                             source = getSource(id)
@@ -414,7 +414,7 @@ class WingetPackageManager(PackageManagerWithSources):
                         if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
 
             if len(packages) <= 2 and not second_attempt:
                 print("🟠 Chocolatey got too few installed packages, retrying")
@@ -488,7 +488,7 @@ class WingetPackageManager(PackageManagerWithSources):
                                 break
                             output.append(str(line, encoding='utf-8', errors="ignore"))
 
-                globals.PackageManagerOutput += "\n--------" + "\n".join(output)
+                Globals.PackageManagerOutput += "\n--------" + "\n".join(output)
 
                 for line in output:
                     if line[0] == " " and outputIsDescribing:
@@ -746,10 +746,10 @@ class WingetPackageManager(PackageManagerWithSources):
                         print(line, idSeparator)
                         print("🔵 found Id", newId)
                         package.Id = newId
-                        globals.PackageManagerOutput += rawoutput + "\n\n"
+                        Globals.PackageManagerOutput += rawoutput + "\n\n"
                         return
 
-        globals.PackageManagerOutput += rawoutput + "\n\n"
+        Globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
 
     def getSources(self) -> None:
@@ -809,11 +809,11 @@ class WingetPackageManager(PackageManagerWithSources):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run([self.EXECUTABLE, "-v"], shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
+        Globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
-        globals.wingetSources = {source.Name: source.Url for source in self.getSources()}
+        Globals.wingetSources = {source.Name: source.Url for source in self.getSources()}
 
     def updateSources(self, signal: Signal = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")

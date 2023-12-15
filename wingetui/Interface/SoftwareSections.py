@@ -26,16 +26,16 @@ import time
 import socket
 from threading import Thread
 
-from wingetui import globals
+import wingetui.Core.Globals as Globals
 from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from wingetui.PackageManagers.PackageClasses import PackageManagerModule
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from wingetui.Interface.CustomWidgets.InstallerWidgets import *
-from wingetui.tools import *
-from wingetui.tools import _
-from wingetui import apiBackend
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+import wingetui.Interface.BackendApi as BackendApi
 
 from wingetui.Interface.GenericSections import *
 
@@ -202,7 +202,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             item.setIcon(3, self.versionIcon)
             item.setIcon(4, package.getSourceIcon())
 
-            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            UNINSTALL: UninstallSoftwareSection = Globals.uninstall
             if package.Id in UNINSTALL.IdPackageReference.keys():
                 installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
                 installedItem = installedPackage.PackageItem
@@ -294,11 +294,11 @@ class DiscoverSoftwareSection(SoftwareSection):
         toolbar.addSeparator()
 
         self.HelpMenuEntry1 = QAction("Guide for beginners on how to install a package")
-        self.HelpMenuEntry1.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/install-a-program"))
+        self.HelpMenuEntry1.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/install-a-program"))
         self.HelpMenuEntry2 = QAction("Discover Packages overview - every feature explained")
-        self.HelpMenuEntry2.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/discover-overview"))
+        self.HelpMenuEntry2.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/discover-overview"))
         self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
-        self.HelpMenuEntry3.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
+        self.HelpMenuEntry3.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
             helpMenu = QMenu(self)
@@ -549,7 +549,7 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent, sectionName="Update")
-        apiBackend.availableUpdates = self.packageItems
+        BackendApi.availableUpdates = self.packageItems
 
         self.blacklistManager = IgnoredUpdatesManager(self.window())
         self.LegacyBlacklist = getSettingsValue("BlacklistedUpdates")
@@ -598,15 +598,15 @@ class UpdateSoftwareSection(SoftwareSection):
         self.MenuInteractive.triggered.connect(lambda: self.updatePackageItem(self.packageList.currentItem(), interactive=True))
 
         def uninstallPackage():
-            UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
+            UNINSTALL_SECTION: UninstallSoftwareSection = Globals.uninstall
             if self.packageList.currentItem():
                 installedItem = self.packageList.currentItem().getInstalledPackageItem()
                 if installedItem:
                     UNINSTALL_SECTION.uninstallPackageItem(installedItem)
                     
         def uninstallThenUpdate():
-            UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
-            INSTALL_SECTION: DiscoverSoftwareSection = globals.discover
+            UNINSTALL_SECTION: UninstallSoftwareSection = Globals.uninstall
+            INSTALL_SECTION: DiscoverSoftwareSection = Globals.discover
             packageItem = self.packageList.currentItem()
             if packageItem:
                 installedItem = self.packageList.currentItem().getInstalledPackageItem()
@@ -700,7 +700,7 @@ class UpdateSoftwareSection(SoftwareSection):
             item.setIcon(4, self.newVersionIcon)
             item.setIcon(5, package.getSourceIcon())
 
-            UNINSTALL: UninstallSoftwareSection = globals.uninstall
+            UNINSTALL: UninstallSoftwareSection = Globals.uninstall
             if package.Id in UNINSTALL.IdPackageReference.keys():
                 installedPackage: UpgradablePackage = UNINSTALL.IdPackageReference[package.Id]
                 installedItem = installedPackage.PackageItem
@@ -808,18 +808,18 @@ class UpdateSoftwareSection(SoftwareSection):
         toolbar.addSeparator()
 
         self.HelpMenuEntry10 = QAction("Upgrading a package")
-        self.HelpMenuEntry10.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#upgrade-package"))
+        self.HelpMenuEntry10.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#upgrade-package"))
         self.HelpMenuEntry11 = QAction("Enabling automatic updates")
-        self.HelpMenuEntry11.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#enable-updates"))
+        self.HelpMenuEntry11.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#enable-updates"))
         self.HelpMenuEntry12 = QAction("Ignoring updates for a package")
-        self.HelpMenuEntry12.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#ignore"))
+        self.HelpMenuEntry12.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#ignore"))
         self.HelpMenuEntry13 = QAction("Managing ignored updates")
-        self.HelpMenuEntry13.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#manage-ignored"))
+        self.HelpMenuEntry13.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/update-software/#manage-ignored"))
 
         self.HelpMenuEntry2 = QAction("Software Updates overview - every feature explained")
-        self.HelpMenuEntry2.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/updates-overview"))
+        self.HelpMenuEntry2.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help/updates-overview"))
         self.HelpMenuEntry3 = QAction("WingetUI Help and Documentation")
-        self.HelpMenuEntry3.triggered.connect(lambda: globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
+        self.HelpMenuEntry3.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
 
         def showHelpMenu():
             helpMenu = QMenu(self)
@@ -844,8 +844,8 @@ class UpdateSoftwareSection(SoftwareSection):
 
     def finishLoadingIfNeeded(self) -> None:
         self.countLabel.setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
-        apiBackend.availableUpdates = self.packageItems
-        globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
+        BackendApi.availableUpdates = self.packageItems
+        Globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}, not finished yet...").format(str(len(self.packageItems))))
         if len(self.packageItems) == 0:
             self.packageList.label.setText(self.countLabel.text())
         else:
@@ -862,7 +862,7 @@ class UpdateSoftwareSection(SoftwareSection):
         self.reloadButton.setEnabled(True)
         self.loadingProgressBar.hide()
         self.loadingProgressBar.hide()
-        globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(len(self.packageItems))))
+        Globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(len(self.packageItems))))
         count = 0
         lastVisibleItem = None
         for item in self.packageItems:
@@ -870,7 +870,7 @@ class UpdateSoftwareSection(SoftwareSection):
                 count += 1
                 lastVisibleItem = item
         if count > 0:
-            globals.tray_is_available_updates = True
+            Globals.tray_is_available_updates = True
             update_tray_icon()
             try:
                 self.UpdatesNotification.close()
@@ -879,7 +879,7 @@ class UpdateSoftwareSection(SoftwareSection):
             except Exception as e:
                 report(e)
             if getSettings("AutomaticallyUpdatePackages") or "--updateapps" in sys.argv:
-                if not globals.tray_is_installing:
+                if not Globals.tray_is_installing:
                     self.updateAllPackageItems()
                     self.UpdatesNotification = ToastNotification(self, self.callInMain.emit)
                     if count > 1:
@@ -892,8 +892,8 @@ class UpdateSoftwareSection(SoftwareSection):
                     elif count == 1:
                         self.UpdatesNotification.setTitle(_("Update found!"))
                         self.UpdatesNotification.setDescription(_("{0} is being updated").format(lastVisibleItem.Package.Name))
-                    self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                    if globals.ENABLE_UPDATES_NOTIFICATIONS:
+                    self.UpdatesNotification.addOnClickCallback(lambda: (Globals.mainWindow.showWindow(1)))
+                    if Globals.ENABLE_UPDATES_NOTIFICATIONS:
                         self.UpdatesNotification.show()
 
             else:
@@ -910,14 +910,14 @@ class UpdateSoftwareSection(SoftwareSection):
                     self.UpdatesNotification.setTitle(_("Update found!"))
                     self.UpdatesNotification.setDescription(_("{0} can be updated").format(lastVisibleItem.Package.Name))
                     self.UpdatesNotification.addAction(_("Update"), self.updateAllPackageItems)
-                self.UpdatesNotification.addAction(_("Show WingetUI"), lambda: (globals.mainWindow.showWindow(1)))
-                self.UpdatesNotification.addOnClickCallback(lambda: (globals.mainWindow.showWindow(1)))
-                if globals.ENABLE_UPDATES_NOTIFICATIONS:
+                self.UpdatesNotification.addAction(_("Show WingetUI"), lambda: (Globals.mainWindow.showWindow(1)))
+                self.UpdatesNotification.addOnClickCallback(lambda: (Globals.mainWindow.showWindow(1)))
+                if Globals.ENABLE_UPDATES_NOTIFICATIONS:
                     self.UpdatesNotification.show()
 
             self.packageList.label.setText("")
         else:
-            globals.tray_is_available_updates = False
+            Globals.tray_is_available_updates = False
             update_tray_icon()
         
         self.updatePackageNumber()
@@ -936,7 +936,7 @@ class UpdateSoftwareSection(SoftwareSection):
     def changeStore(self, package: UpgradablePackage):
         time.sleep(3)
         try:
-            UNINSTALL_SECTION: UninstallSoftwareSection = globals.uninstall
+            UNINSTALL_SECTION: UninstallSoftwareSection = Globals.uninstall
             package.Source = UNINSTALL_SECTION.IdPackageReference[package.Id].Source
         except KeyError:
             print(f"🟠 Package {package.Id} found in the updates section but not in the installed one, happened again")
@@ -966,11 +966,11 @@ class UpdateSoftwareSection(SoftwareSection):
             self.packageItems.append(item)
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
-            action = QAction(package.Name + "  \t" + package.Version + "\t → \t" + package.NewVersion, globals.trayMenuUpdatesList)
+            action = QAction(package.Name + "  \t" + package.Version + "\t → \t" + package.NewVersion, Globals.trayMenuUpdatesList)
             action.triggered.connect(lambda: self.updatePackageItem(item))
             action.setShortcut(package.Version)
             item.setAction(action)
-            globals.trayMenuUpdatesList.addAction(action)
+            Globals.trayMenuUpdatesList.addAction(action)
 
     def finishFiltering(self, text: str):
         def getChecked(item: UpgradablePackageItem) -> str:
@@ -1045,20 +1045,20 @@ class UpdateSoftwareSection(SoftwareSection):
             self.packageList.label.hide()
             self.packageList.label.setText("")
             self.SectionImage.setPixmap(QIcon(getMedia("alert_laptop")).pixmap(QSize(64, 64)))
-            globals.updatesAction.setIcon(QIcon(getMedia("alert_laptop")))
-            globals.app.uaAction.setEnabled(True)
-            globals.trayMenuUpdatesList.menuAction().setEnabled(True)
-            globals.tray_is_available_updates = True
+            Globals.updatesAction.setIcon(QIcon(getMedia("alert_laptop")))
+            Globals.app.uaAction.setEnabled(True)
+            Globals.trayMenuUpdatesList.menuAction().setEnabled(True)
+            Globals.tray_is_available_updates = True
         else:
             trayMenuText = _("No updates are available")
             self.packageList.label.setText(_("Hooray! No updates were found!"))
             self.packageList.label.show()
-            globals.app.uaAction.setEnabled(False)
-            globals.trayMenuUpdatesList.menuAction().setEnabled(False)
-            globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
+            Globals.app.uaAction.setEnabled(False)
+            Globals.trayMenuUpdatesList.menuAction().setEnabled(False)
+            Globals.updatesAction.setIcon(QIcon(getMedia("checked_laptop")))
             self.SectionImage.setPixmap(QIcon(getMedia("checked_laptop")).pixmap(QSize(64, 64)))
-            globals.tray_is_available_updates = False
-        globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)
+            Globals.tray_is_available_updates = False
+        Globals.trayMenuUpdatesList.menuAction().setText(trayMenuText)
         update_tray_icon()
         self.updateFilterTable()
 
@@ -1118,9 +1118,9 @@ class UpdateSoftwareSection(SoftwareSection):
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for updates..."))
         self.packageList.label.setText(self.countLabel.text())
-        for action in globals.trayMenuUpdatesList.actions():
-            globals.trayMenuUpdatesList.removeAction(action)
-        globals.trayMenuUpdatesList.addAction(globals.updatesHeader)
+        for action in Globals.trayMenuUpdatesList.actions():
+            Globals.trayMenuUpdatesList.removeAction(action)
+        Globals.trayMenuUpdatesList.addAction(Globals.updatesHeader)
         return super().startLoadingPackages(force)
 
     def sharePackage(self, packageItem: UpgradablePackageItem):
@@ -1184,13 +1184,13 @@ class UninstallSoftwareSection(SoftwareSection):
         self.MenuInteractive.triggered.connect(lambda: self.uninstallPackageItem(self.packageList.currentItem(), interactive=True))
         
         def reinstall():
-            INSTALL_SECTION: DiscoverSoftwareSection = globals.discover
+            INSTALL_SECTION: DiscoverSoftwareSection = Globals.discover
             packageItem = self.packageList.currentItem()
             if packageItem:
                 INSTALL_SECTION.installPackageItem(packageItem)
                     
         def uninstallThenReinstall():
-            INSTALL_SECTION: DiscoverSoftwareSection = globals.discover
+            INSTALL_SECTION: DiscoverSoftwareSection = Globals.discover
             packageItem = self.packageList.currentItem()
             if packageItem:
                 self.uninstallPackageItem(packageItem, avoidConfirm=True)
@@ -1269,14 +1269,14 @@ class UninstallSoftwareSection(SoftwareSection):
             if package.HasUpdatesIgnored():
                 item.setIcon(1, self.pinnedIcon)
 
-            UPDATES: UpdateSoftwareSection = globals.updates
+            UPDATES: UpdateSoftwareSection = Globals.updates
             if package.Id in UPDATES.IdPackageReference.keys():
                 updatePackage: UpgradablePackage = UPDATES.IdPackageReference[package.Id]
                 updateItem = updatePackage.PackageItem
                 if updateItem in UPDATES.packageItems:
                     item.setIcon(1, self.updateIcon)
 
-            DISCOVER: UninstallSoftwareSection = globals.discover
+            DISCOVER: UninstallSoftwareSection = Globals.discover
             if package.Id in DISCOVER.IdPackageReference.keys():
                 discoverablePackage: UpgradablePackage = DISCOVER.IdPackageReference[package.Id]
                 discoverableItem = discoverablePackage.PackageItem
@@ -1471,7 +1471,7 @@ class UninstallSoftwareSection(SoftwareSection):
             trayMenuText = _("1 package was found").format(self.foundPackages)
         else:
             trayMenuText = _("{0} packages were found").format(self.foundPackages)
-        globals.trayMenuInstalledList.menuAction().setText(trayMenuText)
+        Globals.trayMenuInstalledList.menuAction().setText(trayMenuText)
         if self.foundPackages > 0:
             self.packageList.label.hide()
             self.packageList.label.setText("")
@@ -1486,7 +1486,7 @@ class UninstallSoftwareSection(SoftwareSection):
             self.packageList.label.setText(self.countLabel.text())
         else:
             self.packageList.label.setText("")
-        globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(len(self.packageItems)))
+        Globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(len(self.packageItems)))
         self.reloadButton.setEnabled(True)
         self.searchButton.setEnabled(True)
         self.filter()
@@ -1499,7 +1499,7 @@ class UninstallSoftwareSection(SoftwareSection):
         self.reloadButton.setEnabled(True)
         self.filter()
         self.loadingProgressBar.hide()
-        globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(len(self.packageItems)))
+        Globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(len(self.packageItems)))
         self.countLabel.setText(_("Found packages: {0}").format(len(self.packageItems)))
         self.packageList.label.setText("")
         print("🟢 Total packages: " + str(len(self.packageItems)))
@@ -1511,7 +1511,7 @@ class UninstallSoftwareSection(SoftwareSection):
                 
                 dirName = getSettingsValue("ChangeBackupOutputDirectory")
                 if not dirName:
-                    dirName = globals.DEFAULT_PACKAGE_BACKUP_DIR
+                    dirName = Globals.DEFAULT_PACKAGE_BACKUP_DIR
                 if not os.path.exists(dirName):
                     os.makedirs(dirName)
                 
@@ -1546,11 +1546,11 @@ class UninstallSoftwareSection(SoftwareSection):
             if self.containsQuery(item, self.query.text()):
                 self.showableItems.append(item)
 
-            action = QAction(package.Name + " \t" + package.Version, globals.trayMenuInstalledList)
+            action = QAction(package.Name + " \t" + package.Version, Globals.trayMenuInstalledList)
             action.triggered.connect(lambda: (self.uninstallPackageItem(item)))
             action.setShortcut(package.Version)
             item.setAction(action)
-            globals.trayMenuInstalledList.addAction(action)
+            Globals.trayMenuInstalledList.addAction(action)
 
     def confirmUninstallSelected(self, toUninstall: list[InstalledPackageItem], a: CustomMessageBox, admin: bool = False, interactive: bool = False, removeData: bool = False):
         questionData = {
@@ -1594,9 +1594,9 @@ class UninstallSoftwareSection(SoftwareSection):
     def startLoadingPackages(self, force: bool = False) -> None:
         self.countLabel.setText(_("Searching for packages..."))
         self.packageList.label.setText(self.countLabel.text())
-        for action in globals.trayMenuInstalledList.actions():
-            globals.trayMenuInstalledList.removeAction(action)
-        globals.trayMenuInstalledList.addAction(globals.installedHeader)
+        for action in Globals.trayMenuInstalledList.actions():
+            Globals.trayMenuInstalledList.removeAction(action)
+        Globals.trayMenuInstalledList.addAction(Globals.installedHeader)
         return super().startLoadingPackages(force)
 
     def selectAllInstalled(self) -> None:
@@ -1647,7 +1647,7 @@ class PackageInfoPopupWindow(QWidget):
         self.vLayout = QVBoxLayout()
         self.layout = QVBoxLayout()
         self.title = CustomLabel()
-        self.title.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+        self.title.setStyleSheet(f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         self.title.setText(_("Loading..."))
 
         self.appIcon = QLabel()
@@ -1690,14 +1690,14 @@ class PackageInfoPopupWindow(QWidget):
 
         self.publisher = CustomLabel("<b>" + _('Publisher') + ":</b> " + _('Unknown'))
         self.publisher.setOpenExternalLinks(False)
-        self.publisher.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
+        self.publisher.linkActivated.connect(lambda t: (self.close(), Globals.discover.query.setText(t), Globals.discover.filter(), Globals.mainWindow.buttonBox.buttons()[0].click()))
         self.publisher.setWordWrap(True)
 
         self.layout.addWidget(self.publisher)
 
         self.author = CustomLabel("<b>" + _('Author') + ":</b> " + _('Unknown'))
         self.author.setOpenExternalLinks(False)
-        self.author.linkActivated.connect(lambda t: (self.close(), globals.discover.query.setText(t), globals.discover.filter(), globals.mainWindow.buttonBox.buttons()[0].click()))
+        self.author.linkActivated.connect(lambda t: (self.close(), Globals.discover.query.setText(t), Globals.discover.filter(), Globals.mainWindow.buttonBox.buttons()[0].click()))
         self.author.setWordWrap(True)
 
         self.layout.addWidget(self.author)
@@ -2341,7 +2341,7 @@ class PackageInfoPopupWindow(QWidget):
             self.canContinueWithImageLoading = 0
             iconId = package.getIconId()
             count = 0
-            for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
+            for i in range(len(Globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
                     p = QPixmap(getMedia("placeholder_image")).scaledToHeight(128, Qt.SmoothTransformation)
                     if not p.isNull():
@@ -2352,13 +2352,13 @@ class PackageInfoPopupWindow(QWidget):
                     report(e)
             for i in range(count + 1, 20):
                 self.callInMain.emit(self.imagesCarrousel[i].hide)
-            for i in range(len(globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
+            for i in range(len(Globals.packageMeta["icons_and_screenshots"][iconId]["images"])):
                 try:
                     imagepath = os.path.join(ICON_DIR, f"{iconId}.screenshot.{i}.png")
                     if not os.path.exists(ICON_DIR):
                         os.makedirs(ICON_DIR)
                     if not os.path.exists(imagepath):
-                        iconurl = globals.packageMeta["icons_and_screenshots"][iconId]["images"][i]
+                        iconurl = Globals.packageMeta["icons_and_screenshots"][iconId]["images"][i]
                         print("🔵 Found icon: ", iconurl)
                         if iconurl:
                             icondata = urlopen(iconurl).read()
@@ -2426,18 +2426,18 @@ class PackageInfoPopupWindow(QWidget):
         self.move(g.x() + g.width() // 2 - 700 // 2, g.y() + g.height() // 2 - 650 // 2)
         self.raise_()
         if not self.backgroundApplied:
-            globals.centralWindowLayout.setGraphicsEffect(self.blurBackgroundEffect)
+            Globals.centralWindowLayout.setGraphicsEffect(self.blurBackgroundEffect)
             self.backgroundApplied = True
         self.blurBackgroundEffect.setEnabled(True)
         self.blurBackgroundEffect.setBlurRadius(40)
-        backgroundImage = globals.centralWindowLayout.grab(QRect(QPoint(0, 0), globals.centralWindowLayout.size()))
+        backgroundImage = Globals.centralWindowLayout.grab(QRect(QPoint(0, 0), Globals.centralWindowLayout.size()))
         self.blurBackgroundEffect.setEnabled(False)
         self.imagesScrollbar.move(self.screenshotsWidget.x() + 22, self.screenshotsWidget.y() + self.screenshotsWidget.height() + 4)
         self.blackCover.resize(self.width(), self.centralwidget.height())
-        if globals.centralWindowLayout:
-            globals.centralTextureImage.setPixmap(backgroundImage)
-            globals.centralTextureImage.show()
-            globals.centralWindowLayout.hide()
+        if Globals.centralWindowLayout:
+            Globals.centralTextureImage.setPixmap(backgroundImage)
+            Globals.centralTextureImage.show()
+            Globals.centralWindowLayout.hide()
         _ = super().show()
         return _
 
@@ -2446,9 +2446,9 @@ class PackageInfoPopupWindow(QWidget):
         self.iv.close()
         self.parent().window().blackmatt.hide()
         self.blurBackgroundEffect.setEnabled(False)
-        if globals.centralWindowLayout:
-            globals.centralTextureImage.hide()
-            globals.centralWindowLayout.show()
+        if Globals.centralWindowLayout:
+            Globals.centralTextureImage.hide()
+            Globals.centralWindowLayout.show()
         return super().close()
 
     def hide(self) -> None:
@@ -2459,9 +2459,9 @@ class PackageInfoPopupWindow(QWidget):
             pass
         self.blurBackgroundEffect.setEnabled(False)
         self.iv.close()
-        if globals.centralWindowLayout:
-            globals.centralTextureImage.hide()
-            globals.centralWindowLayout.show()
+        if Globals.centralWindowLayout:
+            Globals.centralTextureImage.hide()
+            Globals.centralWindowLayout.show()
         return super().hide()
 
     def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:

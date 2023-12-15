@@ -18,10 +18,13 @@ if __name__ == "__main__":
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
-from wingetui.globals import CurrentSessionToken
-from wingetui.tools import *
-from wingetui import globals
+from wingetui.Core.Globals import CurrentSessionToken
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+import wingetui.Core.Globals as Globals
 from waitress import serve
+from wingetui.Interface.Tools import *
+
 
 
 globalsignal: Signal = None
@@ -115,7 +118,7 @@ def widgets_open_wingetui():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(globals.mainWindow.showWindow)
+                Globals.mainWindow.callInMain.emit(Globals.mainWindow.showWindow)
             except AttributeError:
                 print("🔴 Could not show WingetUI (called from Widgets API)")
             response = jsonify(status="success")
@@ -133,7 +136,7 @@ def widgets_view_on_wingetui():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(lambda: globals.mainWindow.showWindow(1))
+                Globals.mainWindow.callInMain.emit(lambda: Globals.mainWindow.showWindow(1))
             except AttributeError:
                 print("🔴 Could not show WingetUI (called from Widgets API)")
             response = jsonify(status="success")
@@ -151,7 +154,7 @@ def widgets_update_app():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(lambda id=request.args["id"]: globals.updates.updatePackageForGivenId(id))
+                Globals.mainWindow.callInMain.emit(lambda id=request.args["id"]: Globals.updates.updatePackageForGivenId(id))
             except Exception as e:
                 report(e)
                 abort(500, "Internal server error: " + str(e))
@@ -170,7 +173,7 @@ def widgets_update_all_apps():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(globals.updates.updateAllPackageItems)
+                Globals.mainWindow.callInMain.emit(Globals.updates.updateAllPackageItems)
             except Exception as e:
                 report(e)
                 abort(500, "Internal server error: " + str(e))
@@ -189,7 +192,7 @@ def widgets_update_all_apps_for_source():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(lambda source=request.args["source"]: globals.updates.updateAllPackageItemsForSource(source))
+                Globals.mainWindow.callInMain.emit(lambda source=request.args["source"]: Globals.updates.updateAllPackageItemsForSource(source))
             except Exception as e:
                 report(e)
                 abort(500, "Internal server error: " + str(e))
