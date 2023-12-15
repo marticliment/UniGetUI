@@ -12,7 +12,7 @@ import time
 from threading import Thread
 
 if hasattr(sys, 'frozen'):
-    BASE_PATH = sys._MEIPASS
+    BASE_PATH = os.path.join(sys._MEIPASS, "wingetui")
 else:
     BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 

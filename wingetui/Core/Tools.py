@@ -53,6 +53,7 @@ stderr_buffer = io.StringIO()
 MissingTranslationList = []
 realpath = ""
 blueColor = "blue"
+
 try:
     winver = int(platform.version().split('.')[2])
 except Exception as e:
@@ -638,7 +639,7 @@ if (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
     sys.stderr = stdout_buffer
 
 if hasattr(sys, 'frozen'):
-    realpath = sys._MEIPASS
+    realpath = os.path.join(sys._MEIPASS, "wingetui")
 else:
     realpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
