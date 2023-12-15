@@ -5,21 +5,19 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-
-import os
 import subprocess
 import time
+import os
 from threading import Thread
-
-import wingetui.Core.Globals as Globals
-import PySide6.QtGui
-from wingetui.Interface.CustomWidgets.SpecificWidgets import *
-from wingetui.PackageManagers.PackageClasses import Package, PackageDetails, UpgradablePackage
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+
+import wingetui.Core.Globals as Globals
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 from wingetui.Interface.Tools import *
 from wingetui.Interface.Tools import _
+from wingetui.PackageManagers.PackageClasses import Package, UpgradablePackage
 
 
 class PackageInstallerWidget(QWidget):

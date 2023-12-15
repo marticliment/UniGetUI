@@ -3,35 +3,18 @@ if __name__ == "__main__":
     print("redirecting...")
     import subprocess, os, sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
+    
+    from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow, QPushButton, QWidget, QLabel
+    from PySide6.QtGui import QIcon, QAction
+    from PySide6.QtCore import Qt
+    
+    from wingetui.Interface.CustomWidgets.GenericWidgets import DynamicScrollArea
+    from wingetui.Interface.CustomWidgets.SpecificWidgets import SoftwareSection
 
-
-from subprocess import Popen
-
-from secrets import token_hex
 
 import os
-
-
-class DynamicScrollAreaType('QWidget'):
-    def __init__(self, parent=None) -> None:
-        super().__init__(parent)
-
-    def rss(self):
-        pass
-
-    def removeItem(self, item: 'QWidget'):
-        pass
-
-    def addItem(self, item: 'QWidget'):
-        pass
-
-
-class Section('QWidget'):
-    def __init__(self, parent=None) -> None:
-        super().__init__(parent, parent)
-
-    def addTreeWidgetItem(item: 'QTreeWidgetItem'):
-        pass
+from secrets import token_hex
+from subprocess import Popen
 
 
 componentStatus: dict = {
@@ -40,7 +23,7 @@ componentStatus: dict = {
 }
 
 app: 'QApplication' = None
-installersWidget: DynamicScrollAreaType = None
+installersWidget: 'DynamicScrollArea' = None
 trayIcon: 'QSystemTrayIcon' = None
 mainWindow: 'QMainWindow' = None
 trayMenu: 'QMenu' = None
@@ -58,9 +41,9 @@ updatesAction: 'QAction' = None
 lightCSS: str = ""
 darkCSS: str = ""
 
-discover: Section = None
-updates: Section = None
-uninstall: Section = None
+discover: 'SoftwareSection' = None
+updates: 'SoftwareSection' = None
+uninstall: 'SoftwareSection' = None
 
 lastFocusedWindow: int = 0
 themeChanged: bool = False

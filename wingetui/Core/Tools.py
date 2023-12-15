@@ -3,35 +3,32 @@ if __name__ == "__main__":
     print("redirecting...")
     import subprocess, os, sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-
+    
 
 import io
 import json
 import locale
 import os
+import platform
 import re
 import shutil
-import platform
 import subprocess
 import sys
 import time
-from typing import IO
+import tempfile
+import traceback
 import winreg
+import win32gui
 from datetime import datetime
 from pathlib import Path
 from threading import Thread
-from urllib.request import urlopen
+from typing import IO
 from unicodedata import combining, normalize
-import tempfile
-import win32gui
+from urllib.request import urlopen
+
 import wingetui.Core.Globals as Globals
-from wingetui.ExternalLibraries.BlurWindow import GlobalBlur
 from wingetui.Core.Languages.LangReference import *
 from wingetui.Core.Data.Versions import *
-import traceback
-
-if 2 == 3:
-    from wingetui.PackageManagers.PackageClasses import Package # Enable syntax highlighting
 
 
 try:

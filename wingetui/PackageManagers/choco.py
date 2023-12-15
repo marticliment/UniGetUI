@@ -5,16 +5,14 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-
 import os
 import subprocess
-
 from PySide6.QtCore import *
+
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
-
-from .PackageClasses import *
-from .sampleHelper import *
+from wingetui.PackageManagers.PackageClasses import *
+from wingetui.PackageManagers.sampleHelper import *
 
 
 class ChocoPackageManager(PackageManagerWithSources):

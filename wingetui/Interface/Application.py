@@ -5,27 +5,26 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
 
 import glob
 import hashlib
 import os
-import socket
 import subprocess
 import sys
 import time
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from threading import Thread
 from urllib.request import urlopen
 
 import wingetui.Core.Globals as Globals
 import wingetui.Interface.BackendApi as BackendApi
-from wingetui.Interface.CustomWidgets.SpecificWidgets import *
-from wingetui.ExternalLibraries.BlurWindow import ExtendFrameIntoClientArea, GlobalBlur
-from wingetui.Interface.MainWindow import *
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
+from wingetui.ExternalLibraries.BlurWindow import ExtendFrameIntoClientArea, GlobalBlur
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.Interface.MainWindow import *
 from wingetui.Interface.WelcomeWizard import WelcomeWindow
 
 def RunMainApplication() -> int:

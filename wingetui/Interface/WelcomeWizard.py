@@ -8,16 +8,16 @@ if __name__ == "__main__":
 import ctypes
 import os
 import time
-
-from wingetui.Interface.CustomWidgets.SpecificWidgets import *
-from wingetui.Core.Languages.LangReference import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+from win32mica import *
 
+from wingetui.Core.Languages.LangReference import *
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
-from win32mica import *
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+
 
 dwm = ctypes.windll.dwmapi
 

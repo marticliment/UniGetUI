@@ -5,16 +5,14 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-import PySide6.QtCore
-import PySide6.QtGui
-import PySide6.QtWidgets
 import windows_toasts
+from win32mica import ApplyMica, MicaTheme
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+
 from wingetui.Interface.Tools import *
 from wingetui.Interface.Tools import _
-from win32mica import *
 
 
 class MessageBox(QMessageBox):

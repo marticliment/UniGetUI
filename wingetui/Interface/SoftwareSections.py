@@ -6,23 +6,23 @@ if __name__ == "__main__":
 
 
 import os
+import socket
 import sys
 import time
-import socket
-from threading import Thread
-
-import wingetui.Core.Globals as Globals
-from wingetui.Interface.CustomWidgets.SpecificWidgets import *
-from wingetui.PackageManagers.PackageClasses import PackageManagerModule
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+from threading import Thread
+
+import wingetui.Core.Globals as Globals
+import wingetui.Interface.BackendApi as BackendApi
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
-import wingetui.Interface.BackendApi as BackendApi
-
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
 from wingetui.Interface.GenericSections import *
+from wingetui.PackageManagers.PackageClasses import PackageManagerModule
+
 
 
 class DiscoverSoftwareSection(SoftwareSection):

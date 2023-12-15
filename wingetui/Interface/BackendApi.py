@@ -3,6 +3,7 @@ if __name__ == "__main__":
     print("redirecting...")
     import subprocess, os, sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
+    
     from wingetui.PackageManagers.PackageClasses import UpgradablePackage
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 
@@ -10,12 +11,12 @@ if __name__ == "__main__":
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
-from wingetui.Core.Globals import CurrentSessionToken
-from wingetui.Core.Tools import *
-from wingetui.Core.Tools import _
-import wingetui.Core.Globals as Globals
 from waitress import serve
+
+import wingetui.Core.Globals as Globals
+from wingetui.Core.Globals import CurrentSessionToken
 from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 
 
 

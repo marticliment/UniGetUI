@@ -5,14 +5,16 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-
-from datetime import datetime
+import yaml
 from functools import partial
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+from win32mica import *
 
-import PySide6.QtCore
-import PySide6.QtGui
-import PySide6.QtWidgets
 from wingetui.Interface.CustomWidgets.SectionWidgets import *
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 from wingetui.PackageManagers.choco import Choco
 from wingetui.PackageManagers.npm import Npm
 from wingetui.PackageManagers.PackageClasses import *
@@ -20,13 +22,6 @@ from wingetui.PackageManagers.pip import Pip
 from wingetui.PackageManagers.scoop import Scoop
 from wingetui.PackageManagers.winget import Winget
 from wingetui.PackageManagers.dotnet import Dotnet
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
-from win32mica import *
-from wingetui.Interface.Tools import *
-from wingetui.Interface.Tools import _
-import yaml
 
 PackageManagersList: list[PackageManagerModule] = [
     Winget,

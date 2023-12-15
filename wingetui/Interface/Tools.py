@@ -9,10 +9,10 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+import wingetui.Core.Globals as Globals
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
-
-import wingetui.Core.Globals as Globals
+from wingetui.ExternalLibraries.BlurWindow import GlobalBlur
 
 
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:

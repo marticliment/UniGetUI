@@ -7,12 +7,12 @@ if __name__ == "__main__":
 
 import os
 import subprocess
-
 from PySide6.QtCore import *
+
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
-
-from .PackageClasses import *
+from wingetui.PackageManagers.PackageClasses import *
+from wingetui.PackageManagers.sampleHelper import *
 
 
 class DotNetToolPackageManager(PackageManagerModule):

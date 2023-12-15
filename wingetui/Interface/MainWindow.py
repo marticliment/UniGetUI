@@ -7,16 +7,16 @@ if __name__ == "__main__":
 import ctypes
 import os
 import sys
-
-import wingetui.Core.Globals as Globals
-import win32mica
 import winreg
+import win32mica
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+
+import wingetui.Core.Globals as Globals
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
 from wingetui.Interface.SoftwareSections import *
 
 WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320

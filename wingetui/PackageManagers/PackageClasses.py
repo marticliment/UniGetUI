@@ -3,20 +3,21 @@ if __name__ == "__main__":
     print("redirecting...")
     import subprocess, os, sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
-    from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage  # Unreachable import used for the syntax highlighter
+    
+    from Interface.CustomWidgets.SpecificWidgets import PackageItem, InstalledPackageItem, UpgradablePackage
     # TODO: Check this import hierarchy
 
 
+import os
 import subprocess
-
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from urllib.request import urlopen
-import os
+
+import wingetui.Core.Globals as Globals
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _, blueColor
-import wingetui.Core.Globals as Globals
 
 
 class Package():

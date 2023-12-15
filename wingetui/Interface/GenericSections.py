@@ -10,21 +10,21 @@ import glob
 import os
 import subprocess
 import sys
-from threading import Thread
 import win32mica
-
-import wingetui.Core.Globals as Globals
-from wingetui.Interface.CustomWidgets.SpecificWidgets import *
-from wingetui.Core.Data.Contributors import contributorsInfo
-from wingetui.Core.Data.Translations import languageCredits, untranslatedPercentage
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from wingetui.Interface.CustomWidgets.InstallerWidgets import *
-from wingetui.Core.Tools import *
-from wingetui.Core.Tools import _
+from threading import Thread
+
+import wingetui.Core.Globals as Globals
+from wingetui.Core.Data.Contributors import contributorsInfo
+from wingetui.Core.Data.Translations import languageCredits, untranslatedPercentage
 from wingetui.Core.Data.Licenses import licenses, licenseUrls
 from wingetui.ExternalLibraries.PyWebView2 import WebView2
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 
 
 class AboutSection(SmoothScrollArea):
