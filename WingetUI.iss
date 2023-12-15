@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "2.1.1"
+#define MyAppVersion "2.1.2-beta2"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL='https://www.marticliment.com/'
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=2.1.1.0
+VersionInfoVersion=2.1.2.0
 DefaultDirName="{autopf64}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -78,33 +78,33 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 #include "CustomMessages.iss"
 
 [InstallDelete]
-//[InstallDelete]
-//Type: files; Name: "{userdesktop}\WingetUI.lnk"
-//Type: files; Name: "{userstartmenu}\WingetUI.lnk"
+;[InstallDelete]
+;Type: files; Name: "{userdesktop}\WingetUI.lnk"
+;Type: files; Name: "{userstartmenu}\WingetUI.lnk"
 
-//Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-//Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-//Type: filesandordirs; Name: "{userpf}\WingetUI\clr_loader\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\components\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\data\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\lang\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\markupsafe\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\PackageManagers\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\pythonnet\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\pywin32_system32\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\shiboken6\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\winsdk\*";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.1.2.dist-info";
-//Type: filesandordirs; Name: "{userpf}\WingetUI\setuptools-65.5.0.dist-info";   
-//Type: filesandordirs; Name: "{userpf}\WingetUI\sudo\*";
-////Type: filesandordirs; Name: "{userpf}\WingetUI\winget-cli\*";      
-//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";   
-//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*.pyd";  
-//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\api-ms-win*.dll";  
-//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\python*.dll";  
-//Type: filesandordirs; Name: "{userpf}\WingetUI\resources\wingetui.exe";  
+;Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+;Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+;Type: filesandordirs; Name: "{userpf}\WingetUI\clr_loader\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\components\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\data\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\lang\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\markupsafe\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\PackageManagers\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\pythonnet\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\pywin32_system32\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\shiboken6\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\winsdk\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.1.2.dist-info";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\setuptools-65.5.0.dist-info";   
+;Type: filesandordirs; Name: "{userpf}\WingetUI\sudo\*";
+;Type: filesandordirs; Name: "{userpf}\WingetUI\winget-cli\*";      
+;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";   
+;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*.pyd";  
+;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\api-ms-win*.dll";  
+;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\python*.dll";  
+;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\wingetui.exe";  
 Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
@@ -246,8 +246,8 @@ Source: "SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"
 
 [Icons]
 ; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
-Name: "{commonstartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
-Name: "{commondesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
+Name: "{autostartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
+Name: "{autodesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
 Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;

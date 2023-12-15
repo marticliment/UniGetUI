@@ -8,11 +8,13 @@ import importlib, os
 
 
 
-a = Analysis(['__init__.py'],
+a = Analysis(['launcher.py'],
              pathex=['WingetUI-Store\wingetui_bin'],
-             binaries=[('*.pyc', '.')],
-             datas=[('choco-cli/', 'choco-cli/'), ("components/", "components/"), ("data/*.pyc", "data/"), ("ExternalLibraries/*.pyc", "ExternalLibraries/"), ("Interface/", "Interface/"), ("lang/", "lang/"), ("PackageManagers/", "PackageManagers/"), ("resources/", "resources")],
-             hiddenimports=['pkg_resources.py2_warn', "win32gui", "cls"],
+             binaries=[],
+#             binaries=[('*.pyc', '.')],
+#             datas=[('choco-cli/', 'choco-cli/'), ("components/", "components/"), ("Core/", "Core/"), ("ExternalLibraries/", "ExternalLibraries/"), ("Interface/", "Interface/"), ("PackageEngine/", "PackageEngine/"), ("resources/", "resources")],             hiddenimports=['pkg_resources.py2_warn', "win32gui", "cls"],
+             datas=[('wingetui/', 'wingetui/')],
+             hiddenimports=['pkg_resources.py2_warn', "win32gui", "clr", "ctypes", "os", "win32mica", "PySide6.QtWidgets", "PySide6.QtCore", "PySide6.QtGui", "pythonnet", "windows_toasts", "sys", "subprocess", "threading", "re", "socket", "flask", "flask_cors", "waitress", "urllib.request", "glob", "hashlib", "time", "faulthandler", "yaml"],
              hookspath=[],
              runtime_hooks=[],
              excludes=['eel', 'tkinter', "PyQt5", "PySide2", "pygame", "numpy", "matplotlib", "wingetui", "zroya"],
@@ -38,9 +40,10 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
+    contents_directory='.',
     codesign_identity=None,
     entitlements_file=None,
-    icon="resources/icon.ico",
+    icon="wingetui/resources/icon.ico",
     version="../wingetui-version-file"
 )
 

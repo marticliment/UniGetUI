@@ -35,7 +35,7 @@ contributors = {json.dumps(contributors, indent=2, ensure_ascii=False)}
 contributorsInfo = {json.dumps(contributorsInfo, indent=2, ensure_ascii=False)}
 """
 
-contributors_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/data/contributors.py"))
+contributors_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/Core/Data/Contributors.py"))
 with open(contributors_filepath, "w", encoding="utf-8") as f:
     f.write(output.strip())
 

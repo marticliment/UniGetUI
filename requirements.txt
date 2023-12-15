@@ -1,9 +1,10 @@
-PySide6>=6.6.0
+PySide6==6.6.0 # 6.6.1 has a weird visual bug with TreeWidgets
 win32mica>=3.0
-PyInstaller>=6.2.0
+PyInstaller>=5.9.0 # 5.9.0 is latest version that is not flagged by AV. However, 6.0.0 is required for Py3.12.0+ and 5.10 is required for Py3.11.4+
 pywin32>=306
 Flask>=2.3.3
 flask-cors>=4.0.0
 windows_toasts>=1.0.0
 pythonnet>=3.0.3
 waitress>=2.1.2
+PyYAML>=6.0.1

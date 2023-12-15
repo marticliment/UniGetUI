@@ -1,33 +1,19 @@
-"""
-
-wingetui/Interface/CustomWidgets/SectionWidgets.py
-
-This file contains the classes for the set of Widgets used on:
- - The settings tab
- - The filter pane
- - The "Install Options" section, on the Package Details tab
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-from functools import partial
-import PySide6.QtCore
-import PySide6.QtGui
-import PySide6.QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
 from win32mica import *
 
-from Interface.CustomWidgets.GenericWidgets import *
+from wingetui.Interface.CustomWidgets.GenericWidgets import *
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 
 
 class CollapsableSection(QWidget):
@@ -79,7 +65,7 @@ class CollapsableSection(QWidget):
         vLayout = QVBoxLayout()
         vLayout.setSpacing(0)
         vLayout.setContentsMargins(0, 0, 0, 0)
-        self.childsVisible = False
+        self.childrenVisible = False
         self.compressibleWidget.setLayout(vLayout)
 
         self.setStyleSheet("QWidget#subtitleLabel{border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;}")
@@ -159,8 +145,8 @@ class CollapsableSection(QWidget):
         self.NotAnimated = not self.NotAnimated
 
     def toggleChilds(self):
-        if self.childsVisible:
-            self.childsVisible = False
+        if self.childrenVisible:
+            self.childrenVisible = False
             self.invertNotAnimated()
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
             Thread(target=lambda: (time.sleep(0.2), self.HoverableButton.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"), self.bg70.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
@@ -170,7 +156,7 @@ class CollapsableSection(QWidget):
             self.HoverableButton.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.bg70.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.invertNotAnimated()
-            self.childsVisible = True
+            self.childrenVisible = True
             Thread(target=self.showChildren).start()
 
     def get6px(self, i: int) -> int:
@@ -200,7 +186,7 @@ class CollapsableSection(QWidget):
 
             self.IconLabel.move(17, 20)
             self.IconLabel.setFixedHeight(30)
-            if self.childsVisible and self.NotAnimated:
+            if self.childrenVisible and self.NotAnimated:
                 self.setFixedHeight(self.compressibleWidget.sizeHint().height() + 70)
                 self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
             elif self.NotAnimated:
@@ -238,7 +224,7 @@ class CollapsableSection(QWidget):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
             self.ApplyIcons()
         return super().showEvent(event)
 
@@ -247,7 +233,7 @@ class CollapsableSection(QWidget):
             self.setIcon(self.icon.replace("black", "white"))
         else:
             self.setIcon(self.icon.replace("white", "black"))
-        if self.childsVisible:
+        if self.childrenVisible:
             self.showHideButton.setIcon(QIcon(getMedia("expand")))
         else:
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
@@ -290,8 +276,8 @@ class SmallCollapsableSection(CollapsableSection):
         self.NotAnimated = not self.NotAnimated
 
     def toggleChilds(self):
-        if self.childsVisible:
-            self.childsVisible = False
+        if self.childrenVisible:
+            self.childrenVisible = False
             self.invertNotAnimated()
             self.showHideButton.setIcon(QIcon(getMedia("collapse")))
             Thread(target=lambda: (time.sleep(0.2), self.HoverableButton.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;"), self.bg70.setStyleSheet("border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;")), daemon=True).start()
@@ -301,7 +287,7 @@ class SmallCollapsableSection(CollapsableSection):
             self.HoverableButton.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.bg70.setStyleSheet("border-bottom-left-radius: 0;border-bottom-right-radius: 0;")
             self.invertNotAnimated()
-            self.childsVisible = True
+            self.childrenVisible = True
             Thread(target=self.showChildren).start()
 
     def get6px(self, i: int) -> int:
@@ -326,7 +312,7 @@ class SmallCollapsableSection(CollapsableSection):
 
         self.IconLabel.move(10, 8)
         self.IconLabel.setFixedHeight(24)
-        if self.childsVisible and self.NotAnimated:
+        if self.childrenVisible and self.NotAnimated:
             self.setFixedHeight(self.compressibleWidget.sizeHint().height() + 40)
             self.compressibleWidget.setFixedHeight(self.compressibleWidget.sizeHint().height())
         elif self.NotAnimated:
@@ -348,7 +334,7 @@ class SmallCollapsableSection(CollapsableSection):
 
 
 class SectionHWidget(QWidget):
-    def __init__(self, lastOne: bool = False, smallerMargins: bool = False):
+    def __init__(self, lastOne: bool = False, smallerMargins: bool = False, biggerMargins: bool = False):
         super().__init__()
         if not lastOne:
             self.setStyleSheet("#stBtn{border-radius: 0px;border-bottom: 0px}")
@@ -360,6 +346,8 @@ class SectionHWidget(QWidget):
         if smallerMargins:
             self.setStyleSheet(self.styleSheet() + "#stBtn{margin: 0px;}")
             self.setContentsMargins(0, 0, 0, 0)
+        elif biggerMargins:
+            self.setContentsMargins(65, 0, 10, 0)
         else:
             self.setContentsMargins(40, 0, 0, 0)
 
@@ -404,7 +392,7 @@ class SectionButton(QWidget):
         self.button = QPushButton(btntext + " ", self)
         self.button.setLayoutDirection(Qt.RightToLeft)
         self.setObjectName("stBtn")
-        self.button.setMinimumWidth(250)
+        self.button.setMinimumWidth(270)
         self.setFixedHeight(50)
         self.button.setFixedHeight(30)
         self.label = QLabel(text, self)
@@ -442,9 +430,9 @@ class SectionComboBox(QWidget):
         self.setAttribute(Qt.WA_StyledBackground)
         self.combobox = CustomComboBox(self)
         self.combobox.disableScrolling = True
-        self.combobox.setFixedWidth(250)
+        self.combobox.setFixedWidth(270)
         self.setObjectName("stBtn")
-        self.restartButton = QPushButton("Restart ElevenClock", self)
+        self.restartButton = QPushButton("Restart WingetUI", self)
         self.restartButton.hide()
         self.restartButton.setFixedHeight(30)
         self.restartButton.setFixedWidth(200)
@@ -588,3 +576,88 @@ class SectionCheckBoxTextBox(SectionCheckBox):
             self.lineedit.setToolTip("")
             self.lineedit.setPlaceholderText(self.oldtext)
             self.valueChanged.emit(self.lineedit.text())
+
+
+class SectionCheckBoxDirPicker(SectionCheckBox):
+    stateChanged = Signal(bool)
+    valueChanged = Signal(str)
+    defaultText: str
+
+    def __init__(self, text: str, parent=None, helpLabel: str = "", smallerMargins: bool = False):
+        super().__init__(text=text, parent=parent)
+        self.defaultText = _("Select")
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.pushButton = QPushButton(self)
+        self.oldtext = ""
+        self.pushButton.setObjectName("")
+        self.pushButton.clicked.connect(self.showDialog)
+        self.checkbox.stateChanged.connect(self.stateChangedEvent)
+        self.helplabel = QLabel(helpLabel, self)
+        self.helplabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.helplabel.setOpenExternalLinks(True)
+        self.stateChangedEvent(self.checkbox.isChecked())
+        self.checkbox.move((70), 10)
+        self.checkbox.setFixedHeight(30)
+
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.checkbox)
+        self.layout().addStretch()
+        self.layout().addWidget(self.helplabel)
+        self.layout().addWidget(self.pushButton)
+        if smallerMargins:
+            self.layout().setContentsMargins(50, 2, 10, 0)
+            self.setFixedHeight(40)
+            self.pushButton.setFixedWidth(400)
+        else:
+            self.layout().setContentsMargins(70, 5, 20, 0)
+            self.setFixedHeight(50)
+            self.pushButton.setFixedWidth(450)
+
+    def currentValue(self) -> str:
+        if self.pushButton.text() != self.defaultText:
+            return self.pushButton.text()
+        return ""
+
+    def setValue(self, value: str) -> None:
+        self.setText(value)
+
+    def showDialog(self):
+        folder = QFileDialog.getExistingDirectory(self, _("Select a folder"), os.path.expanduser("~"))
+        if folder:
+            self.valuechangedEvent(folder)
+
+    def valuechangedEvent(self, text: str):
+        self.setText(text)
+        self.valueChanged.emit(text)
+
+    def setPlaceholderText(self, text: str):
+        self.pushButton.setText(text)
+        self.oldtext = text
+
+    def setDefaultText(self, text: str):
+        self.defaultText = text
+
+    def setText(self, text: str):
+        if not self.checkbox.isChecked():
+            self.pushButton.setText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+        elif text:
+            self.pushButton.setText(text)
+        else:
+            self.pushButton.setText(self.defaultText)
+
+    def stateChangedEvent(self, v: bool):
+        self.pushButton.setEnabled(self.checkbox.isChecked())
+        if not self.checkbox.isChecked():
+            self.pushButton.setEnabled(False)
+            self.oldtext = self.pushButton.text()
+            self.pushButton.setToolTip(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()))
+            self.pushButton.setText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+            self.stateChanged.emit(v)
+        else:
+            self.stateChanged.emit(v)
+            self.pushButton.setEnabled(True)
+            self.pushButton.setToolTip("")
+            if not self.oldtext:
+                self.oldtext = self.defaultText
+            self.pushButton.setText(self.oldtext)
+            self.valueChanged.emit(self.pushButton.text())

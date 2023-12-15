@@ -1,86 +1,22 @@
-"""
-
-wingetui/Interface/CustomWidgets/SpecificWidgets.py
-
-This file contains the classes for miscellainous, custom made, specific-case-oriented widgets.
-It also defines the PackageItem, UpgradablePackageItem and InstalledPackageItem classes
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-from datetime import datetime
+import yaml
 from functools import partial
-
-import PySide6.QtCore
-import PySide6.QtGui
-import PySide6.QtWidgets
-from Interface.CustomWidgets.SectionWidgets import *
-from PackageManagers.choco import Choco
-from PackageManagers.npm import Npm
-from PackageManagers.PackageClasses import *
-from PackageManagers.pip import Pip
-from PackageManagers.scoop import Scoop
-from PackageManagers.winget import Winget
-from PackageManagers.dotnet import Dotnet
-from PackageManagers.powershell import Powershell
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
 from win32mica import *
 
-PackageManagersList: list[PackageManagerModule] = [
-    Winget,
-    Scoop,
-    Choco,
-    Pip,
-    Npm,
-    Dotnet,
-    Powershell
-]
-
-PackagesLoadedDict: dict[PackageManagerModule:bool] = {
-    Winget: False,
-    Scoop: False,
-    Choco: False,
-    Pip: False,
-    Npm: False,
-    Dotnet: False,
-    Powershell: False
-}
-
-StaticPackageManagersList: list[PackageManagerModule] = [
-]
-
-StaticPackagesLoadedDict: dict[PackageManagerModule:bool] = {
-}
-
-DynaimcPackageManagersList: list[DynamicPackageManager] = [
-    Pip,
-    Npm,
-    Choco,
-    Winget,
-    Scoop,
-    Dotnet,
-    Powershell
-]
-
-DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
-    Pip: False,
-    Npm: False,
-    Winget: False,
-    Choco: False,
-    Scoop: False,
-    Dotnet: False,
-    Powershell: False
-}
+from wingetui.Interface.CustomWidgets.SectionWidgets import *
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
+from wingetui.PackageEngine.Loader import *
 
 
 class CommandLineEdit(CustomLineEdit):
@@ -94,7 +30,7 @@ class CommandLineEdit(CustomLineEdit):
         self.copyButton.setIconSize(QSize(24, 24))
         self.setFixedHeight(50)
         self.copyButton.setFixedSize(42, 42)
-        self.copyButton.clicked.connect(lambda: globals.app.clipboard().setText(self.text()))
+        self.copyButton.clicked.connect(lambda: Globals.app.clipboard().setText(self.text()))
         self.copyButton.setObjectName("CommandLineEditCopyButton")
         self.ApplyIcons()
         self.setObjectName("CommandLineEdit")
@@ -105,7 +41,7 @@ class CommandLineEdit(CustomLineEdit):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = True
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
         return super().showEvent(event)
 
     def contextMenuEvent(self, arg__1: QContextMenuEvent) -> None:
@@ -184,7 +120,7 @@ class CustomMessageBox(QMainWindow):
             if self.isQuestion:
                 self.qanswer = 1
                 self.close()
-            globals.tray_is_error = False
+            Globals.tray_is_error = False
             update_tray_icon()
 
         def returnFalse():
@@ -307,20 +243,20 @@ class CustomMessageBox(QMainWindow):
                 print("Parent has no window!")
         if showNotification:
             if not wVisible:
-                globals.trayIcon.showMessage(errorData["notifTitle"], errorData["notifText"], errorData["notifIcon"])
+                Globals.trayIcon.showMessage(errorData["notifTitle"], errorData["notifText"], errorData["notifIcon"])
         if wExists:
             if wVisible:
                 self.show()
-                globals.app.beep()
+                Globals.app.beep()
             else:
                 def waitNShow():
                     while not self.parent().window().isVisible():
                         time.sleep(0.5)
-                    self.callInMain.emit(lambda: (self.show(), globals.app.beep()))
+                    self.callInMain.emit(lambda: (self.show(), Globals.app.beep()))
                 Thread(target=waitNShow, daemon=True, name="Error message waiting to be shown").start()
         else:
             self.show()
-            globals.app.beep()
+            Globals.app.beep()
 
     def askQuestion(self, data: dict):
         self.buttonLayout.setDirection(QBoxLayout.Direction.RightToLeft)
@@ -378,14 +314,14 @@ class CustomMessageBox(QMainWindow):
         if wExists:
             if wVisible:
                 self.show()
-                globals.app.beep()
+                Globals.app.beep()
             else:
-                globals.mainWindow.showWindow()
+                Globals.mainWindow.showWindow()
                 self.show()
-                globals.app.beep()
+                Globals.app.beep()
         else:
             self.show()
-            globals.app.beep()
+            Globals.app.beep()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mousePressed = True
@@ -464,7 +400,7 @@ class AnnouncementsPane(QLabel):
                 response = urlopen(announcement_image_url)
                 print("🔵 Image URL:", response.url)
                 response = response.read()
-                self.file = open(os.path.join(os.path.join(os.path.join(os.path.expanduser("~"), ".wingetui")), "announcement.png"), "wb")
+                self.file = open(os.path.join(ICON_DIR, "announcement.png"), "wb")
                 self.file.write(response)
                 self.callInMain.emit(lambda: self.pictureLabel.setText(""))
                 self.file.close()
@@ -472,11 +408,11 @@ class AnnouncementsPane(QLabel):
                 self.callInMain.emit(lambda: self.pictureLabel.setFixedHeight(h))
                 self.callInMain.emit(lambda: self.textLabel.setFixedHeight(h))
                 self.callInMain.emit(lambda: self.pictureLabel.setPixmap(QPixmap(self.file.name).scaledToHeight(h - self.getPx(8), Qt.SmoothTransformation)))
-            except Exception as ex:
-                s = "Couldn't load the announcement image" + "\n\n" + str(ex)
+            except Exception as e:
+                s = "Couldn't load the announcement image" + "\n\n" + str(e)
                 self.callInMain.emit(lambda: self.pictureLabel.setText(s))
                 print("🟠 Unable to retrieve announcement image")
-                print(ex)
+                report(e)
         except Exception as e:
             if useHttps:
                 self.loadAnnouncements(useHttps=False)
@@ -484,7 +420,7 @@ class AnnouncementsPane(QLabel):
                 s = "Couldn't load the announcements. Please try again later" + "\n\n" + str(e)
                 self.callInMain.emit(lambda: self.setTtext(s))
                 print("🟠 Unable to retrieve latest announcement")
-                print(e)
+                report(e)
 
     def showEvent(self, a0: QShowEvent) -> None:
         return super().showEvent(a0)
@@ -552,7 +488,7 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         self.setObjectName("background")
         title = QLabel(_("Ignored updates"))
         title.setContentsMargins(10, 0, 0, 0)
-        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{Globals.dispfont}\";font-weight: bold;")
         image = QLabel()
         image.setPixmap(QPixmap(getMedia("pin_color")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
         image.setFixedWidth(32)
@@ -577,16 +513,14 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
         resetButton.clicked.connect(self.resetAll)
         hl.addWidget(resetButton)
         self.layout().addLayout(hl)
-        self.treewidget.setColumnCount(4)
+        self.treewidget.setColumnCount(3)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(1, QHeaderView.Fixed)
         self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
         self.treewidget.setColumnWidth(1, 150)
         self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 0)
-        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source"), ""])
+        self.treewidget.setHeaderLabels([_("Package ID"), _("Ignored version"), _("Source")])
         self.treewidget.itemDoubleClicked.connect(lambda: self.treewidget.itemWidget(self.treewidget.currentItem(), 3).click())
 
         self.installIcon = QIcon(getMedia("install"))
@@ -615,90 +549,60 @@ class IgnoredUpdatesManager(MovableFramelessWindow):
             pass  # This will be called before __init__ finished loading, so some attributes may not have been set when called
         return super().ApplyIcons()
 
+    def GetIgnoredPackages(self) -> list[Package]:
+        packages = []
+        ignoredPackages = GetJsonSettings("IgnoredPackageUpdates")
+        for ENTRY in ignoredPackages.keys():
+            ENTRY: str  # Formatted as source\package_id
+            if "\\" in ENTRY:
+                id, source, version = (ENTRY.split("\\")[1], ENTRY.split("\\")[0], ignoredPackages[ENTRY])
+                manager: PackageManagerModule = None
+                for _manager in PackageManagersList:
+                    if source.split(" ")[0] in _manager.NAME.lower():
+                        manager = _manager
+
+                if not manager:
+                    manager = Winget
+                packages.append(Package(id, id, version, source, manager))
+        return packages
+
     def loadItems(self):
         self.treewidget.clear()
-        for id in getSettingsValue("BlacklistedUpdates").split(","):
-            if id:
-                self.addItem(id, _("All versions"), _("Unknown"), BlacklistMethod.Legacy)
-        for id, store in GetIgnoredPackageUpdates_Permanent():
-            if id and store:
-                self.addItem(id, _("All versions"), store.capitalize(), BlacklistMethod.AllVersions)
-        for id, version, store in GetIgnoredPackageUpdates_SpecificVersion():
-            if id and store:
-                self.addItem(id, version, store.capitalize(), BlacklistMethod.SpecificVersion)
+        for package in self.GetIgnoredPackages():
+            self.addItem(package)
 
-    def addItem(self, id: str, version: str, store: str, blacklistMethod: BlacklistMethod):
+    def addItem(self, package: Package):
         item = TreeWidgetItemWithQAction()
-        item.setText(0, id)
-        item.setText(1, version)
-        item.setText(2, store)
+        item.setText(0, package.Id)
+        item.setText(1, _("All versions") if package.Version == "*" else package.Version)
+        item.setText(2, package.Source.capitalize())
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.versionIcon)
-        if "scoop" in store.lower():
-            item.setIcon(2, self.scoopIcon)
-        elif "winget" in store.lower():
-            item.setIcon(2, self.wingetIcon)
-        elif "choco" in store.lower():
-            item.setIcon(2, self.chocolateyIcon)
-        elif "pip" in store.lower():
-            item.setIcon(2, self.pipIcon)
-        elif "npm" in store.lower():
-            item.setIcon(2, self.npmIcon)
-        else:
-            item.setIcon(2, self.localIcon)
+        item.setIcon(2, package.PackageManager.getIcon(package.Source))
+
         self.treewidget.addTopLevelItem(item)
+
+        for i in range(3):
+            item.setToolTip(i, item.text(i))
+
+        btnLayout = QHBoxLayout()
+        btnLayout.addStretch()
+        btnLayout.setContentsMargins(0, 0, 5, 0)
+        w = QWidget()
+        w.setLayout(btnLayout)
         removeButton = QPushButton()
+        btnLayout.addWidget(removeButton)
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
-        match blacklistMethod:
-            case BlacklistMethod.Legacy:
-                removeButton.clicked.connect(lambda: self.unBlackistLegacy(id, item))
+        removeButton.clicked.connect(lambda: (package.RemoveFromIgnoredUpdates(), self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))))
 
-            case BlacklistMethod.SpecificVersion:
-                removeButton.clicked.connect(lambda: self.unBlackistSingleVersion(id, version, store, item))
-
-            case BlacklistMethod.AllVersions:
-                removeButton.clicked.connect(lambda: self.unBlackistAllVersions(id, store, item))
-
-        self.treewidget.setItemWidget(item, 3, removeButton)
+        self.treewidget.setItemWidget(item, 2, w)
 
     def resetAll(self):
         for i in range(self.treewidget.topLevelItemCount()):
             self.treewidget.itemWidget(self.treewidget.topLevelItem(0), 3).click()
         self.close()
-        globals.updates.startLoadingPackages(force=True)
-
-    def unBlackistLegacy(self, id: str, item: TreeWidgetItemWithQAction):
-        setSettingsValue("BlacklistedUpdates", getSettingsValue("BlacklistedUpdates").replace(id, "").replace(",,", ","))
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        del i
-
-    def unBlackistAllVersions(self, id: str, store: str, item: TreeWidgetItemWithQAction):
-        originalList: list[list[str]] = GetIgnoredPackageUpdates_Permanent()
-        setSettingsValue("PermanentlyIgnoredPackageUpdates", "")
-        for ignoredPackage in originalList:
-            if [id, store.lower()] == ignoredPackage:
-                continue
-            IgnorePackageUpdates_Permanent(ignoredPackage[0], ignoredPackage[1])
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-
-        INSTALLED: SoftwareSection = globals.uninstall
-        if id in INSTALLED.IdPackageReference:
-            package: Package = INSTALLED.IdPackageReference[id]
-            package.PackageItem.setIcon(1, INSTALLED.installIcon)
-            package.PackageItem.setToolTip(1, package.Name)
-
-        del i
-
-    def unBlackistSingleVersion(self, id: str, version: str, store: str, item: TreeWidgetItemWithQAction):
-        originalList: list[list[str]] = GetIgnoredPackageUpdates_SpecificVersion()
-        setSettingsValue("SingleVersionIgnoredPackageUpdates", "")
-        for ignoredPackage in originalList:
-            if [id, version, store.lower()] == ignoredPackage:
-                continue
-            IgnorePackageUpdates_SpecificVersion(ignoredPackage[0], ignoredPackage[1], ignoredPackage[2])
-        i = self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(item))
-        del i
+        Globals.updates.startLoadingPackages(force=True)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
@@ -740,6 +644,7 @@ class SoftwareSection(QWidget):
     PackageItemReference: dict[Package:'PackageItem'] = {}
     ItemPackageReference: dict['PackageItem':Package] = {}
     IdPackageReference: dict[str:Package] = {}
+    UniqueIdPackageReference: dict[str:Package] = {}
     sectionName: str = ""
     packageItems: list['PackageItem'] = []
     showableItems: list['PackageItem'] = []
@@ -747,6 +652,7 @@ class SoftwareSection(QWidget):
     shownItems: list['PackageItem'] = []
     nextItemToShow: int = 0
     OnThemeChange = Signal()
+    AllItemsSelected: bool = False
 
     FilterItemForManager = {}
 
@@ -758,7 +664,7 @@ class SoftwareSection(QWidget):
     def __init__(self, parent: QWidget = None, sectionName: str = "Install"):
         super().__init__(parent=parent)
         self.sectionName = sectionName
-        self.infobox = globals.infobox
+        self.infobox = Globals.infobox
         self.packageExporter = PackageExporter(self)
         self.setStyleSheet("margin: 0px;")
 
@@ -775,7 +681,7 @@ class SoftwareSection(QWidget):
         self.reloadButton.clicked.connect(self.startLoadingPackages)
         self.reloadButton.setAccessibleName(_("Reload"))
 
-        self.filterScrollArea = SmoothScrollArea(self)
+        self.filterScrollArea = SmoothScrollArea(self, EnableTopButton=False)
         self.filterScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.filterScrollArea.setWidgetResizable(True)
 
@@ -837,6 +743,20 @@ class SoftwareSection(QWidget):
         sct = QShortcut(QKeySequence("Esc"), self)
         sct.activated.connect(self.query.clear)
 
+        def toggleSelectAll():
+            index = self.packageList.currentIndex()
+            if self.AllItemsSelected:
+                for item in self.packageItems:
+                    item.setChecked(False)
+            else:
+                for item in self.packageItems:
+                    item.setChecked(True)
+            self.AllItemsSelected = not self.AllItemsSelected
+            self.packageList.setCurrentIndex(index)
+
+        sct = QShortcut(QKeySequence("Ctrl+A"), self)
+        sct.activated.connect(toggleSelectAll)
+
         self.SectionImage = QLabel()
         self.SectionImage.setFixedWidth(80)
         headerLayout.addWidget(self.SectionImage)
@@ -845,7 +765,7 @@ class SoftwareSection(QWidget):
         v.setSpacing(0)
         v.setContentsMargins(0, 0, 0, 0)
         self.discoverLabel = QLabel("SectionTitle")
-        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+        self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         v.addWidget(self.discoverLabel)
 
         self.titleWidget = QWidget()
@@ -898,7 +818,6 @@ class SoftwareSection(QWidget):
 
         self.filterScrollArea.setFixedWidth(220)
         self.filterScrollArea.setFrameShape(QFrame.Shape.NoFrame)
-        self.filterScrollArea.goTopButton.hide()
 
         sourcesWidget = SmallCollapsableSection(_("Sources"), getMedia("provider"))
         sourcesWidget.showHideButton.click()
@@ -916,7 +835,7 @@ class SoftwareSection(QWidget):
         self.filterList.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.filterList.setColumnWidth(2, 10)
         self.filterList.verticalScrollBar().setFixedWidth(12)
-        self.filterList.itemChanged.connect(lambda i, c: (self.addItemsToTreeWidget(reset = True) if c == 0 else None))
+        self.filterList.itemChanged.connect(lambda i, c: (self.addItemsToTreeWidget(reset=True) if c == 0 else None))
         self.filterList.itemClicked.connect(lambda i, c: i.setCheckState(0, Qt.CheckState.Checked if i.checkState(0) == Qt.CheckState.Unchecked else Qt.CheckState.Unchecked) if c != 0 else None)
 
         self.filterList.header().hide()
@@ -994,10 +913,10 @@ class SoftwareSection(QWidget):
 
         self.filterScrollArea.setWidget(scrollWidget)
 
-        def updateItemState(item: TreeWidgetItemWithQAction, column: int):
+        def updateItemState(item: PackageItem, column: int):
             if column == 0:
-                item.setText(0, " " if item.checkState(0) == Qt.CheckState.Checked else "")
-                if item.checkState(0) == Qt.CheckState.Checked:
+                item.setText(0, " " if item.isChecked() else "")
+                if item.isChecked():
                     self.packageList.setCurrentItem(item)
 
         self.packageList.itemChanged.connect(lambda i, c: updateItemState(i, c))
@@ -1007,8 +926,7 @@ class SoftwareSection(QWidget):
 
         def toggleItemState():
             item = self.packageList.currentItem()
-            checked = item.checkState(0) == Qt.CheckState.Checked
-            item.setCheckState(0, Qt.CheckState.Unchecked if checked else Qt.CheckState.Checked)
+            item.setChecked(not item.isChecked())
 
         sct = QShortcut(QKeySequence(Qt.Key_Space), self.packageList)
         sct.activated.connect(toggleItemState)
@@ -1208,7 +1126,7 @@ class SoftwareSection(QWidget):
 
     def finishFiltering(self, text: str):
         def getChecked(item: PackageItem) -> str:
-            return " " if item.checkState(0) == Qt.CheckState.Checked else ""
+            return " " if item.isChecked() else ""
 
         def getTitle(item: PackageItem) -> str:
             return item.Package.Name
@@ -1295,14 +1213,14 @@ class SoftwareSection(QWidget):
         """
         packagesToExport: list[Package] = []
         for item in self.packageItems:
-            if item.checkState(0) == Qt.CheckState.Checked or all:
+            if item.isChecked() or all:
                 packagesToExport.append(self.ItemPackageReference[item])
         self.packageExporter.showExportUI(packagesToExport)
 
     def setAllPackagesSelected(self, checked: bool) -> None:
         self.packageList.setSortingEnabled(False)
         for item in self.packageItems:
-            item.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+            item.setChecked(checked)
         self.packageList.setSortingEnabled(True)
 
     def startLoadingPackages(self, force: bool = False) -> None:
@@ -1315,6 +1233,7 @@ class SoftwareSection(QWidget):
         self.PackageItemReference = {}
         self.ItemPackageReference = {}
         self.IdPackageReference = {}
+        self.UniqueIdPackageReference = {}
         self.shownItems = []
         self.addedItems = []
         self.loadingProgressBar.show()
@@ -1334,7 +1253,7 @@ class SoftwareSection(QWidget):
         self.finishLoadingIfNeeded()
 
     def addInstallation(self, p) -> None:
-        globals.installersWidget.addItem(p)
+        Globals.installersWidget.addItem(p)
 
     def destroyAnims(self) -> None:
         for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
@@ -1355,11 +1274,11 @@ class SoftwareSection(QWidget):
         if self.discoverLabelDefaultWidth > self.titleWidget.width():
             if not self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = True
-                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 15pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         else:
             if self.discoverLabelIsSmall:
                 self.discoverLabelIsSmall = False
-                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{globals.dispfont}\";font-weight: bold;")
+                self.discoverLabel.setStyleSheet(f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
 
         self.forceCheckBox.setFixedWidth(self.forceCheckBox.sizeHint().width() + 10)
         if self.toolbarDefaultWidth == 0:
@@ -1511,13 +1430,15 @@ class ImageViewer(QWidget):
 
 
 class PackageExporter(MovableFramelessWindow):
+    ItemPackageReference: dict[QTreeWidgetItem:Package] = {}
+
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
         self.setObjectName("background")
         title = QLabel(_("Export packages"))
         title.setContentsMargins(10, 0, 0, 0)
-        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{Globals.dispfont}\";font-weight: bold;")
         image = QLabel()
         image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
         image.setFixedWidth(32)
@@ -1536,15 +1457,13 @@ class PackageExporter(MovableFramelessWindow):
         self.setMinimumSize(QSize(650, 400))
         self.treewidget = TreeWidget(_("No packages selected"))
         self.layout().addWidget(self.treewidget)
-        self.treewidget.setColumnCount(4)
+        self.treewidget.setColumnCount(3)
         self.treewidget.header().setStretchLastSection(False)
         self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
         self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
-        self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 0)
-        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source"), ""])
+        self.treewidget.setColumnWidth(2, 180)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Source")])
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
@@ -1576,107 +1495,98 @@ class PackageExporter(MovableFramelessWindow):
         Receives a list composed of Package objects as the unique parameter
         """
         self.treewidget.clear()
+        self.ItemPackageReference = {}
         for package in packageList:
-            item = TreeWidgetItemWithQAction()
+            item = QTreeWidgetItem()
+            self.ItemPackageReference[item] = package
             item.setText(0, package.Name)
             item.setText(1, package.Id)
             item.setText(2, package.Source)
             item.setIcon(0, self.installIcon)
             item.setIcon(1, self.idIcon)
             item.setIcon(2, package.getSourceIcon())
-            if package.getSourceIcon() != Winget.wingetIcon and package.PackageManager == Winget:
+            if "Winget" not in package.Source and package.PackageManager == Winget:
                 # If the package is not available from winget servers, being the case that the package manager is winget:
                 item.setDisabled(True)
+
+            for i in range(3):
+                item.setToolTip(i, item.text(i))
+
+            btnLayout = QHBoxLayout()
+            btnLayout.addStretch()
+            btnLayout.setContentsMargins(0, 0, 5, 0)
+            w = QWidget()
+            w.setLayout(btnLayout)
             removeButton = QPushButton()
+            btnLayout.addWidget(removeButton)
             removeButton.setIcon(self.removeIcon)
             removeButton.setFixedSize(QSize(24, 24))
             removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
             self.treewidget.addTopLevelItem(item)
-            self.treewidget.setItemWidget(item, 3, removeButton)
+            self.treewidget.setItemWidget(item, 2, w)
         self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
         self.show()
 
+    def generateExportJson(self, packageList: list[Package], incompatiblePackageList: list[Package] = []) -> dict:
+        finalJson = {
+            "export_version": 2.0,
+            "packages": [],
+            "incompatible_packages_info": "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.",
+            "incompatible_packages": []
+        }
+
+        for package in packageList:
+            installationOptions = InstallationOptions(package)
+            jsonPkg = {
+                "Id": package.Id,
+                "Name": package.Name,
+                "Version": package.Version,
+                "Source": package.Source,
+                "ManagerName": package.PackageManager.NAME,
+                "InstallationOptions": installationOptions.ToJson(),
+                "Updates": {
+                    "UpdatesIgnored": package.HasUpdatesIgnored(),
+                    "IgnoredVersion": package.GetIgnoredUpatesVersion()
+                }
+            }
+            finalJson["packages"].append(jsonPkg)
+
+        for package in incompatiblePackageList:
+            jsonPkg = {
+                "Id": package.Id,
+                "Name": package.Name,
+                "Version": package.Version,
+                "Source": package.Source,
+            }
+            finalJson["incompatible_packages"].append(jsonPkg)
+
+        return finalJson
+
     def exportPackages(self) -> None:
-        wingetPackagesList = []
-        scoopPackageList = []
-        chocoPackageList = []
-        npmPackageList = []
-        pipPackageList = []
-        dotnetPackageList = []
-        try:
-            for i in range(self.treewidget.topLevelItemCount()):
-                item = self.treewidget.topLevelItem(i)
-                if "winget" in item.text(2).lower():
-                    id = item.text(1).strip()
-                    wingetPackage = {"PackageIdentifier": id}
-                    wingetPackagesList.append(wingetPackage)
-                elif "scoop" in item.text(2).lower():
-                    scoopPackage = {"Name": item.text(1)}
-                    scoopPackageList.append(scoopPackage)
-                elif "chocolatey" in item.text(2).lower():
-                    chocoPackage = {"Name": item.text(1)}
-                    chocoPackageList.append(chocoPackage)
-                elif "npm" in item.text(2).lower():
-                    npmPackage = {"Name": item.text(1)}
-                    npmPackageList.append(npmPackage)
-                elif "pip" in item.text(2).lower():
-                    pipPackage = {"Name": item.text(1)}
-                    pipPackageList.append(pipPackage)
-                elif ".net tool" in item.text(2).lower():
-                    dotnetPackage = {"Name": item.text(1)}
-                    dotnetPackageList.append(dotnetPackage)
-            wingetDetails = {
-                "Argument": "https://cdn.winget.microsoft.com/cache",
-                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
-                "Name": "winget",
-                "Type": "Microsoft.PreIndexed.Package"
-            }
-            wingetVersion = "1.4"
-            try:
-                wingetVersion = globals.componentStatus["WingetVersion"] if globals.componentStatus["WingetVersion"] else wingetVersion
-            except Exception as e:
-                report(e)
-            wingetExportSchema = {
-                "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
-                "CreationDate": str(datetime.now()),
-                "Sources": [{
-                    "Packages": wingetPackagesList,
-                    "SourceDetails": wingetDetails}],
-                "WinGetVersion": wingetVersion
-            }
-            scoopExportSchema = {
-                "apps": scoopPackageList,
-            }
-            chocoExportSchema = {
-                "apps": chocoPackageList,
-            }
-            pipExportSchema = {
-                "apps": pipPackageList,
-            }
-            npmExportSchema = {
-                "apps": npmPackageList,
-            }
-            dotnetExportSchema = {
-                "apps": dotnetPackageList,
-            }
-            overallSchema = {
-                "winget": wingetExportSchema,
-                "scoop": scoopExportSchema,
-                "chocolatey": chocoExportSchema,
-                "pip": pipExportSchema,
-                "npm": npmExportSchema,
-                ".net tool": dotnetExportSchema,
-            }
-            filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json)')
-            if filename[0] != "" and filename[1]:
+        packagesToExport: list[Package] = []
+        incompatiblePackagesToExport: list[Package] = []
+        for i in range(self.treewidget.topLevelItemCount()):
+            item = self.treewidget.topLevelItem(i)
+            if not item.isDisabled():
+                packagesToExport.append(self.ItemPackageReference[item])
+            else:
+                incompatiblePackagesToExport.append(self.ItemPackageReference[item])
+
+        fileContents = self.generateExportJson(packagesToExport, incompatiblePackagesToExport)
+
+        filename = QFileDialog.getSaveFileName(None, _("Save File"), _("Packages"), filter='JSON (*.json);; YAML (*.yaml)')
+        if filename[0] != "":
+            if "JSON" in filename[1]:
                 print(f"🔵 Saving JSON to {filename[0]}")
                 with open(filename[0], 'w') as f:
-                    f.write(json.dumps(overallSchema, indent=4))
+                    f.write(json.dumps(fileContents, indent=4))
                 subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
-                self.hide()
-
-        except Exception as e:
-            report(e)
+            elif "YAML" in filename[1]:
+                print(f"🔵 Saving YAML to {filename[0]}")
+                with open(filename[0], 'w') as f:
+                    f.write(yaml.dump(fileContents))
+                subprocess.run(['explorer.exe', '/select,', os.path.normpath(filename[0])], shell=True)
+            self.hide()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         return super().resizeEvent(event)
@@ -1689,10 +1599,12 @@ class PackageExporter(MovableFramelessWindow):
 
 class PackageImporter(MovableFramelessWindow):
 
-    ItemPackageReference: dict[str:TreeWidgetItemWithQAction] = {}
+    PackageItemReference: dict['PackageItem':Package] = {}
     setLoadBarValue = Signal(str)
     startAnim = Signal(QVariantAnimation)
     changeBarOrientation = Signal()
+    __importing_mechanism_is_v2: bool = False
+    __package_data: dict[str:dict] = {}
 
     def __init__(self, parent: QWidget | None = ...) -> None:
         super().__init__(parent)
@@ -1700,7 +1612,7 @@ class PackageImporter(MovableFramelessWindow):
         self.setObjectName("background")
         title = QLabel(_("Import packages"))
         title.setContentsMargins(10, 0, 0, 0)
-        title.setStyleSheet(f"font-size: 20pt; font-family: \"{globals.dispfont}\";font-weight: bold;")
+        title.setStyleSheet(f"font-size: 20pt; font-family: \"{Globals.dispfont}\";font-weight: bold;")
         image = QLabel()
         image.setPixmap(QPixmap(getMedia("save")).scaledToHeight(32, Qt.TransformationMode.SmoothTransformation))
         image.setFixedWidth(32)
@@ -1716,7 +1628,7 @@ class PackageImporter(MovableFramelessWindow):
         desc.setContentsMargins(10, 0, 0, 0)
         self.layout().setContentsMargins(5, 5, 5, 5)
         self.setWindowTitle("\x20")
-        self.setMinimumSize(QSize(650, 400))
+        self.setMinimumSize(QSize(750, 450))
         self.treewidget = TreeWidget(_("No packages found"))
 
         self.loadingProgressBar = QProgressBar(self)
@@ -1757,17 +1669,15 @@ class PackageImporter(MovableFramelessWindow):
         self.layout().addWidget(self.loadingProgressBar)
         self.layout().addWidget(self.treewidget)
         self.treewidget.setColumnCount(4)
+        self.treewidget.header().setMinimumSectionSize(10)
         self.treewidget.header().setStretchLastSection(False)
-        self.treewidget.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.treewidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.treewidget.header().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(3, QHeaderView.Fixed)
-        self.treewidget.header().setSectionResizeMode(4, QHeaderView.Fixed)
-        self.treewidget.setColumnWidth(2, 150)
-        self.treewidget.setColumnWidth(3, 100)
-        self.treewidget.setColumnHidden(2, True)
-        self.treewidget.setColumnWidth(4, 0)
-        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source"), ""])
+        self.treewidget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.treewidget.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self.treewidget.header().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.treewidget.header().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
+        self.treewidget.setColumnWidth(2, 100)
+        self.treewidget.setColumnWidth(3, 170)
+        self.treewidget.setHeaderLabels([_("Package Name"), _("Package ID"), _("Version"), _("Source")])
 
         hLayout = QHBoxLayout()
         hLayout.setContentsMargins(0, 0, 5, 5)
@@ -1807,29 +1717,61 @@ class PackageImporter(MovableFramelessWindow):
             self.pendingPackages = {}
             self.treewidget.clear()
             self.show()
-            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="JSON (*.json)")[0]
+            file = QFileDialog.getOpenFileName(None, _("Select package file"), filter="Package files (*.json; *.yaml)")[0]
             if file != "":
                 f = open(file, "r")
-                contents = json.load(f)
+                if file.lower()[-4:] in ("yaml", "yml"):
+                    contents: dict = yaml.load(f, yaml.CLoader)
+                else:
+                    contents: dict = json.load(f)
                 f.close()
                 try:
-                    Managers = {
-                        Winget: contents["winget"]["Sources"][0]["Packages"],
-                        Scoop: contents["scoop"]["apps"],
-                        Choco: contents["chocolatey"]["apps"],
-                        Npm: contents["pip"]["apps"],
-                        Pip: contents["npm"]["apps"],
-                        Dotnet: contents[".net tool"]["apps"],
-                    }
-                    for manager in Managers.keys():
-                        for entry in Managers[manager]:
-                            packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
-                            package = Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager)
-                            item = TreeWidgetItemWithQAction()
-                            package.PackageItem = item
-                            self.treewidget.addTopLevelItem(item)
-                            self.addItemFromPackage(package, item)
-                            self.ItemPackageReference[item] = package
+                    packagesToInstall: list[Package] = []
+                    if "export_version" in contents.keys() and contents["export_version"] == 2.0:
+                        print("🔵 Importing packages using package list version 2.0")
+                        self.__package_data = {}
+                        self.__importing_mechanism_is_v2 = True
+
+                        def getManager(managerName):
+                            for manager in PackageManagersList:
+                                if managerName == manager.NAME:
+                                    return manager
+                            return None
+
+                        for package in contents["packages"]:
+                            self.__package_data[package["Id"]] = package
+                            packagesToInstall.append(Package(package["Name"], package["Id"], package["Version"], package["Source"], getManager(package["ManagerName"])))
+
+                    else:
+                        print("🟡 Importing packages using legacy package list version!")
+                        self.__importing_mechanism_is_v2 = False
+                        Managers = {
+                            Winget: contents["winget"]["Sources"][0]["Packages"],
+                            Scoop: contents["scoop"]["apps"],
+                            Choco: contents["chocolatey"]["apps"],
+                            Npm: contents["pip"]["apps"],
+                            Pip: contents["npm"]["apps"],
+                            Dotnet: contents[".net tool"]["apps"],
+                        }
+                        for manager in Managers.keys():
+                            for entry in Managers[manager]:
+                                packageId = entry["PackageIdentifier" if manager == Winget else "Name"]
+                                packagesToInstall.append(Package(formatPackageIdAsName(packageId), packageId, _("Latest"), manager.NAME, manager))
+
+                    for package in packagesToInstall:
+                        item = QTreeWidgetItem()
+
+                        if not package.PackageManager:
+                            item.setDisabled(True)  # If the manager for this package is not available
+                            package.Source = _("Unknown")
+                            package.PackageManager = Winget
+                        elif not package.PackageManager.isEnabled():
+                            item.setDisabled(True)  # If the manager for this package is disabled
+
+                        self.treewidget.addTopLevelItem(item)
+                        self.addItemFromPackage(package, item)
+                        self.PackageItemReference[item] = package
+
                 except Exception as e:
                     report(e)
 
@@ -1844,23 +1786,56 @@ class PackageImporter(MovableFramelessWindow):
     def addItemFromPackage(self, package: Package, item: TreeWidgetItemWithQAction) -> None:
         item.setText(0, package.Name)
         item.setText(1, package.Id)
-        item.setText(2, package.Version)
+        if self.__importing_mechanism_is_v2:
+            hasUpdatesIgnored = self.__package_data[package.Id]["Updates"]["UpdatesIgnored"]
+        else:
+            hasUpdatesIgnored = False
+        item.setText(2, _("Latest") if not hasUpdatesIgnored else package.Version)
         item.setText(3, package.Source)
         item.setIcon(0, self.installIcon)
         item.setIcon(1, self.idIcon)
         item.setIcon(2, self.versionIcon)
-        item.setDisabled(False)
         item.setIcon(3, package.getSourceIcon())
+        for i in range(4):
+            item.setToolTip(i, item.text(i))
+
+        btnLayout = QHBoxLayout()
+        btnLayout.addStretch()
+        btnLayout.setContentsMargins(0, 0, 5, 0)
+        w = QWidget()
+        w.setLayout(btnLayout)
         removeButton = QPushButton()
+        btnLayout.addWidget(removeButton)
         removeButton.setIcon(self.removeIcon)
         removeButton.setFixedSize(QSize(24, 24))
         removeButton.clicked.connect(lambda: self.treewidget.takeTopLevelItem(self.treewidget.indexOfTopLevelItem(self.treewidget.currentItem())))
-        self.treewidget.setItemWidget(item, 4, removeButton)
+        self.treewidget.setItemWidget(item, 3, w)
 
     def installPackages(self) -> None:
-        DISCOVER_SECTION: SoftwareSection = globals.discover
-        for package in list(self.ItemPackageReference.values()):
-            DISCOVER_SECTION.installPackage(package)
+        DISCOVER_SECTION: SoftwareSection = Globals.discover
+        for item in list(self.PackageItemReference.keys()):
+            item: PackageItem
+            package: Package = self.PackageItemReference[item]
+            if not item.isDisabled():
+                if self.__importing_mechanism_is_v2:
+                    # New import mechanism
+                    packageData = self.__package_data[package.Id]
+                    installationOptions = InstallationOptions(package)
+                    installationOptions.LoadFromJson(packageData["InstallationOptions"])
+                    installationOptions.SaveOptionsToDisk()
+                    if packageData["Updates"]["UpdatesIgnored"]:
+                        package.AddToIgnoredUpdates(packageData["Updates"]["IgnoredVersion"])
+                        installationOptions.Version = packageData["Version"]  # A skipped version could be the latest version available, therefore it is safre to force install the installed version and then updating.
+                    package.PackageItem = PackageItem(package)
+                    DISCOVER_SECTION.installPackage(package, installationOptions)
+                else:
+                    # Legacy method
+                    package.PackageItem = PackageItem(package)
+                    DISCOVER_SECTION.installPackage(package)
+
+            else:
+                print(f"🟠 Not importing package {package.Id} from source {package.Source} because it is not installable!")
+
         self.close()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -1872,7 +1847,7 @@ class PackageImporter(MovableFramelessWindow):
         return super().showEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        globals.discover.callInMain.emit(lambda: globals.discover.packageList.setEnabled(True))
+        Globals.discover.callInMain.emit(lambda: Globals.discover.packageList.setEnabled(True))
         return super().closeEvent(event)
 
 
@@ -1882,21 +1857,24 @@ class PackageItem(QTreeWidgetItem):
         Installed = 1
         Upgradable = 2
         Pinned = 3
+        Pending = 4
+        BeingProcessed = 5
+        Failed = 6
 
     Package: 'Package' = None
-    IconType: 'Tag' = Tag.Default
+    CurrentTag: 'Tag' = Tag.Default
     __item_action: QAction = None
     SoftwareSection: 'SoftwareSection' = None
     callInMain: Signal = None
 
     def __init__(self, package: 'Package'):
         if not self.SoftwareSection:
-            self.SoftwareSection = globals.discover
+            self.SoftwareSection = Globals.discover
         self.Package = package
         self.Package.PackageItem = self
-        self.callInMain: Signal = globals.mainWindow.callInMain
+        self.callInMain: Signal = Globals.mainWindow.callInMain
         super().__init__()
-        self.setCheckState(0, Qt.CheckState.Unchecked)
+        self.setChecked(False)
         self.setText(1, self.Package.Name)
         self.setTag(PackageItem.Tag.Default)
         self.setText(2, self.Package.Id)
@@ -1916,30 +1894,45 @@ class PackageItem(QTreeWidgetItem):
         elif InstalledItem:
             self.setTag(PackageItem.Tag.Installed)
 
-    def setTag(self, iconType: Tag, newVersion: str = ""):
-        self.IconType = iconType
-        match self.IconType:
-            case PackageItem.Tag.Default:
-                self.setIcon(1, getIcon("install"))
-                self.setToolTip(1, self.Package.Name)
+    def setTag(self, tag: Tag, newVersion: str = ""):
+        self.CurrentTag = tag
+        try:
+            match self.CurrentTag:
+                case PackageItem.Tag.Default:
+                    self.setIcon(1, getIcon("install"))
+                    self.setToolTip(1, self.Package.Name)
 
-            case PackageItem.Tag.Installed:
-                self.setIcon(1, getMaskedIcon("installed_masked"))
-                self.setToolTip(1, _("This package is already installed") + " - " + self.Package.Name)
+                case PackageItem.Tag.Installed:
+                    self.setIcon(1, getMaskedIcon("installed_masked"))
+                    self.setToolTip(1, _("This package is already installed") + " - " + self.Package.Name)
 
-            case PackageItem.Tag.Upgradable:
-                self.setIcon(1, getMaskedIcon("update_masked"))
-                if newVersion:
-                    self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
-                else:
-                    self.setToolTip(1, _("This package can be updated") + " - " + self.Package.Name)
+                case PackageItem.Tag.Upgradable:
+                    self.setIcon(1, getMaskedIcon("update_masked"))
+                    if newVersion:
+                        self.setToolTip(1, _("This package can be updated to version {0}").format(newVersion) + " - " + self.Package.Name)
+                    else:
+                        self.setToolTip(1, _("This package can be updated") + " - " + self.Package.Name)
 
-            case PackageItem.Tag.Pinned:
-                self.setIcon(1, getMaskedIcon("pin_masked"))
-                self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
+                case PackageItem.Tag.Pinned:
+                    self.setIcon(1, getMaskedIcon("pin_masked"))
+                    self.setToolTip(1, _("Updates for this package are ignored") + " - " + self.Package.Name)
+
+                case PackageItem.Tag.Pending:
+                    self.setIcon(1, getIcon("queued"))
+                    self.setToolTip(1, _("This package is on the queue") + " - " + self.Package.Name)
+
+                case PackageItem.Tag.BeingProcessed:
+                    self.setIcon(1, getMaskedIcon("gears_masked"))
+                    self.setToolTip(1, _("This package is being processed") + " - " + self.Package.Name)
+
+                case PackageItem.Tag.Failed:
+                    self.setIcon(1, getMaskedIcon("warning_masked"))
+                    self.setToolTip(1, _("An error occurred while processing this package") + " - " + self.Package.Name)
+        except RuntimeError:
+            pass
 
     def getDiscoverPackageItem(self) -> 'PackageItem':
-        DISCOVER: 'SoftwareSection' = globals.discover
+        DISCOVER: 'SoftwareSection' = Globals.discover
         if self.SoftwareSection == DISCOVER:
             return self
         if self.Package.Id in DISCOVER.IdPackageReference:
@@ -1950,7 +1943,7 @@ class PackageItem(QTreeWidgetItem):
         return None
 
     def getUpdatesPackageItem(self) -> 'UpgradablePackageItem':
-        UPDATES: 'SoftwareSection' = globals.updates
+        UPDATES: 'SoftwareSection' = Globals.updates
         if self.SoftwareSection == UPDATES:
             return self
         if self.Package.Id in UPDATES.IdPackageReference:
@@ -1961,9 +1954,10 @@ class PackageItem(QTreeWidgetItem):
         return None
 
     def getInstalledPackageItem(self) -> 'InstalledPackageItem':
-        INSTALLED: 'SoftwareSection' = globals.uninstall
+        INSTALLED: 'SoftwareSection' = Globals.uninstall
         if self.SoftwareSection == INSTALLED:
             return self
+
         if self.Package.Id in INSTALLED.IdPackageReference:
             package: Package = INSTALLED.IdPackageReference[self.Package.Id]
             if self.Package.Source in package.Source:  # Allow "Scoop" packages to be detected as "Scoop: bucket" sources
@@ -1986,6 +1980,12 @@ class PackageItem(QTreeWidgetItem):
         except RuntimeError:
             return False
 
+    def setChecked(self, checked: bool):
+        self.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+
+    def isChecked(self) -> bool:
+        return self.checkState(0) == Qt.CheckState.Checked
+
     def setText(self, column: int, text: str) -> None:
         self.setToolTip(column, text)
         return super().setText(column, text)
@@ -1994,13 +1994,16 @@ class PackageItem(QTreeWidgetItem):
         return super().treeWidget()
 
     def removeFromList(self) -> None:
-        self.setHidden(True)
-        if self in self.SoftwareSection.packageItems:
-            self.SoftwareSection.packageItems.remove(self)
-        if self in self.SoftwareSection.showableItems:
-            self.SoftwareSection.showableItems.remove(self)
-        if self.treeWidget():
-            self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
+        try:
+            self.setHidden(True)
+            if self in self.SoftwareSection.packageItems:
+                self.SoftwareSection.packageItems.remove(self)
+            if self in self.SoftwareSection.showableItems:
+                self.SoftwareSection.showableItems.remove(self)
+            if self.treeWidget():
+                self.treeWidget().takeTopLevelItem(self.treeWidget().indexOfTopLevelItem(self))
+        except RuntimeError:
+            pass
         self.SoftwareSection.updatePackageNumber()
 
 
@@ -2008,9 +2011,9 @@ class UpgradablePackageItem(PackageItem):
     Package: 'UpgradablePackage' = None
 
     def __init__(self, package: 'UpgradablePackage'):
-        self.SoftwareSection = globals.updates
+        self.SoftwareSection = Globals.updates
         super().__init__(package)
-        self.setCheckState(0, Qt.CheckState.Checked)
+        self.setChecked(True)
 
         if package.isManager(Scoop):
             installedPackage = self.Package.getInstalledPackage()
@@ -2057,13 +2060,14 @@ class UpgradablePackageItem(PackageItem):
 class InstalledPackageItem(PackageItem):
 
     def __init__(self, package: 'Package'):
-        self.SoftwareSection = globals.uninstall
+        self.SoftwareSection = Globals.uninstall
         super().__init__(package)
         self.setIcon(3, getIcon("version"))
 
     def updateCorrespondingPackages(self) -> None:
-        if self.Package.hasUpdatesIgnoredPermanently():
-            self.setTag(PackageItem.Tag.Pinned)
+        if self.Package.HasUpdatesIgnored():
+            if self.Package.GetIgnoredUpatesVersion() == "*":
+                self.setTag(PackageItem.Tag.Pinned)
 
         AvailableItem = self.getDiscoverPackageItem()
         if AvailableItem:
