@@ -13,6 +13,7 @@ from wingetui.PackageEngine.Managers.pip import Pip
 from wingetui.PackageEngine.Managers.scoop import Scoop
 from wingetui.PackageEngine.Managers.winget import Winget
 from wingetui.PackageEngine.Managers.dotnet import Dotnet
+from wingetui.PackageEngine.Managers.powershell import Powershell
 
 PackageManagersList: list[PackageManagerModule] = [
     Winget,
@@ -20,7 +21,8 @@ PackageManagersList: list[PackageManagerModule] = [
     Choco,
     Pip,
     Npm,
-    Dotnet
+    Dotnet,
+    Powershell
 ]
 
 PackagesLoadedDict: dict[PackageManagerModule:bool] = {
@@ -29,7 +31,8 @@ PackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Choco: False,
     Pip: False,
     Npm: False,
-    Dotnet: False
+    Dotnet: False,
+    Powershell: False
 }
 
 DynaimcPackageManagersList: list[PackageManagerModule] = [
@@ -38,7 +41,8 @@ DynaimcPackageManagersList: list[PackageManagerModule] = [
     Choco,
     Winget,
     Scoop,
-    Dotnet
+    Dotnet,
+    Powershell
 ]
 
 DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
@@ -47,5 +51,6 @@ DynamicPackagesLoadedDict: dict[PackageManagerModule:bool] = {
     Winget: False,
     Choco: False,
     Scoop: False,
-    Dotnet: False
+    Dotnet: False,
+    Powershell: False
 }

@@ -1,48 +1,34 @@
-"""
-
-wingetui/PackageManagers/powershell.py
-
-This file holds the Powershell Gallery Package Manager related code.
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
 import subprocess
 
-from PySide6.QtCore import *
-from tools import *
-from tools import _
-
-from .PackageClasses import *
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.PackageEngine.Classes import *
 
 
-class PowershellPackageManager(DynamicPackageManager):
+class PowershellPackageManager(PackageManagerModule):
 
     EXECUTABLE = "powershell.exe"
     NAME = "PSGallery"
 
-    BLACKLISTED_PACKAGE_NAMES = []
-    BLACKLISTED_PACKAGE_IDS = []
-    BLACKLISTED_PACKAGE_VERSIONS = []
-
-    Capabilities = PackageManagerCapabilities()
-    Capabilities.CanRunAsAdmin = True
-    Capabilities.CanSkipIntegrityChecks = True
-    Capabilities.CanRunInteractively = False
-    Capabilities.CanRemoveDataOnUninstall = False
-    Capabilities.SupportsCustomVersions = True
-    Capabilities.SupportsCustomArchitectures = False
-    Capabilities.SupportsCustomScopes = False
-
-    LoadedIcons = False
-    icon = None
+    def __init__(self):
+        super().__init__()
+        self.Capabilities = PackageManagerCapabilities()
+        self.Capabilities.CanRunAsAdmin = True
+        self.Capabilities.CanSkipIntegrityChecks = True
+        self.Capabilities.CanRunInteractively = False
+        self.Capabilities.CanRemoveDataOnUninstall = False
+        self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomArchitectures = False
+        self.Capabilities.SupportsCustomScopes = False
+        self.IconPath = getMedia("powershell")
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -106,7 +92,7 @@ class PowershellPackageManager(DynamicPackageManager):
                     if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                         packages.append(UpgradablePackage(name, id, version, newVersion, source, self))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -140,7 +126,7 @@ class PowershellPackageManager(DynamicPackageManager):
                             packages.append(Package(name, id, version, source, Powershell))
 
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -178,7 +164,7 @@ class PowershellPackageManager(DynamicPackageManager):
             Parameters += ["-Scope", options.InstallationScope]
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "-Command", "Install-Module", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -188,7 +174,7 @@ class PowershellPackageManager(DynamicPackageManager):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -198,7 +184,7 @@ class PowershellPackageManager(DynamicPackageManager):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -214,7 +200,7 @@ class PowershellPackageManager(DynamicPackageManager):
         print(p.returncode)
         widget.finishInstallation.emit(p.returncode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         print("🔴 This function should be reimplented!")
         Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
@@ -224,7 +210,7 @@ class PowershellPackageManager(DynamicPackageManager):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -240,8 +226,8 @@ class PowershellPackageManager(DynamicPackageManager):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        Globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
 
