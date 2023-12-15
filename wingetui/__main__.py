@@ -77,8 +77,6 @@ try:
         import ctypes
         ctypes.windll.user32.MessageBoxW(None, "WingetUI can't be installed in a path containing special characters. Please reinstall WingetUI on a valid location\n\n\nCurrent path: " + os.path.dirname(sys.executable) + "\nInvalid character detected: " + specialCharacter + "\n\n\nPlease run the WingetUI installer and select a different install location. A possible valid path could be C:\\Program Files\\WingetUI", "WingetUI Crash handler", 0x00000010)
         sys.exit(1)
-
-    _globals = globals
     
     CheckProgramIntegrity()
     
