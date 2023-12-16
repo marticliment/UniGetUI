@@ -74,6 +74,8 @@ class Package():
                     iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
                 else:
                     iconUrl = ""
+        except KeyError:
+            print(f"🟡 Icon {iconId} not found in IconDatabase")
         except Exception as e:
             report(e)
             iconUrl = ""

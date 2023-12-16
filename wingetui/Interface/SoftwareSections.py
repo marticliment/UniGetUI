@@ -2374,7 +2374,7 @@ class PackageInfoPopupWindow(QWidget):
 
         except Exception as e:
             try:
-                if type(e) is KeyError:
+                if type(e) is not KeyError:
                     report(e)
                 else:
                     print(f"🟡 Image {iconId} not found in json")

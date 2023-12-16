@@ -181,13 +181,58 @@ class PowershellPackageManager(PackageManagerWithSources):
         """
         Will return a PackageDetails object containing the information of the given Package object
         """
-        print(f"🔵 Starting get info for {package.self.NAME} on {self.NAME}")
+        print(f"🔵 Starting get info for {package.Id} on {self.NAME}")
         details = PackageDetails(package)
-        try:
+        try:  # self.EXECUTABLE, "-Command",
+            p = subprocess.Popen(f"\"Find-Module -Name {package.Id} | Get-Member -MemberType NoteProperty\"", executable=shutil.which("powershell"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
 
-            # The code that loads the package details goes here
+            while p.poll() is None:
+                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                if line and "NoteProperty" in line:
+                    if line.startswith("Description"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.Description = content if content != "null" else ""
 
-            print(f"🟢 Get info finished for {package.self.NAME} on {self.NAME}")
+                    elif line.startswith("Author"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.Author = content if content != "null" else ""
+
+                    elif line.startswith("CompanyName"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.Publisher = content if content != "null" else ""
+
+                    elif line.startswith("LicenseUri"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.LicenseURL = content if content != "null" else ""
+
+                    elif line.startswith("Copyright"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.License = content if content != "null" else ""
+
+                    elif line.startswith("PackageManagementProvider"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.InstallerType = content if content != "null" else ""
+
+                    elif line.startswith("ProjectUri"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.HomepageURL = content if content != "null" else ""
+
+                    elif line.startswith("PublishedDate"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.UpdateDate = content if content != "null" else ""
+
+                    elif line.startswith("ReleaseNotes"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.ReleaseNotes = content if content != "null" else ""
+
+                    elif line.startswith("PublishedDate"):
+                        content = "=".join(line.split("=")[1:]).strip()
+                        details.UpdateDate = content if content != "null" else ""
+
+                else:
+                    print(line)
+
+            print(f"🟢 Get info finished for {package.Id} on {self.NAME}")
             return details
         except Exception as e:
             report(e)
@@ -214,21 +259,21 @@ class PowershellPackageManager(PackageManagerWithSources):
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
-        Command: list[str] = [self.EXECUTABLE, "-Command", "Install-Module", "-Name", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "-Command", "Install-Module", "-Name", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Id}").start()
         return p
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
-        Command: list[str] = [self.EXECUTABLE, "-Command", "Update-Module", "-Name", package.Name] + self.getParameters(options, isAnUpdate=True)
+        Command: list[str] = [self.EXECUTABLE, "-Command", "Update-Module", "-Name", package.Id] + self.getParameters(options, isAnUpdate=True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
+        Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Id}").start()
         return p
 
     def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
@@ -250,12 +295,12 @@ class PowershellPackageManager(PackageManagerWithSources):
         widget.finishInstallation.emit(c, output)
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
-        Command: list[str] = [self.EXECUTABLE, "-Command", "Uninstall-Module", "-Name", package.Name] + self.getParameters(options, isAnUninstall=True)
+        Command: list[str] = [self.EXECUTABLE, "-Command", "Uninstall-Module", "-Name", package.Id] + self.getParameters(options, isAnUninstall=True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
-        Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
+        Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Id}").start()
         return p
 
     def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
