@@ -117,7 +117,6 @@ class PowershellPackageManager(PackageManagerWithSources):
         Get-InstalledModule | Test-GalleryModuleUpdate
         exit
         """
-        print(Command)
         print(f"🔵 Starting {self.NAME} search for updates")
         try:
             packages: list[UpgradablePackage] = []
@@ -126,7 +125,6 @@ class PowershellPackageManager(PackageManagerWithSources):
             for line in p.stdout.decode("utf-8").split("\n"):
                 rawoutput += "\n" + line
                 if line and not line.startswith(">>") and not line.startswith("PS "):
-                    print(line)
                     package = list(filter(None, line.split("|")))
                     if len(package) >= 4:
                         name = formatPackageIdAsName(package[0])
@@ -198,7 +196,7 @@ class PowershellPackageManager(PackageManagerWithSources):
     def getIcon(self, source: str = "") -> QIcon:
         if not self.LoadedIcons:
             self.LoadedIcons = True
-            self.icon = QIcon(getMedia("admin_color"))
+            self.icon = QIcon(getMedia("powershell"))
         return self.icon
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False, isAnUpdate: bool = False) -> list[str]:
