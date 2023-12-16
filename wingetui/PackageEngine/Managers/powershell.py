@@ -16,7 +16,7 @@ from wingetui.PackageEngine.Classes import *
 class PowershellPackageManager(PackageManagerWithSources):
 
     EXECUTABLE = "powershell.exe"
-    NAME = "PSGallery"
+    NAME = "PowerShell"
 
     def __init__(self):
         super().__init__()
@@ -70,29 +70,74 @@ class PowershellPackageManager(PackageManagerWithSources):
         f"""
         Will retieve the upgradable packages by {self.NAME} in the format of a list[UpgradablePackage] object.
         """
+        Sources = self.getSources()
+        SourceDict = "{"
+        for source in Sources:
+            SourceDict += f'"{source.Name}" = "{source.Url}";'
+        SourceDict += "}"
+
+        Command = """
+        function Test-GalleryModuleUpdate
+        {
+            param
+            (
+                [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
+                [string]
+                $Name,
+
+                [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
+                [version]
+                $Version,
+
+                [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
+                [string]
+                $Repository,
+
+                [switch]
+                $NeedUpdateOnly
+            )
+
+            process
+            {
+
+
+                $URLs = @""" + SourceDict + """
+
+                $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -Maximum 0 -ea Ignore
+                [version]$latest = Split-Path -Path ($page.Headers.Location -replace "$Name." -replace ".nupkg") -Leaf
+                $needsupdate = $Latest -gt $Version
+
+                if ($needsupdate)
+                {
+                    Write-Output ($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
+                }
+            }
+        }
+
+        Get-InstalledModule | Test-GalleryModuleUpdate
+        exit
+        """
+        print(Command)
         print(f"🔵 Starting {self.NAME} search for updates")
         try:
-            return []
             packages: list[UpgradablePackage] = []
-            p = subprocess.Popen([self.EXECUTABLE, "-Command", "Find-Module"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+            p = subprocess.run(self.EXECUTABLE, input=bytes(Command, "utf-8"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
             rawoutput = "\n\n---------"
-            while p.poll() is None:
-                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+            for line in p.stdout.decode("utf-8").split("\n"):
                 rawoutput += "\n" + line
-                if line:
+                if line and not line.startswith(">>") and not line.startswith("PS "):
+                    print(line)
+                    package = list(filter(None, line.split("|")))
+                    if len(package) >= 4:
+                        name = formatPackageIdAsName(package[0])
+                        id = package[0]
+                        version = package[1]
+                        newVersion = package[2]
+                        source = f"{self.NAME}: {package[3]}"
 
-                    if len(line.split("|")) >= 3:
-                        # Replace these lines with the parse mechanism
-                        name = formatPackageIdAsName(line.split("|")[0])
-                        id = line.split("|")[0]
-                        version = line.split("|")[1]
-                        newVersion = line.split("|")[2]
-                        source = self.NAME
-                    else:
-                        continue
+                        if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
+                            packages.append(UpgradablePackage(name, id, version, newVersion, source, self))
 
-                    if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
-                        packages.append(UpgradablePackage(name, id, version, newVersion, source, self))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
             Globals.PackageManagerOutput += rawoutput
             return packages
@@ -201,8 +246,10 @@ class PowershellPackageManager(PackageManagerWithSources):
                     widget.counterSignal.emit(3)
                 elif "installing" in line:
                     widget.counterSignal.emit(7)
-        print(p.returncode)
-        widget.finishInstallation.emit(p.returncode, output)
+        c = p.returncode
+        if "AdminPrivilegesAreRequired" in output:
+            c = RETURNCODE_NEEDS_ELEVATION
+        widget.finishInstallation.emit(c, output)
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "-Command", "Uninstall-Module", "-Name", package.Name] + self.getParameters(options, isAnUninstall=True)
@@ -224,10 +271,12 @@ class PowershellPackageManager(PackageManagerWithSources):
                 widget.addInfoLine.emit((line, is_newline))
                 if "removing" in line:
                     widget.counterSignal.emit(5)
-        print(p.returncode)
-        widget.finishInstallation.emit(p.returncode, output)
+        c = p.returncode
+        if "AdminPrivilegesAreRequired" in output:
+            c = RETURNCODE_NEEDS_ELEVATION
+        widget.finishInstallation.emit(c, output)
 
-    def getSources(self) -> None:
+    def getSources(self) -> list[ManagerSource]:
         print(f"🔵 Starting {self.NAME} source search...")
         p = subprocess.Popen([self.EXECUTABLE, "-Command", "Get-PSRepository"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
         output = []
