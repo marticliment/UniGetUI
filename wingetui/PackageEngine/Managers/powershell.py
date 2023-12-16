@@ -13,7 +13,7 @@ from wingetui.Core.Tools import _
 from wingetui.PackageEngine.Classes import *
 
 
-class PowershellPackageManager(PackageManagerModule):
+class PowershellPackageManager(PackageManagerWithSources):
 
     EXECUTABLE = "powershell.exe"
     NAME = "PSGallery"
@@ -23,12 +23,14 @@ class PowershellPackageManager(PackageManagerModule):
         self.Capabilities = PackageManagerCapabilities()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
-        self.Capabilities.CanRunInteractively = False
-        self.Capabilities.CanRemoveDataOnUninstall = False
         self.Capabilities.SupportsCustomVersions = True
-        self.Capabilities.SupportsCustomArchitectures = False
-        self.Capabilities.SupportsCustomScopes = False
+        self.Capabilities.SupportsCustomSources = True
         self.IconPath = getMedia("powershell")
+
+        self.KnownSources = [
+            ManagerSource(self, "PSGallery", "https://www.powershellgallery.com/api/v2"),
+            ManagerSource(self, "PoshTestGallery", "https://www.poshtestgallery.com/api/v2"),
+        ]
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -154,19 +156,22 @@ class PowershellPackageManager(PackageManagerModule):
             self.icon = QIcon(getMedia("admin_color"))
         return self.icon
 
-    def getParameters(self, options: InstallationOptions) -> list[str]:
-        Parameters: list[str] = ["-Confirm:$false", "-AcceptLicense", "-Force", "-AllowClobber"]
+    def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False, isAnUpdate: bool = False) -> list[str]:
+        Parameters: list[str] = ["-Confirm:$false", "-Force"]
         if options.CustomParameters:
             Parameters += options.CustomParameters
-        if not options.RunAsAdministrator:
-            options.InstallationScope = "CurrentUser"
-        if options.InstallationScope:
-            Parameters += ["-Scope", options.InstallationScope]
+        if not isAnUninstall and not isAnUpdate:
+            Parameters: list[str] = ["-AcceptLicense", "-AllowClobber"]
+            if not options.RunAsAdministrator:
+                options.InstallationScope = "CurrentUser"
+            else:
+                options.InstallationScope = "AllUsers"
+            if options.InstallationScope:
+                Parameters += ["-Scope", options.InstallationScope]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
-        print("🔴 This function should be reimplented!")
-        Command: list[str] = [self.EXECUTABLE, "-Command", "Install-Module", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "-Command", "Install-Module", "-Name", package.Name] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} installation with Command", Command)
@@ -175,8 +180,7 @@ class PowershellPackageManager(PackageManagerModule):
         return p
 
     def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
-        print("🔴 This function should be reimplented!")
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "-Command", "Update-Module", "-Name", package.Name] + self.getParameters(options, isAnUpdate=True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -201,8 +205,7 @@ class PowershellPackageManager(PackageManagerModule):
         widget.finishInstallation.emit(p.returncode, output)
 
     def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
-        print("🔴 This function should be reimplented!")
-        Command: list[str] = [self.EXECUTABLE, "install", package.Name] + self.getParameters(options)
+        Command: list[str] = [self.EXECUTABLE, "-Command", "Uninstall-Module", "-Name", package.Name] + self.getParameters(options, isAnUninstall=True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
         print(f"🔵 Starting {package} update with Command", Command)
@@ -222,6 +225,61 @@ class PowershellPackageManager(PackageManagerModule):
                 if "removing" in line:
                     widget.counterSignal.emit(5)
         print(p.returncode)
+        widget.finishInstallation.emit(p.returncode, output)
+
+    def getSources(self) -> None:
+        print(f"🔵 Starting {self.NAME} source search...")
+        p = subprocess.Popen([self.EXECUTABLE, "-Command", "Get-PSRepository"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ, shell=True)
+        output = []
+        dashesPassed = False
+        sources: list[ManagerSource] = []
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = line.strip()
+            if line:
+                if not dashesPassed:
+                    if b"---" in line:
+                        dashesPassed = True
+                else:
+                    output.append(str(line, encoding='utf-8', errors="ignore"))
+        for element in output:
+            try:
+                while "  " in element.strip():
+                    element = element.strip().replace("  ", " ")
+                element: list[str] = element.split(" ")
+                sources.append(ManagerSource(self, element[0].strip(), element[2].strip()))
+            except Exception as e:
+                report(e)
+        print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
+        return sources
+
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "-Command", "Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url]
+        print(f"🔵 Starting source {source.Name} installation with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
+        Command = [self.EXECUTABLE, "-Command", "Unregister-PSRepository", "-Name", source.Name]
+        print(f"🔵 Starting source {source.Name} removal with Command", Command)
+        p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
+        Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
+        return p
+
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
+        output = ""
+        counter = 0
+        while p.poll() is None:
+            line, is_newline = getLineFromStdout(p)
+            line = str(line, encoding='utf-8', errors="ignore").strip()
+            if line:
+                widget.addInfoLine.emit((line, is_newline))
+                counter += 1
+                widget.counterSignal.emit(counter)
+                if is_newline:
+                    output += line + "\n"
+        p.wait()
         widget.finishInstallation.emit(p.returncode, output)
 
     def detectManager(self, signal: Signal = None) -> None:
