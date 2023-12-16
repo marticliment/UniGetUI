@@ -1,28 +1,17 @@
-"""
-
-wingetui/PackageManagers/pip.py
-
-This file holds the Pip Package Manager related code.
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
 import re
 import subprocess
 
-from PySide6.QtCore import *
-from tools import *
-from tools import _
-
-from .PackageClasses import *
-from .sampleHelper import *
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.PackageEngine.Classes import *
 
 
 class PipPackageManager(PackageManagerModule):
@@ -40,11 +29,10 @@ class PipPackageManager(PackageManagerModule):
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsPreRelease = True
-        
+
         self.BLACKLISTED_PACKAGE_NAMES = ["WARNING:", "[notice]", "Package"]
         self.BLACKLISTED_PACKAGE_IDS = ["WARNING:", "[notice]", "Package"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["Ignoring", "invalie"]
-
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
@@ -81,7 +69,7 @@ class PipPackageManager(PackageManagerModule):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Pip))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -115,7 +103,7 @@ class PipPackageManager(PackageManagerModule):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Pip))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -246,7 +234,7 @@ class PipPackageManager(PackageManagerModule):
                     Parameters.append("--user")
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         idtoInstall = package.Id
         if options.Version:
             idtoInstall += "==" + options.Version
@@ -258,7 +246,7 @@ class PipPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         idtoInstall = package.Id
         if options.Version:
             idtoInstall += "==" + options.Version
@@ -270,7 +258,7 @@ class PipPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -290,7 +278,7 @@ class PipPackageManager(PackageManagerModule):
             outputCode = RETURNCODE_NEEDS_PIP_ELEVATION
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["uninstall", package.Id, "-y"] + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -299,7 +287,7 @@ class PipPackageManager(PackageManagerModule):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         outputCode = 1
         output = ""
         while p.poll() is None:
@@ -321,8 +309,8 @@ class PipPackageManager(PackageManagerModule):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -V", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which("python.exe") is not None
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
+        Globals.componentStatus[f"{self.NAME}Found"] = shutil.which("python.exe") is not None
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
 

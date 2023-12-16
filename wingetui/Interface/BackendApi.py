@@ -1,27 +1,23 @@
-"""
-
-wingetui/apiBacked.py
-
-This file contains the API used to communicate with https://marticliment.com/wingetui/share
-
-"""
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    import __init__
-    sys.exit(0)  # This code is here to allow vscode syntax highlighting to find the classes required
-    from wingetui.PackageManagers.PackageClasses import UpgradablePackage
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
+
+    from wingetui.PackageEngine.Classes import UpgradablePackage
     from wingetui.Interface.CustomWidgets.SpecificWidgets import UpgradablePackageItem
 
 
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from PySide6.QtCore import Signal
-from globals import CurrentSessionToken
-from tools import *
-import globals
 from waitress import serve
+
+import wingetui.Core.Globals as Globals
+from wingetui.Core.Globals import CurrentSessionToken
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 
 
 globalsignal: Signal = None
@@ -115,7 +111,7 @@ def widgets_open_wingetui():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(globals.mainWindow.showWindow)
+                Globals.mainWindow.callInMain.emit(Globals.mainWindow.showWindow)
             except AttributeError:
                 print("🔴 Could not show WingetUI (called from Widgets API)")
             response = jsonify(status="success")
@@ -133,7 +129,7 @@ def widgets_view_on_wingetui():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(lambda: globals.mainWindow.showWindow(1))
+                Globals.mainWindow.callInMain.emit(lambda: Globals.mainWindow.showWindow(1))
             except AttributeError:
                 print("🔴 Could not show WingetUI (called from Widgets API)")
             response = jsonify(status="success")
@@ -151,7 +147,7 @@ def widgets_update_app():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(lambda id=request.args["id"]: globals.updates.updatePackageForGivenId(id))
+                Globals.mainWindow.callInMain.emit(lambda id=request.args["id"]: Globals.updates.updatePackageForGivenId(id))
             except Exception as e:
                 report(e)
                 abort(500, "Internal server error: " + str(e))
@@ -170,7 +166,7 @@ def widgets_update_all_apps():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(globals.updates.updateAllPackageItems)
+                Globals.mainWindow.callInMain.emit(Globals.updates.updateAllPackageItems)
             except Exception as e:
                 report(e)
                 abort(500, "Internal server error: " + str(e))
@@ -189,7 +185,7 @@ def widgets_update_all_apps_for_source():
             abort(401, "Invalid session token")
         else:
             try:
-                globals.mainWindow.callInMain.emit(lambda source=request.args["source"]: globals.updates.updateAllPackageItemsForSource(source))
+                Globals.mainWindow.callInMain.emit(lambda source=request.args["source"]: Globals.updates.updateAllPackageItemsForSource(source))
             except Exception as e:
                 report(e)
                 abort(500, "Internal server error: " + str(e))

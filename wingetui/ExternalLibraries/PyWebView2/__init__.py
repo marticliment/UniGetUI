@@ -1,3 +1,10 @@
+if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -7,13 +14,13 @@ import os
 import time
 from threading import Thread
 
-
 if hasattr(sys, 'frozen'):
-    BASE_PATH = sys._MEIPASS
+    BASE_PATH = os.path.join(sys._MEIPASS, "wingetui/ExternalLibraries/PyWebView2")
 else:
-    BASE_PATH = '/'.join(sys.argv[0].replace("\\", "/").split("/")[:-1])
+    BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-DLL_PATH = os.path.join(BASE_PATH, "ExternalLibraries/PyWebView2/lib/WinFormsWebView.dll")
+DLL_PATH = os.path.join(BASE_PATH, "lib/WinFormsWebView.dll")
+
 
 class WebView2(QWidget):
     hWnd: int = 0
@@ -29,9 +36,9 @@ class WebView2(QWidget):
         self.callInMain.connect(lambda f: f())
         self.CustomLayout = QHBoxLayout()
         self.setLayout(self.CustomLayout)
-        
+
         clr.AddReference(DLL_PATH)
-        import WinFormsWebView        
+        import WinFormsWebView
 
         self.webview = WinFormsWebView.Form1(contextMenuEnabled=False)
         hWnd = self.webview.getHWND()
@@ -50,7 +57,7 @@ class WebView2(QWidget):
         Navigate back in the browser history
         """
         self.webview.webView.GoBack()
-        
+
     def goForward(self):
         """
         Navigate forward in the browser history
@@ -75,7 +82,7 @@ class WebView2(QWidget):
         Abort webpage loading
         """
         self.webview.stop()
-    
+
     def navigateToString(self, string: str):
         """
         Set the passed string as the WebView HTML content
@@ -87,28 +94,3 @@ class WebView2(QWidget):
         Get the current URL
         """
         return self.webview.getUrl()
-
-
-"""if __name__ == "__main__":
-    a = QApplication(sys.argv)
-
-    win = QWidget()
-    win.resize(800, 480)
-    win32mica.ApplyMica(win.winId(), True)
-    wv = WebView2()
-    layout = QVBoxLayout()
-    edit = QLineEdit()
-
-    edit.editingFinished.connect(lambda: wv.setLocation(edit.text()))
-    wv.locationChanged.connect(lambda l: edit.setText(l))
-    wv.webViewInitialized.connect(
-        lambda: wv.setLocation("https://www.google.com"))
-    wv.navigationStarted.connect(lambda l: (edit.setText(l), edit.setEnabled(False)))
-    wv.navigationCompleted.connect(lambda: (edit.setEnabled(True)))
-    layout.addWidget(edit)
-    layout.addWidget(wv)
-    win.setLayout(layout)
-    win.setWindowTitle("Embed Qt")
-    win.show()
-    sys.exit(a.exec())
-"""

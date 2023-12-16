@@ -1,28 +1,17 @@
-"""
-
-wingetui/PackageManagers/scoop.py
-
-This file holds the Scoop Package Manager related code.
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
 import re
 import subprocess
 
-from PySide6.QtCore import *
-from tools import *
-from tools import _
-
-from .PackageClasses import *
-from .sampleHelper import *
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.PackageEngine.Classes import *
 
 
 class ScoopPackageManager(PackageManagerWithSources):
@@ -44,7 +33,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
-        
+
         self.KnownSources = [
             # This list should reflect the one published on https://github.com/ScoopInstaller/Scoop/blob/master/buckets.json
             ManagerSource(self, "main", "https://github.com/ScoopInstaller/Main"),
@@ -93,7 +82,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -129,7 +118,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS and newVersion not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Scoop))
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -164,7 +153,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Scoop))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -179,8 +168,8 @@ class ScoopPackageManager(PackageManagerWithSources):
         try:
             unknownStr = _("Not available")
             bucket = "main" if len(package.Source.split(": ")) == 1 else package.Source.split(': ')[-1]
-            if bucket in globals.scoopBuckets:
-                bucketRoot = globals.scoopBuckets[bucket].replace(".git", "")
+            if bucket in Globals.scoopBuckets:
+                bucketRoot = Globals.scoopBuckets[bucket].replace(".git", "")
             else:
                 bucketRoot = f"https://github.com/ScoopInstaller/{bucket}"
             details.ManifestUrl = f"{bucketRoot}/blob/master/bucket/{package.Id.split('/')[-1]}.json"
@@ -197,7 +186,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                     rawOutput += line + b"\n"
 
             data: dict = json.loads(str(rawOutput, encoding='utf-8', errors="ignore"))
-            
+
             if "description" in data.keys():
                 if type(data["description"]) is list:
                     details.Description = "\n".join(data["description"])
@@ -307,7 +296,7 @@ class ScoopPackageManager(PackageManagerWithSources):
                 Parameters.append("--global")
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
@@ -319,7 +308,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
@@ -331,7 +320,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         outputCode = 1
         while p.poll() is None:
@@ -360,7 +349,7 @@ class ScoopPackageManager(PackageManagerWithSources):
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         bucket_prefix = ""
         if len(package.Source.split(":")) > 1 and "/" not in package.Source:
             bucket_prefix = package.Source.lower().split(":")[1].replace(" ", "") + "/"
@@ -372,7 +361,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         outputCode = 1
         output = ""
         while p.poll() is None:
@@ -426,26 +415,26 @@ class ScoopPackageManager(PackageManagerWithSources):
                 print("IndexError: " + str(e))
 
         for source in sources:
-            globals.scoopBuckets[source.Name] = source.Url
+            Globals.scoopBuckets[source.Name] = source.Url
 
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
-    
-    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["bucket", "add", source.Name, source.Url]
         print(f"🔵 Starting source {source.Name} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
-    
-    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = self.EXECUTABLE.split(" ") + ["bucket", "rm", source.Name]
         print(f"🔵 Starting source {source.Name} removal with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
 
-    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         counter = 0
         while p.poll() is None:
@@ -463,13 +452,13 @@ class ScoopPackageManager(PackageManagerWithSources):
     def detectManager(self, signal: Signal = None) -> None:
         try:
             o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
-            globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") is not None
-            globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").replace("\n", " ").replace("\r", " ")
+            Globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") is not None
+            Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8', errors="ignore").replace("\n", " ").replace("\r", " ")
             if signal:
                 signal.emit()
         except Exception:
-            globals.componentStatus[f"{self.NAME}Found"] = False
-            globals.componentStatus[f"{self.NAME}Version"] = _("{pm} could not be found").format(pm=self.NAME)
+            Globals.componentStatus[f"{self.NAME}Found"] = False
+            Globals.componentStatus[f"{self.NAME}Version"] = _("{pm} could not be found").format(pm=self.NAME)
             if signal:
                 signal.emit()
 

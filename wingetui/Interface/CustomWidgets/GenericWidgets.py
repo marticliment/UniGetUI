@@ -1,31 +1,19 @@
-"""
-
-wingetui/Interface/CustomWidgets/GenericWidgets.py
-
-This file contains the custom widgets that have been modified but that were not built for a singe purpose, since they are generic widgets.
-Generally they are optimized versions of Qt standard widgets.
-
-
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-import PySide6.QtCore
-import PySide6.QtGui
-import PySide6.QtWidgets
 import windows_toasts
+from win32mica import ApplyMica, MicaTheme
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
-from win32mica import *
+
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 
 
 class MessageBox(QMessageBox):
@@ -95,7 +83,8 @@ class SmoothScrollArea(QScrollArea):
         currentPos = self.verticalScrollBar().value()
         maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos):
+            # If there are no scrollable contents:
             e.ignore()
         else:
             e.angleDelta().setX(0)
@@ -149,7 +138,7 @@ class SmoothScrollArea(QScrollArea):
 
     def showTopButton(self):
         if not self.buttonVisible:
-            self.buttonVisible = True    
+            self.buttonVisible = True
             if self.EnableTopButton:
                 self.goTopButton.raise_()
                 self.buttonAnimation.setStartValue(int(self.buttonOpacity.opacity() * 100))
@@ -172,7 +161,7 @@ class SmoothScrollArea(QScrollArea):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -235,7 +224,6 @@ class TreeWidget(QTreeWidget):
             self.goTopButton.clicked.connect(lambda: (self.smoothScrollAnimation.setStartValue(self.verticalScrollBar().value()), self.smoothScrollAnimation.setEndValue(0), self.smoothScrollAnimation.start()))
         scrollbar.valueChanged.connect(lambda v: self.showTopButton() if v > 20 else self.hideTopButton())
 
-
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.label.move((self.width() - self.label.width()) // 2, (self.height() - self.label.height()) // 2,)
         if self.EnableTopButton:
@@ -271,7 +259,8 @@ class TreeWidget(QTreeWidget):
         currentPos = self.verticalScrollBar().value()
         maxPos = self.verticalScrollBar().maximum()
         finalPos = currentPos - e.angleDelta().y()
-        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos): # If there are no scrollable contents:
+        if (finalPos <= 0 and currentPos == 0) or (finalPos > maxPos and currentPos == maxPos):
+            # If there are no scrollable contents:
             e.ignore()
         else:
             e.angleDelta().setX(0)
@@ -329,7 +318,7 @@ class TreeWidget(QTreeWidget):
             self.goTopButton.setUpdatesEnabled(True)
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -528,7 +517,7 @@ class CustomComboBox(QComboBox):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyBackdrop)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -746,7 +735,7 @@ class ToastNotification(QObject):
         template.on_activated = self.onAction
         template.on_dismissed = lambda _1: self.onDismissFun()
         template.on_failed = lambda _1: self.reportException()
-        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=globals.AUMID if globals.AUMID != "" else None)
+        self.toast = windows_toasts.InteractableWindowsToaster(self.smallText, notifierAUMID=Globals.AUMID if Globals.AUMID != "" else None)
         self.toast.show_toast(template)
 
     def reportException(self, id):
@@ -840,7 +829,7 @@ class MovableFramelessWindow(DraggableWindow):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             try:
-                globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+                Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
                 self.registeredThemeEvent = False
             except AttributeError:
                 pass
@@ -875,12 +864,12 @@ class VerticallyDraggableWidget(QLabel):
         return super().mousePressEvent(event)
 
     def enterEvent(self, event: QEnterEvent) -> None:
-        globals.app.setOverrideCursor(QCursor(Qt.CursorShape.SizeVerCursor))
+        Globals.app.setOverrideCursor(QCursor(Qt.CursorShape.SizeVerCursor))
         return super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent) -> None:
         if not self.pressed:
-            globals.app.restoreOverrideCursor()
+            Globals.app.restoreOverrideCursor()
         return super().leaveEvent(event)
 
     def mouseMoveEvent(self, ev: QMouseEvent) -> None:
@@ -892,16 +881,16 @@ class VerticallyDraggableWidget(QLabel):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.pressed = False
         self.dragged.emit(self.mapToGlobal(self.oldPos).y() - (self.mapToGlobal(QCursor.pos()).y()))
-        globals.app.restoreOverrideCursor()
+        Globals.app.restoreOverrideCursor()
         self.oldPos = QCursor.pos()
         return super().mouseReleaseEvent(event)
 
     def hideEvent(self, event: QHideEvent) -> None:
-        globals.app.restoreOverrideCursor()
+        Globals.app.restoreOverrideCursor()
         return super().hideEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        globals.app.restoreOverrideCursor()
+        Globals.app.restoreOverrideCursor()
         return super().closeEvent(event)
 
 

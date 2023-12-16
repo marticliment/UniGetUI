@@ -1,32 +1,24 @@
-"""
-
-wingetui/Interface/MainWindow.py
-
-This file contains the code of the main WingetUI window.
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import ctypes
 import os
 import sys
-
-import globals
-import win32mica
 import winreg
+import win32mica
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from Interface.CustomWidgets.InstallerWidgets import *
-from tools import *
-from tools import _
-from Interface.SoftwareSections import *
+
+import wingetui.Core.Globals as Globals
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.Interface.CustomWidgets.InstallerWidgets import *
+from wingetui.Interface.SoftwareSections import *
 
 WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320
 DWMWA_USE_IMMERSIVE_DARK_MODE = 20
@@ -78,11 +70,11 @@ class RootWindow(QMainWindow):
 
     def loadWidgets(self) -> None:
 
-        globals.centralTextureImage = QLabel(self)
-        globals.centralTextureImage.hide()
+        Globals.centralTextureImage = QLabel(self)
+        Globals.centralTextureImage.hide()
 
         self.infobox = PackageInfoPopupWindow(self)
-        globals.infobox = self.infobox
+        Globals.infobox = self.infobox
 
         self.widgets = {}
         self.mainWidget = QStackedWidget()
@@ -100,7 +92,7 @@ class RootWindow(QMainWindow):
         self.resizewidget = VerticallyDraggableWidget()
         self.installationsWidget = DynamicScrollArea(self.resizewidget, EnableTopButton=False)
         self.installerswidget: QLayout = self.installationsWidget.vlayout
-        globals.installersWidget = self.installationsWidget
+        Globals.installersWidget = self.installationsWidget
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         self.mainWidget.setStyleSheet("""
         QTabWidget::tab-bar {{
@@ -108,15 +100,15 @@ class RootWindow(QMainWindow):
             }}""")
         self.discover = DiscoverSoftwareSection(self)
         self.discover.setStyleSheet("QGroupBox{border-radius: 5px;}")
-        globals.discover = self.discover
+        Globals.discover = self.discover
         self.widgets[self.discover] = self.addTab(self.discover, _("Discover Packages"))
         self.updates = UpdateSoftwareSection(self)
         self.updates.setStyleSheet("QGroupBox{border-radius: 5px;}")
-        globals.updates = self.updates
+        Globals.updates = self.updates
         self.widgets[self.updates] = self.addTab(self.updates, _("Software Updates"))
         self.uninstall = UninstallSoftwareSection(self)
         self.uninstall.setStyleSheet("QGroupBox{border-radius: 5px;}")
-        globals.uninstall = self.uninstall
+        Globals.uninstall = self.uninstall
         self.widgets[self.uninstall] = self.addTab(self.uninstall, _("Installed Packages"))
         self.settingsSection = SettingsSection(self)
         self.widgets[self.settingsSection] = self.addTab(self.settingsSection, _("WingetUI Settings"), addToMenu=True, actionIcon="settings")
@@ -167,7 +159,7 @@ class RootWindow(QMainWindow):
 
         self.extrasMenu.aboutToHide.connect(resetSelectionIndex)
         self.buttonBox.addButton(self.extrasMenuButton)
-        globals.extrasMenuButton = self.extrasMenuButton
+        Globals.extrasMenuButton = self.extrasMenuButton
         hl.addWidget(self.extrasMenuButton)
         hl.addSpacing(8)
         hl.setContentsMargins(0, 0, 0, 0)
@@ -194,7 +186,7 @@ class RootWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         w.setLayout(vl)
         self.setCentralWidget(w)
-        globals.centralWindowLayout = w
+        Globals.centralWindowLayout = w
         sct = QShortcut(QKeySequence("Ctrl+Tab"), self)
         sct.activated.connect(lambda: (self.mainWidget.setCurrentIndex((self.mainWidget.currentIndex() + 1) if self.mainWidget.currentIndex() < 4 else 0), self.buttonBox.buttons()[self.mainWidget.currentIndex()].setChecked(True)))
 
@@ -301,7 +293,6 @@ class RootWindow(QMainWindow):
         return False, 0
 
     def warnAboutAdmin(self):
-        from tools import _
         self.err = CustomMessageBox(self)
         errorData = {
             "titlebarTitle": "WingetUI",
@@ -329,27 +320,27 @@ class RootWindow(QMainWindow):
         self.closedpos = self.pos()
         setSettingsValue("OldWindowGeometry", f"{self.closedpos.x()},{self.closedpos.y()+30},{self.width()},{self.height()}")
         setSettings("WindowWasMaximized", self.isMaximized())
-        if globals.themeChanged:
-            globals.themeChanged = False
+        if Globals.themeChanged:
+            Globals.themeChanged = False
             self.deleteChildren()
             event.accept()
         if getSettings("DisablesystemTray"):
-            if globals.pending_programs != []:
+            if Globals.pending_programs != []:
                 retValue = QMessageBox.question(self, _("Warning"), _("There is an installation in progress. If you close WingetUI, the installation may fail and have unexpected results. Do you still want to quit WingetUI?"), buttons=QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes, defaultButton=QMessageBox.StandardButton.No)
                 if retValue == QMessageBox.StandardButton.No:
                     event.ignore()
                     return
         self.hide()
-        if globals.updatesAvailable:
-            globals.canUpdate = True
-            if globals.ENABLE_WINGETUI_NOTIFICATIONS:
-                globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
+        if Globals.updatesAvailable:
+            Globals.canUpdate = True
+            if Globals.ENABLE_WINGETUI_NOTIFICATIONS:
+                Globals.trayIcon.showMessage(_("Updating WingetUI"), _("WingetUI is being updated. When finished, WingetUI will restart itself"), QIcon(getMedia("notif_info")))
         else:
-            globals.lastFocusedWindow = 0
+            Globals.lastFocusedWindow = 0
             if getSettings("DisablesystemTray"):
                 self.deleteChildren()
                 event.accept()
-                globals.app.quit()
+                Globals.app.quit()
                 sys.exit(0)
 
     def askRestart(self):
@@ -385,8 +376,8 @@ class RootWindow(QMainWindow):
 
             self.infobox.iv.resize(self.width() - 100, self.height() - 100)
 
-            globals.centralTextureImage.move(0, 0)
-            globals.centralTextureImage.resize(event.size())
+            Globals.centralTextureImage.move(0, 0)
+            Globals.centralTextureImage.resize(event.size())
 
         except AttributeError:
             pass
@@ -395,7 +386,7 @@ class RootWindow(QMainWindow):
         return super().resizeEvent(event)
 
     def showWindow(self, index=-2):
-        if globals.lastFocusedWindow != self.winId() or index >= -1:
+        if Globals.lastFocusedWindow != self.winId() or index >= -1:
             if not self.window().isMaximized():
                 self.window().show()
                 self.window().showNormal()
@@ -412,11 +403,11 @@ class RootWindow(QMainWindow):
                     self.widgets[self.updates].click()
             except Exception as e:
                 report(e)
-            globals.lastFocusedWindow = self.winId()
+            Globals.lastFocusedWindow = self.winId()
             try:
                 match index:
                     case -1:
-                        if globals.updatesAvailable > 0:
+                        if Globals.updatesAvailable > 0:
                             self.widgets[self.updates].click()
                         else:
                             pass  # Show on the default window
@@ -434,26 +425,26 @@ class RootWindow(QMainWindow):
                 report(e)
         else:
             self.hide()
-            globals.lastFocusedWindow = 0
+            Globals.lastFocusedWindow = 0
 
     def showEvent(self, event: QShowEvent) -> None:
         try:
-            globals.uninstall.startLoadingPackages()
+            Globals.uninstall.startLoadingPackages()
         except Exception as e:
             report(e)
-            
+
         if not getSettings("ReleaseNotesVersion2.1.2-beta2"):
             setSettings("ReleaseNotesVersion2.1.2-beta2", True)
             self.showHelpUrl("https://www.marticliment.com/wingetui/notes/2.1.2-beta2.php")
-        
+
         return super().showEvent(event)
 
     def ApplyStyleSheetsAndIcons(self, skipMica: bool = False):
 
         if isDark():
-            self.setStyleSheet(globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
+            self.setStyleSheet(Globals.darkCSS.replace("mainbg", "transparent" if isWin11 else "#202020"))
         else:
-            self.setStyleSheet(globals.lightCSS.replace("mainbg", "transparent" if isWin11 else "#f6f6f6"))
+            self.setStyleSheet(Globals.lightCSS.replace("mainbg", "transparent" if isWin11 else "#f6f6f6"))
         self.ApplyIcons()
         self.callInMain.emit(self.OnThemeChange.emit)
 
@@ -468,8 +459,8 @@ class RootWindow(QMainWindow):
             win32mica.ApplyMica(self.winId(), mode)
 
     def ApplyIcons(self):
-        globals.maskedImages = {}
-        globals.cachedIcons = {}
+        Globals.maskedImages = {}
+        Globals.cachedIcons = {}
         self.adminButton.setIcon(QIcon(getMedia("runasadmin")))
         self.extrasMenuButton.setIcon(QIcon(getMedia("hamburger")))
         for widget in self.DynamicIconsToApply.keys():
@@ -478,11 +469,11 @@ class RootWindow(QMainWindow):
             manager.LoadedIcons = False
 
     def enterEvent(self, event: QEnterEvent) -> None:
-        globals.lastFocusedWindow = self.winId()
+        Globals.lastFocusedWindow = self.winId()
         return super().enterEvent(event)
 
     def loseFocusUpdate(self):
-        globals.lastFocusedWindow = 0
+        Globals.lastFocusedWindow = 0
 
     def focusOutEvent(self, event: QEvent) -> None:
         Thread(target=lambda: (time.sleep(0.3), self.loseFocusUpdate())).start()

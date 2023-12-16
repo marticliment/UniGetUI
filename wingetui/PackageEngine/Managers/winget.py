@@ -1,27 +1,16 @@
-"""
-
-wingetui/PackageManagers/winget.py
-
-This file holds the Winget Package Manager related code.
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
 import subprocess
 
-from PySide6.QtCore import *
-from tools import *
-from tools import _
-
-from .PackageClasses import *
-from .sampleHelper import *
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.PackageEngine.Classes import *
 
 
 class WingetPackageManager(PackageManagerWithSources):
@@ -45,7 +34,6 @@ class WingetPackageManager(PackageManagerWithSources):
 
     NAME = "Winget"
 
-
     wingetIcon = None
     localIcon = None
     steamIcon = None
@@ -53,7 +41,7 @@ class WingetPackageManager(PackageManagerWithSources):
     uPlayIcon = None
     msStoreIcon = None
     wsaIcon = None
-    
+
     def __init__(self):
         super().__init__()
         self.IconPath = getMedia("winget")
@@ -69,7 +57,7 @@ class WingetPackageManager(PackageManagerWithSources):
         self.Capabilities.Sources.KnowsUpdateDate = False
         self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
-        
+
         self.KnownSources = [
             ManagerSource(self, "winget", "https://cdn.winget.microsoft.com/cache"),
             ManagerSource(self, "msstore", "https://storeedgefd.dsx.mp.microsoft.com/v9.0"),
@@ -150,8 +138,8 @@ class WingetPackageManager(PackageManagerWithSources):
                                     source = "Winget: msstore"
                                 elif "winget" in line:
                                     source = "Winget: winget"
-                                elif len(globals.wingetSources.keys() >= 0):
-                                    source = "Winget: " + list(globals.wingetSources.keys())[0]
+                                elif len(Globals.wingetSources.keys() >= 0):
+                                    source = "Winget: " + list(Globals.wingetSources.keys())[0]
                                 else:
                                     source = "Winget"
 
@@ -181,7 +169,7 @@ class WingetPackageManager(PackageManagerWithSources):
                             if type(e) is not IndexError:
                                 report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawOutput
+            Globals.PackageManagerOutput += rawOutput
             return packages
 
         except Exception as e:
@@ -255,9 +243,9 @@ class WingetPackageManager(PackageManagerWithSources):
                         if noSourcesAvailable:
                             source = "Winget"
                         elif source.strip() == "":
-                            if len(list(globals.wingetSources.keys()) >= 0):
+                            if len(list(Globals.wingetSources.keys()) >= 0):
                                 print("🟠 No source found on Winget.getAvailableUpdates()!")
-                                source = "Winget: " + list(globals.wingetSources.keys())[0]
+                                source = "Winget: " + list(Globals.wingetSources.keys())[0]
                             else:
                                 source = "Winget"
 
@@ -275,7 +263,7 @@ class WingetPackageManager(PackageManagerWithSources):
                         if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -396,7 +384,7 @@ class WingetPackageManager(PackageManagerWithSources):
                         if name.strip() == "":
                             continue
 
-                        if packageLine.strip().split(" ")[-1] in globals.wingetSources.keys():
+                        if packageLine.strip().split(" ")[-1] in Globals.wingetSources.keys():
                             source = "Winget: " + packageLine.split(" ")[-1]
                         else:
                             source = getSource(id)
@@ -416,7 +404,7 @@ class WingetPackageManager(PackageManagerWithSources):
                         if type(e) is not IndexError:
                             report(e)
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
 
             if len(packages) <= 2 and not second_attempt:
                 print("🟠 Chocolatey got too few installed packages, retrying")
@@ -490,7 +478,7 @@ class WingetPackageManager(PackageManagerWithSources):
                                 break
                             output.append(str(line, encoding='utf-8', errors="ignore"))
 
-                globals.PackageManagerOutput += "\n--------" + "\n".join(output)
+                Globals.PackageManagerOutput += "\n--------" + "\n".join(output)
 
                 for line in output:
                     if line[0] == " " and outputIsDescribing:
@@ -626,7 +614,7 @@ class WingetPackageManager(PackageManagerWithSources):
             Parameters += ["--version", options.Version, "--force"]
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
 
@@ -645,7 +633,7 @@ class WingetPackageManager(PackageManagerWithSources):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package)
 
@@ -664,7 +652,7 @@ class WingetPackageManager(PackageManagerWithSources):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: update {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         counter = 0
         while p.poll() is None:
@@ -688,7 +676,7 @@ class WingetPackageManager(PackageManagerWithSources):
             outputCode = RETURNCODE_NO_APPLICABLE_UPDATE_FOUND
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         if "…" in package.Id:
             self.updatePackageId(package, installed=True)
 
@@ -698,7 +686,7 @@ class WingetPackageManager(PackageManagerWithSources):
         elif ".x86" in package.Id or "32-bit" in package.Name:
             print(f"🟠 Forcing 32bit architecture for package {package.Id}, {package.Name}")
             options.Architecture = "x86"
-        
+
         Command = [self.EXECUTABLE, "uninstall"] + (["--id", package.Id, "--exact"] if "…" not in package.Id else ["--name", '"' + package.Name + '"']) + self.getParameters(options, True)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -707,7 +695,7 @@ class WingetPackageManager(PackageManagerWithSources):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: uninstall {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         counter = RETURNCODE_OPERATION_SUCCEEDED
         output = ""
         while p.poll() is None:
@@ -748,10 +736,10 @@ class WingetPackageManager(PackageManagerWithSources):
                         print(line, idSeparator)
                         print("🔵 found Id", newId)
                         package.Id = newId
-                        globals.PackageManagerOutput += rawoutput + "\n\n"
+                        Globals.PackageManagerOutput += rawoutput + "\n\n"
                         return
 
-        globals.PackageManagerOutput += rawoutput + "\n\n"
+        Globals.PackageManagerOutput += rawoutput + "\n\n"
         print("🟡 Better id not found!")
 
     def getSources(self) -> None:
@@ -779,22 +767,22 @@ class WingetPackageManager(PackageManagerWithSources):
                 report(e)
         print(f"🟢 {self.NAME} source search finished with {len(sources)} sources")
         return sources
-    
-    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+
+    def installSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "add", "--name", source.Name, "--arg", source.Url, "--accept-source-agreements", "--disable-interactivity"]
         print(f"🔵 Starting source {source.Name} installation with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
-    
-    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+
+    def uninstallSource(self, source: ManagerSource, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command = [GSUDO_EXECUTABLE, self.EXECUTABLE, "source", "remove", "--name", source.Name, "--disable-interactivity"]
         print(f"🔵 Starting source {source.Name} removal with Command", Command)
         p = subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, shell=True, cwd=GSUDO_EXE_LOCATION, env=os.environ)
         Thread(target=self.sourceProgressThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing source {source.Name}").start()
         return p
 
-    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def sourceProgressThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         counter = 0
         while p.poll() is None:
@@ -811,11 +799,11 @@ class WingetPackageManager(PackageManagerWithSources):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run([self.EXECUTABLE, "-v"], shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
+        Globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
-        globals.wingetSources = {source.Name: source.Url for source in self.getSources()}
+        Globals.wingetSources = {source.Name: source.Url for source in self.getSources()}
 
     def updateSources(self, signal: Signal = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")

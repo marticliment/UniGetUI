@@ -6,7 +6,7 @@ This file contains a list of the used libraries and their licenses
 
 """
 
-from tools import _
+from wingetui.Core.Tools import _
 
 licenses = {
     "WingetUI":         "LGPL v2.1",
@@ -16,6 +16,10 @@ licenses = {
     "Win32mica":        "MIT",
     "PyInstaller":      "GPL 2.0",
     "Pythonnet":        "MIT",
+    "Flask":            "BSD-3-Clause",
+    "Flask-Cors":       "MIT",
+    "Waitress":         "ZPL 2.1",
+    "PyYaml":           "MIT",
     "Windows Toasts":   "Apache v2",
     "Winget":           "MIT",
     "Scoop":            "MIT",
@@ -49,5 +53,9 @@ licenseUrls = {
     "Dotnet Tool":      "https://dotnet.microsoft.com/en-us/platform/free",
     "dotnet-tools-outdated": "https://github.com/rychlym/dotnet-tools-outdated/blob/master/LICENSE",
     "Gsudo":            "https://github.com/gerardog/gsudo/blob/master/LICENSE.txt",
-    "Icons":            "https://icons8.com"
+    "Icons":            "https://icons8.com",
+    "Flask":            "https://flask.palletsprojects.com/en/latest/license/",
+    "Flask-Cors":       "https://github.com/corydolphin/flask-cors/blob/main/LICENSE",
+    "Waitress":         "https://github.com/Pylons/waitress/blob/main/LICENSE.txt",
+    "PyYaml":           "https://github.com/yaml/pyyaml/blob/main/LICENSE"
 }

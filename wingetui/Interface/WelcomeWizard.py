@@ -1,24 +1,24 @@
-"""
-
-wingetui/welcome.py
-
-This file contains the code that handles the Welcome Wizard
-
-"""
+if __name__ == "__main__":
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
+    import os
+    import subprocess
+    import sys
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
 import ctypes
 import os
 import time
-
-from Interface.CustomWidgets.SpecificWidgets import *
-from lang.languages import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
 from win32mica import *
+
+from wingetui.Core.Languages.LangReference import *
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.Interface.CustomWidgets.SpecificWidgets import *
+
 
 dwm = ctypes.windll.dwmapi
 

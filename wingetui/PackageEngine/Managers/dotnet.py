@@ -1,26 +1,16 @@
-"""
-
-wingetui/PackageManagers/sampleHelper.py
-
-This file holds a sample package manager implementation. The code here must be reimplemented before being used
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "..")).returncode)
-
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 import os
 import subprocess
 
-from PySide6.QtCore import *
-from tools import *
-from tools import _
-
-from .PackageClasses import *
+from wingetui.Core.Tools import *
+from wingetui.Core.Tools import _
+from wingetui.PackageEngine.Classes import *
 
 
 class DotNetToolPackageManager(PackageManagerModule):
@@ -108,7 +98,7 @@ class DotNetToolPackageManager(PackageManagerModule):
                                 packages.append(UpgradablePackage(name, id, version, newVersion, source, Dotnet))
 
             print(f"🟢 {self.NAME} search for updates finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput
+            Globals.PackageManagerOutput += rawoutput
             return packages
         except Exception as e:
             report(e)
@@ -141,7 +131,7 @@ class DotNetToolPackageManager(PackageManagerModule):
                             if name not in self.BLACKLISTED_PACKAGE_NAMES and id not in self.BLACKLISTED_PACKAGE_IDS and version not in self.BLACKLISTED_PACKAGE_VERSIONS:
                                 packages.append(Package(name, id, version, source, Dotnet))
             print(f"🟢 {self.NAME} search for installed packages finished with {len(packages)} result(s)")
-            globals.PackageManagerOutput += rawoutput + "\n\n"
+            Globals.PackageManagerOutput += rawoutput + "\n\n"
             if len(packages) <= 2 and not second_attempt:
                 print("🟠 Chocolatey got too few installed packages, retrying")
                 return self.getInstalledPackages(second_attempt=True)
@@ -230,7 +220,7 @@ class DotNetToolPackageManager(PackageManagerModule):
             Parameters += options.CustomParameters
         return Parameters
 
-    def startInstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "tool", "install", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -239,7 +229,7 @@ class DotNetToolPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: installing {package.Name}").start()
         return p
 
-    def startUpdate(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUpdate(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "tool", "update", package.Id] + self.getParameters(options)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -248,7 +238,7 @@ class DotNetToolPackageManager(PackageManagerModule):
         Thread(target=self.installationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def installationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -264,7 +254,7 @@ class DotNetToolPackageManager(PackageManagerModule):
                 outputCode = RETURNCODE_OPERATION_SUCCEEDED
         widget.finishInstallation.emit(outputCode, output)
 
-    def startUninstallation(self, package: Package, options: InstallationOptions, widget: InstallationWidgetType) -> subprocess.Popen:
+    def startUninstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:
         Command: list[str] = [self.EXECUTABLE, "tool", "uninstall", package.Id] + self.getParameters(options, False)
         if options.RunAsAdministrator:
             Command = [GSUDO_EXECUTABLE] + Command
@@ -273,7 +263,7 @@ class DotNetToolPackageManager(PackageManagerModule):
         Thread(target=self.uninstallationThread, args=(p, options, widget,), name=f"{self.NAME} installation thread: updating {package.Name}").start()
         return p
 
-    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: InstallationWidgetType):
+    def uninstallationThread(self, p: subprocess.Popen, options: InstallationOptions, widget: 'PackageInstallerWidget'):
         output = ""
         while p.poll() is None:
             line, is_newline = getLineFromStdout(p)
@@ -289,8 +279,8 @@ class DotNetToolPackageManager(PackageManagerModule):
 
     def detectManager(self, signal: Signal = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE}  --version", shell=True, stdout=subprocess.PIPE)
-        globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
-        globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
+        Globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
+        Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
 

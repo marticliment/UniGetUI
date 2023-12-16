@@ -1,33 +1,19 @@
-"""
-
-wingetui/Interface/CustomWidgets/SectionWidgets.py
-
-This file contains the classes for the set of Widgets used on:
- - The settings tab
- - The filter pane
- - The "Install Options" section, on the Package Details tab
-
-"""
-
 if __name__ == "__main__":
-    import subprocess
+    # WingetUI cannot be run directly from this file, it must be run by importing the wingetui module
     import os
+    import subprocess
     import sys
-    sys.exit(subprocess.run(["cmd", "/C", "__init__.py"], shell=True, cwd=os.path.join(os.path.dirname(__file__), "../..")).returncode)
+    sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
-from functools import partial
-import PySide6.QtCore
-import PySide6.QtGui
-import PySide6.QtWidgets
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from tools import *
-from tools import _
 from win32mica import *
 
-from Interface.CustomWidgets.GenericWidgets import *
+from wingetui.Interface.CustomWidgets.GenericWidgets import *
+from wingetui.Interface.Tools import *
+from wingetui.Interface.Tools import _
 
 
 class CollapsableSection(QWidget):
@@ -238,7 +224,7 @@ class CollapsableSection(QWidget):
     def showEvent(self, event: QShowEvent) -> None:
         if not self.registeredThemeEvent:
             self.registeredThemeEvent = False
-            globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
+            Globals.mainWindow.OnThemeChange.connect(self.ApplyIcons)
             self.ApplyIcons()
         return super().showEvent(event)
 
@@ -596,7 +582,7 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
     stateChanged = Signal(bool)
     valueChanged = Signal(str)
     defaultText: str
-    
+
     def __init__(self, text: str, parent=None, helpLabel: str = "", smallerMargins: bool = False):
         super().__init__(text=text, parent=parent)
         self.defaultText = _("Select")
@@ -626,15 +612,15 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
             self.layout().setContentsMargins(70, 5, 20, 0)
             self.setFixedHeight(50)
             self.pushButton.setFixedWidth(450)
-        
+
     def currentValue(self) -> str:
         if self.pushButton.text() != self.defaultText:
             return self.pushButton.text()
         return ""
-    
+
     def setValue(self, value: str) -> None:
         self.setText(value)
-        
+
     def showDialog(self):
         folder = QFileDialog.getExistingDirectory(self, _("Select a folder"), os.path.expanduser("~"))
         if folder:
@@ -647,7 +633,7 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
     def setPlaceholderText(self, text: str):
         self.pushButton.setText(text)
         self.oldtext = text
-        
+
     def setDefaultText(self, text: str):
         self.defaultText = text
 
