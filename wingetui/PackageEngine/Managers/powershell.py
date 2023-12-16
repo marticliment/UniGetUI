@@ -24,7 +24,9 @@ class PowershellPackageManager(PackageManagerWithSources):
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.SupportsCustomVersions = True
+        self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsCustomSources = True
+        self.Capabilities.SupportsPreRelease = True
         self.IconPath = getMedia("powershell")
 
         self.KnownSources = [
@@ -183,7 +185,8 @@ class PowershellPackageManager(PackageManagerWithSources):
         """
         print(f"🔵 Starting get info for {package.Id} on {self.NAME}")
         details = PackageDetails(package)
-        try:  # self.EXECUTABLE, "-Command",
+        details.Scopes = ["AllUsers", "CurrentUser"]
+        try:
             p = subprocess.Popen(f"\"Find-Module -Name {package.Id} | Get-Member -MemberType NoteProperty\"", executable=shutil.which("powershell"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
 
             while p.poll() is None:
@@ -229,8 +232,12 @@ class PowershellPackageManager(PackageManagerWithSources):
                         content = "=".join(line.split("=")[1:]).strip()
                         details.UpdateDate = content if content != "null" else ""
 
-                else:
-                    print(line)
+            p = subprocess.Popen(f"\"Find-Module -Name {package.Id} -AllVersions\"", executable=shutil.which("powershell"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, cwd=os.getcwd(), env=os.environ.copy(), shell=True)
+
+            while p.poll() is None:
+                line: str = str(p.stdout.readline().strip(), "utf-8", errors="ignore")
+                if line and package.Id in line:
+                    details.Versions += [line.split(" ")[0].strip()]
 
             print(f"🟢 Get info finished for {package.Id} on {self.NAME}")
             return details
@@ -248,6 +255,8 @@ class PowershellPackageManager(PackageManagerWithSources):
         Parameters: list[str] = ["-Confirm:$false", "-Force"]
         if options.CustomParameters:
             Parameters += options.CustomParameters
+        if options.SkipHashCheck:
+            Parameters += ["-SkipPublisherCheck"]
         if not isAnUninstall and not isAnUpdate:
             Parameters: list[str] = ["-AcceptLicense", "-AllowClobber"]
             if not options.RunAsAdministrator:
@@ -256,6 +265,13 @@ class PowershellPackageManager(PackageManagerWithSources):
                 options.InstallationScope = "AllUsers"
             if options.InstallationScope:
                 Parameters += ["-Scope", options.InstallationScope]
+                if options.InstallationScope == "AllUsers":
+                    options.RunAsAdministrator = True
+            if options.Version:
+                Parameters += ["-RequiredVersion", options.Version]
+        if not isAnUninstall:
+            if options.PreRelease:
+                Parameters += ["-AllowPrerelease"]
         return Parameters
 
     def startInstallation(self, package: Package, options: InstallationOptions, widget: 'PackageInstallerWidget') -> subprocess.Popen:

@@ -294,6 +294,10 @@ class PackageDetails(Package):
         self.Version = package.Version
         self.Source = package.Source
         self.PackageObject = package
+        self.Versions = []
+        self.Architectures = []
+        self.Scopes = []
+        self.Tags = []
         if type(package) is UpgradablePackage:
             self.NewVersion = package.NewVersion
 
