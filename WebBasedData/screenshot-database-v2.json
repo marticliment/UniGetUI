@@ -48040,15 +48040,15 @@
             "images": []
         },
         "xnresize": {
-            "icon": "https://www.xnview.com/img/app-resizeme-512.webp",
+            "icon": "https://www.xnview.com/img/app-resizeme-512.png",
             "images": []
         },
         "xnshell": {
-            "icon": "https://community.chocolatey.org/content/packageimages/xnshell.portable.4.16.png",
+            "icon": "https://www.xnview.com/img/app-xnview-512.png",
             "images": []
         },
         "xnview": {
-            "icon": "https://community.chocolatey.org/content/packageimages/XnView.2.51.1.png",
+            "icon": "https://www.xnview.com/img/app-xnview-512.png",
             "images": []
         },
         "xnview-classic": {
