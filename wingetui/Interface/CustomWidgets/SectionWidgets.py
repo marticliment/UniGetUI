@@ -65,6 +65,7 @@ class CollapsableSection(QWidget):
         vLayout = QVBoxLayout()
         vLayout.setSpacing(0)
         vLayout.setContentsMargins(0, 0, 0, 0)
+        vLayout.setAlignment(Qt.AlignTop)
         self.childrenVisible = False
         self.compressibleWidget.setLayout(vLayout)
 

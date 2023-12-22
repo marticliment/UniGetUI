@@ -819,8 +819,8 @@ class SoftwareSection(QWidget):
         self.filterScrollArea.setFixedWidth(220)
         self.filterScrollArea.setFrameShape(QFrame.Shape.NoFrame)
 
-        sourcesWidget = SmallCollapsableSection(_("Sources"), getMedia("provider"))
-        sourcesWidget.showHideButton.click()
+        self.SourcesCollapsableWidget = SmallCollapsableSection(_("Sources"), getMedia("provider"))
+        self.SourcesCollapsableWidget.showHideButton.click()
 
         scrollWidget = QWidget()
 
@@ -854,8 +854,8 @@ class SoftwareSection(QWidget):
         self.FilterListHostWidget = SectionHWidget(lastOne=True, smallerMargins=True)
         self.FilterListHostWidget.addWidget(self.filterList)
         self.FilterListHostWidget.setFixedHeight(500)
-        sourcesWidget.addWidget(self.FilterListHostWidget)
-        filterLayout.addWidget(sourcesWidget)
+        self.SourcesCollapsableWidget.addWidget(self.FilterListHostWidget)
+        filterLayout.addWidget(self.SourcesCollapsableWidget)
         filterLayout.addSpacing(0)
 
         optionsWidget = SmallCollapsableSection(_("Filters"), getMedia("edit_filters"))
@@ -1197,6 +1197,7 @@ class SoftwareSection(QWidget):
             HostWidgetHeight += 34 if manager.isEnabled() else 0
             item.setDisabled(managerCount[manager] == 0)
 
+        self.SourcesCollapsableWidget.setFixedHeight(HostWidgetHeight + 50)
         self.FilterListHostWidget.setFixedHeight(HostWidgetHeight + 10)
 
     def showQuery(self) -> None:
