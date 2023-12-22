@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11696,
-        "done": 7461,
-        "packages_with_icon": 7461,
-        "packages_with_screenshot": 527,
-        "total_screenshots": 1673
+        "total": 11697,
+        "done": 7471,
+        "packages_with_icon": 7471,
+        "packages_with_screenshot": 528,
+        "total_screenshots": 1676
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -23801,7 +23801,7 @@
             "images": []
         },
         "manictime": {
-            "icon": "https://community.chocolatey.org/content/packageimages/manictime.install.4.1.9.png",
+            "icon": "https://manictime.com/images/logo.png",
             "images": []
         },
         "manifest-tool": {
@@ -26410,6 +26410,14 @@
         "nativeaccess": {
             "icon": "",
             "images": []
+        },
+        "nativescript": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/8/86/NativeScript_Logo.png",
+            "images": [
+                "https://preview.nativescript.org/assets/sb_screenshot-e3262412.png",
+                "https://docs.nativescript.org/assets/WebView.ee7d2fc5.png",
+                "https://docs.nativescript.org/assets/Image.c71ebc7e.png"
+            ]
         },
         "natron": {
             "icon": "https://community.chocolatey.org/content/packageimages/natron.portable.2.5.0.png",
@@ -29900,23 +29908,23 @@
             "images": []
         },
         "pdf-xchange-editor": {
-            "icon": "",
+            "icon": "https://pdf-xchange.eu/_images/pdf-xchange-editor/box-version-6.png",
             "images": []
         },
         "pdf-xchangeeditor": {
-            "icon": "",
+            "icon": "https://pdf-xchange.eu/_images/pdf-xchange-editor/box-version-6.png",
             "images": []
         },
         "pdf-xchangepro": {
-            "icon": "",
+            "icon": "https://pdf-xchange.eu/_images/pdf-xchange/box-pdf-xchange-pro-6.png",
             "images": []
         },
         "pdf-xchangestandard": {
-            "icon": "",
+            "icon": "https://pdf-xchange.eu/_images/pdf-xchange/box-pdf-xchange-standard-6.png",
             "images": []
         },
         "pdf-xchangeviewer": {
-            "icon": "",
+            "icon": "https://pdf-xchange.eu/_images/pdf-xchange-editor/box-version-6.png",
             "images": []
         },
         "pdf24": {
@@ -43541,7 +43549,7 @@
             "images": []
         },
         "vidcoder": {
-            "icon": "https://vidcoder.net/images/BannerLarge.png",
+            "icon": "https://raw.githubusercontent.com/RandomEngy/VidCoder/master/VidCoder/Icons/VidCoder.png",
             "images": [
                 "https://vidcoder.net/images/main.png",
                 "https://vidcoder.net/images/preview.png",
@@ -43549,7 +43557,7 @@
             ]
         },
         "vidcoder-beta": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/RandomEngy/VidCoder/master/VidCoder/Icons/VidCoder.png",
             "images": []
         },
         "vidcutter": {
@@ -47724,7 +47732,7 @@
             ]
         },
         "x264": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/6/6f/X264.png",
             "images": []
         },
         "x264vfw": {
@@ -47732,7 +47740,7 @@
             "images": []
         },
         "x265": {
-            "icon": "",
+            "icon": "https://en.wikipedia.org/wiki/X265#/media/File:X265_HEVC_Encoder_Logo.png",
             "images": []
         },
         "x2go": {
@@ -48032,15 +48040,15 @@
             "images": []
         },
         "xnresize": {
-            "icon": "",
+            "icon": "https://www.xnview.com/img/app-resizeme-512.png",
             "images": []
         },
         "xnshell": {
-            "icon": "https://community.chocolatey.org/content/packageimages/xnshell.portable.4.16.png",
+            "icon": "https://www.xnview.com/img/app-xnview-512.png",
             "images": []
         },
         "xnview": {
-            "icon": "https://community.chocolatey.org/content/packageimages/XnView.2.51.1.png",
+            "icon": "https://www.xnview.com/img/app-xnview-512.png",
             "images": []
         },
         "xnview-classic": {
