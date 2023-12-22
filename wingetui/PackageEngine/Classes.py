@@ -408,6 +408,13 @@ class PackageManagerCapabilities():
         self.Sources = ManagerSource.Capabilities()
 
 
+class ManagerProperties():
+    InstallVerb: str = ""
+    UpdateVerb: str = ""
+    UninstallVerb: str = ""
+    ExecutableName: str = ""
+
+
 class PackageManagerModule():
     NAME: str
     EXECUTABLE: str
@@ -422,8 +429,14 @@ class PackageManagerModule():
     BLACKLISTED_PACKAGE_IDS: list[str]
     BLACKLISTED_PACKAGE_VERSIONS: list[str]
 
+    INSTALL_VERB: str
+    UPDATE_VERB: str
+    UNINSTALL_VERB: str
+    Properties: ManagerProperties
+
     def __init__(self):
         self.Capabilities = PackageManagerCapabilities()
+        self.Properties = ManagerProperties()
         self.BLACKLISTED_PACKAGE_NAMES: list[str] = []
         self.BLACKLISTED_PACKAGE_IDS: list[str] = []
         self.BLACKLISTED_PACKAGE_VERSIONS: list[str] = []

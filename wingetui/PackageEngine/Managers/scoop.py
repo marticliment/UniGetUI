@@ -33,6 +33,10 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
+        self.Properties.InstallVerb = "install"
+        self.Properties.UpdateVerb = "update"
+        self.Properties.UninstallVerb = "uninstall"
+        self.Properties.ExecutableName = "scoop"
 
         self.KnownSources = [
             # This list should reflect the one published on https://github.com/ScoopInstaller/Scoop/blob/master/buckets.json

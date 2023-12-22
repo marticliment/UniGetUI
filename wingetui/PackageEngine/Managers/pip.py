@@ -29,6 +29,10 @@ class PipPackageManager(PackageManagerModule):
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsPreRelease = True
+        self.Properties.InstallVerb = "install"
+        self.Properties.UpdateVerb = "install --upgrade"
+        self.Properties.UninstallVerb = "uninstall"
+        self.Properties.ExecutableName = "python -m pip"
 
         self.BLACKLISTED_PACKAGE_NAMES = ["WARNING:", "[notice]", "Package"]
         self.BLACKLISTED_PACKAGE_IDS = ["WARNING:", "[notice]", "Package"]

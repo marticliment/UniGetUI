@@ -27,6 +27,10 @@ class PowershellPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.SupportsPreRelease = True
+        self.Properties.InstallVerb = "Install-Module"
+        self.Properties.UpdateVerb = "Update-Module"
+        self.Properties.UninstallVerb = "Uninstall-Module"
+        self.Properties.ExecutableName = "powershell -Command"
         self.IconPath = getMedia("powershell")
 
         self.KnownSources = [

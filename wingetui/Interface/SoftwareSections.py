@@ -2090,32 +2090,17 @@ class PackageInfoPopupWindow(QWidget):
         if saveOptionsToDisk and not self.isLoadingPackageDetails:
             options.SaveOptionsToDisk()
 
-        PackageManager = self.currentPackage.PackageManager
+        Manager = self.currentPackage.PackageManager
 
-        pipId = self.currentPackage.Id
-        if options.Version:
-            pipId += "==" + options.Version
+        versionedId = self.currentPackage.Id
+        if Manager is Pip and options.Version:
+            versionedId += "==" + options.Version
 
-        CMD_UPDATE_VARIANT = 'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
-        CMD_UPGRADE_VARIANT = 'upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
-        CMD_PIP_VARIANT = 'install --upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
-        CMD_PWSH_VARIANT = 'Update-Module' if self.isAnUpdate else ('Uninstall-Module' if self.isAnUninstall else 'Install-Module')
+        baseVerb = Manager.Properties.ExecutableName + " "
+        baseVerb += Manager.Properties.UpdateVerb if self.isAnUpdate else (Manager.Properties.UninstallVerb if self.isAnUninstall else Manager.Properties.InstallVerb) + " "
+        baseVerb += versionedId + " "
 
-        baseCommands = {
-            Winget: f"winget {CMD_UPDATE_VARIANT} --id {self.currentPackage.Id} --exact",
-            Scoop: f"scoop {CMD_UPDATE_VARIANT} {self.currentPackage.Id}",
-            Choco: f"choco {CMD_UPGRADE_VARIANT} {self.currentPackage.Id} -y",
-            Npm: f"npm {CMD_UPDATE_VARIANT} {self.currentPackage.Id}",
-            Pip: f"pip {CMD_PIP_VARIANT} {pipId}",
-            Dotnet: f"dotnet tool {CMD_UPDATE_VARIANT}",
-            Powershell: f"powershell -Command {CMD_PWSH_VARIANT} -Name {self.currentPackage.Id}",
-        }
-
-        if PackageManager not in baseCommands:
-            print(f"🟠 Unknown Package Manager {self.currentPackage.Source}")
-        else:
-            self.CustomCommandLabel.setText(baseCommands[PackageManager] + " " + " ".join(PackageManager.getParameters(options, self.isAnUninstall)))
-
+        self.CustomCommandLabel.setText(baseVerb + " ".join(Manager.getParameters(options, self.isAnUninstall)))
         self.CustomCommandLabel.setCursorPosition(0)
 
     def showPackageDetails(self, package: Package, update: bool = False, uninstall: bool = False, installedVersion: str = ""):

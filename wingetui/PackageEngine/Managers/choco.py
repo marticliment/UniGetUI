@@ -41,6 +41,10 @@ class ChocoPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsPreRelease = True
         self.Capabilities.SupportsCustomSources = True
+        self.Properties.InstallVerb = "install"
+        self.Properties.UpdateVerb = "upgrade"
+        self.Properties.UninstallVerb = "uninstall"
+        self.Properties.ExecutableName = "choco"
 
         self.KnownSources = [
             ManagerSource(self, "chocolatey", "https://community.chocolatey.org/api/v2/")

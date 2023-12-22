@@ -30,6 +30,10 @@ class NPMPackageManager(PackageManagerModule):
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True
+        self.Properties.InstallVerb = "install"
+        self.Properties.UpdateVerb = "update"
+        self.Properties.UninstallVerb = "uninstall"
+        self.Properties.ExecutableName = "npm"
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")

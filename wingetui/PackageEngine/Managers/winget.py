@@ -55,6 +55,10 @@ class WingetPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = False
         self.Capabilities.Sources.KnowsUpdateDate = False
+        self.Properties.InstallVerb = "install"
+        self.Properties.UpdateVerb = "update"
+        self.Properties.UninstallVerb = "uninstall"
+        self.Properties.ExecutableName = "winget"
         self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
 

@@ -25,6 +25,10 @@ class DotNetToolPackageManager(PackageManagerModule):
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsPreRelease = True
+        self.Properties.InstallVerb = "install"
+        self.Properties.UpdateVerb = "update"
+        self.Properties.UninstallVerb = "uninstall"
+        self.Properties.ExecutableName = "dotnet tool"
 
     def isEnabled(self) -> bool:
         return not getSettings(f"Disable{self.NAME}")
