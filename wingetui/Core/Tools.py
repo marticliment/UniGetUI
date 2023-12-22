@@ -650,8 +650,10 @@ if not os.path.isdir(os.path.join(os.path.expanduser("~"), ".wingetui")):
     except Exception:
         pass
 
-GSUDO_EXECUTABLE = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings(
-    "UseUserGSudo") else shutil.which("gsudo")
+GSUDO_EXECUTABLE = os.path.join(os.path.join(realpath, "components"), "gsudo.exe") if not getSettings("UseUserGSudo") else shutil.which("gsudo")
+if not GSUDO_EXECUTABLE:
+    print("🟠 System GSudo not found, defaulting to bundled...")
+    GSUDO_EXECUTABLE = os.path.join(os.path.join(realpath, "components"), "gsudo.exe")
 
 try:
     GSUDO_EXE_LOCATION = os.path.dirname(GSUDO_EXECUTABLE)
