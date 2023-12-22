@@ -124,6 +124,14 @@ class RootWindow(QMainWindow):
         self.helpSection = BaseBrowserSection()
         self.widgets[self.helpSection] = self.addTab(self.helpSection, _("Help and documentation"), addToMenu=True, actionIcon="help")
 
+        self.ReleaseNotesAction = QAction(_("Release notes"), self)
+        self.ReleaseNotesAction.triggered.connect(lambda: self.showHelpUrl("https://github.com/marticliment/WingetUI/releases/tag/" + versionName))
+
+        self.extrasMenu.addSeparator()
+        self.DynamicIconsToApply[self.ReleaseNotesAction] = "megaphone"
+        self.ReleaseNotesAction.setParent(self.extrasMenu)
+        self.extrasMenu.addAction(self.ReleaseNotesAction)
+
         self.buttonLayout.addWidget(QWidget(), stretch=1)
         vl = QVBoxLayout()
         hl = QHBoxLayout()
