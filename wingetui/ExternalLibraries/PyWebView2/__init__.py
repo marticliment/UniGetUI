@@ -11,8 +11,7 @@ from PySide6.QtWidgets import *
 import sys
 import clr
 import os
-import time
-from threading import Thread
+import traceback
 
 if hasattr(sys, 'frozen'):
     BASE_PATH = os.path.join(sys._MEIPASS, "wingetui/ExternalLibraries/PyWebView2")
@@ -37,20 +36,29 @@ class WebView2(QWidget):
         self.CustomLayout = QHBoxLayout()
         self.setLayout(self.CustomLayout)
 
-        clr.AddReference(DLL_PATH)
-        import WinFormsWebView
+        try:
+            clr.AddReference(DLL_PATH)
+            import WinFormsWebView
 
-        self.webview = WinFormsWebView.Form1(contextMenuEnabled=False)
-        hWnd = self.webview.getHWND()
-        window = QWindow.fromWinId(hWnd)
-        window.setFlags(Qt.WindowType.CustomizeWindowHint)
-        self.__webview_widget = QWidget.createWindowContainer(window)
-        self.__webview_widget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            self.webview = WinFormsWebView.Form1(contextMenuEnabled=False)
+            hWnd = self.webview.getHWND()
+            window = QWindow.fromWinId(hWnd)
+            window.setFlags(Qt.WindowType.CustomizeWindowHint)
+            self.__webview_widget = QWidget.createWindowContainer(window)
+            self.__webview_widget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            self.webview.uncoverWindow()
+
+        except Exception as e:
+            print("🔴 Could not load WebView due to", str(type(e)) + ":", str(e))
+            traceback_str = "Something, somewhere, went terribly wrong.\nError details:\n\n" + traceback.format_exc()
+            self.__webview_widget = QLabel()
+            self.__webview_widget.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+            self.__webview_widget.setContentsMargins(200, 0, 0, 0)
+            self.__webview_widget.setText(traceback_str)
+
         self.CustomLayout.addWidget(self.__webview_widget)
         self.CustomLayout.setContentsMargins(0, 0, 0, 0)
-        self.CustomLayout.addWidget(self.__webview_widget)
         self.setMouseTracking(True)
-        self.webview.uncoverWindow()
 
     def goBack(self):
         """
