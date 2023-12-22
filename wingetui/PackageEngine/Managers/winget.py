@@ -28,9 +28,9 @@ class WingetPackageManager(PackageManagerWithSources):
         if getSettings("EnableArmWinget") or IS_ARM:
             print("🟠 USING ARM BUILT-In WINGET")
             IS_ARM = True
-            EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_arm64", "winget.exe")
+            EXECUTABLE = os.path.join(realpath, "PackageEngine/Managers", "winget-cli_arm64", "winget.exe")
         else:
-            EXECUTABLE = os.path.join(realpath, "PackageManagers", "winget-cli_x64", "winget.exe")
+            EXECUTABLE = os.path.join(realpath, "PackageEngine/Managers", "winget-cli_x64", "winget.exe")
 
     NAME = "Winget"
 

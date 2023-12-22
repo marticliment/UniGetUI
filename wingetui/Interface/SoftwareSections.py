@@ -2099,6 +2099,7 @@ class PackageInfoPopupWindow(QWidget):
         CMD_UPDATE_VARIANT = 'update' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
         CMD_UPGRADE_VARIANT = 'upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
         CMD_PIP_VARIANT = 'install --upgrade' if self.isAnUpdate else ('uninstall' if self.isAnUninstall else 'install')
+        CMD_PWSH_VARIANT = 'Update-Module' if self.isAnUpdate else ('Uninstall-Module' if self.isAnUninstall else 'Install-Module')
 
         baseCommands = {
             Winget: f"winget {CMD_UPDATE_VARIANT} --id {self.currentPackage.Id} --exact",
@@ -2107,6 +2108,7 @@ class PackageInfoPopupWindow(QWidget):
             Npm: f"npm {CMD_UPDATE_VARIANT} {self.currentPackage.Id}",
             Pip: f"pip {CMD_PIP_VARIANT} {pipId}",
             Dotnet: f"dotnet tool {CMD_UPDATE_VARIANT}",
+            Powershell: f"powershell -Command {CMD_PWSH_VARIANT} -Name {self.currentPackage.Id}",
         }
 
         if PackageManager not in baseCommands:
@@ -2374,7 +2376,7 @@ class PackageInfoPopupWindow(QWidget):
 
         except Exception as e:
             try:
-                if type(e) is KeyError:
+                if type(e) is not KeyError:
                     report(e)
                 else:
                     print(f"🟡 Image {iconId} not found in json")

@@ -74,6 +74,8 @@ class Package():
                     iconUrl = f"https://community.chocolatey.org/content/packageimages/{self.Id}.{self.Version}.png"
                 else:
                     iconUrl = ""
+        except KeyError:
+            print(f"🟡 Icon {iconId} not found in IconDatabase")
         except Exception as e:
             report(e)
             iconUrl = ""
@@ -292,6 +294,10 @@ class PackageDetails(Package):
         self.Version = package.Version
         self.Source = package.Source
         self.PackageObject = package
+        self.Versions = []
+        self.Architectures = []
+        self.Scopes = []
+        self.Tags = []
         if type(package) is UpgradablePackage:
             self.NewVersion = package.NewVersion
 
