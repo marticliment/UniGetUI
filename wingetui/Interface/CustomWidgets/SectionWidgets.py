@@ -567,8 +567,8 @@ class SectionCheckBoxTextBox(SectionCheckBox):
         if not self.checkbox.isChecked():
             self.lineedit.setEnabled(False)
             self.oldtext = self.lineedit.placeholderText()
-            self.lineedit.setToolTip(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()))
-            self.lineedit.setPlaceholderText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+            self.lineedit.setToolTip(_("This setting is disabled"))
+            self.lineedit.setPlaceholderText(_("This setting is disabled"))
             self.stateChanged.emit(v)
         else:
             self.stateChanged.emit(v)
@@ -639,7 +639,7 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
 
     def setText(self, text: str):
         if not self.checkbox.isChecked():
-            self.pushButton.setText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+            self.pushButton.setText(_("This setting is disabled").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
         elif text:
             self.pushButton.setText(text)
         else:
@@ -650,8 +650,8 @@ class SectionCheckBoxDirPicker(SectionCheckBox):
         if not self.checkbox.isChecked():
             self.pushButton.setEnabled(False)
             self.oldtext = self.pushButton.text()
-            self.pushButton.setToolTip(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()))
-            self.pushButton.setText(_("<b>{0}</b> needs to be enabled to change this setting").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
+            self.pushButton.setToolTip(_("This setting is disabled").format(self.checkbox.text()))
+            self.pushButton.setText(_("This setting is disabled").format(self.checkbox.text()).replace("<b>", "\"").replace("</b>", "\""))
             self.stateChanged.emit(v)
         else:
             self.stateChanged.emit(v)
