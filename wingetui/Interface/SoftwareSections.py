@@ -1409,8 +1409,8 @@ class UninstallSoftwareSection(SoftwareSection):
 
         toolbar.addSeparator()
 
-        self.HelpMenuEntry1 = QAction("")
-        self.HelpMenuEntry1.triggered.connect(lambda: os.startfile(""))
+        self.HelpMenuEntry1 = QAction("WingetUI Help and Documentation")
+        self.HelpMenuEntry1.triggered.connect(lambda: Globals.mainWindow.showHelpUrl("https://marticliment.com/wingetui/help"))
         self.HelpMenuEntry2 = QAction("")
         self.HelpMenuEntry2.triggered.connect(lambda: os.startfile(""))
         self.HelpMenuEntry3 = QAction("")
@@ -1418,7 +1418,7 @@ class UninstallSoftwareSection(SoftwareSection):
 
         def showHelpMenu():
             helpMenu = QMenu(self)
-            # helpMenu.addAction(self.HelpMenuEntry1)
+            helpMenu.addAction(self.HelpMenuEntry1)
             # helpMenu.addAction(self.HelpMenuEntry2)
             helpMenu.addSeparator()
             # helpMenu.addAction(self.HelpMenuEntry3)
