@@ -389,7 +389,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.packageList.scrollToItem(self.packageList.currentItem())
             if len(self.showableItems) == 0:
                 self.addItemsToTreeWidget(reset=True)
-                self.loadingProgressBar.hide()
+                self.LoadingIndicator.hide()
                 self.packageList.label.show()
                 self.packageList.label.setText(_("Search for packages to start"))
             self.updateFilterTable()
@@ -397,7 +397,7 @@ class DiscoverSoftwareSection(SoftwareSection):
             self.showableItems = []
             self.addItemsToTreeWidget(reset=True)
             self.updateFilterTable()
-            self.loadingProgressBar.hide()
+            self.LoadingIndicator.hide()
             self.packageList.label.show()
             self.packageList.label.setText(_("Please type at least two characters"))
 
@@ -414,7 +414,7 @@ class DiscoverSoftwareSection(SoftwareSection):
                 return
 
         self.reloadButton.setEnabled(True)
-        self.loadingProgressBar.hide()
+        self.LoadingIndicator.hide()
         self.countLabel.setText(_("Found packages: {0}").format(str(itemCount)))
         print("🟢 Total packages: " + str(itemCount))
 
@@ -422,7 +422,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         self.finishFiltering(self.query.text())
 
         if not self.isLoadingDynamicPackages():
-            self.loadingProgressBar.hide()
+            self.LoadingIndicator.hide()
             if len(self.showableItems) == 0 and len(self.query.text()) >= 3:
                 self.packageList.label.setText(_("No packages found matching the input criteria"))
             else:
@@ -497,7 +497,7 @@ class DiscoverSoftwareSection(SoftwareSection):
         print(f"🔵 Loading dynamic packages for query {query}")
         for manager in self.DynaimcPackageManagers:
             self.DynamicPackagesLoaded[manager] = False
-        self.loadingProgressBar.show()
+        self.LoadingIndicator.show()
 
         for manager in self.DynaimcPackageManagers:
             if manager.isEnabled():
@@ -845,8 +845,7 @@ class UpdateSoftwareSection(SoftwareSection):
                 return
 
         self.reloadButton.setEnabled(True)
-        self.loadingProgressBar.hide()
-        self.loadingProgressBar.hide()
+        self.LoadingIndicator.hide()
         Globals.trayMenuUpdatesList.menuAction().setText(_("Available updates: {0}").format(str(len(self.packageItems))))
         count = 0
         lastVisibleItem = None
@@ -1483,7 +1482,7 @@ class UninstallSoftwareSection(SoftwareSection):
 
         self.reloadButton.setEnabled(True)
         self.filter()
-        self.loadingProgressBar.hide()
+        self.LoadingIndicator.hide()
         Globals.trayMenuInstalledList.setTitle(_("{0} packages found").format(len(self.packageItems)))
         self.countLabel.setText(_("Found packages: {0}").format(len(self.packageItems)))
         self.packageList.label.setText("")
@@ -1619,14 +1618,7 @@ class PackageInfoPopupWindow(QWidget):
         self.sct.activated.connect(lambda: self.close())
         self.baseScrollArea.setWidgetResizable(True)
 
-        self.loadingProgressBar = QProgressBar(self)
-        self.loadingProgressBar.setRange(0, 1000)
-        self.loadingProgressBar.setValue(0)
-        self.loadingProgressBar.setFixedHeight(4)
-        self.loadingProgressBar.setTextVisible(False)
-        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
-        self.startAnim.connect(lambda anim: anim.start())
-        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not self.loadingProgressBar.invertedAppearance()))
+        self.LoadingIndicator = IndefiniteProgressBar(self)
 
         self.vLayout = QVBoxLayout()
         self.layout = QVBoxLayout()
@@ -1970,36 +1962,6 @@ class PackageInfoPopupWindow(QWidget):
         self.hide()
         self.loadInfo.connect(self.printData)
 
-        self.leftSlow = QVariantAnimation()
-        self.leftSlow.setStartValue(0)
-        self.leftSlow.setEndValue(1000)
-        self.leftSlow.setDuration(700)
-        self.leftSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-
-        self.rightSlow = QVariantAnimation()
-        self.rightSlow.setStartValue(1000)
-        self.rightSlow.setEndValue(0)
-        self.rightSlow.setDuration(700)
-        self.rightSlow.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-
-        self.leftFast = QVariantAnimation()
-        self.leftFast.setStartValue(0)
-        self.leftFast.setEndValue(1000)
-        self.leftFast.setDuration(300)
-        self.leftFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
-
-        self.rightFast = QVariantAnimation()
-        self.rightFast.setStartValue(1000)
-        self.rightFast.setEndValue(0)
-        self.rightFast.setDuration(300)
-        self.rightFast.valueChanged.connect(lambda v: self.loadingProgressBar.setValue(v))
-        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-
-        self.leftSlow.start()
-
         self.baseScrollArea.horizontalScrollBar().setEnabled(False)
         self.baseScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.verticalScrollbar = CustomScrollBar()
@@ -2047,8 +2009,8 @@ class PackageInfoPopupWindow(QWidget):
 
     def resizeEvent(self, event: QResizeEvent = None):
         self.centralwidget.setFixedWidth(self.width() - 18)
-        self.loadingProgressBar.move(16, 0)
-        self.loadingProgressBar.resize(self.width() - 32, 4)
+        self.LoadingIndicator.move(16, 0)
+        self.LoadingIndicator.resize(self.width() - 32, 4)
         self.verticalScrollbar.move(self.width() - 16, 44)
         self.verticalScrollbar.resize(12, self.height() - 64)
         self.backButton.move(self.width() - 40, 0)
@@ -2129,7 +2091,7 @@ class PackageInfoPopupWindow(QWidget):
 
         self.loadPackageCommandLine()
 
-        self.loadingProgressBar.show()
+        self.LoadingIndicator.show()
 
         self.description.setText(_("Loading..."))
         self.author.setText("<b>" + _("Author") + ":</b> " + _("Loading..."))
@@ -2204,7 +2166,7 @@ class PackageInfoPopupWindow(QWidget):
             return
         package = self.currentPackage
 
-        self.loadingProgressBar.hide()
+        self.LoadingIndicator.hide()
         self.InstallButton.setEnabled(True)
         self.adminCheckbox.setEnabled(True)
         if self.isAnUpdate:
@@ -2431,16 +2393,6 @@ class PackageInfoPopupWindow(QWidget):
             Globals.centralTextureImage.hide()
             Globals.centralWindowLayout.show()
         return super().hide()
-
-    def destroy(self, destroyWindow: bool = ..., destroySubWindows: bool = ...) -> None:
-        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
-            anim: QVariantAnimation
-            anim.pause()
-            anim.stop()
-            anim.valueChanged.disconnect()
-            anim.finished.disconnect()
-            anim.deleteLater()
-        return super().destroy(destroyWindow, destroySubWindows)
 
     def showEvent(self, event: QShowEvent):
         if not self.registeredThemeEvent:

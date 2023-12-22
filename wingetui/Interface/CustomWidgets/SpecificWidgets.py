@@ -939,12 +939,7 @@ class SoftwareSection(QWidget):
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.sectionClicked.connect(lambda: self.finishFiltering(self.query.text()))
 
-        self.loadingProgressBar = QProgressBar()
-        self.loadingProgressBar.setRange(0, 1000)
-        self.loadingProgressBar.setValue(0)
-        self.loadingProgressBar.setFixedHeight(4)
-        self.loadingProgressBar.setTextVisible(False)
-        self.loadingProgressBar.setStyleSheet("margin: 0px; margin-left: 2px;margin-right: 2px;")
+        self.LoadingIndicator = IndefiniteProgressBar()
 
         layout = QVBoxLayout()
         w = QWidget()
@@ -975,7 +970,7 @@ class SoftwareSection(QWidget):
         self.informationBanner.image.hide()
         self.informationBanner.hide()
 
-        layout.addWidget(self.loadingProgressBar)
+        layout.addWidget(self.LoadingIndicator)
         layout.addWidget(self.informationBanner)
         hl2 = QHBoxLayout()
         hl2.addWidget(self.filterScrollArea)
@@ -992,37 +987,11 @@ class SoftwareSection(QWidget):
 
         self.finishLoading.connect(self.finishLoadingIfNeeded)
         self.infobox.addProgram.connect(self.addInstallation)
-        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
-        self.startAnim.connect(lambda anim: anim.start())
-        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not self.loadingProgressBar.invertedAppearance()))
 
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
 
-        self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.leftSlow.setStartValue(0)
-        self.leftSlow.setEndValue(1000)
-        self.leftSlow.setDuration(700)
-        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-
-        self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.rightSlow.setStartValue(1000)
-        self.rightSlow.setEndValue(0)
-        self.rightSlow.setDuration(700)
-        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-
-        self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.leftFast.setStartValue(0)
-        self.leftFast.setEndValue(1000)
-        self.leftFast.setDuration(300)
-        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
-
-        self.rightFast = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.rightFast.setStartValue(1000)
-        self.rightFast.setEndValue(0)
-        self.rightFast.setDuration(300)
-        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
         self.window().OnThemeChange.connect(self.ApplyIcons)
 
     def updatePackageNumber(self):
@@ -1046,7 +1015,6 @@ class SoftwareSection(QWidget):
         taborder = [self.forceCheckBox, self.query, self.searchButton, self.reloadButton] + toolbarWidgets + [self.packageList]
         for i in range(len(taborder) - 1):
             self.setTabOrder(taborder[i], taborder[i + 1])
-        self.leftSlow.start()
         self.startLoadingPackages(force=True)
 
     def showContextMenu(self, pos: QPoint):
@@ -1241,7 +1209,7 @@ class SoftwareSection(QWidget):
         self.UniqueIdPackageReference = {}
         self.shownItems = []
         self.addedItems = []
-        self.loadingProgressBar.show()
+        self.LoadingIndicator.show()
         self.reloadButton.setEnabled(False)
         self.searchButton.setEnabled(False)
         self.query.setEnabled(False)
@@ -1259,15 +1227,6 @@ class SoftwareSection(QWidget):
 
     def addInstallation(self, p) -> None:
         Globals.installersWidget.addItem(p)
-
-    def destroyAnims(self) -> None:
-        for anim in (self.leftSlow, self.leftFast, self.rightFast, self.rightSlow):
-            anim: QVariantAnimation
-            anim.pause()
-            anim.stop()
-            anim.valueChanged.disconnect()
-            anim.finished.disconnect()
-            anim.deleteLater()
 
     def showEvent(self, event: QShowEvent) -> None:
         self.adjustWidgetsSize()
@@ -1636,42 +1595,9 @@ class PackageImporter(MovableFramelessWindow):
         self.setMinimumSize(QSize(750, 450))
         self.treewidget = TreeWidget(_("No packages found"))
 
-        self.loadingProgressBar = QProgressBar(self)
-        self.loadingProgressBar.setRange(0, 1000)
-        self.loadingProgressBar.setValue(0)
-        self.loadingProgressBar.setFixedHeight(4)
-        self.loadingProgressBar.setTextVisible(False)
-        self.setLoadBarValue.connect(self.loadingProgressBar.setValue)
-        self.startAnim.connect(lambda anim: anim.start())
-        self.changeBarOrientation.connect(lambda: self.loadingProgressBar.setInvertedAppearance(not self.loadingProgressBar.invertedAppearance()))
+        self.LoadingIndicator = IndefiniteProgressBar(self)
 
-        self.leftSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.leftSlow.setStartValue(0)
-        self.leftSlow.setEndValue(1000)
-        self.leftSlow.setDuration(700)
-        self.leftSlow.finished.connect(lambda: (self.rightSlow.start(), self.changeBarOrientation.emit()))
-
-        self.rightSlow = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.rightSlow.setStartValue(1000)
-        self.rightSlow.setEndValue(0)
-        self.rightSlow.setDuration(700)
-        self.rightSlow.finished.connect(lambda: (self.leftFast.start(), self.changeBarOrientation.emit()))
-
-        self.leftFast = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.leftFast.setStartValue(0)
-        self.leftFast.setEndValue(1000)
-        self.leftFast.setDuration(300)
-        self.leftFast.finished.connect(lambda: (self.rightFast.start(), self.changeBarOrientation.emit()))
-
-        self.rightFast = QPropertyAnimation(self.loadingProgressBar, b"value")
-        self.rightFast.setStartValue(1000)
-        self.rightFast.setEndValue(0)
-        self.rightFast.setDuration(300)
-        self.rightFast.finished.connect(lambda: (self.leftSlow.start(), self.changeBarOrientation.emit()))
-
-        self.leftSlow.start()
-
-        self.layout().addWidget(self.loadingProgressBar)
+        self.layout().addWidget(self.LoadingIndicator)
         self.layout().addWidget(self.treewidget)
         self.treewidget.setColumnCount(4)
         self.treewidget.header().setMinimumSectionSize(10)
@@ -1718,7 +1644,7 @@ class PackageImporter(MovableFramelessWindow):
         Starts the process of installinf selected packages from a file.
         """
         try:
-            self.loadingProgressBar.show()
+            self.LoadingIndicator.show()
             self.pendingPackages = {}
             self.treewidget.clear()
             self.show()
@@ -1781,10 +1707,10 @@ class PackageImporter(MovableFramelessWindow):
                     report(e)
 
                 self.treewidget.label.setVisible(self.treewidget.topLevelItemCount() == 0)
-                self.loadingProgressBar.hide()
+                self.LoadingIndicator.hide()
             else:
                 self.close()
-                self.loadingProgressBar.hide()
+                self.LoadingIndicator.hide()
         except Exception as e:
             report(e)
 

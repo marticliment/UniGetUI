@@ -6,6 +6,7 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
+from functools import partial
 import windows_toasts
 from win32mica import ApplyMica, MicaTheme
 from PySide6.QtCore import *
@@ -1089,3 +1090,79 @@ class FlowLayout(QLayout):
             item: QLayoutItem
             self.removeWidget(item.widget())
             self.removeItem(item)
+
+
+class IndefiniteProgressBar(QProgressBar):
+    callInMain = Signal(object)
+
+    def __init__(self, parent: QWidget = None) -> None:
+        super().__init__(parent)
+        self.callInMain.connect(lambda f: f())
+        self.setRange(0, 1000)
+        self.setValue(0)
+        self.setFixedHeight(4)
+        self.setTextVisible(False)
+
+        self.LeftSlowAnim = QVariantAnimation(self)
+        self.LeftSlowAnim.setStartValue(0)
+        self.LeftSlowAnim.setEndValue(1000)
+        self.LeftSlowAnim.setDuration(700)
+        self.LeftSlowAnim.valueChanged.connect(lambda v: self.setValue(v))
+        self.LeftSlowAnim.finished.connect(lambda: (self.RightSlowAnim.start(), self.setInvertedAppearance(True)))
+
+        self.RightSlowAnim = QVariantAnimation(self)
+        self.RightSlowAnim.setStartValue(1000)
+        self.RightSlowAnim.setEndValue(0)
+        self.RightSlowAnim.setDuration(700)
+        self.RightSlowAnim.valueChanged.connect(lambda v: self.setValue(v))
+        self.RightSlowAnim.finished.connect(lambda: (self.LeftFastAnim.start(), self.setInvertedAppearance(False)))
+
+        self.LeftFastAnim = QVariantAnimation(self)
+        self.LeftFastAnim.setStartValue(0)
+        self.LeftFastAnim.setEndValue(1000)
+        self.LeftFastAnim.setDuration(300)
+        self.LeftFastAnim.valueChanged.connect(lambda v: self.setValue(v))
+        self.LeftFastAnim.finished.connect(lambda: (self.RightFastAnim.start(), self.setInvertedAppearance(True)))
+
+        self.RightFastAnim = QVariantAnimation(self)
+        self.RightFastAnim.setStartValue(1000)
+        self.RightFastAnim.setEndValue(0)
+        self.RightFastAnim.setDuration(300)
+        self.RightFastAnim.valueChanged.connect(lambda v: self.setValue(v))
+        self.RightFastAnim.finished.connect(lambda: (self.LeftSlowAnim.start(), self.setInvertedAppearance(False)))
+
+    def hide(self):
+        """
+        [Thread-safe] Hides the progressbar and stops the animation
+        """
+        self.callInMain.emit(super().hide)
+        self.callInMain.emit(self.LeftSlowAnim.stop)
+        self.callInMain.emit(self.RightSlowAnim.stop)
+        self.callInMain.emit(self.LeftFastAnim.stop)
+        self.callInMain.emit(self.RightFastAnim.stop)
+
+    def showCompleted(self):
+        """
+        [Thread-safe] Shows the progressbar filled and stops the animation
+        """
+        self.callInMain.emit(self.LeftSlowAnim.stop)
+        self.callInMain.emit(self.RightSlowAnim.stop)
+        self.callInMain.emit(self.LeftFastAnim.stop)
+        self.callInMain.emit(self.RightFastAnim.stop)
+        self.callInMain.emit(partial(self.setValue, 1000))
+
+    def show(self):
+        """
+        [Thread-safe] Shows the progressbar and starts the animation
+        """
+        self.callInMain.emit(self.LeftSlowAnim.stop)
+        self.callInMain.emit(self.RightSlowAnim.stop)
+        self.callInMain.emit(self.LeftFastAnim.stop)
+        self.callInMain.emit(self.RightFastAnim.stop)
+        self.callInMain.emit(partial(self.setInvertedAppearance, False))
+        self.callInMain.emit(super().show)
+        self.callInMain.emit(self.LeftSlowAnim.start)
+
+    def setValue(self, v: int):
+        if self.isVisible():
+            super().setValue(v)
