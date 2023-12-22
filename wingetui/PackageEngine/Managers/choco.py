@@ -41,6 +41,13 @@ class ChocoPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsPreRelease = True
         self.Capabilities.SupportsCustomSources = True
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>")
+        self.Properties.Icon = getMedia("choco")
+        self.Properties.ColorIcon = getMedia("choco_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "install"
         self.Properties.UpdateVerb = "upgrade"
         self.Properties.UninstallVerb = "uninstall"

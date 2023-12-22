@@ -24,11 +24,17 @@ class PipPackageManager(PackageManagerModule):
 
     def __init__(self):
         super().__init__()
-        self.IconPath = getMedia("python")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsPreRelease = True
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>")
+        self.Properties.Icon = getMedia("python")
+        self.Properties.ColorIcon = getMedia("pip_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "install"
         self.Properties.UpdateVerb = "install --upgrade"
         self.Properties.UninstallVerb = "uninstall"

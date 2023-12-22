@@ -44,7 +44,6 @@ class WingetPackageManager(PackageManagerWithSources):
 
     def __init__(self):
         super().__init__()
-        self.IconPath = getMedia("winget")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRunInteractively = True
@@ -55,10 +54,18 @@ class WingetPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = False
         self.Capabilities.Sources.KnowsUpdateDate = False
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>")
+        self.Properties.Icon = getMedia("winget")
+        self.Properties.ColorIcon = getMedia("winget_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "install"
         self.Properties.UpdateVerb = "update"
         self.Properties.UninstallVerb = "uninstall"
         self.Properties.ExecutableName = "winget"
+
         self.BLACKLISTED_PACKAGE_IDS = ["", "have", "the", "Id"]
         self.BLACKLISTED_PACKAGE_VERSIONS = ["have", "an", "'winget", "pin'", "have", "an", "Version"]
 

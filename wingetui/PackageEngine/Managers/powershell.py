@@ -27,6 +27,13 @@ class PowershellPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomScopes = True
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.SupportsPreRelease = True
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("")  # TODO: Add description
+        self.Properties.Icon = getMedia("powershell")
+        self.Properties.ColorIcon = getMedia("powershell_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "Install-Module"
         self.Properties.UpdateVerb = "Update-Module"
         self.Properties.UninstallVerb = "Uninstall-Module"

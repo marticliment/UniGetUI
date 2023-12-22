@@ -409,10 +409,16 @@ class PackageManagerCapabilities():
 
 
 class ManagerProperties():
+    Name: str = ""
+    Description: str = ""
+
+    Icon: str = ""
+    ColorIcon: str = ""
+    ExecutableName: str = ""
+
     InstallVerb: str = ""
     UpdateVerb: str = ""
     UninstallVerb: str = ""
-    ExecutableName: str = ""
 
 
 class PackageManagerModule():
@@ -429,9 +435,6 @@ class PackageManagerModule():
     BLACKLISTED_PACKAGE_IDS: list[str]
     BLACKLISTED_PACKAGE_VERSIONS: list[str]
 
-    INSTALL_VERB: str
-    UPDATE_VERB: str
-    UNINSTALL_VERB: str
     Properties: ManagerProperties
 
     def __init__(self):

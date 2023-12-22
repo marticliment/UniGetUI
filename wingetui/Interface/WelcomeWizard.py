@@ -17,6 +17,7 @@ from win32mica import *
 from wingetui.Core.Languages.LangReference import *
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
+from wingetui.PackageEngine.Loader import PackageManagersList
 from wingetui.Interface.CustomWidgets.SpecificWidgets import *
 
 
@@ -989,41 +990,31 @@ class PackageManagersSlide(BasicNavWidget):
         label1.setText(f"""<h1>{_("Which package managers do you want to use?")}</h1>
                        {_("They are the programs in charge of installing, updating and removing packages.")}""")
 
-        self.managers = DynamicScrollArea()
-        winget = WelcomeWizardPackageManager("Winget", _("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"), getMedia("winget_color"))
-        scoop = WelcomeWizardPackageManager("Scoop", _("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"), getMedia("scoop_color"))
-        choco = WelcomeWizardPackageManager("Chocolatey", _("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"), getMedia("choco_color"))
-        pip = WelcomeWizardPackageManager("Pip", _("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"), getMedia("pip_color"))
-        npm = WelcomeWizardPackageManager("Npm", _("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"), getMedia("node_color"))
-        dotnet = WelcomeWizardPackageManager(".NET Tool", _("A repository full of tools designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related Tools</b>"), getMedia("dotnet_color"))
+        self.managerScrollArea = DynamicScrollArea()
+        self.ManagerWidgets: dict[PackageManagerModule:WelcomeWizardPackageManager] = {}
 
-        managers = [winget, scoop, choco, pip, npm, dotnet]
+        for manager in PackageManagersList:
+            self.ManagerWidgets[manager] = WelcomeWizardPackageManager(manager.Properties.Name, manager.Properties.Description, manager.Properties.ColorIcon)
+            if manager in (Winget, Choco):
+                self.ManagerWidgets[manager].setChecked(True)
+            else:
+                self.ManagerWidgets[manager].setChecked(shutil.which(manager.Properties.ExecutableName.split(" ")[0]) is not None)
 
-        for manager in managers:
-            self.managers.addItem(manager)
+        for manager in PackageManagersList:
+            self.managerScrollArea.addItem(self.ManagerWidgets[manager])
 
         def enablePackageManagers():
-            setSettings("DisableWinget", not winget.isChecked())
-            setSettings("DisableChocolatey", not choco.isChecked())
-            if choco.isChecked():
+            for manager in PackageManagersList:
+                setSettings(f"Disable{manager.Properties.Name}", not self.ManagerWidgets[manager].isChecked())
+
+            if self.ManagerWidgets[Choco].isChecked():
                 if shutil.which("choco.exe") is not None:
                     setSettings("UseSystemChocolatey", True)
-            setSettings("DisableScoop", not scoop.isChecked())
-            setSettings("DisablePip", not pip.isChecked())
-            setSettings("DisableNpm", not npm.isChecked())
-            setSettings("Disable.NET Tool", not npm.isChecked())
 
         self.nextButton.clicked.connect(lambda: enablePackageManagers())
 
-        winget.setChecked(True)
-        choco.setChecked(True)
-        scoop.setChecked(shutil.which("scoop") is not None)
-        npm.setChecked(shutil.which("npm") is not None)
-        pip.setChecked(shutil.which("pip") is not None)
-        dotnet.setChecked(shutil.which("dotnet") is not None)
-
         vl.addWidget(label1)
-        vl.addWidget(self.managers, stretch=1)
+        vl.addWidget(self.managerScrollArea, stretch=1)
         self.setCentralWidget(widget)
 
         self.clockMode = ""

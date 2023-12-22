@@ -24,7 +24,6 @@ class ScoopPackageManager(PackageManagerWithSources):
 
     def __init__(self):
         super().__init__()
-        self.IconPath = getMedia("scoop")
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.CanSkipIntegrityChecks = True
         self.Capabilities.CanRemoveDataOnUninstall = True
@@ -33,6 +32,13 @@ class ScoopPackageManager(PackageManagerWithSources):
         self.Capabilities.SupportsCustomSources = True
         self.Capabilities.Sources.KnowsPackageCount = True
         self.Capabilities.Sources.KnowsUpdateDate = True
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>")
+        self.Properties.Icon = getMedia("scoop")
+        self.Properties.ColorIcon = getMedia("scoop_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "install"
         self.Properties.UpdateVerb = "update"
         self.Properties.UninstallVerb = "uninstall"

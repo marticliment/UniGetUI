@@ -25,6 +25,13 @@ class DotNetToolPackageManager(PackageManagerModule):
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomArchitectures = True
         self.Capabilities.SupportsPreRelease = True
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("A repository full of tools designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related Tools</b>")
+        self.Properties.Icon = getMedia("dotnet")
+        self.Properties.ColorIcon = getMedia("dotnet_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "install"
         self.Properties.UpdateVerb = "update"
         self.Properties.UninstallVerb = "uninstall"

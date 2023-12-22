@@ -25,11 +25,17 @@ class NPMPackageManager(PackageManagerModule):
 
     def __init__(self):
         super().__init__()
-        self.IconPath = getMedia("node")
         self.Capabilities = PackageManagerCapabilities()
         self.Capabilities.CanRunAsAdmin = True
         self.Capabilities.SupportsCustomVersions = True
         self.Capabilities.SupportsCustomScopes = True
+
+        self.Properties.Name = self.NAME
+        self.Properties.Description = _("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>")
+        self.Properties.Icon = getMedia("node")
+        self.Properties.ColorIcon = getMedia("node_color")
+        self.IconPath = self.Properties.Icon
+
         self.Properties.InstallVerb = "install"
         self.Properties.UpdateVerb = "update"
         self.Properties.UninstallVerb = "uninstall"
