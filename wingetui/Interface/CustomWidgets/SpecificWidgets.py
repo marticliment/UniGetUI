@@ -851,9 +851,10 @@ class SoftwareSection(QWidget):
             self.FilterItemForManager[manager] = item
             self.filterList.addTopLevelItem(item)
 
-        hostwidget = SectionHWidget(lastOne=True, smallerMargins=True)
-        hostwidget.addWidget(self.filterList)
-        sourcesWidget.addWidget(hostwidget)
+        self.FilterListHostWidget = SectionHWidget(lastOne=True, smallerMargins=True)
+        self.FilterListHostWidget.addWidget(self.filterList)
+        self.FilterListHostWidget.setFixedHeight(500)
+        sourcesWidget.addWidget(self.FilterListHostWidget)
         filterLayout.addWidget(sourcesWidget)
         filterLayout.addSpacing(0)
 
@@ -1183,6 +1184,7 @@ class SoftwareSection(QWidget):
 
     def updateFilterTable(self):
         managerCount = {}
+        HostWidgetHeight = 0
         for manager in PackageManagersList:
             managerCount[manager] = 0
         for packageItem in self.showableItems:
@@ -1192,8 +1194,10 @@ class SoftwareSection(QWidget):
             item: QTreeWidgetItem = self.FilterItemForManager[manager]
             item.setText(2, str(managerCount[manager]))
             item.setHidden(not manager.isEnabled())
+            HostWidgetHeight += 34 if manager.isEnabled() else 0
             item.setDisabled(managerCount[manager] == 0)
-        self.filterList.setFixedHeight(45 * self.filterList.topLevelItemCount() + 10)
+
+        self.FilterListHostWidget.setFixedHeight(HostWidgetHeight + 10)
 
     def showQuery(self) -> None:
         self.programbox.show()
