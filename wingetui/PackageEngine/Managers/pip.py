@@ -236,7 +236,7 @@ class PipPackageManager(PackageManagerModule):
             Parameters += options.CustomParameters
         Parameters += ["--no-input", "--no-color", "--no-python-version-warning", "--no-cache"]
         if not isAnUninstall:
-            Parameters += ["--progress-bar", "off"]
+            # Parameters += ["--progress-bar", "off"]
             if options.PreRelease:
                 Parameters.append("--pre")
             if options.InstallationScope:
