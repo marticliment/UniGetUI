@@ -84,6 +84,8 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 
 ## Supported Package Managers
 
+**NOTE:** All package managers do support basic install, update and uninstall processes, as well as checking for updates, finding new packages and retrieving details from a package.
+
 | Manager | Skip integrity checks | Interactive installation | Install Older Versions | Install a PreRelease Version | Install a Custom Architecture | Install on a Custom Scope | Custom Install Location | Custom Package Sources | Supported since |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Winget** | ✅ | ⚠️³ | ✅ | ☑️² | ✅ | ⚠️¹ | ⚠️¹ | ✅ | 0.1.0 |
@@ -98,9 +100,10 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 ☑️: Not directly supported but can be easily achieved<br>
 ⚠️: Some packages might not follow this setting<br>
 ❌: Not supported<br>
-1\. Some packages do not support installing to a custom location or scope and will ignore this setting<br>
-2\. Despite the Package Manager may not support _PreReleases_, some packages can be found duplicated, with one of the copies being the beta version of it.<br>
-3\. Some installers do not have a GUI, and will ignore the `interactive` flag<br>
+<br>
+**1\.** Some packages do not support installing to a custom location or scope and will ignore this setting<br>
+**2\.** Despite the Package Manager may not support _PreReleases_, some packages can be found duplicated, with one of the copies being the beta version of it.<br>
+**3\.** Some installers do not have a GUI, and will ignore the `interactive` flag<br>
 
 # Translating WingetUI to other languages
 In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/marticliment/WingetUI/wiki#translating-wingetui) for more info.
