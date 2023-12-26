@@ -19,11 +19,11 @@ untranslatedPercentage = {
   "it": "96%",
   "ja": "86%",
   "ko": "96%",
+  "mk": "0%",
   "nb": "84%",
   "pl": "91%",
   "pt_BR": "96%",
   "pt_PT": "96%",
-  "ro": "96%",
   "ru": "89%",
   "si": "9%",
   "sl": "88%",
@@ -33,8 +33,7 @@ untranslatedPercentage = {
   "tr": "85%",
   "ua": "84%",
   "vi": "96%",
-  "zh_CN": "92%",
-  "zh_TW": "92%"
+  "zh_CN": "92%"
 }
 
 languageCredits = {
@@ -278,6 +277,7 @@ languageCredits = {
       "link": "https://github.com/shblue21"
     }
   ],
+  "mk": [],
   "nb": [
     {
       "name": "jomaskm",
