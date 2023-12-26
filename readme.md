@@ -99,7 +99,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 ✅: Supported on WingetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
 ⚠️: Some packages might not follow this setting<br>
-❌: Not supported<br>
+❌: Not supported by the Package Manager<br>
 <br>
 **1\.** Some packages do not support installing to a custom location or scope and will ignore this setting<br>
 **2\.** Despite the Package Manager may not support _PreReleases_, some packages can be found duplicated, with one of the copies being the beta version of it.<br>
