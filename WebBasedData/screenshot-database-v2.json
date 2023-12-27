@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7471,
-        "packages_with_icon": 7471,
-        "packages_with_screenshot": 528,
-        "total_screenshots": 1676
+        "done": 7472,
+        "packages_with_icon": 7472,
+        "packages_with_screenshot": 529,
+        "total_screenshots": 1679
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -20971,7 +20971,7 @@
             "images": []
         },
         "kdeconnect": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
             "images": []
         },
         "kdeconnect-kde": {
@@ -20980,7 +20980,11 @@
         },
         "kdenlive": {
             "icon": "https://kdenlive.org/wp-content/uploads/2022/01/kdenlive-logo-blank-500px.png",
-            "images": []
+            "images": [
+                "https://kdenlive.org/wp-content/uploads/2022/01/271174170_1089343691850009_6872343577648842521_n.png",
+                "https://kdenlive.org/wp-content/uploads/2022/01/photo_2021-12-13_15-36-56.jpg",
+                "https://kdenlive.org/wp-content/uploads/2022/05/photo_2022-05-28_01-11-01.jpg"
+            ]
         },
         "kdevelop": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdevelop.install.5.5.0.png",
