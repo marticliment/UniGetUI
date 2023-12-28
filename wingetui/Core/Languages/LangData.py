@@ -32,6 +32,7 @@ languageReference = {
     "id"    : "Indonesian - Bahasa Indonesia",
     "ja"    : "Japanese - 日本語",
     "ko"    : "Korean - 한국어",
+    "mk"    : "Macedonian - Македонски",
     "nb"    : "Norwegian (bokmål)",
     "nl"    : "Dutch - Nederlands",
     "pl"    : "Polish - Polski",

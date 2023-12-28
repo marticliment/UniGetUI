@@ -184,7 +184,7 @@
   "Looking for packages..." : "Ricerca in corso dei pacchetti...",
   "Manage ignored packages" : "Gestione pacchetti ignorati",
   "Manage ignored updates" : "Gestisci aggiornamenti ignorati",
-  "Manage {0} sources" : "Gestisci {0} fonti",
+  "Manage {0} sources" : "Gestisci fonti {0}",
   "Manifest" : "Manifesto",
   "Manifests" : "Manifesti",
   "Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>" : "Il gestore di pacchetti ufficiale di Microsoft. Pieno di pacchetti noti e verificati.<br>Contiene: <b>Software generale, app dal Microsoft Store</b>",
