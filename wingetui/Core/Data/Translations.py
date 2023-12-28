@@ -9,7 +9,6 @@ untranslatedPercentage = {
   "de": "92%",
   "el": "72%",
   "fa": "71%",
-  "fr": "96%",
   "he": "72%",
   "hi": "81%",
   "hr": "86%",
@@ -17,9 +16,8 @@ untranslatedPercentage = {
   "id": "88%",
   "ja": "86%",
   "ko": "96%",
-  "mk": "0%",
+  "mk": "95%",
   "nb": "84%",
-  "pl": "93%",
   "pt_BR": "96%",
   "pt_PT": "96%",
   "ru": "89%",
@@ -275,7 +273,12 @@ languageCredits = {
       "link": "https://github.com/shblue21"
     }
   ],
-  "mk": [],
+  "mk": [
+    {
+      "name": "LordDeatHunter",
+      "link": ""
+    }
+  ],
   "nb": [
     {
       "name": "jomaskm",
