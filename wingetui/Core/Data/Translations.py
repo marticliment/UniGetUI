@@ -26,8 +26,7 @@ untranslatedPercentage = {
   "tg": "21%",
   "tr": "85%",
   "ua": "84%",
-  "vi": "96%",
-  "zh_CN": "92%"
+  "vi": "96%"
 }
 
 languageCredits = {
