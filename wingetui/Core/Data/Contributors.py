@@ -12,26 +12,25 @@ contributors = [
   "rumplin",
   "uKER",
   "sklart",
-  "aaronliu0130",
-  "vedantmgoyal2009",
-  "adfnekc",
-  "BastianKamp",
-  "candrapersada",
-  "elliot-100",
-  "sitiom",
   "joguarino",
-  "neoOpus",
-  "Carterpersall",
-  "HorridModz",
-  "reima",
-  "Satanarious"
+  "sitiom",
+  "elliot-100",
+  "candrapersada",
+  "BastianKamp",
+  "adfnekc",
+  "vedantmgoyal2009",
+  "aaronliu0130",
+  "victorelec14",
+  "mapi68",
+  "harleylara",
+  "flatron4eg"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2380
+    "contributions": 2381
   },
   {
     "name": "ppvnf",
@@ -84,33 +83,8 @@ contributorsInfo = [
     "contributions": 3
   },
   {
-    "name": "aaronliu0130",
-    "link": "https://github.com/aaronliu0130",
-    "contributions": 2
-  },
-  {
-    "name": "vedantmgoyal2009",
-    "link": "https://github.com/vedantmgoyal2009",
-    "contributions": 2
-  },
-  {
-    "name": "adfnekc",
-    "link": "https://github.com/adfnekc",
-    "contributions": 2
-  },
-  {
-    "name": "BastianKamp",
-    "link": "https://github.com/BastianKamp",
-    "contributions": 2
-  },
-  {
-    "name": "candrapersada",
-    "link": "https://github.com/candrapersada",
-    "contributions": 2
-  },
-  {
-    "name": "elliot-100",
-    "link": "https://github.com/elliot-100",
+    "name": "joguarino",
+    "link": "https://github.com/joguarino",
     "contributions": 2
   },
   {
@@ -119,33 +93,53 @@ contributorsInfo = [
     "contributions": 2
   },
   {
-    "name": "joguarino",
-    "link": "https://github.com/joguarino",
+    "name": "elliot-100",
+    "link": "https://github.com/elliot-100",
     "contributions": 2
   },
   {
-    "name": "neoOpus",
-    "link": "https://github.com/neoOpus",
+    "name": "candrapersada",
+    "link": "https://github.com/candrapersada",
+    "contributions": 2
+  },
+  {
+    "name": "BastianKamp",
+    "link": "https://github.com/BastianKamp",
+    "contributions": 2
+  },
+  {
+    "name": "adfnekc",
+    "link": "https://github.com/adfnekc",
+    "contributions": 2
+  },
+  {
+    "name": "vedantmgoyal2009",
+    "link": "https://github.com/vedantmgoyal2009",
+    "contributions": 2
+  },
+  {
+    "name": "aaronliu0130",
+    "link": "https://github.com/aaronliu0130",
+    "contributions": 2
+  },
+  {
+    "name": "victorelec14",
+    "link": "https://github.com/victorelec14",
     "contributions": 1
   },
   {
-    "name": "Carterpersall",
-    "link": "https://github.com/Carterpersall",
+    "name": "mapi68",
+    "link": "https://github.com/mapi68",
     "contributions": 1
   },
   {
-    "name": "HorridModz",
-    "link": "https://github.com/HorridModz",
+    "name": "harleylara",
+    "link": "https://github.com/harleylara",
     "contributions": 1
   },
   {
-    "name": "reima",
-    "link": "https://github.com/reima",
-    "contributions": 1
-  },
-  {
-    "name": "Satanarious",
-    "link": "https://github.com/Satanarious",
+    "name": "flatron4eg",
+    "link": "https://github.com/flatron4eg",
     "contributions": 1
   }
 ]
