@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7472,
-        "packages_with_icon": 7472,
-        "packages_with_screenshot": 529,
-        "total_screenshots": 1679
+        "done": 7474,
+        "packages_with_icon": 7474,
+        "packages_with_screenshot": 531,
+        "total_screenshots": 1683
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -2682,8 +2682,11 @@
             "images": []
         },
         "appflowy": {
-            "icon": "",
-            "images": []
+            "icon": "https://github.com/AppFlowy-IO/AppFlowy/blob/main/frontend/appflowy_tauri/src-tauri/icons/Square310x310Logo.png",
+            "images": [
+                "https://github.com/AppFlowy-IO/AppFlowy-Website/blob/main/assets/images/hero-section/desktop.png",
+                "https://github.com/AppFlowy-IO/AppFlowy/blob/main/doc/imgs/welcome.png"
+            ]
         },
         "appgallery": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Huawei_AppGallery.svg/2048px-Huawei_AppGallery.svg.png",
@@ -39363,8 +39366,11 @@
             "images": []
         },
         "surfshark": {
-            "icon": "",
-            "images": []
+            "icon": "https://asset.brandfetch.io/idInXa2Zcj/idM5I-Fk7d.png",
+            "images": [
+                "https://surfshark.com/website/_next/public/press/assets/images/downloads/product-screenshots/pc/win-app.png",
+                "https://surfshark.com/website/_next/public/press/assets/images/downloads/product-screenshots/others/multiple-devices.png"
+            ]
         },
         "surge": {
             "icon": "",
