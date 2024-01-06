@@ -409,7 +409,7 @@ class PowershellPackageManager(PackageManagerWithSources):
             signal.emit()
 
     def updateSources(self, signal: Signal = None) -> None:
-        subprocess.run(f"{self.EXECUTABLE} update self", shell=True, stdout=subprocess.PIPE)
+        pass  # Handled by the package manager, no need to manually reload
         if signal:
             signal.emit()
 
