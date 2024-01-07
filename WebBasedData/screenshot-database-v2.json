@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7474,
-        "packages_with_icon": 7474,
+        "done": 7475,
+        "packages_with_icon": 7475,
         "packages_with_screenshot": 531,
-        "total_screenshots": 1683
+        "total_screenshots": 1682
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -103,8 +103,7 @@
                 "https://developer.1password.com/img/meta-og-image.png",
                 "https://1password.com/img/tour/storage.6b7de1841abbfabf58300e55c8832b8b.png",
                 "https://1password.com/img/tour/security.a8d93c2a861e79fe51636df1ecf5fa9d.png",
-                "https://1password.com/img/tour/watchtower.5279b033f16276640b046442f41e8c9a.png",
-                "https://1password.com/img/downloads/screenshot-windows.91455b543f1a1c3ee37dd9bdedb710a1.png"
+                "https://1password.com/img/tour/watchtower.5279b033f16276640b046442f41e8c9a.png"
             ]
         },
         "1password-beta": {
@@ -13916,7 +13915,7 @@
             "images": []
         },
         "ffmpeg": {
-            "icon": "https://community.chocolatey.org/content/packageimages/ffmpeg.6.0.png",
+            "icon": "https://ia803205.us.archive.org/19/items/banner_20240106/FFmpeg_Logo_new.png",
             "images": []
         },
         "ffmpeg-batch": {
@@ -48438,7 +48437,7 @@
             ]
         },
         "yt-dlp": {
-            "icon": "",
+            "icon": "https://ia803205.us.archive.org/19/items/banner_20240106/banner.png",
             "images": []
         },
         "ytcast": {
