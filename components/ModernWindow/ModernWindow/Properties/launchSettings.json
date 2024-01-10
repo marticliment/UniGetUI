@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ModernWindow (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ModernWindow (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
