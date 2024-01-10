@@ -26,12 +26,30 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-	  <Content Include="wingetui\**\*.py" />
-	  <Content Include="wingetui\**\*.png" />
-	  <Content Include="wingetui\**\*.exe" />
-	  <Content Include="wingetui\**\*.dll" />
-	  <Content Include="wingetui\**\*.json" />
-	  <Content Include="wingetui\**\*.txt" />
+	  <Content Include="..\wingetui-engine\**\*.py" />
+	  <Content Include="..\wingetui-engine\**\*.png" />
+	  <Content Include="..\wingetui-engine\**\*.cmd" />
+	  <Content Include="..\wingetui-engine\**\*.ps1" />
+	  <Content Include="..\wingetui-engine\**\*.exe" />
+	  <Content Include="..\wingetui-engine\**\*.dll" />
+	  <Content Include="..\wingetui-engine\**\*.json" />
+	  <Content Include="..\wingetui-engine\**\*.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="..\wingetui-engine\.vscode\**" />
+    <Content Remove="..\wingetui-engine\choco-cli\**" />
+    <Content Remove="..\wingetui-engine\components\**" />
+    <Content Remove="..\wingetui-engine\Core\**" />
+    <Content Remove="..\wingetui-engine\ExternalLibraries\**" />
+    <Content Remove="..\wingetui-engine\Interface\**" />
+    <Content Remove="..\wingetui-engine\PackageEngine\**" />
+    <Content Remove="..\wingetui-engine\resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="..\wingetui-engine\launcher.py" />
+    <Content Remove="..\wingetui-engine\__main__.py" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -48,9 +66,6 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wingetui\" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="SettingsInterface.xaml">
