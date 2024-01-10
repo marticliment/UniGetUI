@@ -120,7 +120,7 @@
   "General preferences" : "Общи настройки",
   "GitHub profile" : "профил в GitHub",
   "Global" : "Глобален",
-  "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>" : null,
+  "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>" : "Чудесно хранилище на малко известни, но полезни инструменти и други интересни пакети.<br>Съдръжание: <b>Инструменти, програми за командния ред, общ софтуер (изисква кофата \"extras\")</b>",
   "Help" : "Помощ",
   "Help and documentation" : "Помощ и документация",
   "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "Здравейте, казвам се Мартѝ и съм <i>автор</i> на WingetUI. WingetUI е създаден изцяло в свободното ми време!",
