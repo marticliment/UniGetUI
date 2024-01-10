@@ -12,8 +12,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -42,9 +45,19 @@ namespace ModernWindow
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            //m_window = new MainWindow();
-            //m_window.Activate();
+            settings = new SettingsInterface();
+            settings.Activate();
+            Console.WriteLine("Settings Window Handle: " + settings.GetHwnd());
 
+            Thread python = new Thread(LoadPython);
+            python.SetApartmentState(ApartmentState.STA);
+            python.Start();
+
+        }
+
+        [STAThread]
+        void LoadPython()
+        {
             Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
             PythonEngine.Initialize();
             PythonEngine.BeginAllowThreads();
@@ -59,6 +72,6 @@ import wingetui.__main__
             }
         }
 
-        private Window m_window;
+    private SettingsInterface settings;
     }
 }

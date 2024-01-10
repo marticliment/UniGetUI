@@ -31,7 +31,7 @@ namespace ModernWindow
 
         public int GetHwnd()
         {
-            return (int)WinRT.Interop.WindowNative.GetWindowHandle(this);;
+            return (int)WinRT.Interop.WindowNative.GetWindowHandle(this);
         }
 
 
