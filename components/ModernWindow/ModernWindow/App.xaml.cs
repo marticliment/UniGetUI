@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using Python.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,8 +42,24 @@ namespace ModernWindow
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            m_window = new MainWindow();
-            m_window.Activate();
+            //m_window = new MainWindow();
+            //m_window.Activate();
+
+            Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
+            PythonEngine.Initialize();
+            PythonEngine.BeginAllowThreads();
+            using (Py.GIL())
+            {
+
+                PythonEngine.Exec(@"
+import sys
+import warnings
+warnings.simplefilter(""ignore"", UserWarning)
+sys.coinit_flags = 2
+import os
+print(""Running WingetUI Python Module from: "" + os.getcwd())
+import wingetui.__main__");
+            }
         }
 
         private Window m_window;

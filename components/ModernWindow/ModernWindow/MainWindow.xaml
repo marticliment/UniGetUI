@@ -9,6 +9,6 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Click="Button_Click_1">Start WingetUI</Button>
+        <Button>Hello Modern</Button>
     </StackPanel>
 </Window>

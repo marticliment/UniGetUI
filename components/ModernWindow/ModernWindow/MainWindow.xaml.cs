@@ -28,28 +28,7 @@ namespace ModernWindow
         public MainWindow()
         {
             this.InitializeComponent();
-            Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
-            PythonEngine.Initialize();
-            PythonEngine.BeginAllowThreads();
             this.SystemBackdrop = new MicaBackdrop();
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("Start Import");
-
-            using (Py.GIL())
-            {
-                PythonEngine.Exec(@"
-import sys
-import warnings
-warnings.simplefilter(""ignore"", UserWarning)
-sys.coinit_flags = 2
-import os
-print(""Running WingetUI Python Module from: "" + os.getcwd())
-import wingetui.__main__");
-            }
         }
     }
 }
