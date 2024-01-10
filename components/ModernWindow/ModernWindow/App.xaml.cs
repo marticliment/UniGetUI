@@ -52,13 +52,10 @@ namespace ModernWindow
             {
 
                 PythonEngine.Exec(@"
-import sys
-import warnings
-warnings.simplefilter(""ignore"", UserWarning)
-sys.coinit_flags = 2
 import os
 print(""Running WingetUI Python Module from: "" + os.getcwd())
-import wingetui.__main__");
+import wingetui.__main__
+");
             }
         }
 

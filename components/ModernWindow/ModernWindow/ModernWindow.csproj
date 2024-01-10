@@ -13,6 +13,9 @@
     <WindowsPackageType>None</WindowsPackageType>
     <StartupObject>ModernWindow.Loader</StartupObject>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="SettingsInterface.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -24,7 +27,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
 
-<Target Name="AfterBuild" AfterTargets="AfterBuild">
+<Target Name="AfterCompile" AfterTargets="AfterCompile">
   <ItemGroup>
 	  <Content Include="wingetui\**\*.py" />
 	  <Content Include="wingetui\**\*.png" />
@@ -53,6 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wingetui\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SettingsInterface.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!-- 
