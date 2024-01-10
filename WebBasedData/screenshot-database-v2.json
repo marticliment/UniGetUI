@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11697,
-        "done": 7475,
-        "packages_with_icon": 7475,
-        "packages_with_screenshot": 531,
-        "total_screenshots": 1682
+        "done": 7476,
+        "packages_with_icon": 7476,
+        "packages_with_screenshot": 532,
+        "total_screenshots": 1684
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -42974,8 +42974,11 @@
             "images": []
         },
         "uvtools": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/sn4k3/UVtools/master/UVtools.CAD/UVtools.png",
+            "images": [
+                "https://raw.githubusercontent.com/sn4k3/UVtools/master/wiki/UI1.png",
+                "https://raw.githubusercontent.com/sn4k3/UVtools/master/wiki/UI2.png"
+            ]
         },
         "uwamp": {
             "icon": "",
