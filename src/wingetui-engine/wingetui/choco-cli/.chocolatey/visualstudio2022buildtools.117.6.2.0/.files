@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio2022buildtools\visualstudio2022buildtools.nupkg" checksum="6619458BA8BD8307C8D1785378D76422" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio2022buildtools\visualstudio2022buildtools.nuspec" checksum="CA58653DE65E24933F79974896E389AC" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio2022buildtools\tools\.skipAutoUninstall" checksum="D41D8CD98F00B204E9800998ECF8427E" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio2022buildtools\tools\ChocolateyInstall.ps1" checksum="8D9BE7F34DC1584EA16960324B922D08" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio2022buildtools\tools\ChocolateyUninstall.ps1" checksum="E83778E19BD6694D1E82BB41265D3EB5" />
+  </files>
+</fileSnapshot>

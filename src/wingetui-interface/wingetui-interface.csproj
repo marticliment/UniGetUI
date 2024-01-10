@@ -11,12 +11,9 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
-    <StartupObject>ModernWindow.Loader</StartupObject>
+    <StartupObject>ModernWindow.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="SettingsInterface.xaml" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -34,22 +31,6 @@
 	  <Content Include="..\wingetui-engine\**\*.dll" />
 	  <Content Include="..\wingetui-engine\**\*.json" />
 	  <Content Include="..\wingetui-engine\**\*.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="..\wingetui-engine\.vscode\**" />
-    <Content Remove="..\wingetui-engine\choco-cli\**" />
-    <Content Remove="..\wingetui-engine\components\**" />
-    <Content Remove="..\wingetui-engine\Core\**" />
-    <Content Remove="..\wingetui-engine\ExternalLibraries\**" />
-    <Content Remove="..\wingetui-engine\Interface\**" />
-    <Content Remove="..\wingetui-engine\PackageEngine\**" />
-    <Content Remove="..\wingetui-engine\resources\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="..\wingetui-engine\launcher.py" />
-    <Content Remove="..\wingetui-engine\__main__.py" />
   </ItemGroup>
 
 	<ItemGroup>
