@@ -12,6 +12,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
     <StartupObject>ModernWindow.Loader</StartupObject>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="SettingsInterface.xaml" />
@@ -25,10 +26,6 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-  </ItemGroup>
-
-<Target Name="AfterCompile" AfterTargets="AfterCompile">
-  <ItemGroup>
 	  <Content Include="wingetui\**\*.py" />
 	  <Content Include="wingetui\**\*.png" />
 	  <Content Include="wingetui\**\*.exe" />
@@ -36,8 +33,6 @@
 	  <Content Include="wingetui\**\*.json" />
 	  <Content Include="wingetui\**\*.txt" />
   </ItemGroup>
-</Target>
-
 
 	<ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
