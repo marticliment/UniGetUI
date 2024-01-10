@@ -63,12 +63,17 @@ namespace ModernWindow
             PythonEngine.BeginAllowThreads();
             using (Py.GIL())
             {
+                string json_options = @"{""settings_window_handle"": " + settings.GetHwnd() + "}";
 
-                PythonEngine.Exec(@"
+                dynamic os_module = PyModule.Import("os");
+                os_module.environ["WINGETUI_OPTIONS"] = new PyString(json_options);
+                dynamic wingetui_module = PyModule.Import("wingetui.__main__");
+
+                /*PythonEngine.Exec(@"
 import os
 print(""Running WingetUI Python Module from: "" + os.getcwd())
 import wingetui.__main__
-");
+");*/
             }
         }
 

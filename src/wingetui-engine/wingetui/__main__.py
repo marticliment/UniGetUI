@@ -7,7 +7,10 @@ if __name__ == "__main__":
         sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
+
 try:
+    
+
     import sys
     if "--debugcrash" in sys.argv:
         import faulthandler
@@ -32,8 +35,18 @@ try:
     from PySide6.QtCore import *
     from PySide6.QtGui import *
     from PySide6.QtWidgets import *
+    
+    import json
+
+    options_str = os.environ["WINGETUI_OPTIONS"]
+    options = json.loads(options_str)
+    
+    print("Received options from C#", options)
 
     import wingetui.Core.Globals as Globals
+
+    Globals.options = options
+    
     from wingetui.Interface.Application import RunMainApplication
     from wingetui.Interface.Tools import *
     from wingetui.Interface.Tools import _

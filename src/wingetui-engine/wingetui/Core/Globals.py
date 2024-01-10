@@ -89,3 +89,5 @@ cachedIcons: dict[str:'QIcon'] = {}
 CurrentSessionToken: str = token_hex(32)
 
 DEFAULT_PACKAGE_BACKUP_DIR = ""
+
+options = {}
