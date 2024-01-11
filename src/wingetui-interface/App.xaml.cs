@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using static System.Formats.Asn1.AsnWriter;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,20 +64,25 @@ namespace ModernWindow
             PythonEngine.BeginAllowThreads();
             using (Py.GIL())
             {
-                string json_options = @"{""settings_window_handle"": " + settings.GetHwnd() + "}";
+                using (PyModule scope = Py.CreateScope())
+                {
+                    scope.Set("CSharpApp", this.ToPython());
+                    
+                    string json_options = @"{""settings_window_handle"": " + settings.GetHwnd() + "}";
+                    using var locals = new PyDict();
+                    locals["CSharpApp"] = this.ToPython();
 
-                dynamic os_module = PyModule.Import("os");
-                os_module.environ["WINGETUI_OPTIONS"] = new PyString(json_options);
-                dynamic wingetui_module = PyModule.Import("wingetui.__main__");
+                    PythonEngine.Exec("import os\n"
+                        + "os.environ['WINGETUI_OPTIONS'] = '" + json_options + "'\n"
+                        + "import wingetui.Core.Globals\n"
+                        + "wingetui.Core.Globals.CSharpApp = CSharpApp\n"
+                        + "import wingetui.__main__\n", null, locals);
 
-                /*PythonEngine.Exec(@"
-import os
-print(""Running WingetUI Python Module from: "" + os.getcwd())
-import wingetui.__main__
-");*/
+
+                }
             }
         }
 
-    private SettingsInterface settings;
+    public SettingsInterface settings;
     }
 }

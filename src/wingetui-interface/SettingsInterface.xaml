@@ -14,6 +14,7 @@
     </Window.SystemBackdrop>
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Button>Hello Modern Settings Interface</Button>
+        <CheckBox Content="Automatically update WingetUI"></CheckBox>
     </StackPanel>
 
 </Window>

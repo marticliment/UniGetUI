@@ -32,6 +32,11 @@ namespace ModernWindow
         {
             return (int)WinRT.Interop.WindowNative.GetWindowHandle(this);
         }
+        public void ShowWindow_SAFE()
+        {
+            Console.WriteLine("Called from Python!");
+            DispatcherQueue.TryEnqueue(() => { this.Activate(); });
+        }
 
 
     }

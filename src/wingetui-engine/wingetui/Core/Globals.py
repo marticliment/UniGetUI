@@ -91,3 +91,4 @@ CurrentSessionToken: str = token_hex(32)
 DEFAULT_PACKAGE_BACKUP_DIR = ""
 
 options = {}
+CSharpApp = None

@@ -237,13 +237,16 @@ class AboutSection(SmoothScrollArea):
 
 
 class SettingsSection(SmoothScrollArea):
+    HostWindow = None
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        hwnd = Globals.options["settings_window_handle"]
+        print(Globals.CSharpApp.settings.GetHwnd())
+        self.HostWindow = Globals.CSharpApp.settings
+        hwnd = self.HostWindow.GetHwnd()
         
         window = QWindow.fromWinId(hwnd)
-        window.setFlags(Qt.WindowType.CustomizeWindowHint)
+        # window.setFlags(Qt.WindowType.CustomizeWindowHint)
         self.__winui_widget = QWidget.createWindowContainer(window)
         # self.__winui_widget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
@@ -251,6 +254,7 @@ class SettingsSection(SmoothScrollArea):
         self.layout().addWidget(self.__winui_widget)
 
         return
+        """
         self.setFrameShape(QFrame.NoFrame)
         self.widget = QWidget()
         self.setWidgetResizable(True)
@@ -876,11 +880,14 @@ class SettingsSection(SmoothScrollArea):
 
         self.mainLayout.addStretch()
 
+        """
         print("🟢 Settings tab loaded!")
 
+
     def showEvent(self, event: QShowEvent) -> None:
-        Thread(target=self.announcements.loadAnnouncements,
-               daemon=True, name="Settings: Announce loader").start()
+        #Thread(target=self.announcements.loadAnnouncements,
+        #       daemon=True, name="Settings: Announce loader").start()
+        self.HostWindow.ShowWindow_SAFE();
         return super().showEvent(event)
 
     def inform(self, text: str) -> None:
