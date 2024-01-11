@@ -36,17 +36,7 @@ try:
     from PySide6.QtGui import *
     from PySide6.QtWidgets import *
     
-    import json
-
-    options_str = os.environ["WINGETUI_OPTIONS"]
-    options = json.loads(options_str)
-    
-    print("Received options from C#", options)
-
     import wingetui.Core.Globals as Globals
-
-    Globals.options = options
-    
     from wingetui.Interface.Application import RunMainApplication
     from wingetui.Interface.Tools import *
     from wingetui.Interface.Tools import _

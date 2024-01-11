@@ -33,6 +33,10 @@
 	  <Content Include="..\wingetui-engine\**\*.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="..\wingetui-engine\.vscode\**" />
+  </ItemGroup>
+
 	<ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
@@ -49,9 +53,12 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="SettingsInterface.xaml">
+    <Page Update="MainInterface.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SettingsTab\" />
   </ItemGroup>
 
   <!-- 

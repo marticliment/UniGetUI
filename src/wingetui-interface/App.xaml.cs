@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Shapes;
 using Python.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -20,46 +21,67 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using static System.Formats.Asn1.AsnWriter;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ModernWindow
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public partial class App : Application
+    public partial class MainApp : Application
     {
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
+        
+        // Python modules to be imported
+        private dynamic Tools;
+        private dynamic Data;
+        private Py.GILState GIL;
+
+        // Windows (MUST BE PUBLIS FOR PYTHON TO ACCESS)
+        public SettingsTab.MainInterface settings;
+
+
+        public MainApp()
         {
             this.InitializeComponent();
-        }
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-        {
-            settings = new SettingsInterface();
-            Console.WriteLine("Settings Window Handle: " + settings.GetHwnd());
+            // Load Python runtime
+            Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
+            PythonEngine.Initialize();
+            PythonEngine.BeginAllowThreads();
+
+            Debug.WriteLine("Python Runtime Loaded");
+
+            // Import Python modules
+            GIL = Py.GIL();
+            Tools = (PyModule)Py.Import("wingetui.Core.Tools");
+            Data = (PyModule)Py.Import("wingetui.Core.Data");
+
+            Debug.WriteLine("Python modules imported");
+
+            // Initialize Windows
+            settings = new SettingsTab.MainInterface(this);
+            settings.Activate();
+
+            Debug.WriteLine("All windows loaded");
 
             Thread python = new Thread(LoadPython);
             python.SetApartmentState(ApartmentState.STA);
             python.Start();
-
         }
 
+        // setSettings binding
+        public void SetSettings(string setting, bool value)
+        {
+            this.Tools.setSettings(setting, value);
+        }
+
+        // getSettings binding
+        public bool GetSettings(string setting)
+        {
+            return (bool)this.Tools.getSettings(setting);
+        }
+
+
+        // Python code loader - Use STA. Otherwise, Qt will crash.
         [STAThread]
         void LoadPython()
         {
-            Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
             PythonEngine.Initialize();
             PythonEngine.BeginAllowThreads();
             using (Py.GIL())
@@ -68,12 +90,10 @@ namespace ModernWindow
                 {
                     scope.Set("CSharpApp", this.ToPython());
                     
-                    string json_options = @"{""settings_window_handle"": " + settings.GetHwnd() + "}";
                     using var locals = new PyDict();
                     locals["CSharpApp"] = this.ToPython();
 
-                    PythonEngine.Exec("import os\n"
-                        + "os.environ['WINGETUI_OPTIONS'] = '" + json_options + "'\n"
+                    PythonEngine.Exec("\n"
                         + "import wingetui.Core.Globals\n"
                         + "wingetui.Core.Globals.CSharpApp = CSharpApp\n"
                         + "import wingetui.__main__\n", null, locals);
@@ -83,6 +103,10 @@ namespace ModernWindow
             }
         }
 
-    public SettingsInterface settings;
+
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        {
+        }
+
     }
 }
