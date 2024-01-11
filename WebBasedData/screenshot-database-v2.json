@@ -32881,7 +32881,7 @@
             "images": []
         },
         "qr-codereader": {
-            "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo.png",
+            "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo_dark.png",
             "images": [
                 "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_1.png",
                 "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2.png",
