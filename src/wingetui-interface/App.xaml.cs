@@ -46,7 +46,6 @@ namespace ModernWindow
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             settings = new SettingsInterface();
-            settings.Activate();
             Console.WriteLine("Settings Window Handle: " + settings.GetHwnd());
 
             Thread python = new Thread(LoadPython);

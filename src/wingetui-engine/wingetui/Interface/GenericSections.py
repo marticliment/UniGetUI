@@ -239,6 +239,18 @@ class AboutSection(SmoothScrollArea):
 class SettingsSection(SmoothScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+        hwnd = Globals.options["settings_window_handle"]
+        
+        window = QWindow.fromWinId(hwnd)
+        window.setFlags(Qt.WindowType.CustomizeWindowHint)
+        self.__winui_widget = QWidget.createWindowContainer(window)
+        # self.__winui_widget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.__winui_widget)
+
+        return
         self.setFrameShape(QFrame.NoFrame)
         self.widget = QWidget()
         self.setWidgetResizable(True)

@@ -26,7 +26,6 @@ namespace ModernWindow
         public SettingsInterface()
         {
             this.InitializeComponent();
-            this.SystemBackdrop = new MicaBackdrop();
         }
 
         public int GetHwnd()
