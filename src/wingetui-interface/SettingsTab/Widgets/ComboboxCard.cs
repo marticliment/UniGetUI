@@ -56,6 +56,7 @@ namespace ModernWindow.SettingsTab.Widgets
             _inverted_val_ref = new Dictionary<string, string>();
 
             _combobox = new ComboBox();
+            _combobox.MinWidth = 200;
             _combobox.SetBinding(ComboBox.ItemsSourceProperty, new Binding() { Source = _elements });
 
             this.DefaultStyleKey = typeof(CheckboxCard);

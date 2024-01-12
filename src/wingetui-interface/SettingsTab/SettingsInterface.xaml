@@ -41,6 +41,11 @@
                             Header="WingetUI display Language:"
                             SettingName="PreferredLanguage"
                             />
+                        <widgets:ButtonCard
+                            Header="Open the welcome wizard"
+                            ButtonText="Open"
+                            ButtonClicked="OpenWelcomeWizard"
+                        />
                         <widgets:CheckboxCard
                             Header="Update WingetUI automatically"
                             SettingName="DisableAutoUpdateWingetUI"
@@ -64,6 +69,21 @@
                             Header="Application theme:"
                             SettingName="UpdatesCheckInterval"
                             />
+                        <widgets:ButtonCard
+                            Header="Import settings from a local file"
+                            ButtonText="Import"
+                            ButtonClicked="ImportSettings"
+                        />
+                        <widgets:ButtonCard
+                            Header="Export settings to a local file"
+                            ButtonText="Export"
+                            ButtonClicked="ExportSettings"
+                        />
+                        <widgets:ButtonCard
+                            Header="Reset WingetUI"
+                            ButtonText="Reset"
+                            ButtonClicked="ResetWingetUI"
+                        />
                     </Toolkit:SettingsExpander.Items>
                 </Toolkit:SettingsExpander>
             </StackPanel>

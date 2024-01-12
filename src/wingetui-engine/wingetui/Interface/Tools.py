@@ -16,6 +16,16 @@ from wingetui.Core.Tools import _
 from wingetui.ExternalLibraries.BlurWindow import GlobalBlur
 
 
+import clr
+clr.AddReference("System")
+if True:
+    from System.Diagnostics import Debug
+
+
+def print(text: str, end: str = "\n", flush: bool = False) -> None:
+    Debug.WriteLine(text)
+
+
 def nativeWindowsShare(text: str, url: str, window: QWidget = None) -> int:
     coordinates = ""
     if window:

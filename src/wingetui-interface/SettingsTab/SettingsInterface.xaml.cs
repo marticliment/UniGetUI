@@ -69,6 +69,24 @@ namespace ModernWindow.SettingsTab
             DispatcherQueue.TryEnqueue(() => { this.Activate(); });
         }
 
+        private void OpenWelcomeWizard(object sender, Widgets.ButtonCardEventArgs e)
+        {
+            // TODO: Implement
+        }
 
+        private void ImportSettings(object sender, Widgets.ButtonCardEventArgs e)
+        {
+            // TODO: Implement
+        }
+
+        private void ExportSettings(object sender, Widgets.ButtonCardEventArgs e)
+        {
+            // TODO: Implement
+        }
+
+        private void ResetWingetUI(object sender, Widgets.ButtonCardEventArgs e)
+        {
+            // TODO: Implement
+        }
     }
 }
