@@ -26,6 +26,16 @@ namespace ModernWindow.Structures
             app.SetSettings(setting, value);
         }
 
+        public string GetSettingsValue(string setting)
+        {
+            return app.GetSettingsValue(setting);
+        }
+
+        public void SetSettingsValue(string setting, string value)
+        {
+            app.SetSettingsValue(setting, value);
+        }
+
         public string Translate(string text)
         {
             return app.Translate(text);

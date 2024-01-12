@@ -720,6 +720,20 @@ Thread(target=checkQueue, daemon=True).start()
 Thread(target=foregroundWindowThread, daemon=True,
        name="Tools: get foreground window").start()
 
+update_times_reference = {
+    _("{0} minutes").format(10): "600",
+    _("{0} minutes").format(30): "1800",
+    _("1 hour"): "3600",
+    _("{0} hours").format(2): "7200",
+    _("{0} hours").format(4): "14400",
+    _("{0} hours").format(8): "28800",
+    _("{0} hours").format(12): "43200",
+    _("1 day"): "86400",
+    _("{0} days").format(2): "172800",
+    _("{0} days").format(3): "259200",
+    _("1 week"): "604800"
+}
+
 
 if __name__ == "__main__":
     import __init__

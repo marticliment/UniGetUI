@@ -16,32 +16,44 @@
         <MicaBackdrop Kind="Base"/>
     </Window.SystemBackdrop>
 
-    <ScrollView Margin="0,50,0,0">
-        <Grid>
+    <ScrollView Margin="0,50,0,0" HorizontalScrollMode="Disabled">
+        <Grid HorizontalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="20"/>
-                <ColumnDefinition Width="1000*" MaxWidth="1000"/>
-                <ColumnDefinition Width="*" MinWidth="20"/>
+                <ColumnDefinition Width="auto" MinWidth="20"/>
+                <ColumnDefinition Width="*" MaxWidth="800"/>
+                <ColumnDefinition Width="auto" MinWidth="20"/>
             </Grid.ColumnDefinitions>
-            <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+            <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
                 <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings"/>
                 <Toolkit:SettingsExpander
+                    x:Name="GeneralSettingsExpander"
                     CornerRadius="8"
                     HorizontalAlignment="Stretch"
-                    Header="Settings 1"
-                    Description="Description"
+                    Header="General Preferences"
+                    Description="Language, theme and other general settings"
                     HeaderIcon="{UI:BitmapIcon Source=ms-appx:///wingetui/resources/settings_white.png}">
                     <Toolkit:SettingsExpander.Items>
+                        <widgets:ComboboxCard
+                            x:Name="LanguageSelector"
+                            Text="WingetUI Display Language:"
+                            SettingName="PreferredLanguage"
+                            />
                         <widgets:CheckboxCard
                             Text="Update WingetUI automatically"
                             SettingName="DisableAutoUpdateWingetUI"
                             />
                         <widgets:CheckboxCard
+                            x:Name="DisableAutoCheckForUpdates"
                             Text="Check for package updates periodically"
                             SettingName="DisableAutoCheckforUpdates"
+                            />
+                        <widgets:ComboboxCard
+                            x:Name="UpdatesCheckIntervalSelector"
+                            Text="Check for updates every:"
+                            SettingName="UpdatesCheckInterval"
                             />
                         <widgets:CheckboxCard
                             Text="Update packages automatically"

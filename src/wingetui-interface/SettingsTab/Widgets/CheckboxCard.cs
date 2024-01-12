@@ -37,6 +37,11 @@ namespace ModernWindow.SettingsTab.Widgets
             set => SetValue(TextProperty, value);
         }
 
+        public bool Checked
+        {
+            get => (bool)_checkbox.IsChecked;
+        }
+
         DependencyProperty SettingProperty = DependencyProperty.Register(
         nameof(SettingName),
         typeof(string),
@@ -49,15 +54,24 @@ namespace ModernWindow.SettingsTab.Widgets
         typeof(CheckboxCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textblock.Text = bindings.Translate((string)e.NewValue); })));
 
+
+        DependencyProperty IsCheckBoxChecked = DependencyProperty.Register(
+        nameof(Checked),
+        typeof(bool),
+        typeof(CheckboxCard),
+        new PropertyMetadata(default(bool), new PropertyChangedCallback((d, e) => {})));
+
         public CheckboxCard()
         {
+            ContentAlignment = ContentAlignment.Left;
+            HorizontalAlignment = HorizontalAlignment.Stretch;
+
             _checkbox = new CheckBox();
             _textblock = new TextBlock();
             this.DefaultStyleKey = typeof(CheckboxCard);
             this.Content = _checkbox;
             _textblock.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _textblock.Width = 5000;
-            HorizontalAlignment = HorizontalAlignment.Left;
+            _textblock.VerticalAlignment = VerticalAlignment.Center;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Content = _textblock;
             _checkbox.Checked += (s, e) => { bindings.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); };

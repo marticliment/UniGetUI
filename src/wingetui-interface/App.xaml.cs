@@ -29,8 +29,8 @@ namespace ModernWindow
     {
         
         // Python modules to be imported
-        private dynamic Tools;
-        private dynamic Data;
+        public dynamic Tools;
+        public dynamic Core;
         private Py.GILState GIL;
 
         // Windows (MUST BE PUBLIS FOR PYTHON TO ACCESS)
@@ -51,7 +51,7 @@ namespace ModernWindow
             // Import Python modules
             GIL = Py.GIL();
             Tools = (PyModule)Py.Import("wingetui.Core.Tools");
-            Data = (PyModule)Py.Import("wingetui.Core.Data");
+            Core = (PyModule)Py.Import("wingetui.Core");
 
             Debug.WriteLine("Python modules imported");
 
@@ -80,6 +80,18 @@ namespace ModernWindow
         public bool GetSettings(string setting)
         {
             return (bool)this.Tools.getSettings(setting);
+        }
+
+        // setSettingsValue binding
+        public void SetSettingsValue(string setting, string value)
+        {
+            this.Tools.setSettingsValue(setting, value);
+        }
+
+        // getSettingsValue binding
+        public string GetSettingsValue(string setting)
+        {
+            return (string)this.Tools.getSettingsValue(setting);
         }
 
         public string Translate(string text)
