@@ -21,6 +21,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 
 namespace ModernWindow
 {
@@ -58,11 +59,15 @@ namespace ModernWindow
             settings = new SettingsTab.MainInterface(this);
             settings.Activate();
 
+            settings.Closed += (sender, args) => { DisposeAndQuit(0); };
+
             Debug.WriteLine("All windows loaded");
 
             Thread python = new Thread(LoadPython);
             python.SetApartmentState(ApartmentState.STA);
-            python.Start();
+            bool run_python = false;
+            if (run_python)
+                python.Start();
         }
 
         // setSettings binding
@@ -75,6 +80,11 @@ namespace ModernWindow
         public bool GetSettings(string setting)
         {
             return (bool)this.Tools.getSettings(setting);
+        }
+
+        public string Translate(string text)
+        {
+            return (string)this.Tools._(text);
         }
 
 
@@ -107,6 +117,22 @@ namespace ModernWindow
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
         }
+
+        private void DisposeAndQuit(int outputCode)
+        {
+            Console.WriteLine("Quitting...");
+            try { PythonEngine.Shutdown(); } catch { Debug.WriteLine("Cannot shutdown Python Runtime"); }
+            try { GIL.Dispose(); } catch { Debug.WriteLine("Cannot dispose GIL"); }
+            settings.Close();
+            Environment.Exit(outputCode);
+        }
+
+        private void __quit_app()
+        {
+            this.Exit();
+        }
+
+        private void DisposeAndQuit() { DisposeAndQuit(0); }
 
     }
 }

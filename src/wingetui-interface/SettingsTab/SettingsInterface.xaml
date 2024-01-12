@@ -6,6 +6,9 @@
     xmlns:local="using:ModernWindow"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UI="using:CommunityToolkit.WinUI"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:widgets="using:ModernWindow.SettingsTab.Widgets"
     mc:Ignorable="d"
     >
 
@@ -13,23 +16,41 @@
         <MicaBackdrop Kind="Base"/>
     </Window.SystemBackdrop>
 
-    <Grid>
-        <!--NavigationView x:Name="nvSample">
-            <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Play" Content="Menu Item1" Tag="SamplePage1" />
-                <NavigationViewItem Icon="Save" Content="Menu Item2" Tag="SamplePage2" />
-                <NavigationViewItem Icon="Refresh" Content="Menu Item3" Tag="SamplePage3" />
-                <NavigationViewItem Icon="Download" Content="Menu Item4" Tag="SamplePage4" />
-            </NavigationView.MenuItems>
-            <Frame x:Name="contentFrame"/>
-        </NavigationView-->
-        <Button>
-            <StackPanel Orientation="Horizontal">
-                <CheckBox>Enable Settings</CheckBox>
-                <DropDownButton>
-                </DropDownButton>
+    <ScrollView Margin="0,50,0,0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="20"/>
+                <ColumnDefinition Width="1000*" MaxWidth="1000"/>
+                <ColumnDefinition Width="*" MinWidth="20"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+                <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings"/>
+                <Toolkit:SettingsExpander
+                    CornerRadius="8"
+                    HorizontalAlignment="Stretch"
+                    Header="Settings 1"
+                    Description="Description"
+                    HeaderIcon="{UI:BitmapIcon Source=ms-appx:///wingetui/resources/settings_white.png}">
+                    <Toolkit:SettingsExpander.Items>
+                        <widgets:CheckboxCard
+                            Text="Update WingetUI automatically"
+                            SettingName="DisableAutoUpdateWingetUI"
+                            />
+                        <widgets:CheckboxCard
+                            Text="Check for package updates periodically"
+                            SettingName="DisableAutoCheckforUpdates"
+                            />
+                        <widgets:CheckboxCard
+                            Text="Update packages automatically"
+                            SettingName="AutomaticallyUpdatePackages"
+                            />
+                    </Toolkit:SettingsExpander.Items>
+                </Toolkit:SettingsExpander>
             </StackPanel>
-        </Button>
-    </Grid>
+        </Grid>
+    </ScrollView>
 
 </Window>

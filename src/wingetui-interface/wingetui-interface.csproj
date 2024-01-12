@@ -38,8 +38,9 @@
   </ItemGroup>
 
 	<ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
     <PackageReference Include="pythonnet" Version="3.0.3" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -56,9 +57,6 @@
     <Page Update="MainInterface.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SettingsTab\" />
   </ItemGroup>
 
   <!-- 
