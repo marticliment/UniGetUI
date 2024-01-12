@@ -51,7 +51,11 @@ namespace ModernWindow.SettingsTab
                 UpdatesCheckIntervalSelector.AddItem(time_names[i].ToString(), time_keys[i].ToString(), false);
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
-            
+
+            ThemeSelector.AddItem("Light", "light");
+            ThemeSelector.AddItem("Dark", "dark");
+            ThemeSelector.AddItem("Follow system color scheme", "auto");
+            ThemeSelector.ShowAddedItems();
         }
 
         public int GetHwnd()

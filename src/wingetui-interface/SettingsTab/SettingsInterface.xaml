@@ -38,26 +38,31 @@
                     <Toolkit:SettingsExpander.Items>
                         <widgets:ComboboxCard
                             x:Name="LanguageSelector"
-                            Text="WingetUI Display Language:"
+                            Header="WingetUI display Language:"
                             SettingName="PreferredLanguage"
                             />
                         <widgets:CheckboxCard
-                            Text="Update WingetUI automatically"
+                            Header="Update WingetUI automatically"
                             SettingName="DisableAutoUpdateWingetUI"
                             />
                         <widgets:CheckboxCard
                             x:Name="DisableAutoCheckForUpdates"
-                            Text="Check for package updates periodically"
+                            Header="Check for package updates periodically"
                             SettingName="DisableAutoCheckforUpdates"
                             />
                         <widgets:ComboboxCard
                             x:Name="UpdatesCheckIntervalSelector"
-                            Text="Check for updates every:"
+                            Header="Check for updates every:"
                             SettingName="UpdatesCheckInterval"
                             />
                         <widgets:CheckboxCard
-                            Text="Update packages automatically"
+                            Header="Update packages automatically"
                             SettingName="AutomaticallyUpdatePackages"
+                            />
+                        <widgets:ComboboxCard
+                            x:Name="ThemeSelector"
+                            Header="Application theme:"
+                            SettingName="UpdatesCheckInterval"
                             />
                     </Toolkit:SettingsExpander.Items>
                 </Toolkit:SettingsExpander>

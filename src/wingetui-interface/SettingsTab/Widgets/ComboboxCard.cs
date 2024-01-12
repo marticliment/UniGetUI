@@ -25,7 +25,6 @@ namespace ModernWindow.SettingsTab.Widgets
     public sealed class ComboboxCard : SettingsCard
     {
         private ComboBox _combobox;
-        private static TextBlock _textblock;
         private static MainAppBindings bindings = new MainAppBindings();
         private ObservableCollection<string> _elements;
         private Dictionary<string, string> _values_ref;
@@ -35,12 +34,6 @@ namespace ModernWindow.SettingsTab.Widgets
         {
             get => (string)GetValue(SettingProperty);
             set => SetValue(SettingProperty, value);
-        }
-
-        public string Text
-        {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
         }
 
         public string Elements
@@ -55,12 +48,6 @@ namespace ModernWindow.SettingsTab.Widgets
         typeof(CheckboxCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { })));
 
-        DependencyProperty TextProperty = DependencyProperty.Register(
-        nameof(Text),
-        typeof(string),
-        typeof(CheckboxCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textblock.Text = bindings.Translate((string)e.NewValue); })));
-
         public ComboboxCard()
         { 
 
@@ -68,31 +55,11 @@ namespace ModernWindow.SettingsTab.Widgets
             _values_ref = new Dictionary<string, string>();
             _inverted_val_ref = new Dictionary<string, string>();
 
-            ContentAlignment = ContentAlignment.Left;
-            HorizontalAlignment = HorizontalAlignment.Stretch;
             _combobox = new ComboBox();
-            _combobox.HorizontalAlignment = HorizontalAlignment.Right;
-            _combobox.Width = 200;
             _combobox.SetBinding(ComboBox.ItemsSourceProperty, new Binding() { Source = _elements });
-            _textblock = new TextBlock();
-            _textblock.VerticalAlignment = VerticalAlignment.Center;
-            _textblock.HorizontalAlignment = HorizontalAlignment.Left;
-
-            Grid g = new Grid();
-            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(200, GridUnitType.Pixel) });
-            Grid.SetColumn(_combobox, 1);
-            Grid.SetColumn(_textblock, 0);
-            g.ColumnSpacing = 10;
-
-            g.HorizontalAlignment = HorizontalAlignment.Stretch;
-            g.VerticalAlignment = VerticalAlignment.Center;
-            g.Children.Add(_textblock);
-            g.Children.Add(_combobox);
-
 
             this.DefaultStyleKey = typeof(CheckboxCard);
-            this.Content = g;
+            this.Content = _combobox;
         }
 
         public void AddItem(string name, string value)
@@ -123,7 +90,6 @@ namespace ModernWindow.SettingsTab.Widgets
             {
                 try
                 {
-                    Console.WriteLine("Setting item "+_combobox.SelectedItem.ToString());
                     bindings.SetSettingsValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
                 }
                 catch (Exception ex)

@@ -22,7 +22,6 @@ namespace ModernWindow.SettingsTab.Widgets
     public sealed class CheckboxCard : SettingsCard
     {
         private static CheckBox _checkbox;
-        private static TextBlock _textblock;
         private static MainAppBindings bindings = new MainAppBindings();
 
         public string SettingName
@@ -31,7 +30,7 @@ namespace ModernWindow.SettingsTab.Widgets
             set => SetValue(SettingProperty, value);
         }
 
-        public string Text
+        public new string Header
         {
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
@@ -49,10 +48,10 @@ namespace ModernWindow.SettingsTab.Widgets
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = bindings.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
 
         DependencyProperty TextProperty = DependencyProperty.Register(
-        nameof(Text),
+        nameof(Header),
         typeof(string),
         typeof(CheckboxCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textblock.Text = bindings.Translate((string)e.NewValue); })));
+        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = bindings.Translate((string)e.NewValue); })));
 
 
         DependencyProperty IsCheckBoxChecked = DependencyProperty.Register(
@@ -67,13 +66,9 @@ namespace ModernWindow.SettingsTab.Widgets
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
             _checkbox = new CheckBox();
-            _textblock = new TextBlock();
             this.DefaultStyleKey = typeof(CheckboxCard);
             this.Content = _checkbox;
-            _textblock.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _textblock.VerticalAlignment = VerticalAlignment.Center;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Content = _textblock;
             _checkbox.Checked += (s, e) => { bindings.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); };
             _checkbox.Unchecked += (s, e) => { bindings.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); };
         }
