@@ -23,11 +23,11 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" MinWidth="20"/>
-                <ColumnDefinition Width="*" MaxWidth="800"/>
+                <ColumnDefinition Width="100000*" MaxWidth="800"/>
                 <ColumnDefinition Width="auto" MinWidth="20"/>
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
-                <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings"/>
+                <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings                                                   ." HorizontalAlignment="Stretch"/>
                 <Toolkit:SettingsExpander
                     x:Name="GeneralSettingsExpander"
                     CornerRadius="8"
