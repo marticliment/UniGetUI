@@ -14,6 +14,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Python.Runtime;
 using Microsoft.VisualBasic.FileIO;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -87,6 +88,20 @@ namespace ModernWindow.SettingsTab
         private void ResetWingetUI(object sender, Widgets.ButtonCardEventArgs e)
         {
             // TODO: Implement
+        }
+
+        private void LanguageSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
+        {
+            //
+        }
+
+        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
+        {
+            //
+        }
+
+        private void ThemeSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
+        {
         }
     }
 }

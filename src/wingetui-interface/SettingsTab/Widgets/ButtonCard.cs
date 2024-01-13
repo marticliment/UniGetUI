@@ -42,10 +42,18 @@ namespace ModernWindow.SettingsTab.Widgets
             set => SetValue(ButtonProperty, value);
         }
 
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
+        DependencyProperty TextProperty;
+
         DependencyProperty ButtonProperty = DependencyProperty.Register(
         nameof(ButtonText),
         typeof(string),
-        typeof(CheckboxCard),
+        typeof(ButtonCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _button.Content = bindings.Translate((string)e.NewValue); })));
 
         public event EventHandler<ButtonCardEventArgs> ButtonClicked;
@@ -56,13 +64,18 @@ namespace ModernWindow.SettingsTab.Widgets
         }
 
         public ButtonCard()
-        { 
+        {
+            TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(ButtonCard),
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsCard)this).Header = bindings.Translate((string)e.NewValue); })));
 
             _button = new Button();
             _button.MinWidth = 200;
             _button.Click += (s, e) => { __button_clicked(); };
 
-            this.DefaultStyleKey = typeof(CheckboxCard);
+            this.DefaultStyleKey = typeof(ButtonCard);
             this.Content = _button;
         }
     }

@@ -22,6 +22,14 @@ using System.Collections.ObjectModel;
 
 namespace ModernWindow.SettingsTab.Widgets
 {
+    public class ComboCardEventArgs : EventArgs
+    {
+
+        public ComboCardEventArgs()
+        {
+        }
+    }
+
     public sealed class ComboboxCard : SettingsCard
     {
         private ComboBox _combobox;
@@ -29,6 +37,7 @@ namespace ModernWindow.SettingsTab.Widgets
         private ObservableCollection<string> _elements;
         private Dictionary<string, string> _values_ref;
         private Dictionary<string, string> _inverted_val_ref;
+        private static string _text;
 
         public string SettingName
         {
@@ -48,8 +57,23 @@ namespace ModernWindow.SettingsTab.Widgets
         typeof(CheckboxCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { })));
 
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
+        DependencyProperty TextProperty;
+
+        public event EventHandler<ComboCardEventArgs> ValueChanged;
+
         public ComboboxCard()
-        { 
+        {
+            TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(CheckboxCard),
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsCard)this).Header = bindings.Translate((string)e.NewValue); })));
 
             _elements = new ObservableCollection<string>();
             _values_ref = new Dictionary<string, string>();
@@ -67,6 +91,7 @@ namespace ModernWindow.SettingsTab.Widgets
         {
             AddItem(name, value, true);
         }
+
         public void AddItem(string name, string value, bool translate)
         {
             if(translate)
@@ -92,6 +117,7 @@ namespace ModernWindow.SettingsTab.Widgets
                 try
                 {
                     bindings.SetSettingsValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
+                    ValueChanged.Invoke(this, new ComboCardEventArgs());
                 }
                 catch (Exception ex)
                 {

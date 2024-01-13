@@ -274,6 +274,10 @@ def isDark() -> bool:
             return True
         case "light":
             return False
+    return IsWindowThemeDark()
+
+
+def IsWindowThemeDark() -> bool:
     return readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) == 0
 
 

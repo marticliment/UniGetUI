@@ -30,11 +30,6 @@ namespace ModernWindow.SettingsTab.Widgets
             set => SetValue(SettingProperty, value);
         }
 
-        public new string Header
-        {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
-        }
 
         public bool Checked
         {
@@ -47,8 +42,14 @@ namespace ModernWindow.SettingsTab.Widgets
         typeof(CheckboxCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = bindings.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
 
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
         DependencyProperty TextProperty = DependencyProperty.Register(
-        nameof(Header),
+        nameof(Text),
         typeof(string),
         typeof(CheckboxCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = bindings.Translate((string)e.NewValue); })));

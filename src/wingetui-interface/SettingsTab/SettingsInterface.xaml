@@ -28,64 +28,71 @@
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
                 <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings                                                   ." HorizontalAlignment="Stretch"/>
-                <Toolkit:SettingsExpander
+                <widgets:SettingsEntry
                     x:Name="GeneralSettingsExpander"
-                    CornerRadius="8"
-                    HorizontalAlignment="Stretch"
-                    Header="General Preferences"
-                    Description="Language, theme and other general settings"
-                    HeaderIcon="{UI:BitmapIcon Source=ms-appx:///wingetui/resources/settings_white.png}">
+                    Text="General preferences"
+                    UnderText="Language, theme and other miscellaneous preferences"
+                    Icon="settings"
+                    >
                     <Toolkit:SettingsExpander.Items>
                         <widgets:ComboboxCard
                             x:Name="LanguageSelector"
-                            Header="WingetUI display Language:"
+                            Text="WingetUI display language:"
                             SettingName="PreferredLanguage"
+                            ValueChanged="LanguageSelector_ValueChanged"
                             />
                         <widgets:ButtonCard
-                            Header="Open the welcome wizard"
+                            Text="Open the welcome wizard"
                             ButtonText="Open"
                             ButtonClicked="OpenWelcomeWizard"
                         />
                         <widgets:CheckboxCard
-                            Header="Update WingetUI automatically"
+                            Text="Update WingetUI automatically"
                             SettingName="DisableAutoUpdateWingetUI"
                             />
                         <widgets:CheckboxCard
                             x:Name="DisableAutoCheckForUpdates"
-                            Header="Check for package updates periodically"
+                            Text="Check for package updates periodically"
                             SettingName="DisableAutoCheckforUpdates"
                             />
                         <widgets:ComboboxCard
                             x:Name="UpdatesCheckIntervalSelector"
-                            Header="Check for updates every:"
+                            Text="Check for updates every:"
                             SettingName="UpdatesCheckInterval"
+                            ValueChanged="UpdatesCheckIntervalSelector_ValueChanged"
                             />
                         <widgets:CheckboxCard
-                            Header="Update packages automatically"
+                            Text="Update packages automatically"
                             SettingName="AutomaticallyUpdatePackages"
                             />
                         <widgets:ComboboxCard
                             x:Name="ThemeSelector"
-                            Header="Application theme:"
-                            SettingName="UpdatesCheckInterval"
+                            Text="Application theme:"
+                            SettingName="PreferredTheme"
+                            ValueChanged="ThemeSelector_ValueChanged"
                             />
                         <widgets:ButtonCard
-                            Header="Import settings from a local file"
+                            Text="Import settings from a local file"
                             ButtonText="Import"
                             ButtonClicked="ImportSettings"
                         />
                         <widgets:ButtonCard
-                            Header="Export settings to a local file"
+                            Text="Export settings to a local file"
                             ButtonText="Export"
                             ButtonClicked="ExportSettings"
                         />
                         <widgets:ButtonCard
-                            Header="Reset WingetUI"
+                            Text="Reset WingetUI"
                             ButtonText="Reset"
                             ButtonClicked="ResetWingetUI"
                         />
                     </Toolkit:SettingsExpander.Items>
-                </Toolkit:SettingsExpander>
+                </widgets:SettingsEntry>
+                <widgets:SettingsEntry
+                    Text="Hello"
+                    Description="Hello World">
+                    
+                </widgets:SettingsEntry>
             </StackPanel>
         </Grid>
     </ScrollView>
