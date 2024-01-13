@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window
-    x:Class="ModernWindow.SettingsTab.MainInterface"
+<UserControl
+    x:Class="ModernWindow.SettingsTab.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ModernWindow"
@@ -12,9 +12,9 @@
     mc:Ignorable="d"
     >
 
-    <Window.SystemBackdrop>
+    <!--Window.SystemBackdrop>
         <MicaBackdrop Kind="Base"/>
-    </Window.SystemBackdrop>
+    </Window.SystemBackdrop-->
 
     <ScrollView Margin="0,50,0,0" HorizontalScrollMode="Disabled">
         <Grid HorizontalAlignment="Center">
@@ -97,4 +97,4 @@
         </Grid>
     </ScrollView>
 
-</Window>
+</UserControl>

@@ -37,6 +37,10 @@
     <Content Remove="..\wingetui-engine\.vscode\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="MainWindow.xaml" />
+  </ItemGroup>
+
 	<ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
@@ -52,6 +56,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainInterface.xaml">

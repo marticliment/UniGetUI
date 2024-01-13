@@ -34,7 +34,8 @@ namespace ModernWindow
         private Py.GILState GIL;
 
         // Windows (MUST BE PUBLIS FOR PYTHON TO ACCESS)
-        public SettingsTab.MainInterface settings;
+        public SettingsTab.MainPage settings;
+        public MainWindow mainWindow;
 
 
         public MainApp()
@@ -56,10 +57,12 @@ namespace ModernWindow
             Debug.WriteLine("Python modules imported");
 
             // Initialize Windows
-            settings = new SettingsTab.MainInterface(this);
-            settings.Activate();
+            mainWindow = new MainWindow();
+            mainWindow.Activate();
+            settings = mainWindow.SettingsTab;
+            //settings.Activate();
 
-            settings.Closed += (sender, args) => { DisposeAndQuit(0); };
+            //settings.Closed += (sender, args) => { DisposeAndQuit(0); };
 
             Debug.WriteLine("All windows loaded");
 
@@ -135,7 +138,7 @@ namespace ModernWindow
             Console.WriteLine("Quitting...");
             try { PythonEngine.Shutdown(); } catch { Debug.WriteLine("Cannot shutdown Python Runtime"); }
             try { GIL.Dispose(); } catch { Debug.WriteLine("Cannot dispose GIL"); }
-            settings.Close();
+            mainWindow.Close();
             Environment.Exit(outputCode);
         }
 
