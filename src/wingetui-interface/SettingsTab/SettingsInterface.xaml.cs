@@ -94,18 +94,17 @@ namespace ModernWindow.SettingsTab
 
         private void LanguageSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
         {
-            //
+            GeneralSettingsExpander.ShowRestartRequiresBanner();
         }
 
         private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
         {
-            //
+            GeneralSettingsExpander.ShowRestartRequiresBanner();
         }
 
         private void ThemeSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
         {
             _app.mainWindow.ApplyTheme();
-
         }
     }
 }

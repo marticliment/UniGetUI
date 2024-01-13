@@ -23,6 +23,8 @@ namespace ModernWindow.SettingsTab.Widgets
     public sealed class SettingsEntry : SettingsExpander
     {
         public static MainAppBindings bindings = new MainAppBindings();
+        private InfoBar infoBar;
+        private Button RestartButton;
         public string Text
         {
             get => (string)GetValue(TextProperty);
@@ -73,7 +75,25 @@ namespace ModernWindow.SettingsTab.Widgets
             CornerRadius = new CornerRadius(8);
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
+            infoBar = new InfoBar();
+            infoBar.Severity = InfoBarSeverity.Warning;
+            infoBar.Title = "";
+            infoBar.Message = bindings.Translate("Restart WingetUI to fully apply changes");
+            infoBar.CornerRadius = new CornerRadius(0);
+            infoBar.BorderThickness = new Thickness(0);
+            RestartButton = new Button();
+            RestartButton.HorizontalAlignment = HorizontalAlignment.Right;
+            infoBar.ActionButton = RestartButton;
+            RestartButton.Content = bindings.Translate("Restart WingetUI");
+            RestartButton.Click += (s, e) => { bindings.RestartApp(); };
+            ItemsHeader = infoBar;
+
             this.DefaultStyleKey = typeof(SettingsExpander);
+        }
+
+        public void ShowRestartRequiresBanner()
+        {
+            infoBar.IsOpen = true;
         }
     }
 }

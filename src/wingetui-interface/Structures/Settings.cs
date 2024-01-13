@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,13 @@ namespace ModernWindow.Structures
         {
             return app.Translate(text);
         }
+
+        public void RestartApp()
+        {
+            Console.WriteLine(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            app.DisposeAndQuit();
+    }
     }
 
 }

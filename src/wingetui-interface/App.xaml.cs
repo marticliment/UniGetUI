@@ -133,7 +133,7 @@ namespace ModernWindow
         {
         }
 
-        private void DisposeAndQuit(int outputCode)
+        public void DisposeAndQuit(int outputCode)
         {
             Console.WriteLine("Quitting...");
             try { PythonEngine.Shutdown(); } catch { Debug.WriteLine("Cannot shutdown Python Runtime"); }
@@ -147,7 +147,7 @@ namespace ModernWindow
             this.Exit();
         }
 
-        private void DisposeAndQuit() { DisposeAndQuit(0); }
+        public void DisposeAndQuit() { DisposeAndQuit(0); }
 
     }
 }
