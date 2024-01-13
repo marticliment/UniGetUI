@@ -15,6 +15,9 @@ using Windows.Foundation.Collections;
 using Python.Runtime;
 using Microsoft.VisualBasic.FileIO;
 using System.Diagnostics;
+using Microsoft.UI;
+using System.Windows.Input;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,13 +27,12 @@ namespace ModernWindow.SettingsTab
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainInterface : Window
+    public sealed partial class MainPage : UserControl
     {
-        private MainApp _app;
-        public MainInterface(MainApp app)
+        private MainApp _app = (MainApp)Application.Current;
+        public MainPage()
         {
             this.InitializeComponent();
-            _app = app;
        
             PyDict lang_dict = new PyDict(_app.Core.Languages.LangData.languageReference);
             var lang_values = lang_dict.Keys();
@@ -67,7 +69,7 @@ namespace ModernWindow.SettingsTab
         public void ShowWindow_SAFE()
         {
             Console.WriteLine("Called from Python!");
-            DispatcherQueue.TryEnqueue(() => { this.Activate(); });
+            _app.mainWindow.DispatcherQueue.TryEnqueue(() => { _app.mainWindow.Activate(); });
         }
 
         private void OpenWelcomeWizard(object sender, Widgets.ButtonCardEventArgs e)
@@ -102,6 +104,8 @@ namespace ModernWindow.SettingsTab
 
         private void ThemeSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
         {
+            _app.mainWindow.ApplyTheme();
+
         }
     }
 }
