@@ -12,7 +12,9 @@
     <Window.SystemBackdrop>
         <MicaBackdrop/>
     </Window.SystemBackdrop>
-    <StackPanel Name="__content_root">
-        <settings:MainPage x:Name="__settings_tab" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-    </StackPanel>
+    <ScrollView Margin="0,50,0,0" HorizontalScrollMode="Disabled" Name="__content_root">
+        <StackPanel Orientation="Vertical">
+            <settings:MainPage x:Name="__settings_tab"/>
+        </StackPanel>
+    </ScrollView>
 </Window>

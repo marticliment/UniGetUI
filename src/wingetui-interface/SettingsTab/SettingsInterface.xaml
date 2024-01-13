@@ -11,90 +11,151 @@
     xmlns:widgets="using:ModernWindow.SettingsTab.Widgets"
     mc:Ignorable="d"
     >
-
-    <!--Window.SystemBackdrop>
-        <MicaBackdrop Kind="Base"/>
-    </Window.SystemBackdrop-->
-
-    <ScrollView Margin="0,50,0,0" HorizontalScrollMode="Disabled">
-        <Grid HorizontalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" MinWidth="20"/>
-                <ColumnDefinition Width="100000*" MaxWidth="800"/>
-                <ColumnDefinition Width="auto" MinWidth="20"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
-                <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings                                                   ." HorizontalAlignment="Stretch"/>
-                <widgets:SettingsEntry
-                    x:Name="GeneralSettingsExpander"
-                    Text="General preferences"
-                    UnderText="Language, theme and other miscellaneous preferences"
-                    Icon="settings"
-                    >
-                    <Toolkit:SettingsExpander.Items>
-                        <widgets:ComboboxCard
-                            x:Name="LanguageSelector"
-                            Text="WingetUI display language:"
-                            SettingName="PreferredLanguage"
-                            ValueChanged="LanguageSelector_ValueChanged"
-                            />
-                        <widgets:ButtonCard
-                            Text="Open the welcome wizard"
-                            ButtonText="Open"
-                            ButtonClicked="OpenWelcomeWizard"
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" MinWidth="20"/>
+            <ColumnDefinition Width="100000*" MaxWidth="800"/>
+            <ColumnDefinition Width="auto" MinWidth="20"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
+            <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings                                                   ." HorizontalAlignment="Stretch"/>
+            <widgets:SettingsEntry
+                x:Name="GeneralSettingsExpander"
+                Text="General preferences"
+                UnderText="Language, theme and other miscellaneous preferences"
+                Icon="settings"
+                >
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:ComboboxCard
+                        x:Name="LanguageSelector"
+                        Text="WingetUI display language:"
+                        SettingName="PreferredLanguage"
+                        ValueChanged="LanguageSelector_ValueChanged"
                         />
-                        <widgets:CheckboxCard
-                            Text="Update WingetUI automatically"
-                            SettingName="DisableAutoUpdateWingetUI"
-                            />
-                        <widgets:CheckboxCard
-                            x:Name="DisableAutoCheckForUpdates"
-                            Text="Check for package updates periodically"
-                            SettingName="DisableAutoCheckforUpdates"
-                            />
-                        <widgets:ComboboxCard
-                            x:Name="UpdatesCheckIntervalSelector"
-                            Text="Check for updates every:"
-                            SettingName="UpdatesCheckInterval"
-                            ValueChanged="UpdatesCheckIntervalSelector_ValueChanged"
-                            />
-                        <widgets:CheckboxCard
-                            Text="Update packages automatically"
-                            SettingName="AutomaticallyUpdatePackages"
-                            />
-                        <widgets:ComboboxCard
-                            x:Name="ThemeSelector"
-                            Text="Application theme:"
-                            SettingName="PreferredTheme"
-                            ValueChanged="ThemeSelector_ValueChanged"
-                            />
-                        <widgets:ButtonCard
-                            Text="Import settings from a local file"
-                            ButtonText="Import"
-                            ButtonClicked="ImportSettings"
+                    <widgets:ButtonCard
+                        Text="Open the welcome wizard"
+                        ButtonText="Open"
+                        ButtonClicked="OpenWelcomeWizard"
+                    />
+                    <widgets:CheckboxCard
+                        Text="Update WingetUI automatically"
+                        SettingName="DisableAutoUpdateWingetUI"
                         />
-                        <widgets:ButtonCard
-                            Text="Export settings to a local file"
-                            ButtonText="Export"
-                            ButtonClicked="ExportSettings"
+                    <widgets:CheckboxCard
+                        x:Name="DisableAutoCheckForUpdates"
+                        Text="Check for package updates periodically"
+                        SettingName="DisableAutoCheckforUpdates"
                         />
-                        <widgets:ButtonCard
-                            Text="Reset WingetUI"
-                            ButtonText="Reset"
-                            ButtonClicked="ResetWingetUI"
+                    <widgets:ComboboxCard
+                        x:Name="UpdatesCheckIntervalSelector"
+                        Text="Check for updates every:"
+                        SettingName="UpdatesCheckInterval"
+                        ValueChanged="UpdatesCheckIntervalSelector_ValueChanged"
                         />
-                    </Toolkit:SettingsExpander.Items>
-                </widgets:SettingsEntry>
-                <widgets:SettingsEntry
-                    Text="Hello"
-                    Description="Hello World">
-                    
-                </widgets:SettingsEntry>
-            </StackPanel>
-        </Grid>
-    </ScrollView>
-
+                    <widgets:CheckboxCard
+                        Text="Update packages automatically"
+                        SettingName="AutomaticallyUpdatePackages"
+                        />
+                    <widgets:ComboboxCard
+                        x:Name="ThemeSelector"
+                        Text="Application theme:"
+                        SettingName="PreferredTheme"
+                        ValueChanged="ThemeSelector_ValueChanged"
+                        />
+                    <widgets:ButtonCard
+                        Text="Import settings from a local file"
+                        ButtonText="Import"
+                        ButtonClicked="ImportSettings"
+                    />
+                    <widgets:ButtonCard
+                        Text="Export settings to a local file"
+                        ButtonText="Export"
+                        ButtonClicked="ExportSettings"
+                    />
+                    <widgets:ButtonCard
+                        Text="Reset WingetUI"
+                        ButtonText="Reset"
+                        ButtonClicked="ResetWingetUI"
+                    />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+            <widgets:SettingsEntry
+                    Text="Startup options"
+                    Description="WingetUI autostart behaviour, application launch settings"
+                    Icon="launch">
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        Text="Autostart WingetUI in the notifications area"
+                        SettingName="DisableAutostart"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Update package indexes on launch"
+                        SettingName="DisableUpdateIndexes"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Enable Scoop cleanup on launch"
+                        SettingName="EnableScoopCleanup"
+                        />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+            <widgets:SettingsEntry
+                    Text="User interface preferences"
+                    Description="Action when double-clicking packages, hide successful installations"
+                    Icon="interactive">
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        Text="Directly install when double-clicking an item on the Discover Packages tab"
+                        SettingName="InstallOnDoubleClick"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Show details when double-clicking a package on the Software Updates tab"
+                        SettingName="DoNotUpdateOnDoubleClick"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Do not remove successful installs/uninstalls/updates from the installation list"
+                        SettingName="MaintainSuccessfulInstalls"
+                        />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+            <widgets:SettingsEntry
+                    Text="Notification tray options"
+                    Description="WingetUI tray application preferences"
+                    Icon="systemtray">
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+            <widgets:SettingsEntry
+                    Text="Backup installed packages"
+                    Description="Automatically save a list of all your installed packages to easily restore them."
+                    Icon="disk">
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+            <widgets:SettingsEntry
+                    Text="Administrator privileges preferences"
+                    Description="Ask once or always for administrator rights, elevate installations by default"
+                    Icon="runasadmin">
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+            <widgets:SettingsEntry
+                    Text="Experimental settings and developer options"
+                    Description="Beta features and other options that shouldn't be touched"
+                    Icon="testing">
+                <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        />
+                </Toolkit:SettingsExpander.Items>
+            </widgets:SettingsEntry>
+        </StackPanel>
+    </Grid>
 </UserControl>
