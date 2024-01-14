@@ -43,6 +43,7 @@ languageReference = {
     "sr"    : "Serbian - Srpski",
     "si"    : "Sinhala - සිංහල",
     "sl"    : "Slovene - Slovenščina",
+    "sv"      : "Swedish - Svenska",
     "tg"    : "Tagalog - Tagalog",
     "th"    : "Thai - ภาษาไทย",
     "tr"    : "Turkish - Türkçe",
