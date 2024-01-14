@@ -2,7 +2,7 @@
 
 untranslatedPercentage = {
   "ar": "87%",
-  "bg": "89%",
+  "bg": "90%",
   "bn": "45%",
   "cs": "94%",
   "da": "29%",
@@ -23,6 +23,7 @@ untranslatedPercentage = {
   "si": "9%",
   "sl": "88%",
   "sr": "96%",
+  "sv": "0%",
   "tg": "21%",
   "tr": "85%",
   "ua": "84%",
@@ -384,6 +385,7 @@ languageCredits = {
       "link": ""
     }
   ],
+  "sv": [],
   "tg": [
     {
       "name": "lasersPew",
