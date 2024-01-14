@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11697,
-        "done": 7476,
-        "packages_with_icon": 7476,
-        "packages_with_screenshot": 532,
-        "total_screenshots": 1684
+        "total": 11698,
+        "done": 7477,
+        "packages_with_icon": 7477,
+        "packages_with_screenshot": 533,
+        "total_screenshots": 1689
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -11025,6 +11025,16 @@
         "dopdf": {
             "icon": "https://community.chocolatey.org/content/packageimages/doPDF.11.7.371.png",
             "images": []
+        },
+        "dorion": {
+            "icon": "https://raw.githubusercontent.com/SpikeHD/Dorion/main/src-tauri/icons/icon.png",
+            "images": [
+                "https://spikehd.github.io/projects/dorion/images/theme_full.png",
+                "https://spikehd.github.io/projects/dorion/images/settings_full.png",
+                "https://spikehd.github.io/projects/dorion/images/performancesettings.png",
+                "https://spikehd.github.io/projects/dorion/images/settings.png",
+                "https://spikehd.github.io/projects/dorion/images/shelter.png"
+            ]
         },
         "doro": {
             "icon": "https://community.chocolatey.org/content/packageimages/doro.install.2.20.png",
