@@ -88,7 +88,7 @@
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
                     Text="Startup options"
-                    Description="WingetUI autostart behaviour, application launch settings"
+                    UnderText="WingetUI autostart behaviour, application launch settings"
                     Icon="launch">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
@@ -107,7 +107,7 @@
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
                     Text="User interface preferences"
-                    Description="Action when double-clicking packages, hide successful installations"
+                    UnderText="Action when double-clicking packages, hide successful installations"
                     Icon="interactive">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
@@ -126,16 +126,34 @@
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
                     Text="Notification tray options"
-                    Description="WingetUI tray application preferences"
+                    UnderText="WingetUI tray application preferences"
                     Icon="systemtray">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
+                        Text="Close WingetUI to the notification area"
+                        SettingName="DisablesystemTray"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Enable WingetUI notifications"
+                        SettingName="DisableNotifications"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Show a notification when there are available updates"
+                        SettingName="DisableUpdatesNotifications"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Show a notification when an installation fails"
+                        SettingName="DisableErrorNotifications"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Show a notification when an installation finishes successfully"
+                        SettingName="DisableSuccessNotifications"
                         />
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
                     Text="Backup installed packages"
-                    Description="Automatically save a list of all your installed packages to easily restore them."
+                    UnderText="Automatically save a list of all your installed packages to easily restore them."
                     Icon="disk">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
@@ -144,7 +162,7 @@
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
                     Text="Administrator privileges preferences"
-                    Description="Ask once or always for administrator rights, elevate installations by default"
+                    UnderText="Ask once or always for administrator rights, elevate installations by default"
                     Icon="runasadmin">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
@@ -153,7 +171,7 @@
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
                     Text="Experimental settings and developer options"
-                    Description="Beta features and other options that shouldn't be touched"
+                    UnderText="Beta features and other options that shouldn't be touched"
                     Icon="testing">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
