@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <None Remove="MainWindow.xaml" />
+    <None Remove="SettingsTab\Widgets\Announcer.xaml" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -56,6 +57,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SettingsTab\Widgets\Announcer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainWindow.xaml">

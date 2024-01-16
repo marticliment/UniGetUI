@@ -21,6 +21,10 @@
             <ColumnDefinition Width="auto" MinWidth="20"/>
         </Grid.ColumnDefinitions>
         <StackPanel HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
+            <widgets:Announcer
+                x:Name="SettingsAnnouncer"
+                Url="https://www.marticliment.com/resources/wingetui.announcement"
+                />
             <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings                                                   ." HorizontalAlignment="Stretch"/>
             <widgets:SettingsEntry
                 x:Name="GeneralSettingsExpander"

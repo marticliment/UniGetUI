@@ -10,7 +10,6 @@ namespace ModernWindow
 {
     public static class EntryPoint
     {
-        [STAThread]
         static void Main(string[] args)
         {
             Microsoft.UI.Xaml.Application.Start((p) =>

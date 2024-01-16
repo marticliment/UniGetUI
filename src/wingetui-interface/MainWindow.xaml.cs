@@ -25,13 +25,12 @@ namespace ModernWindow
     {
         MainApp _app = Application.Current as MainApp;
         public SettingsTab.MainPage SettingsTab;
-        public ScrollView ContentRoot;
+        public ScrollViewer ContentRoot;
         public MainWindow()
         {
             this.InitializeComponent();
             SettingsTab = __settings_tab;
             ContentRoot = __content_root;
-            ContentRoot.VerticalScrollRailMode = ScrollingRailMode.Enabled;
             ApplyTheme();
         }
 
