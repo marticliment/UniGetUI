@@ -281,7 +281,7 @@ class RootWindow(QMainWindow):
                                       ctypes.sizeof(value))
 
             user32.SetWindowPos(int(self.winId()),
-                                0, 0, 0, 0, 0,
+                                -2, 0, 0, 0, 0,
                                 0x0020 | 0x0002 | 0x0004 | 0x0001)
 
     def nativeEvent(self, eventType, message):
