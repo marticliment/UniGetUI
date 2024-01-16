@@ -40,6 +40,7 @@
   <ItemGroup>
     <None Remove="MainWindow.xaml" />
     <None Remove="SettingsTab\Widgets\Announcer.xaml" />
+    <None Remove="SettingsTab\Widgets\TranslatedTextBlock.xaml" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -57,6 +58,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SettingsTab\Widgets\TranslatedTextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="SettingsTab\Widgets\Announcer.xaml">
