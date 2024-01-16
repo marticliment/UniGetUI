@@ -12,9 +12,28 @@
     <Window.SystemBackdrop>
         <MicaBackdrop/>
     </Window.SystemBackdrop>
-    <ScrollViewer Margin="0,50,0,0" HorizontalScrollMode="Disabled" Name="__content_root">
-        <StackPanel Orientation="Vertical">
-            <settings:MainPage x:Name="__settings_tab"/>
-        </StackPanel>
-    </ScrollViewer>
+    <Grid Name="__content_root">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Grid.Column="0" x:Name="__app_titlebar" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="12,8,12,8" Spacing="10">
+                <Image VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="16" Height="16" >
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///wingetui/resources/icon.png"/>
+                    </Image.Source>
+                </Image>
+                <TextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="13"/>
+            </StackPanel>
+        </Border>
+        <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollMode="Disabled" VerticalAlignment="Stretch">
+            <StackPanel Orientation="Vertical">
+                <settings:MainPage x:Name="__settings_tab"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Window>

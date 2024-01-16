@@ -1,3 +1,4 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -25,10 +26,12 @@ namespace ModernWindow
     {
         MainApp _app = Application.Current as MainApp;
         public SettingsTab.MainPage SettingsTab;
-        public ScrollViewer ContentRoot;
+        public Grid ContentRoot;
         public MainWindow()
         {
             this.InitializeComponent();
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(__app_titlebar);
             SettingsTab = __settings_tab;
             ContentRoot = __content_root;
             ApplyTheme();
