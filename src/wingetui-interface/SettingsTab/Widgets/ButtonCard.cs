@@ -56,12 +56,7 @@ namespace ModernWindow.SettingsTab.Widgets
         typeof(ButtonCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _button.Content = bindings.Translate((string)e.NewValue); })));
 
-        public event EventHandler<ButtonCardEventArgs> ButtonClicked;
-
-        protected void __button_clicked()
-        {
-            ButtonClicked?.Invoke(this, new ButtonCardEventArgs());
-        }
+        public new event EventHandler<ButtonCardEventArgs> Click;
 
         public ButtonCard()
         {
@@ -73,7 +68,7 @@ namespace ModernWindow.SettingsTab.Widgets
 
             _button = new Button();
             _button.MinWidth = 200;
-            _button.Click += (s, e) => { __button_clicked(); };
+            _button.Click += (s, e) => { Click?.Invoke(this, new ButtonCardEventArgs()); };
 
             this.DefaultStyleKey = typeof(ButtonCard);
             this.Content = _button;

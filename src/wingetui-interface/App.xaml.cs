@@ -31,6 +31,7 @@ namespace ModernWindow
         // Python modules to be imported
         public dynamic Tools;
         public dynamic Core;
+        public dynamic Globals;
         private Py.GILState GIL;
 
         // Windows (MUST BE PUBLIS FOR PYTHON TO ACCESS)
@@ -51,6 +52,7 @@ namespace ModernWindow
 
             // Import Python modules
             GIL = Py.GIL();
+            Globals = (PyModule)Py.Import("wingetui.Core.Globals");
             Tools = (PyModule)Py.Import("wingetui.Core.Tools");
             Core = (PyModule)Py.Import("wingetui.Core");
 

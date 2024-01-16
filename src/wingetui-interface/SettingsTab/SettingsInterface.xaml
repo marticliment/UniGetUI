@@ -42,7 +42,7 @@
                     <widgets:ButtonCard
                         Text="Open the welcome wizard"
                         ButtonText="Open"
-                        ButtonClicked="OpenWelcomeWizard"
+                        Click="OpenWelcomeWizard"
                     />
                     <widgets:CheckboxCard
                         Text="Update WingetUI automatically"
@@ -72,17 +72,17 @@
                     <widgets:ButtonCard
                         Text="Import settings from a local file"
                         ButtonText="Import"
-                        ButtonClicked="ImportSettings"
+                        Click="ImportSettings"
                     />
                     <widgets:ButtonCard
                         Text="Export settings to a local file"
                         ButtonText="Export"
-                        ButtonClicked="ExportSettings"
+                        Click="ExportSettings"
                     />
                     <widgets:ButtonCard
                         Text="Reset WingetUI"
                         ButtonText="Reset"
-                        ButtonClicked="ResetWingetUI"
+                        Click="ResetWingetUI"
                     />
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
@@ -157,7 +157,43 @@
                     Icon="disk">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
+                        Text="Periodically perform a backup of the installed packages"
+                        SettingName="EnablePackageBackup"
                         />
+                    <Toolkit:SettingsCard>
+                        <Toolkit:SettingsCard.Description>
+                            <StackPanel Orientation="Vertical">
+                                <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." />
+                                <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will NOT include any binary file nor any program's saved data." />
+                                <widgets:TranslatedTextBlock Prefix=" ● " Text="The size of the backup is estimated to be less than 1MB." />
+                                <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will be performed after login." />
+                            </StackPanel>
+                        </Toolkit:SettingsCard.Description>
+                    </Toolkit:SettingsCard>
+                    <widgets:CheckboxCard
+                        Text="Add a timestamp to the backup file names"
+                        SettingName="EnableBackupTimestamping"
+                        />
+                    <widgets:TextboxCard
+                        Text="Set a custom backup file name"
+                        Placeholder="Leave empty for default"
+                        SettingName="ChangeBackupFileName"
+                        />
+                    <widgets:ButtonCard
+                        Text="Change backup output directory"
+                        ButtonText="Select"
+                        x:Name="ChangeBackupDirectory"
+                        Click="ChangeBackupDirectory_Click"
+                        >
+                        <Toolkit:SettingsCard.Description>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <!-- DO NOT MODIFY TEXTBLOCK NOR HYPERLINKBUTTON. THEY HAVE BEEN HARDCODED -->
+                                <TextBlock Name="OutputBackupPathLabel" VerticalAlignment="Center"/>
+                                <HyperlinkButton Name="ResetBackupPath" Click="ResetBackupPath_Click" />
+                            </StackPanel>
+                        </Toolkit:SettingsCard.Description>
+
+                    </widgets:ButtonCard>
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
