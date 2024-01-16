@@ -37,7 +37,7 @@ namespace ModernWindow.SettingsTab.Widgets
             get => (string)GetValue(UnderTextProperty);
             set => SetValue(UnderTextProperty, value);
         }
-        new DependencyProperty UnderTextProperty;
+        DependencyProperty UnderTextProperty;
 
         public string Icon
         {

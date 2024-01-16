@@ -60,7 +60,7 @@ namespace ModernWindow.SettingsTab.Widgets
 
         protected void __button_clicked()
         {
-            ButtonClicked.Invoke(this, new ButtonCardEventArgs());
+            ButtonClicked?.Invoke(this, new ButtonCardEventArgs());
         }
 
         public ButtonCard()

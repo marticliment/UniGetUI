@@ -117,7 +117,7 @@ namespace ModernWindow.SettingsTab.Widgets
                 try
                 {
                     bindings.SetSettingsValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
-                    ValueChanged.Invoke(this, new ComboCardEventArgs());
+                    ValueChanged?.Invoke(this, new ComboCardEventArgs());
                 }
                 catch (Exception ex)
                 {

@@ -25,7 +25,7 @@
                 x:Name="SettingsAnnouncer"
                 Url="https://www.marticliment.com/resources/wingetui.announcement"
                 />
-            <TextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings                                                   ." HorizontalAlignment="Stretch"/>
+            <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings" Suffix="                                                   ." HorizontalAlignment="Stretch"/>
             <widgets:SettingsEntry
                 x:Name="GeneralSettingsExpander"
                 Text="General preferences"
