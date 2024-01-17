@@ -58,7 +58,7 @@ namespace ModernWindow
             Globals = (PyModule)Py.Import("wingetui.Core.Globals");
             Tools = (PyModule)Py.Import("wingetui.Core.Tools");
             Core = (PyModule)Py.Import("wingetui.Core");
-            //PackageClasses = (PyModule)Py.Import("wingetui.PackageEngine.Classes");
+            PackageClasses = (PyModule)Py.Import("wingetui.PackageEngine.Classes");
             try{
                 PackageTools = (PyModule)Py.Import("wingetui.PackageEngine.Tools");
             } catch (Exception ex)

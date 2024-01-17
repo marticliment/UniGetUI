@@ -187,7 +187,7 @@
                         >
                         <Toolkit:SettingsCard.Description>
                             <StackPanel Orientation="Horizontal" Spacing="5">
-                                <!-- DO NOT MODIFY TEXTBLOCK NOR HYPERLINKBUTTONs. THEY HAVE BEEN HARDCODED -->
+                                <!-- DO NOT MODIFY TEXTBLOCK NOR HYPERLINKBUTTONs. THEY HAVE BEEN HARDCODED IN THEIR CURRENT ORDER -->
                                 <TextBlock Name="OutputBackupPathLabel" VerticalAlignment="Center"/>
                                 <HyperlinkButton Name="ResetBackupPath" Click="ResetBackupPath_Click" />
                                 <HyperlinkButton Name="OpenBackupPath" Click="OpenBackupPath_Click" />
@@ -198,11 +198,23 @@
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
+                    x:Name="AdminSettingsExpander"
                     Text="Administrator privileges preferences"
                     UnderText="Ask once or always for administrator rights, elevate installations by default"
                     Icon="runasadmin">
                 <Toolkit:SettingsExpander.Items>
                     <widgets:CheckboxCard
+                        x:Name="DoCacheAdminRights"
+                        Text="Ask only once for administrator privileges (not recommended)"
+                        SettingName="DoCacheAdminRights"
+                        StateChanged="DoCacheAdminRights_StateChanged"
+                        />
+
+                    <widgets:CheckboxCard
+                        x:Name="UseSystemGSudo"
+                        Text="Use installed GSudo instead of the bundled one"
+                        SettingName="UseUserGSudo"
+                        StateChanged="UseSystemGSudo_StateChanged"
                         />
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
@@ -211,8 +223,6 @@
                     UnderText="Beta features and other options that shouldn't be touched"
                     Icon="testing">
                 <Toolkit:SettingsExpander.Items>
-                    <widgets:CheckboxCard
-                        />
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
         </StackPanel>

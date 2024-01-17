@@ -22,6 +22,7 @@ using ModernWindow.Structures;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.Storage;
+using ModernWindow.SettingsTab.Widgets;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,6 +44,7 @@ namespace ModernWindow.SettingsTab
         {
             this.InitializeComponent();
        
+            // General Settings Section
             PyDict lang_dict = new PyDict(bindings.Core.Languages.LangData.languageReference);
             var lang_values = lang_dict.Keys();
             var lang_names = lang_dict.Values();
@@ -69,18 +71,38 @@ namespace ModernWindow.SettingsTab
             ThemeSelector.AddItem("Follow system color scheme", "auto");
             ThemeSelector.ShowAddedItems();
 
+            // Backup Section
             BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
-            if(!bindings.GetSettings("ChangeBackupOutputDirectory"))
-                BackupDirectoryLabel.Text = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
-            else
-                BackupDirectoryLabel.Text = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
-
             ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
+            OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
+            if (!bindings.GetSettings("ChangeBackupOutputDirectory"))
+            {
+                BackupDirectoryLabel.Text = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
+                ResetBackupDirectory.IsEnabled = false;
+            }
+            else
+            {
+                BackupDirectoryLabel.Text = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
+                ResetBackupDirectory.IsEnabled = true;
+            }
+
             ResetBackupDirectory.Content = bindings.Translate("Reset");
 
-            OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
             OpenBackupDirectory.Content = bindings.Translate("Open");
 
+            // Admin Settings Section
+            int index = 1;
+            foreach(dynamic manager in new PyList(bindings.App.PackageTools.PackageManagersList))
+            {
+                Console.WriteLine(manager.NAME.ToString()); ;
+                CheckboxCard card = new CheckboxCard()
+                {
+                    Text = "Always elevate {pm} installations by default",
+                    SettingName = (string)("AlwaysElevate" + manager.NAME),
+                };
+                card._checkbox.Content = card._checkbox.Content.ToString().Replace("{pm}", manager.NAME.ToString());
+                AdminSettingsExpander.Items.Insert(index++, card);
+            }
         }
 
         public int GetHwnd()
@@ -190,6 +212,19 @@ namespace ModernWindow.SettingsTab
                 Directory.CreateDirectory(directory);
             Process.Start("explorer.exe", directory);
 
+        }
+
+        private void DoCacheAdminRights_StateChanged(object sender, Widgets.CheckBoxEventArgs e)
+        {
+            if (!e.IsChecked)
+            {
+                AdminSettingsExpander.ShowRestartRequiresBanner();
+            }
+        }
+
+        private void UseSystemGSudo_StateChanged(object sender, Widgets.CheckBoxEventArgs e)
+        {
+            AdminSettingsExpander.ShowRestartRequiresBanner();
         }
     }
 }

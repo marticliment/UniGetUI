@@ -30,8 +30,8 @@ namespace ModernWindow.SettingsTab.Widgets
     }
     public sealed class CheckboxCard : SettingsCard
     {
-        private static CheckBox _checkbox;
-        private static MainAppBindings bindings = new MainAppBindings();
+        public CheckBox _checkbox;
+        private MainAppBindings bindings = new MainAppBindings();
 
         public string SettingName
         {
@@ -47,11 +47,7 @@ namespace ModernWindow.SettingsTab.Widgets
 
         public event EventHandler<CheckBoxEventArgs> StateChanged;
 
-        DependencyProperty SettingProperty = DependencyProperty.Register(
-        nameof(SettingName),
-        typeof(string),
-        typeof(CheckboxCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = bindings.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
+        DependencyProperty SettingProperty;
 
         public string Text
         {
@@ -59,12 +55,7 @@ namespace ModernWindow.SettingsTab.Widgets
             set => SetValue(TextProperty, value);
         }
 
-        DependencyProperty TextProperty = DependencyProperty.Register(
-        nameof(Text),
-        typeof(string),
-        typeof(CheckboxCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = bindings.Translate((string)e.NewValue); })));
-
+        DependencyProperty TextProperty;
 
         DependencyProperty IsCheckBoxChecked = DependencyProperty.Register(
         nameof(Checked),
@@ -74,6 +65,19 @@ namespace ModernWindow.SettingsTab.Widgets
 
         public CheckboxCard()
         {
+            TextProperty = DependencyProperty.Register(
+                nameof(Text),
+                typeof(string),
+                typeof(CheckboxCard),
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = bindings.Translate((string)e.NewValue); })));
+
+            SettingProperty = DependencyProperty.Register(
+                nameof(SettingName),
+                typeof(string),
+                typeof(CheckboxCard),
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = bindings.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
+
+
             ContentAlignment = ContentAlignment.Left;
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
