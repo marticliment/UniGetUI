@@ -542,13 +542,15 @@ def ImportSettingsFromFile(file: str):
         report(e)
 
 def ResetSettings():
+    ResetCache()
     for file in glob.glob(os.path.join(os.path.expanduser("~"), ".wingetui/**/*"), recursive=True):
         if "Running" not in file:
             try:
                 os.remove(file)
             except Exception:
                 pass
-   
+
+def ResetCache():
     for file in glob.glob(os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/**/*"), recursive=True):
         if "Running" not in file:
             try:

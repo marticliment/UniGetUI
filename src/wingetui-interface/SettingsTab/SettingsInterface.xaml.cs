@@ -94,7 +94,6 @@ namespace ModernWindow.SettingsTab
             int index = 1;
             foreach(dynamic manager in new PyList(bindings.App.PackageTools.PackageManagersList))
             {
-                Console.WriteLine(manager.NAME.ToString()); ;
                 CheckboxCard card = new CheckboxCard()
                 {
                     Text = "Always elevate {pm} installations by default",
@@ -103,6 +102,9 @@ namespace ModernWindow.SettingsTab
                 card._checkbox.Content = card._checkbox.Content.ToString().Replace("{pm}", manager.NAME.ToString());
                 AdminSettingsExpander.Items.Insert(index++, card);
             }
+
+            // Experimental Settings Section
+            ExperimentalSettingsExpander.HideRestartRequiredBanner();
         }
 
         public int GetHwnd()
@@ -129,7 +131,7 @@ namespace ModernWindow.SettingsTab
             if (file != null)
             {
                 bindings.App.Tools.ImportSettingsFromFile(file.Path);
-                GeneralSettingsExpander.ShowRestartRequiresBanner();
+                GeneralSettingsExpander.ShowRestartRequiredBanner();
             }
         }
 
@@ -153,17 +155,17 @@ namespace ModernWindow.SettingsTab
         private void ResetWingetUI(object sender, Widgets.ButtonCardEventArgs e)
         {
             bindings.App.Tools.ResetSettings();
-            GeneralSettingsExpander.ShowRestartRequiresBanner();
+            GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void LanguageSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
         {
-            GeneralSettingsExpander.ShowRestartRequiresBanner();
+            GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
         {
-            GeneralSettingsExpander.ShowRestartRequiresBanner();
+            GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void ThemeSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
@@ -218,13 +220,34 @@ namespace ModernWindow.SettingsTab
         {
             if (!e.IsChecked)
             {
-                AdminSettingsExpander.ShowRestartRequiresBanner();
+                AdminSettingsExpander.ShowRestartRequiredBanner();
             }
         }
 
         private void UseSystemGSudo_StateChanged(object sender, Widgets.CheckBoxEventArgs e)
+        { AdminSettingsExpander.ShowRestartRequiredBanner(); }
+
+        private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)
+        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+
+
+        private void UseSystemWinget_StateChanged(object sender, CheckBoxEventArgs e)
+        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+
+
+        private void DisableDownloadingNewTranslations_StateChanged(object sender, CheckBoxEventArgs e)
+        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+
+        private void ForceArmWinget_StateChanged(object sender, CheckBoxEventArgs e)
+        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+
+        private void TextboxCard_ValueChanged(object sender, TextboxEventArgs e)
+        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+
+        private void ResetIconCache_Click(object sender, ButtonCardEventArgs e)
         {
-            AdminSettingsExpander.ShowRestartRequiresBanner();
+            bindings.Core.Tools.ResetCache();
+            ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
     }
 }

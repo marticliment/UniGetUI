@@ -219,10 +219,53 @@
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
             <widgets:SettingsEntry
+                x:Name="ExperimentalSettingsExpander"
                     Text="Experimental settings and developer options"
                     UnderText="Beta features and other options that shouldn't be touched"
                     Icon="testing">
                 <Toolkit:SettingsExpander.Items>
+                    <widgets:CheckboxCard
+                        x:Name="DisableWidgetsApi"
+                        Text="Enable background api (WingetUI Widgets and Sharing, port 7058)"
+                        SettingName="DisableApi"
+                        StateChanged="DisableWidgetsApi_StateChanged"
+                        />
+                    <widgets:CheckboxCard
+                        Text="Allow parallel installs (NOT RECOMMENDED)"
+                        SettingName="AllowParallelInstalls"
+                        />
+                    <widgets:CheckboxCard
+                        x:Name="UseSystemWinget"
+                        Text="Use system Winget (System language must be set to english)"
+                        SettingName="UseSystemWinget"
+                        StateChanged="UseSystemWinget_StateChanged"
+                        />
+                    <widgets:CheckboxCard
+                        x:Name="ForceArmWinget"
+                        Text="Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"
+                        SettingName="EnableArmWinget"
+                        StateChanged="ForceArmWinget_StateChanged"
+                        />
+                    <widgets:CheckboxCard
+                        x:Name="DisableDownloadingNewTranslations"
+                        Text="Do not download new app translations from GitHub automatically"
+                        SettingName="EnableArmWinget"
+                        StateChanged="DisableDownloadingNewTranslations_StateChanged"
+                        />
+                    <widgets:TextboxCard
+                        Text="Use a custom icon and screenshot database URL"
+                        Placeholder="Leave empty for default"
+                        SettingName="IconDataBaseURL"
+                        HelpUrl="https://www.marticliment.com/wingetui/help/icons-and-screenshots#custom-source"
+                        ValueChanged="TextboxCard_ValueChanged"
+                        />
+                    <widgets:ButtonCard
+                        x:Name="ResetIconCache"
+                        Text="Reset WingetUI icon and screenshot cache"
+                        ButtonText="Reset"
+                        Click="ResetIconCache_Click"
+                        />
+
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
         </StackPanel>

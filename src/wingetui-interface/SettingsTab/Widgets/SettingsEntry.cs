@@ -91,9 +91,13 @@ namespace ModernWindow.SettingsTab.Widgets
             this.DefaultStyleKey = typeof(SettingsExpander);
         }
 
-        public void ShowRestartRequiresBanner()
+        public void ShowRestartRequiredBanner()
         {
             infoBar.IsOpen = true;
+        }
+        public void HideRestartRequiredBanner()
+        {
+            infoBar.IsOpen = false;
         }
     }
 }
