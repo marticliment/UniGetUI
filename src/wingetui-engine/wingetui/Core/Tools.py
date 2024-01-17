@@ -6,6 +6,7 @@ if __name__ == "__main__":
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
 
+import glob
 import io
 import json
 import locale
@@ -509,6 +510,51 @@ def formatPackageIdAsName(id: str):
     """
     return " ".join([piece.capitalize() for piece in id.replace("-", " ").replace("_", " ").replace(".", " ").split(" ")]).replace(".install", " (" + _("Install") + ")").replace(".portable", " (" + _("Portable") + ")")
 
+def ExportSettingsToFile(filename: str):
+    try:
+        rawstr = ""
+        for file in glob.glob(os.path.join(os.path.expanduser("~"), ".wingetui/*")):
+            if "Running" not in file and "png" not in file and "PreferredLanguage" not in file and "json" not in file:
+                sName = file.replace("\\", "/").split("/")[-1]
+                rawstr += sName + "|@|" + \
+                    getSettingsValue(sName).replace("|~|", "").replace("|@|", "") + "|~|"
+        oFile = open(filename, "w", encoding="utf-8", errors="ignore")
+        oFile.write(rawstr)
+        oFile.close()
+        subprocess.run(
+            "explorer /select,\"" + filename.replace('/', '\\') + "\"", shell=True)
+    except Exception as e:
+        report(e)
+
+def ImportSettingsFromFile(file: str):
+    try:
+        iFile = open(file, "r")
+        rawstr = iFile.read()
+        iFile.close()
+        ResetSettings()
+        for element in rawstr.split("|~|"):
+            pairValue = element.split("|@|")
+            if len(pairValue) == 2:
+                setSettings(pairValue[0], True)
+                if pairValue[1] != "":
+                    setSettingsValue(pairValue[0], pairValue[1])
+    except Exception as e:
+        report(e)
+
+def ResetSettings():
+    for file in glob.glob(os.path.join(os.path.expanduser("~"), ".wingetui/**/*"), recursive=True):
+        if "Running" not in file:
+            try:
+                os.remove(file)
+            except Exception:
+                pass
+   
+    for file in glob.glob(os.path.join(os.path.expanduser("~"), "AppData/Local/WingetUI/**/*"), recursive=True):
+        if "Running" not in file:
+            try:
+                os.remove(file)
+            except Exception:
+                pass
 
 LATIN = "ä  æ  ǽ  đ ð ƒ ħ ı ł ø ǿ ö  œ  ß  ŧ ü  Ä  Æ  Ǽ  Đ Ð Ƒ Ħ I Ł Ø Ǿ Ö  Œ  ẞ  Ŧ Ü "
 ASCII = "ae ae ae d d f h i l o o oe oe ss t ue AE AE AE D D F H I L O O OE OE SS T UE"

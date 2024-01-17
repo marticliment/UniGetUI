@@ -85,7 +85,7 @@ namespace ModernWindow.SettingsTab
 
         public int GetHwnd()
         {
-            return (int)WinRT.Interop.WindowNative.GetWindowHandle(this);
+            return (int)WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
         }
 
         private void OpenWelcomeWizard(object sender, Widgets.ButtonCardEventArgs e)
@@ -93,19 +93,45 @@ namespace ModernWindow.SettingsTab
             // TODO: Implement
         }
 
-        private void ImportSettings(object sender, Widgets.ButtonCardEventArgs e)
+        private async void ImportSettings(object sender, Widgets.ButtonCardEventArgs e)
         {
-            // TODO: Implement
+            FileOpenPicker openPicker = new FileOpenPicker();
+
+            openPicker.ViewMode = PickerViewMode.List;
+            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, (IntPtr)GetHwnd());
+
+            openPicker.FileTypeFilter.Add(".conf");
+
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                bindings.App.Tools.ImportSettingsFromFile(file.Path);
+                GeneralSettingsExpander.ShowRestartRequiresBanner();
+            }
         }
 
-        private void ExportSettings(object sender, Widgets.ButtonCardEventArgs e)
+        private async void ExportSettings(object sender, Widgets.ButtonCardEventArgs e)
         {
-            // TODO: Implement
+
+            FileSavePicker savePicker = new FileSavePicker();
+            savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, (IntPtr)GetHwnd());
+            savePicker.FileTypeChoices.Add(bindings.Translate("WingetUI Settings File"), new List<string>() { ".conf" });
+            savePicker.SuggestedFileName = bindings.Translate("Exported Settings");
+
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                bindings.App.Tools.ExportSettingsToFile(file.Path);
+            }
+
         }
 
         private void ResetWingetUI(object sender, Widgets.ButtonCardEventArgs e)
         {
-            // TODO: Implement
+            bindings.App.Tools.ResetSettings();
+            GeneralSettingsExpander.ShowRestartRequiresBanner();
         }
 
         private void LanguageSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
@@ -157,13 +183,6 @@ namespace ModernWindow.SettingsTab
 
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
-            /*dir = getSettingsValue("ChangeBackupOutputDirectory")
-            if not dir:
-                dir = Globals.DEFAULT_PACKAGE_BACKUP_DIR
-            if not os.path.exists(dir):
-                os.makedirs(dir)
-            os.startfile(dir)*/
-
             string directory = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
             if (directory == "")
                 directory = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
