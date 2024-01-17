@@ -148,9 +148,9 @@ namespace ModernWindow.SettingsTab
             ExtraSettingsCards.Add(bindings.App.PackageTools.Scoop, Scoop_Cards);
 
             var Chocolatey_SystemChoco = new CheckboxCard() { Text= "Use system Chocolatey", SettingName="UseSystemChocolatey" };
-            Chocolatey_SystemChoco.Click += (s, e) =>
+            Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.PackageTools.Scoop]).ShowRestartRequiredBanner();
+                ((SettingsEntry)PackageManagerExpanders[bindings.App.PackageTools.Choco]).ShowRestartRequiredBanner();
             };
 
             SettingsCard[] Choco_Cards = { Chocolatey_SystemChoco };
@@ -162,6 +162,8 @@ namespace ModernWindow.SettingsTab
                 var ManagerExpander = new SettingsEntry() { UnderText = "{pm} package manager specific preferences" };
                 ManagerExpander.Text = bindings.Translate("{pm} preferences").Replace("{pm}", Manager.NAME.ToString());
                 ManagerExpander.Description = ManagerExpander.UnderText.Replace("{pm}", Manager.NAME.ToString());
+                PackageManagerExpanders.Add(Manager, ManagerExpander);
+
                 var icon = new BitmapIcon();
                 Console.WriteLine(Manager.IconPath);
                 icon.UriSource = new Uri(Manager.IconPath.ToString().Replace(Manager.IconPath.ToString().Split("wingetui/resources")[0], "ms-appx:///"));
