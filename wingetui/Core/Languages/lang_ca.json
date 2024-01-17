@@ -36,7 +36,7 @@
   "Ask only once for administrator privileges (not recommended)" : "Demana només un cop per a drets d'administrador (no recomanat)",
   "Attention required" : "Es requereix atenció",
   "Author" : "Autor/a",
-  "Automatically save a list of all your installed packages to easily restore them." : "Des automàticament una llista de tots els paquets instal·lats per a restaurar-los fàcilment.",
+  "Automatically save a list of all your installed packages to easily restore them." : "Desa automàticament una llista de tots els paquets instal·lats per a restaurar-los fàcilment.",
   "Automatically save a list of your installed packages on your computer." : "Desa una llista dels paquets instal·lats al vostre ordinador de forma automàtica",
   "Autostart WingetUI in the notifications area" : "Inicia el WingetUI a l'àrea de notificacions",
   "Available updates: {0}" : "Actualitzacions disponibles: {0}",
