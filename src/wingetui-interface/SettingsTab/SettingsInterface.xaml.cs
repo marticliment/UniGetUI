@@ -35,6 +35,7 @@ namespace ModernWindow.SettingsTab
     {
         private MainAppBindings bindings = new MainAppBindings();
         HyperlinkButton ResetBackupDirectory;
+        HyperlinkButton OpenBackupDirectory;
         TextBlock BackupDirectoryLabel;
 
 
@@ -68,14 +69,17 @@ namespace ModernWindow.SettingsTab
             ThemeSelector.AddItem("Follow system color scheme", "auto");
             ThemeSelector.ShowAddedItems();
 
-            BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.First());
+            BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
             if(!bindings.GetSettings("ChangeBackupOutputDirectory"))
                 BackupDirectoryLabel.Text = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
             else
                 BackupDirectoryLabel.Text = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
 
-            ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.Last());
+            ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
             ResetBackupDirectory.Content = bindings.Translate("Reset");
+
+            OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
+            OpenBackupDirectory.Content = bindings.Translate("Open");
 
         }
 
@@ -123,11 +127,11 @@ namespace ModernWindow.SettingsTab
         {
             BackupDirectoryLabel.Text = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
             bindings.SetSettings("ChangeBackupOutputDirectory", false);
+            ResetBackupDirectory.IsEnabled = false;
         }
 
         private async void ChangeBackupDirectory_Click(object sender, dynamic e)
         {
-            Console.WriteLine("Picking dir...");
             FolderPicker openPicker = new Windows.Storage.Pickers.FolderPicker();
 
             var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
@@ -142,11 +146,30 @@ namespace ModernWindow.SettingsTab
             {
                 bindings.SetSettingsValue("ChangeBackupOutputDirectory", folder.Path);
                 BackupDirectoryLabel.Text = folder.Path;
+                ResetBackupDirectory.IsEnabled = true;
             }
             else
             {
                 ResetBackupPath_Click(sender, e);
             }
+
+        }
+
+        private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
+        {
+            /*dir = getSettingsValue("ChangeBackupOutputDirectory")
+            if not dir:
+                dir = Globals.DEFAULT_PACKAGE_BACKUP_DIR
+            if not os.path.exists(dir):
+                os.makedirs(dir)
+            os.startfile(dir)*/
+
+            string directory = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
+            if (directory == "")
+                directory = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            Process.Start("explorer.exe", directory);
 
         }
     }

@@ -196,3 +196,4 @@ src/wingetui-interface/bin
 src/wingetui-interface/obj
 src/wingetui-interface/.vs
 src/.vs
+src/Packages/*

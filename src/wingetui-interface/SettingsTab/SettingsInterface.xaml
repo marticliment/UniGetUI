@@ -187,9 +187,10 @@
                         >
                         <Toolkit:SettingsCard.Description>
                             <StackPanel Orientation="Horizontal" Spacing="5">
-                                <!-- DO NOT MODIFY TEXTBLOCK NOR HYPERLINKBUTTON. THEY HAVE BEEN HARDCODED -->
+                                <!-- DO NOT MODIFY TEXTBLOCK NOR HYPERLINKBUTTONs. THEY HAVE BEEN HARDCODED -->
                                 <TextBlock Name="OutputBackupPathLabel" VerticalAlignment="Center"/>
                                 <HyperlinkButton Name="ResetBackupPath" Click="ResetBackupPath_Click" />
+                                <HyperlinkButton Name="OpenBackupPath" Click="OpenBackupPath_Click" />
                             </StackPanel>
                         </Toolkit:SettingsCard.Description>
 
