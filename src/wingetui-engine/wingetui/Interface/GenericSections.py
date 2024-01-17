@@ -241,22 +241,6 @@ class SettingsSection(SmoothScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        print("Starting embed of window")
-        self.HostWindow = Globals.CSharpApp.settings
-        hwnd = self.HostWindow.GetHwnd()
-        print(hwnd)
-        
-        window = QWindow.fromWinId(hwnd)
-        window.setFlags(Qt.WindowType.FramelessWindowHint)
-        self.__winui_widget = QWidget.createWindowContainer(window)
-        #self.__winui_widget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        
-        print("Finished embed of window")
-        
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(self.__winui_widget)
-
-        return
         """
         self.setFrameShape(QFrame.NoFrame)
         self.widget = QWidget()
@@ -684,6 +668,7 @@ class SettingsSection(SmoothScrollArea):
 
         openBackupDirectory.clicked.connect(showBackupDir)
         self.backupOptions.addWidget(openBackupDirectory)
+        """
 
         self.advancedOptions = CollapsableSection(_("Administrator privileges preferences"), getMedia(
             "runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))
@@ -883,7 +868,6 @@ class SettingsSection(SmoothScrollArea):
 
         self.mainLayout.addStretch()
 
-        """
         print("🟢 Settings tab loaded!")
 
 

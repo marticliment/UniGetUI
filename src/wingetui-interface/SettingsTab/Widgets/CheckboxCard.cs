@@ -19,6 +19,15 @@ using Windows.Networking.XboxLive;
 
 namespace ModernWindow.SettingsTab.Widgets
 {
+
+    public class CheckBoxEventArgs : EventArgs
+    {
+        public bool IsChecked { get; set;}
+        public CheckBoxEventArgs(bool _checked)
+        {
+            IsChecked = _checked;
+        }
+    }
     public sealed class CheckboxCard : SettingsCard
     {
         private static CheckBox _checkbox;
@@ -35,6 +44,8 @@ namespace ModernWindow.SettingsTab.Widgets
         {
             get => (bool)_checkbox.IsChecked;
         }
+
+        public event EventHandler<CheckBoxEventArgs> StateChanged;
 
         DependencyProperty SettingProperty = DependencyProperty.Register(
         nameof(SettingName),
@@ -70,8 +81,8 @@ namespace ModernWindow.SettingsTab.Widgets
             this.DefaultStyleKey = typeof(CheckboxCard);
             this.Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (s, e) => { bindings.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); };
-            _checkbox.Unchecked += (s, e) => { bindings.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); };
+            _checkbox.Checked += (s, e) => { bindings.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
+            _checkbox.Unchecked += (s, e) => { bindings.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };
         }
     }
 }

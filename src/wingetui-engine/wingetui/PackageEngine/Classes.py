@@ -12,8 +12,8 @@ if __name__ == "__main__":
 
 import os
 import subprocess
-from PySide6.QtCore import *
-from PySide6.QtGui import *
+#from PySide6.QtCore import *
+#from PySide6.QtGui import *
 from urllib.request import urlopen
 
 import wingetui.Core.Globals as Globals
@@ -111,7 +111,7 @@ class Package():
             report(e)
             return ""
 
-    def getSourceIcon(self) -> QIcon:
+    def getSourceIcon(self) -> str:
         """
         Returns the icon of the PackageManager in the QIcon format
         """
@@ -428,8 +428,8 @@ class PackageManagerModule():
 
     Capabilities: PackageManagerCapabilities
     LoadedIcons: bool
-    Icon: QIcon
-    icon: QIcon
+    Icon: str
+    icon: str
 
     BLACKLISTED_PACKAGE_NAMES: list[str]
     BLACKLISTED_PACKAGE_IDS: list[str]
@@ -461,7 +461,7 @@ class PackageManagerModule():
         Will retieve the intalled packages by the package manager in the format of a list[Package] object.
         """
 
-    def getIcon(self, source: str) -> QIcon:
+    def getIcon(self, source: str) -> str:
         """
         Will return the corresponding icon to the given source
         """
@@ -501,12 +501,12 @@ class PackageManagerModule():
         Returns the list of parameters that the package manager ib nasis of the given InstallationOptions object
         """
 
-    def detectManager(self, signal: Signal = None) -> None:
+    def detectManager(self, signal: object = None) -> None:
         """
         Detect if the package manager components exist.
         """
 
-    def updateSources(self, signal: Signal = None) -> None:
+    def updateSources(self, signal: object = None) -> None:
         """
         Force update package manager's sources
         """

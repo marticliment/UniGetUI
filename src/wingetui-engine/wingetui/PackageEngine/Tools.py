@@ -5,15 +5,16 @@ if __name__ == "__main__":
     import sys
     sys.exit(subprocess.run(["cmd", "/C", "python", "-m", "wingetui"], shell=True, cwd=os.path.dirname(__file__).split("wingetui")[0]).returncode)
 
-
+from wingetui.PackageEngine.Classes import *
 from wingetui.PackageEngine.Managers.choco import Choco
 from wingetui.PackageEngine.Managers.npm import Npm
-from wingetui.PackageEngine.Classes import *
 from wingetui.PackageEngine.Managers.pip import Pip
 from wingetui.PackageEngine.Managers.scoop import Scoop
 from wingetui.PackageEngine.Managers.winget import Winget
 from wingetui.PackageEngine.Managers.dotnet import Dotnet
 from wingetui.PackageEngine.Managers.powershell import Powershell
+
+
 
 PackageManagersList: list[PackageManagerModule] = [
     Winget,

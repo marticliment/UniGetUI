@@ -574,16 +574,16 @@ class WingetPackageManager(PackageManagerWithSources):
             report(e)
             return details
 
-    def getIcon(self, source: str) -> QIcon:
+    def getIcon(self, source: str) -> str:
         if not self.LoadedIcons:
             self.LoadedIcons = True
-            self.wingetIcon = QIcon(getMedia("winget"))
-            self.localIcon = QIcon(getMedia("localpc"))
-            self.msStoreIcon = QIcon(getMedia("msstore"))
-            self.wsaIcon = QIcon(getMedia("android"))
-            self.steamIcon = QIcon(getMedia("steam"))
-            self.gogIcon = QIcon(getMedia("gog"))
-            self.uPlayIcon = QIcon(getMedia("uplay"))
+            self.wingetIcon = getMedia("winget")
+            self.localIcon = getMedia("localpc")
+            self.msStoreIcon = getMedia("msstore")
+            self.wsaIcon = getMedia("android")
+            self.steamIcon = getMedia("steam")
+            self.gogIcon = getMedia("gog")
+            self.uPlayIcon = getMedia("uplay")
         if "microsoft store" in source.lower():
             return self.msStoreIcon
         elif source in (_("Local PC"), "Local PC"):
@@ -808,7 +808,7 @@ class WingetPackageManager(PackageManagerWithSources):
         p.wait()
         widget.finishInstallation.emit(p.returncode, output)
 
-    def detectManager(self, signal: Signal = None) -> None:
+    def detectManager(self, signal: 'Signal' = None) -> None:
         o = subprocess.run([self.EXECUTABLE, "-v"], shell=True, stdout=subprocess.PIPE)
         Globals.componentStatus[f"{self.NAME}Found"] = shutil.which(self.EXECUTABLE) is not None
         Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
@@ -816,7 +816,7 @@ class WingetPackageManager(PackageManagerWithSources):
             signal.emit()
         Globals.wingetSources = {source.Name: source.Url for source in self.getSources()}
 
-    def updateSources(self, signal: Signal = None) -> None:
+    def updateSources(self, signal: 'Signal' = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")
         subprocess.run([self.EXECUTABLE, "source", "update"], shell=True, stdout=subprocess.PIPE)
         if signal:

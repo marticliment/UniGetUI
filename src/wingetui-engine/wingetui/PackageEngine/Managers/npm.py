@@ -239,10 +239,10 @@ class NPMPackageManager(PackageManagerModule):
             report(e)
             return details
 
-    def getIcon(self, source: str) -> QIcon:
+    def getIcon(self, source: str) -> str:
         if not self.LoadedIcons:
             self.LoadedIcons = True
-            self.icon = QIcon(getMedia("node"))
+            self.icon = getMedia("node")
         return self.icon
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
@@ -326,14 +326,14 @@ class NPMPackageManager(PackageManagerModule):
                 outputCode = RETURNCODE_FAILED
         widget.finishInstallation.emit(outputCode, output)
 
-    def detectManager(self, signal: Signal = None) -> None:
+    def detectManager(self, signal: 'Signal' = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} --version", shell=True, stdout=subprocess.PIPE)
         Globals.componentStatus[f"{self.NAME}Found"] = shutil.which("npm") is not None
         Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", " ").replace("\r", " ")
         if signal:
             signal.emit()
 
-    def updateSources(self, signal: Signal = None) -> None:
+    def updateSources(self, signal: 'Signal' = None) -> None:
         pass  # Handled by the package manager, no need to manually reload
         if signal:
             signal.emit()

@@ -284,10 +284,10 @@ class ScoopPackageManager(PackageManagerWithSources):
             report(e)
             return details
 
-    def getIcon(self, source: str) -> QIcon:
+    def getIcon(self, source: str) -> str:
         if not self.LoadedIcons:
             self.LoadedIcons = True
-            self.icon = QIcon(getMedia("scoop"))
+            self.icon = str(getMedia("scoop"))
         return self.icon
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False) -> list[str]:
@@ -459,7 +459,7 @@ class ScoopPackageManager(PackageManagerWithSources):
         p.wait()
         widget.finishInstallation.emit(p.returncode, output)
 
-    def detectManager(self, signal: Signal = None) -> None:
+    def detectManager(self, signal: 'Signal' = None) -> None:
         try:
             o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
             Globals.componentStatus[f"{self.NAME}Found"] = shutil.which("scoop") is not None
@@ -472,7 +472,7 @@ class ScoopPackageManager(PackageManagerWithSources):
             if signal:
                 signal.emit()
 
-    def updateSources(self, signal: Signal = None) -> None:
+    def updateSources(self, signal: 'Signal' = None) -> None:
         print(f"🔵 Reloading {self.NAME} sources...")
         subprocess.run(f"{self.EXECUTABLE} update", shell=True, stdout=subprocess.PIPE)
         if signal:

@@ -8,6 +8,7 @@ if __name__ == "__main__":
 import os
 import subprocess
 
+
 from wingetui.Core.Tools import *
 from wingetui.Core.Tools import _
 from wingetui.PackageEngine.Classes import *
@@ -256,10 +257,10 @@ class PowershellPackageManager(PackageManagerWithSources):
             report(e)
             return details
 
-    def getIcon(self, source: str = "") -> QIcon:
+    def getIcon(self, source: str = "") -> str:
         if not self.LoadedIcons:
             self.LoadedIcons = True
-            self.icon = QIcon(getMedia("powershell"))
+            self.icon = getMedia("powershell")
         return self.icon
 
     def getParameters(self, options: InstallationOptions, isAnUninstall: bool = False, isAnUpdate: bool = False) -> list[str]:
@@ -401,14 +402,14 @@ class PowershellPackageManager(PackageManagerWithSources):
         p.wait()
         widget.finishInstallation.emit(p.returncode, output)
 
-    def detectManager(self, signal: Signal = None) -> None:
+    def detectManager(self, signal: 'Signal' = None) -> None:
         o = subprocess.run(f"{self.EXECUTABLE} -v", shell=True, stdout=subprocess.PIPE)
         Globals.componentStatus[f"{self.NAME}Found"] = o.returncode == 0
         Globals.componentStatus[f"{self.NAME}Version"] = o.stdout.decode('utf-8').replace("\n", "")
         if signal:
             signal.emit()
 
-    def updateSources(self, signal: Signal = None) -> None:
+    def updateSources(self, signal: 'Signal' = None) -> None:
         subprocess.run(f"{self.EXECUTABLE} update self", shell=True, stdout=subprocess.PIPE)
         if signal:
             signal.emit()
