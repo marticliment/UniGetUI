@@ -668,7 +668,7 @@ class SettingsSection(SmoothScrollArea):
 
         openBackupDirectory.clicked.connect(showBackupDir)
         self.backupOptions.addWidget(openBackupDirectory)
-        """
+        
 
         self.advancedOptions = CollapsableSection(_("Administrator privileges preferences"), getMedia(
             "runasadmin"), _("Ask once or always for administrator rights, elevate installations by default"))
@@ -782,6 +782,7 @@ class SettingsSection(SmoothScrollArea):
             f"font-size: 30pt;font-family: \"{Globals.dispfont}\";font-weight: bold;")
         self.mainLayout.addWidget(title)
         self.mainLayout.addSpacing(20)
+        """
 
         # Package Manager preferences
 

@@ -41,10 +41,10 @@ namespace ModernWindow.SettingsTab.Widgets
             set => SetValue(PrefixProperty, value);
         }
 
-        public TextWrapping TextWrapping
+        public TextWrapping WrappingMode
         {
             get => (TextWrapping)GetValue(TextWrappingProperty);
-            set => SetValue(PrefixProperty, value);
+            set => SetValue(TextWrappingProperty, value);
         }
 
         DependencyProperty TextProperty;
@@ -55,10 +55,10 @@ namespace ModernWindow.SettingsTab.Widgets
         public TranslatedTextBlock()
         {
             TextWrappingProperty = DependencyProperty.Register(
-                nameof(TextWrapping),
-                typeof(string),
+                nameof(WrappingMode),
+                typeof(TextWrapping),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.TextWrapping = TextWrapping; })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.TextWrapping = WrappingMode; })));
 
             this.InitializeComponent();
 
