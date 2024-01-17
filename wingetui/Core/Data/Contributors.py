@@ -6,14 +6,15 @@ contributors = [
   "panther7",
   "RavenMacDaddy",
   "Mikey1993",
-  "adripo",
   "raghavdhingra24",
+  "adripo",
   "MisterEvans78",
   "rumplin",
   "uKER",
   "sklart",
   "joguarino",
   "sitiom",
+  "mapi68",
   "elliot-100",
   "candrapersada",
   "BastianKamp",
@@ -21,7 +22,6 @@ contributors = [
   "vedantmgoyal2009",
   "aaronliu0130",
   "victorelec14",
-  "mapi68",
   "harleylara",
   "flatron4eg"
 ]
@@ -30,7 +30,7 @@ contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2394
+    "contributions": 2398
   },
   {
     "name": "ppvnf",
@@ -53,13 +53,13 @@ contributorsInfo = [
     "contributions": 15
   },
   {
-    "name": "adripo",
-    "link": "https://github.com/adripo",
-    "contributions": 6
-  },
-  {
     "name": "raghavdhingra24",
     "link": "https://github.com/raghavdhingra24",
+    "contributions": 7
+  },
+  {
+    "name": "adripo",
+    "link": "https://github.com/adripo",
     "contributions": 6
   },
   {
@@ -90,6 +90,11 @@ contributorsInfo = [
   {
     "name": "sitiom",
     "link": "https://github.com/sitiom",
+    "contributions": 2
+  },
+  {
+    "name": "mapi68",
+    "link": "https://github.com/mapi68",
     "contributions": 2
   },
   {
@@ -125,11 +130,6 @@ contributorsInfo = [
   {
     "name": "victorelec14",
     "link": "https://github.com/victorelec14",
-    "contributions": 1
-  },
-  {
-    "name": "mapi68",
-    "link": "https://github.com/mapi68",
     "contributions": 1
   },
   {
