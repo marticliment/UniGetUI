@@ -40,11 +40,13 @@
   <ItemGroup>
     <None Remove="MainWindow.xaml" />
     <None Remove="SettingsTab\Widgets\Announcer.xaml" />
+    <None Remove="SettingsTab\Widgets\SourceManager.xaml" />
     <None Remove="SettingsTab\Widgets\TranslatedTextBlock.xaml" />
   </ItemGroup>
 
 	<ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
     <PackageReference Include="pythonnet" Version="3.0.3" />
@@ -58,6 +60,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SettingsTab\Widgets\SourceManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="SettingsTab\Widgets\TranslatedTextBlock.xaml">

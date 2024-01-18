@@ -20,7 +20,7 @@
             <ColumnDefinition Width="100000*" MaxWidth="800"/>
             <ColumnDefinition Width="auto" MinWidth="20"/>
         </Grid.ColumnDefinitions>
-        <StackPanel x:Name="MainLayout" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="10">
+        <StackPanel x:Name="MainLayout" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="8">
             <widgets:Announcer
                 x:Name="SettingsAnnouncer"
                 Url="https://www.marticliment.com/resources/wingetui.announcement"
@@ -269,6 +269,7 @@
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
             <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package manager preferences" HorizontalAlignment="Stretch"/>
+            <widgets:SourceManager/>
         </StackPanel>
     </Grid>
 </UserControl>

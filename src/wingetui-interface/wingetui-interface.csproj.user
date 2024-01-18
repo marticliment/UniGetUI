@@ -10,6 +10,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="SettingsTab\Widgets\SourceManager.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="SettingsTab\Widgets\TranslatedTextBlock.xaml">
       <SubType>Designer</SubType>
     </Page>

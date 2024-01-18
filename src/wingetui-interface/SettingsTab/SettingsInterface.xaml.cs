@@ -114,7 +114,7 @@ namespace ModernWindow.SettingsTab
             Dictionary<PyObject, SettingsEntry> PackageManagerExpanders = new Dictionary<PyObject, SettingsEntry>();
             Dictionary<PyObject, SettingsCard[]> ExtraSettingsCards = new Dictionary<PyObject, SettingsCard[]>();
 
-            var Winget_ResetSources = new ButtonCard() { Text="Reset Winget sources(might help if no packages are listed", ButtonText="Reset" };
+            var Winget_ResetSources = new ButtonCard() { Text="Reset Winget sources (might help if no packages are listed", ButtonText="Reset" };
             Winget_ResetSources.Click += (s, e) =>
             {
                 // Spawn reset winget sources window
@@ -165,9 +165,7 @@ namespace ModernWindow.SettingsTab
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
 
                 var icon = new BitmapIcon();
-                Console.WriteLine(Manager.IconPath);
                 icon.UriSource = new Uri(Manager.IconPath.ToString().Replace(Manager.IconPath.ToString().Split("wingetui/resources")[0], "ms-appx:///"));
-                Console.WriteLine(icon.UriSource.ToString());
                 ManagerExpander.HeaderIcon = icon;
 
                 var EnableManager = new CheckboxCard() { SettingName = "Disable" + Manager.NAME.ToString() };
@@ -202,9 +200,13 @@ namespace ModernWindow.SettingsTab
             }
         }
 
+        public MainWindow GetWindow()
+        {
+            return bindings.App.mainWindow;
+        }
         public int GetHwnd()
         {
-            return (int)WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
+            return (int)WinRT.Interop.WindowNative.GetWindowHandle(GetWindow());
         }
 
         private void OpenWelcomeWizard(object sender, Widgets.ButtonCardEventArgs e)
