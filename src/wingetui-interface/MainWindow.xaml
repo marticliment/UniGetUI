@@ -10,30 +10,62 @@
     xmlns:settings="using:ModernWindow.SettingsTab">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop/>
+        <DesktopAcrylicBackdrop/>
     </Window.SystemBackdrop>
     <Grid Name="__content_root">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition x:Name="SplashScreenColumn" Width="*"/>
+            <ColumnDefinition x:Name="ContentColumn" Width="0"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.Column="0" x:Name="__app_titlebar" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="12,8,12,8" Spacing="10">
-                <Image VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="16" Height="16" >
-                    <Image.Source>
-                        <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///wingetui/resources/icon.png"/>
-                    </Image.Source>
-                </Image>
-                <TextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="13"/>
-            </StackPanel>
-        </Border>
-        <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollMode="Disabled" VerticalAlignment="Stretch">
-            <StackPanel Orientation="Vertical">
-                <settings:MainPage x:Name="__settings_tab"/>
-            </StackPanel>
-        </ScrollViewer>
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="MainContentGrid" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Grid.Column="0" x:Name="__app_titlebar" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="12,8,12,8" Spacing="10">
+                    <Image VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="16" Height="16" >
+                        <Image.Source>
+                            <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///wingetui/resources/icon.png"/>
+                        </Image.Source>
+                    </Image>
+                    <TextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="13"/>
+                </StackPanel>
+            </Border>
+            <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollMode="Disabled" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Vertical" Name="MainNavigationFrame">
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="0" x:Name="LoadingWindow" Visibility="Visible"
+              Background="{StaticResource ProgressBarBorderThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="128"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Image Grid.Column="1" Grid.Row="1" >
+                <Image.Source>
+                    <BitmapImage UriSource="ms-appx:///wingetui/resources/icon.png"/>
+                </Image.Source>
+            </Image>
+            <ProgressRing
+                Grid.Column="1"
+                Grid.Row="2"
+                />
+        </Grid>
     </Grid>
 </Window>

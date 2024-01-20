@@ -6,37 +6,60 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using ModernWindow.SettingsTab;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ModernWindow
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainWindow : Window
     {
         MainApp _app = Application.Current as MainApp;
-        public SettingsTab.MainPage SettingsTab;
+        public SettingsTab.SettingsInterface SettingsTab;
         public Grid ContentRoot;
         public MainWindow()
         {
             this.InitializeComponent();
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(__app_titlebar);
-            SettingsTab = __settings_tab;
+            SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
+            LoadComponents();
+
         }
 
+        private async void LoadComponents()
+        {
+            await Task.Delay(1000);
+            SwitchToInterface();
+        }
+
+
+        public void SwitchToInterface()
+        {
+            SetTitleBar(__app_titlebar);
+            ContentRoot = __content_root;
+
+
+            SettingsTab = new SettingsInterface();
+            MainNavigationFrame.Children.Add(SettingsTab);
+
+            ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
+            ContentColumn.Width = new GridLength(1, GridUnitType.Star);
+
+            ColumnDefinition SpashScreenColumn = __content_root.ColumnDefinitions[0];
+            SpashScreenColumn.Width = new GridLength(0, GridUnitType.Pixel);
+
+            SystemBackdrop = new MicaBackdrop();
+        }
 
         public void ApplyTheme()
         { 

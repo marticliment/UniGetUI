@@ -37,7 +37,7 @@ namespace ModernWindow.SettingsTab
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : UserControl
+    public sealed partial class SettingsInterface : UserControl
     {
         private MainAppBindings bindings = MainAppBindings.Instance;
         HyperlinkButton ResetBackupDirectory;
@@ -45,7 +45,7 @@ namespace ModernWindow.SettingsTab
         TextBlock BackupDirectoryLabel;
 
 
-        public MainPage()
+        public SettingsInterface()
         {
             this.InitializeComponent();
        
