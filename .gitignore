@@ -1,4 +1,5 @@
-.vscode/
+/.vscode/
+src/.vscode/
 src/wingetui-engine/__pycache__
 src/wingetui-engine/lang/__pycache__/*
 src/wingetui-engine/build/

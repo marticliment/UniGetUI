@@ -1,0 +1,15 @@
+{
+    "configurations": [
+    {
+        "name": "WingetUI (Unpackaged)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "dotnet: build y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj",
+        "program": "${workspaceFolder}/bin/Debug/net6.0-windows10.0.19041.0/wingetui-interface.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}/bin/Debug/net6.0-windows10.0.19041.0/",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    },
+    ]
+}
