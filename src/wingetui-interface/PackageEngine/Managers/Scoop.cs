@@ -127,7 +127,7 @@ public class Scoop : PackageManagerWithSources
             ColorIconId = "scoop_color",
             ExecutablePath = "powershell.exe",
             ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command scoop",
-            ExecutableName = "scoop",
+            ExecutableFriendlyName = "scoop",
             InstallVerb = "install",
             UpdateVerb = "update",
             UninstallVerb = "uninstall"
@@ -147,7 +147,7 @@ public class Scoop : PackageManagerWithSources
             Process process = new Process();
             ProcessStartInfo StartInfo = new ProcessStartInfo()
             {
-                FileName = Properties.ExecutableName,
+                FileName = Properties.ExecutableFriendlyName,
                 Arguments = Properties.ExecutableCallArgs + " update"
             };
             process.StartInfo = StartInfo;

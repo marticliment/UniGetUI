@@ -96,7 +96,7 @@ namespace ModernWindow.PackageEngine
         public string ColorIconId;
         public string ExecutablePath;
         public string ExecutableCallArgs;
-        public string ExecutableName;
+        public string ExecutableFriendlyName;
         public string InstallVerb;
         public string UpdateVerb;
         public string UninstallVerb;

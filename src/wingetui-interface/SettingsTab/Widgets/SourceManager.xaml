@@ -11,16 +11,16 @@
     xmlns:widgets="using:ModernWindow.SettingsTab.Widgets">
     <UserControl.Resources>
         <DataTemplate x:Key="ManagerSourceTemplate" x:DataType="widgets:SourceItem">
-            <Grid>
+            <Grid ColumnSpacing="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="32"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="90"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="32"/>
                 </Grid.ColumnDefinitions>
                 <FontIcon
@@ -33,9 +33,10 @@
                     VerticalAlignment="Center"
                     Text="{x:Bind Source.Name}"
                     />
-                <TextBlock 
+                <HyperlinkButton 
                     Grid.Column="2" Grid.Row="0"
-                    Text="{x:Bind Source.Url}"
+                    Content="{x:Bind Source.Url}"
+                    NavigateUri="{x:Bind Source.Url}"
                     VerticalAlignment="Center"
                     />
                 <TextBlock 
@@ -59,8 +60,8 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-            <RowDefinition Height="4" />
+            <RowDefinition Height="35" />
+            <RowDefinition Height="10" />
             <RowDefinition Height="300" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -70,14 +71,14 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="35"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
-            <local:TranslatedTextBlock Grid.Column="0" Text="Manage {pm} sources" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="15" FontWeight="SemiBold"/>
-            <Button Grid.Column="1" Height="40" Width ="150" x:Name="AddSourceButton" Content="Add Source" CornerRadius="6"/>
-            <Button Grid.Column="2" Height="40" Width="40" x:Name="ReloadButton" HorizontalAlignment="Right" CornerRadius="6" Click="ReloadButton_Click">
+            <TextBlock Name="Header" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="15" FontWeight="SemiBold"/>
+            <Button Grid.Column="1" Height="35" Width ="150" x:Name="AddSourceButton" Content="Add Source" CornerRadius="4"/>
+            <Button Grid.Column="2" Height="35" Width="35" x:Name="ReloadButton" HorizontalAlignment="Right" CornerRadius="4" Click="ReloadButton_Click" Padding="0,0,0,0">
                 <FontIcon x:Name="SearchAnimatedIcon" Glyph="&#xE72C;" FontSize="14" HorizontalAlignment="Right"/>
             </Button>
         </Grid>
@@ -87,7 +88,13 @@
             IsIndeterminate="True"
             Visibility="Collapsed"
             />
-        <ListView x:Name="DataList" Grid.Column="0" Grid.Row="2" ItemsSource="{x:Bind Sources, Mode=TwoWay}">
-        </ListView>
+        <ListView x:Name="DataList" 
+            Grid.Column="0" Grid.Row="2" 
+            ItemsSource="{x:Bind Sources, Mode=TwoWay}"
+            CornerRadius="6"
+            Background="{StaticResource SystemAltLowColor}"
+            Padding="3,6,3,6"
+            CanBeScrollAnchor="False"
+            />
     </Grid>
 </UserControl>

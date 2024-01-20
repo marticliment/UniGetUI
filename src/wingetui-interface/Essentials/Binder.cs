@@ -18,8 +18,6 @@ namespace ModernWindow.Structures
         public dynamic Globals;
         public dynamic Tools;
         public dynamic Core;
-        public dynamic PackageClasses;
-        public dynamic PackageTools;
 
         private static MainAppBindings instance;
 
@@ -41,8 +39,6 @@ namespace ModernWindow.Structures
             Globals = App.Globals;
             Tools = App.Tools;
             Core = App.Core;
-            PackageClasses = App.PackageClasses;
-            PackageTools = App.PackageTools;
         }
 
         public bool GetSettings(string setting)

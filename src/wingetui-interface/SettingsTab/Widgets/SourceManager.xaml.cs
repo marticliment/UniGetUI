@@ -47,13 +47,17 @@ namespace ModernWindow.SettingsTab.Widgets
     }
     public sealed partial class SourceManager : UserControl
     {
-        private dynamic Manager { get; set; }
+        private PackageManagerWithSources Manager { get; set; }
         private ObservableCollection<SourceItem> Sources = new ObservableCollection<SourceItem>();
+        private MainAppBindings bindings = MainAppBindings.Instance;
 
         private ListView _datagrid{ get; set; }
-        public SourceManager()
+        public SourceManager(PackageManagerWithSources Manager)
         {
             this.InitializeComponent();
+            Header.Text = bindings.Translate("Manage {0} sources").Replace("{0}", Manager.Properties.Name);
+            AddSourceButton.Content = bindings.Translate("Add source");
+            this.Manager = Manager;
             _datagrid = DataList;
             DataList.ItemTemplate = (DataTemplate)Resources["ManagerSourceTemplate"];
             LoadSources();
@@ -63,9 +67,7 @@ namespace ModernWindow.SettingsTab.Widgets
         {
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
-            Scoop scoop = new Scoop();
-            scoop.Initialize();
-            foreach(ManagerSource Source in await scoop.GetSources())
+            foreach(ManagerSource Source in await Manager.GetSources())
             {
                 Sources.Add(new SourceItem(this, Source));
             }
