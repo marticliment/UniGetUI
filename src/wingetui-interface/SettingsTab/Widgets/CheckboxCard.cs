@@ -31,7 +31,7 @@ namespace ModernWindow.SettingsTab.Widgets
     public sealed class CheckboxCard : SettingsCard
     {
         public CheckBox _checkbox;
-        private MainAppBindings bindings = new MainAppBindings();
+        private MainAppBindings bindings = MainAppBindings.Instance;
 
         public string SettingName
         {

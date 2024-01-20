@@ -34,7 +34,7 @@ namespace ModernWindow.SettingsTab.Widgets
     public sealed class ButtonCard : SettingsCard
     {
         private static Button _button;
-        private static MainAppBindings bindings = new MainAppBindings();
+        private static MainAppBindings bindings = MainAppBindings.Instance;
         
         public string ButtonText
         {

@@ -52,9 +52,15 @@ namespace ModernWindow
             PythonEngine.BeginAllowThreads();
 
             Debug.WriteLine("Python Runtime Loaded");
+            Debug.WriteLine("Current Path: " + Environment.CurrentDirectory);
 
             // Import Python modules
             GIL = Py.GIL();
+
+            dynamic os = Py.Import("os");
+            dynamic sys = Py.Import("sys");
+            sys.path.append(os.getcwd());
+
             Globals = (PyModule)Py.Import("wingetui.Core.Globals");
             Tools = (PyModule)Py.Import("wingetui.Core.Tools");
             Core = (PyModule)Py.Import("wingetui.Core");
@@ -72,9 +78,8 @@ namespace ModernWindow
             mainWindow = new MainWindow();
             mainWindow.Activate();
             settings = mainWindow.SettingsTab;
-            //settings.Activate();
 
-            //settings.Closed += (sender, args) => { DisposeAndQuit(0); };
+            mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
 
             Debug.WriteLine("All windows loaded");
 

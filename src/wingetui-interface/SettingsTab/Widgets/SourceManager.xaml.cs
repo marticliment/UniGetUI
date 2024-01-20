@@ -62,7 +62,7 @@ namespace ModernWindow.SettingsTab.Widgets
         public dynamic GetPythonSource()
         {
             // Needs testing
-            MainAppBindings bindings = new MainAppBindings();
+            MainAppBindings bindings = MainAppBindings.Instance;
             dynamic Source = ((dynamic)bindings).App.PackageClasses.ManagerSource(Manager, Url, PackageCount, UpdateDate);
             return Source;
         }
@@ -77,7 +77,7 @@ namespace ModernWindow.SettingsTab.Widgets
         public SourceManager()
         {
             this.InitializeComponent();
-            Manager = new MainAppBindings().App.PackageTools.Scoop;
+            Manager = MainAppBindings.Instance.App.PackageTools.Scoop;
 
         }
 

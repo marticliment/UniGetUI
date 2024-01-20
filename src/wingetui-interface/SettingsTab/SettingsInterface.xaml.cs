@@ -37,7 +37,7 @@ namespace ModernWindow.SettingsTab
     /// </summary>
     public sealed partial class MainPage : UserControl
     {
-        private MainAppBindings bindings = new MainAppBindings();
+        private MainAppBindings bindings = MainAppBindings.Instance;
         HyperlinkButton ResetBackupDirectory;
         HyperlinkButton OpenBackupDirectory;
         TextBlock BackupDirectoryLabel;

@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    x:Name ="Parent">
+    x:Name ="_parent">
 
-    <TextBlock x:Name="__textblock" FontSize="{x:Bind Parent.FontSize}" FontFamily="{x:Bind Parent.FontFamily}" FontWeight="{x:Bind Parent.FontWeight}"></TextBlock>
+    <TextBlock x:Name="__textblock" FontSize="{x:Bind _parent.FontSize}" FontFamily="{x:Bind _parent.FontFamily}" FontWeight="{x:Bind _parent.FontWeight}"></TextBlock>
 </UserControl>

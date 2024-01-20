@@ -33,7 +33,7 @@ namespace ModernWindow.SettingsTab.Widgets
     public sealed class ComboboxCard : SettingsCard
     {
         private ComboBox _combobox;
-        private static MainAppBindings bindings = new MainAppBindings();
+        private static MainAppBindings bindings = MainAppBindings.Instance;
         private ObservableCollection<string> _elements;
         private Dictionary<string, string> _values_ref;
         private Dictionary<string, string> _inverted_val_ref;

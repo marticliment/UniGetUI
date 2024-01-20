@@ -21,7 +21,21 @@ namespace ModernWindow.Structures
         public dynamic PackageClasses;
         public dynamic PackageTools;
 
-        public MainAppBindings()
+        private static MainAppBindings instance;
+
+        public static MainAppBindings Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new MainAppBindings();
+                }
+                return instance;
+            }
+        }
+
+        private MainAppBindings()
         {
             App = (MainApp)Application.Current;
             Globals = App.Globals;

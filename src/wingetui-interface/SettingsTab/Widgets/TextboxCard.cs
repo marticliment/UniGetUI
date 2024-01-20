@@ -35,7 +35,7 @@ namespace ModernWindow.SettingsTab.Widgets
     {
         private TextBox _textbox;
         private HyperlinkButton _helpbutton;
-        private static MainAppBindings bindings = new MainAppBindings();
+        private static MainAppBindings bindings = MainAppBindings.Instance;
         private static string _text;
 
         public string SettingName
