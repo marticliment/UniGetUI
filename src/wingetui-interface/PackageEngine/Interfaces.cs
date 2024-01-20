@@ -1,4 +1,4 @@
-﻿namespace package_engine
+﻿namespace ModernWindow.PackageEngine
 {
     public interface IPackageManager
     {

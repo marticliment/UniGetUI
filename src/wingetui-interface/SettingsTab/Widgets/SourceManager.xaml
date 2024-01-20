@@ -7,7 +7,55 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.UI.Controls"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:widgets="using:ModernWindow.SettingsTab.Widgets">
+    <UserControl.Resources>
+        <DataTemplate x:Key="ManagerSourceTemplate" x:DataType="widgets:SourceItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="32"/>
+                </Grid.ColumnDefinitions>
+                <FontIcon
+                    Glyph="&#xE74C;"
+                    Grid.Column="0" Grid.Row="0"
+                    VerticalAlignment="Center"
+                    />
+                <TextBlock 
+                    Grid.Column="1" Grid.Row="0"
+                    VerticalAlignment="Center"
+                    Text="{x:Bind Source.Name}"
+                    />
+                <TextBlock 
+                    Grid.Column="2" Grid.Row="0"
+                    Text="{x:Bind Source.Url}"
+                    VerticalAlignment="Center"
+                    />
+                <TextBlock 
+                    Grid.Column="3" Grid.Row="0"
+                    Text="{x:Bind Source.UpdateDate}"
+                    VerticalAlignment="Center"
+                Visibility="{x:Bind Source.Manager.Capabilities.Sources.KnowsUpdateDate}"
+                />  
+                <TextBlock 
+                    Grid.Column="4" Grid.Row="0"
+                    Text="{x:Bind Source.PackageCount}"
+                    VerticalAlignment="Center"
+                Visibility="{x:Bind Source.Manager.Capabilities.Sources.KnowsUpdateDate}"
+                />  
+                <Button Grid.Row="0" Grid.Column="5" Width="32" Height="32" Padding="0,0,0,0" Click="{x:Bind Remove}">
+                    <FontIcon Glyph="&#xE74D;" FontSize="16"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -32,7 +80,7 @@
                 <FontIcon x:Name="SearchAnimatedIcon" Glyph="&#xE72C;" FontSize="14" HorizontalAlignment="Right"/>
             </Button>
         </Grid>
-        <Toolkit:DataGrid Grid.Column="0" Grid.Row="1">
-        </Toolkit:DataGrid>
+        <ListView x:Name="DataList" Grid.Column="0" Grid.Row="1">
+        </ListView>
     </Grid>
 </UserControl>

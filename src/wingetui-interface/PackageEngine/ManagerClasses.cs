@@ -7,27 +7,33 @@ using Microsoft.WindowsAppSDK.Runtime.Packages;
 using ModernWindow.Structures;
 using Windows.Media.Core;
 
-namespace package_engine
+namespace ModernWindow.PackageEngine
 {
-    public abstract class PackageManager : IPackageManager
+
+    public abstract class SingletonBase<T> where T : SingletonBase<T>
+    {
+        private static readonly Lazy<T> Lazy =
+            new(() => (Activator.CreateInstance(typeof(T), true) as T)!);
+
+        public static T Instance => Lazy.Value;
+    }
+    public abstract class PackageManager : SingletonBase<PackageManager>, IPackageManager
     {
         public ManagerProperties Properties { get; set; }
         public ManagerCapabilities Capabilities { get; set; }
         public ManagerStatus Status { get; set; }
-        public string Name { get; }
-        public string ExecutablePath { get; }
-        public string ExecutableCommand { get; }
+        public string Name { get; set; }
         protected MainAppBindings bindings = MainAppBindings.Instance;
         public ManagerSource MainSource { get; set; }
 
-        public PackageManager()
-        {            
+        protected PackageManager()
+        {
         }
-
         public async void Initialize()
         {
             Status = await LoadManager();
             Properties = GetProperties();
+            Name = Properties.Name;
             Capabilities = GetCapabilities();
             MainSource = GetMainSource();
         }
@@ -61,7 +67,7 @@ namespace package_engine
 
     }
 
-    public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources
+    public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources 
     {
         public ManagerSource[] Sources { get; set; }
         new public async void Initialize()
@@ -89,6 +95,7 @@ namespace package_engine
         public string IconId;
         public string ColorIconId;
         public string ExecutablePath;
+        public string ExecutableCallArgs;
         public string ExecutableName;
         public string InstallVerb;
         public string UpdateVerb;
@@ -124,7 +131,7 @@ namespace package_engine
             { }
         }
 
-        PackageManager Manager { get; }
+        public PackageManager Manager { get; }
         public string Name { get; }
         public Uri? Url { get; }
         public int? PackageCount { get; }
