@@ -60,6 +60,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
+            <RowDefinition Height="4" />
             <RowDefinition Height="300" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -76,11 +77,17 @@
             </Grid.RowDefinitions>
             <local:TranslatedTextBlock Grid.Column="0" Text="Manage {pm} sources" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="15" FontWeight="SemiBold"/>
             <Button Grid.Column="1" Height="40" Width ="150" x:Name="AddSourceButton" Content="Add Source" CornerRadius="6"/>
-            <Button Grid.Column="2" Height="40" Width="40" x:Name="ReloadButton" HorizontalAlignment="Right" CornerRadius="6">
+            <Button Grid.Column="2" Height="40" Width="40" x:Name="ReloadButton" HorizontalAlignment="Right" CornerRadius="6" Click="ReloadButton_Click">
                 <FontIcon x:Name="SearchAnimatedIcon" Glyph="&#xE72C;" FontSize="14" HorizontalAlignment="Right"/>
             </Button>
         </Grid>
-        <ListView x:Name="DataList" Grid.Column="0" Grid.Row="1">
+        <ProgressBar
+            x:Name="LoadingBar"
+            Grid.Row="1" Grid.Column="0"
+            IsIndeterminate="True"
+            Visibility="Collapsed"
+            />
+        <ListView x:Name="DataList" Grid.Column="0" Grid.Row="2" ItemsSource="{x:Bind Sources, Mode=TwoWay}">
         </ListView>
     </Grid>
 </UserControl>

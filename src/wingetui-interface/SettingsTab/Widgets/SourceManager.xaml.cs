@@ -24,6 +24,7 @@ using System.Diagnostics;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI;
 using CommunityToolkit.WinUI.UI.Controls.Primitives;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,40 +42,46 @@ namespace ModernWindow.SettingsTab.Widgets
         }
         public void Remove(object sender, RoutedEventArgs e)
         {
-            Parent.RemoveSource(Source);
+            Parent.RemoveSourceItem(this);
         }
     }
     public sealed partial class SourceManager : UserControl
     {
         private dynamic Manager { get; set; }
-        private List<SourceItem> Sources { get; set; }
+        private ObservableCollection<SourceItem> Sources = new ObservableCollection<SourceItem>();
 
         private ListView _datagrid{ get; set; }
         public SourceManager()
         {
-            Sources = new List<SourceItem>();
             this.InitializeComponent();
             _datagrid = DataList;
             DataList.ItemTemplate = (DataTemplate)Resources["ManagerSourceTemplate"];
-            _datagrid.ItemsSource = Sources;
             LoadSources();
         }
 
         public async void LoadSources()
         {
-            Sources = new List<SourceItem>();
+            LoadingBar.Visibility = Visibility.Visible;
+            Sources.Clear();
             Scoop scoop = new Scoop();
             scoop.Initialize();
             foreach(ManagerSource Source in await scoop.GetSources())
             {
                 Sources.Add(new SourceItem(this, Source));
             }
-            _datagrid.ItemsSource = Sources;
+            LoadingBar.Visibility = Visibility.Collapsed;
         }
 
-        public void RemoveSource(ManagerSource Source)
+        public void RemoveSourceItem(SourceItem Item)
         {
-            Console.WriteLine("Clicked " + Source.Name);
+            Sources.Remove(Item);
+            // TODO: Implement source uninstallation
+            // Item.Source.Manager.UninstallSource(Item.Source);
+        }
+
+        private void ReloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadSources();
         }
     }
 }
