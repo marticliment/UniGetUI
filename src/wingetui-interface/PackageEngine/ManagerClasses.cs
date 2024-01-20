@@ -3,45 +3,85 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.WindowsAppSDK.Runtime.Packages;
+using ModernWindow.Structures;
+using Windows.Media.Core;
 
 namespace package_engine
 {
     public abstract class PackageManager : IPackageManager
     {
-        public ManagerProperties Properties { get; }
-        public ManagerCapabilities Capabilities { get; }
+        public ManagerProperties Properties { get; set; }
+        public ManagerCapabilities Capabilities { get; set; }
+        public ManagerStatus Status { get; set; }
         public string Name { get; }
         public string ExecutablePath { get; }
         public string ExecutableCommand { get; }
+        protected MainAppBindings bindings = MainAppBindings.Instance;
+        public ManagerSource MainSource { get; set; }
 
         public PackageManager()
-        {
-            Properties = new ManagerProperties()
-            {
-                Name = "Manager",
-                Description = "A package manager",
-                IconId = "manager",
-                ColorIconId = "manager_color",
-                ExecutablePath = "manager.exe",
-                ExecutableName = "manager",
-            };
+        {            
         }
 
-        bool IsEnabled()
+        public async void Initialize()
         {
-            return false;
+            Status = await LoadManager();
+            Properties = GetProperties();
+            Capabilities = GetCapabilities();
+            MainSource = GetMainSource();
+        }
+
+        protected abstract ManagerProperties GetProperties();
+        protected abstract ManagerCapabilities GetCapabilities();
+        protected abstract Task<ManagerStatus> LoadManager();
+
+        public bool IsEnabled()
+        {
+            return !bindings.GetSettings("Disable"+Name);
         }
 
         public abstract Task<Package[]> FindPackages(string query);
         public abstract Task<UpgradablePackage[]> GetAvailableUpdates();
         public abstract Task<Package[]> GetInstalledPackages();
+        public abstract Task<PackageDetails> GetPackageDetails(Package package);
+        public abstract string[] GetInstallParameters(Package package, InstallationOptions options);
+        public abstract string[] GetUpdateParameters(Package package, InstallationOptions options);
+        public abstract string[] GetUninstallParameters(Package package, InstallationOptions options);
+
+        /*
+
+        All installation thread stuff here
+
+        */
+
+        public abstract void RefreshSources();
+
+        public abstract ManagerSource GetMainSource();
+
     }
 
     public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources
     {
+        public ManagerSource[] Sources { get; set; }
+        new public async void Initialize()
+        {
+            (this as PackageManager).Initialize();
+            Sources = await GetSources();
+        }
+
         public abstract Task<ManagerSource[]> GetSources();
     }
 
+    public struct ManagerStatus
+    {
+        public bool Enabled = false;
+        public bool Found = false;
+        public string ExecutablePath = "";
+        public ManagerStatus()
+        { }
+
+    }
     public struct ManagerProperties
     {
         public string Name;
@@ -67,7 +107,7 @@ namespace package_engine
         public bool SupportsPreRelease = false;
         public bool SupportsCustomLocations = false;
         public bool SupportsCustomSources = false;
-        public ManagerSource.Capabilities Sources { get; }
+        public ManagerSource.Capabilities Sources { get; set; }
         public ManagerCapabilities()
         {
             Sources = new ManagerSource.Capabilities();
@@ -78,8 +118,8 @@ namespace package_engine
     {
         public struct Capabilities
         {
-            public bool KnowsUpdateDate = false;
-            public bool KnowsPackageCount = false;
+            public bool KnowsUpdateDate { get; set; } = false;
+            public bool KnowsPackageCount { get; set; } = false;
             public Capabilities()
             { }
         }
@@ -88,7 +128,7 @@ namespace package_engine
         public string Name { get; }
         public Uri? Url { get; }
         public int? PackageCount { get; }
-        public string? UpdateDate { get; }
+        public string UpdateDate { get; }
 
         public ManagerSource(PackageManager manager, string name, Uri? url = null, int? packageCount = 0, string? updateDate = null)
         {
@@ -99,6 +139,14 @@ namespace package_engine
                 PackageCount = packageCount;
             if(manager.Capabilities.Sources.KnowsUpdateDate)
                 UpdateDate = updateDate;
+        }
+
+        public new string ToString()
+        {
+            if(Manager.Capabilities.SupportsCustomSources)
+                return Manager.Name + ": " + Name;
+            else
+                return Manager.Name;
         }
     }
 }

@@ -119,7 +119,7 @@ namespace package_engine
     public class UpgradablePackage : Package
     {
         public string NewVersion { get; }
-        public UpgradablePackage(string name, string id, string installed_version, string new_version, Source source, PackageManager manager) : base(name, id, installed_version, source, manager)
+        public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager) : base(name, id, installed_version, source, manager)
         {
             NewVersion = new_version;
         }
