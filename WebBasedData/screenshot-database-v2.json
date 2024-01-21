@@ -3,8 +3,8 @@
         "total": 11698,
         "done": 7478,
         "packages_with_icon": 7478,
-        "packages_with_screenshot": 533,
-        "total_screenshots": 1689
+        "packages_with_screenshot": 534,
+        "total_screenshots": 1694
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -391,8 +391,14 @@
             ]
         },
         "aaaaxy": {
-            "icon": "https://camo.githubusercontent.com/8226581c4ae9893fdea18c136e26206faa7111e85a4da785b7f9a018e26915b8/68747470733a2f2f646976566572656e742e6769746875622e696f2f6161616178792f6c6f676f2e706e67",
-            "images": []
+            "icon": "https://i.postimg.cc/ZnnB2RgZ/aaaaxy.png",
+            "images": [
+                "https://i.postimg.cc/CxkZW9vZ/shot1.png",
+                "https://i.postimg.cc/x8ZJ2QDm/shot2.png",
+                "https://i.postimg.cc/BQdL7JC9/shot3.png",
+                "https://i.postimg.cc/TYy5cKgJ/shot4.png",
+                "https://i.postimg.cc/T2NWmVLP/shot5.png"
+            ]
         },
         "aacgain": {
             "icon": "https://community.chocolatey.org/content/packageimages/aacgain.1.9.0.2.png",
