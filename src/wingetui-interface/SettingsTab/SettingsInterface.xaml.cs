@@ -28,6 +28,7 @@ using System.Reflection;
 using Windows.ApplicationModel.DataTransfer;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
+using System.Xml.Schema;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -168,9 +169,11 @@ namespace ModernWindow.SettingsTab
             foreach (PackageManager Manager in bindings.App.PackageManagerList)
             {
 
-                var ManagerExpander = new SettingsEntry() { };
-                ManagerExpander.Text = bindings.Translate("{pm} preferences").Replace("{pm}", Manager.Name);
-                ManagerExpander.Description = Manager.Properties.Description;
+                var ManagerExpander = new SettingsEntry
+                {
+                    Text = Manager.Name,
+                    Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
+                };
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
 
                 InfoBar ManagerStatus = new InfoBar();
@@ -180,7 +183,7 @@ namespace ModernWindow.SettingsTab
                     if(Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = bindings.Translate("{pm} is enabled and ready").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = bindings.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.Name);
                         if (Manager.Status.Version.Contains("\n"))
                             ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name) + "\n" + Manager.Status.Version;
                         else
@@ -200,28 +203,40 @@ namespace ModernWindow.SettingsTab
                     }
                 }
 
-                SetManagerStatus(Manager);
                 ManagerStatus.IsClosable = false;
                 ManagerStatus.IsOpen = true;
                 ManagerStatus.CornerRadius = new CornerRadius(0);
                 ManagerStatus.BorderThickness = new Thickness(0, 1, 0, 0);
                 ManagerExpander.ItemsFooter = ManagerStatus;
 
-                var icon = new BitmapIcon();
-                icon.UriSource = new Uri("ms-appx:///wingetui/resources/"+ Manager.Properties.IconId + "_white.png");
+                var icon = new BitmapIcon
+                {
+                    UriSource = new Uri("ms-appx:///wingetui/resources/" + Manager.Properties.IconId + "_white.png")
+                };
                 ManagerExpander.HeaderIcon = icon;
 
-                var EnableManager = new CheckboxCard() { SettingName = "Disable" + Manager.Name };
-                EnableManager._checkbox.Content = bindings.Translate("Enable {pm}").Replace("{pm}", Manager.Name);
-                EnableManager.StateChanged += (s, e) => { ManagerExpander.ShowRestartRequiredBanner(); SetManagerStatus(Manager); EnableOrDisableEntries(); };
-                ManagerExpander.Items.Add(EnableManager);
+                var ManagerSwitch = new ToggleSwitch
+                {
+                    IsOn = Manager.IsEnabled()
+                };
+                ManagerSwitch.Toggled += (s, e) => {
+                    bindings.SetSettings("Disable" + Manager.Name, !ManagerSwitch.IsOn);
+                    SetManagerStatus(Manager); 
+                    EnableOrDisableEntries();
+                };
+
+                //var EnableManager = new CheckboxCard() { SettingName = "Disable" + Manager.Name };
+                //EnableManager._checkbox.Content = bindings.Translate("Enable {pm}").Replace("{pm}", Manager.Name);
+                //EnableManager.StateChanged += (s, e) => { ManagerExpander.ShowRestartRequiredBanner(); SetManagerStatus(Manager); EnableOrDisableEntries(); };
+                //ManagerExpander.Items.Add(EnableManager);
+                ManagerExpander.Content = ManagerSwitch;
 
                 void EnableOrDisableEntries()
                 {
                     if (ExtraSettingsCards.ContainsKey(Manager))
                     foreach (var card in ExtraSettingsCards[Manager])
                     {
-                        card.IsEnabled = EnableManager.Checked;
+                        card.IsEnabled = ManagerSwitch.IsOn;
                     }
                 }
                 
@@ -253,6 +268,7 @@ namespace ModernWindow.SettingsTab
                         ManagerExpander.Items.Add(card);
                     }
 
+                SetManagerStatus(Manager);
                 EnableOrDisableEntries();
             
                 MainLayout.Children.Add(ManagerExpander);

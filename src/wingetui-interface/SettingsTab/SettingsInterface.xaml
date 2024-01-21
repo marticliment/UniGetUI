@@ -268,7 +268,7 @@
 
                 </Toolkit:SettingsExpander.Items>
             </widgets:SettingsEntry>
-            <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package manager preferences" HorizontalAlignment="Stretch"/>
+            <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package Managers" HorizontalAlignment="Stretch"/>
         </StackPanel>
     </Grid>
 </UserControl>
