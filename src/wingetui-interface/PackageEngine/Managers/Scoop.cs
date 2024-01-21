@@ -166,7 +166,6 @@ public class Scoop : PackageManagerWithSources
         process.Start();
         status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
         status.Found = process.ExitCode == 0;
-        Debug.WriteLine("EXIT CODE: " + process.ExitCode);
         
 
         if (status.Found && IsEnabled())

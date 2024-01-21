@@ -39,9 +39,9 @@ namespace ModernWindow.PackageEngine
             Capabilities = GetCapabilities();
             MainSource = GetMainSource();
             Status = await LoadManager();
-            Debug.WriteLine("Manager " + Name + " loaded");
-            if(this is PackageManagerWithSources)
+            if(this is PackageManagerWithSources && Status.Found)
                 (this as PackageManagerWithSources).Sources = await (this as PackageManagerWithSources).GetSources();
+            Debug.WriteLine("Manager " + Name + " loaded");
             ManagerReady = true;
         }
 

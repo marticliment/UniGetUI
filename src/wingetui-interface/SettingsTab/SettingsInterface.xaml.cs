@@ -156,13 +156,13 @@ namespace ModernWindow.SettingsTab
             ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_Uninstall);
             ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_ResetAppCache);
 
-            /*var Chocolatey_SystemChoco = new CheckboxCard() { Text= "Use system Chocolatey", SettingName="UseSystemChocolatey" };
+            var Chocolatey_SystemChoco = new CheckboxCard() { Text= "Use system Chocolatey", SettingName="UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
                 ((SettingsEntry)PackageManagerExpanders[bindings.App.Choco]).ShowRestartRequiredBanner();
             };
 
-            ExtraSettingsCards[bindings.App.Choco].Add(Chocolatey_SystemChoco);*/
+            ExtraSettingsCards[bindings.App.Choco].Add(Chocolatey_SystemChoco);
 
 
 

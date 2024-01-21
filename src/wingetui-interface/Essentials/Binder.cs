@@ -74,10 +74,16 @@ namespace ModernWindow.Structures
             App.DisposeAndQuit();
         }
 
+        public string Which_MachinePath(string command)
+        {
+            var paths = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).Split(Path.PathSeparator);
+            return paths.FirstOrDefault(x => command.Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase), Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command));
+        }
+
         public string Which(string command)
         {
-            var paths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
-            return paths.FirstOrDefault(x => command.Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase), Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command));
+            var paths = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User).Split(Path.PathSeparator);
+            return paths.FirstOrDefault(x => command.Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase), Which_MachinePath(command));
         }
     }
 

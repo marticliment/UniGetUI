@@ -63,6 +63,9 @@ namespace ModernWindow.SettingsTab.Widgets
 
         public async void LoadSources()
         {
+            if(!Manager.Status.Found)
+                return;
+
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
             foreach(ManagerSource Source in await Manager.GetSources())
