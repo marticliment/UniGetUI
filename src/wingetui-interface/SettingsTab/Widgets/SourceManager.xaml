@@ -60,9 +60,9 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="10" />
-            <RowDefinition Height="300" />
+            <RowDefinition Height="250" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -71,14 +71,14 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="30"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
             <TextBlock Name="Header" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="15" FontWeight="SemiBold"/>
-            <Button Grid.Column="1" Height="35" Width ="150" x:Name="AddSourceButton" Content="Add Source" CornerRadius="4"/>
-            <Button Grid.Column="2" Height="35" Width="35" x:Name="ReloadButton" HorizontalAlignment="Right" CornerRadius="4" Click="ReloadButton_Click" Padding="0,0,0,0">
+            <Button Grid.Column="1" Height="30" Width ="150" x:Name="AddSourceButton" Content="Add Source" CornerRadius="4"/>
+            <Button Grid.Column="2" Height="30" Width="30" x:Name="ReloadButton" HorizontalAlignment="Right" CornerRadius="4" Click="ReloadButton_Click" Padding="0,0,0,0">
                 <FontIcon x:Name="SearchAnimatedIcon" Glyph="&#xE72C;" FontSize="14" HorizontalAlignment="Right"/>
             </Button>
         </Grid>

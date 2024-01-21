@@ -116,33 +116,30 @@ namespace ModernWindow.SettingsTab
             Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new Dictionary<PackageManager, SettingsEntry>();
             Dictionary<PackageManager, SettingsCard[]> ExtraSettingsCards = new Dictionary<PackageManager, SettingsCard[]>();
 
-            List<PackageManager> Managers = new List<PackageManager>();
-            var Scoop = new Scoop();
-            Scoop.Initialize();
-            Managers.Add(Scoop);
 
-            /*var Winget_ResetSources = new ButtonCard() { Text="Reset Winget sources (might help if no packages are listed", ButtonText="Reset" };
+            var Winget_ResetSources = new ButtonCard() { Text="Reset Winget sources (might help if no packages are listed", ButtonText="Reset" };
             Winget_ResetSources.Click += (s, e) =>
             {
                 // Spawn reset winget sources window
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.PackageTools.Winget]).ShowRestartRequiredBanner();
+                ((SettingsEntry)PackageManagerExpanders[bindings.App.Winget]).ShowRestartRequiredBanner();
             };
 
             SettingsCard[] Winget_Cards = { Winget_ResetSources };
-            ExtraSettingsCards.Add(bindings.App.PackageTools.Winget, Winget_Cards);*/
+            Console.WriteLine(bindings.App.Winget.Name);
+            ExtraSettingsCards.Add(bindings.App.Winget, Winget_Cards);
 
             var Scoop_Install = new ButtonCard() { Text = "Install Scoop", ButtonText = "Install" };
             Scoop_Install.Click += (s, e) =>
             {
                 // Spawn install scoop window
-                ((SettingsEntry)PackageManagerExpanders[Scoop]).ShowRestartRequiredBanner();
+                ((SettingsEntry)PackageManagerExpanders[bindings.App.Scoop]).ShowRestartRequiredBanner();
                 bindings.SetSettings("DisableScoop", false);
             };
             var Scoop_Uninstall = new ButtonCard() { Text = "Uninstall Scoop (and its packages)", ButtonText = "Uninstall" };
             Scoop_Uninstall.Click += (s, e) =>
             {
                 // Spawn uninstall scoop window
-                ((SettingsEntry)PackageManagerExpanders[Scoop]).ShowRestartRequiredBanner();
+                ((SettingsEntry)PackageManagerExpanders[bindings.App.Scoop]).ShowRestartRequiredBanner();
                 bindings.SetSettings("DisableScoop", true);
             };
             var Scoop_ResetAppCache = new ButtonCard() { Text = "Reset Scoop's global app cache", ButtonText = "Reset" };
@@ -152,20 +149,20 @@ namespace ModernWindow.SettingsTab
             };
 
             SettingsCard[] Scoop_Cards = { Scoop_Install, Scoop_Uninstall, Scoop_ResetAppCache };
-            ExtraSettingsCards.Add(Scoop, Scoop_Cards);
+            ExtraSettingsCards.Add(bindings.App.Scoop, Scoop_Cards);
 
             /*var Chocolatey_SystemChoco = new CheckboxCard() { Text= "Use system Chocolatey", SettingName="UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.PackageTools.Choco]).ShowRestartRequiredBanner();
+                ((SettingsEntry)PackageManagerExpanders[bindings.App.Choco]).ShowRestartRequiredBanner();
             };
 
             SettingsCard[] Choco_Cards = { Chocolatey_SystemChoco };
-            ExtraSettingsCards.Add(bindings.App.PackageTools.Choco, Choco_Cards);*/
+            ExtraSettingsCards.Add(bindings.App.Choco, Choco_Cards);*/
 
 
 
-            foreach (PackageManager Manager in Managers)
+            foreach (PackageManager Manager in bindings.App.PackageManagerList)
             {
                 var ManagerExpander = new SettingsEntry() { UnderText = "{pm} package manager specific preferences" };
                 ManagerExpander.Text = bindings.Translate("{pm} preferences").Replace("{pm}", Manager.Name);
@@ -181,7 +178,10 @@ namespace ModernWindow.SettingsTab
                 EnableManager.StateChanged += (s, e) => { ManagerExpander.ShowRestartRequiredBanner(); };
                 ManagerExpander.Items.Add(EnableManager);
 
-                var ManagerPath = new SettingsCard() { Description = Manager.Properties.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
+                Debug.WriteLine(Manager.Status.ExecutablePath);
+                Debug.WriteLine(Manager.Properties.ExecutableCallArgs);
+
+                var ManagerPath = new SettingsCard() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {

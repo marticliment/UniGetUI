@@ -21,9 +21,7 @@ using System.Threading;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
 using System.Diagnostics;
-using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI;
-using CommunityToolkit.WinUI.UI.Controls.Primitives;
 using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,16 +27,22 @@ namespace ModernWindow.PackageEngine
         protected MainAppBindings bindings = MainAppBindings.Instance;
         public ManagerSource MainSource { get; set; }
 
+        public bool ManagerReady { get; set; } = false;
+
         protected PackageManager()
         {
         }
-        public async void Initialize()
+        public async Task Initialize()
         {
-            Status = await LoadManager();
             Properties = GetProperties();
             Name = Properties.Name;
             Capabilities = GetCapabilities();
             MainSource = GetMainSource();
+            Status = await LoadManager();
+            Debug.WriteLine("Manager " + Name + " loaded");
+            if(this is PackageManagerWithSources)
+                (this as PackageManagerWithSources).Sources = await (this as PackageManagerWithSources).GetSources();
+            ManagerReady = true;
         }
 
         protected abstract ManagerProperties GetProperties();
@@ -61,7 +68,7 @@ namespace ModernWindow.PackageEngine
 
         */
 
-        public abstract void RefreshSources();
+        public abstract Task RefreshSources();
 
         public abstract ManagerSource GetMainSource();
 
@@ -70,36 +77,29 @@ namespace ModernWindow.PackageEngine
     public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources 
     {
         public ManagerSource[] Sources { get; set; }
-        new public async void Initialize()
-        {
-            (this as PackageManager).Initialize();
-            Sources = await GetSources();
-        }
-
         public abstract Task<ManagerSource[]> GetSources();
     }
 
-    public struct ManagerStatus
+    public class ManagerStatus
     {
-        public bool Enabled = false;
+        public string Version = "";
         public bool Found = false;
         public string ExecutablePath = "";
         public ManagerStatus()
         { }
 
     }
-    public struct ManagerProperties
+    public class ManagerProperties
     {
-        public string Name;
-        public string Description;
-        public string IconId;
-        public string ColorIconId;
-        public string ExecutablePath;
-        public string ExecutableCallArgs;
-        public string ExecutableFriendlyName;
-        public string InstallVerb;
-        public string UpdateVerb;
-        public string UninstallVerb;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string IconId { get; set; }
+        public string ColorIconId { get; set; }
+        public string ExecutableCallArgs { get; set; }
+        public string ExecutableFriendlyName { get; set; }
+        public string InstallVerb { get; set; }
+        public string UpdateVerb { get; set; }
+        public string UninstallVerb { get; set; }
 
     }
     public struct ManagerCapabilities

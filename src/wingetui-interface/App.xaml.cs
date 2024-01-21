@@ -36,12 +36,12 @@ namespace ModernWindow
         public dynamic Globals;
 
         public Scoop Scoop;
+        public Winget Winget;
 
         public List<PackageManager> PackageManagerList = new List<PackageManager>();
 
         private Py.GILState GIL;
 
-        // Windows (MUST BE PUBLIS FOR PYTHON TO ACCESS)
         public SettingsTab.SettingsInterface settings;
         public MainWindow mainWindow;
 
@@ -84,15 +84,30 @@ namespace ModernWindow
             await Task.Delay(100);
 
             // Load managers
+            
+            Winget = new Winget();
+            PackageManagerList.Add(Winget);
             Scoop = new Scoop();
             PackageManagerList.Add(Scoop);
-            await Task.Run(() => { Scoop.Initialize(); });
+
+            foreach(PackageManager manager in PackageManagerList)
+                _ = manager.Initialize();
+
+            foreach(PackageManager manager in PackageManagerList)
+            {
+                while(!manager.ManagerReady){
+                    await Task.Delay(100);
+                    Console.WriteLine("Waiting for manager " + manager.Name);
+                }
+                Console.WriteLine(manager.Name + " ready");
+            }
 
 
-            mainWindow.BlockLoading = false;
-            settings = mainWindow.SettingsTab;
+            Debug.WriteLine("All managers loaded");
 
-            Debug.WriteLine("All windows loaded");
+            mainWindow.SwitchToInterface();
+            // settings = mainWindow.SettingsTab;
+
 
             Thread python = new Thread(LoadPython);
             python.SetApartmentState(ApartmentState.STA);

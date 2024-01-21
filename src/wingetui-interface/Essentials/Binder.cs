@@ -3,6 +3,7 @@ using Microsoft.Web.WebView2.Core;
 using Python.Runtime;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -71,7 +72,13 @@ namespace ModernWindow.Structures
             Console.WriteLine(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
             System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
             App.DisposeAndQuit();
-    }
+        }
+
+        public string Which(string command)
+        {
+            var paths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
+            return paths.FirstOrDefault(x => command.Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase), Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command));
+        }
     }
 
 }

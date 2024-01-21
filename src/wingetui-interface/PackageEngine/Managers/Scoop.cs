@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CommunityToolkit.WinUI;
 using Windows.Graphics.Display;
 
 namespace ModernWindow.PackageEngine.Managers;
@@ -45,7 +48,7 @@ public class Scoop : PackageManagerWithSources
         Console.WriteLine("🔵 Starting " + Name + " source search...");
         using (Process process = new Process())
         {
-            process.StartInfo.FileName = Properties.ExecutablePath;
+            process.StartInfo.FileName = Status.ExecutablePath;
             process.StartInfo.Arguments = Properties.ExecutableCallArgs + " bucket list";
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
@@ -94,9 +97,17 @@ public class Scoop : PackageManagerWithSources
         throw new NotImplementedException();
     }
 
-    public override void RefreshSources()
+    public override async Task RefreshSources()
     {
-        return;
+        Process process = new Process();
+        ProcessStartInfo StartInfo = new ProcessStartInfo()
+        {
+            FileName = Properties.ExecutableFriendlyName,
+            Arguments = Properties.ExecutableCallArgs + " update"
+        };
+        process.StartInfo = StartInfo;
+        process.Start();
+        await process.WaitForExitAsync();
     }
 
     protected override ManagerCapabilities GetCapabilities()
@@ -125,7 +136,6 @@ public class Scoop : PackageManagerWithSources
             Description = bindings.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
             IconId = "scoop",
             ColorIconId = "scoop_color",
-            ExecutablePath = "powershell.exe",
             ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command scoop",
             ExecutableFriendlyName = "scoop",
             InstallVerb = "install",
@@ -136,24 +146,34 @@ public class Scoop : PackageManagerWithSources
 
     protected override async Task<ManagerStatus> LoadManager()
     {
-        var status = new ManagerStatus()
+        var status = new ManagerStatus
         {
-            Enabled = IsEnabled(),
-            Found = false,
-            ExecutablePath = "powershell.exe"
+            ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
         };
-        if(status.Found && status.Enabled)
+        status.Found = File.Exists(status.ExecutablePath) && File.Exists(bindings.Which("scoop"));
+
+        if(!status.Found)
+            return status;
+
+        Process process = new Process()
         {
-            Process process = new Process();
-            ProcessStartInfo StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo()
             {
-                FileName = Properties.ExecutableFriendlyName,
-                Arguments = Properties.ExecutableCallArgs + " update"
-            };
-            process.StartInfo = StartInfo;
-            process.Start();
-            await process.WaitForExitAsync();
-        }
+                FileName = status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " --version",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+                
+            }
+        };
+        process.Start();
+        status.Version = await process.StandardOutput.ReadLineAsync();
+        
+
+        if (status.Found && IsEnabled())
+            await RefreshSources();
+
         return status;
     }
 }
