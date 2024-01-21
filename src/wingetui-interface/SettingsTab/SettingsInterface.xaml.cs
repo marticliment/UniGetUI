@@ -97,14 +97,14 @@ namespace ModernWindow.SettingsTab
 
             // Admin Settings Section
             int index = 1;
-            foreach(dynamic manager in new PyList(bindings.App.PackageTools.PackageManagersList))
+            foreach(PackageManager manager in bindings.App.PackageManagerList)
             {
                 CheckboxCard card = new CheckboxCard()
                 {
                     Text = "Always elevate {pm} installations by default",
-                    SettingName = (string)("AlwaysElevate" + manager.NAME),
+                    SettingName = "AlwaysElevate" + manager.Name,
                 };
-                card._checkbox.Content = card._checkbox.Content.ToString().Replace("{pm}", manager.NAME.ToString());
+                card._checkbox.Content = card._checkbox.Content.ToString().Replace("{pm}", manager.Name);
                 AdminSettingsExpander.Items.Insert(index++, card);
             }
 

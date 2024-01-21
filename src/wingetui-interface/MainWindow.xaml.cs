@@ -25,6 +25,7 @@ namespace ModernWindow
         MainApp _app = Application.Current as MainApp;
         public SettingsTab.SettingsInterface SettingsTab;
         public Grid ContentRoot;
+        public bool BlockLoading = false;
         public MainWindow()
         {
             this.InitializeComponent();
@@ -57,8 +58,6 @@ namespace ModernWindow
 
             ColumnDefinition SpashScreenColumn = __content_root.ColumnDefinitions[0];
             SpashScreenColumn.Width = new GridLength(0, GridUnitType.Pixel);
-
-            SystemBackdrop = new MicaBackdrop();
         }
 
         public void ApplyTheme()

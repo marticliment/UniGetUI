@@ -10,7 +10,7 @@
     xmlns:settings="using:ModernWindow.SettingsTab">
 
     <Window.SystemBackdrop>
-        <DesktopAcrylicBackdrop/>
+        <MicaBackdrop/>
     </Window.SystemBackdrop>
     <Grid Name="__content_root">
         <Grid.ColumnDefinitions>
@@ -53,16 +53,18 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="128"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" MinHeight="150"/>
                 <RowDefinition Height="12"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <Canvas x:Name="LaunchBackground" Background="#212121" Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
             <Image Grid.Column="1" Grid.Row="1" >
                 <Image.Source>
                     <BitmapImage UriSource="ms-appx:///wingetui/resources/icon.png"/>
                 </Image.Source>
             </Image>
             <ProgressRing
+                Foreground="#dddddd"
                 Grid.Column="1"
                 Grid.Row="2"
                 />

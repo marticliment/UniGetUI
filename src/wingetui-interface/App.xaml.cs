@@ -6,6 +6,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Managers;
 using Python.Runtime;
 using System;
 using System.Collections.Generic;
@@ -32,8 +34,10 @@ namespace ModernWindow
         public dynamic Tools;
         public dynamic Core;
         public dynamic Globals;
-        public dynamic PackageClasses;
-        public dynamic PackageTools;
+
+        public Scoop Scoop;
+
+        public List<PackageManager> PackageManagerList = new List<PackageManager>();
 
         private Py.GILState GIL;
 
@@ -45,8 +49,7 @@ namespace ModernWindow
         public MainApp()
         {
             this.InitializeComponent();
-
-            // Load Python runtime
+            
             Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
             PythonEngine.Initialize();
             PythonEngine.BeginAllowThreads();
@@ -64,22 +67,30 @@ namespace ModernWindow
             Globals = (PyModule)Py.Import("wingetui.Core.Globals");
             Tools = (PyModule)Py.Import("wingetui.Core.Tools");
             Core = (PyModule)Py.Import("wingetui.Core");
-            PackageClasses = (PyModule)Py.Import("wingetui.PackageEngine.Classes");
-            try{
-                PackageTools = (PyModule)Py.Import("wingetui.PackageEngine.Tools");
-            } catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
 
             Debug.WriteLine("Python modules imported");
 
-            // Initialize Windows
             mainWindow = new MainWindow();
             mainWindow.Activate();
-            settings = mainWindow.SettingsTab;
 
+            LoadComponents();
+        }
+
+        public async void LoadComponents()
+        {             
+            mainWindow.BlockLoading = true;
             mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
+
+            await Task.Delay(100);
+
+            // Load managers
+            Scoop = new Scoop();
+            PackageManagerList.Add(Scoop);
+            await Task.Run(() => { Scoop.Initialize(); });
+
+
+            mainWindow.BlockLoading = false;
+            settings = mainWindow.SettingsTab;
 
             Debug.WriteLine("All windows loaded");
 
