@@ -189,7 +189,7 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             };
             process.Start();
-            status.Version = await process.StandardOutput.ReadToEndAsync();
+            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
 
             if (status.Found && IsEnabled())
                 await RefreshSources();

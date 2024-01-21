@@ -74,7 +74,7 @@
                 <ColumnDefinition Width="30"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
             <TextBlock Name="Header" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="15" FontWeight="SemiBold"/>
             <Button Grid.Column="1" Height="30" Width ="150" x:Name="AddSourceButton" Content="Add Source" CornerRadius="4"/>

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ABI.System.Collections.Generic;
 using CommunityToolkit.WinUI;
 using Windows.Graphics.Display;
 
@@ -150,10 +151,6 @@ public class Scoop : PackageManagerWithSources
         {
             ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
         };
-        status.Found = File.Exists(status.ExecutablePath) && File.Exists(bindings.Which("scoop"));
-
-        if(!status.Found)
-            return status;
 
         Process process = new Process()
         {
@@ -164,15 +161,16 @@ public class Scoop : PackageManagerWithSources
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true
-                
             }
         };
         process.Start();
-        status.Version = await process.StandardOutput.ReadLineAsync();
+        status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+        status.Found = process.ExitCode == 0;
+        Debug.WriteLine("EXIT CODE: " + process.ExitCode);
         
 
         if (status.Found && IsEnabled())
-            await RefreshSources();
+            _ = RefreshSources();
 
         return status;
     }

@@ -69,6 +69,9 @@ namespace ModernWindow.SettingsTab.Widgets
             {
                 Sources.Add(new SourceItem(this, Source));
             }
+            if (Sources.Count > 0)
+                _datagrid.SelectedIndex = 0;
+            
             LoadingBar.Visibility = Visibility.Collapsed;
         }
 

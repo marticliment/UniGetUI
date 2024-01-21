@@ -114,7 +114,12 @@ namespace ModernWindow.SettingsTab
 
             // Package Manager banners;
             Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new Dictionary<PackageManager, SettingsEntry>();
-            Dictionary<PackageManager, SettingsCard[]> ExtraSettingsCards = new Dictionary<PackageManager, SettingsCard[]>();
+            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = new Dictionary<PackageManager, List<SettingsCard>>();
+
+            foreach (var Manager in bindings.App.PackageManagerList)
+            {
+                ExtraSettingsCards.Add(Manager, new List<SettingsCard>());
+            }
 
 
             var Winget_ResetSources = new ButtonCard() { Text="Reset Winget sources (might help if no packages are listed", ButtonText="Reset" };
@@ -124,9 +129,7 @@ namespace ModernWindow.SettingsTab
                 ((SettingsEntry)PackageManagerExpanders[bindings.App.Winget]).ShowRestartRequiredBanner();
             };
 
-            SettingsCard[] Winget_Cards = { Winget_ResetSources };
-            Console.WriteLine(bindings.App.Winget.Name);
-            ExtraSettingsCards.Add(bindings.App.Winget, Winget_Cards);
+            ExtraSettingsCards[bindings.App.Winget].Add(Winget_ResetSources);
 
             var Scoop_Install = new ButtonCard() { Text = "Install Scoop", ButtonText = "Install" };
             Scoop_Install.Click += (s, e) =>
@@ -148,8 +151,9 @@ namespace ModernWindow.SettingsTab
                 // Spawn Scoop Cache clearer
             };
 
-            SettingsCard[] Scoop_Cards = { Scoop_Install, Scoop_Uninstall, Scoop_ResetAppCache };
-            ExtraSettingsCards.Add(bindings.App.Scoop, Scoop_Cards);
+            ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_Install);
+            ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_Uninstall);
+            ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_ResetAppCache);
 
             /*var Chocolatey_SystemChoco = new CheckboxCard() { Text= "Use system Chocolatey", SettingName="UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
@@ -157,46 +161,90 @@ namespace ModernWindow.SettingsTab
                 ((SettingsEntry)PackageManagerExpanders[bindings.App.Choco]).ShowRestartRequiredBanner();
             };
 
-            SettingsCard[] Choco_Cards = { Chocolatey_SystemChoco };
-            ExtraSettingsCards.Add(bindings.App.Choco, Choco_Cards);*/
+            ExtraSettingsCards[bindings.App.Choco].Add(Chocolatey_SystemChoco);*/
 
 
 
             foreach (PackageManager Manager in bindings.App.PackageManagerList)
             {
-                var ManagerExpander = new SettingsEntry() { UnderText = "{pm} package manager specific preferences" };
+
+                var ManagerExpander = new SettingsEntry() { };
                 ManagerExpander.Text = bindings.Translate("{pm} preferences").Replace("{pm}", Manager.Name);
-                ManagerExpander.Description = ManagerExpander.UnderText.Replace("{pm}", Manager.Name);
+                ManagerExpander.Description = Manager.Properties.Description;
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
 
+                InfoBar ManagerStatus = new InfoBar();
+                
+                void SetManagerStatus(PackageManager Manager)
+                {
+                    if(Manager.IsEnabled() && Manager.Status.Found)
+                    {
+                        ManagerStatus.Severity = InfoBarSeverity.Success;
+                        ManagerStatus.Title = bindings.Translate("{pm} is enabled and ready").Replace("{pm}", Manager.Name);
+                        if (Manager.Status.Version.Contains("\n"))
+                            ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name) + "\n" + Manager.Status.Version;
+                        else
+                            ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name) + " " + Manager.Status.Version;
+                    }
+                    else if (Manager.IsEnabled() && !Manager.Status.Found)
+                    {
+                        ManagerStatus.Severity = InfoBarSeverity.Error;
+                        ManagerStatus.Title = bindings.Translate("{pm} was not found!").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Message = bindings.Translate("You may need to install {pm} in order to use it with WingetUI.").Replace("{pm}", Manager.Name);
+                    }
+                    else if (!Manager.IsEnabled())
+                    {
+                        ManagerStatus.Severity = InfoBarSeverity.Informational;
+                        ManagerStatus.Title = bindings.Translate("{pm} is disabled").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Message = bindings.Translate("Enable it to install packages from {pm}.").Replace("{pm}", Manager.Name);
+                    }
+                }
+
+                SetManagerStatus(Manager);
+                ManagerStatus.IsClosable = false;
+                ManagerStatus.IsOpen = true;
+                ManagerStatus.CornerRadius = new CornerRadius(0);
+                ManagerStatus.BorderThickness = new Thickness(0, 1, 0, 0);
+                ManagerExpander.ItemsFooter = ManagerStatus;
+
                 var icon = new BitmapIcon();
-                icon.UriSource = new Uri("ms-appx:///wingetui/resources/"+ Manager.Properties.IconId+"_white.png");
+                icon.UriSource = new Uri("ms-appx:///wingetui/resources/"+ Manager.Properties.IconId + "_white.png");
                 ManagerExpander.HeaderIcon = icon;
 
                 var EnableManager = new CheckboxCard() { SettingName = "Disable" + Manager.Name };
                 EnableManager._checkbox.Content = bindings.Translate("Enable {pm}").Replace("{pm}", Manager.Name);
-                EnableManager.StateChanged += (s, e) => { ManagerExpander.ShowRestartRequiredBanner(); };
+                EnableManager.StateChanged += (s, e) => { ManagerExpander.ShowRestartRequiredBanner(); SetManagerStatus(Manager); EnableOrDisableEntries(); };
                 ManagerExpander.Items.Add(EnableManager);
 
-                Debug.WriteLine(Manager.Status.ExecutablePath);
-                Debug.WriteLine(Manager.Properties.ExecutableCallArgs);
-
+                void EnableOrDisableEntries()
+                {
+                    if (ExtraSettingsCards.ContainsKey(Manager))
+                    foreach (var card in ExtraSettingsCards[Manager])
+                    {
+                        card.IsEnabled = EnableManager.Checked;
+                    }
+                }
+                
                 var ManagerPath = new SettingsCard() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {
-                    // TODO: Implement copy path algorihtm;
-                };
-                ManagerExpander.Items.Add(ManagerPath);
-                
+                    DataPackage dataPackage = new DataPackage();
+                    dataPackage.SetText(ManagerPath.Description.ToString());
+                    //Clipboard.SetContent(dataPackage);
 
+                    //TODO: Make this work
+                };
+                ExtraSettingsCards[Manager].Insert(0, ManagerPath);
+
+                
                 if(Manager is PackageManagerWithSources)
                 {
                     var SourceManagerCard = new SettingsCard();
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
                     var SourceManager = new SourceManager(Manager as PackageManagerWithSources);
                     SourceManagerCard.Description = SourceManager;
-                    ManagerExpander.Items.Add(SourceManagerCard);
+                    ExtraSettingsCards[Manager].Insert(1, SourceManagerCard);
                 }
 
                 if (ExtraSettingsCards.ContainsKey(Manager))
@@ -205,6 +253,8 @@ namespace ModernWindow.SettingsTab
                         ManagerExpander.Items.Add(card);
                     }
 
+                EnableOrDisableEntries();
+            
                 MainLayout.Children.Add(ManagerExpander);
             }
         }
