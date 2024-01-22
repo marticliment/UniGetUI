@@ -29,6 +29,7 @@ using Windows.ApplicationModel.DataTransfer;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
 using System.Xml.Schema;
+using ModernWindow.Clipboard;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -225,10 +226,6 @@ namespace ModernWindow.SettingsTab
                     EnableOrDisableEntries();
                 };
 
-                //var EnableManager = new CheckboxCard() { SettingName = "Disable" + Manager.Name };
-                //EnableManager._checkbox.Content = bindings.Translate("Enable {pm}").Replace("{pm}", Manager.Name);
-                //EnableManager.StateChanged += (s, e) => { ManagerExpander.ShowRestartRequiredBanner(); SetManagerStatus(Manager); EnableOrDisableEntries(); };
-                //ManagerExpander.Items.Add(EnableManager);
                 ManagerExpander.Content = ManagerSwitch;
 
                 void EnableOrDisableEntries()
@@ -244,11 +241,7 @@ namespace ModernWindow.SettingsTab
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {
-                    DataPackage dataPackage = new DataPackage();
-                    dataPackage.SetText(ManagerPath.Description.ToString());
-                    //Clipboard.SetContent(dataPackage);
-
-                    //TODO: Make this work
+                    WindowsClipboard.SetText(ManagerPath.Description.ToString());
                 };
                 ExtraSettingsCards[Manager].Insert(0, ManagerPath);
 
