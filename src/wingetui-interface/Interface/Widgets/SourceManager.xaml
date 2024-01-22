@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="ModernWindow.SettingsTab.Widgets.SourceManager"
+    x:Class="ModernWindow.Interface.Widgets.SourceManager"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ModernWindow.SettingsTab.Widgets"
+    xmlns:local="using:ModernWindow.Interface.Widgets"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-    xmlns:Toolkit="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
-    xmlns:widgets="using:ModernWindow.SettingsTab.Widgets">
+    xmlns:widgets="using:ModernWindow.Interface.Widgets">
     <UserControl.Resources>
         <DataTemplate x:Key="ManagerSourceTemplate" x:DataType="widgets:SourceItem">
             <Grid ColumnSpacing="5">

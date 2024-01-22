@@ -22,7 +22,7 @@ using ModernWindow.Structures;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-using ModernWindow.SettingsTab.Widgets;
+using ModernWindow.Interface.Widgets;
 using CommunityToolkit.WinUI.Controls;
 using System.Reflection;
 using Windows.ApplicationModel.DataTransfer;
@@ -31,6 +31,7 @@ using ModernWindow.PackageEngine.Managers;
 using System.Xml.Schema;
 using ModernWindow.Clipboard;
 using Windows.UI.Text;
+using ModernWindow.Interface.Widgets;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -300,12 +301,12 @@ namespace ModernWindow.SettingsTab
             return (int)WinRT.Interop.WindowNative.GetWindowHandle(GetWindow());
         }
 
-        private void OpenWelcomeWizard(object sender, Widgets.ButtonCardEventArgs e)
+        private void OpenWelcomeWizard(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
             // TODO: Implement
         }
 
-        private async void ImportSettings(object sender, Widgets.ButtonCardEventArgs e)
+        private async void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
             FileOpenPicker openPicker = new FileOpenPicker();
 
@@ -323,7 +324,7 @@ namespace ModernWindow.SettingsTab
             }
         }
 
-        private async void ExportSettings(object sender, Widgets.ButtonCardEventArgs e)
+        private async void ExportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
 
             FileSavePicker savePicker = new FileSavePicker();
@@ -340,23 +341,23 @@ namespace ModernWindow.SettingsTab
 
         }
 
-        private void ResetWingetUI(object sender, Widgets.ButtonCardEventArgs e)
+        private void ResetWingetUI(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
             bindings.App.Tools.ResetSettings();
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void LanguageSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
+        private void LanguageSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
         {
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
+        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
         {
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void ThemeSelector_ValueChanged(object sender, Widgets.ComboCardEventArgs e)
+        private void ThemeSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
         {
             ((MainApp)Application.Current).mainWindow.ApplyTheme();
         }
@@ -404,7 +405,7 @@ namespace ModernWindow.SettingsTab
 
         }
 
-        private void DoCacheAdminRights_StateChanged(object sender, Widgets.CheckBoxEventArgs e)
+        private void DoCacheAdminRights_StateChanged(object sender, Interface.Widgets.CheckBoxEventArgs e)
         {
             if (!e.IsChecked)
             {
@@ -412,7 +413,7 @@ namespace ModernWindow.SettingsTab
             }
         }
 
-        private void UseSystemGSudo_StateChanged(object sender, Widgets.CheckBoxEventArgs e)
+        private void UseSystemGSudo_StateChanged(object sender, Interface.Widgets.CheckBoxEventArgs e)
         { AdminSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)

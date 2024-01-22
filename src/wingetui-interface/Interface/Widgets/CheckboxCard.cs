@@ -17,12 +17,12 @@ using Windows.Networking.XboxLive;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.SettingsTab.Widgets
+namespace ModernWindow.Interface.Widgets
 {
 
     public class CheckBoxEventArgs : EventArgs
     {
-        public bool IsChecked { get; set;}
+        public bool IsChecked { get; set; }
         public CheckBoxEventArgs(bool _checked)
         {
             IsChecked = _checked;
@@ -61,7 +61,7 @@ namespace ModernWindow.SettingsTab.Widgets
         nameof(Checked),
         typeof(bool),
         typeof(CheckboxCard),
-        new PropertyMetadata(default(bool), new PropertyChangedCallback((d, e) => {})));
+        new PropertyMetadata(default(bool), new PropertyChangedCallback((d, e) => { })));
 
         public CheckboxCard()
         {
@@ -82,8 +82,8 @@ namespace ModernWindow.SettingsTab.Widgets
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
             _checkbox = new CheckBox();
-            this.DefaultStyleKey = typeof(CheckboxCard);
-            this.Content = _checkbox;
+            DefaultStyleKey = typeof(CheckboxCard);
+            Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Checked += (s, e) => { bindings.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
             _checkbox.Unchecked += (s, e) => { bindings.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };

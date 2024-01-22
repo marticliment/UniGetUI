@@ -34,14 +34,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Intereface\**" />
     <Content Remove="..\wingetui-engine\.vscode\**" />
+    <EmbeddedResource Remove="Intereface\**" />
+    <None Remove="Intereface\**" />
+    <Page Remove="Intereface\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Interface\NavigationPage.xaml" />
     <None Remove="MainWindow.xaml" />
-    <None Remove="SettingsTab\Widgets\Announcer.xaml" />
-    <None Remove="SettingsTab\Widgets\SourceManager.xaml" />
-    <None Remove="SettingsTab\Widgets\TranslatedTextBlock.xaml" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -112,4 +114,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
+  <ItemGroup>
+    <PRIResource Remove="Intereface\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Interface\NavigationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
 </Project>

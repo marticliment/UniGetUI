@@ -18,7 +18,7 @@ using static System.Net.Mime.MediaTypeNames;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.SettingsTab.Widgets
+namespace ModernWindow.Interface.Widgets
 {
     public sealed class SettingsEntry : SettingsExpander
     {
@@ -53,22 +53,23 @@ namespace ModernWindow.SettingsTab.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsExpander)this).Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Header = bindings.Translate((string)e.NewValue); })));
 
             UnderTextProperty = DependencyProperty.Register(
             nameof(UnderText),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsExpander)this).Description = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Description = bindings.Translate((string)e.NewValue); })));
 
             IconProperty = DependencyProperty.Register(
             nameof(Icon),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+            {
                 BitmapIcon icon = new BitmapIcon();
                 icon.UriSource = new Uri("ms-appx:///wingetui/resources/" + (string)e.NewValue + "_white.png");
-                ((SettingsExpander)this).HeaderIcon = icon; 
+                this.HeaderIcon = icon;
             })));
 
 
@@ -88,7 +89,7 @@ namespace ModernWindow.SettingsTab.Widgets
             RestartButton.Click += (s, e) => { bindings.RestartApp(); };
             ItemsHeader = infoBar;
 
-            this.DefaultStyleKey = typeof(SettingsExpander);
+            DefaultStyleKey = typeof(SettingsExpander);
         }
 
         public void ShowRestartRequiredBanner()

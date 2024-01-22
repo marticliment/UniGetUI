@@ -2,9 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ModernWindow"
-    xmlns:local2="using:ModernWindow.SettingsTab.Widgets"
-    xmlns:ToolkitPrimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
-    xmlns:Toolkit="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:local2="using:ModernWindow.Interface.Widgets"
     >
 
     <Style TargetType="local2:CheckboxCard" >
@@ -21,7 +19,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local2:SettingsEntry" xmlns:local2="using:ModernWindow.SettingsTab.Widgets">
+    <Style TargetType="local2:SettingsEntry" xmlns:local2="using:ModernWindow.Interface.Widgets">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local2:SettingsEntry">

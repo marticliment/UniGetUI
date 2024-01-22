@@ -21,7 +21,7 @@ using Windows.ApplicationModel.VoiceCommands;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.SettingsTab.Widgets
+namespace ModernWindow.Interface.Widgets
 {
     public class TextboxEventArgs : EventArgs
     {
@@ -69,7 +69,7 @@ namespace ModernWindow.SettingsTab.Widgets
         DependencyProperty TextProperty;
 
         DependencyProperty HelpUrlProperty;
-        
+
         public event EventHandler<TextboxEventArgs> ValueChanged;
 
         public TextboxCard()
@@ -78,20 +78,21 @@ namespace ModernWindow.SettingsTab.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsCard)this).Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Header = bindings.Translate((string)e.NewValue); })));
 
             PlaceholderProperty = DependencyProperty.Register(
             nameof(Placeholder),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this._textbox.PlaceholderText = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = bindings.Translate((string)e.NewValue); })));
 
             SettingProperty = DependencyProperty.Register(
             nameof(SettingName),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { 
-                this._textbox.Text = bindings.GetSettingsValue((string)e.NewValue);
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+            {
+                _textbox.Text = bindings.GetSettingsValue((string)e.NewValue);
                 _textbox.TextChanged += (sender, e) => { SaveValue(); };
             })));
 
@@ -99,10 +100,11 @@ namespace ModernWindow.SettingsTab.Widgets
             nameof(HelpUrl),
             typeof(Uri),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { 
-                this._helpbutton.NavigateUri = (Uri)e.NewValue;
-                this._helpbutton.Visibility = Visibility.Visible;
-                this._helpbutton.Content = bindings.Translate("More info");
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+            {
+                _helpbutton.NavigateUri = (Uri)e.NewValue;
+                _helpbutton.Visibility = Visibility.Visible;
+                _helpbutton.Content = bindings.Translate("More info");
             })));
 
             _helpbutton = new HyperlinkButton();
@@ -116,16 +118,16 @@ namespace ModernWindow.SettingsTab.Widgets
             s.Children.Add(_helpbutton);
             s.Children.Add(_textbox);
 
-            this.DefaultStyleKey = typeof(TextboxCard);
-            this.Content = s;
+            DefaultStyleKey = typeof(TextboxCard);
+            Content = s;
         }
 
         public void SaveValue()
         {
             string SanitizedText = _textbox.Text;
-            
-            if(SettingName.Contains("File"))
-                foreach(char rem in "#%&{}\\/<>*?$!'\":;@`|~")
+
+            if (SettingName.Contains("File"))
+                foreach (char rem in "#%&{}\\/<>*?$!'\":;@`|~")
                     SanitizedText = SanitizedText.Replace(rem.ToString(), "");
 
             if (SanitizedText != "")

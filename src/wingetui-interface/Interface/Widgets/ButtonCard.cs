@@ -21,7 +21,7 @@ using Windows.Devices.Geolocation;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.SettingsTab.Widgets
+namespace ModernWindow.Interface.Widgets
 {
     public class ButtonCardEventArgs : EventArgs
     {
@@ -35,7 +35,7 @@ namespace ModernWindow.SettingsTab.Widgets
     {
         private static Button _button;
         private static MainAppBindings bindings = MainAppBindings.Instance;
-        
+
         public string ButtonText
         {
             get => (string)GetValue(ButtonProperty);
@@ -64,14 +64,14 @@ namespace ModernWindow.SettingsTab.Widgets
             nameof(Text),
             typeof(string),
             typeof(ButtonCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsCard)this).Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Header = bindings.Translate((string)e.NewValue); })));
 
             _button = new Button();
             _button.MinWidth = 200;
             _button.Click += (s, e) => { Click?.Invoke(this, new ButtonCardEventArgs()); };
 
-            this.DefaultStyleKey = typeof(ButtonCard);
-            this.Content = _button;
+            DefaultStyleKey = typeof(ButtonCard);
+            Content = _button;
         }
     }
 }

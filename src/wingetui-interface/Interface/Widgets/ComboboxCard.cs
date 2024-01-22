@@ -20,7 +20,7 @@ using System.Collections.ObjectModel;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.SettingsTab.Widgets
+namespace ModernWindow.Interface.Widgets
 {
     public class ComboCardEventArgs : EventArgs
     {
@@ -73,7 +73,7 @@ namespace ModernWindow.SettingsTab.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { ((SettingsCard)this).Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Header = bindings.Translate((string)e.NewValue); })));
 
             _elements = new ObservableCollection<string>();
             _values_ref = new Dictionary<string, string>();
@@ -81,10 +81,10 @@ namespace ModernWindow.SettingsTab.Widgets
 
             _combobox = new ComboBox();
             _combobox.MinWidth = 200;
-            _combobox.SetBinding(ComboBox.ItemsSourceProperty, new Binding() { Source = _elements });
+            _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding() { Source = _elements });
 
-            this.DefaultStyleKey = typeof(CheckboxCard);
-            this.Content = _combobox;
+            DefaultStyleKey = typeof(CheckboxCard);
+            Content = _combobox;
         }
 
         public void AddItem(string name, string value)
@@ -94,7 +94,7 @@ namespace ModernWindow.SettingsTab.Widgets
 
         public void AddItem(string name, string value, bool translate)
         {
-            if(translate)
+            if (translate)
                 name = bindings.Translate(name);
             _elements.Add(name);
             _values_ref.Add(name, value);
@@ -112,7 +112,7 @@ namespace ModernWindow.SettingsTab.Widgets
             {
                 _combobox.SelectedIndex = 0;
             }
-            _combobox.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+            _combobox.SelectionChanged += (sender, e) =>
             {
                 try
                 {
@@ -123,7 +123,7 @@ namespace ModernWindow.SettingsTab.Widgets
                 {
                     Console.WriteLine(ex);
                 }
-            }; 
+            };
         }
     }
 }

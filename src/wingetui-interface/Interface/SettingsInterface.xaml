@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:UI="using:CommunityToolkit.WinUI"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:widgets="using:ModernWindow.SettingsTab.Widgets"
+    xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d"
     >
     <Grid HorizontalAlignment="Center">
