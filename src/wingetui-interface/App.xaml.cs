@@ -38,6 +38,9 @@ namespace ModernWindow
         public Scoop Scoop;
         public Winget Winget;
         public Chocolatey Choco;
+        public Pip Pip;
+        //public Npm Npm;
+        //public Dotnet Dotnet;
         public PowerShell Powershell;
 
         public List<PackageManager> PackageManagerList = new List<PackageManager>();
@@ -93,6 +96,12 @@ namespace ModernWindow
             PackageManagerList.Add(Scoop);
             Choco = new Chocolatey();
             PackageManagerList.Add(Choco);
+            Pip = new Pip();
+            PackageManagerList.Add(Pip);
+            //Npm = new Npm();
+            //PackageManagerList.Add(Npm);
+            //Dotnet = new Dotnet();
+            //PackageManagerList.Add(Dotnet);
             Powershell = new PowerShell();
             PackageManagerList.Add(Powershell);
 
