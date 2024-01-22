@@ -3,6 +3,7 @@ using Microsoft.Web.WebView2.Core;
 using Python.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -74,16 +75,26 @@ namespace ModernWindow.Structures
             App.DisposeAndQuit();
         }
 
-        public string Which_MachinePath(string command)
+        public async Task<string> Which(string command)
         {
-            var paths = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).Split(Path.PathSeparator);
-            return paths.FirstOrDefault(x => command.Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase), Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command));
-        }
-
-        public string Which(string command)
-        {
-            var paths = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User).Split(Path.PathSeparator);
-            return paths.FirstOrDefault(x => command.Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase), Which_MachinePath(command));
+            Process process = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/C where " + command,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            process.Start();
+            string output = (await process.StandardOutput.ReadLineAsync()).Trim();
+            await process.WaitForExitAsync();
+            if(process.ExitCode != 0 || output == "")
+                return Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command);
+            else
+                return output;
         }
     }
 

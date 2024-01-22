@@ -167,7 +167,7 @@ namespace ModernWindow.PackageEngine.Managers
             var output = await process.StandardOutput.ReadToEndAsync();
 
             if(bindings.GetSettings("UseSystemWinget"))
-                status.ExecutablePath = bindings.Which("winget.exe");
+                status.ExecutablePath = await bindings.Which("winget.exe");
             else if(output.Contains("ARM64") | bindings.GetSettings("EnableArmWinget"))
                 status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "wingetui/PackageEngine/Managers/winget-cli_arm64/winget.exe");
             else

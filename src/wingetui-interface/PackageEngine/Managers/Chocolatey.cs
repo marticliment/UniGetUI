@@ -141,7 +141,7 @@ namespace ModernWindow.PackageEngine.Managers
             var status = new ManagerStatus();
 
             if(bindings.GetSettings("UseSystemChocolatey"))
-                status.ExecutablePath = bindings.Which("choco.exe");
+                status.ExecutablePath = await bindings.Which("choco.exe");
             else if(File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe")))
                 status.ExecutablePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe");
             else
