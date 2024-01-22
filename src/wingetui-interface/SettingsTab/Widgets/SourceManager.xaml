@@ -92,7 +92,7 @@
             Grid.Column="0" Grid.Row="2" 
             ItemsSource="{x:Bind Sources, Mode=TwoWay}"
             CornerRadius="6"
-            Background="{StaticResource SystemAltLowColor}"
+            Background="{ThemeResource SystemAltLowColor}"
             Padding="3,6,3,6"
             CanBeScrollAnchor="False"
             />

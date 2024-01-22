@@ -30,6 +30,7 @@ using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
 using System.Xml.Schema;
 using ModernWindow.Clipboard;
+using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -178,17 +179,39 @@ namespace ModernWindow.SettingsTab
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
 
                 InfoBar ManagerStatus = new InfoBar();
+
+                var LongVersion = new TextBlock();
+                HyperlinkButton ShowVersionButton = new HyperlinkButton();
+                ShowVersionButton.Content = bindings.Translate("Expand version");
+                ShowVersionButton.Visibility = Visibility.Collapsed;
+                ManagerStatus.ActionButton = ShowVersionButton;
+                ShowVersionButton.Click += (s, e) => { SetManagerStatus(Manager, true); };
+
+                LongVersion.TextWrapping = TextWrapping.Wrap;
+                LongVersion.Text = Manager.Status.Version + "\n";
+                LongVersion.FontFamily = new FontFamily("Consolas");
+                LongVersion.Visibility = Visibility.Collapsed;
+                ManagerStatus.Content = LongVersion;
                 
-                void SetManagerStatus(PackageManager Manager)
+                void SetManagerStatus(PackageManager Manager, bool ShowVersion = false)
                 {
+                    ShowVersionButton.Visibility = Visibility.Collapsed;
+                    LongVersion.Visibility = Visibility.Collapsed;
                     if(Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
                         ManagerStatus.Title = bindings.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.Name);
-                        if (Manager.Status.Version.Contains("\n"))
-                            ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name) + "\n" + Manager.Status.Version;
-                        else
+                        if (!Manager.Status.Version.Contains("\n"))
                             ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name) + " " + Manager.Status.Version;
+                        else if (ShowVersion)
+                        {
+                            ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name);
+                            LongVersion.Visibility = Visibility.Visible;
+                        } else {
+                            ManagerStatus.Message = "";
+                            ShowVersionButton.Visibility = Visibility.Visible;
+                        }
+
                     }
                     else if (Manager.IsEnabled() && !Manager.Status.Found)
                     {
