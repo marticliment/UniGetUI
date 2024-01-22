@@ -65,9 +65,9 @@ namespace ModernWindow.PackageEngine.Managers
             process.Start();
 
             bool dashesPassed = false;
-            while (!process.StandardOutput.EndOfStream)
+            string line;
+            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
-                string line = (await process.StandardOutput.ReadLineAsync()).Trim();
                 try {
                     if (string.IsNullOrEmpty(line))
                         continue;
@@ -83,6 +83,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Console.WriteLine(e);
                 }
             }
+            await process.WaitForExitAsync();
             return sources.ToArray();
         }
 
