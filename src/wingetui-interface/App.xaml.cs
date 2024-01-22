@@ -38,6 +38,7 @@ namespace ModernWindow
         public Scoop Scoop;
         public Winget Winget;
         public Chocolatey Choco;
+        public PowerShell Powershell;
 
         public List<PackageManager> PackageManagerList = new List<PackageManager>();
 
@@ -92,6 +93,8 @@ namespace ModernWindow
             PackageManagerList.Add(Scoop);
             Choco = new Chocolatey();
             PackageManagerList.Add(Choco);
+            Powershell = new PowerShell();
+            PackageManagerList.Add(Powershell);
 
             foreach(PackageManager manager in PackageManagerList)
                 _ = manager.Initialize();
