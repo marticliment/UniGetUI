@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Interface\BasePackagesPage.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -49,6 +50,7 @@
 
 	<ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
     <PackageReference Include="pythonnet" Version="3.0.3" />
@@ -117,6 +119,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Intereface\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Interface\BasePackagesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Widgets\NavButton.xaml">

@@ -22,7 +22,7 @@ namespace ModernWindow.Interface
     public sealed partial class NavigationPage : UserControl
     {
         public SettingsInterface SettingsPage;
-        public Page DiscoverPage = new Page();
+        public Page DiscoverPage;
         public Page UpdatesPage = new Page();
         public Page InstalledPage = new Page();
         public Type OldPage;
@@ -30,11 +30,13 @@ namespace ModernWindow.Interface
         {
             this.InitializeComponent();
             SettingsPage = new SettingsInterface();
+            DiscoverPage = new BasePackagesPage();
+            MainContentPresenter.Navigate(typeof(BasePackagesPage), new DrillInNavigationTransitionInfo());
         }
 
         private void DiscoverNavButton_Click(object sender, Widgets.NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
+            MainContentPresenter.Navigate(typeof(BasePackagesPage), new DrillInNavigationTransitionInfo());
         }
 
         private void InstalledNavButton_Click(object sender, Widgets.NavButton.NavButtonEventArgs e)

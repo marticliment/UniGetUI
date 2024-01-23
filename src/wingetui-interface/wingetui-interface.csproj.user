@@ -10,6 +10,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Interface\BasePackagesPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Interface\Widgets\NavButton.xaml">
       <SubType>Designer</SubType>
     </Page>
