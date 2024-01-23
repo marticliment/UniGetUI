@@ -6,19 +6,62 @@
     xmlns:local="using:ModernWindow.Interface"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:interface="using:ModernWindow.Interface" xmlns:interface1="using:ModernWindow.SettingsTab"
+    xmlns:interface="using:ModernWindow.Interface"
+    xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid RowSpacing="5" ColumnSpacing="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="72"/>
+            <ColumnDefinition Width="10000*"/>
+            <ColumnDefinition Width="*" MaxWidth="60"/>
         </Grid.ColumnDefinitions>
-        <!--interface:SettingsInterface></interface:SettingsInterface-->
+        
+        <ScrollViewer HorizontalScrollMode="Disabled" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="1">
+        <interface:SettingsInterface
+            x:Name="__settings_window"
+            />
+        </ScrollViewer>
+
+        <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Width="64" Grid.Row="0" Grid.Column="0"
+            Spacing="4" Orientation="Vertical" VerticalAlignment="Top" Margin="4,4,4,4">
+                <widgets:NavButton
+                    Text="Discover Packages"
+                    Glyph="&#xE896;" 
+                    />
+                <widgets:NavButton
+                    Text="Software Updates"
+                    Glyph="&#xE895;" 
+                    />
+                <widgets:NavButton
+                    Text="Installed Packages"
+                    Glyph="&#xE977;" 
+                />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Row="1" Grid.Column="0"
+                Width="64"
+                Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="4,4,4,4">
+                <widgets:NavButton
+                    Text="More"
+                    Glyph="&#xE712;" 
+                    />
+                <widgets:NavButton
+                    Text="Settings"
+                    Glyph="&#xE713;" 
+                    />
+                <widgets:NavButton
+                    Text="About"
+                    Glyph="&#xE946;" 
+                    /> 
+            </StackPanel>
+        </Grid>
+        
     </Grid>
 </UserControl>

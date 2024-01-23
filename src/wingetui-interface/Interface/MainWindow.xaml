@@ -6,8 +6,7 @@
     xmlns:local="using:ModernWindow"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    xmlns:settings="using:ModernWindow.SettingsTab">
+    mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <MicaBackdrop/>
@@ -38,10 +37,6 @@
                     <TextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="13"/>
                 </StackPanel>
             </Border>
-            <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollMode="Disabled" VerticalAlignment="Stretch">
-                <StackPanel Orientation="Vertical" Name="MainNavigationFrame">
-                </StackPanel>
-            </ScrollViewer>
         </Grid>
         <Grid Grid.Row="0" Grid.Column="0" x:Name="LoadingWindow" Visibility="Visible"
               Background="{StaticResource ProgressBarBorderThemeBrush}">

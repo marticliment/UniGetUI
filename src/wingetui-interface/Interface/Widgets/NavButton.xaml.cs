@@ -55,7 +55,21 @@ namespace ModernWindow.Interface.Widgets
                 nameof(Text),
                 typeof(string),
                 typeof(NavButton),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { TextBlock.Text = (string)e.NewValue; }))
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                    string val = (string)e.NewValue;
+                    if(val.Contains(" "))
+                    {
+                        Height = 58 + 14;
+                        VariableGrid.RowDefinitions[1].Height = new GridLength(26 + 14);
+                        TextBlock.Height = 18 + 14;  
+                    } else
+                    {
+                        Height = 58;
+                        TextBlock.Height = 18;
+                        VariableGrid.RowDefinitions[1].Height = new GridLength(26);
+                    }
+                    TextBlock.Text = val; 
+                }))
             );
 
             GlyphProperty = DependencyProperty.Register(

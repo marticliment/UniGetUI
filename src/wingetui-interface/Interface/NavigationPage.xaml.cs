@@ -20,9 +20,11 @@ namespace ModernWindow.Interface
 {
     public sealed partial class NavigationPage : UserControl
     {
+        public SettingsInterface SettingsInterface;
         public NavigationPage()
         {
             this.InitializeComponent();
+            SettingsInterface = __settings_window;
         }
     }
 }

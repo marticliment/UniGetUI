@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Height="58" Width="64"
+    Height="72" Width="64"
     xmlns:widgets="using:ModernWindow.Interface.Widgets">
 
     <Grid>
@@ -78,7 +78,7 @@
                                             <VisualState x:Name="Pressed">
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundPointerOver}" />
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundDisabled}" />
                                                     </ObjectAnimationUsingKeyFrames>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
@@ -143,7 +143,7 @@
                     </Setter>
                 </Style>
             </ToggleButton.Style>
-            <Grid Margin="0" Padding="0" >
+            <Grid Margin="0" Padding="0" Name="VariableGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="26"/>
@@ -152,11 +152,13 @@
                 Grid.Row="0" x:Name="IconBlock"
                 FontSize="16" VerticalAlignment="Bottom"/>
                 <widgets:TranslatedTextBlock
-                x:Name="TextBlock"
-                FontSize="11" Grid.Row="1" 
-                Height="18" VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-            />
+                    x:Name="TextBlock"
+                    FontSize="11" Grid.Row="1" 
+                    Height="32" VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    WrappingMode="Wrap"
+                    HorizontalContentAlignment="Center"
+                />
             </Grid>
         </ToggleButton>
     </Grid>
