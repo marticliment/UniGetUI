@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<UserControl
+<Page
     x:Class="ModernWindow.Interface.SettingsInterface"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,6 +10,7 @@
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d"
+    NavigationCacheMode="Required"
     >
     <Grid HorizontalAlignment="Center">
         <Grid.RowDefinitions>
@@ -271,4 +272,4 @@
             <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package Managers" HorizontalAlignment="Stretch"/>
         </StackPanel>
     </Grid>
-</UserControl>
+</Page>

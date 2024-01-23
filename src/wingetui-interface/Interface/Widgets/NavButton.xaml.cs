@@ -42,7 +42,7 @@ namespace ModernWindow.Interface.Widgets
         }
         DependencyProperty GlyphProperty;
 
-        event EventHandler<NavButtonEventArgs> Click;
+        public event EventHandler<NavButtonEventArgs> Click;
 
         public NavButton()
         {

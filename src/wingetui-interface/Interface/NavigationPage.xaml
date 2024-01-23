@@ -16,11 +16,9 @@
             <ColumnDefinition Width="10000*"/>
             <ColumnDefinition Width="*" MaxWidth="60"/>
         </Grid.ColumnDefinitions>
-        
-        <ScrollViewer HorizontalScrollMode="Disabled" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="1">
-        <interface:SettingsInterface
-            x:Name="__settings_window"
-            />
+
+        <ScrollViewer HorizontalScrollMode="Disabled" VerticalAlignment="Stretch"  Grid.Row="0" Grid.Column="1">
+            <Frame Name="MainContentPresenter"/>
         </ScrollViewer>
 
         <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" >
@@ -30,17 +28,17 @@
             </Grid.RowDefinitions>
             <StackPanel Width="64" Grid.Row="0" Grid.Column="0"
             Spacing="4" Orientation="Vertical" VerticalAlignment="Top" Margin="4,4,4,4">
-                <widgets:NavButton
+                <widgets:NavButton Name="DiscoverNavButton"
                     Text="Discover Packages"
-                    Glyph="&#xE896;" 
+                    Glyph="&#xE896;" Click="DiscoverNavButton_Click"
                     />
-                <widgets:NavButton
+                <widgets:NavButton Name="UpdatesNavButton"
                     Text="Software Updates"
-                    Glyph="&#xE895;" 
+                    Glyph="&#xE895;" Click="UpdatesNavButton_Click"
                     />
-                <widgets:NavButton
+                <widgets:NavButton Name="InstalledNavButton"
                     Text="Installed Packages"
-                    Glyph="&#xE977;" 
+                    Glyph="&#xE977;" Click="InstalledNavButton_Click"
                 />
             </StackPanel>
 
@@ -49,16 +47,16 @@
                 Width="64"
                 Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="4,4,4,4">
                 <widgets:NavButton
-                    Text="More"
-                    Glyph="&#xE712;" 
+                    Text="More" Name="MoreNavButton"
+                    Glyph="&#xE712;" Click="MoreNavButton_Click"
                     />
                 <widgets:NavButton
-                    Text="Settings"
-                    Glyph="&#xE713;" 
+                    Text="Settings" Name="SettingsNavButton"
+                    Glyph="&#xE713;" Click="SettingsNavButton_Click"
                     />
                 <widgets:NavButton
-                    Text="About"
-                    Glyph="&#xE946;" 
+                    Text="About" Name="AboutNavButton"
+                    Glyph="&#xE946;" Click="AboutNavButton_Click"
                     /> 
             </StackPanel>
         </Grid>

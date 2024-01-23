@@ -31,7 +31,6 @@ using ModernWindow.PackageEngine.Managers;
 using System.Xml.Schema;
 using ModernWindow.Clipboard;
 using Windows.UI.Text;
-using ModernWindow.Interface.Widgets;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,7 +40,7 @@ namespace ModernWindow.Interface
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsInterface : UserControl
+    public sealed partial class SettingsInterface : Page
     {
         private MainAppBindings bindings = MainAppBindings.Instance;
         HyperlinkButton ResetBackupDirectory;

@@ -51,7 +51,6 @@ namespace ModernWindow
             Grid.SetRow(NavigationPage, 1);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
-            SettingsTab = NavigationPage.SettingsInterface;
 
             ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
             ContentColumn.Width = new GridLength(1, GridUnitType.Star);

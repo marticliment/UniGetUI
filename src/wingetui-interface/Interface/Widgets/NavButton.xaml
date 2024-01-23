@@ -11,12 +11,8 @@
     xmlns:widgets="using:ModernWindow.Interface.Widgets">
 
     <Grid>
-        <ToggleButton
-            CornerRadius="6" Padding="0,0,0,0"
-            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-            Click="ToggleButton_Click" x:Name="ToggleButton"
-            >
-            <!-- -->
+        <ToggleButton x:Name="ToggleButton"
+            Click="ToggleButton_Click">
             <ToggleButton.Style>
                 <Style TargetType="ToggleButton">
                     <Setter Property="Background" Value="{ThemeResource ControlAltFillColorTransparent}" />
@@ -24,15 +20,15 @@
                     <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForeground}" />
                     <Setter Property="BorderBrush" Value="{ThemeResource SystemChromeMediumColor}" />
                     <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="Padding" Value="{StaticResource ButtonPadding}" />
-                    <Setter Property="HorizontalAlignment" Value="Left" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Padding" Value="0,0,0,0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
                     <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                     <Setter Property="FontWeight" Value="Normal" />
                     <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
                     <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
                     <Setter Property="FocusVisualMargin" Value="-3" />
-                    <Setter Property="CornerRadius" Value="8" />
+                    <Setter Property="CornerRadius" Value="6" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ToggleButton">
