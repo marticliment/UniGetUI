@@ -7,7 +7,8 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using ModernWindow.SettingsTab;
+using ModernWindow.Interface;
+using ModernWindow.Interface.Widgets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,9 +25,12 @@ namespace ModernWindow
     public sealed partial class MainWindow : Window
     {
         MainApp _app = Application.Current as MainApp;
-        private SettingsTab.SettingsInterface SettingsTab;
+        private Interface.SettingsInterface SettingsTab;
+        private Interface.NavigationPage NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
+
+        public List<NavButton> NavButtonList = new List<NavButton>();
         public MainWindow()
         {
             this.InitializeComponent();
@@ -43,8 +47,11 @@ namespace ModernWindow
             ContentRoot = __content_root;
 
 
-            SettingsTab = new SettingsInterface();
-            MainNavigationFrame.Children.Add(SettingsTab);
+            NavigationPage = new NavigationPage();
+            Grid.SetRow(NavigationPage, 1);
+            Grid.SetColumn(NavigationPage, 0);
+            MainContentGrid.Children.Add(NavigationPage);
+            SettingsTab = NavigationPage.SettingsInterface;
 
             ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
             ContentColumn.Width = new GridLength(1, GridUnitType.Star);

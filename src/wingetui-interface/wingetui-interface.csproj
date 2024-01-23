@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <None Remove="Interface\NavigationPage.xaml" />
+    <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
   </ItemGroup>
 
@@ -116,6 +117,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Intereface\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Interface\Widgets\NavButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\NavigationPage.xaml">

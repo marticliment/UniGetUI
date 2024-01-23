@@ -47,7 +47,7 @@ namespace ModernWindow
 
         private Py.GILState GIL;
 
-        public SettingsTab.SettingsInterface settings;
+        public Interface.SettingsInterface settings;
         public MainWindow mainWindow;
 
 
