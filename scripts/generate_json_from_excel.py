@@ -39,6 +39,9 @@ jsoncontent = {
     "icons_and_screenshots": {},
 }
 
+with open("invalid_urls.txt", "r") as f:
+    forbidden_string = f.read().split("\n")
+
 totalCount = 0
 doneCount = 0
 packagesWithIcon = 0
@@ -74,8 +77,11 @@ while not arrivedAtTheEnd:
         assert (type(data[1]) == str)
         assert (type(data[2]) == list)
         if data[1] != "":
-            doneCount += 1
-            packagesWithIcon += 1
+            if(data[1] in forbidden_string):
+                data[1] = ""
+            else:
+                doneCount += 1
+                packagesWithIcon += 1
 
         if not data[0] in jsoncontent["icons_and_screenshots"].keys():
             jsoncontent["icons_and_screenshots"][data[0]] = {
