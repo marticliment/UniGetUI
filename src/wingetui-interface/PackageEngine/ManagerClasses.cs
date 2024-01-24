@@ -40,7 +40,21 @@ namespace ModernWindow.PackageEngine
             MainSource = GetMainSource();
             Status = await LoadManager();
             if(this is PackageManagerWithSources && Status.Found)
-                (this as PackageManagerWithSources).Sources = await (this as PackageManagerWithSources).GetSources();
+            {
+                var SourcesTask = (this as PackageManagerWithSources).GetSources();
+                var winner = await Task.WhenAny(
+                    SourcesTask,
+                    Task.Delay(TimeSpan.FromSeconds(10)));
+                if (winner == SourcesTask)
+                {
+                    (this as PackageManagerWithSources).Sources = SourcesTask.Result;
+                }
+                else
+                {
+                    Console.WriteLine(Name + " sources took too long to load, using known sources as default");
+                    (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).KnownSources;
+                }
+            }
             Debug.WriteLine("Manager " + Name + " loaded");
             ManagerReady = true;
         }
@@ -77,6 +91,7 @@ namespace ModernWindow.PackageEngine
     public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources 
     {
         public ManagerSource[] Sources { get; set; }
+        public ManagerSource[] KnownSources { get; set; }
         public abstract Task<ManagerSource[]> GetSources();
     }
 
