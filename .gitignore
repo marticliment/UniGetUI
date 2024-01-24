@@ -196,5 +196,8 @@ src/wingetui-engine/choco-cli/extensions/chocolatey-dotnetfx/chocolatey-dotnetfx
 src/wingetui-interface/bin
 src/wingetui-interface/obj
 src/wingetui-interface/.vs
+src/components/.vs
+src/components/share/packages/*
 src/.vs
 src/Packages/*
+src/.vs/
