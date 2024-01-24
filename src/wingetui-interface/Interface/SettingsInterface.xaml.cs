@@ -254,10 +254,13 @@ namespace ModernWindow.Interface
                 void EnableOrDisableEntries()
                 {
                     if (ExtraSettingsCards.ContainsKey(Manager))
-                    foreach (var card in ExtraSettingsCards[Manager])
-                    {
-                        card.IsEnabled = ManagerSwitch.IsOn;
-                    }
+                        foreach (var card in ExtraSettingsCards[Manager])
+                        {
+                            if (ManagerSwitch.IsOn)
+                                card.Visibility = Visibility.Visible;
+                            else
+                                card.Visibility = Visibility.Collapsed;
+                        }
                 }
                 
                 var ManagerPath = new SettingsCard() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
