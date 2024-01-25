@@ -234,11 +234,7 @@ namespace ModernWindow.Interface
                 ManagerStatus.BorderThickness = new Thickness(0, 1, 0, 0);
                 ManagerExpander.ItemsFooter = ManagerStatus;
 
-                var icon = new ImageIcon
-                {
-                    Source = new BitmapImage() { UriSource = new Uri("ms-appx:///wingetui/resources/" + Manager.Properties.IconId + "_white.png") },
-                };
-                ManagerExpander.HeaderIcon = icon;
+                ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
 
                 var ManagerSwitch = new ToggleSwitch
                 {

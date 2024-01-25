@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Interface;
 using ModernWindow.Interface.Widgets;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.DirectX.Direct3D11;
 using Windows.UI.Core;
 
 
@@ -24,7 +26,7 @@ namespace ModernWindow
 {
     public sealed partial class MainWindow : Window
     {
-        MainApp _app = Application.Current as MainApp;
+        MainAppBindings bindings = MainAppBindings.Instance;
         private Interface.SettingsInterface SettingsTab;
         private Interface.NavigationPage NavigationPage;
         public Grid ContentRoot;
@@ -61,13 +63,25 @@ namespace ModernWindow
 
         public void ApplyTheme()
         { 
-            string preferredTheme = _app.GetSettingsValue("PreferredTheme");
+            string preferredTheme = bindings.GetSettingsValue("PreferredTheme");
             if (preferredTheme == "dark")
+            {
+                bindings.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 ContentRoot.RequestedTheme = ElementTheme.Dark;
+            } 
             else if (preferredTheme == "light")
+            {
+                bindings.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Light;
+            }
             else
+            {
+                if (ContentRoot.ActualTheme == ElementTheme.Dark)
+                    bindings.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                else
+                    bindings.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Default;
+            }
 
         }
     }

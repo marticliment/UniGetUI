@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.WinUI.Helpers;
+using Microsoft.UI.Xaml;
 using Microsoft.Web.WebView2.Core;
 using Python.Runtime;
 using System;
@@ -20,6 +21,7 @@ namespace ModernWindow.Structures
         public dynamic Globals;
         public dynamic Tools;
         public dynamic Core;
+        public ThemeListener ThemeListener;
 
         private static MainAppBindings instance;
 
@@ -41,6 +43,7 @@ namespace ModernWindow.Structures
             Globals = App.Globals;
             Tools = App.Tools;
             Core = App.Core;
+            ThemeListener = new ThemeListener();
         }
 
         public bool GetSettings(string setting)

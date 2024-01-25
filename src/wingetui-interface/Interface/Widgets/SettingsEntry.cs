@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -67,9 +68,7 @@ namespace ModernWindow.Interface.Widgets
             typeof(CheckboxCard),
             new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
             {
-                BitmapIcon icon = new BitmapIcon();
-                icon.UriSource = new Uri("ms-appx:///wingetui/resources/" + (string)e.NewValue + "_white.png");
-                this.HeaderIcon = icon;
+                this.HeaderIcon = new LocalIcon((string)e.NewValue);
             })));
 
 

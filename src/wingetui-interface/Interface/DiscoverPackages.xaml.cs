@@ -40,6 +40,7 @@ namespace ModernWindow.Interface
         public DiscoverPackagesPage()
         {
             this.InitializeComponent();
+            LoadToolbar();
             ReloadButton.Click += async (s, e) => { await __load_packages(); } ;
             FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
             QueryBlock.TextChanged += async (s, e) => { await FilterPackages(QueryBlock.Text); };
@@ -104,6 +105,83 @@ namespace ModernWindow.Interface
                 FilteredPackages.Add(match);
             }
             
+        }
+
+        public void LoadToolbar()
+        {
+            var InstallSelected = new AppBarButton();
+            var InstallAsAdmin = new AppBarButton();
+            var InstallSkipHash = new AppBarButton();
+            var InstallInteractive = new AppBarButton();
+
+            var PackageDetails = new AppBarButton();
+            var SharePackage = new AppBarButton();
+
+            var SelectAll = new AppBarButton();
+            var SelectNone = new AppBarButton();
+
+            var ImportPackages = new AppBarButton();
+            var ExportSelection = new AppBarButton();
+
+            var HelpButton = new AppBarButton();
+
+            ToolBar.PrimaryCommands.Add(InstallSelected);
+            ToolBar.PrimaryCommands.Add(InstallAsAdmin);
+            ToolBar.PrimaryCommands.Add(InstallSkipHash);
+            ToolBar.PrimaryCommands.Add(InstallInteractive);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(PackageDetails);
+            ToolBar.PrimaryCommands.Add(SharePackage);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(SelectAll);
+            ToolBar.PrimaryCommands.Add(SelectNone);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(ImportPackages);
+            ToolBar.PrimaryCommands.Add(ExportSelection);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(HelpButton);
+
+            var Labels = new Dictionary<AppBarButton, string>
+            { // Entries with a trailing space are collapsed
+                { InstallSelected,      "Install Selected packages" },
+                { InstallAsAdmin,       " Install as administrator" },
+                { InstallSkipHash,      " Skip integrity checks" },
+                { InstallInteractive,   " InteractiveInstallation" },
+                { PackageDetails,       " Package details" },
+                { SharePackage,         " Share" },
+                { SelectAll,            " Select all" },
+                { SelectNone,           " Clear selection" },
+                { ImportPackages,       "Import packages" },
+                { ExportSelection,      "Export selected packages" },
+                { HelpButton,           "Help" }
+            };
+
+            foreach(var toolButton in Labels.Keys)
+            {
+                toolButton.IsCompact = Labels[toolButton][0] == ' ';
+                if(toolButton.IsCompact)
+                    toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                toolButton.Label = bindings.Translate(Labels[toolButton].Trim());
+            }
+
+            var Icons = new Dictionary<AppBarButton, string>
+            {
+                { InstallSelected,      "install" },
+                { InstallAsAdmin,       "runasadmin" },
+                { InstallSkipHash,      "checksum" },
+                { InstallInteractive, "interactive" },
+                { PackageDetails,       "info" },
+                { SharePackage,         "share" },
+                { SelectAll,            "selectall" },
+                { SelectNone,           "selectnone" },
+                { ImportPackages,       "import" },
+                { ExportSelection,      "export" },
+                { HelpButton,           "help" }
+            };
+
+            foreach (var toolButton in Icons.Keys)
+                toolButton.Icon = new LocalIcon(Icons[toolButton]);
+
         }
     }
 }

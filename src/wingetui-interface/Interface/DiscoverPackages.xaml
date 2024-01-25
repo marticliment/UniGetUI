@@ -292,6 +292,7 @@
                                 HorizontalAlignment="Stretch"
                                 AutomationProperties.AccessibilityView="Raw" >
                                     <ContentPresenter x:Name="Content"
+                                    ToolTipService.ToolTip="{TemplateBinding Label}"
                                     Content="{TemplateBinding Icon}"
                                     Foreground="{TemplateBinding Foreground}"/>
                                 </Viewbox>
@@ -481,60 +482,6 @@
                 </Button>
             </Grid>
             <CommandBar Name="ToolBar" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" DefaultLabelPosition="Right" HorizontalAlignment="Stretch">
-                <AppBarButton Label="Install Selected Packages" Padding="0" Margin="0">
-                    <AppBarButton.Icon>
-                        <ImageIcon Source="ms-appx:///wingetui/resources/install_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="... with admin rights" LabelPosition="Collapsed" Padding="0" Margin="0">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="34" Width="34" Source="ms-appx:///wingetui/resources/runasadmin_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="... skip hash check" LabelPosition="Collapsed">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/checksum_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="... interactive installation" LabelPosition="Collapsed">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/interactive_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarSeparator/>
-                <AppBarButton LabelPosition="Collapsed">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/info_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton LabelPosition="Collapsed">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/share_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarSeparator/>
-                <AppBarButton LabelPosition="Collapsed">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/selectnone_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarSeparator/>
-                <AppBarButton Label="Import packages">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/import_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="Export packages">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/export_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarSeparator/>
-                <AppBarButton Label="Help">
-                    <AppBarButton.Icon>
-                        <ImageIcon Height="24" Width="24" Source="ms-appx:///wingetui/resources/help_white.png"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
             </CommandBar>
         </Grid>
         <Grid Grid.Row="2" Grid.Column="1" RowSpacing="4">
