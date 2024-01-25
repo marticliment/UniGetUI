@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
@@ -15,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Advertisement;
@@ -29,7 +31,7 @@ namespace ModernWindow.Interface
     public partial class DiscoverPackagesPage : Page
     {
         public ObservableCollection<Package> Packages = new ObservableCollection<Package>();
-        public ObservableCollection<Package> FilteredPackages = new ObservableCollection<Package>();
+        public SortableObservableCollection<Package> FilteredPackages = new SortableObservableCollection<Package>() { SortingSelector = (a) => (a.Name)};
         protected MainAppBindings bindings = MainAppBindings.Instance;
 
         protected TranslatedTextBlock MainTitle;
@@ -37,10 +39,11 @@ namespace ModernWindow.Interface
         protected ListView PackageList;
         protected ProgressBar LoadingProgressBar;
         protected Image HeaderImage;
+
+        private bool IsDescending = true;
         public DiscoverPackagesPage()
         {
             this.InitializeComponent();
-            LoadToolbar();
             ReloadButton.Click += async (s, e) => { await __load_packages(); } ;
             FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
             QueryBlock.TextChanged += async (s, e) => { await FilterPackages(QueryBlock.Text); };
@@ -63,11 +66,6 @@ namespace ModernWindow.Interface
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        public void LoadInterface()
-        {
-            MainTitle.Text = "Discover Packages";
-            HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
-        }
         public async Task LoadPackages()
         {
             MainSubtitle.Text = "Loading...";
@@ -104,8 +102,33 @@ namespace ModernWindow.Interface
             {
                 FilteredPackages.Add(match);
             }
-            
         }
+
+        public void SortPackages(string Sorter)
+        {
+            FilteredPackages.Descending = !FilteredPackages.Descending;
+            FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
+            FilteredPackages.Sort();
+        }
+
+        public void LoadInterface()
+        {
+            MainTitle.Text = "Discover Packages";
+            HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
+            LoadToolbar();
+            CheckboxHeader.Content = " ";
+            NameHeader.Content = bindings.Translate("Package Name");
+            IdHeader.Content = bindings.Translate("Package ID");
+            VersionHeader.Content = bindings.Translate("Version");
+            // NewVersionHeader.Content = bindings.Translate("New version");
+            SourceHeader.Content = bindings.Translate("Source");
+
+            NameHeader.Click += (s, e) => { SortPackages("Name"); };
+            IdHeader.Click += (s, e) => { SortPackages("Id"); };
+            VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
+            SourceHeader.Click += (s, e) => { SortPackages("SourceAsString"); };
+        }
+
 
         public void LoadToolbar()
         {

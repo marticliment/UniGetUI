@@ -11,11 +11,17 @@ namespace ModernWindow.PackageEngine
         public string Name { get; }
         public string Id { get; set; }
         public string Version { get; }
+        public float VersionAsFloat { get; }
         public ManagerSource Source { get; set; }
         public PackageManager Manager { get; }
         public string UniqueId { get; }
         public string NewVersion { get; }
         public bool IsUpgradable { get; } = false;
+        public string SourceAsString { get {
+                if (Source != null)
+                    return Source.ToString();
+                else return "";
+            } }
 
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager)
         {
@@ -26,6 +32,7 @@ namespace ModernWindow.PackageEngine
             Manager = manager;
             UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}";
             NewVersion = "";
+            VersionAsFloat = GetFloatVersion();
         }
 
         public string GetIconId()

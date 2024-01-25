@@ -286,6 +286,10 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                
+                                
+                                
+                                
                                 <Viewbox x:Name="ContentViewbox"
                                 Height="24"
                                 Margin="0,12,0,12"
@@ -408,6 +412,7 @@
                     />
             </Grid>
         </DataTemplate>
+
     </Page.Resources>
 
     <!-- Background="{StaticResource LayerFillColorAlt}"
@@ -501,16 +506,75 @@
             </Toolkit:GridSplitter>
             <ProgressBar IsIndeterminate="True" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="__loading_progressbar"/>
             <TextBlock Grid.Column="0" Grid.Row="1" Text="Filters" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <ListView x:Name="__package_list" Grid.Column="1" Grid.Row="1"
-                ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
-                ItemTemplate="{StaticResource PackageTemplate}"
-                Padding="4,6,4,6"
-                Background="{ThemeResource LayerFillColorDefault}" CornerRadius="8"
-                CanBeScrollAnchor="False"
+
+
+            <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                    Padding="4,6,4,6" Background="{ThemeResource LayerFillColorDefault}" CornerRadius="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="37"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid ColumnSpacing="0" Grid.Row="0" Margin="4,4,4,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="11"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="28"/>
+                        <ColumnDefinition Width="*" MinWidth="100"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MinWidth="100"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MaxWidth="100"/>
+                        <!--ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="100"/-->
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MaxWidth="150"/>
+                        <ColumnDefinition Width="11"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="CheckboxHeader" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="4,0,0,4" BorderThickness="0"/>
+                    <Button Name="NameHeader" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
+                    <Button Name="IdHeader" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
+                    <Button Name="VersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
+                    <!--Button Name="NewVersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/-->
+                    <Button Name="SourceHeader" Grid.Column="8" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="0,4,4,0" BorderThickness="0"/>
+                    
+                    <TextBlock 
+                        Grid.Column="6" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        />
+                    <!--ImageIcon
+                        Source="ms-appx:///wingetui/resources/version_white.png"
+                        Grid.Column="7" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Visibility="{x:Bind IsUpgradable}"
+                        />
+                    <TextBlock 
+                        Grid.Column="8" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind NewVersion}"
+                        Visibility="{x:Bind IsUpgradable}"
+                        /-->
+                    <ImageIcon
+                        Grid.Column="7" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        />
+                    <TextBlock 
+                        Grid.Column="8" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        />
+                </Grid>
+
+                <ListView x:Name="__package_list" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
+                    ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
+                    ItemTemplate="{StaticResource PackageTemplate}"
+                    CanBeScrollAnchor="False"
                 />
 
-            <!-- SystemChromeMediumColor-->
+        <!-- SystemChromeMediumColor-->
         </Grid>
+    </Grid>
     </Grid>
 
 </Page>
