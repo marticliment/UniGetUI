@@ -79,13 +79,33 @@ namespace ModernWindow.Interface
                 LoadingProgressBar.Visibility = Visibility.Collapsed;
                 return;
             }
-            var packages = await bindings.App.Scoop.FindPackages(QueryBlock.Text);
-            foreach (var package in packages)
+            
+            if (intialQuery != QueryBlock.Text)
+                return;
+
+            var tasks = new List<Task<Package[]>>();
+
+            foreach(var manager in bindings.App.PackageManagerList)
             {
-                if (intialQuery != QueryBlock.Text)
-                    return;
-                Packages.Add(package);
+                if(manager.IsEnabled() && manager.Status.Found)
+                {
+                    var task = manager.FindPackages(QueryBlock.Text);
+                    tasks.Add(task);
+                }
             }
+
+            foreach(var task in tasks)
+            {
+                if (!task.IsCompleted)
+                    await task;
+                foreach (Package package in task.Result)
+                {
+                    if (intialQuery != QueryBlock.Text)
+                        return;
+                    Packages.Add(package);
+                }
+            }
+            
             MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -108,7 +128,11 @@ namespace ModernWindow.Interface
         {
             FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
+            var Item = PackageList.SelectedItem;
             FilteredPackages.Sort();
+            if (Item != null)
+                PackageList.SelectedItem = Item;
+                PackageList.ScrollIntoView(Item);
         }
 
         public void LoadInterface()
@@ -126,6 +150,7 @@ namespace ModernWindow.Interface
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
             IdHeader.Click += (s, e) => { SortPackages("Id"); };
             VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
+            // NewVersionHeader.Click += (s, e) => { SortPackages("NewVersionAsFloat"); };
             SourceHeader.Click += (s, e) => { SortPackages("SourceAsString"); };
         }
 

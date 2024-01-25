@@ -102,7 +102,7 @@ namespace ModernWindow.Structures
 
         public string FormatAsName(string name)
         {
-            name = name.Replace("-", " ").Replace(".", " ").Replace("(", " ").Replace(")", " ").Replace("/", " ").Replace("\\", " ").Replace(":", " ").Replace(";", " ").Replace(",", " ").Replace("'", " ").Replace("_", " ").Replace("?", " ").Replace("!", " ").Replace("=", " ").Replace("+", " ").Replace("*", " ").Replace("&", " ").Replace("^", " ").Replace("%", " ").Replace("$", " ").Replace("#", " ").Replace("@", " ");
+            name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1];
             string newName = "";
             for(int i = 0; i<name.Length; i++)
             {

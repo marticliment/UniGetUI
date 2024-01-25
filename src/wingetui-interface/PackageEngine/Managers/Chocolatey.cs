@@ -15,9 +15,36 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Chocolatey : PackageManagerWithSources
     {
-        public override Task<Package[]> FindPackages(string query)
+        public override async Task<Package[]> FindPackages(string query)
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " search " + query,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            string line;
+            List<Package> Packages = new();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!line.StartsWith("Chocolatey"))
+                {
+                    string[] elements = line.Split(' ');
+                    if(elements.Length > 1)
+                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                }
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
         public override Task<UpgradablePackage[]> GetAvailableUpdates()
