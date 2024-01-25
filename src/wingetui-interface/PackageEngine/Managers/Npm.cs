@@ -35,7 +35,6 @@ namespace ModernWindow.PackageEngine.Managers
             bool HeaderPassed = false;
             while((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                Console.WriteLine(line);
                 if (!HeaderPassed)
                     if(line.Contains("NAME"))
                         HeaderPassed = true;
@@ -50,7 +49,7 @@ namespace ModernWindow.PackageEngine.Managers
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
-            }
+        }
 
         public override Task<UpgradablePackage[]> GetAvailableUpdates()
         {

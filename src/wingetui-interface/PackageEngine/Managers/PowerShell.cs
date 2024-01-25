@@ -10,14 +10,60 @@ using System.IO;
 using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace ModernWindow.PackageEngine.Managers
 {
     public class PowerShell : PackageManagerWithSources
     {
-        public override Task<Package[]> FindPackages(string query)
+
+        public override async Task<Package[]> FindPackages(string query)
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " Find-Module " + query,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            string line;
+            List<Package> Packages = new();
+            bool DashesPassed = false;
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                Console.WriteLine(DashesPassed.ToString() + ": " + line);
+                if (!DashesPassed)
+                {
+                    if(line.Contains("-----"))
+                        DashesPassed = true;
+                }
+                else
+                {
+                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                    if(elements.Length >= 3)
+                        if(SourceReference.ContainsKey(elements[2]))
+                            Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
+                        else
+                        {
+                            Console.WriteLine("Unknown PowerShell source!");
+                            var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
+                            Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
+                            SourceReference.Add(s.Name, s);
+                        }   
+                    else
+                        Console.WriteLine("NOLENGTH");
+                }
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
         public override Task<UpgradablePackage[]> GetAvailableUpdates()
