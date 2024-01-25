@@ -13,7 +13,7 @@ untranslatedPercentage = {
   "hi": "81%",
   "hr": "86%",
   "id": "88%",
-  "ja": "92%",
+  "ja": "93%",
   "mk": "95%",
   "nb": "84%",
   "pt_BR": "96%",
@@ -252,6 +252,10 @@ languageCredits = {
     },
     {
       "name": "sho9029",
+      "link": ""
+    },
+    {
+      "name": "Takaki IEKURA",
       "link": ""
     },
     {
