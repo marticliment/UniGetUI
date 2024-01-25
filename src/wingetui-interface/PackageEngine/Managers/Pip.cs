@@ -15,9 +15,56 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Pip : PackageManager
     {
-        public override Task<Package[]> FindPackages(string query)
+        public override async Task<Package[]> FindPackages(string query)
         {
-            throw new NotImplementedException();
+            var Packages = new List<Package>();
+
+            string path = await bindings.Which("parse_pip_search");
+            if(!File.Exists(path))
+                {
+                    Process proc = new Process() {
+                        StartInfo = new ProcessStartInfo()
+                        {
+                            FileName = path,
+                            Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
+                            UseShellExecute = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    proc.Start();
+                    await proc.WaitForExitAsync();
+                    path = "parse_pip_search.exe";
+                }
+
+            Process p = new Process() {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = path,
+                    Arguments = query,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            bool DashesPassed = false;
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(!DashesPassed)
+                {
+                    if(line.Contains("----"))
+                        DashesPassed = true;
+                } else {
+                    string[] elements = line.Split('|');
+                    if(elements.Length >= 2)
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                }
+            }
+            return Packages.ToArray();
         }
 
         public override Task<UpgradablePackage[]> GetAvailableUpdates()
