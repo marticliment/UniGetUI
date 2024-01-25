@@ -31,6 +31,7 @@ using ModernWindow.PackageEngine.Managers;
 using System.Xml.Schema;
 using ModernWindow.Clipboard;
 using Windows.UI.Text;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -233,9 +234,9 @@ namespace ModernWindow.Interface
                 ManagerStatus.BorderThickness = new Thickness(0, 1, 0, 0);
                 ManagerExpander.ItemsFooter = ManagerStatus;
 
-                var icon = new BitmapIcon
+                var icon = new ImageIcon
                 {
-                    UriSource = new Uri("ms-appx:///wingetui/resources/" + Manager.Properties.IconId + "_white.png")
+                    Source = new BitmapImage() { UriSource = new Uri("ms-appx:///wingetui/resources/" + Manager.Properties.IconId + "_white.png") },
                 };
                 ManagerExpander.HeaderIcon = icon;
 
