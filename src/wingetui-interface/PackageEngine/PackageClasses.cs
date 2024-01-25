@@ -1,13 +1,18 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.DirectX.Direct3D11;
 
 namespace ModernWindow.PackageEngine
 {
     public class Package
     {
+        private MainAppBindings bindings = MainAppBindings.Instance;
+        public bool IsChecked { get; set; } = false;
+        public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
         public string Id { get; set; }
         public string Version { get; }
@@ -38,11 +43,11 @@ namespace ModernWindow.PackageEngine
         public string GetIconId()
         {
             string iconId = Id.ToLower();
-            if (IsWinget())
+            if (Manager == bindings.App.Winget)
                 iconId = String.Join('.', iconId.Split(".")[1..]);
-            else if(IsChocolatey())
+            else if(Manager == bindings.App.Choco)
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
-            else if(IsScoop())
+            else if(Manager == bindings.App.Scoop)
                 iconId = iconId.Replace(".app", "");
             return iconId;
         }
@@ -82,22 +87,6 @@ namespace ModernWindow.PackageEngine
                     Console.WriteLine(e);
                 }
             return res;
-        }
-
-        public bool IsWinget()
-        {
-            return false;
-        }
-
-        public bool IsChocolatey()
-        {
-            return false;
-        }
-
-        public bool IsScoop()
-        {
-            //TODO
-            return false;
         }
 
         public void AddToIgnoredUpdates(string version = "*")

@@ -357,6 +357,7 @@
                 <CheckBox 
                     Grid.Column="0" Grid.Row="0"
                     VerticalAlignment="Center"
+                    IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
                 <ImageIcon
                     Source="ms-appx:///wingetui/resources/install_white.png"

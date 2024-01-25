@@ -114,10 +114,14 @@ namespace ModernWindow.Interface
         {
             await LoadPackages();
 
+
+            FilterPackages_SortOnly(query);
+        }
+
+        public void FilterPackages_SortOnly(string query)
+        {
             FilteredPackages.Clear();
-
             var MatchingList = Packages.Where(x => x.Name.ToLower().Contains(query.ToLower())); // Needs tweaking
-
             foreach (var match in MatchingList)
             {
                 FilteredPackages.Add(match);
@@ -147,6 +151,7 @@ namespace ModernWindow.Interface
             // NewVersionHeader.Content = bindings.Translate("New version");
             SourceHeader.Content = bindings.Translate("Source");
 
+            CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
             IdHeader.Click += (s, e) => { SortPackages("Id"); };
             VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
@@ -217,7 +222,7 @@ namespace ModernWindow.Interface
                 { InstallSelected,      "install" },
                 { InstallAsAdmin,       "runasadmin" },
                 { InstallSkipHash,      "checksum" },
-                { InstallInteractive, "interactive" },
+                { InstallInteractive,   "interactive" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
@@ -229,6 +234,20 @@ namespace ModernWindow.Interface
 
             foreach (var toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
+
+            InstallSelected.IsEnabled = false;
+            InstallAsAdmin.IsEnabled = false;
+            InstallSkipHash.IsEnabled = false;
+            InstallInteractive.IsEnabled = false;
+            PackageDetails.IsEnabled = false;
+            ImportPackages.IsEnabled = false;
+            ExportSelection.IsEnabled = false;
+            HelpButton.IsEnabled = false;
+
+            SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
+
+            SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages_SortOnly(QueryBlock.Text); };
+            SelectNone.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = false; FilterPackages_SortOnly(QueryBlock.Text); };
 
         }
     }
