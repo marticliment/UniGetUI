@@ -8,15 +8,71 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ABI.System.Collections.Generic;
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Xaml;
 using Windows.Graphics.Display;
 
 namespace ModernWindow.PackageEngine.Managers;
 
 public class Scoop : PackageManagerWithSources
 {
-    public override Task<Package[]> FindPackages(string query)
+    public override async Task<Package[]> FindPackages(string query)
     {
-        throw new NotImplementedException();
+        var Packages = new List<Package>();
+
+        string path = await bindings.Which("scoop-search");
+        if(!File.Exists(path))
+            {
+                Process proc = new Process() {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = path,
+                        Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
+                        UseShellExecute = true,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+                await proc.WaitForExitAsync();
+                path = "scoop-search.exe";
+            }
+
+        Process p = new Process() {
+            StartInfo = new ProcessStartInfo()
+            {
+                FileName = path,
+                Arguments = query,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        p.Start();
+
+        string line;
+        ManagerSource source = GetMainSource();
+        while((line = await p.StandardOutput.ReadLineAsync()) != null)
+        {
+            if(line.StartsWith("'"))
+            {
+                var sourceName = line.Split(" ")[0].Replace("'", "");
+                if(SourceReference.ContainsKey(sourceName))
+                    source = SourceReference[sourceName];
+                else{
+                    Console.WriteLine("Unknown source!");
+                    source = new ManagerSource(this, sourceName, new Uri("https://scoop.sh/"), 0, "Unknown");
+                    SourceReference.Add(sourceName, source);
+                }
+            } else if (line.Trim() != "")
+            {
+                var elements = line.Trim().Split(" ");
+                if(elements.Length < 2)
+                    continue;
+                Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
+            }
+        }
+        return Packages.ToArray();
     }
 
     public override Task<UpgradablePackage[]> GetAvailableUpdates()

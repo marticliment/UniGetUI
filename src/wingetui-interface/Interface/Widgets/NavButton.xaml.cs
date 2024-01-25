@@ -90,6 +90,12 @@ namespace ModernWindow.Interface.Widgets
             }
             Click?.Invoke(this, new NavButtonEventArgs());
         }
+
+        public void ForceClick()
+        {
+            ToggleButton.IsChecked = true;
+            Click?.Invoke(this, new NavButtonEventArgs());
+        }
     }
 }
 

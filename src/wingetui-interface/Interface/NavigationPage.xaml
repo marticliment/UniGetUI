@@ -10,33 +10,32 @@
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d">
 
-    <Grid RowSpacing="5" ColumnSpacing="5">
+    <Grid RowSpacing="4" ColumnSpacing="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="72"/>
             <ColumnDefinition Width="10000*"/>
-            <ColumnDefinition Width="*" MaxWidth="60"/>
+            <!--ColumnDefinition Width="*" MaxWidth="60"/-->
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer HorizontalScrollMode="Disabled" VerticalAlignment="Stretch"  Grid.Row="0" Grid.Column="1">
-            <Frame Name="MainContentPresenter"/>
-        </ScrollViewer>
+        
+        <Frame Name="MainContentPresenter" Grid.Row="0" Grid.Column="1" />
 
-        <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" >
+        <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" MinHeight="225"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Width="64" Grid.Row="0" Grid.Column="0"
-            Spacing="4" Orientation="Vertical" VerticalAlignment="Top" Margin="4,4,4,4">
-                <widgets:NavButton Name="DiscoverNavButton"
+            Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
+                <widgets:NavButton x:Name="DiscoverNavButton"
                     Text="Discover Packages"
                     Glyph="&#xE896;" Click="DiscoverNavButton_Click"
                     />
-                <widgets:NavButton Name="UpdatesNavButton"
+                <widgets:NavButton x:Name="UpdatesNavButton"
                     Text="Software Updates"
                     Glyph="&#xE895;" Click="UpdatesNavButton_Click"
                     />
-                <widgets:NavButton Name="InstalledNavButton"
+                <widgets:NavButton x:Name="InstalledNavButton"
                     Text="Installed Packages"
                     Glyph="&#xE977;" Click="InstalledNavButton_Click"
                 />
@@ -45,17 +44,17 @@
             <StackPanel
                 Grid.Row="1" Grid.Column="0"
                 Width="64"
-                Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="4,4,4,4">
+                Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
                 <widgets:NavButton
-                    Text="More" Name="MoreNavButton"
+                    Text="More" x:Name="MoreNavButton"
                     Glyph="&#xE712;" Click="MoreNavButton_Click"
                     />
                 <widgets:NavButton
-                    Text="Settings" Name="SettingsNavButton"
+                    Text="Settings" x:Name="SettingsNavButton"
                     Glyph="&#xE713;" Click="SettingsNavButton_Click"
                     />
                 <widgets:NavButton
-                    Text="About" Name="AboutNavButton"
+                    Text="About" x:Name="AboutNavButton"
                     Glyph="&#xE946;" Click="AboutNavButton_Click"
                     /> 
             </StackPanel>

@@ -15,9 +15,71 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Winget : PackageManagerWithSources
     {
-        public override Task<Package[]> FindPackages(string query)
+        public override async Task<Package[]> FindPackages(string query)
         {
-            throw new NotImplementedException();
+            var Packages = new List<Package>();
+            Process p = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " search " + query,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            Console.WriteLine(Status.ExecutablePath);
+            p.StartInfo = startInfo;
+            Console.WriteLine("Starting winget");
+            p.Start();
+            Console.WriteLine("Winget started " + query);
+
+            await Task.Run( p.WaitForExit );
+            Console.WriteLine("Process ended");
+
+            string OldLine = "";
+            int IdIndex = -1;
+            int VersionIndex =-1;
+            int SourceIndex = -1;
+            bool DashesPassed = false;
+            foreach(string line in p.StandardOutput.ReadToEnd().Split('\n'))
+            {
+                Console.WriteLine(line);
+                if(!DashesPassed && line.Contains("---"))
+                {
+                    IdIndex = OldLine.IndexOf("SearchId");
+                    VersionIndex = OldLine.IndexOf("SearchVersion");
+                    SourceIndex = OldLine.IndexOf("SearchSource");
+                    DashesPassed = true;
+                }
+                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0)
+                {
+                    string name = line[..IdIndex].Trim();
+                    string id = line[IdIndex..].Trim().Split(' ')[0];
+                    //string id = line.Substring(IdIndex, line.Length-1).Trim().Split(' ')[0];
+                    Console.WriteLine(id);
+                    /*string version = line.Substring(VersionIndex, line.Length-1).Trim().Split(' ')[0];
+                    ManagerSource source;
+                    if (SourceIndex == -1)
+                        source = MainSource;
+                    else if (!SourceReference.ContainsKey(line.Substring(SourceIndex, line.Length - 1).Trim().Split(' ')[0]))
+                    {
+                        source = new ManagerSource(this, line.Substring(SourceIndex, line.Length - 1).Trim().Split(' ')[0], new Uri(""));
+                        SourceReference.Add(source.Name, source);
+                    }
+                    else
+                        source = SourceReference[line.Substring(SourceIndex, line.Length - 1).Trim().Split(' ')[0]];
+                    */
+                    //Packages.Add(new Package(name, "", "", MainSource, this));
+                }
+                OldLine = line;
+            }
+            Console.WriteLine("End of process");
+
+            //await p.WaitForExitAsync();
+
+            Console.WriteLine("Winget finished with package count " + Packages.Count());
+            return Packages.ToArray();
+
         }
 
         public override Task<UpgradablePackage[]> GetAvailableUpdates()

@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Interface\BasePackagesPage.xaml" />
+    <None Remove="Interface\DiscoverPackages.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -121,7 +121,7 @@
     <PRIResource Remove="Intereface\**" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Interface\BasePackagesPage.xaml">
+    <Page Update="Interface\DiscoverPackages.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -96,6 +96,20 @@ namespace ModernWindow.Structures
             else
                 return output;
         }
+
+        public string FormatAsName(string name)
+        {
+            name = name.Replace("-", " ").Replace(".", " ").Replace("(", " ").Replace(")", " ").Replace("/", " ").Replace("\\", " ").Replace(":", " ").Replace(";", " ").Replace(",", " ").Replace("'", " ").Replace("_", " ").Replace("?", " ").Replace("!", " ").Replace("=", " ").Replace("+", " ").Replace("*", " ").Replace("&", " ").Replace("^", " ").Replace("%", " ").Replace("$", " ").Replace("#", " ").Replace("@", " ");
+            string newName = "";
+            for(int i = 0; i<name.Length; i++)
+            {
+                if (i == 0 || name[i - 1] == ' ')
+                    newName += name[i].ToString().ToUpper();
+                else 
+                    newName += name[i];
+            }
+            return name;
+        }
     }
 
 }

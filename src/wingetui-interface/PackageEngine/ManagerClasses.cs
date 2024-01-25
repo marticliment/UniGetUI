@@ -23,6 +23,10 @@ namespace ModernWindow.PackageEngine
         public ManagerProperties Properties { get; set; }
         public ManagerCapabilities Capabilities { get; set; }
         public ManagerStatus Status { get; set; }
+
+        public Uri IconAppxUri { get; set; }
+
+        public String IconAppxUriString { get { return IconAppxUri.ToString(); } }
         public string Name { get; set; }
         protected MainAppBindings bindings = MainAppBindings.Instance;
         public ManagerSource MainSource { get; set; }
@@ -39,7 +43,10 @@ namespace ModernWindow.PackageEngine
             Capabilities = GetCapabilities();
             MainSource = GetMainSource();
             Status = await LoadManager();
-            if(this is PackageManagerWithSources && Status.Found)
+
+            IconAppxUri = new Uri("ms-appx:///wingetui/resources/" + Properties.IconId + "_white.png");
+
+            if (this is PackageManagerWithSources && Status.Found)
             {
                 var SourcesTask = (this as PackageManagerWithSources).GetSources();
                 var winner = await Task.WhenAny(
@@ -52,7 +59,7 @@ namespace ModernWindow.PackageEngine
                 else
                 {
                     Console.WriteLine(Name + " sources took too long to load, using known sources as default");
-                    (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).KnownSources;
+                    (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).DefaultSources;
                 }
             }
             Debug.WriteLine("Manager " + Name + " loaded");
@@ -91,7 +98,8 @@ namespace ModernWindow.PackageEngine
     public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources 
     {
         public ManagerSource[] Sources { get; set; }
-        public ManagerSource[] KnownSources { get; set; }
+        public ManagerSource[] DefaultSources { get; set; }
+        public Dictionary<string, ManagerSource> SourceReference = new Dictionary<string, ManagerSource>();
         public abstract Task<ManagerSource[]> GetSources();
     }
 

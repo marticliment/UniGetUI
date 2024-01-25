@@ -14,6 +14,8 @@ namespace ModernWindow.PackageEngine
         public ManagerSource Source { get; set; }
         public PackageManager Manager { get; }
         public string UniqueId { get; }
+        public string NewVersion { get; }
+        public bool IsUpgradable { get; } = false;
 
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager)
         {
@@ -23,6 +25,7 @@ namespace ModernWindow.PackageEngine
             Source = source;
             Manager = manager;
             UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}";
+            NewVersion = "";
         }
 
         public string GetIconId()
@@ -118,7 +121,9 @@ namespace ModernWindow.PackageEngine
 
     public class UpgradablePackage : Package
     {
-        public string NewVersion { get; }
+        public new string NewVersion { get; }
+        public new bool IsUpgradable { get; } = true;
+
         public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager) : base(name, id, installed_version, source, manager)
         {
             NewVersion = new_version;
