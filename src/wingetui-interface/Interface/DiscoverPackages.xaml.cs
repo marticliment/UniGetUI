@@ -1,7 +1,9 @@
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -28,6 +30,7 @@ using Windows.Foundation.Collections;
 
 namespace ModernWindow.Interface
 {
+
     public partial class DiscoverPackagesPage : Page
     {
         public ObservableCollection<Package> Packages = new ObservableCollection<Package>();
@@ -39,21 +42,24 @@ namespace ModernWindow.Interface
         protected ListView PackageList;
         protected ProgressBar LoadingProgressBar;
         protected Image HeaderImage;
+        protected MenuFlyout ContextMenu;
 
         private bool IsDescending = true;
         public DiscoverPackagesPage()
         {
             this.InitializeComponent();
-            ReloadButton.Click += async (s, e) => { await __load_packages(); } ;
-            FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
-            QueryBlock.TextChanged += async (s, e) => { await FilterPackages(QueryBlock.Text); };
             MainTitle = __main_title;
             MainSubtitle = __main_subtitle;
             PackageList = __package_list;
             HeaderImage = __header_image;
-            LoadingProgressBar= __loading_progressbar;
+            LoadingProgressBar = __loading_progressbar;
+            ReloadButton.Click += async (s, e) => { await __load_packages(); } ;
+            FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
+            QueryBlock.TextChanged += async (s, e) => { await FilterPackages(QueryBlock.Text); };
+            PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
+            GenerateToolBar();
             LoadInterface();
-            __load_packages();
+            _ = __load_packages();
         }
 
         protected async Task __load_packages()
@@ -65,6 +71,14 @@ namespace ModernWindow.Interface
             MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
+
+        /*
+         * 
+         * 
+         *  DO NOT MODIFY THE UPPER PART OF THIS FILE
+         * 
+         * 
+         */
 
         public async Task LoadPackages()
         {
@@ -113,8 +127,6 @@ namespace ModernWindow.Interface
         public async Task FilterPackages(string query)
         {
             await LoadPackages();
-
-
             FilterPackages_SortOnly(query);
         }
 
@@ -143,7 +155,6 @@ namespace ModernWindow.Interface
         {
             MainTitle.Text = "Discover Packages";
             HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
-            LoadToolbar();
             CheckboxHeader.Content = " ";
             NameHeader.Content = bindings.Translate("Package Name");
             IdHeader.Content = bindings.Translate("Package ID");
@@ -160,7 +171,7 @@ namespace ModernWindow.Interface
         }
 
 
-        public void LoadToolbar()
+        public void GenerateToolBar()
         {
             var InstallSelected = new AppBarButton();
             var InstallAsAdmin = new AppBarButton();
@@ -249,6 +260,35 @@ namespace ModernWindow.Interface
             SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages_SortOnly(QueryBlock.Text); };
             SelectNone.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = false; FilterPackages_SortOnly(QueryBlock.Text); };
 
+        }
+        private void MenuDetails_Invoked(object sender, Package package)
+        {
+        }
+
+        private void MenuShare_Invoked(object sender, Package package)
+        {
+            bindings.App.mainWindow.SharePackage(package);
+        }
+
+        private void MenuInstall_Invoked(object sender, Package package)
+        {
+        }
+
+        private void MenuSkipHash_Invoked(object sender, Package package)
+        {
+        }
+
+        private void MenuInteractive_Invoked(object sender, Package package)
+        {
+        }
+
+        private void MenuAsAdmin_Invoked(object sender, Package package)
+        {
+        }
+
+        private void PackageContextMenu_AboutToShow(object sender, Package package)
+        {
+            PackageList.SelectedItem = package;
         }
     }
 }

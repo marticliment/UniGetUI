@@ -18,13 +18,11 @@ namespace ModernWindow.Interface.Widgets
         public static MainAppBindings bindings = MainAppBindings.Instance;
 
         private string __icon_name;
-
         public string IconName { 
             get { return __icon_name; }
-            set { __icon_name = value; __apply_icon(); (Parent as FrameworkElement).ActualThemeChanged += (s, e) => { __apply_icon(); };  }
-
-        
+            set { __icon_name = value; __apply_icon(); ActualThemeChanged += (s, e) => { __apply_icon(); };  }
         }
+
         public LocalIcon()
         {            
         }

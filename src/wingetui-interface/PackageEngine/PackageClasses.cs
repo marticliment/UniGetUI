@@ -10,7 +10,7 @@ namespace ModernWindow.PackageEngine
 {
     public class Package
     {
-        private MainAppBindings bindings = MainAppBindings.Instance;
+        public MainAppBindings bindings = MainAppBindings.Instance;
         public bool IsChecked { get; set; } = false;
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
@@ -38,6 +38,11 @@ namespace ModernWindow.PackageEngine
             UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}";
             NewVersion = "";
             VersionAsFloat = GetFloatVersion();
+        }
+
+        public Package _get_self_package()
+        {
+            return this;
         }
 
         public string GetIconId()
