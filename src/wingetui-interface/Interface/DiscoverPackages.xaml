@@ -458,7 +458,7 @@
         CornerRadius="6,0,0,0"
     -->
     <Grid 
-          Padding="10"
+        Padding="10"
         BorderThickness="1,1,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -469,6 +469,8 @@
             <ColumnDefinition Width="1000000*" MaxWidth="1200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+
+        <!-- HEADER -->
         <Grid Name="MainHeader" Grid.Row="0" Grid.Column="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
@@ -497,7 +499,6 @@
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 FontWeight="Normal" Foreground="{StaticResource AppBarItemDisabledForegroundThemeBrush}"
                 />
-
             <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Stretch" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -527,7 +528,8 @@
             <CommandBar Name="ToolBar" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" DefaultLabelPosition="Right" HorizontalAlignment="Stretch">
             </CommandBar>
         </Grid>
-        <Grid Grid.Row="2" Grid.Column="1" RowSpacing="4">
+        <!-- NON-HEADER CONTENT -->
+        <Grid Grid.Row="2" Grid.Column="1" RowSpacing="4" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="150" MaxWidth="400" Width="250"/>
                 <ColumnDefinition MinWidth="200"/>
@@ -543,11 +545,96 @@
                 </Toolkit:GridSplitter.RenderTransform>
             </Toolkit:GridSplitter>
             <ProgressBar IsIndeterminate="True" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="__loading_progressbar"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" Text="Filters" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            
+            <!-- FILTERING PANE -->
+            <ScrollView Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  
+                BorderThickness="0"
+                HorizontalScrollMode="Disabled"
+                CornerRadius="8">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- " -->
+                    <Expander Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
+                        IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <widgets:LocalIcon IconName="provider" Height="24"/>
+                                <widgets:TranslatedTextBlock Text="Sources" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Expander.Header>
+                        <Expander.Content>
+                                <TreeView/>
+                        </Expander.Content>
+                    </Expander>
+                    <Expander Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
+                        IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                        Padding="8">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <widgets:LocalIcon IconName="edit_filters" Height="24"/>
+                                <widgets:TranslatedTextBlock Text="Filters" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="8">
+                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind bindings.GetSettings(InstantSearchSettingString, x:True)}">
+                                    <CheckBox.Content>
+                                        <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap"/>
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <CheckBox x:Name="UpperLowerCaseCheckbox" Checked="FilterOptionsChanged" Unchecked="FilterOptionsChanged">
+                                    <CheckBox.Content>
+                                        <widgets:TranslatedTextBlock Text="Distinguish between uppercase and lowercase" WrappingMode="Wrap"/>
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <CheckBox x:Name="IgnoreSpecialCharsCheckbox" Checked="FilterOptionsChanged" Unchecked="FilterOptionsChanged" IsChecked="True">
+                                    <CheckBox.Content>
+                                        <widgets:TranslatedTextBlock Text="Ignore special characters" WrappingMode="Wrap"/>
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <RadioButtons Margin="0,16,0,0" SelectionChanged="FilterOptionsChanged">
+                                    <RadioButtons.Header>
+                                        <widgets:TranslatedTextBlock Text="Compare query against:" WrappingMode="Wrap" FontSize="15" FontWeight="SemiBold"/>
+                                    </RadioButtons.Header>
+                                    <RadioButton x:Name="QueryNameRadio">
+                                        <RadioButton.Content>
+                                            <widgets:TranslatedTextBlock Text="Package Name" WrappingMode="Wrap"/>
+                                        </RadioButton.Content>
+                                    </RadioButton>
+                                    <RadioButton x:Name="QueryIdRadio">
+                                        <RadioButton.Content>
+                                            <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap"/>
+                                        </RadioButton.Content>
+                                    </RadioButton>
+                                    <RadioButton x:Name="QueryBothRadio" IsChecked="True">
+                                        <RadioButton.Content>
+                                            <widgets:TranslatedTextBlock Text="Both" WrappingMode="Wrap"/>
+                                        </RadioButton.Content>
+                                    </RadioButton>
+                                    <RadioButton x:Name="QuerySimilarResultsRadio">
+                                        <RadioButton.Content>
+                                            <widgets:TranslatedTextBlock Text="Show similar results" WrappingMode="Wrap"/>
+                                        </RadioButton.Content>
+                                    </RadioButton>
+                                </RadioButtons>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                </Grid>
+            </ScrollView>
 
-
-            <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                    Padding="4,6,4,6" Background="{ThemeResource LayerFillColorDefault}" CornerRadius="8">
+            <!-- ACTUAL PACKAGE LIST -->
+            <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  
+                BorderBrush="{ThemeResource SystemChromeMediumColor}"
+                BorderThickness="1" Padding="4,6,4,6" 
+                Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                CornerRadius="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="37"/>
                     <RowDefinition Height="*"/>
@@ -577,31 +664,6 @@
                     <Button Name="VersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <!--Button Name="NewVersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/-->
                     <Button Name="SourceHeader" Grid.Column="8" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="0,4,4,0" BorderThickness="0"/>
-                    
-                    <TextBlock 
-                        Grid.Column="6" Grid.Row="0"
-                        VerticalAlignment="Center"
-                        />
-                    <!--ImageIcon
-                        Source="ms-appx:///wingetui/resources/version_white.png"
-                        Grid.Column="7" Grid.Row="0"
-                        VerticalAlignment="Center"
-                        Visibility="{x:Bind IsUpgradable}"
-                        />
-                    <TextBlock 
-                        Grid.Column="8" Grid.Row="0"
-                        VerticalAlignment="Center"
-                        Text="{x:Bind NewVersion}"
-                        Visibility="{x:Bind IsUpgradable}"
-                        /-->
-                    <ImageIcon
-                        Grid.Column="7" Grid.Row="0"
-                        VerticalAlignment="Center"
-                        />
-                    <TextBlock 
-                        Grid.Column="8" Grid.Row="0"
-                        VerticalAlignment="Center"
-                        />
                 </Grid>
 
                 <ListView x:Name="__package_list" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"

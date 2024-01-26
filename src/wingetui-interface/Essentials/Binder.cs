@@ -46,9 +46,9 @@ namespace ModernWindow.Structures
             ThemeListener = new ThemeListener();
         }
 
-        public bool GetSettings(string setting)
+        public bool GetSettings(string setting, bool invert = false)
         {
-            return App.GetSettings(setting);
+            return App.GetSettings(setting) ^ invert;
         }
 
         public void SetSettings(string setting, bool value)

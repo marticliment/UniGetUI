@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.VisualBasic;
 using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine;
@@ -18,6 +19,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -35,6 +37,7 @@ namespace ModernWindow.Interface
     {
         public ObservableCollection<Package> Packages = new ObservableCollection<Package>();
         public SortableObservableCollection<Package> FilteredPackages = new SortableObservableCollection<Package>() { SortingSelector = (a) => (a.Name)};
+        protected ObservableCollection<ManagerSource> UsedSources = new ObservableCollection<ManagerSource>();
         protected MainAppBindings bindings = MainAppBindings.Instance;
 
         protected TranslatedTextBlock MainTitle;
@@ -45,6 +48,10 @@ namespace ModernWindow.Interface
         protected MenuFlyout ContextMenu;
 
         private bool IsDescending = true;
+
+        private bool Initialized = false;
+
+        public string InstantSearchSettingString = "DisableInstantSearchOnDiscover";
         public DiscoverPackagesPage()
         {
             this.InitializeComponent();
@@ -53,9 +60,11 @@ namespace ModernWindow.Interface
             PackageList = __package_list;
             HeaderImage = __header_image;
             LoadingProgressBar = __loading_progressbar;
+            Initialized = true;
             ReloadButton.Click += async (s, e) => { await __load_packages(); } ;
             FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
-            QueryBlock.TextChanged += async (s, e) => { await FilterPackages(QueryBlock.Text); };
+            QueryBlock.TextChanged += async (s, e) => { if (InstantSearchCheckbox.IsChecked == true) await FilterPackages(QueryBlock.Text); };
+            QueryBlock.KeyUp += async (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) await FilterPackages(QueryBlock.Text); };
             PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
             GenerateToolBar();
             LoadInterface();
@@ -64,12 +73,20 @@ namespace ModernWindow.Interface
 
         protected async Task __load_packages()
         {
+            if (!Initialized)
+                return;
             MainSubtitle.Text= "Loading...";
             LoadingProgressBar.Visibility = Visibility.Visible;
             //await this.LoadPackages();
             await this.FilterPackages(QueryBlock.Text);
             MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
             LoadingProgressBar.Visibility = Visibility.Collapsed;
+        }
+
+        protected void AddPackageToSourcesList(Package package)
+        {
+            if (!Initialized)
+                return;
         }
 
         /*
@@ -82,12 +99,15 @@ namespace ModernWindow.Interface
 
         public async Task LoadPackages()
         {
+            if (!Initialized)
+                return;
             MainSubtitle.Text = "Loading...";
             LoadingProgressBar.Visibility = Visibility.Visible;
             var intialQuery = QueryBlock.Text;
             Packages.Clear();
             FilteredPackages.Clear();
-            if(QueryBlock.Text == null || QueryBlock.Text.Length < 3)
+            UsedSources.Clear();
+            if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
             {
                 MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
                 LoadingProgressBar.Visibility = Visibility.Collapsed;
@@ -117,6 +137,7 @@ namespace ModernWindow.Interface
                     if (intialQuery != QueryBlock.Text)
                         return;
                     Packages.Add(package);
+                    AddPackageToSourcesList(package);
                 }
             }
             
@@ -126,14 +147,57 @@ namespace ModernWindow.Interface
 
         public async Task FilterPackages(string query)
         {
+            if (!Initialized)
+                return;
             await LoadPackages();
             FilterPackages_SortOnly(query);
         }
 
         public void FilterPackages_SortOnly(string query)
         {
+            if (!Initialized)
+                return;
             FilteredPackages.Clear();
-            var MatchingList = Packages.Where(x => x.Name.ToLower().Contains(query.ToLower())); // Needs tweaking
+            Package[] MatchingList;
+
+            Func<string, string> CaseFunc;
+            if (UpperLowerCaseCheckbox.IsChecked == true)
+                CaseFunc = (x) => { return x; };
+            else
+                CaseFunc = (x) => { return x.ToLower(); };
+
+            Func<string, string> CharsFunc;
+            if (IgnoreSpecialCharsCheckbox.IsChecked == true)
+                CharsFunc = (x) => { 
+                    var temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "");
+                    foreach(var entry in new Dictionary<char, string>
+                        {
+                            {'a', ""},
+                            {'e', ""},
+                            {'i', ""},
+                            {'o', ""},
+                            {'u', ""},
+                            {'c', ""},
+                            {'ñ', ""},
+                        })
+                    {
+                        foreach(char InvalidChar in entry.Value)
+                            x = x.Replace(InvalidChar, entry.Key);
+                    }
+                    return temp_x;
+                };
+            else
+                CharsFunc = (x) => { return CaseFunc(x); };
+
+            if (QueryIdRadio.IsChecked == true)
+                MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query))).ToArray();
+            else if (QueryNameRadio.IsChecked == true)
+                MatchingList = Packages.Where(x => CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
+            else if (QueryBothRadio.IsChecked == true)
+                MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query)) | CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
+            else // QuerySimilarResultsRadio == true
+                MatchingList = Packages.ToArray();
+
             foreach (var match in MatchingList)
             {
                 FilteredPackages.Add(match);
@@ -142,6 +206,8 @@ namespace ModernWindow.Interface
 
         public void SortPackages(string Sorter)
         {
+            if (!Initialized)
+                return;
             FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
             var Item = PackageList.SelectedItem;
@@ -153,6 +219,8 @@ namespace ModernWindow.Interface
 
         public void LoadInterface()
         {
+            if (!Initialized)
+                return;
             MainTitle.Text = "Discover Packages";
             HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
             CheckboxHeader.Content = " ";
@@ -173,6 +241,8 @@ namespace ModernWindow.Interface
 
         public void GenerateToolBar()
         {
+            if (!Initialized)
+                return;
             var InstallSelected = new AppBarButton();
             var InstallAsAdmin = new AppBarButton();
             var InstallSkipHash = new AppBarButton();
@@ -207,6 +277,7 @@ namespace ModernWindow.Interface
 
             var Labels = new Dictionary<AppBarButton, string>
             { // Entries with a trailing space are collapsed
+              // Their texts will be used as the tooltip
                 { InstallSelected,      "Install Selected packages" },
                 { InstallAsAdmin,       " Install as administrator" },
                 { InstallSkipHash,      " Skip integrity checks" },
@@ -263,32 +334,61 @@ namespace ModernWindow.Interface
         }
         private void MenuDetails_Invoked(object sender, Package package)
         {
+            if (!Initialized)
+                return;
         }
 
         private void MenuShare_Invoked(object sender, Package package)
         {
+            if (!Initialized)
+                return;
             bindings.App.mainWindow.SharePackage(package);
         }
 
         private void MenuInstall_Invoked(object sender, Package package)
         {
+            if (!Initialized)
+                return;
         }
 
         private void MenuSkipHash_Invoked(object sender, Package package)
         {
+            if (!Initialized)
+                return;
         }
 
         private void MenuInteractive_Invoked(object sender, Package package)
         {
+            if (!Initialized)
+                return;
         }
 
         private void MenuAsAdmin_Invoked(object sender, Package package)
         {
+            if (!Initialized)
+                return;
         }
 
         private void PackageContextMenu_AboutToShow(object sender, Package package)
         {
+            if (!Initialized)
+                return;
             PackageList.SelectedItem = package;
         }
+
+
+        private void FilterOptionsChanged(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+            FilterPackages_SortOnly(QueryBlock.Text);
+        }
+
+        private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+            bindings.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+        }   
     }
 }
