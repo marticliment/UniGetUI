@@ -9,13 +9,15 @@ untranslatedPercentage = {
   "de": "99%",
   "el": "72%",
   "fa": "71%",
+  "fi": "0%",
   "he": "72%",
   "hi": "81%",
   "hr": "86%",
   "id": "88%",
   "ja": "93%",
   "mk": "95%",
-  "nb": "84%",
+  "nb": "85%",
+  "nn-NO": "8%",
   "pt_BR": "96%",
   "pt_PT": "96%",
   "ru": "89%",
@@ -167,6 +169,7 @@ languageCredits = {
       "link": "https://github.com/smsi2001"
     }
   ],
+  "fi": [],
   "fr": [
     {
       "name": "Evans Costa",
@@ -295,6 +298,7 @@ languageCredits = {
       "link": "https://github.com/Stephan-P"
     }
   ],
+  "nn-NO": [],
   "pl": [
     {
       "name": "KamilZielinski",
