@@ -451,12 +451,30 @@
             </Grid>
         </DataTemplate>
 
+        <!--DataTemplate x:Key="ManagerTemplate" x:DataType="engine:ManagerSource">
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name}"
+            ItemsSource="{x:Bind}" IsExpanded="True">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="20" Source="../Assets/folder.png"/>
+                    <TextBlock Margin="0,0,10,0"/>
+                    <TextBlock Text="{x:Bind Name}" />
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SourceTemplate" x:DataType="engine:ManagerSource">
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="20" Source="../Assets/file.png"/>
+                    <TextBlock Margin="0,0,10,0"/>
+                    <TextBlock Text="{x:Bind Name}"/>
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate-->
+
+
     </Page.Resources>
 
-    <!-- Background="{StaticResource LayerFillColorAlt}"
-        BorderBrush="{ThemeResource SystemChromeMediumColor}"
-        CornerRadius="6,0,0,0"
-    -->
     <Grid 
         Padding="10"
         BorderThickness="1,1,0,0">
@@ -559,9 +577,9 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <!-- " -->
                     <Expander Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
-                        IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}">
+                        IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                        Padding="8,8,0,8">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <widgets:LocalIcon IconName="provider" Height="24"/>
@@ -569,7 +587,9 @@
                             </StackPanel>
                         </Expander.Header>
                         <Expander.Content>
-                                <TreeView/>
+                            <TreeView Name="SourcesTreeView" SelectionMode="Multiple" Margin="-30,0,0,0" Padding="0"
+                                SelectionChanged="SourcesTreeView_SelectionChanged" 
+                                HorizontalAlignment="Stretch"/>
                         </Expander.Content>
                     </Expander>
                     <Expander Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
@@ -612,14 +632,14 @@
                                             <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QueryBothRadio" IsChecked="True">
+                                    <RadioButton x:Name="QueryBothRadio">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Both" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QuerySimilarResultsRadio">
+                                    <RadioButton x:Name="QuerySimilarResultsRadio" IsChecked="True">
                                         <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Show similar results" WrappingMode="Wrap"/>
+                                            <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
                                 </RadioButtons>
@@ -639,7 +659,7 @@
                     <RowDefinition Height="37"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid ColumnSpacing="0" Grid.Row="0" Margin="4,2,4,0">
+                <Grid ColumnSpacing="0" Grid.Row="0" Margin="4,2,4,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
@@ -671,8 +691,6 @@
                     ItemTemplate="{StaticResource PackageTemplate}"
                     CanBeScrollAnchor="False"
                 />
-
-        <!-- SystemChromeMediumColor-->
         </Grid>
     </Grid>
     </Grid>

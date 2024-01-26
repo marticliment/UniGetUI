@@ -12,28 +12,30 @@ namespace ModernWindow.Essentials
     {
         public Func<T, object> SortingSelector { get; set; }
         public bool Descending { get; set; }
+        public bool BlockSorting { get; set; } = false;
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            base.OnCollectionChanged(e);
-            if (SortingSelector == null
-                || e.Action == NotifyCollectionChangedAction.Remove
-                || e.Action == NotifyCollectionChangedAction.Reset)
-                return;
-            Sort();
+            if (!BlockSorting)
+            {
+                base.OnCollectionChanged(e);
+                if (SortingSelector == null
+                    || e.Action == NotifyCollectionChangedAction.Remove
+                    || e.Action == NotifyCollectionChangedAction.Reset)
+                    return;
+                Sort();
+            }
+            
         }
-        public void Sort() { 
-            var query = this
-              .Select((item, index) => (Item: item, Index: index));
-            query = Descending
-              ? query.OrderByDescending(tuple => SortingSelector(tuple.Item))
-              : query.OrderBy(tuple => SortingSelector(tuple.Item));
+        public void Sort() {
+            BlockSorting = true;
 
-            var map = query.Select((tuple, index) => (OldIndex: tuple.Index, NewIndex: index))
-             .Where(o => o.OldIndex != o.NewIndex);
-
-            using (var enumerator = map.GetEnumerator())
-                if (enumerator.MoveNext())
-                    Move(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
+            var sorted = Descending ? this.OrderByDescending(SortingSelector).ToList(): this.OrderBy(SortingSelector).ToList();
+            foreach (var item in sorted)
+            {
+                Move(IndexOf(item), sorted.IndexOf(item));
+            }
+            BlockSorting = false;
+            base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
 }

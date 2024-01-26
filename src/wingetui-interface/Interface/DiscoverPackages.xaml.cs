@@ -37,7 +37,10 @@ namespace ModernWindow.Interface
     {
         public ObservableCollection<Package> Packages = new ObservableCollection<Package>();
         public SortableObservableCollection<Package> FilteredPackages = new SortableObservableCollection<Package>() { SortingSelector = (a) => (a.Name)};
-        protected ObservableCollection<ManagerSource> UsedSources = new ObservableCollection<ManagerSource>();
+        protected List<PackageManager> UsedManagers = new();
+        protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
+        protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
+        protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
         protected MainAppBindings bindings = MainAppBindings.Instance;
 
         protected TranslatedTextBlock MainTitle;
@@ -48,8 +51,8 @@ namespace ModernWindow.Interface
         protected MenuFlyout ContextMenu;
 
         private bool IsDescending = true;
-
         private bool Initialized = false;
+        private string LastCalledQuery = "";
 
         public string InstantSearchSettingString = "DisableInstantSearchOnDiscover";
         public DiscoverPackagesPage()
@@ -75,18 +78,79 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            MainSubtitle.Text= "Loading...";
-            LoadingProgressBar.Visibility = Visibility.Visible;
+            //MainSubtitle.Text= "Loading...";
+            //LoadingProgressBar.Visibility = Visibility.Visible;
             //await this.LoadPackages();
             await this.FilterPackages(QueryBlock.Text);
-            MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
-            LoadingProgressBar.Visibility = Visibility.Collapsed;
+            //MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
+            //LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
         protected void AddPackageToSourcesList(Package package)
         {
             if (!Initialized)
                 return;
+
+            var source = package.Source;
+            if (!UsedManagers.Contains(source.Manager))
+            {
+                UsedManagers.Add(source.Manager);
+                TreeViewNode Node;
+                if (source.Manager.Capabilities.SupportsCustomSources)
+                    Node = new TreeViewNode() { Content = source.Manager.Name + ": " + source.Name};
+                else
+                    Node = new TreeViewNode() { Content = source.Manager.Name };
+                SourcesTreeView.RootNodes.Add(Node);
+                RootNodeForManager.Add(source.Manager, Node);
+                UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>() { source });
+            }
+
+            if (!UsedSourcesForManager.ContainsKey(source.Manager) && source.Manager.Capabilities.SupportsCustomSources)
+            {
+                UsedSourcesForManager[source.Manager].Add(source);
+            }
+            else if (!UsedSourcesForManager[source.Manager].Contains(source))
+            {
+                if (UsedSourcesForManager[source.Manager].Count == 1)
+                {
+                    RootNodeForManager[source.Manager].Content = source.Manager.Name;
+                    var item0 = new TreeViewNode() { Content = UsedSourcesForManager[source.Manager][0].Name };
+                    NodesForSources.Add(UsedSourcesForManager[source.Manager][0], item0);
+                    RootNodeForManager[source.Manager].Children.Add(item0);
+                }
+
+                UsedSourcesForManager[source.Manager].Add(source);
+                var item = new TreeViewNode() { Content = source.Name };
+                NodesForSources.Add(source, item);
+                RootNodeForManager[source.Manager].Children.Add(item);
+                
+            }
+        }
+
+
+        private void PackageContextMenu_AboutToShow(object sender, Package package)
+        {
+            if (!Initialized)
+                return;
+            PackageList.SelectedItem = package;
+        }
+
+        private void FilterOptionsChanged(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+            FilterPackages_SortOnly(QueryBlock.Text);
+        }
+
+        private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+            bindings.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+        }
+        private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
+        {
+            FilterPackages_SortOnly(QueryBlock.Text);
         }
 
         /*
@@ -103,42 +167,57 @@ namespace ModernWindow.Interface
                 return;
             MainSubtitle.Text = "Loading...";
             LoadingProgressBar.Visibility = Visibility.Visible;
-            var intialQuery = QueryBlock.Text;
-            Packages.Clear();
-            FilteredPackages.Clear();
-            UsedSources.Clear();
-            if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
-            {
-                MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
-                LoadingProgressBar.Visibility = Visibility.Collapsed;
-                return;
-            }
-            
-            if (intialQuery != QueryBlock.Text)
-                return;
 
-            var tasks = new List<Task<Package[]>>();
-
-            foreach(var manager in bindings.App.PackageManagerList)
+            if (LastCalledQuery.Trim() != QueryBlock.Text.Trim())
             {
-                if(manager.IsEnabled() && manager.Status.Found)
+                LastCalledQuery = QueryBlock.Text.Trim();
+                var intialQuery = QueryBlock.Text.Trim();
+                Packages.Clear();
+                FilteredPackages.Clear();
+                UsedManagers.Clear();
+                SourcesTreeView.RootNodes.Clear();
+                UsedSourcesForManager.Clear();
+                RootNodeForManager.Clear();
+                NodesForSources.Clear();
+
+
+
+                if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
                 {
-                    var task = manager.FindPackages(QueryBlock.Text);
-                    tasks.Add(task);
+                    MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
+                    LoadingProgressBar.Visibility = Visibility.Collapsed;
+                    return;
                 }
-            }
 
-            foreach(var task in tasks)
-            {
-                if (!task.IsCompleted)
-                    await task;
-                foreach (Package package in task.Result)
+                if (intialQuery != QueryBlock.Text)
+                    return;
+
+                var tasks = new List<Task<Package[]>>();
+
+                foreach (var manager in bindings.App.PackageManagerList)
                 {
-                    if (intialQuery != QueryBlock.Text)
-                        return;
-                    Packages.Add(package);
-                    AddPackageToSourcesList(package);
+                    if (manager.IsEnabled() && manager.Status.Found)
+                    {
+                        var task = manager.FindPackages(QueryBlock.Text);
+                        tasks.Add(task);
+                    }
                 }
+
+                foreach (var task in tasks)
+                {
+                    if (!task.IsCompleted)
+                        await task;
+                    foreach (Package package in task.Result)
+                    {
+                        if (intialQuery != QueryBlock.Text)
+                            return;
+                        Packages.Add(package);
+                        AddPackageToSourcesList(package);
+                    }
+                }
+            } else
+            {
+                Console.WriteLine("Query not changed, skipping");
             }
             
             MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
@@ -158,27 +237,46 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
             FilteredPackages.Clear();
-            Package[] MatchingList;
+
+
+            bool AllSourcesVisible = true;
+            List<ManagerSource> VisibleSources = new();
+            List<PackageManager> VisibleManagers = new();
+
+            if (SourcesTreeView.SelectedNodes.Count > 0)
+            {
+                AllSourcesVisible = false;
+                foreach (var node in SourcesTreeView.SelectedNodes)
+                {
+                    if (NodesForSources.ContainsValue(node))
+                        VisibleSources.Add(NodesForSources.First(x => x.Value == node).Key);
+                    else if (RootNodeForManager.ContainsValue(node))
+                        VisibleManagers.Add(RootNodeForManager.First(x => x.Value == node).Key);
+                }
+            }
+
+
+            Package[] MatchingList; 
 
             Func<string, string> CaseFunc;
             if (UpperLowerCaseCheckbox.IsChecked == true)
                 CaseFunc = (x) => { return x; };
             else
                 CaseFunc = (x) => { return x.ToLower(); };
-
+              
             Func<string, string> CharsFunc;
             if (IgnoreSpecialCharsCheckbox.IsChecked == true)
                 CharsFunc = (x) => { 
-                    var temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "");
+                    var temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
                     foreach(var entry in new Dictionary<char, string>
                         {
-                            {'a', ""},
-                            {'e', ""},
-                            {'i', ""},
-                            {'o', ""},
-                            {'u', ""},
-                            {'c', ""},
-                            {'ñ', ""},
+                            {'a', "àáäâ"},
+                            {'e', "èéëê"},
+                            {'i', "ìíïî"},
+                            {'o', "òóöô"},
+                            {'u', "ùúüû"},
+                            {'c', "ç"},
+                            {'ñ', "n"},
                         })
                     {
                         foreach(char InvalidChar in entry.Value)
@@ -198,20 +296,26 @@ namespace ModernWindow.Interface
             else // QuerySimilarResultsRadio == true
                 MatchingList = Packages.ToArray();
 
+            FilteredPackages.BlockSorting = true;
             foreach (var match in MatchingList)
             {
-                FilteredPackages.Add(match);
+                if(AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                    FilteredPackages.Add(match);
             }
+            FilteredPackages.BlockSorting = false;
+            FilteredPackages.Sort();
         }
 
         public void SortPackages(string Sorter)
         {
             if (!Initialized)
                 return;
+
             FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
             var Item = PackageList.SelectedItem;
             FilteredPackages.Sort();
+
             if (Item != null)
                 PackageList.SelectedItem = Item;
                 PackageList.ScrollIntoView(Item);
@@ -369,26 +473,5 @@ namespace ModernWindow.Interface
                 return;
         }
 
-        private void PackageContextMenu_AboutToShow(object sender, Package package)
-        {
-            if (!Initialized)
-                return;
-            PackageList.SelectedItem = package;
-        }
-
-
-        private void FilterOptionsChanged(object sender, RoutedEventArgs e)
-        {
-            if (!Initialized)
-                return;
-            FilterPackages_SortOnly(QueryBlock.Text);
-        }
-
-        private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
-        {
-            if (!Initialized)
-                return;
-            bindings.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
-        }   
     }
 }
