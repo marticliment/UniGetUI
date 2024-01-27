@@ -186,6 +186,8 @@ namespace ModernWindow.Interface
                 RootNodeForManager.Clear();
                 NodesForSources.Clear();
 
+                await Task.Delay(100);
+
                 if (intialQuery != QueryBlock.Text)
                     return;
 

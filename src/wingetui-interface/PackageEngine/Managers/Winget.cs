@@ -43,7 +43,6 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             while((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                Console.WriteLine(line);
                 if(!DashesPassed && line.Contains("---"))
                 {
                     var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
@@ -56,7 +55,6 @@ namespace ModernWindow.PackageEngine.Managers
                 {
                     string name = line[..IdIndex].Trim();
                     string id = line[IdIndex..].Trim().Split(' ')[0];
-                    Console.WriteLine(id);
                     string version = line[VersionIndex..].Trim().Split(' ')[0];
                     ManagerSource source;
                     if (SourceIndex == -1 || SourceIndex >= line.Length)
