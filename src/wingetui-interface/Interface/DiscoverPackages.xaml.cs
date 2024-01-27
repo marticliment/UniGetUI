@@ -78,12 +78,15 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
+            //BackgroundText.Text = "Loading...";
             //MainSubtitle.Text= "Loading...";
             //LoadingProgressBar.Visibility = Visibility.Visible;
             //await this.LoadPackages();
             await this.FilterPackages(QueryBlock.Text);
             //MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
             //LoadingProgressBar.Visibility = Visibility.Collapsed;
+
+            //BackgroundText.Visibility = Packages.Count() == 0? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected void AddPackageToSourcesList(Package package)
@@ -101,6 +104,7 @@ namespace ModernWindow.Interface
                 else
                     Node = new TreeViewNode() { Content = source.Manager.Name };
                 SourcesTreeView.RootNodes.Add(Node);
+                SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
                 UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>() { source });
             }
@@ -166,7 +170,16 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
             MainSubtitle.Text = "Loading...";
+            BackgroundText.Text = "Loading...";
             LoadingProgressBar.Visibility = Visibility.Visible;
+            if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
+            {
+                MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
+                LoadingProgressBar.Visibility = Visibility.Collapsed;
+                return;
+            }
+            else
+                BackgroundText.Visibility = Visibility.Collapsed;
 
             if (LastCalledQuery.Trim() != QueryBlock.Text.Trim())
             {
@@ -179,15 +192,6 @@ namespace ModernWindow.Interface
                 UsedSourcesForManager.Clear();
                 RootNodeForManager.Clear();
                 NodesForSources.Clear();
-
-
-
-                if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
-                {
-                    MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
-                    LoadingProgressBar.Visibility = Visibility.Collapsed;
-                    return;
-                }
 
                 if (intialQuery != QueryBlock.Text)
                     return;
@@ -212,6 +216,7 @@ namespace ModernWindow.Interface
                         if (intialQuery != QueryBlock.Text)
                             return;
                         Packages.Add(package);
+                        BackgroundText.Visibility = Visibility.Collapsed;
                         AddPackageToSourcesList(package);
                     }
                 }
@@ -219,7 +224,8 @@ namespace ModernWindow.Interface
             {
                 Console.WriteLine("Query not changed, skipping");
             }
-            
+
+            BackgroundText.Visibility = Packages.Count() == 0? Visibility.Visible : Visibility.Collapsed;
             MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -304,6 +310,19 @@ namespace ModernWindow.Interface
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
+
+            if(MatchingList.Count() == 0)
+            {
+                if (QueryBlock.Text == "")
+                    BackgroundText.Text = "Search for packages to start";
+                else if (QueryBlock.Text.Length < 3)
+                    BackgroundText.Text = "Please enter at least 3 characters";
+                else
+                    BackgroundText.Text = "No results were found matching the input criteria";
+                BackgroundText.Visibility = Visibility.Visible;
+            }
+            else
+                BackgroundText.Visibility = Visibility.Collapsed;
         }
 
         public void SortPackages(string Sorter)
