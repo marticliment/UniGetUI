@@ -14,7 +14,7 @@
   "About the dev" : "Über den Entwickler",
   "Action when double-clicking packages, hide successful installations" : "Aktion bei Doppelklick auf Pakete, erfolgreiche Installationen ausblenden",
   "Add a source to {0}" : "Quelle zu {0} hinzufügen",
-  "Add a timestamp to the backup files" : null,
+  "Add a timestamp to the backup files" : "Eine Zeitstempel die Backupdateien hinzufugen",
   "Add source" : "Quelle hinzufügen",
   "Administrator privileges" : "Administratorrechte",
   "Administrator privileges preferences" : "Administratorrechte Einstellungen",
