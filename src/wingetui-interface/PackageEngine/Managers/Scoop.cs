@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using ABI.System.Collections.Generic;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
@@ -15,6 +16,9 @@ namespace ModernWindow.PackageEngine.Managers;
 
 public class Scoop : PackageManagerWithSources
 {
+    new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
+    new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
+    new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
     public override async Task<Package[]> FindPackages(string query)
     {
         var Packages = new List<Package>();
@@ -59,16 +63,24 @@ public class Scoop : PackageManagerWithSources
                 var sourceName = line.Split(" ")[0].Replace("'", "");
                 if(SourceReference.ContainsKey(sourceName))
                     source = SourceReference[sourceName];
-                else{
+                else
+                {
                     Console.WriteLine("Unknown source!");
                     source = new ManagerSource(this, sourceName, new Uri("https://scoop.sh/"), 0, "Unknown");
                     SourceReference.Add(sourceName, source);
                 }
-            } else if (line.Trim() != "")
+            }
+            else if (line.Trim() != "")
             {
                 var elements = line.Trim().Split(" ");
                 if(elements.Length < 2)
                     continue;
+
+                for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    continue;
+
                 Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
             }
         }

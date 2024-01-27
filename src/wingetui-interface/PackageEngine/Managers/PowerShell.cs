@@ -16,6 +16,9 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class PowerShell : PackageManagerWithSources
     {
+        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
 
         public override async Task<Package[]> FindPackages(string query)
         {
@@ -46,18 +49,20 @@ namespace ModernWindow.PackageEngine.Managers
                 else
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if(elements.Length >= 3)
-                        if(SourceReference.ContainsKey(elements[2]))
-                            Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
-                        else
-                        {
-                            Console.WriteLine("Unknown PowerShell source!");
-                            var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
-                            Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
-                            SourceReference.Add(s.Name, s);
-                        }   
+                    if (elements.Length < 3)
+                        continue;
+
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                    if (SourceReference.ContainsKey(elements[2]))
+                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
                     else
-                        Console.WriteLine("NOLENGTH");
+                    {
+                        Console.WriteLine("Unknown PowerShell source!");
+                        var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
+                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
+                        SourceReference.Add(s.Name, s);
+                    }   
                 }
             }
 

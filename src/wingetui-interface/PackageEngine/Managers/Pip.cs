@@ -15,6 +15,9 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Pip : PackageManager
     {
+        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "WARNING:", "[notice]", "Package" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "WARNING:", "[notice]", "Package" };
+        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Ignoring", "invalid" };
         public override async Task<Package[]> FindPackages(string query)
         {
             var Packages = new List<Package>();
@@ -60,7 +63,13 @@ namespace ModernWindow.PackageEngine.Managers
                         DashesPassed = true;
                 } else {
                     string[] elements = line.Split('|');
-                    if(elements.Length >= 2)
+                    if (elements.Length < 2)
+                        continue;
+
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+                    
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }

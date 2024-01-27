@@ -5,19 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAppSDK.Runtime.Packages;
+using ModernWindow.Essentials;
 using ModernWindow.Structures;
 using Windows.Media.Core;
 
 namespace ModernWindow.PackageEngine
 {
 
-    public abstract class SingletonBase<T> where T : SingletonBase<T>
-    {
-        private static readonly Lazy<T> Lazy =
-            new(() => (Activator.CreateInstance(typeof(T), true) as T)!);
-
-        public static T Instance => Lazy.Value;
-    }
     public abstract class PackageManager : SingletonBase<PackageManager>, IPackageManager
     {
         public ManagerProperties Properties { get; set; }
@@ -30,6 +24,10 @@ namespace ModernWindow.PackageEngine
         public string Name { get; set; }
         protected MainAppBindings bindings = MainAppBindings.Instance;
         public ManagerSource MainSource { get; set; }
+
+        public static string[] FALSE_PACKAGE_NAMES = new string[] {""};
+        public static string[] FALSE_PACKAGE_IDS = new string[] {""};
+        public static string[] FALSE_PACKAGE_VERSIONS = new string[] {""};
 
         public bool ManagerReady { get; set; } = false;
 

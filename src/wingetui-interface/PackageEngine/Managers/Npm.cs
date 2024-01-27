@@ -15,6 +15,9 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Npm : PackageManager
     {
+        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
         public override async Task<Package[]> FindPackages(string query)
         {
             Process p = new Process();

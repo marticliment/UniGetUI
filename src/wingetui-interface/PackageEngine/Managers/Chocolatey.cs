@@ -15,6 +15,9 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Chocolatey : PackageManagerWithSources
     {
+        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] {"", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
+        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] {"", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
         public override async Task<Package[]> FindPackages(string query)
         {
             Process p = new Process();
@@ -37,6 +40,10 @@ namespace ModernWindow.PackageEngine.Managers
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
+                    for(int i = 0; i<elements.Length; i++) elements[i] = elements[i].Trim();
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+
                     if(elements.Length > 1)
                         Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
@@ -64,7 +71,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override ManagerSource GetMainSource()
         {
-            return new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/"));
+            return new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/"));
         }
 
         public override Task<PackageDetails> GetPackageDetails(Package package)

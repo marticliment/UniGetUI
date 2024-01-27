@@ -15,6 +15,9 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Winget : PackageManagerWithSources
     {
+        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "have", "the", "Id" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
+        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
         public override async Task<Package[]> FindPackages(string query)
         {
             var Packages = new List<Package>();

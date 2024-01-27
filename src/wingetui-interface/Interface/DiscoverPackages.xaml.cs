@@ -99,35 +99,21 @@ namespace ModernWindow.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                if (source.Manager.Capabilities.SupportsCustomSources)
-                    Node = new TreeViewNode() { Content = source.Manager.Name + ": " + source.Name};
-                else
-                    Node = new TreeViewNode() { Content = source.Manager.Name };
+                Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded=true };
                 SourcesTreeView.RootNodes.Add(Node);
                 SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
-                UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>() { source });
+                UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
+                SourcesPlaceholderText.Visibility = Visibility.Collapsed;
             }
 
-            if (!UsedSourcesForManager.ContainsKey(source.Manager) && source.Manager.Capabilities.SupportsCustomSources)
+            if ((!UsedSourcesForManager.ContainsKey(source.Manager)  || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
             {
                 UsedSourcesForManager[source.Manager].Add(source);
-            }
-            else if (!UsedSourcesForManager[source.Manager].Contains(source))
-            {
-                if (UsedSourcesForManager[source.Manager].Count == 1)
-                {
-                    RootNodeForManager[source.Manager].Content = source.Manager.Name;
-                    var item0 = new TreeViewNode() { Content = UsedSourcesForManager[source.Manager][0].Name };
-                    NodesForSources.Add(UsedSourcesForManager[source.Manager][0], item0);
-                    RootNodeForManager[source.Manager].Children.Add(item0);
-                }
-
-                UsedSourcesForManager[source.Manager].Add(source);
-                var item = new TreeViewNode() { Content = source.Name };
+                var item = new TreeViewNode() { Content = source.Name + " " };
                 NodesForSources.Add(source, item);
                 RootNodeForManager[source.Manager].Children.Add(item);
-                
+
             }
         }
 
@@ -169,20 +155,30 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            MainSubtitle.Text = "Loading...";
-            BackgroundText.Text = "Loading...";
-            LoadingProgressBar.Visibility = Visibility.Visible;
+
             if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
             {
                 MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
                 LoadingProgressBar.Visibility = Visibility.Collapsed;
+                Packages.Clear();
+                FilteredPackages.Clear();
+                UsedManagers.Clear();
+                SourcesTreeView.RootNodes.Clear();
+                UsedSourcesForManager.Clear();
+                RootNodeForManager.Clear();
+                NodesForSources.Clear();
                 return;
             }
-            else
-                BackgroundText.Visibility = Visibility.Collapsed;
+            
 
             if (LastCalledQuery.Trim() != QueryBlock.Text.Trim())
             {
+                MainSubtitle.Text = "Loading...";
+                BackgroundText.Text = "Loading...";
+                LoadingProgressBar.Visibility = Visibility.Visible;
+                SourcesPlaceholderText.Visibility = Visibility.Visible;
+                SourcesPlaceholderText.Text = "Loading...";
+
                 LastCalledQuery = QueryBlock.Text.Trim();
                 var intialQuery = QueryBlock.Text.Trim();
                 Packages.Clear();
@@ -225,8 +221,6 @@ namespace ModernWindow.Interface
                 Console.WriteLine("Query not changed, skipping");
             }
 
-            BackgroundText.Visibility = Packages.Count() == 0? Visibility.Visible : Visibility.Collapsed;
-            MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
@@ -314,15 +308,25 @@ namespace ModernWindow.Interface
             if(MatchingList.Count() == 0)
             {
                 if (QueryBlock.Text == "")
-                    BackgroundText.Text = "Search for packages to start";
+                    BackgroundText.Text = SourcesPlaceholderText.Text = "Search for packages to start";
                 else if (QueryBlock.Text.Length < 3)
+                {
                     BackgroundText.Text = "Please enter at least 3 characters";
+                    SourcesPlaceholderText.Text = "Search for packages to start";
+                }
                 else
+                {
                     BackgroundText.Text = "No results were found matching the input criteria";
+                    SourcesPlaceholderText.Text = "No packages were found";
+                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", MatchingList.Length.ToString());
+                }
                 BackgroundText.Visibility = Visibility.Visible;
             }
             else
+            {
                 BackgroundText.Visibility = Visibility.Collapsed;
+                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", MatchingList.Length.ToString());
+            }
         }
 
         public void SortPackages(string Sorter)
