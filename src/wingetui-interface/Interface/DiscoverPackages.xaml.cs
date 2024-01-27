@@ -64,7 +64,7 @@ namespace ModernWindow.Interface
             HeaderImage = __header_image;
             LoadingProgressBar = __loading_progressbar;
             Initialized = true;
-            ReloadButton.Click += async (s, e) => { await __load_packages(); } ;
+            ReloadButton.Click += async (s, e) => { LastCalledQuery = ""; await __load_packages(); } ;
             FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
             QueryBlock.TextChanged += async (s, e) => { if (InstantSearchCheckbox.IsChecked == true) await FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += async (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) await FilterPackages(QueryBlock.Text); };

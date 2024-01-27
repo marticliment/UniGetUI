@@ -562,6 +562,7 @@
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"
                     Text="{x:Bind Name}"
+                    ToolTipService.ToolTip="{x:Bind Name}"
                     />
                 <ImageIcon
                     Source="ms-appx:///wingetui/resources/ID_white.png"
@@ -572,6 +573,7 @@
                     Grid.Column="4" Grid.Row="0"
                     VerticalAlignment="Center"
                     Text="{x:Bind Id}"
+                    ToolTipService.ToolTip="{x:Bind Id}"
                     />
                 <ImageIcon
                     Source="ms-appx:///wingetui/resources/newversion_white.png"
@@ -582,6 +584,7 @@
                     Grid.Column="6" Grid.Row="0"
                     VerticalAlignment="Center"
                     Text="{x:Bind Version}"
+                    ToolTipService.ToolTip="{x:Bind Version}"
                     />
                 <!--ImageIcon
                     Source="ms-appx:///wingetui/resources/version_white.png"
@@ -604,6 +607,7 @@
                     Grid.Column="8" Grid.Row="0"
                     VerticalAlignment="Center"
                     Text="{x:Bind Source.ToString()}"
+                    ToolTipService.ToolTip="{x:Bind Source.ToString()}"
                     />
             </Grid>
         </DataTemplate>
@@ -754,7 +758,7 @@
                                 </CheckBox>
                                 <RadioButtons Margin="0,16,0,8" SelectionChanged="FilterOptionsChanged" CharacterSpacing="0">
                                     <RadioButtons.Header>
-                                        <widgets:TranslatedTextBlock Text="Compare query against:" WrappingMode="Wrap" FontSize="15" FontWeight="SemiBold"/>
+                                        <widgets:TranslatedTextBlock Text="Search mode:" WrappingMode="Wrap" FontSize="15" FontWeight="Bold"/>
                                     </RadioButtons.Header>
                                     <RadioButton x:Name="QueryNameRadio" Margin="0,-2,0,-2" Height="30">
                                         <RadioButton.Content>
@@ -794,7 +798,7 @@
 
             <!-- ACTUAL PACKAGE LIST -->
             <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  
-                BorderBrush="{ThemeResource SystemChromeMediumColor}"
+                BorderBrush="{StaticResource ExpanderContentBorderBrush}"
                 BorderThickness="1" Padding="4,6,4,6" 
                 Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                 CornerRadius="8">

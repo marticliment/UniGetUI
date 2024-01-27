@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using System.Net.Http.Headers;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -32,53 +33,51 @@ namespace ModernWindow.PackageEngine.Managers
             };
             Console.WriteLine(Status.ExecutablePath);
             p.StartInfo = startInfo;
-            Console.WriteLine("Starting winget");
             p.Start();
-            Console.WriteLine("Winget started " + query);
-
-            await Task.Run( p.WaitForExit );
-            Console.WriteLine("Process ended");
 
             string OldLine = "";
             int IdIndex = -1;
             int VersionIndex =-1;
             int SourceIndex = -1;
             bool DashesPassed = false;
-            foreach(string line in p.StandardOutput.ReadToEnd().Split('\n'))
+            string line;
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 Console.WriteLine(line);
                 if(!DashesPassed && line.Contains("---"))
                 {
-                    IdIndex = OldLine.IndexOf("SearchId");
-                    VersionIndex = OldLine.IndexOf("SearchVersion");
-                    SourceIndex = OldLine.IndexOf("SearchSource");
+                    var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
+                    IdIndex = OldLine.IndexOf(HeaderPrefix+"Id");
+                    VersionIndex = OldLine.IndexOf(HeaderPrefix+"Version");
+                    SourceIndex = OldLine.IndexOf(HeaderPrefix+"Source");
                     DashesPassed = true;
                 }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0)
+                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < line.Length && VersionIndex < line.Length)
                 {
                     string name = line[..IdIndex].Trim();
                     string id = line[IdIndex..].Trim().Split(' ')[0];
-                    //string id = line.Substring(IdIndex, line.Length-1).Trim().Split(' ')[0];
                     Console.WriteLine(id);
-                    /*string version = line.Substring(VersionIndex, line.Length-1).Trim().Split(' ')[0];
+                    string version = line[VersionIndex..].Trim().Split(' ')[0];
                     ManagerSource source;
-                    if (SourceIndex == -1)
+                    if (SourceIndex == -1 || SourceIndex >= line.Length)
                         source = MainSource;
-                    else if (!SourceReference.ContainsKey(line.Substring(SourceIndex, line.Length - 1).Trim().Split(' ')[0]))
-                    {
-                        source = new ManagerSource(this, line.Substring(SourceIndex, line.Length - 1).Trim().Split(' ')[0], new Uri(""));
-                        SourceReference.Add(source.Name, source);
-                    }
                     else
-                        source = SourceReference[line.Substring(SourceIndex, line.Length - 1).Trim().Split(' ')[0]];
-                    */
-                    //Packages.Add(new Package(name, "", "", MainSource, this));
+                    {
+                        string sourceName = line[SourceIndex..].Trim().Split(' ')[0];
+                        if (SourceReference.ContainsKey(sourceName))
+                            source = SourceReference[sourceName];
+                        else
+                        {
+                            source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
+                            SourceReference.Add(source.Name, source);
+                        }    
+                    }
+                    Packages.Add(new Package(name, id, version, source, this));
                 }
                 OldLine = line;
             }
-            Console.WriteLine("End of process");
 
-            //await p.WaitForExitAsync();
+            await Task.Run(p.WaitForExit);
 
             Console.WriteLine("Winget finished with package count " + Packages.Count());
             return Packages.ToArray();

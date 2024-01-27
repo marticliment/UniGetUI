@@ -18,7 +18,7 @@
                     <Setter Property="Background" Value="{ThemeResource ControlAltFillColorTransparent}" />
                     <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
                     <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForeground}" />
-                    <Setter Property="BorderBrush" Value="{ThemeResource SystemChromeMediumColor}" />
+                    <Setter Property="BorderBrush" Value="{ThemeResource ExpanderContentBorderBrush}" />
                     <Setter Property="BorderThickness" Value="1" />
                     <Setter Property="Padding" Value="0,0,0,0" />
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
