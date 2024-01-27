@@ -29,7 +29,7 @@
             Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
                 <widgets:NavButton x:Name="DiscoverNavButton"
                     Text="Discover Packages"
-                    Glyph="&#xE896;" Click="DiscoverNavButton_Click"
+                    Glyph="&#xF6FA;" Click="DiscoverNavButton_Click"
                     />
                 <widgets:NavButton x:Name="UpdatesNavButton"
                     Text="Software Updates"

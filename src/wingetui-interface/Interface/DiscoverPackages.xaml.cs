@@ -47,7 +47,6 @@ namespace ModernWindow.Interface
         protected TranslatedTextBlock MainSubtitle;
         protected ListView PackageList;
         protected ProgressBar LoadingProgressBar;
-        protected Image HeaderImage;
         protected MenuFlyout ContextMenu;
 
         private bool IsDescending = true;
@@ -61,7 +60,6 @@ namespace ModernWindow.Interface
             MainTitle = __main_title;
             MainSubtitle = __main_subtitle;
             PackageList = __package_list;
-            HeaderImage = __header_image;
             LoadingProgressBar = __loading_progressbar;
             Initialized = true;
             ReloadButton.Click += async (s, e) => { LastCalledQuery = ""; await __load_packages(); } ;
@@ -116,7 +114,6 @@ namespace ModernWindow.Interface
 
             }
         }
-
 
         private void PackageContextMenu_AboutToShow(object sender, Package package)
         {
@@ -349,7 +346,8 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
             MainTitle.Text = "Discover Packages";
-            HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
+            //HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
+            HeaderIcon.Glyph = "\uF6FA";
             CheckboxHeader.Content = " ";
             NameHeader.Content = bindings.Translate("Package Name");
             IdHeader.Content = bindings.Translate("Package ID");

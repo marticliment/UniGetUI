@@ -639,11 +639,13 @@
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" x:Name="__header_image"
+            <!--Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" x:Name="__header_image"
                    Source="ms-appx:///wingetui/resources/desktop_download.png" 
                    Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Height="64" Width="60"
-            />
+            /-->
+            <FontIcon Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
+                x:Name="HeaderIcon" FontSize="50" FontWeight="Normal" Height="60" Width="60"/>
             <widgets:TranslatedTextBlock x:Name="__main_title"
                 Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" 
                 Text="TITLE" FontSize="30" Height="48"
