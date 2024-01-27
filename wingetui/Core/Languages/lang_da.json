@@ -439,7 +439,7 @@
   "{0} succeeded" : "{0} lykkedes",
   "{0} update" : "{0} opdater",
   "{0} was {1} successfully!" : null,
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@mikkolukas",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@mikkolukas, @yrjarv",
   "{0} {1} failed" : "{0} {1} fejlede",
   "{pm} could not be found" : null,
   "{pm} found: {state}" : null,

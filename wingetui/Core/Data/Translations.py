@@ -6,7 +6,6 @@ untranslatedPercentage = {
   "bn": "45%",
   "cs": "94%",
   "da": "29%",
-  "de": "99%",
   "el": "72%",
   "fa": "71%",
   "fi": "0%",
@@ -81,6 +80,10 @@ languageCredits = {
     {
       "name": "mikkolukas",
       "link": "https://github.com/mikkolukas"
+    },
+    {
+      "name": "yrjarv",
+      "link": "https://github.com/yrjarv"
     }
   ],
   "de": [
@@ -284,8 +287,12 @@ languageCredits = {
   ],
   "nb": [
     {
-      "name": "jomaskm",
-      "link": "https://github.com/jomaskm"
+      "name": "jonaskm",
+      "link": "https://github.com/jonaskm"
+    },
+    {
+      "name": "yrjarv",
+      "link": "https://github.com/yrjarv"
     }
   ],
   "nl": [
