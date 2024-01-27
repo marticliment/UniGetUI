@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11698,
-        "done": 4996,
-        "packages_with_icon": 4996,
-        "packages_with_screenshot": 534,
-        "total_screenshots": 1694
+        "done": 4998,
+        "packages_with_icon": 4998,
+        "packages_with_screenshot": 535,
+        "total_screenshots": 1690
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -212,8 +212,10 @@
             "images": []
         },
         "4k-video-downloader": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/ZKVs8Jf2/4k-video-downloader-icon.png",
+            "images": [
+                "https://i.postimg.cc/ncHw9X1q/4k-video-downloader-1.png"
+            ]
         },
         "4k-video-to-mp3": {
             "icon": "https://community.chocolatey.org/content/packageimages/4k-video-to-mp3.3.0.1.png",
@@ -315,40 +317,35 @@
             "images": []
         },
         "7zip": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://a.fsdn.com/con/app/proj/sevenzip/screenshots/534500_4.png",
-                "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c-1200-80.jpg",
-                "https://www.wikihow.com/images/thumb/e/e2/Highly-Compress-Files-with-7zip-Step-3.jpg/v4-460px-Highly-Compress-Files-with-7zip-Step-3.jpg"
+                "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png"
             ]
         },
         "7zip-alpha-exe": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://a.fsdn.com/con/app/proj/sevenzip/screenshots/534500_4.png",
-                "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c-1200-80.jpg",
-                "https://www.wikihow.com/images/thumb/e/e2/Highly-Compress-Files-with-7zip-Step-3.jpg/v4-460px-Highly-Compress-Files-with-7zip-Step-3.jpg"
+                "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png"
             ]
         },
         "7zip-alpha-msi": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://a.fsdn.com/con/app/proj/sevenzip/screenshots/534500_4.png",
-                "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c-1200-80.jpg",
-                "https://www.wikihow.com/images/thumb/e/e2/Highly-Compress-Files-with-7zip-Step-3.jpg/v4-460px-Highly-Compress-Files-with-7zip-Step-3.jpg"
+                "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png"
             ]
         },
         "7zip-commandline": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": []
         },
         "7zip-zstd": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://mcmilk.de/projects/7-Zip-zstd/Fileman.png",
-                "https://mcmilk.de/projects/7-Zip-zstd/Methods.png",
-                "https://mcmilk.de/projects/7-Zip-zstd/Add-To-Archive.png",
-                "https://mcmilk.de/projects/7-Zip-zstd/dl/compr-v120.png"
+                "https://i.postimg.cc/qvcFN2Pc/7zip-zstd-1.png",
+                "https://i.postimg.cc/d3THwCRy/7zip-zstd-2.png",
+                "https://i.postimg.cc/1tX772fM/7zip-zstd-3.png",
+                "https://i.postimg.cc/SsPTBd94/7zip-zstd-4.png",
+                "https://i.postimg.cc/9fJNpCFr/7zip-zstd-5.png"
             ]
         },
         "7zip19-00-helper": {
