@@ -117,7 +117,7 @@ namespace ModernWindow.Structures
                 else 
                     newName += name[i];
             }
-            return name;
+            return newName;
         }
     }
 
