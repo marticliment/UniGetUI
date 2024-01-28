@@ -172,12 +172,14 @@ namespace ModernWindow.Interface
             {
                 if (!task.IsCompleted)
                     await task;
-                foreach (Package package in task.Result)
-                {
-                    Packages.Add(package);
-                    BackgroundText.Visibility = Visibility.Collapsed;
-                    AddPackageToSourcesList(package);
-                }
+
+                if (task.IsCompletedSuccessfully)
+                    foreach (Package package in task.Result)
+                    {
+                        Packages.Add(package);
+                        BackgroundText.Visibility = Visibility.Collapsed;
+                        AddPackageToSourcesList(package);
+                    }
             }
 
             FilterPackages(QueryBlock.Text);

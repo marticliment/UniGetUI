@@ -90,12 +90,117 @@ public class Scoop : PackageManagerWithSources
 
     public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
     {
-        throw new NotImplementedException();
+        var PackageSources = new Dictionary<string, ManagerSource>();
+        foreach(var InstalledPackage in await GetInstalledPackages())
+        {
+            if (!PackageSources.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
+                PackageSources.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage.Source);
+        }
+
+        var Packages = new List<UpgradablePackage>();
+
+        Process p = new Process()
+        {
+            StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " status",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        p.Start();
+
+        string line;
+        bool DashesPassed = false;
+        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        {
+            if (!DashesPassed)
+            {
+                if(line.Contains("---"))
+                    DashesPassed = true;
+            }
+            else if (line.Trim() != "")
+            {
+                var elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
+                if (elements.Length < 3)
+                    continue;
+
+                for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    continue;
+
+                if(!PackageSources.ContainsKey(elements[0] + "." + elements[1]))
+                {
+                    Console.WriteLine("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
+                    continue;
+                }
+
+                Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], PackageSources[elements[0] + "." + elements[1]], this));
+            }
+        }
+        return Packages.ToArray();
     }
 
     public override async Task<Package[]> GetInstalledPackages_UnSafe()
     {
-        throw new NotImplementedException();
+        var Packages = new List<Package>();
+
+        Process p = new Process()
+        {
+            StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " list",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        p.Start();
+
+        string line;
+        bool DashesPassed = false;
+        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        {
+
+            if (!DashesPassed)
+            {
+                if (line.Contains("---"))
+                    DashesPassed = true;
+            }
+            else if (line.Trim() != "")
+            {
+                var elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
+                if (elements.Length < 3)
+                    continue;
+
+                for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    continue;
+
+                ManagerSource source;
+                var sourceName = elements[2];
+                if (SourceReference.ContainsKey(sourceName))
+                    source = SourceReference[sourceName];
+                else
+                {
+                    Console.WriteLine("Unknown source!");
+                    source = new ManagerSource(this, sourceName, new Uri("https://scoop.sh/"), 0, "Unknown");
+                    SourceReference.Add(sourceName, source);
+                }
+
+                Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], source, this));
+            }
+        }
+        return Packages.ToArray();
     }
 
     public override string[] GetInstallParameters(Package package, InstallationOptions options)

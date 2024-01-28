@@ -206,14 +206,16 @@ namespace ModernWindow.Interface
                 {
                     if (!task.IsCompleted)
                         await task;
-                    foreach (Package package in task.Result)
-                    {
-                        if (intialQuery != QueryBlock.Text)
-                            return;
-                        Packages.Add(package);
-                        BackgroundText.Visibility = Visibility.Collapsed;
-                        AddPackageToSourcesList(package);
-                    }
+
+                    if (task.IsCompletedSuccessfully)
+                        foreach (Package package in task.Result)
+                        {
+                            if (intialQuery != QueryBlock.Text)
+                                return;
+                            Packages.Add(package);
+                            BackgroundText.Visibility = Visibility.Collapsed;
+                            AddPackageToSourcesList(package);
+                        }
                 }
             } else
             {
@@ -355,14 +357,12 @@ namespace ModernWindow.Interface
             NameHeader.Content = bindings.Translate("Package Name");
             IdHeader.Content = bindings.Translate("Package ID");
             VersionHeader.Content = bindings.Translate("Version");
-            // NewVersionHeader.Content = bindings.Translate("New version");
             SourceHeader.Content = bindings.Translate("Source");
 
             CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
             IdHeader.Click += (s, e) => { SortPackages("Id"); };
             VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
-            // NewVersionHeader.Click += (s, e) => { SortPackages("NewVersionAsFloat"); };
             SourceHeader.Click += (s, e) => { SortPackages("SourceAsString"); };
         }
 
