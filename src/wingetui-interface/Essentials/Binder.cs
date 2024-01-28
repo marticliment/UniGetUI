@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 
 namespace ModernWindow.Structures
 {
@@ -92,7 +93,12 @@ namespace ModernWindow.Structures
                 }
             };
             process.Start();
-            string output = (await process.StandardOutput.ReadLineAsync()).Trim();
+            var line = await process.StandardOutput.ReadLineAsync();
+            string output;
+            if (line == null)
+                output = "";
+            else
+                output = line.Trim();
             await process.WaitForExitAsync();
             if(process.ExitCode != 0 || output == "")
                 return Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command);
