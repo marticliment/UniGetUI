@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -19,11 +20,11 @@ public class Scoop : PackageManagerWithSources
     new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
     new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
     new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
-    public override async Task<Package[]> FindPackages(string query)
+    public override async Task<Package[]> FindPackages_UnSafe(string query)
     {
         var Packages = new List<Package>();
 
-        string path = await bindings.Which("scoop-search");
+        string path = await bindings.Which("scoop-search.exe");
         if(!File.Exists(path))
             {
                 Process proc = new Process() {
@@ -87,12 +88,12 @@ public class Scoop : PackageManagerWithSources
         return Packages.ToArray();
     }
 
-    public override Task<UpgradablePackage[]> GetAvailableUpdates()
+    public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
     {
         throw new NotImplementedException();
     }
 
-    public override Task<Package[]> GetInstalledPackages()
+    public override async Task<Package[]> GetInstalledPackages_UnSafe()
     {
         throw new NotImplementedException();
     }
@@ -107,12 +108,12 @@ public class Scoop : PackageManagerWithSources
         return new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main"), 0, "");
     }
 
-    public override Task<PackageDetails> GetPackageDetails(Package package)
+    public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
     {
         throw new NotImplementedException();
     }
 
-    public override async Task<ManagerSource[]> GetSources()
+    public override async Task<ManagerSource[]> GetSources_UnSafe()
     {
         Console.WriteLine("🔵 Starting " + Name + " source search...");
         using (Process process = new Process())
@@ -133,7 +134,6 @@ public class Scoop : PackageManagerWithSources
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
-                Debug.WriteLine(line);
                 try
                 {
                     string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
@@ -141,8 +141,6 @@ public class Scoop : PackageManagerWithSources
                         sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
                     else if (elements.Length >= 2)
                         sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), 0, "Unknown"));
-                    else if (elements.Length >= 1)
-                        sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(""), 0, "Unknown"));
                 }
                 catch (Exception e)
                 {

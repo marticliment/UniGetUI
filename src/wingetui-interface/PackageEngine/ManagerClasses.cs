@@ -73,10 +73,58 @@ namespace ModernWindow.PackageEngine
             return !bindings.GetSettings("Disable"+Name);
         }
 
-        public abstract Task<Package[]> FindPackages(string query);
-        public abstract Task<UpgradablePackage[]> GetAvailableUpdates();
-        public abstract Task<Package[]> GetInstalledPackages();
-        public abstract Task<PackageDetails> GetPackageDetails(Package package);
+        public virtual async Task<Package[]> FindPackages(string query)
+        {
+            try
+            {
+                return await FindPackages_UnSafe(query);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error finding packages on manager " + Name + " with query "  + query +  ": \n" + e.ToString());
+                return new Package[] { };
+            }
+        }
+        public virtual async Task<UpgradablePackage[]> GetAvailableUpdates()
+        {
+            try
+            {
+                return await GetAvailableUpdates_UnSafe();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error finding updates on manager " + Name + ": \n" + e.ToString());
+                return new UpgradablePackage[] { };
+            }
+        }
+        public virtual async Task<Package[]> GetInstalledPackages()
+        {
+            try
+            {
+                return await GetInstalledPackages_UnSafe();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
+                return new Package[] { };
+            }
+        }
+        public virtual async Task<PackageDetails> GetPackageDetails(Package package)
+        {
+            try
+            {
+                return await GetPackageDetails_UnSafe(package);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error getting package details on manager " + Name + " for package id=" + package.Id +": \n" + e.ToString());
+                return new PackageDetails(package);
+            }
+        }
+        public abstract Task<Package[]> FindPackages_UnSafe(string query);
+        public abstract Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe();
+        public abstract Task<Package[]> GetInstalledPackages_UnSafe();
+        public abstract Task<PackageDetails> GetPackageDetails_UnSafe(Package package);
         public abstract string[] GetInstallParameters(Package package, InstallationOptions options);
         public abstract string[] GetUpdateParameters(Package package, InstallationOptions options);
         public abstract string[] GetUninstallParameters(Package package, InstallationOptions options);
@@ -98,7 +146,19 @@ namespace ModernWindow.PackageEngine
         public ManagerSource[] Sources { get; set; }
         public ManagerSource[] DefaultSources { get; set; }
         public Dictionary<string, ManagerSource> SourceReference = new Dictionary<string, ManagerSource>();
-        public abstract Task<ManagerSource[]> GetSources();
+        public virtual async Task<ManagerSource[]> GetSources()
+        {
+            try
+            {
+                return await GetSources_UnSafe();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error finding sources for manager " + Name + ": \n" + e.ToString());
+                return new ManagerSource[] { };
+            }
+        }
+        public abstract Task<ManagerSource[]> GetSources_UnSafe();
     }
 
     public class ManagerStatus

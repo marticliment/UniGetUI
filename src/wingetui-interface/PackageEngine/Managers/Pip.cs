@@ -18,7 +18,7 @@ namespace ModernWindow.PackageEngine.Managers
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "WARNING:", "[notice]", "Package" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "WARNING:", "[notice]", "Package" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Ignoring", "invalid" };
-        public override async Task<Package[]> FindPackages(string query)
+        public override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             var Packages = new List<Package>();
 
@@ -76,12 +76,12 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override Task<UpgradablePackage[]> GetAvailableUpdates()
+        public override Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             throw new NotImplementedException();
         }
 
-        public override Task<Package[]> GetInstalledPackages()
+        public override Task<Package[]> GetInstalledPackages_UnSafe()
         {
             throw new NotImplementedException();
         }
@@ -96,7 +96,7 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "pip", new Uri("https://pypi.org/"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails(Package package)
+        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
             throw new NotImplementedException();
         }
