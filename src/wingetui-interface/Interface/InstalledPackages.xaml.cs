@@ -33,10 +33,10 @@ using Windows.Foundation.Collections;
 namespace ModernWindow.Interface
 {
 
-    public partial class DiscoverPackagesPage : Page
+    public partial class InstalledPackagesPage : Page
     {
         public ObservableCollection<Package> Packages = new ObservableCollection<Package>();
-        public SortableObservableCollection<Package> FilteredPackages = new SortableObservableCollection<Package>() { SortingSelector = (a) => (a.Name)};
+        public SortableObservableCollection<Package> FilteredPackages = new SortableObservableCollection<Package>() { SortingSelector = (a) => (a.Name) };
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
@@ -51,40 +51,25 @@ namespace ModernWindow.Interface
 
         private bool IsDescending = true;
         private bool Initialized = false;
-        private string LastCalledQuery = "";
 
-        public string InstantSearchSettingString = "DisableInstantSearchDiscoverTab";
-        public DiscoverPackagesPage()
+        public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
+        public InstalledPackagesPage()
         {
             this.InitializeComponent();
             MainTitle = __main_title;
             MainSubtitle = __main_subtitle;
             PackageList = __package_list;
             LoadingProgressBar = __loading_progressbar;
+            LoadingProgressBar.Visibility = Visibility.Collapsed;
             Initialized = true;
-            ReloadButton.Click += async (s, e) => { LastCalledQuery = ""; await __load_packages(); } ;
-            FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
-            QueryBlock.TextChanged += async (s, e) => { if (InstantSearchCheckbox.IsChecked == true) await FilterPackages(QueryBlock.Text); };
-            QueryBlock.KeyUp += async (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) await FilterPackages(QueryBlock.Text); };
+            ReloadButton.Click += async (s, e) => { await LoadPackages(); };
+            FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
+            QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
+            QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) FilterPackages(QueryBlock.Text); };
             PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
             GenerateToolBar();
             LoadInterface();
-            _ = __load_packages();
-        }
-
-        protected async Task __load_packages()
-        {
-            if (!Initialized)
-                return;
-            //BackgroundText.Text = "Loading...";
-            //MainSubtitle.Text= "Loading...";
-            //LoadingProgressBar.Visibility = Visibility.Visible;
-            //await this.LoadPackages();
-            await this.FilterPackages(QueryBlock.Text);
-            //MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
-            //LoadingProgressBar.Visibility = Visibility.Collapsed;
-
-            //BackgroundText.Visibility = Packages.Count() == 0? Visibility.Visible : Visibility.Collapsed;
+            _ = LoadPackages();
         }
 
         protected void AddPackageToSourcesList(Package package)
@@ -97,7 +82,7 @@ namespace ModernWindow.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded=true };
+                Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded = true };
                 SourcesTreeView.RootNodes.Add(Node);
                 SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
@@ -105,7 +90,7 @@ namespace ModernWindow.Interface
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
             }
 
-            if ((!UsedSourcesForManager.ContainsKey(source.Manager)  || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
+            if ((!UsedSourcesForManager.ContainsKey(source.Manager) || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
             {
                 UsedSourcesForManager[source.Manager].Add(source);
                 var item = new TreeViewNode() { Content = source.Name + " " };
@@ -126,7 +111,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            FilterPackages_SortOnly(QueryBlock.Text);
+            FilterPackages(QueryBlock.Text);
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
@@ -137,7 +122,7 @@ namespace ModernWindow.Interface
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
-            FilterPackages_SortOnly(QueryBlock.Text);
+            FilterPackages(QueryBlock.Text);
         }
 
         /*
@@ -153,91 +138,59 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
 
-            if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
+            if (LoadingProgressBar.Visibility == Visibility.Visible)
+                return; // If already loading, don't load again
+
+            MainSubtitle.Text = "Loading...";
+            BackgroundText.Text = "Loading...";
+            LoadingProgressBar.Visibility = Visibility.Visible;
+            SourcesPlaceholderText.Visibility = Visibility.Visible;
+            SourcesPlaceholderText.Text = "Loading...";
+
+            Packages.Clear();
+            FilteredPackages.Clear();
+            UsedManagers.Clear();
+            SourcesTreeView.RootNodes.Clear();
+            UsedSourcesForManager.Clear();
+            RootNodeForManager.Clear();
+            NodesForSources.Clear();
+
+            await Task.Delay(100);
+
+            var tasks = new List<Task<Package[]>>();
+
+            foreach (var manager in bindings.App.PackageManagerList)
             {
-                MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
-                LoadingProgressBar.Visibility = Visibility.Collapsed;
-                Packages.Clear();
-                FilteredPackages.Clear();
-                UsedManagers.Clear();
-                SourcesTreeView.RootNodes.Clear();
-                UsedSourcesForManager.Clear();
-                RootNodeForManager.Clear();
-                NodesForSources.Clear();
-                return;
-            }
-            
-
-            if (LastCalledQuery.Trim() != QueryBlock.Text.Trim())
-            {
-                MainSubtitle.Text = "Loading...";
-                BackgroundText.Text = "Loading...";
-                LoadingProgressBar.Visibility = Visibility.Visible;
-                SourcesPlaceholderText.Visibility = Visibility.Visible;
-                SourcesPlaceholderText.Text = "Loading...";
-
-                LastCalledQuery = QueryBlock.Text.Trim();
-                var intialQuery = QueryBlock.Text.Trim();
-                Packages.Clear();
-                FilteredPackages.Clear();
-                UsedManagers.Clear();
-                SourcesTreeView.RootNodes.Clear();
-                UsedSourcesForManager.Clear();
-                RootNodeForManager.Clear();
-                NodesForSources.Clear();
-
-                await Task.Delay(100);
-
-                if (intialQuery != QueryBlock.Text)
-                    return;
-
-                var tasks = new List<Task<Package[]>>();
-
-                foreach (var manager in bindings.App.PackageManagerList)
+                if (manager.IsEnabled() && manager.Status.Found)
                 {
-                    if (manager.IsEnabled() && manager.Status.Found)
-                    {
-                        var task = manager.FindPackages(QueryBlock.Text);
-                        tasks.Add(task);
-                    }
+                    var task = manager.GetInstalledPackages();
+                    tasks.Add(task);
                 }
-
-                foreach (var task in tasks)
-                {
-                    if (!task.IsCompleted)
-                        await task;
-                    foreach (Package package in task.Result)
-                    {
-                        if (intialQuery != QueryBlock.Text)
-                            return;
-                        Packages.Add(package);
-                        BackgroundText.Visibility = Visibility.Collapsed;
-                        AddPackageToSourcesList(package);
-                    }
-                }
-            } else
-            {
-                Console.WriteLine("Query not changed, skipping");
             }
+
+            foreach (var task in tasks)
+            {
+                if (!task.IsCompleted)
+                    await task;
+                foreach (Package package in task.Result)
+                {
+                    Packages.Add(package);
+                    BackgroundText.Visibility = Visibility.Collapsed;
+                    AddPackageToSourcesList(package);
+                }
+            }
+
+            FilterPackages(QueryBlock.Text);
 
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        public async Task FilterPackages(string query)
+        public void FilterPackages(string query)
         {
             if (!Initialized)
                 return;
-            await LoadPackages();
-            FilterPackages_SortOnly(query);
-        }
 
-        public void FilterPackages_SortOnly(string query)
-        {
-            if (!Initialized)
-                return;
             FilteredPackages.Clear();
-
-
             bool AllSourcesVisible = true;
             List<ManagerSource> VisibleSources = new();
             List<PackageManager> VisibleManagers = new();
@@ -255,19 +208,19 @@ namespace ModernWindow.Interface
             }
 
 
-            Package[] MatchingList; 
+            Package[] MatchingList;
 
             Func<string, string> CaseFunc;
             if (UpperLowerCaseCheckbox.IsChecked == true)
                 CaseFunc = (x) => { return x; };
             else
                 CaseFunc = (x) => { return x.ToLower(); };
-              
+
             Func<string, string> CharsFunc;
             if (IgnoreSpecialCharsCheckbox.IsChecked == true)
-                CharsFunc = (x) => { 
+                CharsFunc = (x) => {
                     var temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
-                    foreach(var entry in new Dictionary<char, string>
+                    foreach (var entry in new Dictionary<char, string>
                         {
                             {'a', "àáäâ"},
                             {'e', "èéëê"},
@@ -279,7 +232,7 @@ namespace ModernWindow.Interface
                             {'ñ', "n"},
                         })
                     {
-                        foreach(char InvalidChar in entry.Value)
+                        foreach (char InvalidChar in entry.Value)
                             x = x.Replace(InvalidChar, entry.Key);
                     }
                     return temp_x;
@@ -291,28 +244,25 @@ namespace ModernWindow.Interface
                 MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query))).ToArray();
             else if (QueryNameRadio.IsChecked == true)
                 MatchingList = Packages.Where(x => CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
-            else if (QueryBothRadio.IsChecked == true)
+            else // QueryBothRadio.IsChecked == true
                 MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query)) | CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
-            else // QuerySimilarResultsRadio == true
-                MatchingList = Packages.ToArray();
 
             FilteredPackages.BlockSorting = true;
             foreach (var match in MatchingList)
             {
-                if(AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if (AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
 
-            if(MatchingList.Count() == 0)
+            if (MatchingList.Count() == 0)
             {
-                if (QueryBlock.Text == "")
-                    BackgroundText.Text = SourcesPlaceholderText.Text = "Search for packages to start";
-                else if (QueryBlock.Text.Length < 3)
+                if (Packages.Count() == 0)
                 {
-                    BackgroundText.Text = "Please enter at least 3 characters";
-                    SourcesPlaceholderText.Text = "Search for packages to start";
+                    BackgroundText.Text = SourcesPlaceholderText.Text = "We couldn't find any package";
+                    SourcesPlaceholderText.Text = "No sources found";
+                    MainSubtitle.Text = "No packages found";
                 }
                 else
                 {
@@ -341,28 +291,25 @@ namespace ModernWindow.Interface
 
             if (Item != null)
                 PackageList.SelectedItem = Item;
-                PackageList.ScrollIntoView(Item);
+            PackageList.ScrollIntoView(Item);
         }
 
         public void LoadInterface()
         {
             if (!Initialized)
                 return;
-            MainTitle.Text = "Discover Packages";
-            //HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
-            HeaderIcon.Glyph = "\uF6FA";
+            MainTitle.Text = "Installed Packages";
+            HeaderIcon.Glyph = "\uE977";
             CheckboxHeader.Content = " ";
             NameHeader.Content = bindings.Translate("Package Name");
             IdHeader.Content = bindings.Translate("Package ID");
             VersionHeader.Content = bindings.Translate("Version");
-            // NewVersionHeader.Content = bindings.Translate("New version");
             SourceHeader.Content = bindings.Translate("Source");
 
             CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
             IdHeader.Click += (s, e) => { SortPackages("Id"); };
             VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
-            // NewVersionHeader.Click += (s, e) => { SortPackages("NewVersionAsFloat"); };
             SourceHeader.Click += (s, e) => { SortPackages("SourceAsString"); };
         }
 
@@ -373,7 +320,6 @@ namespace ModernWindow.Interface
                 return;
             var InstallSelected = new AppBarButton();
             var InstallAsAdmin = new AppBarButton();
-            var InstallSkipHash = new AppBarButton();
             var InstallInteractive = new AppBarButton();
 
             var PackageDetails = new AppBarButton();
@@ -382,14 +328,13 @@ namespace ModernWindow.Interface
             var SelectAll = new AppBarButton();
             var SelectNone = new AppBarButton();
 
-            var ImportPackages = new AppBarButton();
+            var IgnoreSelected = new AppBarButton();
             var ExportSelection = new AppBarButton();
 
             var HelpButton = new AppBarButton();
 
             ToolBar.PrimaryCommands.Add(InstallSelected);
             ToolBar.PrimaryCommands.Add(InstallAsAdmin);
-            ToolBar.PrimaryCommands.Add(InstallSkipHash);
             ToolBar.PrimaryCommands.Add(InstallInteractive);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
@@ -398,7 +343,7 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(SelectAll);
             ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(ImportPackages);
+            ToolBar.PrimaryCommands.Add(IgnoreSelected);
             ToolBar.PrimaryCommands.Add(ExportSelection);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
@@ -406,38 +351,36 @@ namespace ModernWindow.Interface
             var Labels = new Dictionary<AppBarButton, string>
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { InstallSelected,      "Install selected packages" },
-                { InstallAsAdmin,       " Install as administrator" },
-                { InstallSkipHash,      " Skip integrity checks" },
-                { InstallInteractive,   " Interactive installation" },
+                { InstallSelected,      "Uninstall selected packages" },
+                { InstallAsAdmin,       " Uninstall as administrator" },
+                { InstallInteractive,   " Interactive uninstallation" },
                 { PackageDetails,       " Package details" },
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
                 { SelectNone,           " Clear selection" },
-                { ImportPackages,       "Import packages" },
+                { IgnoreSelected,       "Ignore selected packages" },
                 { ExportSelection,      "Export selected packages" },
                 { HelpButton,           "Help" }
             };
 
-            foreach(var toolButton in Labels.Keys)
+            foreach (var toolButton in Labels.Keys)
             {
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
-                if(toolButton.IsCompact)
+                if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
                 toolButton.Label = bindings.Translate(Labels[toolButton].Trim());
             }
 
             var Icons = new Dictionary<AppBarButton, string>
             {
-                { InstallSelected,      "install" },
+                { InstallSelected,      "menu_uninstall" },
                 { InstallAsAdmin,       "runasadmin" },
-                { InstallSkipHash,      "checksum" },
                 { InstallInteractive,   "interactive" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
                 { SelectNone,           "selectnone" },
-                { ImportPackages,       "import" },
+                { IgnoreSelected,       "pin" },
                 { ExportSelection,      "export" },
                 { HelpButton,           "help" }
             };
@@ -447,20 +390,56 @@ namespace ModernWindow.Interface
 
             InstallSelected.IsEnabled = false;
             InstallAsAdmin.IsEnabled = false;
-            InstallSkipHash.IsEnabled = false;
             InstallInteractive.IsEnabled = false;
             PackageDetails.IsEnabled = false;
-            ImportPackages.IsEnabled = false;
+            IgnoreSelected.IsEnabled = false;
             ExportSelection.IsEnabled = false;
             HelpButton.IsEnabled = false;
 
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
-            SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages_SortOnly(QueryBlock.Text); };
-            SelectNone.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = false; FilterPackages_SortOnly(QueryBlock.Text); };
+            SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages(QueryBlock.Text); };
+            SelectNone.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = false; FilterPackages(QueryBlock.Text); };
 
         }
-        private void MenuDetails_Invoked(object sender, Package package)
+
+        private void MenuUninstall_Invoked(object sender, Package e)
+        {
+            if (!Initialized)
+                return;
+        }
+
+        private void MenuAsAdmin_Invoked(object sender, Package e)
+        {
+            if (!Initialized)
+                return;
+        }
+
+        private void MenuInteractive_Invoked(object sender, Package e)
+        {
+            if (!Initialized)
+                return;
+        }
+
+        private void MenuRemoveData_Invoked(object sender, Package e)
+        {
+            if (!Initialized)
+                return;
+        }
+
+        private void MenuReinstall_Invoked(object sender, Package e)
+        {
+            if (!Initialized)
+                return;
+        }
+
+        private void MenuUninstallThenReinstall_Invoked(object sender, Package e)
+        {
+            if (!Initialized)
+                return;
+        }
+
+        private void MenuIgnorePackage_Invoked(object sender, Package e)
         {
             if (!Initialized)
                 return;
@@ -473,29 +452,10 @@ namespace ModernWindow.Interface
             bindings.App.mainWindow.SharePackage(package);
         }
 
-        private void MenuInstall_Invoked(object sender, Package package)
+        private void MenuDetails_Invoked(object sender, Package e)
         {
             if (!Initialized)
                 return;
         }
-
-        private void MenuSkipHash_Invoked(object sender, Package package)
-        {
-            if (!Initialized)
-                return;
-        }
-
-        private void MenuInteractive_Invoked(object sender, Package package)
-        {
-            if (!Initialized)
-                return;
-        }
-
-        private void MenuAsAdmin_Invoked(object sender, Package package)
-        {
-            if (!Initialized)
-                return;
-        }
-
     }
 }

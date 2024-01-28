@@ -61,14 +61,18 @@ namespace ModernWindow.Interface.Widgets
                     {
                         Height = 58 + 14;
                         VariableGrid.RowDefinitions[1].Height = new GridLength(26 + 14);
-                        TextBlock.Height = 18 + 14;  
-                    } else
+                        TextBlock.Height = 18 + 14;
+                        TextBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                        TextBlock.VerticalAlignment = VerticalAlignment.Center;
+                        TextBlock.TextAlignment = TextAlignment.Center;
+                    }
+                    else
                     {
                         Height = 58;
                         TextBlock.Height = 18;
                         VariableGrid.RowDefinitions[1].Height = new GridLength(26);
                     }
-                    TextBlock.Text = val; 
+                    TextBlock.Text = bindings.Translate(val).Replace(" ", "\x0a"); 
                 }))
             );
 

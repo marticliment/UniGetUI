@@ -24,50 +24,46 @@ namespace ModernWindow.Interface
     {
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
-        public Page UpdatesPage = new Page();
-        public Page InstalledPage = new Page();
+        public SoftwareUpdatesPage UpdatesPage;
+        public InstalledPackagesPage InstalledPage;
         public Type OldPage;
         public NavigationPage()
         {
             this.InitializeComponent();
             SettingsPage = new SettingsInterface();
             DiscoverPage = new DiscoverPackagesPage();
+            UpdatesPage = new SoftwareUpdatesPage();
+            InstalledPage = new InstalledPackagesPage();
             DiscoverNavButton.ForceClick();
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
             MainContentPresenter.Navigate(typeof(DiscoverPackagesPage), new DrillInNavigationTransitionInfo());
-            //ContentPresenterScrollBar.CornerRadius = new CornerRadius(6, 0, 0, 0);
         }
 
         private void InstalledNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
-            //ContentPresenterScrollBar.CornerRadius = new CornerRadius(12, 0, 0, 0);
+            MainContentPresenter.Navigate(typeof(InstalledPackagesPage), new DrillInNavigationTransitionInfo());
         }
 
         private void UpdatesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            //ContentPresenterScrollBar.CornerRadius = new CornerRadius(12, 0, 0, 0);
-            MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
+            MainContentPresenter.Navigate(typeof(SoftwareUpdatesPage), new DrillInNavigationTransitionInfo());
         }
 
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            //ContentPresenterScrollBar.CornerRadius = new CornerRadius(12, 0, 0, 0);
             MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
         }
 
         private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            //ContentPresenterScrollBar.CornerRadius = new CornerRadius(12, 0, 0, 0);
-            MainContentPresenter.Navigate(typeof(SettingsInterface), new EntranceNavigationTransitionInfo());
+            MainContentPresenter.Navigate(typeof(SettingsInterface), new DrillInNavigationTransitionInfo());
         }
 
         private void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            //ContentPresenterScrollBar.CornerRadius = new CornerRadius(12, 0, 0, 0);
             MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
         }
     }

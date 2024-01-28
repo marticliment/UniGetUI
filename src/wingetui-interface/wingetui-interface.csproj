@@ -43,7 +43,9 @@
 
   <ItemGroup>
     <None Remove="Interface\DiscoverPackages.xaml" />
+    <None Remove="Interface\InstalledPackages.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
+    <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
   </ItemGroup>
@@ -66,6 +68,14 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Interface\InstalledPackages.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Interface\SoftwareUpdates.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="SettingsTab\Widgets\SourceManager.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

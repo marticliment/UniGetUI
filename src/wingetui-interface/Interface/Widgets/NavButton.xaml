@@ -147,13 +147,12 @@
                 <FontIcon 
                 Grid.Row="0" x:Name="IconBlock"
                 FontSize="16" VerticalAlignment="Bottom"/>
-                <widgets:TranslatedTextBlock
+                <TextBlock
                     x:Name="TextBlock"
                     FontSize="11" Grid.Row="1" 
                     Height="32" VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    WrappingMode="Wrap"
-                    HorizontalContentAlignment="Center"
+                    TextWrapping="Wrap"
                 />
             </Grid>
         </ToggleButton>
