@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -41,11 +42,14 @@ namespace ModernWindow.PackageEngine.Managers
                 {
                     string[] elements = line.Split(' ');
                     for(int i = 0; i<elements.Length; i++) elements[i] = elements[i].Trim();
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+
+                    if (elements.Length > 1)
                         continue;
 
-                    if(elements.Length > 1)
-                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+                    
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -54,14 +58,82 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " outdated",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            string line;
+            List<UpgradablePackage> Packages = new();
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!line.StartsWith("Chocolatey"))
+                {
+                    string[] elements = line.Split('|');
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                    if (elements.Length <= 2)
+                        continue;
+                    
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
+                }
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
-        public override Task<Package[]> GetInstalledPackages_UnSafe()
+        public override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " list",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            string line;
+            List<Package> Packages = new();
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!line.StartsWith("Chocolatey"))
+                {
+                    string[] elements = line.Split(' ');
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                    if (elements.Length <= 1)
+                        continue;
+
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                }
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)

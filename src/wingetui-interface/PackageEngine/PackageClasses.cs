@@ -128,6 +128,7 @@ namespace ModernWindow.PackageEngine
         public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager) : base(name, id, installed_version, source, manager)
         {
             NewVersion = new_version;
+            IsChecked = true;
         }
     }
 
