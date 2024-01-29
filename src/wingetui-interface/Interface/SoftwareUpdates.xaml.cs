@@ -84,7 +84,6 @@ namespace ModernWindow.Interface
                 TreeViewNode Node;
                 Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded=true };
                 SourcesTreeView.RootNodes.Add(Node);
-                SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
                 UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;

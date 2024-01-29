@@ -1,13 +1,24 @@
 ﻿using ModernWindow.Structures;
+using Python.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.DirectX.Direct3D11;
+using WinRT;
 
 namespace ModernWindow.PackageEngine
 {
+    public enum PackageScope
+    {
+        // Repeated entries for coherence with Package Managers
+        Global = 1,
+        Machine = 1,
+        Local = 0,
+        User = 0,
+    }
     public class Package
     {
         public MainAppBindings bindings = MainAppBindings.Instance;
@@ -22,19 +33,22 @@ namespace ModernWindow.PackageEngine
         public string UniqueId { get; }
         public string NewVersion { get; }
         public bool IsUpgradable { get; } = false;
+
+        public PackageScope Scope { get; set; }
         public string SourceAsString { get {
                 if (Source != null)
                     return Source.ToString();
                 else return "";
             } }
 
-        public Package(string name, string id, string version, ManagerSource source, PackageManager manager)
+        public Package(string name, string id, string version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
         {
             Name = name;
             Id = id;
             Version = version;
             Source = source;
             Manager = manager;
+            Scope = scope;
             UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}";
             NewVersion = "";
             VersionAsFloat = GetFloatVersion();
@@ -125,7 +139,7 @@ namespace ModernWindow.PackageEngine
         public new string NewVersion { get; }
         public new bool IsUpgradable { get; } = true;
 
-        public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager) : base(name, id, installed_version, source, manager)
+        public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local) : base(name, id, installed_version, source, manager, scope)
         {
             NewVersion = new_version;
             IsChecked = true;

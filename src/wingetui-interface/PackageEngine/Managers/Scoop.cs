@@ -90,11 +90,11 @@ public class Scoop : PackageManagerWithSources
 
     public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
     {
-        var PackageSources = new Dictionary<string, ManagerSource>();
+        var InstalledPackages = new Dictionary<string, Package>();
         foreach(var InstalledPackage in await GetInstalledPackages())
         {
-            if (!PackageSources.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
-                PackageSources.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage.Source);
+            if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
+                InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
         }
 
         var Packages = new List<UpgradablePackage>();
@@ -134,13 +134,13 @@ public class Scoop : PackageManagerWithSources
                 if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                     continue;
 
-                if(!PackageSources.ContainsKey(elements[0] + "." + elements[1]))
+                if(!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                 {
                     Console.WriteLine("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
                     continue;
                 }
-
-                Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], PackageSources[elements[0] + "." + elements[1]], this));
+                
+                Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
             }
         }
         return Packages.ToArray();
@@ -197,7 +197,11 @@ public class Scoop : PackageManagerWithSources
                     SourceReference.Add(sourceName, source);
                 }
 
-                Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], source, this));
+                var scope = PackageScope.User;
+                if (line.Contains("Global install"))
+                    scope = PackageScope.Global;
+
+                Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], source, this, scope));
             }
         }
         return Packages.ToArray();

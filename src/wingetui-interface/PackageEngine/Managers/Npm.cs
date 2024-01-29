@@ -54,14 +54,114 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " outdated --parseable",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+            };
+
+            p.Start();
+            string line;
+            List<UpgradablePackage> Packages = new();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                string[] elements = line.Split(':');
+                if(elements.Length >= 4)
+                {
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
+                }
+            }
+            
+            p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " outdated --global --parseable",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                string[] elements = line.Split(':');
+                if(elements.Length >= 4)
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this, PackageScope.Global));
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
-        public override Task<Package[]> GetInstalledPackages_UnSafe()
+        public override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " list",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+            };
+
+            p.Start();
+            string line;
+            List<Package> Packages = new();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                {
+                    string[] elements = line[4..].Split('@');
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                }
+                else
+                {Console.WriteLine(line);}
+            }
+            
+            p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " list --global",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                {
+                    string[] elements = line[4..].Split('@');
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                }
+                else 
+                {Console.WriteLine(line);}
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)

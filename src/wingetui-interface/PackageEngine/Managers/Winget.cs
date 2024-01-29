@@ -38,7 +38,6 @@ namespace ModernWindow.PackageEngine.Managers
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            Console.WriteLine(Status.ExecutablePath);
             p.StartInfo = startInfo;
             p.Start();
 
@@ -100,7 +99,6 @@ namespace ModernWindow.PackageEngine.Managers
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            Console.WriteLine(Status.ExecutablePath);
             p.StartInfo = startInfo;
             p.Start();
 
@@ -175,7 +173,6 @@ namespace ModernWindow.PackageEngine.Managers
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            Console.WriteLine(Status.ExecutablePath);
             p.StartInfo = startInfo;
             p.Start();
 
@@ -232,8 +229,6 @@ namespace ModernWindow.PackageEngine.Managers
 
         private ManagerSource GetLocalSource(string id)
         {
-            Console.WriteLine("Getting local source for " + id);
-
             // Check if source is android
             bool AndroidValid = true;
             foreach(char c in id)
