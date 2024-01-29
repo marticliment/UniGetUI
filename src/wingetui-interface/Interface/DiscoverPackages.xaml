@@ -543,8 +543,6 @@
                     <ColumnDefinition Width="*" MinWidth="100"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*" MaxWidth="100"/>
-                    <!--ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="100"/-->
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*" MaxWidth="150"/>
                 </Grid.ColumnDefinitions>
@@ -553,8 +551,8 @@
                     VerticalAlignment="Center"
                     IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
-                <ImageIcon
-                    Source="ms-appx:///wingetui/resources/install_white.png"
+                <widgets:LocalIcon
+                    IconName="install"
                     Grid.Column="1" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -564,8 +562,8 @@
                     Text="{x:Bind Name}"
                     ToolTipService.ToolTip="{x:Bind Name}"
                     />
-                <ImageIcon
-                    Source="ms-appx:///wingetui/resources/ID_white.png"
+                <widgets:LocalIcon
+                    IconName="ID"
                     Grid.Column="3" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -575,8 +573,8 @@
                     Text="{x:Bind Id}"
                     ToolTipService.ToolTip="{x:Bind Id}"
                     />
-                <ImageIcon
-                    Source="ms-appx:///wingetui/resources/newversion_white.png"
+                <widgets:LocalIcon
+                    IconName="newversion"
                     Grid.Column="5" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -586,22 +584,10 @@
                     Text="{x:Bind Version}"
                     ToolTipService.ToolTip="{x:Bind Version}"
                     />
-                <!--ImageIcon
-                    Source="ms-appx:///wingetui/resources/version_white.png"
+                <widgets:LocalIcon
                     Grid.Column="7" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Visibility="{x:Bind IsUpgradable}"
-                    />
-                <TextBlock 
-                    Grid.Column="8" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind NewVersion}"
-                    Visibility="{x:Bind IsUpgradable}"
-                    /-->
-                <ImageIcon
-                    Grid.Column="7" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Source="{x:Bind Manager.IconAppxUriString}"
+                    IconName="{x:Bind Source.IconId}"
                     />
                 <TextBlock 
                     Grid.Column="8" Grid.Row="0"

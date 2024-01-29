@@ -17,12 +17,8 @@ namespace ModernWindow.PackageEngine
         public ManagerProperties Properties { get; set; }
         public ManagerCapabilities Capabilities { get; set; }
         public ManagerStatus Status { get; set; }
-
-        public Uri IconAppxUri { get; set; }
-
-        public String IconAppxUriString { get { return IconAppxUri.ToString(); } }
         public string Name { get; set; }
-        protected MainAppBindings bindings = MainAppBindings.Instance;
+        public static MainAppBindings bindings = MainAppBindings.Instance;
         public ManagerSource MainSource { get; set; }
 
         public static string[] FALSE_PACKAGE_NAMES = new string[] {""};
@@ -41,8 +37,6 @@ namespace ModernWindow.PackageEngine
             Capabilities = GetCapabilities();
             MainSource = GetMainSource();
             Status = await LoadManager();
-
-            IconAppxUri = new Uri("ms-appx:///wingetui/resources/" + Properties.IconId + "_white.png");
 
             if (this is PackageManagerWithSources && Status.Found)
             {
@@ -204,6 +198,7 @@ namespace ModernWindow.PackageEngine
 
     public class ManagerSource
     {
+        public virtual string IconId { get { return Manager.Properties.IconId; } }
         public struct Capabilities
         {
             public bool KnowsUpdateDate { get; set; } = false;
@@ -229,12 +224,17 @@ namespace ModernWindow.PackageEngine
                 UpdateDate = updateDate;
         }
 
-        public new string ToString()
+        public override string ToString()
         {
             if(Manager.Capabilities.SupportsCustomSources)
                 return Manager.Name + ": " + Name;
             else
                 return Manager.Name;
+        }
+
+        public new bool Equals(object obj)
+        {
+            return (obj as ManagerSource).Name == Name && (obj as ManagerSource).Url == Url && (obj as ManagerSource).Manager == Manager; 
         }
     }
 }
