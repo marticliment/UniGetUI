@@ -84,7 +84,6 @@ namespace ModernWindow.Interface
                 TreeViewNode Node;
                 Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded = true };
                 SourcesTreeView.RootNodes.Add(Node);
-                SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
                 UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
@@ -93,10 +92,13 @@ namespace ModernWindow.Interface
             if ((!UsedSourcesForManager.ContainsKey(source.Manager) || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
             {
                 UsedSourcesForManager[source.Manager].Add(source);
-                var item = new TreeViewNode() { Content = source.Name + " " };
+                var item = new TreeViewNode() { Content = source.Name };
                 NodesForSources.Add(source, item);
-                RootNodeForManager[source.Manager].Children.Add(item);
 
+                if (source.IsVirtualManager)
+                    SourcesTreeView.RootNodes.Add(item);
+                else
+                    RootNodeForManager[source.Manager].Children.Add(item);
             }
         }
 
@@ -250,10 +252,13 @@ namespace ModernWindow.Interface
                 MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query)) | CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
 
             FilteredPackages.BlockSorting = true;
+            int HiddenPackagesDueToSource = 0;
             foreach (var match in MatchingList)
             {
                 if (AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
+                else
+                    HiddenPackagesDueToSource++;
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
@@ -270,14 +275,14 @@ namespace ModernWindow.Interface
                 {
                     BackgroundText.Text = "No results were found matching the input criteria";
                     SourcesPlaceholderText.Text = "No packages were found";
-                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", MatchingList.Length.ToString());
+                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
                 }
                 BackgroundText.Visibility = Visibility.Visible;
             }
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", MatchingList.Length.ToString());
+                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
             }
         }
 

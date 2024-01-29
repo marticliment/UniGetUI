@@ -739,7 +739,7 @@
                     </Expander>
                     <!-- Filter Options Expander -->
                     <Expander Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
-                        IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                        IsExpanded="False" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                         Padding="16,8,16,8" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">

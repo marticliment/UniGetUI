@@ -299,10 +299,13 @@ namespace ModernWindow.Interface
                 MatchingList = Packages.ToArray();
 
             FilteredPackages.BlockSorting = true;
+            int HiddenPackagesDueToSource = 0;
             foreach (var match in MatchingList)
             {
-                if(AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if (AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
+                else
+                    HiddenPackagesDueToSource++;
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
@@ -320,14 +323,14 @@ namespace ModernWindow.Interface
                 {
                     BackgroundText.Text = "No results were found matching the input criteria";
                     SourcesPlaceholderText.Text = "No packages were found";
-                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", MatchingList.Length.ToString());
+                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
                 }
                 BackgroundText.Visibility = Visibility.Visible;
             }
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", MatchingList.Length.ToString());
+                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
             }
         }
 

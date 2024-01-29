@@ -436,7 +436,7 @@ namespace ModernWindow.PackageEngine.Managers
     {
         public override string IconId { get { return "localpc"; } }
         public LocalPcSource() : base(Winget.bindings.App.Winget, Winget.bindings.Translate("Local PC"), new Uri("https://microsoft.com/local-pc-source"))
-        { }
+        { IsVirtualManager = true; }
         public override string ToString()
         {
             return Winget.bindings.Translate("Local PC");
@@ -447,7 +447,7 @@ namespace ModernWindow.PackageEngine.Managers
     {
         public override string IconId { get { return "android"; } }
         public AndroidSubsystemSource() : base(Winget.bindings.App.Winget, Winget.bindings.Translate("Android Subsystem"), new Uri("https://microsoft.com/local-pc-source"))
-        { }
+        { IsVirtualManager = true; }
         public override string ToString()
         {
             return Winget.bindings.Translate("Android Subsystem");
@@ -458,7 +458,7 @@ namespace ModernWindow.PackageEngine.Managers
     {
         public override string IconId { get { return "steam"; } }
         public SteamSource() : base(Winget.bindings.App.Winget, "Steam", new Uri("https://microsoft.com/local-pc-source"))
-        { }
+        { IsVirtualManager = true; }
         public override string ToString()
         {
             return "Steam";
@@ -469,7 +469,7 @@ namespace ModernWindow.PackageEngine.Managers
     {
         public override string IconId { get { return "uplay"; } }
         public UbisoftConnectSource() : base(Winget.bindings.App.Winget, "Ubisoft Connect", new Uri("https://microsoft.com/local-pc-source"))
-        { }
+        { IsVirtualManager = true; }
         public override string ToString()
         {
             return "Ubisoft Connect";
@@ -480,7 +480,7 @@ namespace ModernWindow.PackageEngine.Managers
     {
         public override string IconId { get { return "gog"; } }
         public GOGSource() : base(Winget.bindings.App.Winget, "GOG", new Uri("https://microsoft.com/gog-source"))
-        { }
+        { IsVirtualManager = true; }
         public override string ToString()
         {
             return "GOG";
@@ -491,7 +491,7 @@ namespace ModernWindow.PackageEngine.Managers
     {
         public override string IconId { get { return "msstore"; } }
         public MicrosoftStoreSource() : base(Winget.bindings.App.Winget, "Microsoft Store", new Uri("https://microsoft.com/microsoft-store-source"))
-        { }
+        { IsVirtualManager = true; }
         public override string ToString()
         {
             return "Microsoft Store";

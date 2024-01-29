@@ -199,6 +199,7 @@ namespace ModernWindow.PackageEngine
     public class ManagerSource
     {
         public virtual string IconId { get { return Manager.Properties.IconId; } }
+        public bool IsVirtualManager = false;
         public struct Capabilities
         {
             public bool KnowsUpdateDate { get; set; } = false;
