@@ -71,14 +71,126 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = "",
+                RedirectStandardOutput = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+
+            var sources = await GetSources();
+
+            string SourceDict = "{";
+            foreach (var source in sources)
+            {
+                SourceDict += "\"" + source.Name + "\" = \"" + source.Url.ToString() + "\";";
+            }
+            SourceDict += "}";
+            await p.StandardInput.WriteLineAsync(@"
+                function Test-GalleryModuleUpdate {
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [version] $Version,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Repository,
+                        [switch] $NeedUpdateOnly
+                    )
+                    process {
+                        $URLs = @" + SourceDict + @"
+                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + ""/package/$Name"") -UseBasicParsing -Maximum 0 -ea Ignore
+                        [version]$latest = Split-Path -Path ($page.Headers.Location -replace ""$Name."" -replace "".nupkg"") -Leaf
+                        $needsupdate = $Latest -gt $Version
+                        if ($needsupdate) {
+                            Write-Output ($Name + ""|"" + $Version.ToString() + ""|"" + $Latest.ToString() + ""|"" + $Repository)
+                        }
+                    }
+                }
+                Get-InstalledModule | Test-GalleryModuleUpdate
+                exit
+                "); // do NOT remove the trailing endline
+            string line;
+            List<UpgradablePackage> Packages = new();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(line.StartsWith(">>"))
+                    continue;
+
+                string[] elements = line.Split('|');
+                if (elements.Length < 4)
+                    continue;
+
+                for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                if (SourceReference.ContainsKey(elements[3]))
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceReference[elements[3]], this));
+                else
+                {
+                    var s = new ManagerSource(this, elements[3], new Uri("https://www.powershellgallery.com/api/v2"));
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], s, this));
+                    SourceReference.Add(s.Name, s);
+                }   
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
-        public override Task<Package[]> GetInstalledPackages_UnSafe()
+        public override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            throw new NotImplementedException();
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+            string line;
+            List<Package> Packages = new();
+            bool DashesPassed = false;
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!DashesPassed)
+                {
+                    if(line.Contains("-----"))
+                        DashesPassed = true;
+                }
+                else
+                {
+                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                    if (elements.Length < 3)
+                        continue;
+
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+
+                    if (SourceReference.ContainsKey(elements[2]))
+                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
+                    else
+                    {
+                        Console.WriteLine("Unknown PowerShell source!");
+                        var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
+                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
+                        SourceReference.Add(s.Name, s);
+                    }   
+                }
+            }
+
+            await p.WaitForExitAsync();
+
+            return Packages.ToArray();
         }
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)

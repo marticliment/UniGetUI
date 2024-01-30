@@ -57,14 +57,102 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            throw new NotImplementedException();
+            string path = await bindings.Which("dotnet-tools-outdated.exe");
+            if(!File.Exists(path))
+            {
+                Process proc = new Process() {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = path,
+                        Arguments = Properties.ExecutableCallArgs + " install dotnet-tools-outdated.exe",
+                        UseShellExecute = true,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+                await proc.WaitForExitAsync();
+                path = "dotnet-tools-outdated.exe";
+            }
+
+            Process p = new Process() {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = path,
+                    Arguments = "",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            bool DashesPassed = false;
+            var Packages = new List<UpgradablePackage>();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(!DashesPassed)
+                {
+                    if(line.Contains("----"))
+                        DashesPassed = true;
+                } else {
+                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                    if (elements.Length < 3)
+                        continue;
+
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+                    
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
+                }
+            }
+            return Packages.ToArray();
         }
 
-        public override Task<Package[]> GetInstalledPackages_UnSafe()
+        public override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            throw new NotImplementedException();
+            
+            Process p = new Process() {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list --global",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            bool DashesPassed = false;
+            var Packages = new List<Package>();
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(!DashesPassed)
+                {
+                    if(line.Contains("----"))
+                        DashesPassed = true;
+                } else {
+                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                    if (elements.Length < 2)
+                        continue;
+
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+                    
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                }
+            }
+            return Packages.ToArray();
         }
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)

@@ -131,8 +131,6 @@ namespace ModernWindow.PackageEngine.Managers
                     string[] elements = line[4..].Split('@');
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
-                else
-                {Console.WriteLine(line);}
             }
             
             p = new Process();
@@ -155,8 +153,6 @@ namespace ModernWindow.PackageEngine.Managers
                     string[] elements = line[4..].Split('@');
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
-                else 
-                {Console.WriteLine(line);}
             }
 
             await p.WaitForExitAsync();
