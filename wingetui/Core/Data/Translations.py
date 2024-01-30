@@ -14,8 +14,7 @@ untranslatedPercentage = {
   "hr": "86%",
   "id": "88%",
   "mk": "95%",
-  "nb": "85%",
-  "nn-NO": "8%",
+  "nn-NO": "9%",
   "pt_BR": "96%",
   "pt_PT": "96%",
   "ru": "89%",
@@ -304,7 +303,12 @@ languageCredits = {
       "link": "https://github.com/Stephan-P"
     }
   ],
-  "nn-NO": [],
+  "nn-NO": [
+    {
+      "name": "YrjarV",
+      "link": ""
+    }
+  ],
   "pl": [
     {
       "name": "KamilZielinski",
