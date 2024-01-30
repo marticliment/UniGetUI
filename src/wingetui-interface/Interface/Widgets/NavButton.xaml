@@ -152,7 +152,7 @@
                     FontSize="11" Grid.Row="1" 
                     Height="32" VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    TextWrapping="Wrap"
+                    TextWrapping="Wrap" Padding="2,0,2,0"
                 />
             </Grid>
         </ToggleButton>
