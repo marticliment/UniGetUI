@@ -27,9 +27,11 @@ namespace ModernWindow.Interface
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public Type OldPage;
+        public InfoBadge UpdatesBadge;
         public NavigationPage()
         {
             this.InitializeComponent();
+            UpdatesBadge = __updates_count_badge;
             SettingsPage = new SettingsInterface();
             DiscoverPage = new DiscoverPackagesPage();
             UpdatesPage = new SoftwareUpdatesPage();

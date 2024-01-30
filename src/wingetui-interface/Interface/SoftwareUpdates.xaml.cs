@@ -282,6 +282,9 @@ namespace ModernWindow.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
                 MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
             }
+
+            bindings.App.mainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0? Visibility.Collapsed: Visibility.Visible;
+            bindings.App.mainWindow.NavigationPage.UpdatesBadge.Value = Packages.Count();
         }
 
         public void SortPackages(string Sorter)

@@ -51,6 +51,7 @@ namespace ModernWindow.Interface
 
         private bool IsDescending = true;
         private bool Initialized = false;
+        TreeViewNode LocalPackagesNode;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
         public InstalledPackagesPage()
@@ -61,6 +62,7 @@ namespace ModernWindow.Interface
             PackageList = __package_list;
             LoadingProgressBar = __loading_progressbar;
             LoadingProgressBar.Visibility = Visibility.Collapsed;
+            LocalPackagesNode = new TreeViewNode() { Content = bindings.Translate("Local"), IsExpanded = true };
             Initialized = true;
             ReloadButton.Click += async (s, e) => { await LoadPackages(); };
             FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
@@ -76,7 +78,6 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-
             var source = package.Source;
             if (!UsedManagers.Contains(source.Manager))
             {
@@ -96,7 +97,11 @@ namespace ModernWindow.Interface
                 NodesForSources.Add(source, item);
 
                 if (source.IsVirtualManager)
-                    SourcesTreeView.RootNodes.Add(item);
+                {
+                    LocalPackagesNode.Children.Add(item);
+                    if (!SourcesTreeView.RootNodes.Contains(LocalPackagesNode))
+                        SourcesTreeView.RootNodes.Add(LocalPackagesNode);
+                }
                 else
                     RootNodeForManager[source.Manager].Children.Add(item);
             }
