@@ -8,7 +8,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interface="using:ModernWindow.Interface"
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
+    xmlns:engine="using:ModernWindow.PackageEngine"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="OperationWidget" x:DataType="engine:InstallPackageOperation">
+            <Grid ColumnSpacing="7">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Background" Value="{ThemeResource SystemFillColorNeutralBackgroundBrush}"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource ExpanderContentBorderBrush}"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="CornerRadius" Value="8"/>
+                        <Setter Property="Height" Value="48"/>
+                        <Setter Property="Margin" Value="0,0,0,8"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="205" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="150" />
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                            <Setter Property="Height" Value="32"/>
+                            <Setter Property="CornerRadius" Value="4"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ResourceDictionary>
+                </Grid.Resources>
+                <Image Grid.Column="0" VerticalAlignment="Center" Loaded="{x:Bind ImageIcon_Loaded}" Width="24" Height="24" Margin="8,8,8,8"/>
+                <TextBlock Loaded="{x:Bind TextBlock_Loaded}" Grid.Column="1" VerticalAlignment="Center"/>
+                <ProgressBar IsIndeterminate="True" Grid.Column="2" VerticalAlignment="Bottom" Loaded="{x:Bind ProgressBar_Loaded}" Margin="0,0,0,8" CornerRadius="0,0,4,4" Height="2"/>
+                <Button Grid.Column="2" VerticalAlignment="Center" Loaded="{x:Bind ViewLogButton_Loaded}" HorizontalAlignment="Stretch"
+                        FontFamily="Consolas" HorizontalContentAlignment="Left"/>
+                <Button Grid.Column="3" VerticalAlignment="Center" Loaded="{x:Bind ActionButton_Loaded}" HorizontalAlignment="Stretch" Margin="0,0,7,0"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid RowSpacing="4" ColumnSpacing="0">
         <Grid.ColumnDefinitions>
@@ -32,8 +72,12 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto" MaxHeight="300"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0" MaxHeight="200">
+                    <ListView Margin="-5,0,-2,0" Padding="0" Name="OperationListView" ItemTemplate="{StaticResource OperationWidget}" ItemsSource="{x:Bind OperationList}" SelectionMode="None">
+                    </ListView>
+                </ScrollView>
             </Grid>
         </Frame>
 

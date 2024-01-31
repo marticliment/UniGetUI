@@ -16,6 +16,9 @@ using Windows.Foundation.Collections;
 using ModernWindow.Interface.Widgets;
 using Microsoft.UI.Composition;
 using System.Numerics;
+using System.Collections.ObjectModel;
+using ModernWindow.PackageEngine;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,6 +34,7 @@ namespace ModernWindow.Interface
         public Type OldPage;
         public InfoBadge UpdatesBadge;
         private Dictionary<Page, int> PageColumnReference = new();
+        public ObservableCollection<InstallPackageOperation> OperationList = new();
         public NavigationPage()
         {
             this.InitializeComponent();
@@ -51,6 +55,28 @@ namespace ModernWindow.Interface
             }
 
             DiscoverNavButton.ForceClick();
+            _ = TestOperationWidget();
+        }
+
+        public async Task TestOperationWidget()
+        {
+            OperationList.Add(new InstallPackageOperation());
+            await Task.Delay(5000);
+            OperationList.Add(new InstallPackageOperation());
+            await Task.Delay(5000);
+            OperationList.Add(new InstallPackageOperation());
+            await Task.Delay(10000);
+            OperationList.Add(new InstallPackageOperation());
+            await Task.Delay(2000);
+            OperationList.RemoveAt(0);
+            await Task.Delay(2000);
+            OperationList.RemoveAt(0);
+            await Task.Delay(2000);
+            OperationList.RemoveAt(0);
+            await Task.Delay(2000);
+            OperationList.RemoveAt(0);
+            await Task.Delay(2000);
+            OperationList.Add(new InstallPackageOperation());
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
