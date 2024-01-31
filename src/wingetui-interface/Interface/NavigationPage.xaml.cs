@@ -14,6 +14,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using ModernWindow.Interface.Widgets;
+using Microsoft.UI.Composition;
+using System.Numerics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,6 +30,7 @@ namespace ModernWindow.Interface
         public InstalledPackagesPage InstalledPage;
         public Type OldPage;
         public InfoBadge UpdatesBadge;
+        private Dictionary<Page, int> PageColumnReference = new();
         public NavigationPage()
         {
             this.InitializeComponent();
@@ -36,37 +39,68 @@ namespace ModernWindow.Interface
             DiscoverPage = new DiscoverPackagesPage();
             UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
+
+            int i = 0;
+            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, SettingsPage, })
+            {
+                Grid.SetColumn(page, 0);
+                Grid.SetRow(page, 0);
+                MainContentPresenterGrid.Children.Add(page);
+                PageColumnReference.Add(page, i);
+                i++;
+            }
+
             DiscoverNavButton.ForceClick();
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(DiscoverPackagesPage), new DrillInNavigationTransitionInfo());
+            NavigateToPage(DiscoverPage);
         }
 
         private void InstalledNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(InstalledPackagesPage), new DrillInNavigationTransitionInfo());
+            NavigateToPage(InstalledPage);
         }
 
         private void UpdatesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(SoftwareUpdatesPage), new DrillInNavigationTransitionInfo());
+            NavigateToPage(UpdatesPage);
         }
 
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
+            // MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
         }
 
         private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(SettingsInterface), new DrillInNavigationTransitionInfo());
+            NavigateToPage(SettingsPage);
         }
 
         private void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
+            // MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
+        }
+
+        private void NavigateToPage(Page targetPage)
+        {
+            var visiblePage = targetPage;
+            foreach (Page page in PageColumnReference.Keys)
+                if (page.Visibility == Visibility.Visible)
+                    visiblePage = page;
+
+            /*if (PageColumnReference[visiblePage] < PageColumnReference[targetPage])
+                (targetPage as dynamic).ShowAnimationInitialPos = new Vector3(0, 100, 0);
+            else
+                (targetPage as dynamic).ShowAnimationInitialPos = new Vector3(0, -100, 0);*/
+
+
+                foreach (Page page in PageColumnReference.Keys)
+                page.Visibility = (page == targetPage) ? Visibility.Visible : Visibility.Collapsed;
+                    //    MainContentPresenterGrid.ColumnDefinitions[PageColumnReference[page]].Width =
+            //        (page != targetPage) ? new GridLength(0, GridUnitType.Pixel) : new GridLength(1, GridUnitType.Star);
+
         }
     }
 }

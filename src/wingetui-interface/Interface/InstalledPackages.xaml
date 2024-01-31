@@ -9,11 +9,17 @@
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:engine="using:ModernWindow.PackageEngine"
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
-    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" 
     mc:Ignorable="d"
     Name="DiscoverPage"
-    NavigationCacheMode="Required">
+    NavigationCacheMode="Required"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations">
 
+    <animations:Implicit.ShowAnimations>
+        <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
+        <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
+    </animations:Implicit.ShowAnimations>
+    
     <Page.Resources>
         <Style TargetType="AppBarButton">
             <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />

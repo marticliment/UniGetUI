@@ -32,30 +32,37 @@ namespace ModernWindow.PackageEngine
         }
         public async Task Initialize()
         {
-            Properties = GetProperties();
-            Name = Properties.Name;
-            Capabilities = GetCapabilities();
-            MainSource = GetMainSource();
-            Status = await LoadManager();
-
-            if (this is PackageManagerWithSources && Status.Found)
+            try
             {
-                var SourcesTask = (this as PackageManagerWithSources).GetSources();
-                var winner = await Task.WhenAny(
-                    SourcesTask,
-                    Task.Delay(TimeSpan.FromSeconds(10)));
-                if (winner == SourcesTask)
+                Properties = GetProperties();
+                Name = Properties.Name;
+                Capabilities = GetCapabilities();
+                MainSource = GetMainSource();
+                Status = await LoadManager();
+
+                if (this is PackageManagerWithSources && Status.Found)
                 {
-                    (this as PackageManagerWithSources).Sources = SourcesTask.Result;
+                    var SourcesTask = (this as PackageManagerWithSources).GetSources();
+                    var winner = await Task.WhenAny(
+                        SourcesTask,
+                        Task.Delay(TimeSpan.FromSeconds(10)));
+                    if (winner == SourcesTask)
+                    {
+                        (this as PackageManagerWithSources).Sources = SourcesTask.Result;
+                    }
+                    else
+                    {
+                        Console.WriteLine(Name + " sources took too long to load, using known sources as default");
+                        (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).DefaultSources;
+                    }
                 }
-                else
-                {
-                    Console.WriteLine(Name + " sources took too long to load, using known sources as default");
-                    (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).DefaultSources;
-                }
+                Debug.WriteLine("Manager " + Name + " loaded");
+                ManagerReady = true;
             }
-            Debug.WriteLine("Manager " + Name + " loaded");
-            ManagerReady = true;
+            catch (Exception e)
+            {
+                Console.WriteLine("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
+            }
         }
 
         protected abstract ManagerProperties GetProperties();

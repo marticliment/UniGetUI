@@ -18,7 +18,24 @@
         </Grid.ColumnDefinitions>
 
         
-        <Frame Name="MainContentPresenter" Grid.Row="0" Grid.Column="1" />
+        <!--Frame Name="MainContentPresenter"/-->
+        <Frame Name="ContentAnimatorPresenter" Grid.Row="0" Grid.Column="1">
+            <Grid Name="MainContentPresenterGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="0" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" MaxHeight="300"/>
+                </Grid.RowDefinitions>
+            </Grid>
+        </Frame>
 
         <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
             <Grid.RowDefinitions>

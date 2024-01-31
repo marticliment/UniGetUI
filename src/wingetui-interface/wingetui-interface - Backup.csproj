@@ -14,6 +14,17 @@
     <StartupObject>ModernWindow.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Company />
+    <Authors>Martí Climent</Authors>
+    <Title>WingetUI</Title>
+    <Product>WingetUI</Product>
+    <Copyright>2024, Martí Climent</Copyright>
+    <PackageProjectUrl>https://www.marticliment.com/wingetui</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/marticliment/wingetui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>WingetUI: A better UI for your package managers</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -53,7 +64,6 @@
   </ItemGroup>
 
 	<ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
@@ -132,6 +142,16 @@
   </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Intereface\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\wingetui-engine\wingetui\resources\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\DiscoverPackages.xaml">

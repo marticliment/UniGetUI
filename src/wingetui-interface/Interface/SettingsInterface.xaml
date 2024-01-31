@@ -11,7 +11,13 @@
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
-    >
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations">
+
+    <animations:Implicit.ShowAnimations>
+        <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
+        <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
+    </animations:Implicit.ShowAnimations>
+
     <ScrollViewer
     HorizontalScrollMode="Disabled">
         <Grid HorizontalAlignment="Center">
@@ -28,7 +34,7 @@
                     x:Name="SettingsAnnouncer"
                     Url="https://www.marticliment.com/resources/wingetui.announcement"
                     />
-                <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" Text="WingetUI Settings" Suffix="                                                   ." HorizontalAlignment="Stretch"/>
+                <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
                 <widgets:SettingsEntry
                     x:Name="GeneralSettingsExpander"
                     Text="General preferences"

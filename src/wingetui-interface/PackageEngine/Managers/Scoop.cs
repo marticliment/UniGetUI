@@ -248,8 +248,6 @@ public class Scoop : PackageManagerWithSources
                     string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
                     if (elements.Length >= 5)
                         sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
-                    else if (elements.Length >= 2)
-                        sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), 0, "Unknown"));
                 }
                 catch (Exception e)
                 {
