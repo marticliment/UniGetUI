@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -26,7 +27,7 @@ namespace ModernWindow.PackageEngine.Managers
         private static GOGSource GOGSource { get; } = new GOGSource();
         private static MicrosoftStoreSource MicrosoftStoreSource { get; } = new MicrosoftStoreSource();
 
-        public override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             var Packages = new List<Package>();
             Process p = new Process();
@@ -87,7 +88,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         }
 
-        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             var Packages = new List<UpgradablePackage>();
             Process p = new Process();
@@ -161,7 +162,7 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             var Packages = new List<Package>();
             Process p = new Process();
@@ -261,7 +262,89 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options).ToList();
+            parameters[0] = "install";
+
+            parameters.Add("--accept-package-agreements");
+
+            if (options.SkipHashCheck)
+                parameters.Add("--ignore-security-hash");
+
+            if (options.CustomInstallLocation != "")
+            {
+                parameters.Add("--location"); parameters.Add(options.CustomInstallLocation);
+            }
+            
+            switch(options.Architecture)
+            {
+                case (null):
+                    break;
+                case (Architecture.X86):
+                    parameters.Add("--architecture"); parameters.Add("x86");
+                    break;
+                case (Architecture.X64):
+                    parameters.Add("--architecture"); parameters.Add("x64");
+                    break;
+                case (Architecture.Arm64):
+                    parameters.Add("--architecture"); parameters.Add("arm64");
+                    break;
+            }
+            return parameters.ToArray();
+        }
+
+        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        {
+            List<string> parameters = new List<string>() { "uninstall" };
+            if (!package.Id.Contains("…"))
+            {
+                parameters.Add("--id");
+                parameters.Add(package.Id);
+                parameters.Add("--exact");
+            }
+            else if (package.Name.Contains("…"))
+            {
+                parameters.Add("--name");
+                parameters.Add("\"" + package.Name + "\"");
+                parameters.Add("--exact");
+            }
+            else
+            {
+                parameters.Add("--id");
+                parameters.Add(package.Id.Replace("…", ""));
+            }
+            parameters.Add("--accept-source-agreements");
+
+            switch (options.InstallationScope)
+            {
+                case (PackageScope.Local):
+                    parameters.Add("--scope"); parameters.Add("user");
+                    break;
+                case (PackageScope.Global):
+                    parameters.Add("--scope"); parameters.Add("machine");
+                    break;
+            }
+
+            if (options.Version != "")
+            {
+                parameters.Add("--version"); parameters.Add(options.Version); parameters.Add("--force");
+            }
+
+            if (options.InteractiveInstallation)
+                parameters.Add("--interactive");
+            else
+            {
+                parameters.Add("--silent");
+                parameters.Add("--disable-interactivity");
+            }
+
+            return parameters.ToArray();
+        }
+
+        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        {
+            var parameters = GetInstallParameters(package, options);
+            parameters[0] = "update";
+            return parameters;
         }
 
         public override ManagerSource GetMainSource()
@@ -274,7 +357,7 @@ namespace ModernWindow.PackageEngine.Managers
             throw new NotImplementedException();
         }
 
-        public override async Task<ManagerSource[]> GetSources_UnSafe()
+        protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
             List<ManagerSource> sources = new List<ManagerSource>();
 
@@ -316,15 +399,6 @@ namespace ModernWindow.PackageEngine.Managers
             return sources.ToArray();
         }
 
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
-        }
 
         public override async Task RefreshSources()
         {
@@ -424,6 +498,21 @@ namespace ModernWindow.PackageEngine.Managers
                 await RefreshSources();
 
             return status;
+        }
+
+        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
     }
 

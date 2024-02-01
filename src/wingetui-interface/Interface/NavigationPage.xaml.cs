@@ -34,7 +34,7 @@ namespace ModernWindow.Interface
         public Type OldPage;
         public InfoBadge UpdatesBadge;
         private Dictionary<Page, int> PageColumnReference = new();
-        public ObservableCollection<InstallPackageOperation> OperationList = new();
+        public ObservableCollection<AbstractOperation> OperationList = new();
         public NavigationPage()
         {
             this.InitializeComponent();
@@ -60,7 +60,7 @@ namespace ModernWindow.Interface
 
         public async Task TestOperationWidget()
         {
-            OperationList.Add(new InstallPackageOperation());
+            /*OperationList.Add(new InstallPackageOperation());
             await Task.Delay(5000);
             OperationList.Add(new InstallPackageOperation());
             await Task.Delay(5000);
@@ -76,7 +76,7 @@ namespace ModernWindow.Interface
             await Task.Delay(2000);
             OperationList.RemoveAt(0);
             await Task.Delay(2000);
-            OperationList.Add(new InstallPackageOperation());
+            OperationList.Add(new InstallPackageOperation());*/
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)

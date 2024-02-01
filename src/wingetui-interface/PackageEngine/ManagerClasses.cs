@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAppSDK.Runtime.Packages;
 using ModernWindow.Essentials;
+using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
 using Windows.Media.Core;
 
@@ -122,19 +123,16 @@ namespace ModernWindow.PackageEngine
                 return new PackageDetails(package);
             }
         }
-        public abstract Task<Package[]> FindPackages_UnSafe(string query);
-        public abstract Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe();
-        public abstract Task<Package[]> GetInstalledPackages_UnSafe();
+        protected abstract Task<Package[]> FindPackages_UnSafe(string query);
+        protected abstract Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe();
+        protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
         public abstract Task<PackageDetails> GetPackageDetails_UnSafe(Package package);
         public abstract string[] GetInstallParameters(Package package, InstallationOptions options);
         public abstract string[] GetUpdateParameters(Package package, InstallationOptions options);
         public abstract string[] GetUninstallParameters(Package package, InstallationOptions options);
-
-        /*
-
-        All installation thread stuff here
-
-        */
+        public abstract OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
 
         public abstract Task RefreshSources();
 
@@ -159,7 +157,7 @@ namespace ModernWindow.PackageEngine
                 return new ManagerSource[] { };
             }
         }
-        public abstract Task<ManagerSource[]> GetSources_UnSafe();
+        protected abstract Task<ManagerSource[]> GetSources_UnSafe();
     }
 
     public class ManagerStatus

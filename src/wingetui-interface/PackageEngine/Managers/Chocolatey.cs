@@ -19,7 +19,7 @@ namespace ModernWindow.PackageEngine.Managers
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] {"", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] {"", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
-        public override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo()
@@ -58,7 +58,7 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo()
@@ -97,7 +97,7 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo()
@@ -136,6 +136,11 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
+        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
             throw new NotImplementedException();
@@ -151,7 +156,7 @@ namespace ModernWindow.PackageEngine.Managers
             throw new NotImplementedException();
         }
 
-        public override async Task<ManagerSource[]> GetSources_UnSafe()
+        protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
             List<ManagerSource> sources = new List<ManagerSource>();
 
@@ -189,7 +194,17 @@ namespace ModernWindow.PackageEngine.Managers
             return sources.ToArray();
         }
 
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             throw new NotImplementedException();
         }

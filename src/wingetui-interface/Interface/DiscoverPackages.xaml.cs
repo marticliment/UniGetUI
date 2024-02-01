@@ -447,15 +447,38 @@ namespace ModernWindow.Interface
             foreach (var toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            InstallSelected.IsEnabled = false;
-            InstallAsAdmin.IsEnabled = false;
-            InstallSkipHash.IsEnabled = false;
-            InstallInteractive.IsEnabled = false;
             PackageDetails.IsEnabled = false;
             ImportPackages.IsEnabled = false;
             ExportSelection.IsEnabled = false;
             HelpButton.IsEnabled = false;
 
+            InstallSelected.Click += (s, e) => { 
+                foreach (var package in FilteredPackages) if (package.IsChecked) 
+                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                        new InstallationOptions(package))); 
+            };
+
+            InstallAsAdmin.Click += (s, e) =>
+            {
+                foreach (var package in FilteredPackages) if (package.IsChecked) 
+                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                        new InstallationOptions(package) { RunAsAdministrator = true })); 
+            };
+
+            InstallSkipHash.Click += (s, e) =>
+            {
+                foreach (var package in FilteredPackages) if (package.IsChecked) 
+                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                        new InstallationOptions(package) { SkipHashCheck = true })); 
+            };
+
+            InstallInteractive.Click +=  (s, e) => 
+            {
+                foreach (var package in FilteredPackages) if (package.IsChecked) 
+                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                        new InstallationOptions(package) { InteractiveInstallation = true })); 
+            };
+            
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
             SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages_SortOnly(QueryBlock.Text); };
@@ -479,24 +502,37 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
+
+            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                new InstallationOptions(package)));
         }
 
         private void MenuSkipHash_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+
+            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                new InstallationOptions(package) { SkipHashCheck = true })); 
         }
 
         private void MenuInteractive_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            
+            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                new InstallationOptions(package) { InteractiveInstallation = true }));
         }
 
         private void MenuAsAdmin_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+
+            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                new InstallationOptions(package) { RunAsAdministrator = true }));
+
         }
 
     }

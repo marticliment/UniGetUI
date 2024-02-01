@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.DirectX.Direct3D11;
@@ -71,11 +72,11 @@ namespace ModernWindow.PackageEngine
             return iconId;
         }
 
-        public string GetIconUrl()
+        public Uri GetIconUrl()
         {
             string iconId = GetIconId();
             // TODO: Look up icon URL from iconId
-            return "";
+            return new Uri("ms-appx:///wingetui/resources/package_color.png");
         }
 
         public float GetFloatVersion()
@@ -193,8 +194,8 @@ namespace ModernWindow.PackageEngine
         public bool InteractiveInstallation { get; set; } = false;
         public bool RunAsAdministrator { get; set; } = false;
         public string Version { get; set; } = "";
-        public string Architecture { get; set; } = "";
-        public string InstallationScope { get; set; } = "";
+        public Architecture? Architecture { get; set; } = null;
+        public PackageScope? InstallationScope { get; set; } = null;
         public List<string> CustomParameters { get; set; } = new List<string>();
         public bool RemoveDataOnUninstall { get; set; } = false;
         public bool PreRelease { get; set; } = false;
@@ -223,6 +224,10 @@ namespace ModernWindow.PackageEngine
             {
                 LoadOptionsFromDisk();
             }
+        }
+
+        public InstallationOptions(UpgradablePackage package, bool reset = false) : this((Package)package, reset)
+        {
         }
 
         public Dictionary<string, object> ToDictionary()

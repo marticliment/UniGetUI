@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.Web.WebView2.Core;
+using ModernWindow.PackageEngine;
 using Python.Runtime;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace ModernWindow.Structures
         public dynamic Tools;
         public dynamic Core;
         public ThemeListener ThemeListener;
+        public List<AbstractOperation> OperationList = new();
 
         private static MainAppBindings instance;
 

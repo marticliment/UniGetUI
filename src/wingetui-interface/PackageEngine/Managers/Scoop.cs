@@ -20,7 +20,7 @@ public class Scoop : PackageManagerWithSources
     new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
     new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
     new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
-    public override async Task<Package[]> FindPackages_UnSafe(string query)
+    protected override async Task<Package[]> FindPackages_UnSafe(string query)
     {
         var Packages = new List<Package>();
 
@@ -88,7 +88,7 @@ public class Scoop : PackageManagerWithSources
         return Packages.ToArray();
     }
 
-    public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+    protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
     {
         var InstalledPackages = new Dictionary<string, Package>();
         foreach(var InstalledPackage in await GetInstalledPackages())
@@ -146,7 +146,7 @@ public class Scoop : PackageManagerWithSources
         return Packages.ToArray();
     }
 
-    public override async Task<Package[]> GetInstalledPackages_UnSafe()
+    protected override async Task<Package[]> GetInstalledPackages_UnSafe()
     {
         var Packages = new List<Package>();
 
@@ -207,6 +207,11 @@ public class Scoop : PackageManagerWithSources
         return Packages.ToArray();
     }
 
+    public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+    {
+        throw new NotImplementedException();
+    }
+
     public override string[] GetInstallParameters(Package package, InstallationOptions options)
     {
         throw new NotImplementedException();
@@ -222,7 +227,7 @@ public class Scoop : PackageManagerWithSources
         throw new NotImplementedException();
     }
 
-    public override async Task<ManagerSource[]> GetSources_UnSafe()
+    protected override async Task<ManagerSource[]> GetSources_UnSafe()
     {
         Console.WriteLine("🔵 Starting " + Name + " source search...");
         using (Process process = new Process())
@@ -261,7 +266,17 @@ public class Scoop : PackageManagerWithSources
         }
     }
 
+    public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+    {
+        throw new NotImplementedException();
+    }
+
     public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
         throw new NotImplementedException();
     }

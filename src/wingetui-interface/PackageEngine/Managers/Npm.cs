@@ -18,7 +18,7 @@ namespace ModernWindow.PackageEngine.Managers
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
-        public override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo()
@@ -54,7 +54,7 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo()
@@ -106,7 +106,7 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-        public override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo()
@@ -160,6 +160,11 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
+        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
             throw new NotImplementedException();
@@ -175,7 +180,17 @@ namespace ModernWindow.PackageEngine.Managers
             throw new NotImplementedException();
         }
 
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             throw new NotImplementedException();
         }
