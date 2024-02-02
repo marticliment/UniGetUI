@@ -3,6 +3,7 @@
     x:Class="ModernWindow.MainApp"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:widgets="using:ModernWindow.Interface.Widgets"
     xmlns:local="using:ModernWindow">
     <Application.Resources>
         <ResourceDictionary>
@@ -11,6 +12,18 @@
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
+
+            <Style TargetType="MenuFlyoutItem" x:Key="BetterMenuItem" BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Height" Value="36"/>
+            </Style>
+
+            <Style TargetType="MenuFlyoutPresenter" x:Name="BetterContextMenu" BasedOn="{StaticResource DefaultMenuFlyoutPresenterStyle}">
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

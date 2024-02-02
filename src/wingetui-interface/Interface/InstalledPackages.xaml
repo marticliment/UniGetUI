@@ -500,6 +500,7 @@
             </Setter>
         </Style>
 
+
         <DataTemplate x:Key="PackageTemplate" x:DataType="engine:Package">
             <Grid ColumnSpacing="5">
                 <Grid.ContextFlyout>
@@ -510,7 +511,7 @@
                             Text="{x:Bind bindings.Translate('Uninstall')}"
                             Invoked="MenuUninstall_Invoked"
                             Package="{x:Bind _get_self_package()}"
-                            IconName="newversion"/>
+                            IconName="menu_uninstall"/>
                         <MenuFlyoutSeparator/>
                         <widgets:MenuItemForPackage x:Name="MenuAsAdmin" 
                             Text="{x:Bind bindings.Translate('Uninstall as administrator')}" 

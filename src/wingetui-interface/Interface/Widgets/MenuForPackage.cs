@@ -17,6 +17,7 @@ namespace ModernWindow.Interface.Widgets
 
         public MenuForPackage() : base()
         {
+            this.MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
             PackageProperty = DependencyProperty.Register(
                 nameof(Package),
                 typeof(Package),
@@ -54,6 +55,7 @@ namespace ModernWindow.Interface.Widgets
 
         public MenuItemForPackage() : base()
         {
+            this.Style = (Style)Application.Current.Resources["BetterMenuItem"];
             PackageProperty = DependencyProperty.Register(
                 nameof(Package),
                 typeof(Package),
