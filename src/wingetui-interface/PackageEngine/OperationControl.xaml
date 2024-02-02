@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" SizeChanged="ResizeEvent">
-    
+
     <Grid ColumnSpacing="6" RowSpacing="6" Padding="8" x:Name="MainGrid">
         <Grid.Style>
             <Style TargetType="Grid">
@@ -38,11 +38,21 @@
                 </Style>
             </ResourceDictionary>
         </Grid.Resources>
-        <Image Grid.Column="0" VerticalAlignment="Center" Loaded="{x:Bind ImageIcon_Loaded}" Width="32" Height="24" Margin="0"/>
-        <TextBlock Loaded="{x:Bind TextBlock_Loaded}" Grid.Column="1" VerticalAlignment="Center"/>
-        <ProgressBar Name="ProgressIndicator" IsIndeterminate="True" Grid.Column="2" VerticalAlignment="Bottom" Loaded="{x:Bind ProgressBar_Loaded}" CornerRadius="0,0,4,4" Height="4" Maximum="100" Value="100"/>
-        <Button Grid.Column="2" VerticalAlignment="Center" Loaded="{x:Bind ViewLogButton_Loaded}" HorizontalAlignment="Stretch"
+        <Image Grid.Column="0" VerticalAlignment="Center" Name="PackageIcon" Width="32" Height="24" Margin="0"/>
+        <TextBlock Name="InfoTextBlock" Grid.Column="1" VerticalAlignment="Center"/>
+        <ProgressBar Name="ProgressIndicator" IsIndeterminate="True" Grid.Column="2" VerticalAlignment="Bottom" CornerRadius="0,0,4,4" Height="4" Maximum="100" Value="100"/>
+        <Button Grid.Column="2" VerticalAlignment="Center" Name="OutputViewewBlock" HorizontalAlignment="Stretch"
             FontFamily="Consolas" HorizontalContentAlignment="Left"/>
-        <Button Grid.Column="3" VerticalAlignment="Center" Loaded="{x:Bind ActionButton_Loaded}" HorizontalAlignment="Stretch"/>
+        <Button Grid.Column="3" VerticalAlignment="Center" Name="ActionButton" HorizontalAlignment="Stretch"/>
+        <ContentDialog
+            Name="OutputDialog"
+            >
+            <ContentDialog.Content>
+                <ScrollView CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="LiveOutputScrollBar" Height="500" Width="500">
+                    <RichTextBlock Margin="8" Name="LiveOutputTextBlock" FontFamily="Consolas" >
+                    </RichTextBlock>
+                </ScrollView>
+            </ContentDialog.Content>
+        </ContentDialog>
     </Grid>
 </UserControl>

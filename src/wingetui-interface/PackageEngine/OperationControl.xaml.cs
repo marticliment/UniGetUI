@@ -1,8 +1,10 @@
 using Microsoft.UI;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -10,6 +12,7 @@ using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -26,11 +29,6 @@ namespace ModernWindow.PackageEngine
 {
     public abstract partial class AbstractOperation : UserControl
     {
-        public AbstractOperation()
-        {
-            this.InitializeComponent();
-        }
-
         protected enum AfterFinshAction
         {
             TimeoutClose,
@@ -46,18 +44,13 @@ namespace ModernWindow.PackageEngine
 
         public static AppTools bindings = AppTools.Instance;
 
-        private Button ActionButton;
-        private Button OutputViewewBlock;
-        private ProgressBar Progress;
-        private Image PackageIcon;
-        private TextBlock OperationDescription;
-
         private string __button_text;
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new Uri("ms-appx://wingetui/resources/package_color.png");
         private string __operation_description = "$Package Install";
         private Color? __progressbar_color = null;
         private OperationStatus __status = OperationStatus.Pending;
+        private bool IsDialogOpen = false;
 
         private WidgetLayout __layout_mode;
         private WidgetLayout LayoutMode
@@ -108,18 +101,18 @@ namespace ModernWindow.PackageEngine
         protected string OperationTitle
         {
             get { return __operation_description; }
-            set { __operation_description = value; if (OperationDescription != null) OperationDescription.Text = __operation_description; }
+            set { __operation_description = value; if (InfoTextBlock != null) InfoTextBlock.Text = __operation_description; }
         }
         protected Color? ProgressBarColor
         {
             get { return __progressbar_color; }
-            set { __progressbar_color = value; if (Progress != null) Progress.Foreground = (__progressbar_color != null) ? new SolidColorBrush((Color)__progressbar_color) : null; }
+            set { __progressbar_color = value; if (ProgressIndicator != null) ProgressIndicator.Foreground = (__progressbar_color != null) ? new SolidColorBrush((Color)__progressbar_color) : null; }
         }
 
         protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
         protected event EventHandler<OperationCancelledEventArgs> CloseRequested;
         protected Process Process;
-        protected List<string> ProcessOutput = new List<string>();
+        protected ObservableCollection<string> ProcessOutput = new ObservableCollection<string>();
 
         public OperationStatus Status
         {
@@ -130,37 +123,70 @@ namespace ModernWindow.PackageEngine
                 switch (__status)
                 {
                     case OperationStatus.Pending:
-                        if (Progress != null) Progress.IsIndeterminate = true;
+                        ProgressIndicator.IsIndeterminate = true;
                         ProgressBarColor = Colors.Gray;
                         ButtonText = bindings.Translate("Cancel");
                         break;
 
                     case OperationStatus.Running:
-                        if (Progress != null) Progress.IsIndeterminate = true;
+                        ProgressIndicator.IsIndeterminate = true;
                         ProgressBarColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.AccentLight1);
                         ButtonText = bindings.Translate("Cancel");
                         break;
 
                     case OperationStatus.Succeeded:
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#11945a");
-                        if (Progress != null) Progress.IsIndeterminate = false;
+                        ProgressIndicator.IsIndeterminate = false;
                         ButtonText = bindings.Translate("Close");
                         break;
 
                     case OperationStatus.Failed:
-                        if (Progress != null) Progress.IsIndeterminate = false;
+                        ProgressIndicator.IsIndeterminate = false;
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fe890b");
                         ButtonText = bindings.Translate("Close");
                         break;
 
                     case OperationStatus.Cancelled:
-                        if (Progress != null) Progress.IsIndeterminate = false;
+                        ProgressIndicator.IsIndeterminate = false;
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fec10b");
                         ButtonText = bindings.Translate("Close");
                         break;
                 }
             }
         }
+        public AbstractOperation()
+        {
+            this.InitializeComponent();
+
+            OutputDialog.Title = bindings.Translate("Live output");
+            OutputDialog.CloseButtonText = bindings.Translate("Close");
+            OutputDialog.SecondaryButtonText = bindings.Translate("Copy and close");
+            ProcessOutput.CollectionChanged += (s, e) => {
+                LiveOutputTextBlock.Blocks.Clear();
+                Paragraph p = new();
+                foreach (var line in ProcessOutput)
+                {
+                    if(line.Contains("  | "))
+                    p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a"});
+                }
+                LiveOutputTextBlock.Blocks.Add(p);
+                LiveOutputScrollBar.ScrollTo(0, LiveOutputTextBlock.Height, new ScrollingScrollOptions(ScrollingAnimationMode.Disabled));
+            } ;
+            
+            Status = OperationStatus.Pending;
+
+            ActionButton.Click += ActionButtonClicked;
+            OutputViewewBlock.Click += async (s, e) => { 
+                OutputDialog.XamlRoot = this.XamlRoot;
+                IsDialogOpen = true;
+                if (await OutputDialog.ShowAsync() == ContentDialogResult.Secondary)
+                {
+                    Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
+                }
+                IsDialogOpen = false;
+            };
+        }
+
 
         public void ActionButtonClicked(object sender, RoutedEventArgs args)
         {
@@ -198,7 +224,7 @@ namespace ModernWindow.PackageEngine
 
         public void CloseButtonClicked(OperationStatus OldStatus)
         {
-            Console.WriteLine(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this));
+            _ = Close();
         }
 
         private void AddToQueue_Priority()
@@ -262,7 +288,10 @@ namespace ModernWindow.PackageEngine
                     if (line.Trim() != "")
                     {
                         LineInfoText = line.Trim();
-                        ProcessOutput.Add("   | " + line);
+                        if (line.Length > 5 || ProcessOutput.Count == 0)
+                            ProcessOutput.Add("    | " + line);
+                        else
+                            ProcessOutput[^1] = "    | " + line;
                     }
                 }
 
@@ -306,8 +335,7 @@ namespace ModernWindow.PackageEngine
                 {
                     case AfterFinshAction.TimeoutClose:
                         await Task.Delay(5000);
-                        if(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
-                            bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
+                        _ = Close();
                         break;
 
                     case AfterFinshAction.ManualClose:
@@ -332,6 +360,17 @@ namespace ModernWindow.PackageEngine
 
 
         }
+        protected async Task Close()
+        {
+            while (IsDialogOpen)
+                await Task.Delay(1000);
+
+            RemoveFromQueue();
+            if(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+                bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
+
+        }
+
         protected abstract void Initialize();
         protected abstract Process BuildProcessInstance(ProcessStartInfo startInfo);
         protected abstract OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output);
@@ -342,7 +381,7 @@ namespace ModernWindow.PackageEngine
         protected void Retry()
         {
             LineInfoText = bindings.Translate("Retrying, please wait...");
-            ProcessOutput = new List<string>();
+            ProcessOutput.Clear();
             Status = OperationStatus.Pending;
             _ = MainThread();
         }
@@ -353,39 +392,6 @@ namespace ModernWindow.PackageEngine
             Initialize();
             _ = PreMainThread();
         }
-
-        public void ImageIcon_Loaded(object sender, RoutedEventArgs e)
-        {
-            PackageIcon = sender as Image;
-            PackageIcon.Source = new BitmapImage(__icon_source);
-        }
-
-        public void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            OperationDescription = sender as TextBlock;
-            OperationDescription.Text = __operation_description;
-        }
-
-        public void ProgressBar_Loaded(object sender, RoutedEventArgs e)
-        {
-            Progress = sender as ProgressBar;
-            Progress.Foreground = (__progressbar_color != null) ? new SolidColorBrush((Color)__progressbar_color) : null;
-            Progress.IsIndeterminate = (Status == OperationStatus.Pending || Status == OperationStatus.Running);
-        }
-
-        public void ViewLogButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            OutputViewewBlock = sender as Button;
-            OutputViewewBlock.Content = __line_info_text;
-        }
-
-        public void ActionButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            ActionButton = sender as Button;
-            ActionButton.Content = __button_text;
-            ActionButton.Click += ActionButtonClicked;
-        }
-
         private void ResizeEvent(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width < 500)

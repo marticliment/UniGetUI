@@ -178,6 +178,11 @@ namespace ModernWindow.PackageEngine
                 }
             return res;
         }
+
+        public new UpgradablePackage _get_self_package()
+        {
+            return this;
+        }
     }
 
     public class PackageDetails

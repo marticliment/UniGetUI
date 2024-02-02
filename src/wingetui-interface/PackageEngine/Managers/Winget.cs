@@ -12,6 +12,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using CommunityToolkit.WinUI.Helpers;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -344,6 +345,13 @@ namespace ModernWindow.PackageEngine.Managers
         {
             var parameters = GetInstallParameters(package, options);
             parameters[0] = "update";
+            if( package.Version == "Unknown" && parameters.Contains("--force"))
+            {
+                var p = parameters.ToList();
+                p.Add("--force");
+                p.Add("--include-unknown");
+                parameters = p.ToArray();
+            }
             return parameters;
         }
 
