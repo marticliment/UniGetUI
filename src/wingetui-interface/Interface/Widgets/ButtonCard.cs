@@ -34,7 +34,7 @@ namespace ModernWindow.Interface.Widgets
     public sealed class ButtonCard : SettingsCard
     {
         private static Button _button;
-        private static MainAppBindings bindings = MainAppBindings.Instance;
+        private static AppTools bindings = AppTools.Instance;
 
         public string ButtonText
         {

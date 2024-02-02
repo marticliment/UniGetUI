@@ -15,7 +15,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public class LocalIcon : ImageIcon
     {
-        public static MainAppBindings bindings = MainAppBindings.Instance;
+        public static AppTools bindings = AppTools.Instance;
 
         private string __icon_name;
         public string IconName { 

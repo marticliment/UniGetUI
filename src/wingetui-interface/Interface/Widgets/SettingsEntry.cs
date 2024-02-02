@@ -23,7 +23,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public sealed class SettingsEntry : SettingsExpander
     {
-        public static MainAppBindings bindings = MainAppBindings.Instance;
+        public static AppTools bindings = AppTools.Instance;
         private InfoBar infoBar;
         private Button RestartButton;
         public string Text

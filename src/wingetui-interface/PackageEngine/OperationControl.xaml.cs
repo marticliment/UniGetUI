@@ -1,57 +1,49 @@
-﻿using Microsoft.UI;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net.Security;
-using System.Text;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Graphics.DirectX.Direct3D11;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI;
-using Windows.Web.UI;
-using CommunityToolkit.WinUI.Helpers;
+
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ModernWindow.PackageEngine
 {
-    public enum OperationVeredict
+    public abstract partial class AbstractOperation : UserControl
     {
-        Succeeded,
-        Failed,
-        AutoRetry,
-    }
-    public enum OperationStatus
-    {
-        Pending,
-        Running,
-        Succeeded,
-        Failed,
-        Cancelled
-    }
-    public class OperationCancelledEventArgs : EventArgs
-    {
-        public OperationStatus OldStatus;
-        public OperationCancelledEventArgs(OperationStatus OldStatus)
-        { 
-            this.OldStatus = OldStatus;
+        public AbstractOperation()
+        {
+            this.InitializeComponent();
         }
-    }
-    public abstract class AbstractOperation_old
-    {
-        /*
-         protected enum AfterFinshAction
+
+        protected enum AfterFinshAction
         {
             TimeoutClose,
             ManualClose,
             Retry,
         }
-        
+
+        private enum WidgetLayout
+        {
+            Default,
+            Compact,
+        }
+
         public static AppTools bindings = AppTools.Instance;
 
         private Button ActionButton;
@@ -67,9 +59,42 @@ namespace ModernWindow.PackageEngine
         private Color? __progressbar_color = null;
         private OperationStatus __status = OperationStatus.Pending;
 
+        private WidgetLayout __layout_mode;
+        private WidgetLayout LayoutMode
+        {
+            set
+            {
+                if(value == WidgetLayout.Compact)
+                {
+                    Grid.SetColumn(OutputViewewBlock, 0);
+                    Grid.SetColumnSpan(OutputViewewBlock, 4);
+                    Grid.SetRow(OutputViewewBlock, 1);
+                    Grid.SetColumn(ProgressIndicator, 0);
+                    Grid.SetColumnSpan(ProgressIndicator, 4);
+                    Grid.SetRow(ProgressIndicator, 1);
+                    if (MainGrid.RowDefinitions.Count < 2)
+                        MainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto});
+                } else
+                {
+                    Grid.SetColumn(OutputViewewBlock, 2);
+                    Grid.SetColumnSpan(OutputViewewBlock, 1);
+                    Grid.SetRow(OutputViewewBlock, 0);
+                    Grid.SetColumn(ProgressIndicator, 2);
+                    Grid.SetColumnSpan(ProgressIndicator, 1);
+                    Grid.SetRow(ProgressIndicator, 0);
+                    if (MainGrid.RowDefinitions.Count >= 2)
+                        MainGrid.RowDefinitions.RemoveAt(1);
+                }
+                __layout_mode = value;
+            }
+            get { return __layout_mode; }
+        }
+
         protected string ButtonText
-        {   get { return __button_text; }
-            set { __button_text = value; if(ActionButton != null) ActionButton.Content = __button_text; } }
+        {
+            get { return __button_text; }
+            set { __button_text = value; if (ActionButton != null) ActionButton.Content = __button_text; }
+        }
         protected string LineInfoText
         {
             get { return __line_info_text; }
@@ -88,7 +113,7 @@ namespace ModernWindow.PackageEngine
         protected Color? ProgressBarColor
         {
             get { return __progressbar_color; }
-            set { __progressbar_color = value; if (Progress != null) Progress.Foreground = (__progressbar_color != null)? new SolidColorBrush((Color)__progressbar_color): null; }
+            set { __progressbar_color = value; if (Progress != null) Progress.Foreground = (__progressbar_color != null) ? new SolidColorBrush((Color)__progressbar_color) : null; }
         }
 
         protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
@@ -99,7 +124,8 @@ namespace ModernWindow.PackageEngine
         public OperationStatus Status
         {
             get { return __status; }
-            set { 
+            set
+            {
                 __status = value;
                 switch (__status)
                 {
@@ -108,7 +134,7 @@ namespace ModernWindow.PackageEngine
                         ProgressBarColor = Colors.Gray;
                         ButtonText = bindings.Translate("Cancel");
                         break;
-                    
+
                     case OperationStatus.Running:
                         if (Progress != null) Progress.IsIndeterminate = true;
                         ProgressBarColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.AccentLight1);
@@ -120,13 +146,13 @@ namespace ModernWindow.PackageEngine
                         if (Progress != null) Progress.IsIndeterminate = false;
                         ButtonText = bindings.Translate("Close");
                         break;
-                    
+
                     case OperationStatus.Failed:
                         if (Progress != null) Progress.IsIndeterminate = false;
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fe890b");
                         ButtonText = bindings.Translate("Close");
                         break;
-                    
+
                     case OperationStatus.Cancelled:
                         if (Progress != null) Progress.IsIndeterminate = false;
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fec10b");
@@ -141,7 +167,7 @@ namespace ModernWindow.PackageEngine
             if (Status == OperationStatus.Pending || Status == OperationStatus.Running)
             {
                 CancelButtonClicked(Status);
-}
+            }
             else
                 CloseButtonClicked(Status);
         }
@@ -149,7 +175,7 @@ namespace ModernWindow.PackageEngine
         private void RemoveFromQueue()
         {
             int Index = bindings.OperationQueue.IndexOf(this);
-            if(Index != -1)
+            if (Index != -1)
                 bindings.OperationQueue.Remove(this);
         }
         private void AddToQueue()
@@ -163,7 +189,7 @@ namespace ModernWindow.PackageEngine
             RemoveFromQueue();
             this.Status = OperationStatus.Cancelled;
             LineInfoText = bindings.Translate("Operation cancelled");
-            if(OldStatus == OperationStatus.Running)
+            if (OldStatus == OperationStatus.Running)
             {
                 Process.Kill();
                 ProcessOutput.Add("Operation was cancelled by the user!");
@@ -172,8 +198,7 @@ namespace ModernWindow.PackageEngine
 
         public void CloseButtonClicked(OperationStatus OldStatus)
         {
-            Console.WriteLine(bindings.App.mainWindow.NavigationPage.OperationList.Remove(this));
-            
+            Console.WriteLine(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this));
         }
 
         private void AddToQueue_Priority()
@@ -255,7 +280,7 @@ namespace ModernWindow.PackageEngine
                 }
 
                 var OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
-                
+
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
                 switch (OperationVeredict)
                 {
@@ -277,11 +302,12 @@ namespace ModernWindow.PackageEngine
                         break;
                 }
 
-                switch(postAction)
+                switch (postAction)
                 {
                     case AfterFinshAction.TimeoutClose:
                         await Task.Delay(5000);
-                        bindings.App.mainWindow.NavigationPage.OperationList.Remove(this);
+                        if(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+                            bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
                         break;
 
                     case AfterFinshAction.ManualClose:
@@ -303,7 +329,7 @@ namespace ModernWindow.PackageEngine
                 RemoveFromQueue();
                 try { this.Status = OperationStatus.Failed; } catch { }
             }
-            
+
 
         }
         protected abstract void Initialize();
@@ -359,168 +385,18 @@ namespace ModernWindow.PackageEngine
             ActionButton.Content = __button_text;
             ActionButton.Click += ActionButtonClicked;
         }
-         */
 
-    }
-
-    public abstract class PackageOperation : AbstractOperation
-    {
-        
-        protected Package Package;
-        protected InstallationOptions Options;
-        public PackageOperation(Package package, InstallationOptions options)
+        private void ResizeEvent(object sender, SizeChangedEventArgs e)
         {
-            this.Package = package;
-            this.Options = options;
-            MainProcedure();
-        }
-        public PackageOperation(Package package) : this(package, new InstallationOptions(package)) { }
-    }
+            if (e.NewSize.Width < 500)
+            { 
+                if (LayoutMode != WidgetLayout.Compact)
+                    LayoutMode = WidgetLayout.Compact;
+            } else {
+                if(LayoutMode != WidgetLayout.Default)
+                    LayoutMode = WidgetLayout.Default;
+            }
 
-    public class InstallPackageOperation : PackageOperation
-    {
-
-        public InstallPackageOperation(Package package, InstallationOptions options) : base(package, options) { }
-        public InstallPackageOperation(Package package) : base(package) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
-        {
-            startInfo.FileName = Package.Manager.Status.ExecutablePath;
-            startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
-            Process process = new Process();
-            process.StartInfo = startInfo;
-            return process;
-        }
-
-        protected override string[] GenerateProcessLogHeader()
-        {
-            return new string[]
-            {
-                "Starting package install operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
-        }
-
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
-        {
-            return Package.Manager.GetInstallOperationVeredict(Package, Options, ReturnCode, Output);
-        }
-
-        protected override async Task<AfterFinshAction> HandleFailure()
-        {
-            LineInfoText = bindings.Translate("{package} installation failed!").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.ManualClose;
-        }
-
-        protected override async Task<AfterFinshAction> HandleSuccess()
-        {
-            LineInfoText = bindings.Translate("{package} installation succeeded!").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.TimeoutClose;
-        }
-
-        protected override void Initialize()
-        {
-            OperationTitle = bindings.Translate("{package} Installation").Replace("{package}", Package.Name); 
-            IconSource = Package.GetIconUrl();
-        }
-    }
-
-    public class UpdatePackageOperation : PackageOperation
-    {
-
-        public UpdatePackageOperation(Package package, InstallationOptions options) : base(package, options) { }
-        public UpdatePackageOperation(Package package) : base(package) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
-        {
-            startInfo.FileName = Package.Manager.Status.ExecutablePath;
-            startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
-            Process process = new Process();
-            process.StartInfo = startInfo;
-            return process;
-        }
-
-        protected override string[] GenerateProcessLogHeader()
-        {
-            return new string[]
-            {
-                "Starting package update operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
-        }
-
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
-        {
-            return Package.Manager.GetUpdateOperationVeredict(Package, Options, ReturnCode, Output);
-        }
-
-        protected override async Task<AfterFinshAction> HandleFailure()
-        {
-            LineInfoText = bindings.Translate("{package} update failed. Click here for more details.").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.ManualClose;
-        }
-
-        protected override async Task<AfterFinshAction> HandleSuccess()
-        {
-            LineInfoText = bindings.Translate("{package} update succeeded!").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.TimeoutClose;
-        }
-
-        protected override void Initialize()
-        {
-            OperationTitle = bindings.Translate("{package} Update").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
-        }
-    }
-
-    public class UninstallPackageOperation : PackageOperation
-    {
-
-        public UninstallPackageOperation(Package package, InstallationOptions options) : base(package, options) { }
-        public UninstallPackageOperation(Package package) : base(package) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
-        {
-            startInfo.FileName = Package.Manager.Status.ExecutablePath;
-            startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
-            Process process = new Process();
-            process.StartInfo = startInfo;
-            return process;
-        }
-
-        protected override string[] GenerateProcessLogHeader()
-        {
-            return new string[]
-            {
-                "Starting package uninstall operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
-        }
-
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
-        {
-            return Package.Manager.GetUninstallOperationVeredict(Package, Options, ReturnCode, Output);
-        }
-
-        protected override async Task<AfterFinshAction> HandleFailure()
-        {
-            LineInfoText = bindings.Translate("{package} uninstallation failed!").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.ManualClose;
-        }
-
-        protected override async Task<AfterFinshAction> HandleSuccess()
-        {
-            LineInfoText = bindings.Translate("{package} uninstallation succeeded!").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.TimeoutClose;
-        }
-
-        protected override void Initialize()
-        {
-            OperationTitle = bindings.Translate("{package} Uninstallation").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
         }
     }
 }

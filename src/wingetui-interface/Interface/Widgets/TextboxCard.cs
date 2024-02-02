@@ -35,7 +35,7 @@ namespace ModernWindow.Interface.Widgets
     {
         private TextBox _textbox;
         private HyperlinkButton _helpbutton;
-        private static MainAppBindings bindings = MainAppBindings.Instance;
+        private static AppTools bindings = AppTools.Instance;
         private static string _text;
 
         public string SettingName

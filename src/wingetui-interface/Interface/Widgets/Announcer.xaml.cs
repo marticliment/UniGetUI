@@ -30,7 +30,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public sealed partial class Announcer : UserControl
     {
-        MainAppBindings binder = MainAppBindings.Instance;
+        AppTools binder = AppTools.Instance;
         public Uri Url
         {
             get => (Uri)GetValue(UrlProperty);

@@ -22,7 +22,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public sealed partial class TranslatedTextBlock : UserControl
     {
-        static MainAppBindings bindings = MainAppBindings.Instance;
+        static AppTools bindings = AppTools.Instance;
 
         public string Text
         {

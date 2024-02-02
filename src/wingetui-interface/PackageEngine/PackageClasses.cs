@@ -22,7 +22,7 @@ namespace ModernWindow.PackageEngine
     }
     public class Package
     {
-        public MainAppBindings bindings = MainAppBindings.Instance;
+        public AppTools bindings = AppTools.Instance;
         public bool IsChecked { get; set; } = false;
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
@@ -138,12 +138,45 @@ namespace ModernWindow.PackageEngine
     public class UpgradablePackage : Package
     {
         public new string NewVersion { get; }
+
+        public float NewVersionAsFloat { get; }
         public new bool IsUpgradable { get; } = true;
 
         public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local) : base(name, id, installed_version, source, manager, scope)
         {
             NewVersion = new_version;
             IsChecked = true;
+            NewVersionAsFloat = GetFloatNewVersion();
+        }
+
+        public float GetFloatNewVersion()
+        {
+            string _ver = "";
+            bool _dotAdded = false;
+            foreach (char _char in NewVersion)
+            {
+                if (Char.IsDigit(_char))
+                    _ver += _char;
+                else if (_char == '.')
+                {
+                    if (!_dotAdded)
+                    {
+                        _ver += _char;
+                        _dotAdded = true;
+                    }
+                }
+            }
+            float res = 0.0F;
+            if (_ver != "" && _ver != ".")
+                try
+                {
+                    return float.Parse(_ver);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            return res;
         }
     }
 

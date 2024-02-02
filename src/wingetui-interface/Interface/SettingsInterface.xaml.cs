@@ -43,7 +43,7 @@ namespace ModernWindow.Interface
     /// </summary>
     public sealed partial class SettingsInterface : Page
     {
-        private MainAppBindings bindings = MainAppBindings.Instance;
+        private AppTools bindings = AppTools.Instance;
         HyperlinkButton ResetBackupDirectory;
         HyperlinkButton OpenBackupDirectory;
         TextBlock BackupDirectoryLabel;

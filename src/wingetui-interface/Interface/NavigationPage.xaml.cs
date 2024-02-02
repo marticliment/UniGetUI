@@ -34,11 +34,12 @@ namespace ModernWindow.Interface
         public Type OldPage;
         public InfoBadge UpdatesBadge;
         private Dictionary<Page, int> PageColumnReference = new();
-        public ObservableCollection<AbstractOperation> OperationList = new();
+        public StackPanel OperationStackPanel;
         public NavigationPage()
         {
             this.InitializeComponent();
             UpdatesBadge = __updates_count_badge;
+            OperationStackPanel = __operations_list_stackpanel;
             SettingsPage = new SettingsInterface();
             DiscoverPage = new DiscoverPackagesPage();
             UpdatesPage = new SoftwareUpdatesPage();

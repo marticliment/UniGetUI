@@ -23,6 +23,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using System.Xml;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -41,7 +42,7 @@ namespace ModernWindow.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected MainAppBindings bindings = MainAppBindings.Instance;
+        protected AppTools bindings = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -161,6 +162,7 @@ namespace ModernWindow.Interface
             UsedSourcesForManager.Clear();
             RootNodeForManager.Clear();
             NodesForSources.Clear();
+            LocalPackagesNode.Children.Clear();
 
             await Task.Delay(100);
 
@@ -330,9 +332,9 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            var InstallSelected = new AppBarButton();
-            var InstallAsAdmin = new AppBarButton();
-            var InstallInteractive = new AppBarButton();
+            var UninstallSelected = new AppBarButton();
+            var UninstallAsAdmin = new AppBarButton();
+            var UninstallInteractive = new AppBarButton();
 
             var PackageDetails = new AppBarButton();
             var SharePackage = new AppBarButton();
@@ -345,9 +347,9 @@ namespace ModernWindow.Interface
 
             var HelpButton = new AppBarButton();
 
-            ToolBar.PrimaryCommands.Add(InstallSelected);
-            ToolBar.PrimaryCommands.Add(InstallAsAdmin);
-            ToolBar.PrimaryCommands.Add(InstallInteractive);
+            ToolBar.PrimaryCommands.Add(UninstallSelected);
+            ToolBar.PrimaryCommands.Add(UninstallAsAdmin);
+            ToolBar.PrimaryCommands.Add(UninstallInteractive);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
@@ -363,9 +365,9 @@ namespace ModernWindow.Interface
             var Labels = new Dictionary<AppBarButton, string>
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { InstallSelected,      "Uninstall selected packages" },
-                { InstallAsAdmin,       " Uninstall as administrator" },
-                { InstallInteractive,   " Interactive uninstallation" },
+                { UninstallSelected,      "Uninstall selected packages" },
+                { UninstallAsAdmin,       " Uninstall as administrator" },
+                { UninstallInteractive,   " Interactive uninstallation" },
                 { PackageDetails,       " Package details" },
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
@@ -385,9 +387,9 @@ namespace ModernWindow.Interface
 
             var Icons = new Dictionary<AppBarButton, string>
             {
-                { InstallSelected,      "menu_uninstall" },
-                { InstallAsAdmin,       "runasadmin" },
-                { InstallInteractive,   "interactive" },
+                { UninstallSelected,      "menu_uninstall" },
+                { UninstallAsAdmin,       "runasadmin" },
+                { UninstallInteractive,   "interactive" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
@@ -400,13 +402,14 @@ namespace ModernWindow.Interface
             foreach (var toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            InstallSelected.IsEnabled = false;
-            InstallAsAdmin.IsEnabled = false;
-            InstallInteractive.IsEnabled = false;
             PackageDetails.IsEnabled = false;
             IgnoreSelected.IsEnabled = false;
             ExportSelection.IsEnabled = false;
             HelpButton.IsEnabled = false;
+
+            UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray()); };
+            UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
+            UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), Interactive: true); };
 
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
@@ -415,46 +418,112 @@ namespace ModernWindow.Interface
 
         }
 
-        private void MenuUninstall_Invoked(object sender, Package e)
+        private async void ConfirmAndUninstall(Package package, InstallationOptions options)
         {
-            if (!Initialized)
+            ContentDialog dialog = new ContentDialog();
+
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = bindings.Translate("Are you sure?");
+            dialog.PrimaryButtonText = bindings.Translate("No");
+            dialog.SecondaryButtonText = bindings.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = bindings.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
+
+            if (await dialog.ShowAsync() == ContentDialogResult.Secondary)
+                bindings.AddOperationToList(new UninstallPackageOperation(package, options));
+
+        }
+        private async void ConfirmAndUninstall(Package[] packages, bool AsAdmin = false, bool Interactive = false, bool RemoveData = false)
+        {
+            if (packages.Length == 0)
                 return;
+            if (packages.Length == 1)
+            {
+                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]));
+                return;
+            }
+
+            ContentDialog dialog = new ContentDialog();
+
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = bindings.Translate("Are you sure?");
+            dialog.PrimaryButtonText = bindings.Translate("No");
+            dialog.SecondaryButtonText = bindings.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            var p = new StackPanel();
+            p.Children.Add(new TextBlock() { Text = bindings.Translate("Do you really want to uninstall the following {0} packages?").Replace("{0}", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
+
+            string pkgList = "";
+            foreach (var package in packages)
+                pkgList += " ● " + package.Name + "\x0a";
+
+            var PackageListTextBlock = new TextBlock() { FontFamily = new FontFamily("Consolas"), Text = pkgList };
+            p.Children.Add(new ScrollView() { Content = PackageListTextBlock, MaxHeight = 200 });
+
+            dialog.Content = p;
+                
+            if (await dialog.ShowAsync() == ContentDialogResult.Secondary)
+                foreach(var package in packages)
+                    bindings.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package) {
+                        RunAsAdministrator = AsAdmin,
+                        InteractiveInstallation = Interactive,
+                        RemoveDataOnUninstall = RemoveData
+                    }));
         }
 
-        private void MenuAsAdmin_Invoked(object sender, Package e)
+        private void MenuUninstall_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            ConfirmAndUninstall(package, new InstallationOptions(package));
         }
 
-        private void MenuInteractive_Invoked(object sender, Package e)
+        private void MenuAsAdmin_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            ConfirmAndUninstall(package, new InstallationOptions(package) { RunAsAdministrator = true }) ;
         }
 
-        private void MenuRemoveData_Invoked(object sender, Package e)
+        private void MenuInteractive_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            ConfirmAndUninstall(package, new InstallationOptions(package) { InteractiveInstallation = true });
         }
 
-        private void MenuReinstall_Invoked(object sender, Package e)
+        private void MenuRemoveData_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            ConfirmAndUninstall(package, new InstallationOptions(package) { RemoveDataOnUninstall = true });
         }
 
-        private void MenuUninstallThenReinstall_Invoked(object sender, Package e)
+        private void MenuReinstall_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            bindings.AddOperationToList(new InstallPackageOperation(package));
         }
 
-        private void MenuIgnorePackage_Invoked(object sender, Package e)
+        private void MenuUninstallThenReinstall_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
+            bindings.AddOperationToList(new UninstallPackageOperation(package));
+            bindings.AddOperationToList(new InstallPackageOperation(package));
+
+        }
+
+
+        private void MenuIgnorePackage_Invoked(object sender, Package package)
+        {
+            if (!Initialized)
+                return;
+            package.AddToIgnoredUpdates();
         }
 
         private void MenuShare_Invoked(object sender, Package package)
@@ -464,7 +533,7 @@ namespace ModernWindow.Interface
             bindings.App.mainWindow.SharePackage(package);
         }
 
-        private void MenuDetails_Invoked(object sender, Package e)
+        private void MenuDetails_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;

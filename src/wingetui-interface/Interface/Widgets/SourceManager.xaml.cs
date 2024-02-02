@@ -47,7 +47,7 @@ namespace ModernWindow.Interface.Widgets
     {
         private PackageManagerWithSources Manager { get; set; }
         private ObservableCollection<SourceItem> Sources = new ObservableCollection<SourceItem>();
-        private MainAppBindings bindings = MainAppBindings.Instance;
+        private AppTools bindings = AppTools.Instance;
 
         private ListView _datagrid{ get; set; }
         public SourceManager(PackageManagerWithSources Manager)

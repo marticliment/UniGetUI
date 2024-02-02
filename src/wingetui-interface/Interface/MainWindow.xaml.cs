@@ -43,7 +43,7 @@ namespace ModernWindow
         static readonly Guid _dtm_iid =
             new Guid(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
-        MainAppBindings bindings = MainAppBindings.Instance;
+        AppTools bindings = AppTools.Instance;
         public NavigationPage NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;

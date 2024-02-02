@@ -12,7 +12,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="OperationWidget" x:DataType="engine:AbstractOperation">
+        <!--DataTemplate x:Key="OperationWidget" x:DataType="engine:AbstractOperation">
             <Grid ColumnSpacing="7">
                 <Grid.Style>
                     <Style TargetType="Grid">
@@ -47,7 +47,7 @@
                         FontFamily="Consolas" HorizontalContentAlignment="Left"/>
                 <Button Grid.Column="3" VerticalAlignment="Center" Loaded="{x:Bind ActionButton_Loaded}" HorizontalAlignment="Stretch" Margin="0,0,7,0"/>
             </Grid>
-        </DataTemplate>
+        </DataTemplate-->
     </UserControl.Resources>
 
     <Grid RowSpacing="4" ColumnSpacing="0">
@@ -59,8 +59,8 @@
 
         
         <!--Frame Name="MainContentPresenter"/-->
-        <Frame Name="ContentAnimatorPresenter" Grid.Row="0" Grid.Column="1">
-            <Grid Name="MainContentPresenterGrid">
+        <Frame Name="ContentAnimatorPresenter" Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
+            <Grid Name="MainContentPresenterGrid" Margin="0" RowSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="0" />
@@ -75,8 +75,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0" MaxHeight="200">
-                    <ListView Margin="-5,0,-2,0" Padding="0" Name="OperationListView" ItemTemplate="{StaticResource OperationWidget}" ItemsSource="{x:Bind OperationList}" SelectionMode="None">
-                    </ListView>
+                    <StackPanel Orientation="Vertical" Spacing="8" Margin="0,0,0,0" Padding="0" Name="__operations_list_stackpanel"/>
                 </ScrollView>
             </Grid>
         </Frame>

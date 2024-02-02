@@ -22,7 +22,7 @@ namespace ModernWindow.Interface.Widgets
     public sealed partial class NavButton : UserControl
     {
 
-        private MainAppBindings bindings = MainAppBindings.Instance;
+        private AppTools bindings = AppTools.Instance;
         public class NavButtonEventArgs : EventArgs
         {
             public NavButtonEventArgs()

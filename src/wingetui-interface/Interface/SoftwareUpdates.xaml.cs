@@ -41,7 +41,7 @@ namespace ModernWindow.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected MainAppBindings bindings = MainAppBindings.Instance;
+        protected AppTools bindings = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -330,10 +330,10 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            var InstallSelected = new AppBarButton();
-            var InstallAsAdmin = new AppBarButton();
-            var InstallSkipHash = new AppBarButton();
-            var InstallInteractive = new AppBarButton();
+            var UpdateSelected = new AppBarButton();
+            var UpdateAsAdmin = new AppBarButton();
+            var UpdateSkipHash = new AppBarButton();
+            var UpdateInteractive = new AppBarButton();
 
             var PackageDetails = new AppBarButton();
             var SharePackage = new AppBarButton();
@@ -346,10 +346,10 @@ namespace ModernWindow.Interface
 
             var HelpButton = new AppBarButton();
 
-            ToolBar.PrimaryCommands.Add(InstallSelected);
-            ToolBar.PrimaryCommands.Add(InstallAsAdmin);
-            ToolBar.PrimaryCommands.Add(InstallSkipHash);
-            ToolBar.PrimaryCommands.Add(InstallInteractive);
+            ToolBar.PrimaryCommands.Add(UpdateSelected);
+            ToolBar.PrimaryCommands.Add(UpdateAsAdmin);
+            ToolBar.PrimaryCommands.Add(UpdateSkipHash);
+            ToolBar.PrimaryCommands.Add(UpdateInteractive);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
@@ -365,10 +365,10 @@ namespace ModernWindow.Interface
             var Labels = new Dictionary<AppBarButton, string>
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { InstallSelected,      "Update selected packages" },
-                { InstallAsAdmin,       " Update as administrator" },
-                { InstallSkipHash,      " Skip integrity checks" },
-                { InstallInteractive,   " Interactive update" },
+                { UpdateSelected,      "Update selected packages" },
+                { UpdateAsAdmin,       " Update as administrator" },
+                { UpdateSkipHash,      " Skip integrity checks" },
+                { UpdateInteractive,   " Interactive update" },
                 { PackageDetails,       " Package details" },
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
@@ -388,10 +388,10 @@ namespace ModernWindow.Interface
 
             var Icons = new Dictionary<AppBarButton, string>
             {
-                { InstallSelected,      "menu_updates" },
-                { InstallAsAdmin,       "runasadmin" },
-                { InstallSkipHash,      "checksum" },
-                { InstallInteractive,   "interactive" },
+                { UpdateSelected,      "menu_updates" },
+                { UpdateAsAdmin,       "runasadmin" },
+                { UpdateSkipHash,      "checksum" },
+                { UpdateInteractive,   "interactive" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
@@ -409,32 +409,27 @@ namespace ModernWindow.Interface
             ManageIgnored.IsEnabled = false;
             HelpButton.IsEnabled = false;
 
-            InstallSelected.Click += (s, e) => 
+            UpdateSelected.Click += (s, e) => 
             { 
-                foreach (var package in FilteredPackages) 
-                    if (package.IsChecked) 
-                        bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage, 
-                            new InstallationOptions(package)));
+                foreach (var package in FilteredPackages) if (package.IsChecked) 
+                        bindings.AddOperationToList(new UpdatePackageOperation(package));
             };
-            InstallAsAdmin.Click += (s, e) => 
+            UpdateAsAdmin.Click += (s, e) => 
             {
-                foreach (var package in FilteredPackages)
-                    if (package.IsChecked)
-                        bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
+                foreach (var package in FilteredPackages) if (package.IsChecked)
+                        bindings.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { RunAsAdministrator = true }));
             };
-            InstallSkipHash.Click += (s, e) => 
+            UpdateSkipHash.Click += (s, e) => 
             {
-                foreach (var package in FilteredPackages)
-                    if (package.IsChecked)
-                        bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
+                foreach (var package in FilteredPackages) if (package.IsChecked)
+                        bindings.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { SkipHashCheck = true }));
             };
-            InstallInteractive.Click += (s, e) => 
+            UpdateInteractive.Click += (s, e) => 
             {
-                foreach (var package in FilteredPackages)
-                    if (package.IsChecked)
-                        bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
+                foreach (var package in FilteredPackages) if (package.IsChecked)
+                        bindings.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
@@ -467,15 +462,14 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package) { }));
+            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage));
         }
 
         private void MenuSkipHash_Invoked(object sender, Package package)
         {
             if (!Initialized)
                 return;
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
+            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage,
                 new InstallationOptions(package) { SkipHashCheck = true }));
         }
 
@@ -483,7 +477,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
+            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage,
                 new InstallationOptions(package) { InteractiveInstallation = true }));
         }
 
@@ -491,22 +485,19 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
+            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage,
                 new InstallationOptions(package) { RunAsAdministrator = true }));
         }
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, Package package)
         {
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UninstallPackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package)));
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UpdatePackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package)));
+            bindings.AddOperationToList(new UninstallPackageOperation(package as UpgradablePackage));
+            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage));
         }
 
         private void MenuUninstall_Invoked(object sender, Package package)
         {
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new UninstallPackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package)));
+            bindings.AddOperationToList(new UninstallPackageOperation(package as UpgradablePackage));
         }
 
         private void MenuIgnorePackage_Invoked(object sender, Package package)

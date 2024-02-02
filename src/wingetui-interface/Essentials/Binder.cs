@@ -15,7 +15,7 @@ using Windows.Storage.Streams;
 
 namespace ModernWindow.Structures
 {
-    public class MainAppBindings
+    public class AppTools
     {
 
         public MainApp App;
@@ -24,23 +24,23 @@ namespace ModernWindow.Structures
         public dynamic Tools;
         public dynamic Core;
         public ThemeListener ThemeListener;
-        public List<AbstractOperation> OperationList = new();
+        public List<AbstractOperation> OperationQueue = new();
 
-        private static MainAppBindings instance;
+        private static AppTools instance;
 
-        public static MainAppBindings Instance
+        public static AppTools Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new MainAppBindings();
+                    instance = new AppTools();
                 }
                 return instance;
             }
         }
 
-        private MainAppBindings()
+        private AppTools()
         {
             App = (MainApp)Application.Current;
             Globals = App.Globals;
@@ -121,6 +121,12 @@ namespace ModernWindow.Structures
             }
             return newName;
         }
+
+        public void AddOperationToList(AbstractOperation operation)
+        {
+            App.mainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
+        }
+        
     }
 
 }

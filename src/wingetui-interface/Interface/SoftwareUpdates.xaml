@@ -642,7 +642,7 @@
     </Page.Resources>
 
     <Grid 
-        Padding="10"
+        Padding="0"
         BorderThickness="1,1,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

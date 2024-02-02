@@ -41,7 +41,7 @@ namespace ModernWindow.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected MainAppBindings bindings = MainAppBindings.Instance;
+        protected AppTools bindings = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -454,28 +454,27 @@ namespace ModernWindow.Interface
 
             InstallSelected.Click += (s, e) => { 
                 foreach (var package in FilteredPackages) if (package.IsChecked) 
-                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
-                        new InstallationOptions(package))); 
+                    bindings.AddOperationToList(new InstallPackageOperation(package)); 
             };
 
             InstallAsAdmin.Click += (s, e) =>
             {
                 foreach (var package in FilteredPackages) if (package.IsChecked) 
-                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                    bindings.AddOperationToList(new InstallPackageOperation(package, 
                         new InstallationOptions(package) { RunAsAdministrator = true })); 
             };
 
             InstallSkipHash.Click += (s, e) =>
             {
                 foreach (var package in FilteredPackages) if (package.IsChecked) 
-                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                    bindings.AddOperationToList(new InstallPackageOperation(package, 
                         new InstallationOptions(package) { SkipHashCheck = true })); 
             };
 
             InstallInteractive.Click +=  (s, e) => 
             {
                 foreach (var package in FilteredPackages) if (package.IsChecked) 
-                    bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+                    bindings.AddOperationToList(new InstallPackageOperation(package, 
                         new InstallationOptions(package) { InteractiveInstallation = true })); 
             };
             
@@ -503,8 +502,7 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
 
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
-                new InstallationOptions(package)));
+            bindings.AddOperationToList(new InstallPackageOperation(package));
         }
 
         private void MenuSkipHash_Invoked(object sender, Package package)
@@ -512,7 +510,7 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
 
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+            bindings.AddOperationToList(new InstallPackageOperation(package, 
                 new InstallationOptions(package) { SkipHashCheck = true })); 
         }
 
@@ -521,7 +519,7 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
             
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+            bindings.AddOperationToList(new InstallPackageOperation(package, 
                 new InstallationOptions(package) { InteractiveInstallation = true }));
         }
 
@@ -530,7 +528,7 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
 
-            bindings.App.mainWindow.NavigationPage.OperationList.Add(new InstallPackageOperation(package, 
+            bindings.AddOperationToList(new InstallPackageOperation(package, 
                 new InstallationOptions(package) { RunAsAdministrator = true }));
 
         }

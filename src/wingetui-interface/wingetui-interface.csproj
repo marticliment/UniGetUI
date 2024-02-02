@@ -50,6 +50,7 @@
     <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
+    <None Remove="PackageEngine\OperationControl.xaml" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -132,6 +133,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Intereface\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="PackageEngine\OperationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\DiscoverPackages.xaml">

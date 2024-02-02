@@ -19,7 +19,7 @@ namespace ModernWindow.PackageEngine
         public ManagerCapabilities Capabilities { get; set; }
         public ManagerStatus Status { get; set; }
         public string Name { get; set; }
-        public static MainAppBindings bindings = MainAppBindings.Instance;
+        public static AppTools bindings = AppTools.Instance;
         public ManagerSource MainSource { get; set; }
 
         public static string[] FALSE_PACKAGE_NAMES = new string[] {""};

@@ -624,9 +624,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid 
-        Padding="10"
-        BorderThickness="1,1,0,0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
