@@ -171,6 +171,14 @@ namespace ModernWindow.Interface
 
             if (LastCalledQuery.Trim() != QueryBlock.Text.Trim())
             {
+                LastCalledQuery = QueryBlock.Text.Trim();
+                string InitialQuery = QueryBlock.Text.Trim();
+                
+                await Task.Delay(250);
+                
+                if (InitialQuery != QueryBlock.Text.Trim())
+                    return;
+
                 MainSubtitle.Text = "Loading...";
                 BackgroundText.Text = "Loading...";
                 LoadingProgressBar.Visibility = Visibility.Visible;
@@ -178,8 +186,6 @@ namespace ModernWindow.Interface
                 SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
                 SourcesPlaceholderText.Text = "Loading...";
 
-                LastCalledQuery = QueryBlock.Text.Trim();
-                var intialQuery = QueryBlock.Text.Trim();
                 Packages.Clear();
                 FilteredPackages.Clear();
                 UsedManagers.Clear();
@@ -188,10 +194,7 @@ namespace ModernWindow.Interface
                 RootNodeForManager.Clear();
                 NodesForSources.Clear();
 
-                await Task.Delay(100);
 
-                if (intialQuery != QueryBlock.Text)
-                    return;
 
                 var tasks = new List<Task<Package[]>>();
 
@@ -204,38 +207,43 @@ namespace ModernWindow.Interface
                     }
                 }
 
-                foreach (var task in tasks)
+                while (tasks.Count > 0)
                 {
-                    if (!task.IsCompleted)
-                        await task;
+                    foreach (var task in tasks.ToArray())
+                    {
+                        if (!task.IsCompleted)
+                            await Task.Delay(100);
 
-                    if (task.IsCompletedSuccessfully)
-                        foreach (Package package in task.Result)
+                        if (InitialQuery != QueryBlock.Text)
+                            return;
+
+                        if (task.IsCompleted)
                         {
-                            if (intialQuery != QueryBlock.Text)
-                                return;
-                            Packages.Add(package);
-                            BackgroundText.Visibility = Visibility.Collapsed;
-                            AddPackageToSourcesList(package);
+                            if (task.IsCompletedSuccessfully)
+                                foreach (Package package in task.Result)
+                                {
+                                    Packages.Add(package);
+                                    AddPackageToSourcesList(package);
+                                    FilterPackages_SortOnly(QueryBlock.Text.Trim(), StillLoading: true);
+                                }
+                            tasks.Remove(task);
                         }
+                    }
                 }
-            } else
-            {
-                Console.WriteLine("Query not changed, skipping");
             }
 
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        public async Task FilterPackages(string query)
+        public async Task FilterPackages(string query, bool StillLoading = false)
         {
             if (!Initialized)
                 return;
             await LoadPackages();
-            FilterPackages_SortOnly(query);
+            FilterPackages_SortOnly(query, StillLoading);
         }
 
-        public void FilterPackages_SortOnly(string query)
+        public void FilterPackages_SortOnly(string query, bool StillLoading = false)
         {
             if (!Initialized)
                 return;
@@ -311,20 +319,23 @@ namespace ModernWindow.Interface
 
             if(MatchingList.Count() == 0)
             {
-                if (QueryBlock.Text == "")
-                    BackgroundText.Text = SourcesPlaceholderText.Text = "Search for packages to start";
-                else if (QueryBlock.Text.Length < 3)
+                if(!StillLoading)
                 {
-                    BackgroundText.Text = "Please enter at least 3 characters";
-                    SourcesPlaceholderText.Text = "Search for packages to start";
+                    if (QueryBlock.Text == "")
+                        BackgroundText.Text = SourcesPlaceholderText.Text = "Search for packages to start";
+                    else if (QueryBlock.Text.Length < 3)
+                    {
+                        BackgroundText.Text = "Please enter at least 3 characters";
+                        SourcesPlaceholderText.Text = "Search for packages to start";
+                    }
+                    else
+                    {
+                        BackgroundText.Text = "No results were found matching the input criteria";
+                        SourcesPlaceholderText.Text = "No packages were found";
+                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                    }
+                    BackgroundText.Visibility = Visibility.Visible;
                 }
-                else
-                {
-                    BackgroundText.Text = "No results were found matching the input criteria";
-                    SourcesPlaceholderText.Text = "No packages were found";
-                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
-                }
-                BackgroundText.Visibility = Visibility.Visible;
             }
             else
             {
@@ -540,6 +551,7 @@ namespace ModernWindow.Interface
         private void ClearSourceSelectionButton_Click(object sender, RoutedEventArgs e)
         {
             SourcesTreeView.SelectedItems.Clear();
+            FilterPackages_SortOnly(QueryBlock.Text.Trim());
         }
 
 

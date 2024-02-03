@@ -145,6 +145,7 @@ namespace ModernWindow.Interface
             
             MainSubtitle.Text = "Loading...";
             BackgroundText.Text = "Loading...";
+            BackgroundText.Visibility = Visibility.Visible;
             LoadingProgressBar.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Text = "Loading...";
@@ -171,26 +172,34 @@ namespace ModernWindow.Interface
                 }
             }
 
-            foreach (var task in tasks)
+            while (tasks.Count > 0)
             {
-                if (!task.IsCompleted)
-                    await task;
+                foreach (var task in tasks.ToArray())
+                {
+                    if (!task.IsCompleted)
+                        await Task.Delay(100);
                 
-                if(task.IsCompletedSuccessfully)
-                    foreach (UpgradablePackage package in task.Result)
+                    if(task.IsCompleted)
                     {
-                        Packages.Add(package);
-                        BackgroundText.Visibility = Visibility.Collapsed;
-                        AddPackageToSourcesList(package);
+                        if(task.IsCompletedSuccessfully)
+                            foreach (UpgradablePackage package in task.Result)
+                            {
+                                Packages.Add(package);
+                                AddPackageToSourcesList(package);
+                                FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
+                            }
+                        tasks.Remove(task);
                     }
+                }
             }
+            
 
             FilterPackages(QueryBlock.Text);
 
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        public void FilterPackages(string query)
+        public void FilterPackages(string query, bool StillLoading = false)
         {
             if (!Initialized)
                 return;
@@ -264,19 +273,23 @@ namespace ModernWindow.Interface
 
             if(MatchingList.Count() == 0)
             {
-                if (Packages.Count() == 0)
+                if (!StillLoading)
                 {
-                    BackgroundText.Text = SourcesPlaceholderText.Text = "Hooray! No updates were found.";
-                    SourcesPlaceholderText.Text = "Everything is up to date";
-                    MainSubtitle.Text = "Everything is up to date";
+                    if (Packages.Count() == 0)
+                    {
+                        BackgroundText.Text = SourcesPlaceholderText.Text = "Hooray! No updates were found.";
+                        SourcesPlaceholderText.Text = "Everything is up to date";
+                        MainSubtitle.Text = "Everything is up to date";
+                    }
+                    else
+                    {
+                        BackgroundText.Text = "No results were found matching the input criteria";
+                        SourcesPlaceholderText.Text = "No packages were found";
+                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                    }
+                    BackgroundText.Visibility = Visibility.Visible;
                 }
-                else
-                {
-                    BackgroundText.Text = "No results were found matching the input criteria";
-                    SourcesPlaceholderText.Text = "No packages were found";
-                    MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
-                }
-                BackgroundText.Visibility = Visibility.Visible;
+                
             }
             else
             {
@@ -519,6 +532,7 @@ namespace ModernWindow.Interface
         private void ClearSourceSelectionButton_Click(object sender, RoutedEventArgs e)
         {
             SourcesTreeView.SelectedItems.Clear();
+            FilterPackages(QueryBlock.Text.Trim());
         }
     }
 }
