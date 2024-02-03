@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using Microsoft.Windows.AppLifecycle;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
 using Python.Runtime;
@@ -144,6 +145,13 @@ namespace ModernWindow
             bool run_python = false;
             if (run_python)
                 python.Start();
+        }
+
+        public async Task ShowMainWindow_FromRedirect()
+        {
+            while(mainWindow == null)
+                await Task.Delay(100);
+            mainWindow.DispatcherQueue.TryEnqueue(() => { mainWindow.Activate(); });
         }
 
         // setSettings binding
