@@ -273,7 +273,7 @@ namespace ModernWindow.PackageEngine.Managers
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
             var parameters = GetUninstallParameters(package, options).ToList();
-            parameters[0] = "install";
+            parameters[0] = Properties.InstallVerb;
 
             parameters.Add("--accept-package-agreements");
 
@@ -301,10 +301,28 @@ namespace ModernWindow.PackageEngine.Managers
             }
             return parameters.ToArray();
         }
+        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        {
+            if(package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
+                options.Architecture = Architecture.X64;
+            else if(package.Name.Contains("32-bit") || package.Id.ToLower().Contains("x86"))
+                options.Architecture = Architecture.X86;
+
+            var parameters = GetInstallParameters(package, options);
+            parameters[0] = Properties.InstallVerb;
+            if( package.Version == "Unknown" && parameters.Contains("--force"))
+            {
+                var p = parameters.ToList();
+                p.Add("--force");
+                p.Add("--include-unknown");
+                parameters = p.ToArray();
+            }
+            return parameters;
+        }
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new List<string>() { "uninstall" };
+            List<string> parameters = new List<string>() { Properties.UninstallVerb };
             if (!package.Id.Contains("…"))
             {
                 parameters.Add("--id");
@@ -350,19 +368,39 @@ namespace ModernWindow.PackageEngine.Managers
             return parameters.ToArray();
         }
 
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            var parameters = GetInstallParameters(package, options);
-            parameters[0] = "update";
-            if( package.Version == "Unknown" && parameters.Contains("--force"))
-            {
-                var p = parameters.ToList();
-                p.Add("--force");
-                p.Add("--include-unknown");
-                parameters = p.ToArray();
-            }
-            return parameters;
+            var output_string = string.Join("\n", Output);
+
+            if (ReturnCode == -1978334967) // Use https://www.rapidtables.com/convert/number/hex-to-decimal.html for easy UInt(hex) to Int(dec) conversion
+                return OperationVeredict.Succeeded; // TODO: Needs restart
+            else if (ReturnCode == -1978335215)
+                return OperationVeredict.Failed; // TODO: Needs skip checksum
+
+            if (output_string.Contains("No applicable upgrade found") || output_string.Contains("No newer package versions are available from the configured sources"))
+                return OperationVeredict.Succeeded;
+
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
+
+        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
+        }
+
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            var output_string = string.Join("\n", Output);
+
+            if(output_string.Contains("1603") || output_string.Contains("0x80070005") || output_string.Contains("Access is denied"))
+            {
+                options.RunAsAdministrator = true;
+                return OperationVeredict.AutoRetry;
+            }
+
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
+
 
         public override ManagerSource GetMainSource()
         {
@@ -517,20 +555,6 @@ namespace ModernWindow.PackageEngine.Managers
             return status;
         }
 
-        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
     }
 
     public class LocalPcSource : ManagerSource

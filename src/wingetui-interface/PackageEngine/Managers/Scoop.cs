@@ -208,30 +208,6 @@ public class Scoop : PackageManagerWithSources
         return Packages.ToArray();
     }
 
-    public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-    {
-        var output_string = string.Join("\n", Output);
-        if((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
-        {
-            package.Scope = PackageScope.Global;
-            return OperationVeredict.AutoRetry;
-        }
-        if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))
-        {
-            options.RunAsAdministrator = true;
-            return OperationVeredict.AutoRetry;
-        }
-        if (output_string.Contains("Latest versions for all apps are installed") || output_string.Contains("is already installed") || output_string.Contains("was installed successfully"))
-            return OperationVeredict.Succeeded;
-        return OperationVeredict.Failed;
-    }
-
-    public override string[] GetInstallParameters(Package package, InstallationOptions options)
-    {
-        var parameters = GetUpdateParameters(package, options);
-        parameters[0] = Properties.InstallVerb;
-        return parameters;
-    }
 
     public override ManagerSource GetMainSource()
     {
@@ -299,6 +275,27 @@ public class Scoop : PackageManagerWithSources
             return OperationVeredict.Succeeded;
         return OperationVeredict.Failed;
     }
+    public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+    {
+        var output_string = string.Join("\n", Output);
+        if((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
+        {
+            package.Scope = PackageScope.Global;
+            return OperationVeredict.AutoRetry;
+        }
+        if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))
+        {
+            options.RunAsAdministrator = true;
+            return OperationVeredict.AutoRetry;
+        }
+        if (output_string.Contains("Latest versions for all apps are installed") || output_string.Contains("is already installed") || output_string.Contains("was installed successfully"))
+            return OperationVeredict.Succeeded;
+        return OperationVeredict.Failed;
+    }
+    public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+    {
+        return GetInstallOperationVeredict(package, options, ReturnCode, Output);
+    }
 
     public override string[] GetUninstallParameters(Package package, InstallationOptions options)
     {
@@ -307,24 +304,23 @@ public class Scoop : PackageManagerWithSources
         parameters.Add(Properties.UninstallVerb);
         parameters.Add(package.Source.Name + "/" + package.Id);
 
-        if(package.Scope == PackageScope.Global)
+        if (package.Scope == PackageScope.Global)
             parameters.Add("--global");
 
-        if(options.CustomParameters != null)
+        if (options.CustomParameters != null)
             parameters.AddRange(options.CustomParameters);
 
         if (options.RemoveDataOnUninstall)
             parameters.Add("--purge");
 
         return parameters.ToArray();
-
     }
-
-    public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+    public override string[] GetInstallParameters(Package package, InstallationOptions options)
     {
-        return GetInstallOperationVeredict(package, options, ReturnCode, Output);
+        var parameters = GetUpdateParameters(package, options);
+        parameters[0] = Properties.InstallVerb;
+        return parameters;
     }
-
     public override string[] GetUpdateParameters(Package package, InstallationOptions options)
     {
         var parameters = GetUninstallParameters(package, options).ToList();
