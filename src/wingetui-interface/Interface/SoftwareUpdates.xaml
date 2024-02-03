@@ -742,7 +742,7 @@
                     <!-- Sources Expander -->
                     <Expander Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
                         IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                        Padding="4,8,4,8" HorizontalContentAlignment="Stretch">
+                        Padding="4,4,4,8" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <widgets:LocalIcon IconName="provider" Height="24"/>
@@ -751,12 +751,25 @@
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Orientation="Vertical">
-                                <widgets:TranslatedTextBlock Text="Search for packages to start" FontWeight="Bold" x:Name="SourcesPlaceholderText" MinHeight="140"
+                                <widgets:TranslatedTextBlock Text="Search for packages to start" FontWeight="Bold" x:Name="SourcesPlaceholderText" MinHeight="60"
                                     FontSize="15" WrappingMode="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"
                                     HorizontalContentAlignment="Center" Opacity="0.5" VerticalContentAlignment="Center"/>
-                                <TreeView Name="SourcesTreeView" SelectionMode="Multiple" Padding="0"
-                                SelectionChanged="SourcesTreeView_SelectionChanged" 
-                                HorizontalAlignment="Stretch"/>
+                                <Grid Name="SourcesTreeViewGrid" HorizontalAlignment="Stretch" ColumnSpacing="4" RowSpacing="4" Visibility="Collapsed">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="28"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <HyperlinkButton Padding="4" Name="SelectAllSourcesButton" Grid.Column="0" Content="Select all sources" Click="SelectAllSourcesButton_Click" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                                    <HyperlinkButton Padding="4" Name="ClearSourceSelectionButton" Grid.Column="1" Content="Clear selection" Click="ClearSourceSelectionButton_Click" HorizontalAlignment="Stretch"  HorizontalContentAlignment="Center"/>
+                                    <TreeView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="SourcesTreeView" SelectionMode="Multiple" Padding="0"
+                                        SelectionChanged="SourcesTreeView_SelectionChanged" 
+                                        HorizontalAlignment="Stretch"/>
+                                </Grid>
+                                
                             </StackPanel>
                         </Expander.Content>
                     </Expander>

@@ -82,11 +82,13 @@ namespace ModernWindow.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded=true };
+                Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded=false };
                 SourcesTreeView.RootNodes.Add(Node);
+                SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
                 UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
+                SourcesTreeViewGrid.Visibility = Visibility.Visible;
             }
 
             if ((!UsedSourcesForManager.ContainsKey(source.Manager)  || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
@@ -146,6 +148,7 @@ namespace ModernWindow.Interface
             LoadingProgressBar.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Text = "Loading...";
+            SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
 
             Packages.Clear();
             FilteredPackages.Clear();
@@ -193,13 +196,11 @@ namespace ModernWindow.Interface
                 return;
 
             FilteredPackages.Clear();
-            bool AllSourcesVisible = true;
             List<ManagerSource> VisibleSources = new();
             List<PackageManager> VisibleManagers = new();
 
             if (SourcesTreeView.SelectedNodes.Count > 0)
             {
-                AllSourcesVisible = false;
                 foreach (var node in SourcesTreeView.SelectedNodes)
                 {
                     if (NodesForSources.ContainsValue(node))
@@ -253,7 +254,7 @@ namespace ModernWindow.Interface
             int HiddenPackagesDueToSource = 0;
             foreach (var match in MatchingList)
             {
-                if (AllSourcesVisible || VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
                 else
                     HiddenPackagesDueToSource++;
@@ -508,6 +509,16 @@ namespace ModernWindow.Interface
         private void MenuSkipVersion_Invoked(object sender, Package package)
         {
             package.AddToIgnoredUpdates(package.Version);
+        }
+
+        private void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
+        {
+            SourcesTreeView.SelectAll();
+        }
+
+        private void ClearSourceSelectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            SourcesTreeView.SelectedItems.Clear();
         }
     }
 }
