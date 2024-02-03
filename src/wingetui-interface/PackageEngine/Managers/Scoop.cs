@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -209,12 +210,27 @@ public class Scoop : PackageManagerWithSources
 
     public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
-        throw new NotImplementedException();
+        var output_string = string.Join("\n", Output);
+        if((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
+        {
+            package.Scope = PackageScope.Global;
+            return OperationVeredict.AutoRetry;
+        }
+        if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))
+        {
+            options.RunAsAdministrator = true;
+            return OperationVeredict.AutoRetry;
+        }
+        if (output_string.Contains("Latest versions for all apps are installed") || output_string.Contains("is already installed") || output_string.Contains("was installed successfully"))
+            return OperationVeredict.Succeeded;
+        return OperationVeredict.Failed;
     }
 
     public override string[] GetInstallParameters(Package package, InstallationOptions options)
     {
-        throw new NotImplementedException();
+        var parameters = GetUpdateParameters(package, options);
+        parameters[0] = Properties.InstallVerb;
+        return parameters;
     }
 
     public override ManagerSource GetMainSource()
@@ -268,22 +284,78 @@ public class Scoop : PackageManagerWithSources
 
     public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
-        throw new NotImplementedException();
+        var output_string = string.Join("\n", Output);
+        if ((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
+        {
+            package.Scope = PackageScope.Global;
+            return OperationVeredict.AutoRetry;
+        }
+        if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))
+        {
+            options.RunAsAdministrator = true;
+            return OperationVeredict.AutoRetry;
+        }
+        if (output_string.Contains("was uninstalled"))
+            return OperationVeredict.Succeeded;
+        return OperationVeredict.Failed;
     }
 
     public override string[] GetUninstallParameters(Package package, InstallationOptions options)
     {
-        throw new NotImplementedException();
+        List<string> parameters = new List<string>();
+
+        parameters.Add(Properties.UninstallVerb);
+        parameters.Add(package.Source.Name + "/" + package.Id);
+
+        if(package.Scope == PackageScope.Global)
+            parameters.Add("--global");
+
+        if(options.CustomParameters != null)
+            parameters.AddRange(options.CustomParameters);
+
+        if (options.RemoveDataOnUninstall)
+            parameters.Add("--purge");
+
+        return parameters.ToArray();
+
     }
 
     public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
-        throw new NotImplementedException();
+        return GetInstallOperationVeredict(package, options, ReturnCode, Output);
     }
 
     public override string[] GetUpdateParameters(Package package, InstallationOptions options)
     {
-        throw new NotImplementedException();
+        var parameters = GetUninstallParameters(package, options).ToList();
+        parameters[0] = Properties.UpdateVerb;
+
+        parameters.Remove("--purge");
+
+        switch(options.Architecture)
+        {
+            case null:
+                break;
+            case Architecture.X64:
+                parameters.Add("--arch");
+                parameters.Add("64bit");
+                break;
+            case Architecture.X86:
+                parameters.Add("--arch");
+                parameters.Add("32bit");
+                break;
+            case Architecture.Arm64:
+                parameters.Add("--arch");
+                parameters.Add("arm64");
+                break;
+        }
+
+        if(options.SkipHashCheck)
+        {
+            parameters.Add("--skip");
+        }
+
+        return parameters.ToArray();
     }
 
     public override async Task RefreshSources()
