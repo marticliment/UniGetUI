@@ -78,6 +78,21 @@ namespace ModernWindow
             mainWindow = new MainWindow();
             mainWindow.Activate();
 
+            var hWnd = mainWindow.GetWindowHandle();
+
+            Microsoft.UI.WindowId windowId =
+                Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+
+            // Lastly, retrieve the AppWindow for the current (XAML) WinUI 3 window.
+            Microsoft.UI.Windowing.AppWindow appWindow =
+                Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+            if (appWindow != null)
+            {
+                appWindow.Closing += mainWindow.HandleClosingEvent;
+            }
+
+
             LoadComponents();
         }
 

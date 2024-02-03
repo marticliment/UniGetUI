@@ -140,7 +140,7 @@
                     <Toolkit:SettingsExpander.Items>
                         <widgets:CheckboxCard
                             Text="Close WingetUI to the notification area"
-                            SettingName="DisablesystemTray"
+                            SettingName="DisableSystemTray"
                             />
                         <widgets:CheckboxCard
                             Text="Enable WingetUI notifications"

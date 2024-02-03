@@ -1,3 +1,5 @@
+using H.NotifyIcon;
+using H.NotifyIcon.Core;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,11 +16,14 @@ using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Devices.PointOfService.Provider;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.DirectX.Direct3D11;
@@ -40,6 +45,9 @@ namespace ModernWindow
             void ShowShareUIForWindow(IntPtr appWindow);
         }
 
+        TaskbarIcon TrayIcon;
+        private bool RecentlyActivated = false;
+
         static readonly Guid _dtm_iid =
             new Guid(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
@@ -52,12 +60,119 @@ namespace ModernWindow
         public MainWindow()
         {
             this.InitializeComponent();
+            LoadTrayMenu();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
         }
 
+        public void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+        {
+            if (!bindings.GetSettings("DisableSystemTray"))
+            {
+                args.Cancel = true;
+                RecentlyActivated = false;
+                this.Hide();
+            } else
+            {
+                //if (bindings.OperationQueue.Count > 0)
+                    // TODO: Handle confirmation if ongoing operations
+            }
+        }
+
+        private void LoadTrayMenu()
+        {
+            var TrayMenu = new MenuFlyout();
+
+            var DiscoverPackages = new XamlUICommand();
+            var AvailableUpdates = new XamlUICommand();
+            var InstalledPackages = new XamlUICommand();
+            var AboutWingetUI = new XamlUICommand();
+            var ShowWingetUI = new XamlUICommand();
+            var QuitWingetUI = new XamlUICommand();
+
+            var Labels = new Dictionary<XamlUICommand, string>
+            {
+                { DiscoverPackages, "Discover Packages" },
+                { AvailableUpdates, "Available Updates" },
+                { InstalledPackages, "Installed Packages" },
+                { AboutWingetUI, "WingetUI Version NeXT" },
+                { ShowWingetUI, "Show WingetUI" },
+                { QuitWingetUI, "Quit" },
+            };
+
+            foreach (var item in Labels)
+            {
+                item.Key.Label = bindings.Translate(item.Value);
+            }
+
+            var Icons = new Dictionary<XamlUICommand, string>
+            {
+                { DiscoverPackages,  "\uF6FA"},
+                { AvailableUpdates,  "\uE977"},
+                { InstalledPackages,  "\uE895"},
+                { AboutWingetUI,  "\uE946"},
+                { ShowWingetUI,  "\uE8A7"},
+                { QuitWingetUI,  "\uE711"},
+            };
+
+            foreach (var item in Icons)
+            {
+                item.Key.IconSource = new FontIconSource { Glyph = item.Value };
+            }
+
+            DiscoverPackages.ExecuteRequested += (s, e) => {NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
+            AvailableUpdates.ExecuteRequested += (s, e) => {NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
+            InstalledPackages.ExecuteRequested += (s, e) => {NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
+            ShowWingetUI.ExecuteRequested += (s, e) => { Activate(); };
+            QuitWingetUI.ExecuteRequested += (s, e) => { bindings.App.DisposeAndQuit(); };
+
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = InstalledPackages });
+            TrayMenu.Items.Add(new MenuFlyoutSeparator());
+            var _about = new MenuFlyoutItem() { Command = AboutWingetUI };
+            _about.IsEnabled = false;
+            TrayMenu.Items.Add(_about);
+            TrayMenu.Items.Add(new MenuFlyoutSeparator());
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = ShowWingetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = QuitWingetUI });
+
+
+            TrayMenu.AreOpenCloseAnimationsEnabled = false;
+
+            TrayIcon = new TaskbarIcon();
+            __content_root.Children.Add(TrayIcon);
+            TrayIcon.ContextMenuMode = H.NotifyIcon.ContextMenuMode.PopupMenu;
+
+            var ShowHideCommand = new XamlUICommand();
+            ShowHideCommand.ExecuteRequested += async (s, e) =>
+            {
+                if (!RecentlyActivated)
+                {
+                    Activate();
+                    RecentlyActivated = true;
+                    await Task.Delay(5000);
+                    RecentlyActivated = false;
+                }
+                else
+                {
+                    RecentlyActivated = false;
+                    this.Hide();
+                }
+            };
+
+            TrayIcon.LeftClickCommand = ShowHideCommand;
+            TrayIcon.DoubleClickCommand = ShowHideCommand;
+            TrayIcon.NoLeftClickDelay = true;
+            TrayIcon.ContextFlyout = TrayMenu;
+        }
+
+        private void TrayIcon_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SwitchToInterface()
         {
@@ -130,6 +245,11 @@ namespace ModernWindow
 
             interop.ShowShareUIForWindow(hWnd);
 
+        }
+
+        public IntPtr GetWindowHandle()
+        {
+            return WinRT.Interop.WindowNative.GetWindowHandle(this);
         }
 
 
