@@ -61,15 +61,17 @@ namespace ModernWindow.PackageEngine.Managers
                 }
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
                 {
-                    string name = line[..IdIndex].Trim();
-                    string id = line[IdIndex..].Trim().Split(' ')[0];
-                    string version = line[VersionIndex..].Trim().Split(' ')[0];
+                    int offset = 0; // Account for non-unicode character length
+                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                        offset++;
+                    string name = line[..(IdIndex-offset)].Trim();
+                    string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
                     ManagerSource source;
                     if (SourceIndex == -1 || SourceIndex >= line.Length)
                         source = MainSource;
                     else
                     {
-                        string sourceName = line[SourceIndex..].Trim().Split(' ')[0];
+                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
                         if (SourceReference.ContainsKey(sourceName))
                             source = SourceReference[sourceName];
                         else
@@ -129,21 +131,24 @@ namespace ModernWindow.PackageEngine.Managers
                 }
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length )
                 {
-                    string name = line[..IdIndex].Trim();
-                    string id = line[IdIndex..].Trim().Split(' ')[0];
-                    string version = line[VersionIndex..NewVersionIndex].Trim();
+                    int offset = 0; // Account for non-unicode character length
+                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                        offset++;
+                    string name = line[..(IdIndex - offset)].Trim();
+                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
+                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
                     string newVersion;
                     if(SourceIndex != -1)
-                        newVersion = line[NewVersionIndex..SourceIndex].Trim();
+                        newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
                     else
-                        newVersion = line[NewVersionIndex..].Trim().Split(' ')[0];
+                        newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
 
                     ManagerSource source;
                     if (SourceIndex == -1 || SourceIndex >= line.Length)
                         source = MainSource;
                     else
                     {
-                        string sourceName = line[SourceIndex..].Trim().Split(' ')[0];
+                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
                         if (SourceReference.ContainsKey(sourceName))
                             source = SourceReference[sourceName];
                         else
@@ -199,15 +204,18 @@ namespace ModernWindow.PackageEngine.Managers
                 }
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
                 {
-                    string name = line[..IdIndex].Trim();
-                    string id = line[IdIndex..].Trim().Split(' ')[0];
+                    int offset = 0; // Account for non-unicode character length
+                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                        offset++;
+                    string name = line[..(IdIndex - offset)].Trim();
+                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
                     if (NewVersionIndex == -1 && SourceIndex != -1) NewVersionIndex = SourceIndex;
                     else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length-1;
-                    string version = line[VersionIndex..NewVersionIndex].Trim();
+                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
 
                     ManagerSource source;
-                    string sourceName = line[SourceIndex..].Trim().Split(' ')[0].Trim();
-                    if(SourceIndex == -1 || SourceIndex >= line.Length)
+                    string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
+                    if(SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
                         source = GetLocalSource(id); // Load Winget Local Sources
                     else
                     {
