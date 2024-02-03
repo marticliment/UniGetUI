@@ -43,7 +43,7 @@ namespace ModernWindow.PackageEngine.Managers
                     string[] elements = line.Split(' ');
                     for(int i = 0; i<elements.Length; i++) elements[i] = elements[i].Trim();
 
-                    if (elements.Length > 1)
+                    if (elements.Length < 2)
                         continue;
 
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))

@@ -65,6 +65,7 @@ namespace ModernWindow.PackageEngine.Managers
                     while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
                         offset++;
                     string name = line[..(IdIndex-offset)].Trim();
+                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
                     string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
                     ManagerSource source;
                     if (SourceIndex == -1 || SourceIndex >= line.Length)
