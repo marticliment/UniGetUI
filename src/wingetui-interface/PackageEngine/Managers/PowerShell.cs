@@ -128,6 +128,9 @@ namespace ModernWindow.PackageEngine.Managers
 
                 for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
+                if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
+                    continue;
+
                 if (SourceReference.ContainsKey(elements[3]))
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceReference[elements[3]], this));
                 else
@@ -195,30 +198,65 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return GetUninstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return GetUninstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            var output_string = string.Join("\n", Output);
+
+            if(output_string.Contains("AdminPrivilegesAreRequired") && !options.RunAsAdministrator)
+            {
+                options.RunAsAdministrator = true;
+                return OperationVeredict.AutoRetry;
+            }
+
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUpdateParameters(package, options).ToList();
+            parameters[0] = Properties.InstallVerb;
+
+            parameters.AddRange(new string[] { "-AllowClobber" });
+            if (package.Scope == PackageScope.Global)
+                parameters.AddRange(new string[] { "-Scope", "AllUsers" });
+            else
+                parameters.AddRange(new string[] { "-Scope", "CurrentUser" });
+
+            if(options.Version != "")
+                parameters.AddRange(new string[] { "-RequiredVersion", options.Version });
+
+            return parameters.ToArray();
+            
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options).ToList();
+            parameters[0] = Properties.UpdateVerb;
+
+            if(options.PreRelease)
+                parameters.Add("-AllowPrerelease");
+
+            if(options.SkipHashCheck)
+                parameters.Add("-SkipPublisherCheck");
+
+            return parameters.ToArray();
         }
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = new List<string>() { Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force" };
+
+            if(options.CustomParameters != null)
+                parameters.AddRange(options.CustomParameters);
+
+            return parameters.ToArray();
         }
         public override ManagerSource GetMainSource()
         {
@@ -307,8 +345,8 @@ namespace ModernWindow.PackageEngine.Managers
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "powershell.exe",
                 InstallVerb = "Install-Module",
-                UninstallVerb = "Update-Module",
-                UpdateVerb = "Uninstall-Module",
+                UninstallVerb = "Uninstall-Module",
+                UpdateVerb = "Update-Module",
                 ExecutableCallArgs = "-NoProfile -Command",
                 
             };
