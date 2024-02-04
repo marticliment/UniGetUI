@@ -29,7 +29,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
             };
 
             p.Start();
@@ -90,7 +91,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
             };
 
             p.Start();
@@ -142,7 +144,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
             };
 
             p.Start();
@@ -160,33 +163,51 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options);
+            parameters[0] = Properties.InstallVerb;
+
+            if(options.Version != "")
+                parameters[1] = package.Id + "@" + package.Version;
+            else
+                parameters[1] = package.Id + "@latest";
+            
+            return parameters;
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options);
+            parameters[0] = Properties.UpdateVerb;
+            parameters[1] = package.Id + "@" + package.NewVersion;
+            return parameters;
         }
-
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = new List<string>() { Properties.UninstallVerb, package.Id };
+
+            if (options.CustomParameters != null)
+                parameters.AddRange(options.CustomParameters);
+
+            if (package.Scope == PackageScope.Global)
+                parameters.Add("--global");
+
+            return parameters.ToArray();
+
         }
         public override ManagerSource GetMainSource()
         {
@@ -224,8 +245,8 @@ namespace ModernWindow.PackageEngine.Managers
                 ColorIconId = "node_color",
                 ExecutableFriendlyName = "npm",
                 InstallVerb = "install",
-                UninstallVerb = "update",
-                UpdateVerb = "uninstall",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "install",
                 ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command npm",
                 
             };
@@ -252,7 +273,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 }
             };
             process.Start();

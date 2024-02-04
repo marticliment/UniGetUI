@@ -272,6 +272,7 @@ namespace ModernWindow.PackageEngine
                 startInfo.RedirectStandardError = true;
                 startInfo.UseShellExecute = false;
                 startInfo.CreateNoWindow = true;
+                startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
                 Process = BuildProcessInstance(startInfo);
 
