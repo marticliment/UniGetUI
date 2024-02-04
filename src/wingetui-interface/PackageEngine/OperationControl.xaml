@@ -47,10 +47,10 @@
             Name="OutputDialog"
             >
             <ContentDialog.Content>
-                <ScrollView CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="LiveOutputScrollBar" Height="500" Width="500">
+                <ScrollViewer CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="LiveOutputScrollBar" Height="500" Width="500">
                     <RichTextBlock Margin="8" Name="LiveOutputTextBlock" FontFamily="Consolas" >
                     </RichTextBlock>
-                </ScrollView>
+                </ScrollViewer>
             </ContentDialog.Content>
         </ContentDialog>
     </Grid>

@@ -16,6 +16,11 @@ namespace ModernWindow
         {
             WinRT.ComWrappersSupport.InitializeComWrappers();
             bool isRedirect = await DecideRedirection();
+            if (!isRedirect) // Sometimes, redirection fails, so we try again
+                isRedirect = await DecideRedirection();
+            if (!isRedirect) // Sometimes, redirection fails, so we try again (second time)
+                isRedirect = await DecideRedirection();
+
             if (!isRedirect)
             {
                 Microsoft.UI.Xaml.Application.Start((p) =>
@@ -32,7 +37,8 @@ namespace ModernWindow
             bool isRedirect = false;
             AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
             ExtendedActivationKind kind = args.Kind;
-            AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.WingetUI.New");
+
+            AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.WingetUI.NeXT");
 
             if (keyInstance.IsCurrent)
             {

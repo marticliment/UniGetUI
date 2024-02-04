@@ -161,7 +161,7 @@ namespace ModernWindow.PackageEngine
             OutputDialog.Title = bindings.Translate("Live output");
             OutputDialog.CloseButtonText = bindings.Translate("Close");
             OutputDialog.SecondaryButtonText = bindings.Translate("Copy and close");
-            ProcessOutput.CollectionChanged += (s, e) => {
+            ProcessOutput.CollectionChanged += async (s, e) => {
                 LiveOutputTextBlock.Blocks.Clear();
                 Paragraph p = new();
                 foreach (var line in ProcessOutput)
@@ -170,7 +170,8 @@ namespace ModernWindow.PackageEngine
                     p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a"});
                 }
                 LiveOutputTextBlock.Blocks.Add(p);
-                LiveOutputScrollBar.ScrollTo(0, LiveOutputTextBlock.Height, new ScrollingScrollOptions(ScrollingAnimationMode.Disabled));
+                await Task.Delay(100);
+                LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
             } ;
             
             Status = OperationStatus.Pending;
@@ -289,6 +290,9 @@ namespace ModernWindow.PackageEngine
                 {
                     if (line.Trim() != "")
                     {
+                        if(line.Contains("For the question below")) // Mitigate chocolatey timeouts
+                            Process.StandardInput.WriteLine("");
+
                         LineInfoText = line.Trim();
                         if (line.Length > 5 || ProcessOutput.Count == 0)
                             ProcessOutput.Add("    | " + line);

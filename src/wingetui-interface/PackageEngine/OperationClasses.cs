@@ -68,6 +68,7 @@ namespace ModernWindow.PackageEngine
             startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
             Process process = new Process();
             process.StartInfo = startInfo;
+
             return process;
         }
 
@@ -117,6 +118,7 @@ namespace ModernWindow.PackageEngine
             startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             Process process = new Process();
             process.StartInfo = startInfo;
+
             return process;
         }
 
@@ -166,6 +168,8 @@ namespace ModernWindow.PackageEngine
             startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             Process process = new Process();
             process.StartInfo = startInfo;
+
+
             return process;
         }
 

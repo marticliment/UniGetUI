@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Collections;
+using Windows.UI.WebUI;
+using System.Net.Http.Headers;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -137,30 +139,77 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            var output_string = string.Join("\n", Output);
+            
+            if(ReturnCode == 1641 || ReturnCode == 0)
+                return OperationVeredict.Succeeded;
+            else if(ReturnCode == 3010)
+                return OperationVeredict.Succeeded; // TODO: Restart required
+            else if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation") || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) && !options.RunAsAdministrator)
+            {
+                options.RunAsAdministrator = true;
+                return OperationVeredict.AutoRetry;
+            }
+            return OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            var output_string = string.Join("\n", Output);
+
+            if (ReturnCode == 1641 || ReturnCode == 1614 || ReturnCode == 1605 || ReturnCode == 0)
+                return OperationVeredict.Succeeded;
+            else if (ReturnCode == 3010)
+                return OperationVeredict.Succeeded; // TODO: Restart required
+            else if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation")) && !options.RunAsAdministrator)
+            {
+                options.RunAsAdministrator = true;
+                return OperationVeredict.AutoRetry;
+            }
+            return OperationVeredict.Failed;
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options).ToList();
+            parameters[0] = Properties.InstallVerb;
+
+            if(options.Architecture == System.Runtime.InteropServices.Architecture.X86)
+                parameters.Add("--forcex86");
+
+            if(options.PreRelease)
+                parameters.Add("--prerelease");
+
+            if(options.SkipHashCheck)
+                parameters.AddRange(new string[] { "--ignore-checksums", "--force"});
+
+            if (options.Version != "")
+                parameters.AddRange(new string[] { "--version=" + options.Version, "--allow-downgrade" });
+
+            return parameters.ToArray();
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetInstallParameters(package, options);
+            parameters[0] = Properties.UpdateVerb;
+            return parameters;
         }
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = new List<string>() { Properties.UninstallVerb, package.Id, "-y" };
+
+            if (options.CustomParameters != null)
+                parameters.AddRange(options.CustomParameters);
+
+            if (!options.InteractiveInstallation)
+                parameters.Add("--notsilent");
+
+            return parameters.ToArray();
         }
 
         public override ManagerSource GetMainSource()
