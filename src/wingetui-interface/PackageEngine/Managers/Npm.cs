@@ -160,32 +160,8 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
+
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetInstallParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"));
-        }
-
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
             throw new NotImplementedException();
         }
@@ -195,7 +171,29 @@ namespace ModernWindow.PackageEngine.Managers
             throw new NotImplementedException();
         }
 
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+        public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+        public override ManagerSource GetMainSource()
+        {
+            return new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"));
+        }
+
+        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
             throw new NotImplementedException();
         }

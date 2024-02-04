@@ -193,16 +193,34 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
+
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             throw new NotImplementedException();
         }
 
-        public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             throw new NotImplementedException();
         }
 
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+        public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
         public override ManagerSource GetMainSource()
         {
             return new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2"));
@@ -254,26 +272,6 @@ namespace ModernWindow.PackageEngine.Managers
             }
             await process.WaitForExitAsync();
             return sources.ToArray();
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
         }
 
 #pragma warning disable CS1998

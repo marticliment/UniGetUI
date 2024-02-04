@@ -155,12 +155,31 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
+
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             throw new NotImplementedException();
         }
 
+        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        {
+            throw new NotImplementedException();
+        }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
             throw new NotImplementedException();
         }
@@ -175,25 +194,6 @@ namespace ModernWindow.PackageEngine.Managers
             throw new NotImplementedException();
         }
 
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
-        {
-            throw new NotImplementedException();
-        }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public override async Task RefreshSources()
