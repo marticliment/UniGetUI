@@ -193,7 +193,6 @@ namespace ModernWindow.PackageEngine.Managers
             return Packages.ToArray();
         }
 
-
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             throw new NotImplementedException();

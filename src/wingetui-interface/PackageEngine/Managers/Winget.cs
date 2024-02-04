@@ -324,22 +324,12 @@ namespace ModernWindow.PackageEngine.Managers
         {
             List<string> parameters = new List<string>() { Properties.UninstallVerb };
             if (!package.Id.Contains("…"))
-            {
-                parameters.Add("--id");
-                parameters.Add(package.Id);
-                parameters.Add("--exact");
-            }
+                parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
             else if (package.Name.Contains("…"))
-            {
-                parameters.Add("--name");
-                parameters.Add("\"" + package.Name + "\"");
-                parameters.Add("--exact");
-            }
+                parameters.AddRange(new string[] { "--name", "\""+package.Name+"\"", "--exact" });
             else
-            {
-                parameters.Add("--id");
-                parameters.Add(package.Id.Replace("…", ""));
-            }
+                parameters.AddRange(new string[] { "--id", package.Id.Replace("…", "") });
+
             parameters.Add("--accept-source-agreements");
 
             switch (options.InstallationScope)
@@ -353,17 +343,12 @@ namespace ModernWindow.PackageEngine.Managers
             }
 
             if (options.Version != "")
-            {
-                parameters.Add("--version"); parameters.Add(options.Version); parameters.Add("--force");
-            }
+                parameters.AddRange(new string[] { "--version", options.Version, "--force" });
 
             if (options.InteractiveInstallation)
                 parameters.Add("--interactive");
             else
-            {
-                parameters.Add("--silent");
-                parameters.Add("--disable-interactivity");
-            }
+                parameters.AddRange(new string[] { "--silent", "--disable-interactivity" });
 
             return parameters.ToArray();
         }
