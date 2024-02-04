@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -48,7 +49,8 @@ namespace ModernWindow.PackageEngine.Managers
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if(elements.Length >= 2)
-                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global)); 
+                        // Dotnet tool packages are installed globally by default, hence the Global flag
                 }
             }
 
@@ -116,8 +118,46 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            
-            Process p = new Process() {
+            Process p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            bool DashesPassed = false;
+            var Packages = new List<Package>();
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!DashesPassed)
+                {
+                    if (line.Contains("----"))
+                        DashesPassed = true;
+                }
+                else
+                {
+                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                    if (elements.Length < 2)
+                        continue;
+
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        continue;
+
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.User));
+                }
+            }
+
+            p = new Process() {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = Status.ExecutablePath,
@@ -131,9 +171,7 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
 
-            string line;
-            bool DashesPassed = false;
-            var Packages = new List<Package>();
+            DashesPassed = false;
             while((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 if(!DashesPassed)
@@ -154,39 +192,63 @@ namespace ModernWindow.PackageEngine.Managers
             }
             return Packages.ToArray();
         }
-
+        
 
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUpdateParameters(package, options);
+            parameters[0] = Properties.InstallVerb;
+            return parameters;
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options).ToList();
+            parameters[0] = Properties.UpdateVerb;
+
+            if (options.Architecture == Architecture.X86)
+                parameters.AddRange(new string[] { "--arch", "x86" });
+            else if (options.Architecture == Architecture.X64)
+                parameters.AddRange(new string[] { "--arch", "x64" });
+            else if (options.Architecture == Architecture.Arm)
+                parameters.AddRange(new string[] { "--arch", "arm32" });
+            else if (options.Architecture == Architecture.Arm64)
+                parameters.AddRange(new string[] { "--arch", "arm64" });
+
+            return parameters.ToArray();
         }
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = new List<string>() { Properties.UninstallVerb, package.Id };
+
+            if(options.CustomParameters != null)
+                parameters.AddRange(options.CustomParameters);
+
+            if (options.CustomInstallLocation != "")
+                parameters.Add("--tool-path" + options.CustomInstallLocation);
+            else if (package.Scope == PackageScope.Global)
+                parameters.Add("--global");
+            
+            return parameters.ToArray();
         }
 
         public override ManagerSource GetMainSource()
         {
-            return new ManagerSource(this, "dotnet-tool", new Uri("https://www.nuget.org/"));
+            return new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"));
         }
 
         public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
@@ -209,6 +271,7 @@ namespace ModernWindow.PackageEngine.Managers
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
                 SupportsPreRelease = true,
+                SupportsCustomLocations = true,
             };
         }
 
@@ -222,8 +285,8 @@ namespace ModernWindow.PackageEngine.Managers
                 ColorIconId = "dotnet_color",
                 ExecutableFriendlyName = "dotnet tool",
                 InstallVerb = "install",
-                UninstallVerb = "update",
-                UpdateVerb = "uninstall",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "update",
                 ExecutableCallArgs = "tool",
                 
             };
