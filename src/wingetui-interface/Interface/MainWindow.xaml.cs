@@ -8,7 +8,9 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Win32;
 using ModernWindow.Essentials;
 using ModernWindow.Interface;
 using ModernWindow.Interface.Widgets;
@@ -19,6 +21,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -167,12 +171,61 @@ namespace ModernWindow
             TrayIcon.DoubleClickCommand = ShowHideCommand;
             TrayIcon.NoLeftClickDelay = true;
             TrayIcon.ContextFlyout = TrayMenu;
+            UpdateSystemTrayStatus();
         }
 
-        private void TrayIcon_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        public void UpdateSystemTrayStatus()
         {
-            throw new NotImplementedException();
+            string modifier = "_empty";
+            string tooltip = bindings.Translate("Everything is up to date") + " - WingetUI";
+
+            if(bindings.TooltipStatus.OperationsInProgress > 0)
+            {
+                modifier = "_blue";
+                tooltip = bindings.Translate("Operation in progress") + " - WingetUI";
+            }
+            else if (bindings.TooltipStatus.ErrorsOccurred > 0)
+            {
+                modifier = "_orange";
+                tooltip = bindings.Translate("Attention required") + " - WingetUI";
+            }
+            else if (bindings.TooltipStatus.RestartRequired)
+            {
+                modifier = "_turquoise";
+                tooltip = bindings.Translate("Restart required") + " - WingetUI";
+            }
+            else if (bindings.TooltipStatus.AvailableUpdates > 0)
+            {
+                modifier = "_green";
+                if(bindings.TooltipStatus.AvailableUpdates == 1)
+                    tooltip = bindings.Translate("1 update is available") + " - WingetUI";
+                else
+                    tooltip = bindings.Translate("{0} updates are available").Replace("{0}", bindings.TooltipStatus.AvailableUpdates.ToString()) + " - WingetUI";
+            }
+
+            TrayIcon.ToolTipText = tooltip;
+
+            var theme = ApplicationTheme.Light;
+            string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+            string RegistryValueName = "SystemUsesLightTheme";
+            var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
+            var registryValueObject = key?.GetValue(RegistryValueName);
+            if (registryValueObject != null)
+            {   
+                var registryValue = (int)registryValueObject;
+                theme = registryValue > 0 ? ApplicationTheme.Light : ApplicationTheme.Dark;
+            }
+            if(theme == ApplicationTheme.Light)
+                modifier += "_black";
+            else
+                modifier += "_white";
+            
+
+            var FullIconPath = Path.Join(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "\\wingetui\\resources\\tray" + modifier + ".ico");
+
+            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
         }
+
 
         public void SwitchToInterface()
         {

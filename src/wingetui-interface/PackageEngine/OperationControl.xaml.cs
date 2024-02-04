@@ -261,6 +261,8 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
+                bindings.TooltipStatus.OperationsInProgress = bindings.TooltipStatus.OperationsInProgress + 1;
+
                 this.Status = OperationStatus.Running;
                 LineInfoText = bindings.Translate("Launching subprocess...");
                 ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -357,6 +359,7 @@ namespace ModernWindow.PackageEngine
                 RemoveFromQueue();
                 try { this.Status = OperationStatus.Failed; } catch { }
             }
+            bindings.TooltipStatus.OperationsInProgress = bindings.TooltipStatus.OperationsInProgress - 1;
 
 
         }

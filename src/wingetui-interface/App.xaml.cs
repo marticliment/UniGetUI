@@ -55,7 +55,13 @@ namespace ModernWindow
         public MainApp()
         {
             this.InitializeComponent();
-            
+         
+            this.UnhandledException += (sender, e) =>
+            {
+                Debug.WriteLine("Unhandled Exception raised: " + e.Message);
+                Debug.WriteLine("Stack Trace: \n" + e.Exception.StackTrace);
+            };
+
             Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
             PythonEngine.Initialize();
             PythonEngine.BeginAllowThreads();

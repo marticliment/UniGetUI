@@ -27,6 +27,7 @@
     <Content Include="icon.ico" />
 	  <Content Include="..\wingetui-engine\**\*.py" />
 	  <Content Include="..\wingetui-engine\**\*.png" />
+	  <Content Include="..\wingetui-engine\**\*.ico" />
 	  <Content Include="..\wingetui-engine\**\*.cmd" />
 	  <Content Include="..\wingetui-engine\**\*.ps1" />
 	  <Content Include="..\wingetui-engine\**\*.exe" />

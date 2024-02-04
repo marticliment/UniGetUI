@@ -192,10 +192,7 @@ namespace ModernWindow.Interface
                     }
                 }
             }
-            
-
             FilterPackages(QueryBlock.Text);
-
             LoadingProgressBar.Visibility = Visibility.Collapsed;
         }
 
@@ -299,6 +296,10 @@ namespace ModernWindow.Interface
 
             bindings.App.mainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0? Visibility.Collapsed: Visibility.Visible;
             bindings.App.mainWindow.NavigationPage.UpdatesBadge.Value = Packages.Count();
+            try
+            {
+                bindings.TooltipStatus.AvailableUpdates = Packages.Count();
+            } catch (Exception) { }
         }
 
         public void SortPackages(string Sorter)

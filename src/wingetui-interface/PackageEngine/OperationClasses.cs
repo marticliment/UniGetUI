@@ -186,7 +186,9 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = bindings.Translate("{package} uninstallation failed!").Replace("{package}", Package.Name);
+            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred + 1;
             await Task.Delay(0);
+            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred - 1;
             return AfterFinshAction.ManualClose;
         }
 

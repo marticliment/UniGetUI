@@ -11,12 +11,26 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Audio;
 using Windows.Storage.Streams;
 
 namespace ModernWindow.Structures
 {
     public class AppTools
     {
+
+        public class __tooltip_options
+        {
+            private int _errors_occurred = 0;
+            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value;AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus() ;  } }
+            private bool _restart_required = false;
+            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value;AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus();  } }
+            private int _operations_in_progress = 0;
+            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value;AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus();  } }
+            private int _available_updates = 0;
+            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
+        }
+
 
         public MainApp App;
 
@@ -25,6 +39,8 @@ namespace ModernWindow.Structures
         public dynamic Core;
         public ThemeListener ThemeListener;
         public List<AbstractOperation> OperationQueue = new();
+
+        public __tooltip_options TooltipStatus = new __tooltip_options();
 
         private static AppTools instance;
 
