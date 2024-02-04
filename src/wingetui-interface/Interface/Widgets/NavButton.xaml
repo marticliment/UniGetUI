@@ -12,6 +12,7 @@
 
     <Grid>
         <ToggleButton x:Name="ToggleButton"
+            x:FieldModifier="public"
             Click="ToggleButton_Click">
             <ToggleButton.Style>
                 <Style TargetType="ToggleButton">

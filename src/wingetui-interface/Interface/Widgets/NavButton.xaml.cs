@@ -84,14 +84,9 @@ namespace ModernWindow.Interface.Widgets
             );
 
             bindings.App.mainWindow.NavButtonList.Add(this);
-            
         }
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach(NavButton button in bindings.App.mainWindow.NavButtonList)
-            {
-                button.ToggleButton.IsChecked = (button == this);
-            }
             Click?.Invoke(this, new NavButtonEventArgs());
         }
 

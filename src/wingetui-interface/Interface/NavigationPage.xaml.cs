@@ -19,6 +19,7 @@ using System.Numerics;
 using System.Collections.ObjectModel;
 using ModernWindow.PackageEngine;
 using System.Threading.Tasks;
+using ModernWindow.Structures;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,14 +28,16 @@ namespace ModernWindow.Interface
 {
     public sealed partial class NavigationPage : UserControl
     {
+        public static AppTools bindings = AppTools.Instance;
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
-        public Type OldPage;
+        public Page OldPage;
+        public Page CurrentPage;
         public InfoBadge UpdatesBadge;
-        private Dictionary<Page, int> PageColumnReference = new();
         public StackPanel OperationStackPanel;
+        private Dictionary<Page, NavButton> PageButtonReference = new();
         public NavigationPage()
         {
             this.InitializeComponent();
@@ -51,33 +54,15 @@ namespace ModernWindow.Interface
                 Grid.SetColumn(page, 0);
                 Grid.SetRow(page, 0);
                 MainContentPresenterGrid.Children.Add(page);
-                PageColumnReference.Add(page, i);
                 i++;
             }
 
-            DiscoverNavButton.ForceClick();
-            _ = TestOperationWidget();
-        }
+            PageButtonReference.Add(DiscoverPage, DiscoverNavButton);
+            PageButtonReference.Add(UpdatesPage, UpdatesNavButton);
+            PageButtonReference.Add(InstalledPage, InstalledNavButton);
+            PageButtonReference.Add(SettingsPage, SettingsNavButton);
 
-        public async Task TestOperationWidget()
-        {
-            /*OperationList.Add(new InstallPackageOperation());
-            await Task.Delay(5000);
-            OperationList.Add(new InstallPackageOperation());
-            await Task.Delay(5000);
-            OperationList.Add(new InstallPackageOperation());
-            await Task.Delay(10000);
-            OperationList.Add(new InstallPackageOperation());
-            await Task.Delay(2000);
-            OperationList.RemoveAt(0);
-            await Task.Delay(2000);
-            OperationList.RemoveAt(0);
-            await Task.Delay(2000);
-            OperationList.RemoveAt(0);
-            await Task.Delay(2000);
-            OperationList.RemoveAt(0);
-            await Task.Delay(2000);
-            OperationList.Add(new InstallPackageOperation());*/
+            DiscoverNavButton.ForceClick();
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
@@ -97,7 +82,6 @@ namespace ModernWindow.Interface
 
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            // MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
         }
 
         private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
@@ -105,29 +89,33 @@ namespace ModernWindow.Interface
             NavigateToPage(SettingsPage);
         }
 
-        private void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            // MainContentPresenter.Navigate(typeof(Page), new DrillInNavigationTransitionInfo());
+            
+            
+            AboutWingetUI.PrimaryButtonText = bindings.Translate("Close");
+            await AboutWingetUI.ShowAsync();
+            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+            {
+                button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
+            }
         }
 
-        private void NavigateToPage(Page targetPage)
+        private void NavigateToPage(Page TargetPage)
         {
-            var visiblePage = targetPage;
-            foreach (Page page in PageColumnReference.Keys)
+            foreach (Page page in PageButtonReference.Keys)
                 if (page.Visibility == Visibility.Visible)
-                    visiblePage = page;
+                    OldPage = page;
 
-            /*if (PageColumnReference[visiblePage] < PageColumnReference[targetPage])
-                (targetPage as dynamic).ShowAnimationInitialPos = new Vector3(0, 100, 0);
-            else
-                (targetPage as dynamic).ShowAnimationInitialPos = new Vector3(0, -100, 0);*/
+            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+            {
+                button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
+            }
 
+            foreach (Page page in PageButtonReference.Keys)
+                page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
 
-                foreach (Page page in PageColumnReference.Keys)
-                page.Visibility = (page == targetPage) ? Visibility.Visible : Visibility.Collapsed;
-                    //    MainContentPresenterGrid.ColumnDefinitions[PageColumnReference[page]].Width =
-            //        (page != targetPage) ? new GridLength(0, GridUnitType.Pixel) : new GridLength(1, GridUnitType.Star);
-
+            CurrentPage = TargetPage;
         }
     }
 }

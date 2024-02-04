@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ModernWindow.Interface.AboutWingetUI"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ModernWindow.Interface"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:ModernWindow.Interface.Widgets"
+    mc:Ignorable="d"
+    Height="500"
+    >
+    <Pivot>
+        <PivotItem>
+            <PivotItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="About"/>
+                </StackPanel>
+            </PivotItem.Header>
+            <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                <StackPanel Orientation="Vertical" Padding="0,8,0,0" Spacing="4">
+                    <InfoBar Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False" Title="Disclaimer" Message="WingetUI is not affiliated with Winget, Microsoft, nor any other package manager."/>
+
+                    <widgets:TranslatedTextBlock x:Name="AboutHeader" Text="About WingetUI Version" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="WingetUI is an application that makes manaing your software easier, by providing an all-in-one graphical interface for your command-line package managers."/>
+                    <widgets:TranslatedTextBlock Text="With WingetUI you will be able to install, update and remove your packages, as well as backup your packages, manage which updates to install and which ones not to, and many other features."/>
+                    <TextBlock/>
+                    <widgets:TranslatedTextBlock Text="Useful links" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <HyperlinkButton NavigateUri="https://www.marticliment.com/wingetui" HorizontalAlignment="Stretch">
+                        <widgets:TranslatedTextBlock Text="WingetUI Homepage"/>
+                    </HyperlinkButton>
+                    <HyperlinkButton NavigateUri="https://github.com/marticliment/wingetui/issues/new/choose" HorizontalAlignment="Stretch">
+                        <widgets:TranslatedTextBlock Text="Report an issue or submit a feature request"/>
+                    </HyperlinkButton>
+                    <HyperlinkButton NavigateUri="https://github.com/marticliment/wingetui/" HorizontalAlignment="Stretch">
+                        <widgets:TranslatedTextBlock Text="WingetUI Repository"/>
+                    </HyperlinkButton>
+
+                </StackPanel>
+            </ScrollView>
+        </PivotItem>
+
+        <PivotItem>
+            <PivotItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="Licenses"/>
+                </StackPanel>
+            </PivotItem.Header>
+            <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                <StackPanel Orientation="Vertical" Padding="0,16,0,0" Spacing="4">
+                    <widgets:TranslatedTextBlock Text="WingetUI License" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="Using WingetUI implies the acceptation of the GNU Lesser General Public License v2.1 License"/>
+                    <TextBlock/>
+                    <widgets:TranslatedTextBlock Text="Third-party licenses" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="WingetUI Uses the following libraries. Without them, WingetUI wouldn't have been possible."/>
+                    <ListView ItemsSource="{x:Bind Licenses}" SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:LibraryLicense">
+                                <Grid ColumnSpacing="8" Margin="0" Padding="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <HyperlinkButton Grid.Column="1" Content="{x:Bind License}" NavigateUri="{x:Bind LicenseURL}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                </StackPanel>
+            </ScrollView>
+        </PivotItem>
+
+        <PivotItem>
+            <PivotItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xEBDA;" FontSize="16" VerticalAlignment="Center"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="Contributors"/>
+                </StackPanel>
+            </PivotItem.Header>
+            <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                <StackPanel Orientation="Vertical" Padding="0,16,0,0">
+                    <widgets:TranslatedTextBlock Text="Contributors" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="WingetUI wouldn't have been possible without the help of the contributors. Thank you all 🥳"/>
+                    <TextBlock/>
+                    <ListView ItemsSource="{x:Bind Contributors}" SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:Person">
+                                <Grid ColumnSpacing="8" Margin="0" Padding="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" CornerRadius="16" Height="32">
+                                        <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
+                                            <Image.Source>
+                                                <BitmapImage UriSource="{x:Bind ProfilePicture}"/>
+                                            </Image.Source>
+                                        </Image>
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <HyperlinkButton Grid.Column="2" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                        <widgets:TranslatedTextBlock Text="View GitHub Profile"/>
+                                    </HyperlinkButton>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </ScrollView>
+        </PivotItem>
+
+        <PivotItem>
+            <PivotItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xF2B7;" FontSize="16" VerticalAlignment="Center"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="Translators"/>
+                </StackPanel>
+            </PivotItem.Header>
+            <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                <StackPanel Orientation="Vertical" Padding="0,16,0,0">
+                    <widgets:TranslatedTextBlock Text="Translators" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="WingetUI has been translated to more than 30 languages thaks to the volunteer translators. Thank you 🤝"/>
+                    <HyperlinkButton Grid.Column="2" NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"  VerticalAlignment="Center" Margin="0,4,0,4" HorizontalAlignment="Stretch" >
+                    <widgets:TranslatedTextBlock Text="Become a translator"/>
+                    </HyperlinkButton>
+                    <TextBlock/>
+                    <ListView ItemsSource="{x:Bind Translators}" SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:Person">
+                                <Grid ColumnSpacing="8" Margin="0" Padding="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" CornerRadius="16" Height="32">
+                                        <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
+                                            <Image.Source>
+                                                <BitmapImage UriSource="{x:Bind ProfilePicture}"/>
+                                            </Image.Source>
+                                        </Image>
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <HyperlinkButton Grid.Column="2" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                        <widgets:TranslatedTextBlock Text="View GitHub Profile"/>
+                                    </HyperlinkButton>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </ScrollView>
+        </PivotItem>
+
+        <PivotItem>
+            <PivotItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xED56;" FontSize="16" VerticalAlignment="Center"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="Support me"/>
+                </StackPanel>
+            </PivotItem.Header>
+            <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                <StackPanel Orientation="Vertical" Padding="0,16,0,0" Spacing="4">
+                    <widgets:TranslatedTextBlock Text="Support the developer" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="Do you find WingetUI useful? If you can, you may want to support my work, so I can continue making WingetUI the ultimate package maniaging interface."/>
+                    <widgets:TranslatedTextBlock Text="WingetUI is free, and it will be free forever. No ads, no credit card, no premium version. 100% free, forever."/>
+                    <widgets:TranslatedTextBlock Text="Thank you ❤"/>
+                    <TextBlock/>
+                    <HyperlinkButton NavigateUri="https://ko-fi.com/martinet101" HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="https://storage.ko-fi.com/cdn/kofi3.png?v=3" Height="48"/>
+                        </StackPanel>
+                    </HyperlinkButton>
+                    <TextBlock/>
+                    <widgets:TranslatedTextBlock Text="Share WingetUI" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock Text="Don't feel like donating? Don't worry, you can always share WingetUI with your friends. Spread the word about WingetUI."/>
+                    <widgets:TranslatedTextBlock Text="Thank you 😉"/>
+                    <HyperlinkButton NavigateUri="https://www.marticliment.com/wingetui" HorizontalAlignment="Stretch">
+                        <widgets:TranslatedTextBlock Text="WingetUI Homepage - Share this link!"/>
+                    </HyperlinkButton>
+                </StackPanel>
+            </ScrollView>
+        </PivotItem>
+    </Pivot>
+
+</Page>
