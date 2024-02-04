@@ -172,7 +172,7 @@ namespace ModernWindow.PackageEngine
                 LiveOutputTextBlock.Blocks.Add(p);
                 await Task.Delay(100);
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-            } ;
+            };
             
             Status = OperationStatus.Pending;
 
@@ -290,7 +290,7 @@ namespace ModernWindow.PackageEngine
                 {
                     if (line.Trim() != "")
                     {
-                        if(line.Contains("For the question below")) // Mitigate chocolatey timeouts
+                        if(line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
                             Process.StandardInput.WriteLine("");
 
                         LineInfoText = line.Trim();

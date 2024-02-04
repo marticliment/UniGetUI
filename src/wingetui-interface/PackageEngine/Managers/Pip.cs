@@ -10,6 +10,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using CommunityToolkit.WinUI.Helpers;
+using Windows.ApplicationModel;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -70,7 +72,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
                     
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
             return Packages.ToArray();
@@ -110,7 +112,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
                     
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
+                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
                 }
             }
             return Packages.ToArray();
@@ -151,39 +153,69 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
                     
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
             return Packages.ToArray();
         }
 
-
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            var output_string = string.Join("\n", Output);
+
+            if (ReturnCode == 0)
+                return OperationVeredict.Succeeded;
+            else if(output_string.Contains("--user") && package.Scope == PackageScope.Global)
+            {
+                package.Scope = PackageScope.User;
+                return OperationVeredict.AutoRetry;
+            }
+            else 
+                return OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            throw new NotImplementedException();
+            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUpdateParameters(package, options);
+            parameters[0] = Properties.InstallVerb;
+            return parameters;
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = GetUninstallParameters(package, options).ToList();
+            parameters[0] = Properties.UpdateVerb;
+            parameters.Remove("--yes");
+            
+            if (options.PreRelease)
+                parameters.Add("--pre");
+
+            if(options.InstallationScope == PackageScope.User)
+                parameters.Add("--user");
+
+            if (options.Version != "")
+                parameters[1] = package.Id + "==" + options.Version;
+
+
+            return parameters.ToArray();
         }
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            throw new NotImplementedException();
+            var parameters = new List<string>() { Properties.UninstallVerb, package.Id, "--yes", "--no-input", "--no-color", "--no-python-version-warning", "--no-cache" };
+
+            if (options.CustomParameters != null)
+                parameters.AddRange(options.CustomParameters);
+
+            return parameters.ToArray();
         }
         public override ManagerSource GetMainSource()
         {
@@ -222,8 +254,8 @@ namespace ModernWindow.PackageEngine.Managers
                 ColorIconId = "pip_color",
                 ExecutableFriendlyName = "pip",
                 InstallVerb = "install",
-                UninstallVerb = "instal --upgrade",
-                UpdateVerb = "uninstall",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "install --upgrade",
                 ExecutableCallArgs = "-m pip",
                 
             };
