@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11698,
-        "done": 4998,
-        "packages_with_icon": 4998,
+        "done": 4999,
+        "packages_with_icon": 4999,
         "packages_with_screenshot": 535,
         "total_screenshots": 1690
     },
@@ -40369,7 +40369,7 @@
             "images": []
         },
         "tencentmeeting": {
-            "icon": "",
+            "icon": "https://cdn.meeting.tencent.com/assets/next-website/logo128.png",
             "images": []
         },
         "tencentmeetingrooms": {
