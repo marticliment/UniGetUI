@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11698,
-        "done": 4999,
-        "packages_with_icon": 4999,
-        "packages_with_screenshot": 535,
-        "total_screenshots": 1690
+        "done": 5017,
+        "packages_with_icon": 5017,
+        "packages_with_screenshot": 536,
+        "total_screenshots": 1691
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -5318,8 +5318,10 @@
             "images": []
         },
         "blockbench": {
-            "icon": "",
-            "images": []
+            "icon": "https://offlinesetups.com/wp-content/uploads/2022/06/Blockbench.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/minecraft/creator/documents/media/entitymodeling/animation.png"
+            ]
         },
         "blockcheck": {
             "icon": "https://community.chocolatey.org/content/packageimages/blockcheck.0.0.9.7.png",
@@ -16707,11 +16709,11 @@
             "images": []
         },
         "google-assistant": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Google_Assistant_logo.svg/768px-Google_Assistant_logo.svg.png",
             "images": []
         },
         "google-assistant-pr\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Google_Assistant_logo.svg/768px-Google_Assistant_logo.svg.png",
             "images": []
         },
         "google-books-downloader": {
@@ -16723,7 +16725,7 @@
             "images": []
         },
         "google-calendar-desktop": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/2048px-Google_Calendar_icon_%282020%29.svg.png",
             "images": []
         },
         "google-cast-chrome": {
@@ -16731,7 +16733,7 @@
             "images": []
         },
         "google-chat-linux": {
-            "icon": "",
+            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2021/01/scalable.svg.png",
             "images": []
         },
         "google-chrome-for-enterprise": {
@@ -16759,11 +16761,11 @@
             "images": []
         },
         "google-java-format": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
             "images": []
         },
         "google-meet-desktop": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/512px-Google_Meet_icon_%282020%29.svg.png",
             "images": []
         },
         "google-pinyin": {
@@ -16779,7 +16781,7 @@
             "images": []
         },
         "google-voice-deskt\u2026": {
-            "icon": "",
+            "icon": "https://fonts.gstatic.com/s/i/productlogos/voice_2020q4/v1/web-96dp/logo_voice_2020q4_color_2x_web_96dp.png",
             "images": []
         },
         "google-voice-desktop": {
@@ -16799,7 +16801,7 @@
             "images": []
         },
         "googlechatelectron": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Google_Chat_icon_%282020%29.svg/1200px-Google_Chat_icon_%282020%29.svg.png",
             "images": []
         },
         "googlechrome": {
@@ -16853,7 +16855,7 @@
             "images": []
         },
         "googleplaymusicdeskto\u2026": {
-            "icon": "",
+            "icon": "https://cdn.wccftech.com/wp-content/uploads/2018/01/Youtube-music.png",
             "images": []
         },
         "gopass": {
@@ -43938,15 +43940,15 @@
             "images": []
         },
         "visualstudio-2019-buildt\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
             "images": []
         },
         "visualstudio-2019-enterp\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
             "images": []
         },
         "visualstudio-2019-profes\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
             "images": []
         },
         "visualstudio-2019-remotetools": {
@@ -43954,15 +43956,15 @@
             "images": []
         },
         "visualstudio-2022-buildt\u2026": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
         "visualstudio-2022-commun\u2026": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
         "visualstudio-2022-enterp\u2026": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
         "visualstudio-2022-profes\u2026": {
@@ -44625,11 +44627,11 @@
             "images": []
         },
         "vncserver": {
-            "icon": "",
+            "icon": "https://www.pacisoft.vn/wp-content/uploads/2018/10/vnc-viewer-logo.png ",
             "images": []
         },
         "vncviewer": {
-            "icon": "",
+            "icon": "https://www.pacisoft.vn/wp-content/uploads/2018/10/vnc-viewer-logo.png ",
             "images": []
         },
         "vnote": {
