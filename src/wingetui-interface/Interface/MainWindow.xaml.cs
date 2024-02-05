@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Win32;
+using ModernWindow.Data;
 using ModernWindow.Essentials;
 using ModernWindow.Interface;
 using ModernWindow.Interface.Widgets;
@@ -101,7 +102,7 @@ namespace ModernWindow
                 { DiscoverPackages, "Discover Packages" },
                 { AvailableUpdates, "Available Updates" },
                 { InstalledPackages, "Installed Packages" },
-                { AboutWingetUI, "WingetUI Version NeXT" },
+                { AboutWingetUI, "WingetUI Version {0}" },
                 { ShowWingetUI, "Show WingetUI" },
                 { QuitWingetUI, "Quit" },
             };
@@ -129,6 +130,7 @@ namespace ModernWindow
             DiscoverPackages.ExecuteRequested += (s, e) => {NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => {NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => {NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
+            AboutWingetUI.Label = bindings.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
             ShowWingetUI.ExecuteRequested += (s, e) => { Activate(); };
             QuitWingetUI.ExecuteRequested += (s, e) => { bindings.App.DisposeAndQuit(); };
 

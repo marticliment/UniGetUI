@@ -14,17 +14,16 @@
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
-                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="About"/>
                 </StackPanel>
             </PivotItem.Header>
             <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
                 <StackPanel Orientation="Vertical" Padding="0,8,0,0" Spacing="4">
-                    <InfoBar Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False" Title="Disclaimer" Message="WingetUI is not affiliated with Winget, Microsoft, nor any other package manager."/>
 
-                    <widgets:TranslatedTextBlock x:Name="AboutHeader" Text="About WingetUI Version" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
+                    <widgets:TranslatedTextBlock x:Name="AboutHeader" Text="About WingetUI" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
                     <widgets:TranslatedTextBlock Text="WingetUI is an application that makes manaing your software easier, by providing an all-in-one graphical interface for your command-line package managers."/>
-                    <widgets:TranslatedTextBlock Text="With WingetUI you will be able to install, update and remove your packages, as well as backup your packages, manage which updates to install and which ones not to, and many other features."/>
-                    <TextBlock/>
+                    <TextBlock Margin="0,10,0,10" x:Name="VersionText" Text="" FontWeight="SemiBold" FontSize="15"/>
+                    <InfoBar Margin="0,10,0,10" Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False" Title="Disclaimer" Message="WingetUI is not affiliated or related with Winget, Microsoft, nor any other package manager."/>
+
                     <widgets:TranslatedTextBlock Text="Useful links" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
                     <HyperlinkButton NavigateUri="https://www.marticliment.com/wingetui" HorizontalAlignment="Stretch">
                         <widgets:TranslatedTextBlock Text="WingetUI Homepage"/>
@@ -92,9 +91,9 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" CornerRadius="16" Height="32">
+                                    <Border Grid.Column="0" CornerRadius="16" Height="32" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                                         <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
                                             <Image.Source>
                                                 <BitmapImage UriSource="{x:Bind ProfilePicture}"/>
@@ -123,7 +122,7 @@
             <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
                 <StackPanel Orientation="Vertical" Padding="0,16,0,0">
                     <widgets:TranslatedTextBlock Text="Translators" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-                    <widgets:TranslatedTextBlock Text="WingetUI has been translated to more than 30 languages thaks to the volunteer translators. Thank you 🤝"/>
+                    <widgets:TranslatedTextBlock Text="WingetUI has been translated to more than 40 languages thaks to the volunteer translators. Thank you 🤝"/>
                     <HyperlinkButton Grid.Column="2" NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"  VerticalAlignment="Center" Margin="0,4,0,4" HorizontalAlignment="Stretch" >
                     <widgets:TranslatedTextBlock Text="Become a translator"/>
                     </HyperlinkButton>
@@ -133,20 +132,20 @@
                             <DataTemplate x:DataType="local:Person">
                                 <Grid ColumnSpacing="8" Margin="0" Padding="0">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="3*"/>
-                                        <ColumnDefinition Width="4*"/>
-                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="67"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" CornerRadius="16" Height="32" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                                    <Border Grid.Column="1" CornerRadius="16" Height="32" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                                         <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
                                             <Image.Source>
                                                 <BitmapImage UriSource="{x:Bind ProfilePicture}"/>
                                             </Image.Source>
                                         </Image>
                                     </Border>
-                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                    <TextBlock Grid.Column="2" Text="{x:Bind Language}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <TextBlock Grid.Column="0" Text="{x:Bind Language}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <TextBlock Grid.Column="2" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                     <HyperlinkButton Grid.Column="3" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
                                         <TextBlock Text="GitHub"/>
                                     </HyperlinkButton>

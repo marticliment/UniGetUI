@@ -77,25 +77,28 @@ namespace ModernWindow.Interface
 
             JsonObject TranslatorsInfo = JsonNode.Parse(LanguagesData.TranslatorsJSON).AsObject();
 
+            VersionText.Text = bindings.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+
+
             foreach (var langKey in TranslatorsInfo)
             {
-                Console.WriteLine(langKey.Key);
                 var TranslatorsForLang = langKey.Value.AsArray();
+                bool LangShown = false;
                 foreach(var translator in TranslatorsForLang)
                 {
-                    Console.WriteLine(translator.ToString());
                     Uri? url = null;
                     if (translator["link"].ToString() != "")
                         url = new Uri(translator["link"].ToString());
                     Person person = new Person()
                     {
-                        Name = translator["name"].ToString(),
+                        Name = (url != null? "@": "") + translator["name"].ToString(),
                         HasPicture = url != null,
                         HasGithubProfile = url != null,
                         GitHubUrl = url != null ? url : new Uri("https://github.com/"),
                         ProfilePicture = url != null ? new Uri(url.ToString() + ".png") : new Uri("https://github.com/"),
-                        Language = LanguagesData.LanguageList[langKey.Key],
+                        Language = !LangShown? LanguagesData.LanguageList[langKey.Key]: "",
                     };
+                    LangShown = true;
                     Translators.Add(person);
                 }
             }
