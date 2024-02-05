@@ -251,12 +251,12 @@ namespace ModernWindow.PackageEngine.Managers
             if (AndroidValid && id.Count(x => x == '.') >= 2)
                 return AndroidSubsystemSource;
 
-            // Check if source is Steam
-            if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App ")[1].Count(x => !"1234567890".Contains(x)) == 0)
+            // Check if source is Steama
+            if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                 return SteamSource;
 
             // Check if source is Ubisoft Connect
-            if (id == "Uplay" || id.Contains("Uplay Install ")  && id.Split("Uplay Install ")[1].Count(x => !"1234567890".Contains(x)) == 0)
+            if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                 return UbisoftConnectSource;
             
             // Check if source is GOG

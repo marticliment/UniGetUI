@@ -104,7 +104,6 @@ namespace ModernWindow.PackageEngine
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(e);
                 }
             return res;
         }
@@ -174,7 +173,6 @@ namespace ModernWindow.PackageEngine
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
                 }
             return res;
         }
