@@ -240,6 +240,8 @@ namespace ModernWindow
             Grid.SetRow(NavigationPage, 1);
             Grid.SetColumn(NavigationPage, 0);
             Dialogs = new PackageDialogs();
+            Grid.SetRow(Dialogs, 0);
+            Grid.SetColumn(Dialogs, 0);
             MainContentGrid.Children.Add(NavigationPage);
             MainContentGrid.Children.Add(Dialogs);
 

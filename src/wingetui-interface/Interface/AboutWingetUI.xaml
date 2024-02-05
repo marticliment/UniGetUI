@@ -95,7 +95,7 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" CornerRadius="16" Height="32" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                                    <Border Grid.Column="0" CornerRadius="16" Height="32" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                                         <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
                                             <Image.Source>
                                                 <BitmapImage UriSource="{x:Bind ProfilePicture}"/>
@@ -139,7 +139,7 @@
                                         <ColumnDefinition Width="2*"/>
                                         <ColumnDefinition Width="67"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="1" CornerRadius="16" Height="32" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                                    <Border Grid.Column="1" CornerRadius="16" Height="32" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                                         <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
                                             <Image.Source>
                                                 <BitmapImage UriSource="{x:Bind ProfilePicture}"/>

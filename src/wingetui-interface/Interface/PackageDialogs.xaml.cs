@@ -71,6 +71,7 @@ namespace ModernWindow.Interface
             this.InitializeComponent(); 
             ManageIgnoredUpdates.PrimaryButtonText = bindings.Translate("Close");
             ManageIgnoredUpdates.SecondaryButtonText = bindings.Translate("Reset");
+            ManageIgnoredUpdates.DefaultButton = ContentDialogButton.Primary;
             ManageIgnoredUpdates.Title = bindings.Translate("Manage ignored updates");
         }
 

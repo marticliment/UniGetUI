@@ -15,7 +15,7 @@
             <StackPanel Spacing="8" MaxWidth="900" HorizontalAlignment="Stretch">
                 <widgets:TranslatedTextBlock  Text="The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates."/>
                 <ScrollViewer>
-                    <ListView x:Name="IgnoredUpdatesList" Height="300" Width="650" HorizontalAlignment="Stretch" Padding="2,4,2,4" CornerRadius="6" DoubleTapped="IgnoredUpdatesList_DoubleTapped" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <ListView x:Name="IgnoredUpdatesList" Height="300" Width="650" HorizontalAlignment="Stretch" Padding="2,4,2,4" CornerRadius="6" DoubleTapped="IgnoredUpdatesList_DoubleTapped" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local:IgnoredPackage">
                                 <Grid ColumnSpacing="4">
@@ -23,9 +23,9 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*" MaxWidth="100"/>
+                                        <ColumnDefinition Width="*" MaxWidth="120"/>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*" MaxWidth="100"/>
+                                        <ColumnDefinition Width="*" MaxWidth="80"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <widgets:LocalIcon IconName="install" Grid.Column="0" Height="24" Width="24"/>
