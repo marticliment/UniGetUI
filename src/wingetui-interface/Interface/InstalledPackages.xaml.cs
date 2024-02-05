@@ -362,6 +362,7 @@ namespace ModernWindow.Interface
             var SelectNone = new AppBarButton();
 
             var IgnoreSelected = new AppBarButton();
+            var ManageIgnored = new AppBarButton();
             var ExportSelection = new AppBarButton();
 
             var HelpButton = new AppBarButton();
@@ -377,6 +378,8 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(IgnoreSelected);
+            ToolBar.PrimaryCommands.Add(ManageIgnored);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(ExportSelection);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
@@ -392,6 +395,7 @@ namespace ModernWindow.Interface
                 { SelectAll,              " Select all" },
                 { SelectNone,             " Clear selection" },
                 { IgnoreSelected,         "Ignore selected packages" },
+                { ManageIgnored,          "Manage ignored updates" },
                 { ExportSelection,        "Export selected packages" },
                 { HelpButton,             "Help" }
             };
@@ -414,6 +418,7 @@ namespace ModernWindow.Interface
                 { SelectAll,            "selectall" },
                 { SelectNone,           "selectnone" },
                 { IgnoreSelected,       "pin" },
+                { ManageIgnored,        "blacklist" },
                 { ExportSelection,      "export" },
                 { HelpButton,           "help" }
             };
@@ -426,6 +431,7 @@ namespace ModernWindow.Interface
             HelpButton.IsEnabled = false;
 
 
+            ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.Dialogs.ShowManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) => {
                 foreach (var package in FilteredPackages) if (package.IsChecked)
                         await package.AddToIgnoredUpdates();

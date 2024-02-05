@@ -59,6 +59,7 @@ namespace ModernWindow
         AppTools bindings = AppTools.Instance;
         public NavigationPage NavigationPage;
         public Grid ContentRoot;
+        public PackageDialogs Dialogs;
         public bool BlockLoading = false;
 
         public List<NavButton> NavButtonList = new List<NavButton>();
@@ -238,7 +239,9 @@ namespace ModernWindow
             NavigationPage = new NavigationPage();
             Grid.SetRow(NavigationPage, 1);
             Grid.SetColumn(NavigationPage, 0);
+            Dialogs = new PackageDialogs();
             MainContentGrid.Children.Add(NavigationPage);
+            MainContentGrid.Children.Add(Dialogs);
 
             ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
             ContentColumn.Width = new GridLength(1, GridUnitType.Star);

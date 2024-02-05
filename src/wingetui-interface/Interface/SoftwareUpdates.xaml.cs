@@ -431,9 +431,9 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.IsEnabled = false;
-            ManageIgnored.IsEnabled = false;
             HelpButton.IsEnabled = false;
 
+            ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.Dialogs.ShowManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) => { 
                 foreach (var package in FilteredPackages) if (package.IsChecked)
                         await package.AddToIgnoredUpdates();

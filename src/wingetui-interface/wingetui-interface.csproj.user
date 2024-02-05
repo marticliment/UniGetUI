@@ -10,6 +10,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Interface\PackageDialogs.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Interface\AboutWingetUI.xaml">
       <SubType>Designer</SubType>
     </Page>
