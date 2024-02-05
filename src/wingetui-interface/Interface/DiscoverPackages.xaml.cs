@@ -221,12 +221,14 @@ namespace ModernWindow.Interface
                         {
                             if (task.IsCompletedSuccessfully)
                             {
+                                int InitialCount = Packages.Count;
                                 foreach (Package package in task.Result)
                                 {
                                     Packages.Add(package);
                                     AddPackageToSourcesList(package);
                                 }
-                                FilterPackages_SortOnly(QueryBlock.Text.Trim(), StillLoading: true);
+                                if (InitialCount < Packages.Count)
+                                    FilterPackages_SortOnly(QueryBlock.Text.Trim(), StillLoading: true);
                             }
                             tasks.Remove(task);
                         }

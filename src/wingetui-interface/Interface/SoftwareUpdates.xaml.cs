@@ -183,6 +183,7 @@ namespace ModernWindow.Interface
                     {
                         if(task.IsCompletedSuccessfully)
                         {
+                            int InitialCount = Packages.Count;
                             foreach (UpgradablePackage package in task.Result)
                             {
                                 if(await package.HasUpdatesIgnored(package.NewVersion))
@@ -194,7 +195,8 @@ namespace ModernWindow.Interface
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
                             }
-                            FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
+                            if (InitialCount < Packages.Count)
+                                FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
                         }
                         tasks.Remove(task);
                     }

@@ -195,12 +195,14 @@ namespace ModernWindow.Interface
                     {
                         if (task.IsCompletedSuccessfully)
                         {
+                            int InitialCount = Packages.Count;
                             foreach (Package package in task.Result)
                             {
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
                             }
-                            FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
+                            if (InitialCount < Packages.Count)
+                                FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
                         }
                         tasks.Remove(task);
                     }
