@@ -134,10 +134,11 @@
                                 <Grid ColumnSpacing="8" Margin="0" Padding="0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="4*"/>
+                                        <ColumnDefinition Width="70"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" CornerRadius="16" Height="32">
+                                    <Border Grid.Column="0" CornerRadius="16" Height="32" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                                         <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="32" Width="32">
                                             <Image.Source>
                                                 <BitmapImage UriSource="{x:Bind ProfilePicture}"/>
@@ -145,8 +146,9 @@
                                         </Image>
                                     </Border>
                                     <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                    <HyperlinkButton Grid.Column="2" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                        <widgets:TranslatedTextBlock Text="View GitHub Profile"/>
+                                    <TextBlock Grid.Column="2" Text="{x:Bind Language}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <HyperlinkButton Grid.Column="3" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                        <TextBlock Text="GitHub"/>
                                     </HyperlinkButton>
                                 </Grid>
                             </DataTemplate>

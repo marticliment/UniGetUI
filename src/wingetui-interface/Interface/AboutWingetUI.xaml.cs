@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json.Nodes;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -38,6 +39,7 @@ namespace ModernWindow.Interface
         public Uri? GitHubUrl;
         public bool HasPicture = false;
         public bool HasGithubProfile = false;
+        public string Language = "";
     }
 
     public sealed partial class AboutWingetUI : Page
@@ -71,6 +73,31 @@ namespace ModernWindow.Interface
                     HasGithubProfile = true,
                 };
                 Contributors.Add(person);
+            }
+
+            JsonObject TranslatorsInfo = JsonNode.Parse(LanguagesData.TranslatorsJSON).AsObject();
+
+            foreach (var langKey in TranslatorsInfo)
+            {
+                Console.WriteLine(langKey.Key);
+                var TranslatorsForLang = langKey.Value.AsArray();
+                foreach(var translator in TranslatorsForLang)
+                {
+                    Console.WriteLine(translator.ToString());
+                    Uri? url = null;
+                    if (translator["link"].ToString() != "")
+                        url = new Uri(translator["link"].ToString());
+                    Person person = new Person()
+                    {
+                        Name = translator["name"].ToString(),
+                        HasPicture = url != null,
+                        HasGithubProfile = url != null,
+                        GitHubUrl = url != null ? url : new Uri("https://github.com/"),
+                        ProfilePicture = url != null ? new Uri(url.ToString() + ".png") : new Uri("https://github.com/"),
+                        Language = LanguagesData.LanguageList[langKey.Key],
+                    };
+                    Translators.Add(person);
+                }
             }
         }
     }
