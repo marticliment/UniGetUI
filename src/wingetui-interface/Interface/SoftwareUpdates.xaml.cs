@@ -182,12 +182,20 @@ namespace ModernWindow.Interface
                     if(task.IsCompleted)
                     {
                         if(task.IsCompletedSuccessfully)
+                        {
                             foreach (UpgradablePackage package in task.Result)
                             {
+                                if(await package.HasUpdatesIgnored(package.NewVersion))
+                                    continue;
+
+                                if(package.NewVersionIsInstalled())
+                                    Console.WriteLine("Package Id={0} with NewVersion={1} is already installed, skipping it...");
+
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
-                                FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
                             }
+                            FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
+                        }
                         tasks.Remove(task);
                     }
                 }
@@ -200,8 +208,9 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-
+            
             FilteredPackages.Clear();
+
             List<ManagerSource> VisibleSources = new();
             List<PackageManager> VisibleManagers = new();
 
@@ -420,9 +429,13 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.IsEnabled = false;
-            IgnoreSelected.IsEnabled = false;
             ManageIgnored.IsEnabled = false;
             HelpButton.IsEnabled = false;
+
+            IgnoreSelected.Click += async (s, e) => { 
+                foreach (var package in FilteredPackages) if (package.IsChecked)
+                        await package.AddToIgnoredUpdates();
+            };
 
             UpdateSelected.Click += (s, e) => 
             { 

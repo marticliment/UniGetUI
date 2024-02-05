@@ -1,11 +1,15 @@
-﻿using ModernWindow.Structures;
+﻿using Microsoft.WindowsAppSDK.Runtime;
+using ModernWindow.Data;
+using ModernWindow.Structures;
 using Python.Runtime;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Windows.Graphics.DirectX.Direct3D11;
 using WinRT;
@@ -108,26 +112,50 @@ namespace ModernWindow.PackageEngine
             return res;
         }
 
-        public void AddToIgnoredUpdates(string version = "*")
+        public async Task AddToIgnoredUpdates(string version = "*")
         {
-            //TODO
+            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+            if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                IgnoredUpdatesJson.Remove(IgnoredId);   
+            IgnoredUpdatesJson.Add(IgnoredId, version);
+            await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
+
+            // TODO: Change InstalledPackages flag to show that the package is ignored, add to IgnoredPackages if applicable
         }
 
-        public void RemoveFromIgnoredUpdates()
+        public async Task RemoveFromIgnoredUpdates()
         {
-            //TODO
+            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+            if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+            {
+                IgnoredUpdatesJson.Remove(IgnoredId);
+                await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
+            }
+
+            // TODO: Change InstalledPackages flag to show that the package is no longer ignored
+
         }
 
-        public bool HasUpdatesIgnored(string version = "*")
+        public async Task<bool> HasUpdatesIgnored(string version = "*")
         {
-            // TODO
-            return false;
+            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+            if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == version))
+                return true;
+            else
+                return false;
         }
 
-        public string GetIgnoredUpatesVersion()
+        public async Task<string> GetIgnoredUpdatesVersion()
         {
-            // TODO
-            return "";
+            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+            if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                return IgnoredUpdatesJson[IgnoredId].ToString();
+            else
+                return "";
         }
 
 
@@ -180,6 +208,14 @@ namespace ModernWindow.PackageEngine
         public new UpgradablePackage _get_self_package()
         {
             return this;
+        }
+
+        public bool NewVersionIsInstalled()
+        {
+            foreach (var package in bindings.App.mainWindow.NavigationPage.InstalledPage.Packages)
+                if(package.Manager == Manager && package.Id == Id && package.Version == NewVersion && package.Source.Name == Source.Name)
+                    return true;
+            return false;
         }
     }
 

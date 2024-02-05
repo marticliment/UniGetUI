@@ -220,12 +220,14 @@ namespace ModernWindow.Interface
                         if (task.IsCompleted)
                         {
                             if (task.IsCompletedSuccessfully)
+                            {
                                 foreach (Package package in task.Result)
                                 {
                                     Packages.Add(package);
                                     AddPackageToSourcesList(package);
-                                    FilterPackages_SortOnly(QueryBlock.Text.Trim(), StillLoading: true);
                                 }
+                                FilterPackages_SortOnly(QueryBlock.Text.Trim(), StillLoading: true);
+                            }
                             tasks.Remove(task);
                         }
                     }

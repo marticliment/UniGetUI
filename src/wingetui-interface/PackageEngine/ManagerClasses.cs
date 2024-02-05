@@ -13,7 +13,7 @@ using Windows.Media.Core;
 namespace ModernWindow.PackageEngine
 {
 
-    public abstract class PackageManager : SingletonBase<PackageManager>, IPackageManager
+    public abstract class PackageManager : SingletonBase<PackageManager>
     {
         public ManagerProperties Properties { get; set; }
         public ManagerCapabilities Capabilities { get; set; }
@@ -140,7 +140,7 @@ namespace ModernWindow.PackageEngine
 
     }
 
-    public abstract class PackageManagerWithSources : PackageManager, IPackageManagerWithSources 
+    public abstract class PackageManagerWithSources : PackageManager 
     {
         public ManagerSource[] Sources { get; set; }
         public ManagerSource[] DefaultSources { get; set; }

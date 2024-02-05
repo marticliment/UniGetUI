@@ -194,12 +194,14 @@ namespace ModernWindow.Interface
                     if (task.IsCompleted)
                     {
                         if (task.IsCompletedSuccessfully)
+                        {
                             foreach (Package package in task.Result)
                             {
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
-                                FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
                             }
+                            FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
+                        }
                         tasks.Remove(task);
                     }
                 }
@@ -418,9 +420,14 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.IsEnabled = false;
-            IgnoreSelected.IsEnabled = false;
             ExportSelection.IsEnabled = false;
             HelpButton.IsEnabled = false;
+
+
+            IgnoreSelected.Click += async (s, e) => {
+                foreach (var package in FilteredPackages) if (package.IsChecked)
+                        await package.AddToIgnoredUpdates();
+            };
 
             UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray()); };
             UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
