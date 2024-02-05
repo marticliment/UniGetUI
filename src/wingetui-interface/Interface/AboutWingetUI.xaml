@@ -9,11 +9,13 @@
     mc:Ignorable="d"
     Height="500"
     >
-    <Pivot>
+    <Pivot MaxWidth="700" HorizontalAlignment="Stretch">
         <PivotItem>
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="About"/>
+
                 </StackPanel>
             </PivotItem.Header>
             <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
@@ -43,7 +45,7 @@
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center"/>
-                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="Licenses"/>
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" FontSize="14" Text="Third-party licenses"/>
                 </StackPanel>
             </PivotItem.Header>
             <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">

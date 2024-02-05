@@ -13,7 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
 
-            <x:Double x:Key="ContentDialogMaxWidth">1000</x:Double>
+            <x:Double x:Key="ContentDialogMaxWidth">700</x:Double>
 
             <Style TargetType="MenuFlyoutItem" x:Key="BetterMenuItem" BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
                 <Setter Property="CornerRadius" Value="4"/>

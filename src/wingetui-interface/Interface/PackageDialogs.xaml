@@ -8,14 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Height="500" MaxWidth="700">
+    Height="500" MaxWidth="900">
 
     <Grid>
         <ContentDialog Name="ManageIgnoredUpdates" x:FieldModifier="public" SecondaryButtonClick="ManageIgnoredUpdates_SecondaryButtonClick">
-            <StackPanel Spacing="8">
-                <widgets:TranslatedTextBlock Width="700" Text="The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates."/>
+            <StackPanel Spacing="8" MaxWidth="900" HorizontalAlignment="Stretch">
+                <widgets:TranslatedTextBlock  Text="The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates."/>
                 <ScrollViewer>
-                    <ListView x:Name="IgnoredUpdatesList" Height="350" Width="700" Padding="2,4,2,4" CornerRadius="6" DoubleTapped="IgnoredUpdatesList_DoubleTapped" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <ListView x:Name="IgnoredUpdatesList" Height="300" Width="650" HorizontalAlignment="Stretch" Padding="2,4,2,4" CornerRadius="6" DoubleTapped="IgnoredUpdatesList_DoubleTapped" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local:IgnoredPackage">
                                 <Grid ColumnSpacing="4">
