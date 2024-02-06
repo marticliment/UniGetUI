@@ -10,6 +10,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Interface\Dialogs\InstallOptions.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="PackageEngine\OperationControl.xaml">
       <SubType>Designer</SubType>
     </Page>

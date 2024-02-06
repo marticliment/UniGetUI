@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using ModernWindow.PackageEngine;
 using System.Threading.Tasks;
 using ModernWindow.Structures;
+using ModernWindow.Interface.Dialogs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -133,6 +134,31 @@ namespace ModernWindow.Interface
 
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
+        }
+
+        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, string PrimaryButtonText)
+        {
+            var OptionsPage = new InstallOptionsPage(package);
+
+            ContentDialog OptionsDialog = new ContentDialog();
+            OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            OptionsDialog.XamlRoot = this.XamlRoot;
+            OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
+            OptionsDialog.SecondaryButtonText = bindings.Translate(PrimaryButtonText);
+            OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
+            OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
+            OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Content = OptionsPage;
+
+            var result = await OptionsDialog.ShowAsync();
+            OptionsPage.SaveToDisk();
+
+            OptionsDialog.Content = null;
+            OptionsDialog = null;
+
+            return result == ContentDialogResult.Secondary;
+
         }
 
         private void NavigateToPage(Page TargetPage)

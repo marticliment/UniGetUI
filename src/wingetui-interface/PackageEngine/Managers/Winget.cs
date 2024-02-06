@@ -463,6 +463,7 @@ namespace ModernWindow.PackageEngine.Managers
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
                 SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
                 SupportsCustomScopes = true,
                 SupportsCustomLocations = true,
                 SupportsCustomSources = true,

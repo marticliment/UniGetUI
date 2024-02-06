@@ -512,6 +512,12 @@
                             Package="{x:Bind _get_self_package()}"
                             IconName="newversion"/>
                         <MenuFlyoutSeparator/>
+                        <widgets:MenuItemForPackage x:Name="MenuInstallSettings" 
+                            Text="{x:Bind bindings.Translate('Installation options')}" 
+                            Invoked="MenuInstallSettings_Invoked"
+                            Package="{x:Bind _get_self_package()}"
+                            IconName="options"/>
+                        <MenuFlyoutSeparator/>
                         <widgets:MenuItemForPackage x:Name="MenuAsAdmin" 
                             Text="{x:Bind bindings.Translate('Install as administrator')}" 
                             Invoked="MenuAsAdmin_Invoked"
@@ -787,7 +793,7 @@
                                     </RadioButton>
                                     <RadioButton x:Name="QueryExactMatch" Margin="0,-2,0,-2" Height="30">
                                         <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Exact name or id" WrappingMode="Wrap"/>
+                                            <widgets:TranslatedTextBlock Text="Exact match" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
                                 </RadioButtons>

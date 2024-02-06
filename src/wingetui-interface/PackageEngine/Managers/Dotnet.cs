@@ -270,6 +270,8 @@ namespace ModernWindow.PackageEngine.Managers
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
+                SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
                 SupportsPreRelease = true,
                 SupportsCustomLocations = true,
             };

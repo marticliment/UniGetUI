@@ -11,6 +11,8 @@ using ModernWindow.Structures;
 using System.IO;
 using System.Text.Json.Nodes;
 using System.Net;
+using System.Runtime.InteropServices;
+using ModernWindow.PackageEngine;
 
 namespace ModernWindow.Data
 {
@@ -573,6 +575,7 @@ namespace ModernWindow.Data
                 MainLangDict = LoadLanguageFile("en");
                 MainLangDict.TryAdd("locale", "en");
             }
+            LoadStaticTranslation();
             Console.WriteLine("Loaded language locale: " + MainLangDict["locale"]);
         }
 
@@ -591,7 +594,7 @@ namespace ModernWindow.Data
                 Console.WriteLine(LangFileToLoad);
             }
 
-            LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
+            LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null?x.Value.ToString(): "");
             
             if (!AppTools.GetSettings_Static("DisableLangAutoUpdater"))
                 _ = UpdateLanguageFile(LangKey);
@@ -617,15 +620,68 @@ namespace ModernWindow.Data
             }
         }
 
+        public void LoadStaticTranslation()
+        {
+            CommonTranslations.ScopeNames[PackageScope.Local] = Translate("User | Local");
+            CommonTranslations.ScopeNames[PackageScope.Global] = Translate("Machine | Global");
+
+            CommonTranslations.InvertedScopeNames.Clear();
+            CommonTranslations.InvertedScopeNames.Add(Translate("Machine | Global"), PackageScope.Global);
+            CommonTranslations.InvertedScopeNames.Add(Translate("User | Local"), PackageScope.Local);
+        }
+
         public string Translate(string key)
         {
             if (key == null || key == "")
                 return "";
-            else if (MainLangDict.ContainsKey(key))
+            else if (MainLangDict.ContainsKey(key) && MainLangDict[key] != "")
                 return MainLangDict[key];
             else
                 return key;
         }
+    }
+
+    public static class CommonTranslations
+    {
+        public static Dictionary<Architecture, string> ArchNames = new()
+        {
+            { Architecture.X64, "x64" },
+            { Architecture.X86, "x86" },
+            { Architecture.Arm64, "arm64" },
+            { Architecture.Arm, "arm32" },
+        };
+
+        public static Dictionary<string, Architecture> InvertedArchNames = new()
+        {
+            { "x64", Architecture.X64 },
+            { "x86", Architecture.X86 },
+            { "arm64", Architecture.Arm64 },
+            { "arm32", Architecture.Arm },
+        };
+
+        public static Dictionary<PackageScope, string> ScopeNames = new()
+        {
+            { PackageScope.Global, "Machine | Global" },
+            { PackageScope.Local, "User | Local" },
+        };
+
+        public static Dictionary<string, PackageScope> InvertedScopeNames = new()
+        {
+            { "Machine | Global", PackageScope.Global },
+            { "User | Local", PackageScope.Local },
+        };
+
+        public static Dictionary<PackageScope, string> ScopeNames_NonLang= new()
+        {
+            { PackageScope.Global, "machine" },
+            { PackageScope.Local, "user" },
+        };
+
+        public static Dictionary<string, PackageScope> InvertedScopeNames_NonLang = new()
+        {
+            { "machine", PackageScope.Global },
+            { "user", PackageScope.Local },
+        };
     }
 }
 

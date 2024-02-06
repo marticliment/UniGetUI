@@ -513,6 +513,12 @@
                             Package="{x:Bind _get_self_package()}"
                             IconName="menu_updates"/>
                         <MenuFlyoutSeparator/>
+                        <widgets:MenuItemForPackage x:Name="MenuInstallSettings" 
+                            Text="{x:Bind bindings.Translate('Installation options')}" 
+                            Invoked="MenuInstallSettings_Invoked"
+                            Package="{x:Bind _get_self_package()}"
+                            IconName="options"/>
+                        <MenuFlyoutSeparator/>
                         <widgets:MenuItemForPackage x:Name="MenuAsAdmin" 
                             Text="{x:Bind bindings.Translate('Update as administrator')}" 
                             Invoked="MenuAsAdmin_Invoked"

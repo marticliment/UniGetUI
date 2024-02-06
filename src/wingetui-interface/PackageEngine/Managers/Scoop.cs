@@ -375,6 +375,7 @@ public class Scoop : PackageManagerWithSources
             CanSkipIntegrityChecks = true,
             CanRemoveDataOnUninstall = true,
             SupportsCustomArchitectures = true,
+            SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
             SupportsCustomScopes = true,
             SupportsCustomSources = true,
             Sources = new ManagerSource.Capabilities()

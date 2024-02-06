@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAppSDK.Runtime.Packages;
@@ -190,6 +191,7 @@ namespace ModernWindow.PackageEngine
         public bool CanRemoveDataOnUninstall = false;
         public bool SupportsCustomVersions = false;
         public bool SupportsCustomArchitectures = false;
+        public Architecture[] SupportedCustomArchitectures = new Architecture[0];
         public bool SupportsCustomScopes = false;
         public bool SupportsPreRelease = false;
         public bool SupportsCustomLocations = false;

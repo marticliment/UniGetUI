@@ -361,6 +361,8 @@ namespace ModernWindow.Interface
             var UpdateSkipHash = new AppBarButton();
             var UpdateInteractive = new AppBarButton();
 
+            var InstallationSettings = new AppBarButton();
+
             var PackageDetails = new AppBarButton();
             var SharePackage = new AppBarButton();
 
@@ -376,6 +378,8 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(UpdateAsAdmin);
             ToolBar.PrimaryCommands.Add(UpdateSkipHash);
             ToolBar.PrimaryCommands.Add(UpdateInteractive);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(InstallationSettings);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
@@ -395,6 +399,7 @@ namespace ModernWindow.Interface
                 { UpdateAsAdmin,       " Update as administrator" },
                 { UpdateSkipHash,      " Skip integrity checks" },
                 { UpdateInteractive,   " Interactive update" },
+                { InstallationSettings, " Installation options" },
                 { PackageDetails,       " Package details" },
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
@@ -418,6 +423,7 @@ namespace ModernWindow.Interface
                 { UpdateAsAdmin,       "runasadmin" },
                 { UpdateSkipHash,      "checksum" },
                 { UpdateInteractive,   "interactive" },
+                { InstallationSettings, "options" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
@@ -432,6 +438,11 @@ namespace ModernWindow.Interface
 
             PackageDetails.IsEnabled = false;
             HelpButton.IsEnabled = false;
+
+            InstallationSettings.Click += async (s, e) => {
+                if (PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Update"))
+                    bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            };
 
             ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) => { 
@@ -549,6 +560,12 @@ namespace ModernWindow.Interface
         {
             SourcesTreeView.SelectedItems.Clear();
             FilterPackages(QueryBlock.Text.Trim());
+        }
+
+        private async void MenuInstallSettings_Invoked(object sender, Package e)
+        {
+            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(e, "Update"))
+                bindings.AddOperationToList(new UpdatePackageOperation(e));
         }
     }
 }

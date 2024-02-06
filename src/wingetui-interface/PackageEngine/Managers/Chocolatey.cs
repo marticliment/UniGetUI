@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using Windows.UI.WebUI;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -275,6 +276,7 @@ namespace ModernWindow.PackageEngine.Managers
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
                 SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86 },
                 SupportsPreRelease = true,
                 SupportsCustomSources = true,
                 Sources = new ManagerSource.Capabilities()

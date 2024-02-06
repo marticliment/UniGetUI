@@ -354,6 +354,7 @@ namespace ModernWindow.Interface
             var UninstallSelected = new AppBarButton();
             var UninstallAsAdmin = new AppBarButton();
             var UninstallInteractive = new AppBarButton();
+            var InstallationSettings = new AppBarButton();
 
             var PackageDetails = new AppBarButton();
             var SharePackage = new AppBarButton();
@@ -370,6 +371,8 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(UninstallSelected);
             ToolBar.PrimaryCommands.Add(UninstallAsAdmin);
             ToolBar.PrimaryCommands.Add(UninstallInteractive);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(InstallationSettings);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
@@ -390,6 +393,7 @@ namespace ModernWindow.Interface
                 { UninstallSelected,      "Uninstall selected packages" },
                 { UninstallAsAdmin,       " Uninstall as administrator" },
                 { UninstallInteractive,   " Interactive uninstallation" },
+                { InstallationSettings,   " Installation options" },
                 { PackageDetails,         " Package details" },
                 { SharePackage,           " Share" },
                 { SelectAll,              " Select all" },
@@ -413,6 +417,7 @@ namespace ModernWindow.Interface
                 { UninstallSelected,      "menu_uninstall" },
                 { UninstallAsAdmin,       "runasadmin" },
                 { UninstallInteractive,   "interactive" },
+                { InstallationSettings, "options" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
@@ -429,6 +434,11 @@ namespace ModernWindow.Interface
             PackageDetails.IsEnabled = false;
             ExportSelection.IsEnabled = false;
             HelpButton.IsEnabled = false;
+            
+            InstallationSettings.Click += async (s, e) => {
+                if (PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Uninstall"))
+                    ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
+            };
 
 
             ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
@@ -579,6 +589,12 @@ namespace ModernWindow.Interface
         {
             SourcesTreeView.SelectedItems.Clear();
             FilterPackages(QueryBlock.Text.Trim());
+        }
+
+        private async void MenuInstallSettings_Invoked(object sender, Package e)
+        {
+            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(e, "Uninstall"))
+                ConfirmAndUninstall(e, new InstallationOptions(e));
         }
     }
 }

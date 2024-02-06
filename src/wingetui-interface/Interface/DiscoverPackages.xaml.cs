@@ -395,6 +395,8 @@ namespace ModernWindow.Interface
             var InstallSkipHash = new AppBarButton();
             var InstallInteractive = new AppBarButton();
 
+            var InstallationSettings = new AppBarButton();
+
             var PackageDetails = new AppBarButton();
             var SharePackage = new AppBarButton();
 
@@ -410,6 +412,8 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(InstallAsAdmin);
             ToolBar.PrimaryCommands.Add(InstallSkipHash);
             ToolBar.PrimaryCommands.Add(InstallInteractive);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(InstallationSettings);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
@@ -429,6 +433,7 @@ namespace ModernWindow.Interface
                 { InstallAsAdmin,       " Install as administrator" },
                 { InstallSkipHash,      " Skip integrity checks" },
                 { InstallInteractive,   " Interactive installation" },
+                { InstallationSettings, "Installation options" },
                 { PackageDetails,       " Package details" },
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
@@ -452,6 +457,7 @@ namespace ModernWindow.Interface
                 { InstallAsAdmin,       "runasadmin" },
                 { InstallSkipHash,      "checksum" },
                 { InstallInteractive,   "interactive" },
+                { InstallationSettings, "options" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
@@ -468,6 +474,11 @@ namespace ModernWindow.Interface
             ImportPackages.IsEnabled = false;
             ExportSelection.IsEnabled = false;
             HelpButton.IsEnabled = false;
+            
+            InstallationSettings.Click += async (s, e) => { 
+                if(PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Install"))
+                    bindings.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package));
+            };
 
             InstallSelected.Click += (s, e) => { 
                 foreach (var package in FilteredPackages) if (package.IsChecked) 
@@ -558,6 +569,12 @@ namespace ModernWindow.Interface
         {
             SourcesTreeView.SelectedItems.Clear();
             FilterPackages_SortOnly(QueryBlock.Text.Trim());
+        }
+
+        private async void MenuInstallSettings_Invoked(object sender, Package e)
+        {
+            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(e, "Install"))
+                bindings.AddOperationToList(new InstallPackageOperation(e));
         }
 
 

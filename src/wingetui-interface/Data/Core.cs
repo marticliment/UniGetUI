@@ -27,6 +27,7 @@ namespace ModernWindow.Data
         public static string WingetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
 
         public static string WingetUIDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
+        public static string WingetUIInstallationOptionsDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui\\InstallationOptions");
         public static string WingetUICacheDirectory_Data = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI\\CachedData");
         public static string WingetUICacheDirectory_Icons = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI\\CachedIcons");
         public static string WingetUICacheDirectory_Lang = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI\\CachedLangFiles");

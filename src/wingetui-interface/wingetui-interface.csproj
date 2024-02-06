@@ -46,6 +46,7 @@
 
   <ItemGroup>
     <None Remove="Interface\AboutWingetUI.xaml" />
+    <None Remove="Interface\Dialogs\InstallOptions.xaml" />
     <None Remove="Interface\DiscoverPackages.xaml" />
     <None Remove="Interface\IgnoredUpdates.xaml" />
     <None Remove="Interface\InstalledPackages.xaml" />
@@ -168,6 +169,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interface\Dialogs\" />
+    <Page Update="Interface\Dialogs\InstallOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

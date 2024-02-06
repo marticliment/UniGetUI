@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAppSDK.Runtime;
+﻿using Microsoft.UI.Xaml.Media;
+using Microsoft.WindowsAppSDK.Runtime;
 using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
@@ -299,6 +300,8 @@ namespace ModernWindow.PackageEngine
 
         public InstallationOptions(UpgradablePackage package, bool reset = false) : this((Package)package, reset)
         {
+            if (!reset)
+                LoadOptionsFromDisk();
         }
 
         public Dictionary<string, object> ToDictionary()
@@ -317,7 +320,27 @@ namespace ModernWindow.PackageEngine
             {
                 if (data.ContainsKey(entry))
                 {
-                    GetType().GetProperty(entry)?.SetValue(this, data[entry]);
+                    if (entry == "Architecture" && data[entry].ToString() != "" && CommonTranslations.InvertedArchNames.ContainsKey(data[entry].ToString()))
+                        Architecture = CommonTranslations.InvertedArchNames[data[entry].ToString()];
+                    else if (entry == "InstallationScope" && data[entry].ToString() != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(data[entry].ToString()))
+                        InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[data[entry].ToString()];
+                    else if (data[entry] != null && data[entry].ToString() != "")
+                    {
+                        if (new string[] { "SkipHashCheck", "InteractiveInstallation", "RunAsAdministrator", "PreRelease" }.Contains(entry))
+                        {
+                            GetType().GetProperty(entry)?.SetValue(this, "true" == data[entry].ToString() ? true : false);
+                        }
+                        else if (new string[] { "CustomParameters" }.Contains(entry))
+                        {
+                            var list = new List<string>();
+                            (data[entry] as JsonArray).ToList().ForEach(x => list.Add(x.ToString()));
+                            GetType().GetProperty(entry)?.SetValue(this, list);
+                        }
+                        else
+                        {
+                            GetType().GetProperty(entry)?.SetValue(this, data[entry].ToString());
+                        }
+                    }
                 }
             }
         }
@@ -330,19 +353,33 @@ namespace ModernWindow.PackageEngine
 
         public void LoadOptionsFromDisk()
         {
-            // Implement your custom deserialization method here.
-            // Example: LoadJsonSettings(_saveFileName, "InstallationOptions", LoadFromDictionary);
+            try
+            {
+                var filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
+                if (!File.Exists(filename))
+                    return;
+                Dictionary<string, object?> DictData = new();
+                foreach(var element in (JsonObject.Parse(File.ReadAllText(filename)) as JsonObject))
+                    DictData.Add(element.Key, element.Value);
+                LoadFromDictionary(DictData);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         public override string ToString()
         {
+            var customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";
             return $"<InstallationOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
                    $"RunAsAdministrator={RunAsAdministrator};" +
                    $"Version={Version};" +
                    $"Architecture={Architecture};" +
                    $"InstallationScope={InstallationScope};" +
-                   $"CustomParameters={string.Join(",", CustomParameters)};" +
+                   $"InstallationScope={CustomInstallLocation};" +
+                   $"CustomParameters={customparams};" +
                    $"RemoveDataOnUninstall={RemoveDataOnUninstall}>";
         }
     }
