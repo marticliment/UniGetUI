@@ -439,7 +439,7 @@
   "{0} succeeded" : "{0} επιτυχή",
   "{0} update" : "{0} ενημερώσεις",
   "{0} was {1} successfully!" : "{0} {1} με επιτυχία!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@antwnhsx  @wobblerrrgg",
+  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@antwnhsx, @wobblerrrgg",
   "{0} {1} failed" : "{0} {1} απέτυχε",
   "{pm} could not be found" : "{pm} Αποτυχία εύρεσης",
   "{pm} found: {state}" : "{pm} βρέθηκε: {state}",
