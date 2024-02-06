@@ -79,7 +79,6 @@ namespace ModernWindow.Interface
 
             VersionText.Text = bindings.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
 
-
             foreach (var langKey in TranslatorsInfo)
             {
                 var TranslatorsForLang = langKey.Value.AsArray();

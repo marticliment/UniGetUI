@@ -30,6 +30,55 @@ namespace ModernWindow.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    
+    public sealed partial class IgnoredUpdatesManager : Page
+    {
+        AppTools bindings = AppTools.Instance;
+        public IgnoredUpdatesManager()
+        {
+            this.InitializeComponent();
+            IgnoredUpdatesList.DoubleTapped += IgnoredUpdatesList_DoubleTapped;
+        }
+
+        public async Task UpdateData()
+        {
+
+            var ManagerNameReference = new Dictionary<string, PackageManager>();
+
+            foreach(var Manager in bindings.App.PackageManagerList)
+            {
+                ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
+            }
+
+            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+            
+            IgnoredUpdatesList.Items.Clear();
+
+            foreach(var keypair in IgnoredUpdatesJson)
+            {
+                PackageManager manager = bindings.App.Winget; // Manager by default
+                if(ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
+                    manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
+
+                IgnoredUpdatesList.Items.Add(new IgnoredPackage(keypair.Key.Split("\\")[^1], keypair.Value.ToString(), manager, IgnoredUpdatesList));
+            }
+
+        }
+
+        private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (IgnoredUpdatesList.SelectedItem != null)
+                await (IgnoredUpdatesList.SelectedItem as IgnoredPackage).RemoveFromIgnoredUpdates();
+        }
+
+        public async void ManageIgnoredUpdates_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            args.Cancel = true;
+            foreach (IgnoredPackage package in IgnoredUpdatesList.Items.ToArray())
+                await package.RemoveFromIgnoredUpdates();
+        }
+    }
+    
     public class IgnoredPackage
     {
         public string Id { get; }
@@ -59,61 +108,6 @@ namespace ModernWindow.Interface
             }
 
             List.Items.Remove(this);
-        }
-
-    }
-    public sealed partial class PackageDialogs : Page
-    {
-        AppTools bindings = AppTools.Instance;
-
-        public PackageDialogs()
-        {
-            this.InitializeComponent(); 
-            ManageIgnoredUpdates.PrimaryButtonText = bindings.Translate("Close");
-            ManageIgnoredUpdates.SecondaryButtonText = bindings.Translate("Reset");
-            ManageIgnoredUpdates.DefaultButton = ContentDialogButton.Primary;
-            ManageIgnoredUpdates.Title = bindings.Translate("Manage ignored updates");
-        }
-
-        public async Task ShowManageIgnoredUpdatesDialog()
-        {
-            ManageIgnoredUpdates.XamlRoot = bindings.App.mainWindow.ContentRoot.XamlRoot;
-
-            var ManagerNameReference = new Dictionary<string, PackageManager>();
-
-            foreach(var Manager in bindings.App.PackageManagerList)
-            {
-                ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
-            }
-
-            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            
-            IgnoredUpdatesList.Items.Clear();
-
-            foreach(var keypair in IgnoredUpdatesJson)
-            {
-                PackageManager manager = bindings.App.Winget; // Manager by default
-                if(ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
-                    manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
-
-                IgnoredUpdatesList.Items.Add(new IgnoredPackage(keypair.Key.Split("\\")[^1], keypair.Value.ToString(), manager, IgnoredUpdatesList));
-            }
-
-            await ManageIgnoredUpdates.ShowAsync();
-
-        }
-
-        private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            if (IgnoredUpdatesList.SelectedItem != null)
-                await (IgnoredUpdatesList.SelectedItem as IgnoredPackage).RemoveFromIgnoredUpdates();
-        }
-
-        private async void ManageIgnoredUpdates_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            args.Cancel = true;
-            foreach (IgnoredPackage package in IgnoredUpdatesList.Items.ToArray())
-                await package.RemoveFromIgnoredUpdates();
         }
     }
 }

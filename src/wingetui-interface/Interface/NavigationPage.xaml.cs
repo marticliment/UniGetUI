@@ -38,6 +38,10 @@ namespace ModernWindow.Interface
         public InfoBadge UpdatesBadge;
         public StackPanel OperationStackPanel;
         private Dictionary<Page, NavButton> PageButtonReference = new();
+
+        private AboutWingetUI AboutPage;
+        private IgnoredUpdatesManager IgnoredUpdatesPage;
+
         public NavigationPage()
         {
             this.InitializeComponent();
@@ -47,9 +51,11 @@ namespace ModernWindow.Interface
             DiscoverPage = new DiscoverPackagesPage();
             UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
+            AboutPage = new AboutWingetUI();
+            IgnoredUpdatesPage = new IgnoredUpdatesManager();
 
             int i = 0;
-            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, SettingsPage, })
+            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, SettingsPage })
             {
                 Grid.SetColumn(page, 0);
                 Grid.SetRow(page, 0);
@@ -81,8 +87,7 @@ namespace ModernWindow.Interface
         }
 
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
-        {
-        }
+        { }
 
         private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
@@ -91,14 +96,45 @@ namespace ModernWindow.Interface
 
         private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            
-            
-            AboutWingetUI.PrimaryButtonText = bindings.Translate("Close");
-            await AboutWingetUI.ShowAsync();
+            ContentDialog AboutDialog = new ContentDialog();
+            AboutDialog.XamlRoot = this.XamlRoot;
+            AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
+            AboutDialog.Content = AboutPage;
+            AboutDialog.PrimaryButtonText = bindings.Translate("Close");
             foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
-            {
+                button.ToggleButton.IsChecked = false;
+
+            await AboutDialog.ShowAsync();
+
+            AboutDialog.Content = null;
+            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
-            }
+            AboutDialog = null;
+        }
+
+        public async Task ManageIgnoredUpdatesDialog()
+        {
+            ContentDialog UpdatesDialog = new ContentDialog();
+            UpdatesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            UpdatesDialog.XamlRoot = this.XamlRoot;
+            UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
+            UpdatesDialog.PrimaryButtonText = bindings.Translate("Close");
+            UpdatesDialog.SecondaryButtonText = bindings.Translate("Reset");
+            UpdatesDialog.DefaultButton = ContentDialogButton.Primary;
+            UpdatesDialog.Title = bindings.Translate("Manage ignored updates");
+            UpdatesDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
+            UpdatesDialog.Content = IgnoredUpdatesPage;
+
+            _ = IgnoredUpdatesPage.UpdateData();
+            await UpdatesDialog.ShowAsync();
+
+            UpdatesDialog.Content = null;
+            UpdatesDialog = null;
+
+
         }
 
         private void NavigateToPage(Page TargetPage)

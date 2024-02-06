@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:ModernWindow.Interface.Widgets"
     mc:Ignorable="d"
     Height="500"
+    Width="650"
     >
     <Pivot MaxWidth="700" HorizontalAlignment="Stretch">
         <PivotItem>

@@ -47,9 +47,9 @@
   <ItemGroup>
     <None Remove="Interface\AboutWingetUI.xaml" />
     <None Remove="Interface\DiscoverPackages.xaml" />
+    <None Remove="Interface\IgnoredUpdates.xaml" />
     <None Remove="Interface\InstalledPackages.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
-    <None Remove="Interface\PackageDialogs.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -139,7 +139,7 @@
     <PRIResource Remove="Intereface\**" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Interface\PackageDialogs.xaml">
+    <Page Update="Interface\IgnoredUpdates.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -167,5 +167,8 @@
     <Page Update="Interface\NavigationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interface\Dialogs\" />
   </ItemGroup>
 </Project>

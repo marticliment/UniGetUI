@@ -433,7 +433,7 @@ namespace ModernWindow.Interface
             PackageDetails.IsEnabled = false;
             HelpButton.IsEnabled = false;
 
-            ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.Dialogs.ShowManageIgnoredUpdatesDialog(); };
+            ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) => { 
                 foreach (var package in FilteredPackages) if (package.IsChecked)
                         await package.AddToIgnoredUpdates();

@@ -11,74 +11,30 @@
     xmlns:engine="using:ModernWindow.PackageEngine"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <!--DataTemplate x:Key="OperationWidget" x:DataType="engine:AbstractOperation">
-            <Grid ColumnSpacing="7">
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Setter Property="Background" Value="{ThemeResource SystemFillColorNeutralBackgroundBrush}"/>
-                        <Setter Property="BorderBrush" Value="{StaticResource ExpanderContentBorderBrush}"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="CornerRadius" Value="8"/>
-                        <Setter Property="Height" Value="48"/>
-                        <Setter Property="Margin" Value="0,0,0,8"/>
-                        <Setter Property="Padding" Value="0"/>
-                    </Style>
-                </Grid.Style>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="205" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="150" />
-                </Grid.ColumnDefinitions>
-                <Grid.Resources>
-                    <ResourceDictionary>
-                        <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-                            <Setter Property="Height" Value="32"/>
-                            <Setter Property="CornerRadius" Value="4"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                        </Style>
-                    </ResourceDictionary>
-                </Grid.Resources>
-                <Image Grid.Column="0" VerticalAlignment="Center" Loaded="{x:Bind ImageIcon_Loaded}" Width="32" Height="24" Margin="8,8,0,8"/>
-                <TextBlock Loaded="{x:Bind TextBlock_Loaded}" Grid.Column="1" VerticalAlignment="Center"/>
-                <ProgressBar IsIndeterminate="True" Grid.Column="2" VerticalAlignment="Bottom" Loaded="{x:Bind ProgressBar_Loaded}" Margin="0,0,0,8" CornerRadius="0,0,4,4" Height="2" Maximum="100" Value="100"/>
-                <Button Grid.Column="2" VerticalAlignment="Center" Loaded="{x:Bind ViewLogButton_Loaded}" HorizontalAlignment="Stretch"
-                        FontFamily="Consolas" HorizontalContentAlignment="Left"/>
-                <Button Grid.Column="3" VerticalAlignment="Center" Loaded="{x:Bind ActionButton_Loaded}" HorizontalAlignment="Stretch" Margin="0,0,7,0"/>
-            </Grid>
-        </DataTemplate-->
-    </UserControl.Resources>
-
     <Grid RowSpacing="4" ColumnSpacing="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="72"/>
             <ColumnDefinition Width="10000*"/>
-            <!--ColumnDefinition Width="*" MaxWidth="60"/-->
         </Grid.ColumnDefinitions>
 
-        
-        <!--Frame Name="MainContentPresenter"/-->
-        <Frame Name="ContentAnimatorPresenter" Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
-            <Grid Name="MainContentPresenterGrid" Margin="0" RowSpacing="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="0" />
-                    <ColumnDefinition Width="0" />
-                    <ColumnDefinition Width="0" />
-                    <ColumnDefinition Width="0" />
-                    <ColumnDefinition Width="0" />
-                    <ColumnDefinition Width="0" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0" MaxHeight="200">
-                    <StackPanel Orientation="Vertical" Spacing="8" Margin="0,0,0,0" Padding="0" Name="__operations_list_stackpanel"/>
-                </ScrollView>
-            </Grid>
-        </Frame>
+        <Grid Name="MainContentPresenterGrid" RowSpacing="8" Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="0" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0" MaxHeight="200">
+                <StackPanel Orientation="Vertical" Spacing="8" Margin="0,0,0,0" Padding="0" Name="__operations_list_stackpanel"/>
+            </ScrollView>
+        </Grid>
 
         <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
             <Grid.RowDefinitions>
@@ -125,13 +81,8 @@
                     Text="About" x:Name="AboutNavButton"
                     x:FieldModifier="public"
                     Glyph="&#xE946;" Click="AboutNavButton_Click"
-                    /> 
+                    />
             </StackPanel>
         </Grid>
-        <ContentDialog
-            x:Name="AboutWingetUI"
-            >
-            <pages:AboutWingetUI/>
-        </ContentDialog>
     </Grid>
 </UserControl>
