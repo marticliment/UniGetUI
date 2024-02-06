@@ -132,7 +132,6 @@ namespace ModernWindow
             mainWindow.DispatcherQueue.TryEnqueue(() => { mainWindow.Activate(); });
         }
 
-        public void SetSettings(string setting, bool value)
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
         }
