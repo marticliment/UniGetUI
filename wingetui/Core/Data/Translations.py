@@ -107,8 +107,12 @@ languageCredits = {
   ],
   "el": [
     {
-      "name": "antwnhsx  @wobblerrrgg",
-      "link": "https://github.com/antwnhsx  @wobblerrrgg"
+      "name": "antwnhsx",
+      "link": "https://github.com/antwnhsx"
+    },
+    {
+      "name": "wobblerrrgg",
+      "link": "https://github.com/wobblerrrgg"
     }
   ],
   "en": [
