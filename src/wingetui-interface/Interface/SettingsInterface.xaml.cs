@@ -12,7 +12,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Python.Runtime;
 using Microsoft.VisualBasic.FileIO;
 using System.Diagnostics;
 using Microsoft.UI;
@@ -32,6 +31,8 @@ using System.Xml.Schema;
 using ModernWindow.Clipboard;
 using Windows.UI.Text;
 using Microsoft.UI.Xaml.Media.Imaging;
+using ModernWindow.Data;
+using Windows.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,26 +53,36 @@ namespace ModernWindow.Interface
         public SettingsInterface()
         {
             this.InitializeComponent();
-       
+
             // General Settings Section
-            PyDict lang_dict = new PyDict(bindings.Core.Languages.LangData.languageReference);
-            var lang_values = lang_dict.Keys();
-            var lang_names = lang_dict.Values();
+            var lang_dict = LanguageData.LanguageList;
             bool isFirst = true;
-            for (int i = 0; i < lang_values.Count(); i++)
+            foreach (var entry in lang_dict)
             {
-                LanguageSelector.AddItem(lang_names[i].ToString(), lang_values[i].ToString(), isFirst);
+                LanguageSelector.AddItem(entry.Value, entry.Key.ToString(), isFirst);
                 isFirst = false;
             }
             LanguageSelector.ShowAddedItems();
 
 
-            PyDict updates_dict = new PyDict(bindings.Core.Tools.update_times_reference);
-            var time_names = updates_dict.Keys();
-            var time_keys = updates_dict.Values();
-            for (int i = 0; i < time_names.Count(); i++)
+
+            Dictionary<string, string> updates_dict = new Dictionary<string, string> {
+                {bindings.Translate("{0} minutes").Replace("{0}", "10"), "600"},
+                {bindings.Translate("{0} minutes").Replace("{0}", "30"), "1800"},
+                {bindings.Translate("1 hour"), "3600"},
+                {bindings.Translate("{0} hours").Replace("{0}", "2"), "7200"},
+                {bindings.Translate("{0} hours").Replace("{0}", "4"), "14400"},
+                {bindings.Translate("{0} hours").Replace("{0}", "8"), "28800"},
+                {bindings.Translate("{0} hours").Replace("{0}", "12"), "43200"},
+                {bindings.Translate("1 day"), "86400"},
+                {bindings.Translate("{0} days").Replace("{0}", "2"), "172800"},
+                {bindings.Translate("{0} days").Replace("{0}", "3"), "259200"},
+                {bindings.Translate("1 week"), "604800"}
+            };
+
+            foreach (var entry in updates_dict)
             {
-                UpdatesCheckIntervalSelector.AddItem(time_names[i].ToString(), time_keys[i].ToString(), false);
+                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value.ToString(), false);
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
@@ -86,7 +97,7 @@ namespace ModernWindow.Interface
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
             if (!bindings.GetSettings("ChangeBackupOutputDirectory"))
             {
-                BackupDirectoryLabel.Text = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
+                BackupDirectoryLabel.Text = CoreData.DEFAULT_PACKAGE_BACKUP_DIR;
                 ResetBackupDirectory.IsEnabled = false;
             }
             else
@@ -318,7 +329,7 @@ namespace ModernWindow.Interface
             StorageFile file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                bindings.App.Tools.ImportSettingsFromFile(file.Path);
+                // TODO: Import Settings
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
             }
         }
@@ -335,14 +346,14 @@ namespace ModernWindow.Interface
             StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
-                bindings.App.Tools.ExportSettingsToFile(file.Path);
+                // TODO: Export settings
             }
 
         }
 
         private void ResetWingetUI(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-            bindings.App.Tools.ResetSettings();
+            // TODO: Reset Settings
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
@@ -363,7 +374,7 @@ namespace ModernWindow.Interface
 
         private void ResetBackupPath_Click(object sender, dynamic e)
         {
-            BackupDirectoryLabel.Text = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
+            BackupDirectoryLabel.Text = CoreData.DEFAULT_PACKAGE_BACKUP_DIR;
             bindings.SetSettings("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
@@ -397,7 +408,7 @@ namespace ModernWindow.Interface
         {
             string directory = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
             if (directory == "")
-                directory = bindings.Globals.DEFAULT_PACKAGE_BACKUP_DIR;
+                directory = CoreData.DEFAULT_PACKAGE_BACKUP_DIR;
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             Process.Start("explorer.exe", directory);
@@ -434,7 +445,13 @@ namespace ModernWindow.Interface
 
         private void ResetIconCache_Click(object sender, ButtonCardEventArgs e)
         {
-            bindings.Core.Tools.ResetCache();
+            try
+            {
+                Directory.Delete(CoreData.WingetUICacheDirectory_Icons, true);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
     }

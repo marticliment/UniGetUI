@@ -63,7 +63,6 @@
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.124" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
-    <PackageReference Include="pythonnet" Version="3.0.3" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 

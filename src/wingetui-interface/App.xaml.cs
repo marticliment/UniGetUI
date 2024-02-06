@@ -7,9 +7,9 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using Microsoft.Windows.AppLifecycle;
+using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
-using Python.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,9 +32,9 @@ namespace ModernWindow
     {
         
         // Python modules to be imported
-        public dynamic Tools;
-        public dynamic Core;
-        public dynamic Globals;
+        //public dynamic Tools;
+        //public dynamic Core;
+        //public dynamic Globals;
 
         public Scoop Scoop;
         public Winget Winget;
@@ -46,8 +46,6 @@ namespace ModernWindow
 
         public List<PackageManager> PackageManagerList = new List<PackageManager>();
 
-        private Py.GILState GIL;
-
         public Interface.SettingsInterface settings;
         public MainWindow mainWindow;
 
@@ -58,27 +56,9 @@ namespace ModernWindow
          
             this.UnhandledException += (sender, e) =>
             {
-                Debug.WriteLine("Unhandled Exception raised: " + e.Message);
-                Debug.WriteLine("Stack Trace: \n" + e.Exception.StackTrace);
+                Console.WriteLine("Unhandled Exception raised: " + e.Message);
+                Console.WriteLine("Stack Trace: \n" + e.Exception.StackTrace);
             };
-
-            Runtime.PythonDLL = @"C:\Users\marti\AppData\Local\Programs\Python\Python311\Python311.dll";
-            PythonEngine.Initialize();
-            PythonEngine.BeginAllowThreads();
-
-            Debug.WriteLine("Python Runtime Loaded");
-            Debug.WriteLine("Current Path: " + Environment.CurrentDirectory);
-
-            // Import Python modules
-            GIL = Py.GIL();
-
-            dynamic os = Py.Import("os");
-            dynamic sys = Py.Import("sys");
-            sys.path.append(os.getcwd());
-
-            Globals = (PyModule)Py.Import("wingetui.Core.Globals");
-            Tools = (PyModule)Py.Import("wingetui.Core.Tools");
-            Core = (PyModule)Py.Import("wingetui.Core");
 
             Debug.WriteLine("Python modules imported");
 
@@ -143,14 +123,6 @@ namespace ModernWindow
             Debug.WriteLine("All managers loaded");
 
             mainWindow.SwitchToInterface();
-            // settings = mainWindow.SettingsTab;
-
-
-            Thread python = new Thread(LoadPython);
-            python.SetApartmentState(ApartmentState.STA);
-            bool run_python = false;
-            if (run_python)
-                python.Start();
         }
 
         public async Task ShowMainWindow_FromRedirect()
@@ -160,62 +132,7 @@ namespace ModernWindow
             mainWindow.DispatcherQueue.TryEnqueue(() => { mainWindow.Activate(); });
         }
 
-        // setSettings binding
         public void SetSettings(string setting, bool value)
-        {
-            this.Tools.setSettings(setting, value);
-        }
-
-        // getSettings binding
-        public bool GetSettings(string setting)
-        {
-            return (bool)this.Tools.getSettings(setting);
-        }
-
-        // setSettingsValue binding
-        public void SetSettingsValue(string setting, string value)
-        {
-            this.Tools.setSettingsValue(setting, value);
-        }
-
-        // getSettingsValue binding
-        public string GetSettingsValue(string setting)
-        {
-            return (string)this.Tools.getSettingsValue(setting);
-        }
-
-        public string Translate(string text)
-        {
-            return (string)this.Tools._(text);
-        }
-
-
-        // Python code loader - Use STA. Otherwise, Qt will crash.
-        [STAThread]
-        void LoadPython()
-        {
-            PythonEngine.Initialize();
-            PythonEngine.BeginAllowThreads();
-            using (Py.GIL())
-            {
-                using (PyModule scope = Py.CreateScope())
-                {
-                    scope.Set("CSharpApp", this.ToPython());
-                    
-                    using var locals = new PyDict();
-                    locals["CSharpApp"] = this.ToPython();
-
-                    PythonEngine.Exec("\n"
-                        + "import wingetui.Core.Globals\n"
-                        + "wingetui.Core.Globals.CSharpApp = CSharpApp\n"
-                        + "import wingetui.__main__\n", null, locals);
-
-
-                }
-            }
-        }
-
-
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
         }
@@ -223,8 +140,6 @@ namespace ModernWindow
         public void DisposeAndQuit(int outputCode)
         {
             Console.WriteLine("Quitting...");
-            try { PythonEngine.Shutdown(); } catch { Debug.WriteLine("Cannot shutdown Python Runtime"); }
-            try { GIL.Dispose(); } catch { Debug.WriteLine("Cannot dispose GIL"); }
             mainWindow.Close();
             Environment.Exit(outputCode);
         }

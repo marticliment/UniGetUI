@@ -133,8 +133,6 @@ namespace ModernWindow.Interface
 
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
-
-
         }
 
         private void NavigateToPage(Page TargetPage)

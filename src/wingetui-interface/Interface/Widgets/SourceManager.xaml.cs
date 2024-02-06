@@ -12,7 +12,6 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Python.Runtime;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Graphics.DirectX.Direct3D11;
 using ModernWindow.Structures;

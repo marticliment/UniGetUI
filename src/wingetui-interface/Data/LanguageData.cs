@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Devices.Bluetooth.Advertisement;
+using static CommunityToolkit.WinUI.Animations.Expressions.ExpressionValues;
+using Windows.Globalization;
+using ModernWindow.Structures;
+using System.IO;
+using System.Text.Json.Nodes;
+using System.Net;
 
 namespace ModernWindow.Data
 {
-    public static class LanguagesData
+    public static class LanguageData
     {
         public static string TranslatorsJSON =
             @"
@@ -536,4 +543,89 @@ namespace ModernWindow.Data
         };
 
     }
+
+    public class LanguageEngine
+    {
+        public static Dictionary<string, string> MainLangDict = new();
+
+        public LanguageEngine()
+        {
+            var LangName = AppTools.GetSettingsValue_Static("PreferredLanguage");
+            if(LangName == "default" || LangName == "")
+            {
+                LangName = Windows.System.UserProfile.GlobalizationPreferences.Languages[0];
+            }
+            var LangNames = (LangName, LangName[0..2]);
+            bool LangFound = false;
+
+            if (LanguageData.LanguageList.ContainsKey(LangName))
+            {
+                MainLangDict = LoadLanguageFile(LangName);
+                MainLangDict.TryAdd("locale", LangName);
+            }
+            else if (LanguageData.LanguageList.ContainsKey(LangName[0..2]))
+            {
+                MainLangDict = LoadLanguageFile(LangName[0..2]);
+                MainLangDict.TryAdd("locale", LangName[0..2]);
+            }
+            else
+            {
+                MainLangDict = LoadLanguageFile("en");
+                MainLangDict.TryAdd("locale", "en");
+            }
+            Console.WriteLine("Loaded language locale: " + MainLangDict["locale"]);
+        }
+
+        public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
+        {
+            Dictionary<string, string> LangDict = new();
+            var LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
+            Console.WriteLine(LangFileToLoad);
+
+            if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                ForceBundled = true;
+
+            if(ForceBundled)
+            {
+                LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "wingetui\\Core\\Languages", "lang_" + LangKey + ".json");
+                Console.WriteLine(LangFileToLoad);
+            }
+
+            LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
+            
+            if (!AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                _ = UpdateLanguageFile(LangKey);
+            
+            return LangDict;
+        }
+
+        public async Task UpdateLanguageFile(string LangKey)
+        {
+            try
+            {
+                var NewFile = new Uri("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/Core/Languages/" + "lang_" + LangKey + ".json");
+                using (WebClient client = new WebClient())
+                {
+                    var fileContents = await client.DownloadStringTaskAsync(NewFile);
+                    File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
+                }
+                Console.WriteLine("Lang files were updated successfully");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public string Translate(string key)
+        {
+            if (key == null || key == "")
+                return "";
+            else if (MainLangDict.ContainsKey(key))
+                return MainLangDict[key];
+            else
+                return key;
+        }
+    }
 }
+

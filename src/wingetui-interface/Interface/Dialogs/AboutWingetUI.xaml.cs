@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Data;
 using ModernWindow.Structures;
-using Python.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -75,7 +74,7 @@ namespace ModernWindow.Interface
                 Contributors.Add(person);
             }
 
-            JsonObject TranslatorsInfo = JsonNode.Parse(LanguagesData.TranslatorsJSON).AsObject();
+            JsonObject TranslatorsInfo = JsonNode.Parse(LanguageData.TranslatorsJSON).AsObject();
 
             VersionText.Text = bindings.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
 
@@ -95,7 +94,7 @@ namespace ModernWindow.Interface
                         HasGithubProfile = url != null,
                         GitHubUrl = url != null ? url : new Uri("https://github.com/"),
                         ProfilePicture = url != null ? new Uri(url.ToString() + ".png") : new Uri("https://github.com/"),
-                        Language = !LangShown? LanguagesData.LanguageList[langKey.Key]: "",
+                        Language = !LangShown? LanguageData.LanguageList[langKey.Key]: "",
                     };
                     LangShown = true;
                     Translators.Add(person);

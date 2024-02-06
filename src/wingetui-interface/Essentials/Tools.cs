@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.Web.WebView2.Core;
+using ModernWindow.Data;
 using ModernWindow.PackageEngine;
-using Python.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,13 +34,12 @@ namespace ModernWindow.Structures
 
         public MainApp App;
 
-        public dynamic Globals;
-        public dynamic Tools;
-        public dynamic Core;
         public ThemeListener ThemeListener;
         public List<AbstractOperation> OperationQueue = new();
 
         public __tooltip_options TooltipStatus = new __tooltip_options();
+
+        private LanguageEngine LanguageEngine = new LanguageEngine();
 
         private static AppTools instance;
 
@@ -59,35 +58,53 @@ namespace ModernWindow.Structures
         private AppTools()
         {
             App = (MainApp)Application.Current;
-            Globals = App.Globals;
-            Tools = App.Tools;
-            Core = App.Core;
             ThemeListener = new ThemeListener();
         }
 
         public bool GetSettings(string setting, bool invert = false)
+        { return AppTools.GetSettings_Static(setting, invert); }
+
+        public static bool GetSettings_Static(string setting, bool invert = false)
         {
-            return App.GetSettings(setting) ^ invert;
+            return File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)) ^ invert;
         }
 
         public void SetSettings(string setting, bool value)
-        {
-            App.SetSettings(setting, value);
-        }
+        { AppTools.SetSettings_Static(setting, value); }
 
+        public static void SetSettings_Static(string setting, bool value)
+        {
+            if (value)
+            {
+                if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                    File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), "");
+            }
+            else
+            {
+                if (File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                    File.Delete(Path.Join(CoreData.WingetUIDataDirectory, setting));
+            }
+        }
         public string GetSettingsValue(string setting)
-        {
-            return App.GetSettingsValue(setting);
-        }
+        { return AppTools.GetSettingsValue_Static(setting); }
 
-        public void SetSettingsValue(string setting, string value)
+        public static string GetSettingsValue_Static(string setting)
         {
-            App.SetSettingsValue(setting, value);
+            if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                return "";
+            return File.ReadAllText(Path.Join(CoreData.WingetUIDataDirectory, setting));
+        }
+        public void SetSettingsValue(string setting, string value)
+        { AppTools.SetSettingsValue_Static(setting, value); }
+
+        public static void SetSettingsValue_Static(string setting, string value)
+        {
+            File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
         }
 
         public string Translate(string text)
         {
-            return App.Translate(text);
+            return LanguageEngine.Translate(text);
         }
 
         public void RestartApp()
