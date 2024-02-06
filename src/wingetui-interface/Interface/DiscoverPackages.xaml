@@ -785,6 +785,11 @@
                                             <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
+                                    <RadioButton x:Name="QueryExactMatch" Margin="0,-2,0,-2" Height="30">
+                                        <RadioButton.Content>
+                                            <widgets:TranslatedTextBlock Text="Exact name or id" WrappingMode="Wrap"/>
+                                        </RadioButton.Content>
+                                    </RadioButton>
                                 </RadioButtons>
                             </StackPanel>
                         </Expander.Content>

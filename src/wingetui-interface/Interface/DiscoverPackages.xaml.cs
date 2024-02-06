@@ -306,6 +306,8 @@ namespace ModernWindow.Interface
                 MatchingList = Packages.Where(x => CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
             else if (QueryBothRadio.IsChecked == true)
                 MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query)) | CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
+            else if (QueryExactMatch.IsChecked == true)
+                MatchingList = Packages.Where(x => CharsFunc(x.Name) == CharsFunc(query) | CharsFunc(x.Id) == CharsFunc(query)).ToArray();
             else // QuerySimilarResultsRadio == true
                 MatchingList = Packages.ToArray();
 

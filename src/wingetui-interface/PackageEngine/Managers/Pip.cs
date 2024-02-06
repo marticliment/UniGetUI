@@ -45,7 +45,7 @@ namespace ModernWindow.PackageEngine.Managers
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = path,
-                    Arguments = query,
+                    Arguments = "\"" + query + "\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,

@@ -26,7 +26,7 @@ namespace ModernWindow.PackageEngine.Managers
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search " + query,
+                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
