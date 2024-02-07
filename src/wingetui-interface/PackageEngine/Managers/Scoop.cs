@@ -26,23 +26,25 @@ public class Scoop : PackageManagerWithSources
         var Packages = new List<Package>();
 
         string path = await bindings.Which("scoop-search.exe");
-        if(!File.Exists(path))
+        if (!File.Exists(path))
+        {
+            Process proc = new Process()
             {
-                Process proc = new Process() {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = path,
-                        Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
-                        UseShellExecute = true,
-                        CreateNoWindow = true
-                    }
-                };
-                proc.Start();
-                await proc.WaitForExitAsync();
-                path = "scoop-search.exe";
-            }
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = path,
+                    Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
+                    UseShellExecute = true,
+                    CreateNoWindow = true
+                }
+            };
+            proc.Start();
+            await proc.WaitForExitAsync();
+            path = "scoop-search.exe";
+        }
 
-        Process p = new Process() {
+        Process p = new Process()
+        {
             StartInfo = new ProcessStartInfo()
             {
                 FileName = path,
@@ -58,12 +60,12 @@ public class Scoop : PackageManagerWithSources
 
         string line;
         ManagerSource source = GetMainSource();
-        while((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
-            if(line.StartsWith("'"))
+            if (line.StartsWith("'"))
             {
                 var sourceName = line.Split(" ")[0].Replace("'", "");
-                if(SourceReference.ContainsKey(sourceName))
+                if (SourceReference.ContainsKey(sourceName))
                     source = SourceReference[sourceName];
                 else
                 {
@@ -75,7 +77,7 @@ public class Scoop : PackageManagerWithSources
             else if (line.Trim() != "")
             {
                 var elements = line.Trim().Split(" ");
-                if(elements.Length < 2)
+                if (elements.Length < 2)
                     continue;
 
                 for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
@@ -92,7 +94,7 @@ public class Scoop : PackageManagerWithSources
     protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
     {
         var InstalledPackages = new Dictionary<string, Package>();
-        foreach(var InstalledPackage in await GetInstalledPackages())
+        foreach (var InstalledPackage in await GetInstalledPackages())
         {
             if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
                 InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
@@ -121,7 +123,7 @@ public class Scoop : PackageManagerWithSources
         {
             if (!DashesPassed)
             {
-                if(line.Contains("---"))
+                if (line.Contains("---"))
                     DashesPassed = true;
             }
             else if (line.Trim() != "")
@@ -135,12 +137,12 @@ public class Scoop : PackageManagerWithSources
                 if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                     continue;
 
-                if(!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
+                if (!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                 {
                     Console.WriteLine("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
                     continue;
                 }
-                
+
                 Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
             }
         }
@@ -251,7 +253,7 @@ public class Scoop : PackageManagerWithSources
                     Debug.WriteLine(e);
                 }
             }
-            
+
             await process.WaitForExitAsync();
             Debug.WriteLine("🔵 " + Name + " source search finished.");
             return sources.ToArray();
@@ -278,7 +280,7 @@ public class Scoop : PackageManagerWithSources
     public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
         var output_string = string.Join("\n", Output);
-        if((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
+        if ((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
         {
             package.Scope = PackageScope.Global;
             return OperationVeredict.AutoRetry;
@@ -328,7 +330,7 @@ public class Scoop : PackageManagerWithSources
 
         parameters.Remove("--purge");
 
-        switch(options.Architecture)
+        switch (options.Architecture)
         {
             case null:
                 break;
@@ -346,7 +348,7 @@ public class Scoop : PackageManagerWithSources
                 break;
         }
 
-        if(options.SkipHashCheck)
+        if (options.SkipHashCheck)
         {
             parameters.Add("--skip");
         }
@@ -423,11 +425,18 @@ public class Scoop : PackageManagerWithSources
         process.Start();
         status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
         status.Found = process.ExitCode == 0;
-        
+
 
         if (status.Found && IsEnabled())
             _ = RefreshSources();
 
         return status;
+    }
+
+    protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+    {
+        await Task.Delay(0);
+        Console.WriteLine("Manager " + Name + " does not support version retrieving, this function should have never been called");
+        return new string[0];
     }
 }

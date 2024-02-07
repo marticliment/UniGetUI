@@ -286,5 +286,36 @@ namespace ModernWindow.PackageEngine.Managers
 
             return status;
         }
+
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            var p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                }
+            };
+
+            string line;
+            List<string> versions = new();
+
+            p.Start();
+
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (line.Contains("\""))
+                    versions.Add(line.Trim().TrimStart('"').TrimEnd(',').TrimEnd('"'));                        
+            }
+
+            return versions.ToArray();
+        }
     }
 }

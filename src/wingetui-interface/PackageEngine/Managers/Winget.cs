@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using CommunityToolkit.WinUI.Helpers;
+using Microsoft.UI.Xaml;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -325,7 +326,7 @@ namespace ModernWindow.PackageEngine.Managers
             List<string> parameters = new List<string>() { Properties.UninstallVerb };
             if (!package.Id.Contains("…"))
                 parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
-            else if (package.Name.Contains("…"))
+            else if (!package.Name.Contains("…"))
                 parameters.AddRange(new string[] { "--name", "\""+package.Name+"\"", "--exact" });
             else
                 parameters.AddRange(new string[] { "--id", package.Id.Replace("…", "") });
@@ -541,6 +542,49 @@ namespace ModernWindow.PackageEngine.Managers
             return status;
         }
 
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            var callId = "";
+            if (!package.Id.Contains("…"))
+                callId = "--id " + package.Id + " --exact";
+            else if (!package.Name.Contains("…"))
+                callId = "--name \"" + package.Name + "\" --exact";
+            else
+                callId = "--id " + package.Id;
+
+
+            var p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " show " + callId + " --versions --accept-source-agreements",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            List<string> versions = new List<string>();
+            bool DashesPassed = false;
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!DashesPassed)
+                {
+                    if (line.Contains("---"))
+                        DashesPassed = true;
+                }
+                else 
+                    versions.Add(line.Trim());
+            }
+
+            return versions.ToArray();
+        }
     }
 
     public class LocalPcSource : ManagerSource

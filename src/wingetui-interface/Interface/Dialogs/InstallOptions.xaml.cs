@@ -112,8 +112,15 @@ namespace ModernWindow.Interface.Dialogs
         {
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnored();
 
-            // TODO: Blah blah blah
-            await Task.Delay(5000);
+            var versions = await Package.Manager.GetPackageVersions(Package);
+            
+            foreach(string ver in versions)
+            {
+                VersionComboBox.Items.Add(ver);
+                if (Options.Version == ver)
+                    VersionComboBox.SelectedValue = ver;
+            }
+
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 

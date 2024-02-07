@@ -383,5 +383,46 @@ namespace ModernWindow.PackageEngine.Managers
 
             return status;
         }
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            var p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " Find-Module -Name " + package.Id + " -AllVersions",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            List<string> versions = new();
+            bool DashesPassed = false;
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!DashesPassed)
+                {
+                    if(line.Contains("-----"))
+                        DashesPassed = true;
+                }
+                else
+                {
+                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                    if (elements.Length < 3)
+                        continue;
+
+                    versions.Add(elements[0]);
+                }
+            }
+
+            return versions.ToArray();
+        }
     }
+
 }

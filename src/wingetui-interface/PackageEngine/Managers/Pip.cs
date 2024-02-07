@@ -291,5 +291,34 @@ namespace ModernWindow.PackageEngine.Managers
 
             return status;
         }
+
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            var p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " index versions " + package.Id,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+
+            string line;
+            string[] result = new string[0];
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if(line.Contains("Available versions:"))
+                    result = line.Replace("Available versions:", "").Trim().Split(", ");
+            }
+
+            return result;
+        }
     }
 }

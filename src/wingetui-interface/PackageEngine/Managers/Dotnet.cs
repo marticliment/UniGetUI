@@ -268,7 +268,6 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerCapabilities()
             {
                 CanRunAsAdmin = true,
-                SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
@@ -323,6 +322,13 @@ namespace ModernWindow.PackageEngine.Managers
                 await RefreshSources();
 
             return status;
+        }
+
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            await Task.Delay(0);
+            Console.WriteLine("Manager "+Name+" does not support version retrieving, this function should have never been called");
+            return new string[0];
         }
     }
 }

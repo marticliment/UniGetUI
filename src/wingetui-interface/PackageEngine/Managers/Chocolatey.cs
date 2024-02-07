@@ -340,5 +340,41 @@ namespace ModernWindow.PackageEngine.Managers
 
             return status;
         }
+
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            var p = new Process() {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " find -e " + package.Id + " -a",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            Console.WriteLine(p.StartInfo.FileName);
+            Console.WriteLine(p.StartInfo.Arguments.ToString());
+
+            p.Start();
+            string line;
+            List<string> versions = new();
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (!line.StartsWith("Chocolatey"))
+                {
+                    string[] elements = line.Split(' ');
+                    Console.WriteLine(line);
+                    if (elements.Length < 2 || elements[0].Trim() != package.Id)
+                        continue;
+
+                    versions.Add(elements[1].Trim());
+                }
+            }
+            return versions.ToArray();
+        }
     }
 }

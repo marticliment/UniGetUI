@@ -124,6 +124,24 @@ namespace ModernWindow.PackageEngine
                 return new PackageDetails(package);
             }
         }
+
+        public virtual async Task<string[]> GetPackageVersions(Package package)
+        {
+            try
+            {
+                if(package.Manager.Capabilities.SupportsCustomVersions)
+                    return await GetPackageVersions_Unsafe(package);
+                else
+                    return new string[0];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                return new string[0];
+            }
+        }
+
+        protected abstract Task<string[]> GetPackageVersions_Unsafe(Package package);
         protected abstract Task<Package[]> FindPackages_UnSafe(string query);
         protected abstract Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe();
         protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
@@ -134,9 +152,7 @@ namespace ModernWindow.PackageEngine
         public abstract OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
         public abstract OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
         public abstract OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
-
         public abstract Task RefreshSources();
-
         public abstract ManagerSource GetMainSource();
 
     }
