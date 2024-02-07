@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -310,42 +311,63 @@ namespace ModernWindow.PackageEngine
                 ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode.ToString());
                 ProcessOutput.Add("Process End Time       : " + DateTime.Now.ToString());
 
-                if (Status == OperationStatus.Cancelled)
-                {
-                    return;
-                }
 
-                var OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
 
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
-                switch (OperationVeredict)
+                
+                var OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
+                
+                if (Status != OperationStatus.Cancelled)
                 {
-                    case OperationVeredict.Failed:
-                        this.Status = OperationStatus.Failed;
-                        RemoveFromQueue();
-                        postAction = await HandleFailure();
-                        break;
+                    switch (OperationVeredict)
+                    {
+                        case OperationVeredict.Failed:
+                            this.Status = OperationStatus.Failed;
+                            RemoveFromQueue();
+                            postAction = await HandleFailure();
+                            break;
 
-                    case OperationVeredict.Succeeded:
-                        this.Status = OperationStatus.Succeeded;
-                        postAction = await HandleSuccess();
-                        RemoveFromQueue();
-                        break;
+                        case OperationVeredict.Succeeded:
+                            this.Status = OperationStatus.Succeeded;
+                            postAction = await HandleSuccess();
+                            RemoveFromQueue();
+                            break;
 
-                    case OperationVeredict.AutoRetry:
-                        this.Status = OperationStatus.Pending;
-                        postAction = AfterFinshAction.Retry;
-                        break;
+                        case OperationVeredict.AutoRetry:
+                            this.Status = OperationStatus.Pending;
+                            postAction = AfterFinshAction.Retry;
+                            break;
+                    }
                 }
 
                 switch (postAction)
                 {
                     case AfterFinshAction.TimeoutClose:
+                        if (bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Count == 0)
+                            if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                            {
+                                Console.WriteLine("Erasing admin rights");
+                                Process p = new Process();
+                                p.StartInfo.FileName = CoreData.GSudoPath;
+                                p.StartInfo.Arguments = "cache off";
+                                p.Start();
+                                p.WaitForExit();
+                            }
                         await Task.Delay(5000);
                         _ = Close();
                         break;
 
                     case AfterFinshAction.ManualClose:
+                        if (bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Count == 0)
+                            if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                            {
+                                Console.WriteLine("Erasing admin rights");
+                                Process p = new Process();
+                                p.StartInfo.FileName = CoreData.GSudoPath;
+                                p.StartInfo.Arguments = "cache off";
+                                p.Start();
+                                p.WaitForExit();
+                            }
                         break;
 
                     case AfterFinshAction.Retry:
@@ -375,8 +397,9 @@ namespace ModernWindow.PackageEngine
 
             RemoveFromQueue();
             if(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+            {
                 bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
-
+            }
         }
 
         protected abstract void Initialize();

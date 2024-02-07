@@ -218,6 +218,12 @@
                             SettingName="DoCacheAdminRights"
                             StateChanged="DoCacheAdminRights_StateChanged"
                             />
+                        <widgets:CheckboxCard
+                            x:Name="DoCacheAdminRightsForBatches"
+                            Text="Ask for administrator privileges once for each batch of operations"
+                            SettingName="DoCacheAdminRightsForBatches"
+                            StateChanged="DoCacheAdminRights_StateChanged"
+                            />
 
                         <widgets:CheckboxCard
                             x:Name="UseSystemGSudo"

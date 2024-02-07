@@ -17,6 +17,7 @@ using Windows.Graphics.DirectX.Direct3D11;
 using Windows.UI;
 using Windows.Web.UI;
 using CommunityToolkit.WinUI.Helpers;
+using ModernWindow.Data;
 
 namespace ModernWindow.PackageEngine
 {
@@ -64,8 +65,26 @@ namespace ModernWindow.PackageEngine
         public InstallPackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            startInfo.FileName = Package.Manager.Status.ExecutablePath;
-            startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+            if(Options.RunAsAdministrator || bindings.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            {
+                if(bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                {
+                    Console.WriteLine("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Process p = new Process();
+                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
+                    p.Start();
+                    p.WaitForExit();
+                }
+                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.Arguments = Package.Manager.Status.ExecutablePath + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+
+            }
+            else
+            {
+                startInfo.FileName = Package.Manager.Status.ExecutablePath;
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+            }
             Process process = new Process();
             process.StartInfo = startInfo;
 
@@ -114,8 +133,25 @@ namespace ModernWindow.PackageEngine
         public UpdatePackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            startInfo.FileName = Package.Manager.Status.ExecutablePath;
-            startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
+            if (Options.RunAsAdministrator || bindings.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            {
+                if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                {
+                    Console.WriteLine("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Process p = new Process();
+                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
+                    p.Start();
+                    p.WaitForExit();
+                }
+                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.Arguments = Package.Manager.Status.ExecutablePath + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+            }
+            else
+            {
+                startInfo.FileName = Package.Manager.Status.ExecutablePath;
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+            }
             Process process = new Process();
             process.StartInfo = startInfo;
 
@@ -164,8 +200,25 @@ namespace ModernWindow.PackageEngine
         public UninstallPackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            startInfo.FileName = Package.Manager.Status.ExecutablePath;
-            startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
+            if (Options.RunAsAdministrator || bindings.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            {
+                if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                {
+                    Console.WriteLine("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Process p = new Process();
+                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
+                    p.Start();
+                    p.WaitForExit();
+                }
+                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.Arguments = Package.Manager.Status.ExecutablePath + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+            }
+            else
+            {
+                startInfo.FileName = Package.Manager.Status.ExecutablePath;
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+            }
             Process process = new Process();
             process.StartInfo = startInfo;
 

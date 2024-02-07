@@ -25,6 +25,7 @@ namespace ModernWindow.Data
             }
         }
         public static string WingetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
+        public static string GSudoPath = Path.Join(WingetUIExecutableDirectory, "wingetui", "components", "gsudo.exe");
 
         public static string WingetUIDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
         public static string WingetUIInstallationOptionsDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui\\InstallationOptions");
