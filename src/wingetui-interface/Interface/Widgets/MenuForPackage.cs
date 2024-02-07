@@ -7,9 +7,61 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ModernWindow.PackageEngine;
+using ModernWindow.Structures;
 
 namespace ModernWindow.Interface.Widgets
 {
+    public class BetterMenu : MenuFlyout
+    {
+        public BetterMenu() : base()
+        {
+            this.MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
+        }
+    }
+
+    public class BetterMenuItem : MenuFlyoutItem
+    {
+        DependencyProperty IconNameProperty;
+
+        public string IconName
+        {
+            get => (string)GetValue(IconNameProperty);
+            set => SetValue(IconNameProperty, (string)value);
+        }
+
+        new DependencyProperty TextProperty;
+
+        new public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, (string)value);
+        }
+
+        public BetterMenuItem() : base()
+        {
+            this.Style = (Style)Application.Current.Resources["BetterMenuItem"];
+            
+            IconNameProperty = DependencyProperty.Register(
+                nameof(IconName),
+                typeof(string),
+                typeof(CheckboxCard),
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                    Icon = new LocalIcon(e.NewValue as string);
+                })));
+
+            TextProperty = DependencyProperty.Register(
+                nameof(Text),
+                typeof(string),
+                typeof(CheckboxCard),
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                    (this as MenuFlyoutItem).Text = AppTools.Instance.Translate(e.NewValue as string);
+                })));
+
+        }
+
+    }
+
+
     public class MenuForPackage : MenuFlyout
     {
         public event EventHandler<Package> AboutToShow;

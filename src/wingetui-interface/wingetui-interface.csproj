@@ -47,6 +47,7 @@
   <ItemGroup>
     <None Remove="Interface\AboutWingetUI.xaml" />
     <None Remove="Interface\Dialogs\InstallOptions.xaml" />
+    <None Remove="Interface\Dialogs\ReleaseNotes.xaml" />
     <None Remove="Interface\DiscoverPackages.xaml" />
     <None Remove="Interface\IgnoredUpdates.xaml" />
     <None Remove="Interface\InstalledPackages.xaml" />
@@ -137,6 +138,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Intereface\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Interface\Dialogs\ReleaseNotes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\IgnoredUpdates.xaml">

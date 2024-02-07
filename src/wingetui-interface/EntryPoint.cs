@@ -12,7 +12,12 @@ namespace ModernWindow
     public static class EntryPoint
     {
         [STAThread]
-        static async Task Main(string[] args)
+        static void Main(string[] args)
+        {
+            _ = AsyncMain(args);
+        }
+
+        static async Task AsyncMain(string[] args)
         {
             WinRT.ComWrappersSupport.InitializeComWrappers();
             bool isRedirect = await DecideRedirection();

@@ -21,6 +21,7 @@ using ModernWindow.PackageEngine;
 using System.Threading.Tasks;
 using ModernWindow.Structures;
 using ModernWindow.Interface.Dialogs;
+using ModernWindow.Data;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -88,7 +89,21 @@ namespace ModernWindow.Interface
         }
 
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
-        { }
+        {
+
+            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+                button.ToggleButton.IsChecked = false;
+            MoreNavButton.ToggleButton.IsChecked = true;
+
+            (VersionMenuItem as MenuFlyoutItem).Text = bindings.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            MoreNavButtonMenu.ShowAt(MoreNavButton);
+
+            MoreNavButtonMenu.Closed += (s, e) =>
+            {
+                foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+                    button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
+            };
+        }
 
         private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
@@ -176,6 +191,55 @@ namespace ModernWindow.Interface
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
 
             CurrentPage = TargetPage;
+        }
+
+        private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
+        {
+
+            ContentDialog NotesDialog = new ContentDialog();
+            NotesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            NotesDialog.XamlRoot = this.XamlRoot;
+            NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
+            NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
+            NotesDialog.CloseButtonText = bindings.Translate("Close");
+            NotesDialog.Title = bindings.Translate("Release notes");
+            var notes = new ReleaseNotes();
+            NotesDialog.Content = notes;
+            NotesDialog.SizeChanged += (s, e) =>
+            {
+                notes.MinWidth = ActualWidth - 300;
+                notes.MinHeight = ActualHeight- 200;
+            };
+
+            await NotesDialog.ShowAsync();
+
+            NotesDialog = null;
+        }
+
+        private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void WingetUILogs_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        private void HelpMenu_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void QuitWingetUI_Click(object sender, RoutedEventArgs e)
+        {
+            bindings.App.DisposeAndQuit();
         }
     }
 }
