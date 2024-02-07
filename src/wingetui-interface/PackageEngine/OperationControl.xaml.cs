@@ -343,7 +343,7 @@ namespace ModernWindow.PackageEngine
                 switch (postAction)
                 {
                     case AfterFinshAction.TimeoutClose:
-                        if (bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Count == 0)
+                        if (bindings.OperationQueue.Count == 0)
                             if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
                             {
                                 Console.WriteLine("Erasing admin rights");
@@ -358,7 +358,7 @@ namespace ModernWindow.PackageEngine
                         break;
 
                     case AfterFinshAction.ManualClose:
-                        if (bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Count == 0)
+                        if (bindings.OperationQueue.Count == 0)
                             if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
                             {
                                 Console.WriteLine("Erasing admin rights");
