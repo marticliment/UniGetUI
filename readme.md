@@ -93,7 +93,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 | **Chocolatey** | ✅ | ⚠️³ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | 1.6.0 |
 | **Npm** | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | 2.0.0 |
 | **Pip** | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | 2.0.0 |
-| **.NET Tool** | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | 2.1.0 |
+| **.NET Tool** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | 2.1.0 |
 | **PowerShell** | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | 2.2.0 |
 
 ✅: Supported on WingetUI<br>
