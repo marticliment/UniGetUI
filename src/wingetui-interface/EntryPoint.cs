@@ -14,6 +14,7 @@ namespace ModernWindow
         [STAThread]
         static void Main(string[] args)
         {
+            // Having an async main method breaks WebView2
             _ = AsyncMain(args);
         }
 

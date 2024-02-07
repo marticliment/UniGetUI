@@ -23,6 +23,7 @@ using ModernWindow.Structures;
 using ModernWindow.Interface.Dialogs;
 using ModernWindow.Data;
 using System.Security.Cryptography.X509Certificates;
+using CommunityToolkit.WinUI.Animations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +37,7 @@ namespace ModernWindow.Interface
         public DiscoverPackagesPage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
+        public HelpDialog HelpPage;
         public Page OldPage;
         public Page CurrentPage;
         public InfoBadge UpdatesBadge;
@@ -55,6 +57,7 @@ namespace ModernWindow.Interface
             UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
             AboutPage = new AboutWingetUI();
+            HelpPage = new HelpDialog();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();
 
             int i = 0;
@@ -182,9 +185,16 @@ namespace ModernWindow.Interface
             foreach (Page page in PageButtonReference.Keys)
                 if (page.Visibility == Visibility.Visible)
                     OldPage = page;
-
+            if(!PageButtonReference.ContainsKey(TargetPage))
+            {
+                PageButtonReference.Add(TargetPage, MoreNavButton);
+                Grid.SetColumn(TargetPage, 0);
+                Grid.SetRow(TargetPage, 0);
+                MainContentPresenterGrid.Children.Add(TargetPage);
+            }
             foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
             {
+                
                 button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
             }
 
@@ -239,24 +249,7 @@ namespace ModernWindow.Interface
         }
         public async void ShowHelp()
         { 
-            ContentDialog HelpDialog = new ContentDialog();
-            HelpDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            HelpDialog.XamlRoot = this.XamlRoot;
-            HelpDialog.Resources["ContentDialogMaxWidth"] = 12000;
-            HelpDialog.Resources["ContentDialogMaxHeight"] = 10000;
-            HelpDialog.CloseButtonText = bindings.Translate("Close");
-            HelpDialog.Title = bindings.Translate("WingetUI Help");
-            var notes = new HelpDialog();
-            HelpDialog.Content = notes;
-            HelpDialog.SizeChanged += (s, e) =>
-            {
-                notes.MinWidth = ActualWidth - 300;
-                notes.MinHeight = ActualHeight - 200;
-            };
-
-            await HelpDialog.ShowAsync();
-
-            HelpDialog = null;
+            NavigateToPage(HelpPage);
         }
 
         private void QuitWingetUI_Click(object sender, RoutedEventArgs e)
