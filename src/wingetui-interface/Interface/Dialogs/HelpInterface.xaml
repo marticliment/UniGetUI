@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ModernWindow.Interface.Dialogs.HelpDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:widgets="using:ModernWindow.Interface.Widgets"
+    mc:Ignorable="d"
+    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowSpacing="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid ColumnSpacing="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="BackButton" Click="BackButton_Click" Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="left"/>
+            </Button>
+            <Button Grid.Column="1" Name="RightButton" Click="RightButton_Click" Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="right"/>
+            </Button>
+            <Button Grid.Column="2" Name="HomeButton" Click="HomeButton_Click"  Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="home"/>
+            </Button>
+            <Button Grid.Column="3" Name="ReloadButton" Click="ReloadButton_Click" Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="reload"/>
+            </Button>
+            <Button Grid.Column="5" Name="BrowserButton" Click="BrowserButton_Click" Height="30">
+                <widgets:TranslatedTextBlock Text="View page on browser"/> 
+            </Button>
+        </Grid>
+        <Border CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1" Grid.Column="0">
+            <controls:WebView2 Name="WebView" Source="https://www.google.com/"/>
+        </Border>
+        <ProgressBar IsIndeterminate="True" Name="ProgressBar" Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" CornerRadius="4,4,0,0"/>
+    </Grid>
+</Page>

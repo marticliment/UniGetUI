@@ -432,9 +432,10 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.IsEnabled = false;
-            ExportSelection.IsEnabled = false;
-            HelpButton.IsEnabled = false;
-            
+            ExportSelection.IsEnabled = false; 
+            HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
+
+
             InstallationSettings.Click += async (s, e) => {
                 if (PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Uninstall"))
                     ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));

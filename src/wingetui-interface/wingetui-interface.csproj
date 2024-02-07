@@ -46,6 +46,7 @@
 
   <ItemGroup>
     <None Remove="Interface\AboutWingetUI.xaml" />
+    <None Remove="Interface\Dialogs\HelpInterface.xaml" />
     <None Remove="Interface\Dialogs\InstallOptions.xaml" />
     <None Remove="Interface\Dialogs\ReleaseNotes.xaml" />
     <None Remove="Interface\DiscoverPackages.xaml" />
@@ -77,6 +78,10 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Interface\Dialogs\HelpInterface.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Interface\InstalledPackages.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

@@ -436,8 +436,9 @@ namespace ModernWindow.Interface
             foreach (var toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.IsEnabled = false;
-            HelpButton.IsEnabled = false;
+            PackageDetails.IsEnabled = false; 
+            HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
+
 
             InstallationSettings.Click += async (s, e) => {
                 if (PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Update"))

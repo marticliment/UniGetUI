@@ -473,7 +473,7 @@ namespace ModernWindow.Interface
             PackageDetails.IsEnabled = false;
             ImportPackages.IsEnabled = false;
             ExportSelection.IsEnabled = false;
-            HelpButton.IsEnabled = false;
+            HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
             
             InstallationSettings.Click += async (s, e) => { 
                 if(PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Install"))

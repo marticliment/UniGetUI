@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using ModernWindow.Structures;
 using ModernWindow.Interface.Dialogs;
 using ModernWindow.Data;
+using System.Security.Cryptography.X509Certificates;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -234,7 +235,28 @@ namespace ModernWindow.Interface
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
         {
+            ShowHelp();
+        }
+        public async void ShowHelp()
+        { 
+            ContentDialog HelpDialog = new ContentDialog();
+            HelpDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            HelpDialog.XamlRoot = this.XamlRoot;
+            HelpDialog.Resources["ContentDialogMaxWidth"] = 12000;
+            HelpDialog.Resources["ContentDialogMaxHeight"] = 10000;
+            HelpDialog.CloseButtonText = bindings.Translate("Close");
+            HelpDialog.Title = bindings.Translate("WingetUI Help");
+            var notes = new HelpDialog();
+            HelpDialog.Content = notes;
+            HelpDialog.SizeChanged += (s, e) =>
+            {
+                notes.MinWidth = ActualWidth - 300;
+                notes.MinHeight = ActualHeight - 200;
+            };
 
+            await HelpDialog.ShowAsync();
+
+            HelpDialog = null;
         }
 
         private void QuitWingetUI_Click(object sender, RoutedEventArgs e)
