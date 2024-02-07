@@ -111,7 +111,7 @@ namespace ModernWindow.Interface
             OpenBackupDirectory.Content = bindings.Translate("Open");
 
             // Admin Settings Section
-            int index = 1;
+            int index = 2;
             foreach(PackageManager manager in bindings.App.PackageManagerList)
             {
                 CheckboxCard card = new CheckboxCard()
