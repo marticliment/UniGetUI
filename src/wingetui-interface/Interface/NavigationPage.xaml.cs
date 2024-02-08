@@ -117,8 +117,8 @@ namespace ModernWindow.Interface
         private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
             ContentDialog AboutDialog = new ContentDialog();
-            AboutDialog.XamlRoot = this.XamlRoot;
             AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            AboutDialog.XamlRoot = this.XamlRoot;
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
             AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
             AboutDialog.Content = AboutPage;
@@ -126,7 +126,7 @@ namespace ModernWindow.Interface
             foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
 
-            await AboutDialog.ShowAsync();
+            await bindings.App.mainWindow.ShowDialog(AboutDialog);
 
             AboutDialog.Content = null;
             foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
@@ -149,7 +149,7 @@ namespace ModernWindow.Interface
             UpdatesDialog.Content = IgnoredUpdatesPage;
 
             _ = IgnoredUpdatesPage.UpdateData();
-            await UpdatesDialog.ShowAsync();
+            await bindings.App.mainWindow.ShowDialog(UpdatesDialog);
 
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
@@ -170,7 +170,7 @@ namespace ModernWindow.Interface
             OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
 
-            var result = await OptionsDialog.ShowAsync();
+            var result = await bindings.App.mainWindow.ShowDialog(OptionsDialog);
             OptionsPage.SaveToDisk();
 
             OptionsDialog.Content = null;
@@ -222,7 +222,7 @@ namespace ModernWindow.Interface
                 notes.MinHeight = ActualHeight- 200;
             };
 
-            await NotesDialog.ShowAsync();
+            await bindings.App.mainWindow.ShowDialog(NotesDialog);
 
             NotesDialog = null;
         }

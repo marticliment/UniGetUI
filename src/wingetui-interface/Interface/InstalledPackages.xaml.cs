@@ -552,7 +552,7 @@ namespace ModernWindow.Interface
             dialog.DefaultButton = ContentDialogButton.Primary;
             dialog.Content = bindings.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
 
-            if (await dialog.ShowAsync() == ContentDialogResult.Secondary)
+            if (await bindings.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
                 bindings.AddOperationToList(new UninstallPackageOperation(package, options));
 
         }
@@ -587,7 +587,7 @@ namespace ModernWindow.Interface
 
             dialog.Content = p;
                 
-            if (await dialog.ShowAsync() == ContentDialogResult.Secondary)
+            if (await bindings.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
                 foreach(var package in packages)
                     bindings.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package) {
                         RunAsAdministrator = AsAdmin,

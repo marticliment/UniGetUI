@@ -89,7 +89,6 @@ namespace ModernWindow
                 });
             };
 
-
             LoadComponents();
         }
 

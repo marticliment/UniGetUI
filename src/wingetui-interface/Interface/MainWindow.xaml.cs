@@ -62,6 +62,8 @@ namespace ModernWindow
         public Grid ContentRoot;
         public bool BlockLoading = false;
 
+        public List<ContentDialog> DialogQueue = new();
+
         public List<NavButton> NavButtonList = new List<NavButton>();
         public MainWindow()
         {
@@ -317,6 +319,29 @@ namespace ModernWindow
             return WinRT.Interop.WindowNative.GetWindowHandle(this);
         }
 
+        public async Task<ContentDialogResult> ShowDialog(ContentDialog dialog, bool HighPriority = false)
+        {
+            try
+            {
+                if(HighPriority && DialogQueue.Count >= 1)
+                    DialogQueue.Insert(1, dialog);
+                else
+                    DialogQueue.Add(dialog);
+
+                while (DialogQueue[0] != dialog)
+                    await Task.Delay(100);
+                var result = await dialog.ShowAsync();
+                DialogQueue.Remove(dialog);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                if(DialogQueue.Contains(dialog))
+                    DialogQueue.Remove(dialog);
+                return ContentDialogResult.None;
+            }
+        }
 
     }
 }
