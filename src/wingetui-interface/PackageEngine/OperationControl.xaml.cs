@@ -115,6 +115,10 @@ namespace ModernWindow.PackageEngine
         protected Process Process;
         protected ObservableCollection<string> ProcessOutput = new ObservableCollection<string>();
 
+        private ContentDialog OutputDialog = new ContentDialog();
+        private ScrollViewer LiveOutputScrollBar = new ScrollViewer();
+        private RichTextBlock LiveOutputTextBlock = new RichTextBlock();
+
         public OperationStatus Status
         {
             get { return __status; }
@@ -159,10 +163,43 @@ namespace ModernWindow.PackageEngine
         {
             this.InitializeComponent();
 
+            OutputDialog = new ContentDialog();
+            OutputDialog.Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"];
+            OutputDialog.XamlRoot = this.XamlRoot;
+            OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
+
+            LiveOutputTextBlock = new RichTextBlock();
+            LiveOutputTextBlock.Margin = new Thickness(8);
+            LiveOutputTextBlock.FontFamily = new FontFamily("Consolas");
+
+            LiveOutputScrollBar = new ScrollViewer();
+            LiveOutputScrollBar.CornerRadius = new CornerRadius(6);
+            LiveOutputScrollBar.Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];
+            LiveOutputScrollBar.Height = 400;
+            LiveOutputScrollBar.Width = 600;
+            LiveOutputScrollBar.Content = LiveOutputTextBlock;
+
             OutputDialog.Title = bindings.Translate("Live output");
             OutputDialog.CloseButtonText = bindings.Translate("Close");
             OutputDialog.SecondaryButtonText = bindings.Translate("Copy and close");
+
+
+            OutputDialog.SizeChanged += (s, e) =>
+            {
+                if(!IsDialogOpen)
+                    return;
+
+                LiveOutputScrollBar.MinWidth = bindings.App.mainWindow.NavigationPage.ActualWidth - 400;
+                LiveOutputScrollBar.MinHeight = bindings.App.mainWindow.NavigationPage.ActualHeight - 200;
+            };
+
+            OutputDialog.Content = LiveOutputScrollBar;
+            
             ProcessOutput.CollectionChanged += async (s, e) => {
+                if (!IsDialogOpen)
+                    return;
+
                 LiveOutputTextBlock.Blocks.Clear();
                 Paragraph p = new();
                 foreach (var line in ProcessOutput)
@@ -178,17 +215,39 @@ namespace ModernWindow.PackageEngine
             Status = OperationStatus.Pending;
 
             ActionButton.Click += ActionButtonClicked;
-            OutputViewewBlock.Click += async (s, e) => { 
-                OutputDialog.XamlRoot = this.XamlRoot;
-                IsDialogOpen = true;
-                if (await OutputDialog.ShowAsync() == ContentDialogResult.Secondary)
-                {
-                    Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
-                }
-                IsDialogOpen = false;
+            OutputViewewBlock.Click += (s, e) => { 
+                OpenLiveViewDialog();
             };
         }
 
+        public async void OpenLiveViewDialog()
+        {
+            OutputDialog.XamlRoot = this.XamlRoot;
+            LiveOutputTextBlock.Blocks.Clear();
+            Paragraph p = new();
+            p.LineHeight = 4.8;
+            foreach (var line in ProcessOutput)
+            {
+                if (Status != OperationStatus.Failed)
+                {
+                    if (line.Contains("  | "))
+                        p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                }
+                else
+                {
+                    p.Inlines.Add(new Run() { Text = line + "\x0a" });
+                }
+            }
+            LiveOutputTextBlock.Blocks.Add(p);
+            IsDialogOpen = true;
+            
+            if (await bindings.App.mainWindow.ShowDialog(OutputDialog) == ContentDialogResult.Secondary)
+            {
+                LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
+                Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
+            }
+            IsDialogOpen = false;
+        }
 
         public void ActionButtonClicked(object sender, RoutedEventArgs args)
         {
@@ -304,7 +363,8 @@ namespace ModernWindow.PackageEngine
                 }
 
                 foreach (var errorLine in (await Process.StandardError.ReadToEndAsync()).Split(' '))
-                    ProcessOutput.Add("ERR | " + errorLine);
+                    if(errorLine.Trim() != "")
+                        ProcessOutput.Add("ERR | " + errorLine);
 
                 await Process.WaitForExitAsync();
 
@@ -324,7 +384,9 @@ namespace ModernWindow.PackageEngine
                         case OperationVeredict.Failed:
                             this.Status = OperationStatus.Failed;
                             RemoveFromQueue();
+                            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred + 1;
                             postAction = await HandleFailure();
+                            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred - 1;
                             break;
 
                         case OperationVeredict.Succeeded:

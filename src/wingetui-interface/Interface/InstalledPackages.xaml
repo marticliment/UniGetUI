@@ -801,12 +801,12 @@
                                 Text="{x:Bind bindings.Translate('Uninstall')}"
                                 Click="MenuUninstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
                                 IconName="menu_uninstall"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
                                 Text="{x:Bind bindings.Translate('Installation options')}" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
                                 IconName="options"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
                                 Text="{x:Bind bindings.Translate('Uninstall as administrator')}" 
                                 Click="MenuAsAdmin_Invoked"
@@ -819,7 +819,7 @@
                                 Text="{x:Bind bindings.Translate('Uninstall and remove data')}" 
                                 Click="MenuRemoveData_Invoked"
                                 IconName="menu_close"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuReinstall" 
                                 Text="{x:Bind bindings.Translate('Reinstall package')}" 
                                 Click="MenuReinstall_Invoked"
@@ -828,12 +828,12 @@
                                 Text="{x:Bind bindings.Translate('Uninstall package, then reinstall it')}" 
                                 Click="MenuUninstallThenReinstall_Invoked"
                                 IconName="undelete"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuIgnorePackage" 
                                 Text="{x:Bind bindings.Translate('Ignore updates for this package')}" 
                                 Click="MenuIgnorePackage_Invoked"
                                 IconName="pin"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="{x:Bind bindings.Translate('Share this package')}" 
                                 Click="MenuShare_Invoked"

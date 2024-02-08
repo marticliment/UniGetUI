@@ -43,15 +43,6 @@
         <Button Grid.Column="2" VerticalAlignment="Center" Name="OutputViewewBlock" HorizontalAlignment="Stretch"
             FontFamily="Consolas" HorizontalContentAlignment="Left"/>
         <Button Grid.Column="3" VerticalAlignment="Center" Name="ActionButton" HorizontalAlignment="Stretch"/>
-        <ContentDialog
-            Name="OutputDialog"
-            >
-            <ContentDialog.Content>
-                <ScrollViewer CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="LiveOutputScrollBar" Height="500" Width="500">
-                    <RichTextBlock Margin="8" Name="LiveOutputTextBlock" FontFamily="Consolas" >
-                    </RichTextBlock>
-                </ScrollViewer>
-            </ContentDialog.Content>
-        </ContentDialog>
+        
     </Grid>
 </UserControl>

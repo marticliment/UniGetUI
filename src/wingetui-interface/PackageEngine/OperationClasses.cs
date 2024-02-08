@@ -19,6 +19,7 @@ using Windows.Web.UI;
 using CommunityToolkit.WinUI.Helpers;
 using ModernWindow.Data;
 using CommunityToolkit.WinUI.Notifications;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ModernWindow.PackageEngine
 {
@@ -108,22 +109,49 @@ namespace ModernWindow.PackageEngine
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = bindings.Translate("{package} installation failed!").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.ManualClose;
+            LineInfoText = bindings.Translate("{package} installation failed").Replace("{package}", Package.Name);
+            if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
+                new ToastContentBuilder()
+                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                    .AddText(bindings.Translate("Installation failed"))
+                    .AddText(bindings.Translate("{package} could not be installed").Replace("{package}", Package.Name)).Show();
+
+            ContentDialog dialog = new ContentDialog();
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Title = bindings.Translate("{package} installation failed").Replace("{package}", Package.Name);
+            dialog.Content = bindings.Translate("{package} could not be installed").Replace("{package}", Package.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+            dialog.PrimaryButtonText = bindings.Translate("Retry");
+            dialog.SecondaryButtonText = bindings.Translate("More details");
+            dialog.CloseButtonText = bindings.Translate("Close");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            dialog.SecondaryButtonClick += (s, e) => {
+                OpenLiveViewDialog();
+            };
+
+            var result = await bindings.App.mainWindow.ShowDialog(dialog);
+            while (result == ContentDialogResult.Secondary)
+                result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+
+            if (result == ContentDialogResult.Primary)
+                return AfterFinshAction.Retry;
+            else
+                return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = bindings.Translate("{package} installation succeeded!").Replace("{package}", Package.Name);
+            LineInfoText = bindings.Translate("{package} was installed successfully").Replace("{package}", Package.Name);
             bindings.App.mainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(bindings.Translate("Installation succeeded!"))
-                    .AddText(bindings.Translate("{package} was installed successfully!").Replace("{package}", Package.Name)).Show();
+                    .AddText(bindings.Translate("Installation succeeded"))
+                    .AddText(bindings.Translate("{package} was installed successfully").Replace("{package}", Package.Name)).Show();
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -184,20 +212,47 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = bindings.Translate("{package} update failed. Click here for more details.").Replace("{package}", Package.Name);
-            await Task.Delay(0);
-            return AfterFinshAction.ManualClose;
+            if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
+                new ToastContentBuilder()
+                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                    .AddText(bindings.Translate("Update failed"))
+                    .AddText(bindings.Translate("{package} could not be updated").Replace("{package}", Package.Name)).Show();
+            
+            ContentDialog dialog = new ContentDialog();
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Title = bindings.Translate("{package} update failed").Replace("{package}", Package.Name);
+            dialog.Content = bindings.Translate("{package} could not be updated").Replace("{package}", Package.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+            dialog.PrimaryButtonText = bindings.Translate("Retry");
+            dialog.SecondaryButtonText = bindings.Translate("More details");
+            dialog.CloseButtonText = bindings.Translate("Close");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            dialog.SecondaryButtonClick += (s, e) => {
+                OpenLiveViewDialog();
+            };
+
+            var result = await bindings.App.mainWindow.ShowDialog(dialog);
+            while (result == ContentDialogResult.Secondary)
+                result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+
+            if (result == ContentDialogResult.Primary)
+                return AfterFinshAction.Retry;
+            else
+                return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = bindings.Translate("{package} was updated successfully!").Replace("{package}", Package.Name);
+            LineInfoText = bindings.Translate("{package} was updated successfully").Replace("{package}", Package.Name);
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                .AddText(bindings.Translate("Update succeeded!"))
-                .AddText(bindings.Translate("{package} was updated successfully!").Replace("{package}", Package.Name)).Show();
+                .AddText(bindings.Translate("Update succeeded"))
+                .AddText(bindings.Translate("{package} was updated successfully").Replace("{package}", Package.Name)).Show();
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -258,24 +313,51 @@ namespace ModernWindow.PackageEngine
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = bindings.Translate("{package} uninstallation failed!").Replace("{package}", Package.Name);
-            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred + 1;
-            await Task.Delay(0);
-            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred - 1;
-            return AfterFinshAction.ManualClose;
+            LineInfoText = bindings.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
+            
+            if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
+                new ToastContentBuilder()
+                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                    .AddText(bindings.Translate("Uninstallation failed"))
+                    .AddText(bindings.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name)).Show();
+            
+            
+            ContentDialog dialog = new ContentDialog();
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Title = bindings.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
+            dialog.Content = bindings.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+            dialog.PrimaryButtonText = bindings.Translate("Retry");
+            dialog.SecondaryButtonText = bindings.Translate("More details");
+            dialog.CloseButtonText = bindings.Translate("Close");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            dialog.SecondaryButtonClick += (s, e) => {
+                OpenLiveViewDialog();
+            };
+
+            var result = await bindings.App.mainWindow.ShowDialog(dialog);
+            while (result == ContentDialogResult.Secondary)
+                result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+
+            if (result == ContentDialogResult.Primary)
+                return AfterFinshAction.Retry;
+            else
+                return AfterFinshAction.ManualClose; 
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = bindings.Translate("{package} uninstallation succeeded!").Replace("{package}", Package.Name);
+            LineInfoText = bindings.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name);
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             bindings.App.mainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                .AddText(bindings.Translate("Uninstall succeeded!"))
-                .AddText(bindings.Translate("{package} was uninstalled successfully!").Replace("{package}", Package.Name)).Show();
+                .AddText(bindings.Translate("Uninstall succeeded"))
+                .AddText(bindings.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name)).Show();
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }

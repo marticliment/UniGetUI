@@ -14,14 +14,14 @@
     <UserControl.Resources>
         <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
             <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
-            <MenuFlyoutSeparator/>
+            <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem Text="WingetUI log" IconName="buggy" Name="WingetUILogs" Click="WingetUILogs_Click" />
             <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
             <widgets:BetterMenuItem Text="Operation history" IconName="list" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
-            <MenuFlyoutSeparator/>
+            <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info" IsEnabled="False" />
             <widgets:BetterMenuItem Text="Release Notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
-            <MenuFlyoutSeparator/>
+            <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem Text="Quit WingetUI" IconName="menu_close" Name="QuitWingetUI" Click="QuitWingetUI_Click" />
         </widgets:BetterMenu>
     </UserControl.Resources>

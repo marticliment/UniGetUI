@@ -825,12 +825,12 @@
                                 Text="{x:Bind bindings.Translate('Update')}"
                                 Click="MenuInstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
                                 IconName="menu_updates"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
                                 Text="{x:Bind bindings.Translate('Installation options')}" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
                                 IconName="options"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
                                 Text="{x:Bind bindings.Translate('Update as administrator')}" 
                                 Click="MenuAsAdmin_Invoked"
@@ -843,7 +843,7 @@
                                 Text="{x:Bind bindings.Translate('Skip hash check')}" 
                                 Click="MenuSkipHash_Invoked"
                                 IconName="checksum"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuUpdateAfterUninstall" 
                                 Text="{x:Bind bindings.Translate('Uninstall package, then update it')}" 
                                 Click="MenuUpdateAfterUninstall_Invoked"
@@ -852,7 +852,7 @@
                                 Text="{x:Bind bindings.Translate('Uninstall package')}" 
                                 Click="MenuUninstall_Invoked"
                                 IconName="menu_uninstall"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuIgnorePackage" 
                                 Text="{x:Bind bindings.Translate('Ignore updates for this package')}" 
                                 Click="MenuIgnorePackage_Invoked"
@@ -861,7 +861,7 @@
                                 Text="{x:Bind bindings.Translate('Skip this version')}" 
                                 Click="MenuSkipVersion_Invoked"
                                 IconName="skip"/>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="{x:Bind bindings.Translate('Share this package')}" 
                                 Click="MenuShare_Invoked"
