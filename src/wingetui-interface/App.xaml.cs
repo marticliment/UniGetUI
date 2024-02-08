@@ -63,7 +63,8 @@ namespace ModernWindow
             Debug.WriteLine("Python modules imported");
 
             mainWindow = new MainWindow();
-            mainWindow.Activate();
+            if (!CoreData.IsDaemon)
+                mainWindow.Activate();
 
             var hWnd = mainWindow.GetWindowHandle();
 
@@ -110,15 +111,17 @@ namespace ModernWindow
             foreach(PackageManager manager in PackageManagerList)
                 _ = manager.Initialize();
 
+            int StartTime = Environment.TickCount;
+
             foreach(PackageManager manager in PackageManagerList)
             {
-                while(!manager.ManagerReady){
+                while(!manager.ManagerReady || Environment.TickCount - StartTime > 15000)
+                {
                     await Task.Delay(100);
                     Console.WriteLine("Waiting for manager " + manager.Name);
                 }
                 Console.WriteLine(manager.Name + " ready");
             }
-
 
             Debug.WriteLine("All managers loaded");
 

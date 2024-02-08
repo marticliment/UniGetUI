@@ -24,6 +24,8 @@ namespace ModernWindow.Data
                 return __ignored_updates_database_file;
             }
         }
+        public static bool IsDaemon = false;
+
         public static string WingetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
         public static string GSudoPath = Path.Join(WingetUIExecutableDirectory, "wingetui", "components", "gsudo.exe");
 

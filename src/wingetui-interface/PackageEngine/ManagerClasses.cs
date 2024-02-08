@@ -16,10 +16,10 @@ namespace ModernWindow.PackageEngine
 
     public abstract class PackageManager : SingletonBase<PackageManager>
     {
-        public ManagerProperties Properties { get; set; }
-        public ManagerCapabilities Capabilities { get; set; }
-        public ManagerStatus Status { get; set; }
-        public string Name { get; set; }
+        public ManagerProperties Properties { get; set; } = new();
+        public ManagerCapabilities Capabilities { get; set; } = new();
+        public ManagerStatus Status { get; set; } = new() { Found = false };
+        public string Name { get; set; } = "Unset";
         public static AppTools bindings = AppTools.Instance;
         public ManagerSource MainSource { get; set; }
 
@@ -188,15 +188,15 @@ namespace ModernWindow.PackageEngine
     }
     public class ManagerProperties
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string IconId { get; set; }
-        public string ColorIconId { get; set; }
-        public string ExecutableCallArgs { get; set; }
-        public string ExecutableFriendlyName { get; set; }
-        public string InstallVerb { get; set; }
-        public string UpdateVerb { get; set; }
-        public string UninstallVerb { get; set; }
+        public string Name { get; set; } = "Unset";
+        public string Description { get; set; } = "Unset";
+        public string IconId { get; set; } = "Unset";
+        public string ColorIconId { get; set; } = "Unset";
+        public string ExecutableCallArgs { get; set; } = "Unset";
+        public string ExecutableFriendlyName { get; set; } = "Unset";
+        public string InstallVerb { get; set; } = "Unset";
+        public string UpdateVerb { get; set; } = "Unset";
+        public string UninstallVerb { get; set; } = "Unset";
 
     }
     public struct ManagerCapabilities

@@ -100,7 +100,7 @@ namespace ModernWindow.Interface
             MoreNavButton.ToggleButton.IsChecked = true;
 
             (VersionMenuItem as MenuFlyoutItem).Text = bindings.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
-            MoreNavButtonMenu.ShowAt(MoreNavButton);
+            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions() { ShowMode = FlyoutShowMode.Standard });
 
             MoreNavButtonMenu.Closed += (s, e) =>
             {

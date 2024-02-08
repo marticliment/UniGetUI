@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
+using ModernWindow.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace ModernWindow
         static void Main(string[] args)
         {
             // Having an async main method breaks WebView2
+            CoreData.IsDaemon = args.Contains("--daemon");
             _ = AsyncMain(args);
         }
 

@@ -190,7 +190,7 @@ namespace ModernWindow.Interface
                                     continue;
 
                                 if(package.NewVersionIsInstalled())
-                                    Console.WriteLine("Package Id={0} with NewVersion={1} is already installed, skipping it...");
+                                    Console.WriteLine("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
 
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
