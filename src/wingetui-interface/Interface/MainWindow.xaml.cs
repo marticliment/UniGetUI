@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI.Notifications;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
 using Microsoft.UI;
@@ -70,6 +71,15 @@ namespace ModernWindow
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
+        }
+
+        public void HandleNotificationActivation(ToastArguments args, ValueSet input)
+        {
+            if (args.Contains("action") && args["action"] == "updateAll")
+                NavigationPage.UpdatesPage.UpdateAll();
+            else
+                Activate();
+            Console.WriteLine("Notification activated: " + args.ToString() + " " + input.ToString()) ;
         }
 
         public void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)

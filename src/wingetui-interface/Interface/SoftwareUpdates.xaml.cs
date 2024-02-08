@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.VisualBasic;
+using ModernWindow.Data;
 using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine;
@@ -28,6 +30,7 @@ using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Core;
+using Windows.UI.Notifications;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -290,6 +293,86 @@ namespace ModernWindow.Interface
             }
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
+
+
+            
+            if(Packages.Count > 0)
+            {
+                var body = "";
+                var title = "";
+                var attribution = "";
+                bool ShowButtons = false;
+                if(bindings.GetSettings("AutomaticallyUpdatePackages") || Environment.GetCommandLineArgs().Contains("--updateapps"))
+                {
+                    if(Packages.Count == 1)
+                    {
+                        title = bindings.Translate("An update was found!");
+                        body = bindings.Translate("{0} is being updates to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
+                        attribution = bindings.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
+                    }
+                    else
+                    {
+                        title = bindings.Translate("Updates found!");
+                        body = bindings.Translate("{0} packages are being updated").Replace("{0}", Packages.Count.ToString()); ;
+                        foreach(var package in Packages)
+                        {
+                            attribution += package.Name + ", ";
+                        }
+                        attribution = attribution.TrimEnd(' ').TrimEnd(',');
+                    }
+                    UpdateAll();
+                }
+                else
+                {
+                    if (Packages.Count == 1)
+                    {
+                        title = bindings.Translate("An update was found!");
+                        body = bindings.Translate("{0} can be updated to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
+                        attribution = bindings.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
+                    }
+                    else
+                    {
+                        title = bindings.Translate("Updates found!");
+                        body = bindings.Translate("{0} packages can be updated").Replace("{0}", Packages.Count.ToString()); ;
+                        foreach (var package in Packages)
+                        {
+                            attribution += package.Name + ", ";
+                        }
+                        attribution = attribution.TrimEnd(' ').TrimEnd(',');
+                        ShowButtons = true;
+                    }
+                }
+
+                if (!bindings.GetSettings("DisableUpdatesNotifications") && !bindings.GetSettings("DisableNotifications"))
+                {
+                    var toast = new ToastContentBuilder();
+                    toast.AddArgument("action", "openWingetUI");
+                    toast.AddArgument("notificationId", CoreData.UpdatesAvailableNotificationId);
+                    toast.AddText(title);
+                    toast.AddText(body);
+                    toast.AddAttributionText(attribution);
+                    if(ShowButtons)
+                    {
+                        toast.AddButton(new ToastButton()
+                            .SetContent(bindings.Translate("Open WingetUI"))
+                            .AddArgument("action", "openWingetUI")
+                            .SetBackgroundActivation());
+                        toast.AddButton(new ToastButton()
+                            .SetContent(bindings.Translate("Update all"))
+                            .AddArgument("action", "updateAll")
+                            .SetBackgroundActivation());
+                    }
+                    toast.Show();
+                }
+            }
+        }
+
+        public void UpdateAll()
+        {
+            foreach(var package in Packages)
+            {
+                bindings.AddOperationToList(new UpdatePackageOperation(package));
+            }
         }
 
         public void FilterPackages(string query, bool StillLoading = false)

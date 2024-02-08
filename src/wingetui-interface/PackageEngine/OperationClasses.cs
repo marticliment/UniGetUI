@@ -18,6 +18,7 @@ using Windows.UI;
 using Windows.Web.UI;
 using CommunityToolkit.WinUI.Helpers;
 using ModernWindow.Data;
+using CommunityToolkit.WinUI.Notifications;
 
 namespace ModernWindow.PackageEngine
 {
@@ -115,6 +116,12 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = bindings.Translate("{package} installation succeeded!").Replace("{package}", Package.Name);
+            if(!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+                new ToastContentBuilder()
+                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                    .AddText(bindings.Translate("Installation succeeded!"))
+                    .AddText(bindings.Translate("{package} was installed successfully!").Replace("{package}", Package.Name)).Show();
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -181,7 +188,13 @@ namespace ModernWindow.PackageEngine
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = bindings.Translate("{package} update succeeded!").Replace("{package}", Package.Name);
+            LineInfoText = bindings.Translate("{package} was updated successfully!").Replace("{package}", Package.Name);
+            if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+                new ToastContentBuilder()
+                .AddArgument("action", "openWingetUI")
+                .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                .AddText(bindings.Translate("Update succeeded!"))
+                .AddText(bindings.Translate("{package} was updated successfully!").Replace("{package}", Package.Name)).Show();
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -252,6 +265,12 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = bindings.Translate("{package} uninstallation succeeded!").Replace("{package}", Package.Name);
+            if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+                new ToastContentBuilder()
+                .AddArgument("action", "openWingetUI")
+                .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                .AddText(bindings.Translate("Uninstall succeeded!"))
+                .AddText(bindings.Translate("{package} was uninstalled successfully!").Replace("{package}", Package.Name)).Show();
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }

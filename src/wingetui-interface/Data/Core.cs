@@ -26,6 +26,10 @@ namespace ModernWindow.Data
         }
         public static bool IsDaemon = false;
 
+        private static int __volatile_notification_id_counter = 1235;
+        public static int VolatileNotificationIdCounter { get { return __volatile_notification_id_counter++; } }
+        public static int UpdatesAvailableNotificationId = 1234;
+
         public static string WingetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
         public static string GSudoPath = Path.Join(WingetUIExecutableDirectory, "wingetui", "components", "gsudo.exe");
 

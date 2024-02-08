@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using ABI.Windows.ApplicationModel.Activation;
+using CommunityToolkit.WinUI.Notifications;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -58,13 +60,11 @@ namespace ModernWindow
             {
                 Console.WriteLine("Unhandled Exception raised: " + e.Message);
                 Console.WriteLine("Stack Trace: \n" + e.Exception.StackTrace);
+                DisposeAndQuit(1);
             };
 
-            Debug.WriteLine("Python modules imported");
 
             mainWindow = new MainWindow();
-            if (!CoreData.IsDaemon)
-                mainWindow.Activate();
 
             var hWnd = mainWindow.GetWindowHandle();
 
@@ -80,6 +80,16 @@ namespace ModernWindow
                 appWindow.Closing += mainWindow.HandleClosingEvent;
             }
 
+            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            {
+                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                ValueSet userInput = toastArgs.UserInput;
+                mainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    mainWindow.HandleNotificationActivation(args, userInput);
+                });
+            };
+
 
             LoadComponents();
         }
@@ -88,8 +98,6 @@ namespace ModernWindow
         {             
             mainWindow.BlockLoading = true;
             mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
-
-            await Task.Delay(100);
 
             // Load managers
             
@@ -135,14 +143,21 @@ namespace ModernWindow
             mainWindow.DispatcherQueue.TryEnqueue(() => { mainWindow.Activate(); });
         }
 
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+
+        protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            if (!CoreData.IsDaemon)
+            {
+                await ShowMainWindow_FromRedirect();
+                CoreData.IsDaemon = false;
+            }
         }
 
-        public void DisposeAndQuit(int outputCode)
+        public void DisposeAndQuit(int outputCode = 0)
         {
             Console.WriteLine("Quitting...");
             mainWindow.Close();
+            ToastNotificationManagerCompat.Uninstall();
             Environment.Exit(outputCode);
         }
 
@@ -150,8 +165,6 @@ namespace ModernWindow
         {
             this.Exit();
         }
-
-        public void DisposeAndQuit() { DisposeAndQuit(0); }
 
     }
 }
