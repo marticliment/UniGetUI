@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,6 +27,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -51,6 +53,7 @@ namespace ModernWindow.Interface
 
         private bool IsDescending = true;
         private bool Initialized = false;
+        private bool AllSelected = true;
 
         public string InstantSearchSettingString = "DisableInstantSearchUpdatesTab";
         public SoftwareUpdatesPage()
@@ -67,6 +70,72 @@ namespace ModernWindow.Interface
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) FilterPackages(QueryBlock.Text); };
             PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
+
+            /*
+            
+            
+
+             */
+
+            PackageList.DoubleTapped += (s, e) => {
+                //if (PackageList.SelectedItem != null) bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package);
+            };
+
+            PackageList.RightTapped += (s, e) =>
+            {
+                if (e.OriginalSource is FrameworkElement element)
+                {
+                    try
+                    {
+                        if (element.DataContext != null && element.DataContext is Package package)
+                        {
+                            PackageList.SelectedItem = package;
+                            MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
+                            MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
+                            MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
+                            PackageContextMenu.ShowAt(PackageList, e.GetPosition(PackageList));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
+            };
+
+            PackageList.KeyUp += async (s, e) =>
+            {
+                if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
+                {
+                    if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
+                    {
+                        if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Update"))
+                            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
+                    }
+                    else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                        bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as Package));
+                    else
+                        Console.WriteLine();
+                        //bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package);
+                }
+                else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                {
+                    if (AllSelected)
+                        ClearItemSelection();
+                    else
+                        SelectAllItems();
+                }
+                else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
+                {
+                    (PackageList.SelectedItem as Package).IsChecked = !(PackageList.SelectedItem as Package).IsChecked;
+                }
+                else if (e.Key == Windows.System.VirtualKey.F5)
+                {
+                    _ = LoadPackages();
+                }
+            };
+
+
             GenerateToolBar();
             LoadInterface();
             _ = LoadPackages();
@@ -483,73 +552,81 @@ namespace ModernWindow.Interface
 
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
-            SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages(QueryBlock.Text); };
-            SelectNone.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = false; FilterPackages(QueryBlock.Text); };
+            SelectAll.Click += (s, e) => { SelectAllItems(); };
+            SelectNone.Click += (s, e) => { ClearItemSelection(); };
 
         }
-        private void MenuDetails_Invoked(object sender, Package package)
+        private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
         }
 
-        private void MenuShare_Invoked(object sender, Package package)
+        private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.App.mainWindow.SharePackage(package);
+            bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as UpgradablePackage);
         }
 
-        private void MenuInstall_Invoked(object sender, Package package)
+        private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage));
+            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
-        private void MenuSkipHash_Invoked(object sender, Package package)
+        private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package) { SkipHashCheck = true }));
+            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
+                new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { SkipHashCheck = true }));
         }
 
-        private void MenuInteractive_Invoked(object sender, Package package)
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package) { InteractiveInstallation = true }));
+            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
+                new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { InteractiveInstallation = true }));
         }
 
-        private void MenuAsAdmin_Invoked(object sender, Package package)
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage,
-                new InstallationOptions(package) { RunAsAdministrator = true }));
+            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
+                new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { RunAsAdministrator = true }));
         }
 
-        private void MenuUpdateAfterUninstall_Invoked(object sender, Package package)
+        private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            bindings.AddOperationToList(new UninstallPackageOperation(package as UpgradablePackage));
-            bindings.AddOperationToList(new UpdatePackageOperation(package as UpgradablePackage));
+            if (!Initialized || PackageList.SelectedItem == null)
+                return;
+            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            bindings.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
-        private void MenuUninstall_Invoked(object sender, Package package)
+        private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            bindings.AddOperationToList(new UninstallPackageOperation(package as UpgradablePackage));
+            if (!Initialized || PackageList.SelectedItem == null)
+                return;
+            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
-        private void MenuIgnorePackage_Invoked(object sender, Package package)
+        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
-            package.AddToIgnoredUpdates();
+            if (!Initialized || PackageList.SelectedItem == null)
+                return;
+            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdates();
         }
 
-        private void MenuSkipVersion_Invoked(object sender, Package package)
+        private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
-            package.AddToIgnoredUpdates(package.Version);
+            if (!Initialized || PackageList.SelectedItem == null)
+                return;
+            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdates((PackageList.SelectedItem as UpgradablePackage).Version);
         }
 
         private void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
@@ -563,10 +640,28 @@ namespace ModernWindow.Interface
             FilterPackages(QueryBlock.Text.Trim());
         }
 
-        private async void MenuInstallSettings_Invoked(object sender, Package e)
+        private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(e, "Update"))
-                bindings.AddOperationToList(new UpdatePackageOperation(e));
+            if (!Initialized || PackageList.SelectedItem == null)
+                return;
+
+            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as UpgradablePackage, "Update"))
+                bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
+
+        private void SelectAllItems()
+        {
+            foreach (var package in FilteredPackages)
+                package.IsChecked = true;
+            AllSelected = true;
+        }
+
+        private void ClearItemSelection()
+        {
+            foreach (var package in FilteredPackages)
+                package.IsChecked = false;
+            AllSelected = false;
+        }
+
     }
 }

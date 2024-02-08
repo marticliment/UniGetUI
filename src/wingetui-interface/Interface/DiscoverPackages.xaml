@@ -502,48 +502,6 @@
 
         <DataTemplate x:Key="PackageTemplate" x:DataType="engine:Package">
             <Grid ColumnSpacing="5">
-                <Grid.ContextFlyout>
-                    <widgets:MenuForPackage x:Name="PackageContextMenu"
-                        Package="{x:Bind _get_self_package()}"
-                        AboutToShow="PackageContextMenu_AboutToShow">
-                        <widgets:MenuItemForPackage x:Name="MenuInstall" 
-                            Text="{x:Bind bindings.Translate('Install')}"
-                            Invoked="MenuInstall_Invoked"
-                            Package="{x:Bind _get_self_package()}"
-                            IconName="newversion"/>
-                        <MenuFlyoutSeparator/>
-                        <widgets:MenuItemForPackage x:Name="MenuInstallSettings" 
-                            Text="{x:Bind bindings.Translate('Installation options')}" 
-                            Invoked="MenuInstallSettings_Invoked"
-                            Package="{x:Bind _get_self_package()}"
-                            IconName="options"/>
-                        <MenuFlyoutSeparator/>
-                        <widgets:MenuItemForPackage x:Name="MenuAsAdmin" 
-                            Text="{x:Bind bindings.Translate('Install as administrator')}" 
-                            Invoked="MenuAsAdmin_Invoked"
-                            Package="{x:Bind _get_self_package()}" IsEnabled="{x:Bind Manager.Capabilities.CanRunAsAdmin}" 
-                            IconName="runasadmin"/>
-                        <widgets:MenuItemForPackage x:Name="MenuInteractive" 
-                            Text="{x:Bind bindings.Translate('Interactive installation')}" 
-                            Invoked="MenuInteractive_Invoked"
-                            Package="{x:Bind _get_self_package()}" IsEnabled="{x:Bind Manager.Capabilities.CanRunInteractively}" 
-                            IconName="interactive"/>
-                        <widgets:MenuItemForPackage x:Name="MenuskipHash" 
-                            Text="{x:Bind bindings.Translate('Skip hash check')}" 
-                            Invoked="MenuSkipHash_Invoked"
-                            Package="{x:Bind _get_self_package()}" IsEnabled="{x:Bind Manager.Capabilities.CanSkipIntegrityChecks}" 
-                            IconName="checksum"/>
-                        <MenuFlyoutSeparator/>
-                        <widgets:MenuItemForPackage x:Name="MenuShare" 
-                            Text="{x:Bind bindings.Translate('Share this package')}" 
-                            Invoked="MenuShare_Invoked"
-                            Package="{x:Bind _get_self_package()}" IconName="share"/>
-                        <widgets:MenuItemForPackage x:Name="MenuDetails" 
-                            Text="{x:Bind bindings.Translate('Package details')}" 
-                            Invoked="MenuDetails_Invoked"
-                            Package="{x:Bind _get_self_package()}" IconName="info"/>
-                    </widgets:MenuForPackage>
-                </Grid.ContextFlyout>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
@@ -635,11 +593,6 @@
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <!--Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" x:Name="__header_image"
-                   Source="ms-appx:///wingetui/resources/desktop_download.png" 
-                   Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Height="64" Width="60"
-            /-->
             <FontIcon Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
                 x:Name="HeaderIcon" FontSize="50" FontWeight="Normal" Height="60" Width="60"/>
             <widgets:TranslatedTextBlock x:Name="__main_title"
@@ -835,8 +788,6 @@
                         <ColumnDefinition Width="*" MinWidth="100"/>
                         <ColumnDefinition Width="24"/>
                         <ColumnDefinition Width="*" MaxWidth="100"/>
-                        <!--ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="100"/-->
                         <ColumnDefinition Width="24"/>
                         <ColumnDefinition Width="*" MaxWidth="150"/>
                         <ColumnDefinition Width="11"/>
@@ -845,7 +796,6 @@
                     <Button Name="NameHeader" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="IdHeader" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="VersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
-                    <!--Button Name="NewVersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/-->
                     <Button Name="SourceHeader" Grid.Column="8" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="0,4,4,0" BorderThickness="0"/>
                 </Grid>
 
@@ -853,7 +803,43 @@
                     ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
                     ItemTemplate="{StaticResource PackageTemplate}"
                     CanBeScrollAnchor="False"
-                />
+                >
+                    <ListView.ContextFlyout>
+                        <widgets:BetterMenu x:Name="PackageContextMenu">
+                            <widgets:BetterMenuItem x:Name="MenuInstall" 
+                                Text="{x:Bind bindings.Translate('Install')}"
+                                Click="MenuInstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
+                                IconName="newversion"/>
+                            <MenuFlyoutSeparator/>
+                            <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
+                                Text="{x:Bind bindings.Translate('Installation options')}" 
+                                Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
+                                IconName="options"/>
+                            <MenuFlyoutSeparator/>
+                            <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
+                                Text="{x:Bind bindings.Translate('Install as administrator')}" 
+                                Click="MenuAsAdmin_Invoked"
+                                IconName="runasadmin"/>
+                            <widgets:BetterMenuItem x:Name="MenuInteractive" 
+                                Text="{x:Bind bindings.Translate('Interactive installation')}" 
+                                Click="MenuInteractive_Invoked"
+                                IconName="interactive"/>
+                            <widgets:BetterMenuItem x:Name="MenuskipHash" 
+                                Text="{x:Bind bindings.Translate('Skip hash check')}" 
+                                Click="MenuSkipHash_Invoked"
+                                IconName="checksum"/>
+                            <MenuFlyoutSeparator/>
+                            <widgets:BetterMenuItem x:Name="MenuShare" 
+                                Text="{x:Bind bindings.Translate('Share this package')}" 
+                                Click="MenuShare_Invoked"
+                                IconName="share"/>
+                            <widgets:BetterMenuItem x:Name="MenuDetails" 
+                                Text="{x:Bind bindings.Translate('Package details')}" 
+                                Click="MenuDetails_Invoked" KeyboardAcceleratorTextOverride="Enter"
+                                IconName="info"/>
+                        </widgets:BetterMenu>
+                    </ListView.ContextFlyout>
+                </ListView>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>

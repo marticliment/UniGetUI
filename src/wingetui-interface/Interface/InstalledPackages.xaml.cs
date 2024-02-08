@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -27,6 +28,7 @@ using System.Xml;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,6 +54,7 @@ namespace ModernWindow.Interface
 
         private bool IsDescending = true;
         private bool Initialized = false;
+        private bool AllSelected = false;
         TreeViewNode LocalPackagesNode;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
@@ -70,10 +73,70 @@ namespace ModernWindow.Interface
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) FilterPackages(QueryBlock.Text); };
             PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
+
+            PackageList.DoubleTapped += (s, e) => { 
+                //if (PackageList.SelectedItem != null) bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package);
+            };
+
+            PackageList.RightTapped += (s, e) =>
+            {
+                if (e.OriginalSource is FrameworkElement element)
+                {
+                    try
+                    {
+                        if (element.DataContext != null && element.DataContext is Package package)
+                        {
+                            PackageList.SelectedItem = package;
+                            MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
+                            MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
+                            MenuRemoveData.IsEnabled = package.Manager.Capabilities.CanRemoveDataOnUninstall;
+                            PackageContextMenu.ShowAt(PackageList, e.GetPosition(PackageList));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
+            };
+
+            PackageList.KeyUp += async (s, e) =>
+            {
+                if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
+                {
+                    if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
+                    {
+                        if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Uninstall"))
+                            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
+                    }
+                    else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                        ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
+                    else
+                        Console.WriteLine();
+                    //bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package);
+                }
+                else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                {
+                    if (AllSelected)
+                        ClearItemSelection();
+                    else
+                        SelectAllItems();
+                }
+                else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
+                {
+                    (PackageList.SelectedItem as Package).IsChecked = !(PackageList.SelectedItem as Package).IsChecked;
+                }
+                else if (e.Key == Windows.System.VirtualKey.F5)
+                {
+                    _ = LoadPackages();
+                }
+            };
+
             GenerateToolBar();
             LoadInterface();
             _ = LoadPackages();
         }
+
 
         protected void AddPackageToSourcesList(Package package)
         {
@@ -111,13 +174,6 @@ namespace ModernWindow.Interface
                 else
                     RootNodeForManager[source.Manager].Children.Add(item);
             }
-        }
-
-        private void PackageContextMenu_AboutToShow(object sender, Package package)
-        {
-            if (!Initialized)
-                return;
-            PackageList.SelectedItem = package;
         }
 
         private void FilterOptionsChanged(object sender, RoutedEventArgs e)
@@ -454,8 +510,8 @@ namespace ModernWindow.Interface
 
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
-            SelectAll.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = true; FilterPackages(QueryBlock.Text); };
-            SelectNone.Click += (s, e) => { foreach (var package in FilteredPackages) package.IsChecked = false; FilterPackages(QueryBlock.Text); };
+            SelectAll.Click += (s, e) => { SelectAllItems(); };
+            SelectNone.Click += (s, e) => { ClearItemSelection(); };
 
         }
 
@@ -515,68 +571,70 @@ namespace ModernWindow.Interface
                     }));
         }
 
-        private void MenuUninstall_Invoked(object sender, Package package)
+        private void MenuUninstall_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall(package, new InstallationOptions(package));
+            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+                new InstallationOptions((PackageList.SelectedItem as Package)));
         }
 
-        private void MenuAsAdmin_Invoked(object sender, Package package)
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall(package, new InstallationOptions(package) { RunAsAdministrator = true }) ;
+            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+                new InstallationOptions((PackageList.SelectedItem as Package)) { RunAsAdministrator = true }) ;
         }
 
-        private void MenuInteractive_Invoked(object sender, Package package)
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall(package, new InstallationOptions(package) { InteractiveInstallation = true });
+            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+                new InstallationOptions((PackageList.SelectedItem as Package)) { InteractiveInstallation = true });
         }
 
-        private void MenuRemoveData_Invoked(object sender, Package package)
+        private void MenuRemoveData_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall(package, new InstallationOptions(package) { RemoveDataOnUninstall = true });
+            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+                new InstallationOptions((PackageList.SelectedItem as Package)) { RemoveDataOnUninstall = true });
         }
 
-        private void MenuReinstall_Invoked(object sender, Package package)
+        private void MenuReinstall_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new InstallPackageOperation(package));
+            bindings.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
         }
 
-        private void MenuUninstallThenReinstall_Invoked(object sender, Package package)
+        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UninstallPackageOperation(package));
-            bindings.AddOperationToList(new InstallPackageOperation(package));
+            bindings.AddOperationToList(new UninstallPackageOperation((PackageList.SelectedItem as Package)));
+            bindings.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
 
         }
-
-
-        private void MenuIgnorePackage_Invoked(object sender, Package package)
+        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            package.AddToIgnoredUpdates();
+            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdates();
         }
 
-        private void MenuShare_Invoked(object sender, Package package)
+        private void MenuShare_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.App.mainWindow.SharePackage(package);
+            bindings.App.mainWindow.SharePackage((PackageList.SelectedItem as Package));
         }
 
-        private void MenuDetails_Invoked(object sender, Package package)
+        private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized)
+            if (!Initialized || PackageList.SelectedItem == null)
                 return;
         }
 
@@ -592,10 +650,27 @@ namespace ModernWindow.Interface
             FilterPackages(QueryBlock.Text.Trim());
         }
 
-        private async void MenuInstallSettings_Invoked(object sender, Package e)
+        private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(e, "Uninstall"))
-                ConfirmAndUninstall(e, new InstallationOptions(e));
+            if (PackageList.SelectedItem as Package != null 
+                && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, "Uninstall") )
+            {
+                ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
+            }
+        }
+
+        private void SelectAllItems()
+        {
+            foreach (var package in FilteredPackages) 
+                package.IsChecked = true;
+            AllSelected = true;
+        }
+
+        private void ClearItemSelection()
+        {
+            foreach (var package in FilteredPackages) 
+                package.IsChecked = false; 
+            AllSelected = false;
         }
     }
 }
