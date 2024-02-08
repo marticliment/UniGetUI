@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 using Microsoft.Windows.AppLifecycle;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
@@ -99,8 +98,12 @@ namespace ModernWindow
             mainWindow.BlockLoading = true;
             mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
 
+            if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
+                Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+            Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+
             // Load managers
-            
+
             Winget = new Winget();
             PackageManagerList.Add(Winget);
             Scoop = new Scoop();
