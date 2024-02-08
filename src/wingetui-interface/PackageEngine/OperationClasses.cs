@@ -152,12 +152,12 @@ namespace ModernWindow.PackageEngine
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = Package.Manager.Status.ExecutablePath + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = Package.Manager.Status.ExecutablePath + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             Process process = new Process();
             process.StartInfo = startInfo;
