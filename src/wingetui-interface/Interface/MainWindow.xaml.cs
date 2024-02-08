@@ -251,6 +251,7 @@ namespace ModernWindow
             Grid.SetRow(NavigationPage, 1);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
+            LoadingIndicator.Visibility = Visibility.Visible;
 
             ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
             ContentColumn.Width = new GridLength(1, GridUnitType.Star);
@@ -343,5 +344,16 @@ namespace ModernWindow
             }
         }
 
+        public async Task DoEntryTextAnimation()
+        {
+            const int WIDTH = 400;
+            for(double i = WIDTH; i > 1.1; i *= 0.85)
+            {
+                WingetUITitle.Width = (WIDTH - i);
+                await Task.Delay(10);
+            }
+            WingetUITitle.Width = WIDTH;
+            LoadingIndicator.Visibility = Visibility.Visible;
+        }
     }
 }

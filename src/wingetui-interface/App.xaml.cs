@@ -93,7 +93,10 @@ namespace ModernWindow
         }
 
         public async void LoadComponents()
-        {             
+        {
+
+            await mainWindow.DoEntryTextAnimation();
+
             mainWindow.BlockLoading = true;
             mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
 
@@ -125,7 +128,7 @@ namespace ModernWindow
 
             foreach(PackageManager manager in PackageManagerList)
             {
-                while(!manager.ManagerReady && Environment.TickCount - StartTime < 15000)
+                while(!manager.ManagerReady && Environment.TickCount - StartTime < 10000)
                 {
                     await Task.Delay(100);
                     Console.WriteLine("Waiting for manager " + manager.Name);

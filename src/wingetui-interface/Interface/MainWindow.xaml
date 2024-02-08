@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ModernWindow"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:tb="using:H.NotifyIcon"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:tb="using:H.NotifyIcon" xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     mc:Ignorable="d"
     Title="WingetUI">
 
@@ -43,26 +43,31 @@
               Background="{StaticResource ProgressBarBorderThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="128"/>
-                <RowDefinition Height="*" MinHeight="150"/>
-                <RowDefinition Height="12"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Canvas x:Name="LaunchBackground" Background="#212121" Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
-            <Image Grid.Column="1" Grid.Row="1" >
-                <Image.Source>
-                    <BitmapImage UriSource="ms-appx:///wingetui/resources/icon.png"/>
-                </Image.Source>
-            </Image>
-            <ProgressRing
-                Foreground="#dddddd"
-                Grid.Column="1"
-                Grid.Row="2"
+            <Canvas x:Name="LaunchBackground" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
+            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Padding="0,20,0,20">
+                <Image Canvas.ZIndex="1" Width="120">
+                    <Image.Source>
+                        <BitmapImage UriSource="ms-appx:///wingetui/resources/icon.png"/>
+                    </Image.Source>
+                </Image>
+                <Border HorizontalAlignment="Right" Margin="0,0,0,0">
+                    <TextBlock Text="WingetUI" VerticalAlignment="Center" FontWeight="ExtraBlack" 
+                        HorizontalAlignment="Right" Width="0" HorizontalTextAlignment="Right" 
+                        FontFamily="Segoe UI Variable Display" FontSize="90" Name="WingetUITitle"/>
+                </Border>
+            </StackPanel>
+            <ProgressBar
+                Foreground="#08a9c3" Margin="20,0,5,0" Height="6"
+                Grid.Column="1" IsIndeterminate="True" Name="LoadingIndicator"
+                Grid.Row="1" VerticalAlignment="Bottom" Visibility="Collapsed"
                 />
         </Grid>
     </Grid>
