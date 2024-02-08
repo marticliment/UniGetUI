@@ -69,14 +69,31 @@ namespace ModernWindow.Interface
             FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) FilterPackages(QueryBlock.Text); };
-            PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
 
-            /*
-            
-            
-
-             */
-
+            SourcesTreeView.Tapped += (s, e) =>
+            {
+                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
+                {
+                    Console.WriteLine(e);
+                    Console.WriteLine(e.OriginalSource);
+                    Console.WriteLine(e.OriginalSource as FrameworkElement);
+                    Console.WriteLine((e.OriginalSource as FrameworkElement).DataContext);
+                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    {
+                        var node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        if (node == null)
+                            return;
+                        if (SourcesTreeView.SelectedNodes.Contains(node))
+                            SourcesTreeView.SelectedNodes.Remove(node);
+                        else
+                            SourcesTreeView.SelectedNodes.Add(node);
+                    }
+                    else
+                    {
+                        Console.WriteLine((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                    }
+                }
+            };
             PackageList.DoubleTapped += (s, e) => {
                 //if (PackageList.SelectedItem != null) bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package);
             };

@@ -70,11 +70,31 @@ namespace ModernWindow.Interface
             FindButton.Click += async (s, e) => { await FilterPackages(QueryBlock.Text); };
             QueryBlock.TextChanged += async (s, e) => { if (InstantSearchCheckbox.IsChecked == true) await FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += async (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) await FilterPackages(QueryBlock.Text); };
-            PackageList.ItemClick += (s, e) => { if (e.ClickedItem != null) Console.WriteLine("Clicked item " + (e.ClickedItem as Package).Id); };
-            GenerateToolBar();
-            LoadInterface();
-            _ = __load_packages();
 
+            SourcesTreeView.Tapped += (s, e) =>
+            {
+                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
+                {
+                    Console.WriteLine(e);
+                    Console.WriteLine(e.OriginalSource);
+                    Console.WriteLine(e.OriginalSource as FrameworkElement);
+                    Console.WriteLine((e.OriginalSource as FrameworkElement).DataContext);
+                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    {
+                        var node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        if (node == null)
+                            return;
+                        if (SourcesTreeView.SelectedNodes.Contains(node))
+                            SourcesTreeView.SelectedNodes.Remove(node);
+                        else
+                            SourcesTreeView.SelectedNodes.Add(node);
+                    }
+                    else
+                    {
+                        Console.WriteLine((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                    }
+                }
+            };
 
             PackageList.DoubleTapped += (s, e) => {
                 //if (PackageList.SelectedItem != null) bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package);
@@ -134,8 +154,9 @@ namespace ModernWindow.Interface
                 }
             };
 
-
-
+            GenerateToolBar();
+            LoadInterface();
+            _ = __load_packages();
 
         }
 
@@ -143,15 +164,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            //BackgroundText.Text = "Loading...";
-            //MainSubtitle.Text= "Loading...";
-            //LoadingProgressBar.Visibility = Visibility.Visible;
-            //await this.LoadPackages();
             await this.FilterPackages(QueryBlock.Text);
-            //MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
-            //LoadingProgressBar.Visibility = Visibility.Collapsed;
-
-            //BackgroundText.Visibility = Packages.Count() == 0? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected void AddPackageToSourcesList(Package package)
