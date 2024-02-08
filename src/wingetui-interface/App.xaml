@@ -15,7 +15,7 @@
 
             <Style TargetType="MenuFlyoutItem" x:Key="BetterMenuItem" BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
                 <Setter Property="CornerRadius" Value="4"/>
-                <Setter Property="Margin" Value="0"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Height" Value="36"/>
             </Style>
 
@@ -24,6 +24,7 @@
                 <Setter Property="Margin" Value="0"/>
                 <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}"/>
             </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -4,9 +4,11 @@ using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -24,10 +26,13 @@ namespace ModernWindow.PackageEngine
         Local = 0,
         User = 0,
     }
-    public class Package
+    public class Package: INotifyPropertyChanged
     {
         public AppTools bindings = AppTools.Instance;
-        public bool IsChecked { get; set; } = false;
+
+        private bool __is_checked = false;
+
+        public bool IsChecked { get {return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
         public string Id { get; set; }
@@ -38,6 +43,8 @@ namespace ModernWindow.PackageEngine
         public string UniqueId { get; }
         public string NewVersion { get; }
         public bool IsUpgradable { get; } = false;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public PackageScope Scope { get; set; }
         public string SourceAsString { get {
@@ -106,9 +113,7 @@ namespace ModernWindow.PackageEngine
                 {
                     return float.Parse(_ver);
                 }
-                catch(Exception e)
-                {
-                }
+                catch {}
             return res;
         }
 
@@ -158,7 +163,10 @@ namespace ModernWindow.PackageEngine
                 return "";
         }
 
-
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
     }
 
