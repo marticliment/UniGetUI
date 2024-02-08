@@ -29,6 +29,7 @@ using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Core;
+using Windows.Web.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -696,5 +697,27 @@ namespace ModernWindow.Interface
                 package.IsChecked = false; 
             AllSelected = false;
         }
+
+        public void RemoveCorrespondingPackages(Package foreignPackage)
+        {
+            foreach(var package in Packages.ToArray())
+                if (package == foreignPackage || package.Equals(foreignPackage))
+                {
+                    Packages.Remove(package);
+                    if (FilteredPackages.Contains(package))
+                        FilteredPackages.Remove(package);
+                }
+            if (bindings.App.mainWindow.NavigationPage.CurrentPage != bindings.App.mainWindow.NavigationPage.InstalledPage)
+                FilterPackages(QueryBlock.Text.Trim());
+        }
+        public void AddInstalledPackage(Package foreignPackage)
+        {
+            foreach (var package in Packages.ToArray())
+                if (package == foreignPackage || package.Equals(foreignPackage))
+                    return;
+            Packages.Add(foreignPackage);
+            FilterPackages(QueryBlock.Text.Trim());
+        }
+
     }
 }

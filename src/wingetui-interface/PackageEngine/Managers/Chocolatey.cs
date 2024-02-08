@@ -178,6 +178,7 @@ namespace ModernWindow.PackageEngine.Managers
         {
             var parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
+            parameters.Add("--no-progress");
 
             if(options.Architecture == System.Runtime.InteropServices.Architecture.X86)
                 parameters.Add("--forcex86");

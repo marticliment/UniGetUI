@@ -116,7 +116,9 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = bindings.Translate("{package} installation succeeded!").Replace("{package}", Package.Name);
-            if(!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+            bindings.App.mainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
+            bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+            if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
@@ -189,6 +191,7 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = bindings.Translate("{package} was updated successfully!").Replace("{package}", Package.Name);
+            bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")
@@ -230,7 +233,7 @@ namespace ModernWindow.PackageEngine
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
             Process process = new Process();
             process.StartInfo = startInfo;
@@ -265,6 +268,8 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = bindings.Translate("{package} uninstallation succeeded!").Replace("{package}", Package.Name);
+            bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+            bindings.App.mainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")

@@ -42,18 +42,21 @@ namespace ModernWindow.PackageEngine
                 MainSource = GetMainSource();
                 Status = await LoadManager();
 
+
                 if (this is PackageManagerWithSources && Status.Found)
                 {
                     var SourcesTask = (this as PackageManagerWithSources).GetSources();
                     var winner = await Task.WhenAny(
                         SourcesTask,
-                        Task.Delay(TimeSpan.FromSeconds(10)));
+                        Task.Delay(10000));
                     if (winner == SourcesTask)
                     {
+                        ManagerReady = true;
                         (this as PackageManagerWithSources).Sources = SourcesTask.Result;
                     }
                     else
                     {
+                        ManagerReady = true;
                         Console.WriteLine(Name + " sources took too long to load, using known sources as default");
                         (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).DefaultSources;
                     }
@@ -63,6 +66,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
+                ManagerReady = true; // We need this to unblock the main thread
                 Console.WriteLine("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
             }
         }
@@ -154,7 +158,6 @@ namespace ModernWindow.PackageEngine
         public abstract OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
         public abstract Task RefreshSources();
         public abstract ManagerSource GetMainSource();
-
     }
 
     public abstract class PackageManagerWithSources : PackageManager 
@@ -256,9 +259,12 @@ namespace ModernWindow.PackageEngine
                 return Manager.Name;
         }
 
-        public new bool Equals(object obj)
+        public override bool Equals(object obj)
         {
-            return (obj as ManagerSource).Name == Name && (obj as ManagerSource).Url == Url && (obj as ManagerSource).Manager == Manager; 
+            if(obj is not ManagerSource) 
+                return false;
+            else
+                return (obj as ManagerSource).Manager == Manager && (obj as ManagerSource).Name == Name && (obj as ManagerSource).Url == Url;
         }
     }
 }

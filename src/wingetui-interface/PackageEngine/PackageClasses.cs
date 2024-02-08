@@ -66,6 +66,14 @@ namespace ModernWindow.PackageEngine
             VersionAsFloat = GetFloatVersion();
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Package))
+                return false;
+            else
+                return Source == (obj as Package).Source && Id == (obj as Package).Id;
+        }
+
         public Package _get_self_package()
         {
             return this;
@@ -125,6 +133,7 @@ namespace ModernWindow.PackageEngine
                 IgnoredUpdatesJson.Remove(IgnoredId);   
             IgnoredUpdatesJson.Add(IgnoredId, version);
             await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
+            bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
 
             // TODO: Change InstalledPackages flag to show that the package is ignored, add to IgnoredPackages if applicable
         }

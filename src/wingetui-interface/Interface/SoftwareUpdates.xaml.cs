@@ -762,6 +762,18 @@ namespace ModernWindow.Interface
                 package.IsChecked = false;
             AllSelected = false;
         }
+        public void RemoveCorrespondingPackages(Package foreignPackage)
+        {
+            foreach (var package in Packages.ToArray())
+                if (package == foreignPackage || package.Equals(foreignPackage))
+                {
+                    Packages.Remove(package);
+                    if(FilteredPackages.Contains(package))
+                        FilteredPackages.Remove(package);
+                }
+            if (bindings.App.mainWindow.NavigationPage.CurrentPage != bindings.App.mainWindow.NavigationPage.UpdatesPage)
+                FilterPackages(QueryBlock.Text.Trim());
+        }
 
     }
 }
