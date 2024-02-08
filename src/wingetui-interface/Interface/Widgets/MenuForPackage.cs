@@ -13,6 +13,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public class BetterMenu : MenuFlyout
     {
+        public AppTools bindings = AppTools.Instance;
         public BetterMenu() : base()
         {
             this.MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
@@ -21,6 +22,7 @@ namespace ModernWindow.Interface.Widgets
 
     public class BetterMenuItem : MenuFlyoutItem
     {
+        public AppTools bindings = AppTools.Instance;
         DependencyProperty IconNameProperty;
 
         public string IconName
