@@ -227,6 +227,33 @@ namespace ModernWindow.Interface
             NotesDialog = null;
         }
 
+        public async Task ShowPackageDetails(Package package, string PrimaryButtonText = "Install")
+        {
+            var DetailsPage = new PackageDetailsPage(package, PrimaryButtonText);
+
+            ContentDialog DetailsDialog = new ContentDialog();
+            DetailsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            DetailsDialog.XamlRoot = this.XamlRoot;
+            DetailsDialog.Resources["ContentDialogMaxWidth"] = 8000;
+            DetailsDialog.Resources["ContentDialogMaxHeight"] = 4000;
+            DetailsDialog.Content = DetailsPage;
+            DetailsDialog.SizeChanged += (s, e) =>
+            {
+                DetailsPage.MinWidth = ActualWidth - 300;
+                DetailsPage.MinHeight = ActualHeight - 100;
+                DetailsPage.MaxWidth = ActualWidth - 300;
+                DetailsPage.MaxHeight = ActualHeight - 100;
+            };
+
+            DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
+
+            await bindings.App.mainWindow.ShowDialog(DetailsDialog);
+
+            DetailsDialog.Content = null;
+            DetailsDialog = null;
+
+        }
+
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
 
