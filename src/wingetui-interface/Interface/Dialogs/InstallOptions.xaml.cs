@@ -39,7 +39,7 @@ namespace ModernWindow.Interface.Dialogs
         AppTools bindings = AppTools.Instance;
         public InstallationOptions Options;
         public Package Package;
-        public InstallOptionsPage(Package package)
+        public InstallOptionsPage(Package package, OperationType Operation)
         {
             Package = package;
             this.InitializeComponent();
@@ -53,10 +53,10 @@ namespace ModernWindow.Interface.Dialogs
             InteractiveCheckBox.IsChecked = Options.InteractiveInstallation;
             InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
             
-            HashCheckbox.IsChecked = Options.SkipHashCheck;
+            HashCheckbox.IsChecked = Operation != OperationType.Uninstall && Options.SkipHashCheck;
             HashCheckbox.IsEnabled = Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
-            ArchitectureComboBox.IsEnabled = Package.Manager.Capabilities.SupportsCustomArchitectures;
+            ArchitectureComboBox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
             ArchitectureComboBox.Items.Add(bindings.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
 
@@ -69,7 +69,7 @@ namespace ModernWindow.Interface.Dialogs
                         ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
                 }
 
-            VersionComboBox.IsEnabled = Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease;
+            VersionComboBox.IsEnabled = Operation == OperationType.Install && Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease;
             VersionComboBox.SelectionChanged += (s, e) =>
               { IgnoreUpdatesCheckbox.IsChecked =  !new string[] { bindings.Translate("Latest"), bindings.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
             VersionComboBox.Items.Add(bindings.Translate("Latest"));

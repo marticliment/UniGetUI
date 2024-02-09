@@ -15,22 +15,25 @@
                 <StackPanel Name="LeftPanel" Spacing="16"/>
                 <StackPanel Name="RightPanel" Spacing="16"/>
 
-                <StackPanel Orientation="Horizontal" Name="TitlePanel" HorizontalAlignment="Stretch" Spacing="32">
+                <!-- Title + Icon -->
+                <StackPanel Orientation="Horizontal" Name="TitlePanel" HorizontalAlignment="Stretch" Spacing="8">
                     <Border BorderThickness="10" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="128" Width="128" CornerRadius="24">
-                        <Image Name="PackageIcon" Height="64" Width="64" Margin="32"/>
+                        <Image Name="PackageIcon" Height="64" Width="64" Margin="16"/>
                     </Border>
                     <TextBlock Name="PackageName" HorizontalAlignment="Center" VerticalAlignment="Center" Text="ElevenClock" FontFamily="Segoe UI Variable Display" FontWeight="Bold" FontSize="50"/>
                 </StackPanel>
                 
+                <!-- Tags + Description -->
                 <StackPanel Name="DescriptionPanel" Orientation="Vertical" VerticalAlignment="Top">
                     <GridView Name="TagGridView"/>
                     <TextBlock Name="DescriptionBox" TextWrapping="WrapWholeWords" Text="Hello World. This is the App's description"/>
                 </StackPanel>
 
+                <!-- Basic Info Panel -->
                 <StackPanel Name="BasicInfoPanel" Orientation="Vertical" VerticalAlignment="Top" Spacing="6">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <widgets:TranslatedTextBlock Text="Homepage" Suffix=":" FontWeight="Bold"/>
-                        <HyperlinkButton Name="HomepageButton" Content="Hello World" Margin="0" Padding="4,0,4,0"/>
+                        <HyperlinkButton Name="HomepageUrlButton" Content="Hello World" Margin="0" Padding="4,0,4,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <widgets:TranslatedTextBlock Text="Publisher" Suffix=":" FontWeight="Bold"/>
@@ -43,11 +46,15 @@
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <widgets:TranslatedTextBlock Text="License" Suffix=":" FontWeight="Bold"/>
                         <TextBlock Name="LicenseTextBlock" Text="Hello World"/>
-                        <HyperlinkButton Name="HomepageUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
+                        <HyperlinkButton Name="LicenseUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Package Manager" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock Name="SourceNameTextBlock" Text="Hello World"/>
                     </StackPanel>
                 </StackPanel>
 
-
+                <!-- Install and Share button -->
                 <Grid Name="ActionsPanel"  VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10000*" MaxWidth="250"/>
@@ -63,8 +70,10 @@
                     <Button Grid.Column="2" Name="ActionButton" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Action!" Click="ActionButton_Click" Height="40" CornerRadius="8"/>
                 </Grid>
 
+                <!-- Screenshots -->
                 <FlipView Name="ScreenshotsPanel"  VerticalAlignment="Top" Height="260" CornerRadius="8"/>
 
+                <!-- Install Options -->
                 <Expander HorizontalAlignment="Stretch" CornerRadius="8" Name="InstallOptionsPanel"  VerticalAlignment="Top">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Spacing="12">
@@ -74,6 +83,7 @@
                     </Expander.Header>
                 </Expander>
 
+                <!-- Package Details -->
                 <StackPanel Name="MoreDataStackPanel" Orientation="Vertical"  VerticalAlignment="Top" Spacing="6">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <widgets:TranslatedTextBlock Text="Package ID" Suffix=":" FontWeight="Bold"/>
@@ -122,18 +132,18 @@
                         <widgets:TranslatedTextBlock Text="Release notes URL" Suffix=":" FontWeight="Bold"/>
                         <HyperlinkButton Name="ReleaseNotesUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <widgets:TranslatedTextBlock Text="Source" Suffix=":" FontWeight="Bold"/>
-                        <TextBlock Name="SourceNameTextBlock" Text="Hello World"/>
-                    </StackPanel>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
+        
+        <!-- Close Button -->
         <Button HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="6" 
                 BorderThickness="0" Margin="0,-20,-20,0" Width="40" Height="40"
                 Click="CloseButton_Click"
                 Padding="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <widgets:LocalIcon IconName="close" Height="24"/>
-    </Button>
+        </Button>
+        <ProgressBar Name="LoadingIndicator" Margin="-30,-24,-30,0" IsIndeterminate="True" VerticalAlignment="Top"/>
+
     </Grid>
 </Page>

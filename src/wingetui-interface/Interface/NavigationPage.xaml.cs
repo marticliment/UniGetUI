@@ -155,16 +155,21 @@ namespace ModernWindow.Interface
             UpdatesDialog = null;
         }
 
-        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, string PrimaryButtonText)
+        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
         {
-            var OptionsPage = new InstallOptionsPage(package);
+            var OptionsPage = new InstallOptionsPage(package, Operation);
 
             ContentDialog OptionsDialog = new ContentDialog();
             OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             OptionsDialog.XamlRoot = this.XamlRoot;
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            OptionsDialog.SecondaryButtonText = bindings.Translate(PrimaryButtonText);
+            if (Operation == OperationType.Install)
+                OptionsDialog.SecondaryButtonText = bindings.Translate("Install");
+            else if(Operation == OperationType.Update)
+                OptionsDialog.SecondaryButtonText = bindings.Translate("Update");
+            else 
+                OptionsDialog.SecondaryButtonText = bindings.Translate("Uninstall");
             OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
@@ -227,9 +232,9 @@ namespace ModernWindow.Interface
             NotesDialog = null;
         }
 
-        public async Task ShowPackageDetails(Package package, string PrimaryButtonText = "Install")
+        public async Task ShowPackageDetails(Package package, OperationType ActionOperation)
         {
-            var DetailsPage = new PackageDetailsPage(package, PrimaryButtonText);
+            var DetailsPage = new PackageDetailsPage(package, ActionOperation);
 
             ContentDialog DetailsDialog = new ContentDialog();
             DetailsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;

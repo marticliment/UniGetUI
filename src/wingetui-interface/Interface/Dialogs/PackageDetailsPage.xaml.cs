@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -30,6 +32,8 @@ namespace ModernWindow.Interface.Dialogs
         public Package Package;
         private InstallOptionsPage InstallOptionsPage;
         public event EventHandler Close;
+        private PackageDetails Info;
+        OperationType FutureOperation;
 
         private enum LayoutMode
         {
@@ -38,21 +42,133 @@ namespace ModernWindow.Interface.Dialogs
         }
         
         private LayoutMode? layoutMode;
-        public PackageDetailsPage(Package package, string MainButtonText)
+        public PackageDetailsPage(Package package, OperationType futureOperation)
         {
+            FutureOperation = futureOperation;
+            Package = package;
+
             this.InitializeComponent();
 
-            InstallOptionsPage = new InstallOptionsPage(package);
+            InstallOptionsPage = new InstallOptionsPage(package, futureOperation);
             InstallOptionsPanel.Content = InstallOptionsPage;
 
             SizeChanged += PackageDetailsPage_SizeChanged;
+            switch (futureOperation)
+            {
+                case OperationType.Install:
+                    ActionButton.Content = bindings.Translate("Install");
+                    break;
+                case OperationType.Uninstall:
+                    ActionButton.Content = bindings.Translate("Uninstall");
+                    break;
+                case OperationType.Update:
+                    ActionButton.Content = bindings.Translate("Update");
+                    break;
+            }
+
+            IdTextBlock.Text = package.Id;
+            VersionTextBlock.Text = package.Version;
+            if(package is UpgradablePackage)
+                VersionTextBlock.Text += " - " + bindings.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
+            PackageName.Text = package.Name;
+            PackageIcon.Source = new BitmapImage() { UriSource = package.GetIconUrl() };
+            SourceNameTextBlock.Text = package.SourceAsString;
+
+
+            var LoadingString = bindings.Translate("Loading...");
+            LoadingIndicator.Visibility = Visibility.Visible;
+
+
+            HomepageUrlButton.Content = LoadingString;
+            PublisherTextBlock.Text = LoadingString;
+            AuthorTextBlock.Text = LoadingString;
+            LicenseTextBlock.Text = LoadingString;
+            LicenseUrlButton.Content = LoadingString;
+
+            DescriptionBox.Text = LoadingString;
+            ManifestUrlButton.Content = LoadingString;
+            HashTextBlock.Text = LoadingString;
+            InstallerUrlButton.Content = LoadingString;
+            InstallerTypeTextBlock.Text = LoadingString;
+            UpdateDateTextBlock.Text = LoadingString;
+            ReleaseNotesBlock.Text = LoadingString;
+            InstallerSizeTextBlock.Text = LoadingString;
+            DownloadInstallerButton.IsEnabled = false;
+            ReleaseNotesUrlButton.Content = LoadingString;
+
+            _ = LoadInformation();
+            
+        }
+        public async Task LoadInformation()
+        {
+            LoadingIndicator.Visibility = Visibility.Visible;
+
+            var NotFound = bindings.Translate("Not available");
+            var InvalidUri = new Uri("about:blank");
+            Info = await Package.Manager.GetPackageDetails(Package);
+
+
+            LoadingIndicator.Visibility = Visibility.Collapsed;
+
+            HomepageUrlButton.Content = Info.HomepageUrl != null? Info.HomepageUrl: NotFound;
+            HomepageUrlButton.NavigateUri = Info.HomepageUrl != null? Info.HomepageUrl: InvalidUri;
+            PublisherTextBlock.Text = Info.Publisher != ""? Info.Publisher: NotFound;
+            AuthorTextBlock.Text = Info.Author != "" ? Info.Author: NotFound;
+            LicenseTextBlock.Text = Info.License!= "" ? Info.License: NotFound;
+            if(Info.License != "" && Info.LicenseUrl != null)
+            {
+                LicenseTextBlock.Text = Info.License;
+                LicenseUrlButton.Content = "(" + Info.LicenseUrl + ")";
+                LicenseUrlButton.NavigateUri = Info.LicenseUrl;
+            } else if (Info.License != "" && Info.LicenseUrl == null)
+            {
+                LicenseTextBlock.Text = Info.License;
+                LicenseUrlButton.Content = "";
+                LicenseUrlButton.NavigateUri = InvalidUri;
+            } else if(Info.License == "" && Info.LicenseUrl != null)
+            {
+                LicenseTextBlock.Text = "";
+                LicenseUrlButton.Content = Info.LicenseUrl;
+                LicenseUrlButton.NavigateUri = Info.LicenseUrl;
+            }
+            else
+            {
+                LicenseTextBlock.Text = NotFound;
+                LicenseUrlButton.Content = "";
+                LicenseUrlButton.NavigateUri = InvalidUri;
+            }
+
+            DescriptionBox.Text = Info.Description != "" ? Info.Description : NotFound;
+            ManifestUrlButton.Content = Info.ManifestUrl != null ? Info.ManifestUrl: NotFound;
+            ManifestUrlButton.NavigateUri = Info.ManifestUrl != null ? Info.ManifestUrl : InvalidUri;
+            HashTextBlock.Text = Info.InstallerHash != "" ? Info.InstallerHash: NotFound;
+            InstallerUrlButton.Content = Info.InstallerUrl != null ? Info.InstallerUrl: NotFound;
+            InstallerUrlButton.NavigateUri = Info.InstallerUrl != null ? Info.InstallerUrl : InvalidUri;
+            InstallerTypeTextBlock.Text = Info.InstallerType != "" ? Info.InstallerType : NotFound;
+            UpdateDateTextBlock.Text = Info.UpdateDate != "" ? Info.UpdateDate : NotFound;
+            ReleaseNotesBlock.Text = Info.ReleaseNotes != "" ? Info.ReleaseNotes : NotFound;
+            InstallerSizeTextBlock.Text = Info.InstallerSize != 0.0 ? Info.InstallerSize.ToString() + " MB" : NotFound;
+            DownloadInstallerButton.IsEnabled = Info.InstallerUrl != null;
+            ReleaseNotesUrlButton.Content = Info.ReleaseNotesUrl != null ? Info.ReleaseNotesUrl : NotFound;
+            ReleaseNotesUrlButton.NavigateUri = Info.ReleaseNotesUrl != null ? Info.ReleaseNotesUrl : InvalidUri;
         }
 
         public void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, new EventArgs());
-            //InstallOptionsPanel.Save
-            // Install Action 
+            InstallOptionsPage.SaveToDisk();
+            switch (FutureOperation)
+            {
+                case OperationType.Install:
+                    bindings.AddOperationToList(new InstallPackageOperation(Package));
+                    break;
+                case OperationType.Uninstall:
+                    bindings.App.mainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, new InstallationOptions(Package));
+                    break;
+                case OperationType.Update:
+                    bindings.AddOperationToList(new UpdatePackageOperation(Package));
+                    break;
+            }
         }
 
         public void ShareButton_Click(object sender, RoutedEventArgs e)

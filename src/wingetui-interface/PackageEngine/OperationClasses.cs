@@ -37,6 +37,14 @@ namespace ModernWindow.PackageEngine
         Failed,
         Cancelled
     }
+
+    public enum OperationType
+    {
+        Install,
+        Update,
+        Uninstall
+    }
+
     public class OperationCancelledEventArgs : EventArgs
     {
         public OperationStatus OldStatus;

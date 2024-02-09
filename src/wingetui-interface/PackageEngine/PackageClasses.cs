@@ -253,11 +253,11 @@ namespace ModernWindow.PackageEngine
         public Uri? InstallerUrl { get; set; } = null;
         public string InstallerHash { get; set; } = "";
         public string InstallerType { get; set; } = "";
-        public int InstallerSize { get; set; } = 0; // In Megabytes
+        public double InstallerSize { get; set; } = 0; // In Megabytes
         public Uri? ManifestUrl { get; set; } = null;
         public string UpdateDate { get; set; } = "";
         public string ReleaseNotes { get; set; } = "";
-        public string ReleaseNotesUrl { get; set; } = "";
+        public Uri? ReleaseNotesUrl { get; set; } = null;
         public string[] Versions { get; set; } = new string[0];
         public string[] Architectures { get; set; } = new string[0];
         public string[] Scopes { get; set; } = new string[0];

@@ -17,7 +17,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <ScrollView HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Spacing="16" MinWidth="550">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Spacing="16" MinWidth="500">
                 <widgets:TranslatedTextBlock Text="The following settings will be applied each time this package is installed, updated or removed."/>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="16,12,16,12" CornerRadius="8">
                     <StackPanel Spacing="8">
