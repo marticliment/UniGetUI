@@ -9,19 +9,23 @@
     mc:Ignorable="d">
 
     <Grid>
-        <ScrollViewer HorizontalAlignment="Stretch">
+        <ScrollViewer HorizontalAlignment="Stretch" Margin="0,0,-15,0" Padding="0,0,15,0">
             <Grid Name="MainGrid" ColumnSpacing="32" RowSpacing="16">
 
                 <StackPanel Name="LeftPanel" Spacing="16"/>
                 <StackPanel Name="RightPanel" Spacing="16"/>
 
                 <!-- Title + Icon -->
-                <StackPanel Orientation="Horizontal" Name="TitlePanel" HorizontalAlignment="Stretch" Spacing="8">
-                    <Border BorderThickness="10" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="128" Width="128" CornerRadius="24">
-                        <Image Name="PackageIcon" Height="64" Width="64" Margin="16"/>
+                <Grid Name="TitlePanel" HorizontalAlignment="Stretch" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" BorderThickness="10" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="128" Width="128" CornerRadius="24">
+                        <Image Name="PackageIcon" Height="80" Width="80" Margin="8"/>
                     </Border>
-                    <TextBlock Name="PackageName" HorizontalAlignment="Center" VerticalAlignment="Center" Text="ElevenClock" FontFamily="Segoe UI Variable Display" FontWeight="Bold" FontSize="50"/>
-                </StackPanel>
+                    <TextBlock Grid.Column="1" Name="PackageName" HorizontalAlignment="Left" VerticalAlignment="Center" Text="ElevenClock" FontFamily="Segoe UI Variable Display" FontWeight="Bold" FontSize="50" TextWrapping="Wrap"/>
+                </Grid>
                 
                 <!-- Tags + Description -->
                 <StackPanel Name="DescriptionPanel" Orientation="Vertical" VerticalAlignment="Top">
@@ -71,17 +75,46 @@
                 </Grid>
 
                 <!-- Screenshots -->
-                <FlipView Name="ScreenshotsPanel"  VerticalAlignment="Top" Height="225" CornerRadius="8"/>
+                <StackPanel Name="ScreenshotsPanel" Orientation="Vertical" Spacing="8">
+                    <FlipView Name="ScreenshotsCarroussel" CornerRadius="8">
+                        <FlipView.Items>
+                            <FlipViewItem>
+                                <Grid Margin="50,50,50,50">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <widgets:TranslatedTextBlock  VerticalAlignment="Center" Grid.Column="0" Text="This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to WingetUI!" WrappingMode="WrapWholeWords"/>
+                                    <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/wingetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
+                                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Become a contributor"/>
+                                    </HyperlinkButton>
+                                </Grid>
+                            </FlipViewItem>
+                        </FlipView.Items>
+                    </FlipView>
+                    <Grid Name="IconsExtraBanner" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <widgets:TranslatedTextBlock Grid.Column="0" Text="This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to WingetUI!" WrappingMode="WrapWholeWords"/>
+                        <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/wingetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
+                            <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Become a contributor"/>
+                        </HyperlinkButton>
+                    </Grid>
+                </StackPanel>
 
                 <!-- Install Options -->
-                <Expander HorizontalAlignment="Stretch" CornerRadius="8" Name="InstallOptionsPanel"  VerticalAlignment="Top">
-                    <Expander.Header>
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <widgets:LocalIcon IconName="options" Height="24"/>
-                            <widgets:TranslatedTextBlock Text="Installation options" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Expander.Header>
-                </Expander>
+                <Border Name="InstallOptionsBorder" CornerRadius="8">
+                    <Expander HorizontalAlignment="Stretch" CornerRadius="8" Name="InstallOptionsExpander"  VerticalAlignment="Top">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <widgets:LocalIcon IconName="options" Height="24"/>
+                                <widgets:TranslatedTextBlock Text="Installation options" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Expander.Header>
+                    </Expander>
+                </Border>
 
                 <!-- Package Details -->
                 <StackPanel Name="MoreDataStackPanel" Orientation="Vertical"  VerticalAlignment="Top" Spacing="6">
