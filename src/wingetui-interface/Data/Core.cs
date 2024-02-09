@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace ModernWindow.Data
 {
@@ -40,5 +44,73 @@ namespace ModernWindow.Data
         public static string WingetUICacheDirectory_Lang = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI\\CachedLangFiles");
 
         public static string DEFAULT_PACKAGE_BACKUP_DIR = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
+
+        public static Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = new();
+
+        public class IconScreenshotDatabase_v2
+        {
+            public class PackageCount
+            {
+                public int total { get; set; }
+                public int done { get; set; }
+                public int packages_with_icon { get; set; }
+                public int packages_with_screenshot { get; set; }
+                public int total_screenshots { get; set; }
+            }
+            public class PackageIconAndScreenshots
+            {
+                public string icon { get; set; }
+                public List<string> images { get; set; }
+            }
+
+            public PackageCount package_count { get; set; }
+            public Dictionary<string, PackageIconAndScreenshots> icons_and_screenshots { get; set; }
+        }
+
+        public static async Task LoadIconAndScreenshotsDatabase()
+        {
+            var IconsAndScreenshotsFile = Path.Join(WingetUICacheDirectory_Data, "Icon Database.json");
+
+            try
+            {
+                if(!File.Exists(IconsAndScreenshotsFile))
+                    if(!Directory.Exists(Path.GetDirectoryName(IconsAndScreenshotsFile)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(IconsAndScreenshotsFile));
+                
+                var DownloadUrl = new Uri("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json");
+                using (WebClient client = new WebClient())
+                {
+                    var fileContents = await client.DownloadStringTaskAsync(DownloadUrl);
+                    await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
+                }
+
+                Console.WriteLine("Downloaded icons and screenshots successfully!");
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to download icons and screenshots");
+                Console.WriteLine(e);
+            }
+
+            
+            if(!File.Exists(IconsAndScreenshotsFile))
+            {
+                Console.WriteLine("WARNING: Icon Database file not found");
+                return;
+            }
+
+            try
+            {
+                var JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(await File.ReadAllTextAsync(IconsAndScreenshotsFile));
+                if (JsonData.icons_and_screenshots != null)
+                    IconDatabaseData = JsonData.icons_and_screenshots;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to load icon database");
+                Console.WriteLine(ex);
+            }
+        }
     }
 }

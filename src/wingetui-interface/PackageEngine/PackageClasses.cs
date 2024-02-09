@@ -94,7 +94,10 @@ namespace ModernWindow.PackageEngine
         public Uri GetIconUrl()
         {
             string iconId = GetIconId();
-            // TODO: Look up icon URL from iconId
+            if (CoreData.IconDatabaseData.ContainsKey(iconId))
+                if (CoreData.IconDatabaseData[iconId].icon != "")
+                    return new Uri(CoreData.IconDatabaseData[iconId].icon);
+
             return new Uri("ms-appx:///wingetui/resources/package_color.png");
         }
 

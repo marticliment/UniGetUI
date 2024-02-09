@@ -71,7 +71,7 @@
                 </Grid>
 
                 <!-- Screenshots -->
-                <FlipView Name="ScreenshotsPanel"  VerticalAlignment="Top" Height="260" CornerRadius="8"/>
+                <FlipView Name="ScreenshotsPanel"  VerticalAlignment="Top" Height="225" CornerRadius="8"/>
 
                 <!-- Install Options -->
                 <Expander HorizontalAlignment="Stretch" CornerRadius="8" Name="InstallOptionsPanel"  VerticalAlignment="Top">

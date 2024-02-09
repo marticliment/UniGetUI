@@ -62,31 +62,23 @@ namespace ModernWindow
                 DisposeAndQuit(1);
             };
 
-
             mainWindow = new MainWindow();
 
             var hWnd = mainWindow.GetWindowHandle();
 
-            Microsoft.UI.WindowId windowId =
-                Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-
-            // Lastly, retrieve the AppWindow for the current (XAML) WinUI 3 window.
-            Microsoft.UI.Windowing.AppWindow appWindow =
-                Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
             if (appWindow != null)
-            {
                 appWindow.Closing += mainWindow.HandleClosingEvent;
-            }
 
-            ToastNotificationManagerCompat.OnActivated += toastArgs =>
-            {
+            ToastNotificationManagerCompat.OnActivated += toastArgs => {
                 ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
                 ValueSet userInput = toastArgs.UserInput;
                 mainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     mainWindow.HandleNotificationActivation(args, userInput);
-                });
+                }); 
             };
 
             LoadComponents();
@@ -95,10 +87,13 @@ namespace ModernWindow
         public async void LoadComponents()
         {
 
-            await mainWindow.DoEntryTextAnimation();
-
             mainWindow.BlockLoading = true;
             mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
+
+
+            _ = CoreData.LoadIconAndScreenshotsDatabase();
+            await Task.Delay(200);
+            await mainWindow.DoEntryTextAnimation();
 
             if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
                 Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));

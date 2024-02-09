@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
 using System;
@@ -38,10 +39,11 @@ namespace ModernWindow.Interface.Dialogs
         private enum LayoutMode
         {
             Normal,
-            Wide
+            Wide,
+            Unloaded
         }
         
-        private LayoutMode? layoutMode;
+        private LayoutMode layoutMode = LayoutMode.Unloaded;
         public PackageDetailsPage(Package package, OperationType futureOperation)
         {
             FutureOperation = futureOperation;
@@ -95,6 +97,12 @@ namespace ModernWindow.Interface.Dialogs
             InstallerSizeTextBlock.Text = LoadingString;
             DownloadInstallerButton.IsEnabled = false;
             ReleaseNotesUrlButton.Content = LoadingString;
+
+            if(CoreData.IconDatabaseData.ContainsKey(Package.GetIconId()))
+                foreach (string image in CoreData.IconDatabaseData[Package.GetIconId()].images)
+                {
+                    ScreenshotsPanel.Items.Add(new Image() { Source = new BitmapImage(new Uri(image)) });
+                }
 
             _ = LoadInformation();
             
@@ -213,9 +221,9 @@ namespace ModernWindow.Interface.Dialogs
                     Grid.SetRow(TitlePanel, 0);
                     Grid.SetRow(DescriptionPanel, 1);
                     Grid.SetRow(BasicInfoPanel, 2);
-                    Grid.SetRow(ScreenshotsPanel, 3);
-                    Grid.SetRow(ActionsPanel, 4);
-                    Grid.SetRow(InstallOptionsPanel, 5);
+                    Grid.SetRow(ActionsPanel, 3);
+                    Grid.SetRow(InstallOptionsPanel, 4);
+                    Grid.SetRow(ScreenshotsPanel, 5);
                     Grid.SetRow(MoreDataStackPanel, 6);
 
                     LeftPanel.Children.Clear();
@@ -228,6 +236,7 @@ namespace ModernWindow.Interface.Dialogs
                     MainGrid.Children.Add(ActionsPanel);
                     MainGrid.Children.Add(InstallOptionsPanel);
                     MainGrid.Children.Add(MoreDataStackPanel);
+                    ScreenshotsPanel.Height = 225;
 
                     InstallOptionsPanel.IsExpanded = false;
 
@@ -245,14 +254,15 @@ namespace ModernWindow.Interface.Dialogs
                     Grid.SetColumn(LeftPanel, 0);
                     Grid.SetColumn(RightPanel, 1);
                     Grid.SetColumn(TitlePanel, 0);
-                    Grid.SetColumnSpan(TitlePanel, 2);
+                    Grid.SetColumnSpan(TitlePanel, 1);
 
                     MainGrid.RowDefinitions.Clear();
                     MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
                     MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
                     Grid.SetRow(LeftPanel, 1);
-                    Grid.SetRow(RightPanel, 1);
+                    Grid.SetRow(RightPanel, 0);
                     Grid.SetRow(TitlePanel, 0);
+                    Grid.SetRowSpan(RightPanel, 2);
 
                     LeftPanel.Children.Clear();
                     RightPanel.Children.Clear();
@@ -263,6 +273,7 @@ namespace ModernWindow.Interface.Dialogs
                     LeftPanel.Children.Add(ActionsPanel);
                     LeftPanel.Children.Add(InstallOptionsPanel);
                     RightPanel.Children.Add(MoreDataStackPanel);
+                    ScreenshotsPanel.Height = 400;
 
                     InstallOptionsPanel.IsExpanded = true;
 
