@@ -81,7 +81,7 @@
                     </animations:Explicit.Animations>
 
                     <TextBlock Text="WingetUI" VerticalAlignment="Center" FontWeight="ExtraBlack" 
-                        HorizontalAlignment="Right" HorizontalTextAlignment="Right" 
+                        HorizontalAlignment="Right" HorizontalTextAlignment="Right"
                         FontFamily="Segoe UI Variable Display" FontSize="90" Name="WingetUITitle"/>
                 </Border>
             </StackPanel>

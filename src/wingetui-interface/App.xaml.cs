@@ -62,7 +62,13 @@ namespace ModernWindow
                 DisposeAndQuit(1);
             };
 
+            if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
+                Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+            Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+
             mainWindow = new MainWindow();
+            mainWindow.BlockLoading = true;
+            mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
 
             var hWnd = mainWindow.GetWindowHandle();
 
@@ -86,18 +92,9 @@ namespace ModernWindow
 
         public async void LoadComponents()
         {
-
-            mainWindow.BlockLoading = true;
-            mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
-
-
             _ = CoreData.LoadIconAndScreenshotsDatabase();
-            await Task.Delay(200);
-            await mainWindow.DoEntryTextAnimation();
 
-            if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
-                Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
-            Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+            await mainWindow.DoEntryTextAnimation();
 
             // Load managers
 

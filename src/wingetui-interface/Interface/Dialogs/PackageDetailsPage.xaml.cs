@@ -35,6 +35,7 @@ namespace ModernWindow.Interface.Dialogs
         public event EventHandler Close;
         private PackageDetails Info;
         OperationType FutureOperation;
+        bool PackageHasScreenshots = false;
 
         private enum LayoutMode
         {
@@ -102,6 +103,7 @@ namespace ModernWindow.Interface.Dialogs
             {
                 if (CoreData.IconDatabaseData[Package.GetIconId()].images.Count > 0)
                 {
+                    PackageHasScreenshots = true;
                     IconsExtraBanner.Visibility = Visibility.Visible;
                     ScreenshotsCarroussel.Items.Clear();
                     foreach (string image in CoreData.IconDatabaseData[Package.GetIconId()].images)
@@ -242,7 +244,7 @@ namespace ModernWindow.Interface.Dialogs
                     MainGrid.Children.Add(ActionsPanel);
                     MainGrid.Children.Add(InstallOptionsBorder);
                     MainGrid.Children.Add(MoreDataStackPanel);
-                    ScreenshotsCarroussel.Height = 225;
+                    ScreenshotsCarroussel.Height = PackageHasScreenshots? 225: 150;
 
                     InstallOptionsExpander.IsExpanded = false;
 
@@ -279,7 +281,7 @@ namespace ModernWindow.Interface.Dialogs
                     LeftPanel.Children.Add(ActionsPanel);
                     LeftPanel.Children.Add(InstallOptionsBorder);
                     RightPanel.Children.Add(MoreDataStackPanel);
-                    ScreenshotsCarroussel.Height = 400;
+                    ScreenshotsCarroussel.Height = PackageHasScreenshots? 400: 150;
 
                     InstallOptionsExpander.IsExpanded = true;
 
