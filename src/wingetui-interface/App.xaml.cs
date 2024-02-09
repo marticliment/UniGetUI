@@ -138,7 +138,7 @@ namespace ModernWindow
 
             Debug.WriteLine("All managers loaded");
 
-            mainWindow.SwitchToInterface();
+            await mainWindow.SwitchToInterface();
         }
 
         public async Task ShowMainWindow_FromRedirect()

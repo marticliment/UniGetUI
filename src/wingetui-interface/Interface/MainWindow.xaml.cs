@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI.Animations;
 using CommunityToolkit.WinUI.Notifications;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
@@ -24,6 +25,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -241,7 +243,7 @@ namespace ModernWindow
         }
 
 
-        public void SwitchToInterface()
+        public async Task SwitchToInterface()
         {
             SetTitleBar(__app_titlebar);
             ContentRoot = __content_root;
@@ -251,7 +253,8 @@ namespace ModernWindow
             Grid.SetRow(NavigationPage, 1);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
-            LoadingIndicator.Visibility = Visibility.Visible;
+
+            //await DoExitTextAnimation();
 
             ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
             ContentColumn.Width = new GridLength(1, GridUnitType.Star);
@@ -346,14 +349,19 @@ namespace ModernWindow
 
         public async Task DoEntryTextAnimation()
         {
-            const int WIDTH = 400;
-            for(double i = WIDTH; i > 1.1; i *= 0.85)
-            {
-                WingetUITitle.Width = (WIDTH - i);
-                await Task.Delay(10);
-            }
-            WingetUITitle.Width = WIDTH;
+            InAnimation_Border.Start();
+            InAnimation_Text.Start();
+            await Task.Delay(700);
             LoadingIndicator.Visibility = Visibility.Visible;
+        }
+
+        public async Task DoExitTextAnimation()
+        {
+            await Task.Delay(1000);
+            LoadingIndicator.Visibility = Visibility.Collapsed;
+            OutAnimation_Text.Start();
+            OutAnimation_Border.Start();
+            await Task.Delay(400);
         }
     }
 }

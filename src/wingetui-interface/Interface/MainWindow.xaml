@@ -53,19 +53,40 @@
             </Grid.RowDefinitions>
             <Canvas x:Name="LaunchBackground" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
             <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Padding="0,20,0,20">
-                <Image Canvas.ZIndex="1" Width="120">
-                    <Image.Source>
-                        <BitmapImage UriSource="ms-appx:///wingetui/resources/icon.png"/>
-                    </Image.Source>
-                </Image>
+                <Border Canvas.ZIndex="1" BorderThickness="500,0,0,0" Margin="-500,0,20,0" BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <animations:Explicit.Animations>
+                        <animations:AnimationSet x:Name="InAnimation_Border">
+                            <animations:TranslationAnimation From="225,0" To="0,0" Duration="0:0:0.7" EasingMode="EaseOut"/>
+                        </animations:AnimationSet>
+                        <animations:AnimationSet x:Name="OutAnimation_Border">
+                            <animations:TranslationAnimation From="0,0" To="225,0" Duration="0:0:0.4" EasingMode="EaseIn"/>
+                        </animations:AnimationSet>
+                    </animations:Explicit.Animations>
+                    <Image Width="87">
+                        <Image.Source>
+                            <BitmapImage UriSource="ms-appx:///wingetui/resources/icon_unsquare.png"/>
+                        </Image.Source>
+                    </Image>
+                </Border>
                 <Border HorizontalAlignment="Right" Margin="0,0,0,0">
+                    <animations:Explicit.Animations>
+                        <animations:AnimationSet x:Name="InAnimation_Text">
+                            <animations:TranslationAnimation From="-225,0" To="0,0" Duration="0:0:0.7" EasingMode="EaseOut"/>
+                            <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.7" EasingMode="EaseOut"/>
+                        </animations:AnimationSet>
+                        <animations:AnimationSet x:Name="OutAnimation_Text">
+                            <animations:TranslationAnimation From="0,0" To="-250,0" Duration="0:0:0.4" EasingMode="EaseIn"/>
+                            <animations:OpacityAnimation From="1" To="0" Duration="0:0:0.4" EasingMode="EaseIn"/>
+                        </animations:AnimationSet>
+                    </animations:Explicit.Animations>
+
                     <TextBlock Text="WingetUI" VerticalAlignment="Center" FontWeight="ExtraBlack" 
-                        HorizontalAlignment="Right" Width="0" HorizontalTextAlignment="Right" 
+                        HorizontalAlignment="Right" HorizontalTextAlignment="Right" 
                         FontFamily="Segoe UI Variable Display" FontSize="90" Name="WingetUITitle"/>
                 </Border>
             </StackPanel>
             <ProgressBar
-                Foreground="#08a9c3" Margin="20,0,5,0" Height="6"
+                Foreground="#08a9c3" Margin="0,0,5,0"
                 Grid.Column="1" IsIndeterminate="True" Name="LoadingIndicator"
                 Grid.Row="1" VerticalAlignment="Bottom" Visibility="Collapsed"
                 />

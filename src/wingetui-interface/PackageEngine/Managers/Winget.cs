@@ -452,7 +452,18 @@ namespace ModernWindow.PackageEngine.Managers
             };
             process.StartInfo = StartInfo;
             process.Start();
-            await process.WaitForExitAsync();
+
+            int StartTime = Environment.TickCount;
+
+            while (!process.HasExited && Environment.TickCount - StartTime < 8000)
+                await Task.Delay(100);
+
+            if(!process.HasExited)
+            {
+                process.Kill();
+                Console.WriteLine("Winget source update timed out. Current output was");
+                Console.WriteLine(await process.StandardOutput.ReadToEndAsync());
+            }
         }
 
         protected override ManagerCapabilities GetCapabilities()
