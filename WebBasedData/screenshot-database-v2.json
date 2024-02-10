@@ -4,7 +4,7 @@
         "done": 5017,
         "packages_with_icon": 5017,
         "packages_with_screenshot": 536,
-        "total_screenshots": 1691
+        "total_screenshots": 1690
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -2264,7 +2264,6 @@
         "anki": {
             "icon": "https://i.redd.it/cruevyf68dt31.png",
             "images": [
-                "https://arihoresh.com/wp-content/uploads/2021/09/Laptop2-1-1024x458-1.jpg",
                 "https://images.squarespace-cdn.com/content/v1/58eada9abe659458e85c3f68/1532751018464-0U0KMM5L0XH731KAZ27K/01.png",
                 "https://remembereverything.org/wp-content/uploads/2016/10/Vocabulary-card-Anki-2.jpg",
                 "https://uploads-ssl.webflow.com/5dc6cc5bc19d438a53fbbaa9/607c90200e3c5babc5c380c0_German%20Noun%20Flashcards%20by%20Visual%20German.png",
@@ -40371,7 +40370,7 @@
             "images": []
         },
         "tencentmeeting": {
-            "icon": "https://cdn.meeting.tencent.com/assets/next-website/logo128.png",
+            "icon": "https://cdn.meeting.tencent.com/assets/next-website/logo512.png",
             "images": []
         },
         "tencentmeetingrooms": {
