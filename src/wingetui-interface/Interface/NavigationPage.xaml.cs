@@ -24,6 +24,7 @@ using ModernWindow.Interface.Dialogs;
 using ModernWindow.Data;
 using System.Security.Cryptography.X509Certificates;
 using CommunityToolkit.WinUI.Animations;
+using ModernWindow.Interface.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -261,17 +262,17 @@ namespace ModernWindow.Interface
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigateToPage(new LogPage(LogType.OperationHistory));
         }
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigateToPage(new LogPage(LogType.ManagerLogs));
         }
 
         private void WingetUILogs_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigateToPage(new LogPage(LogType.WingetUILog));
         }
 
 

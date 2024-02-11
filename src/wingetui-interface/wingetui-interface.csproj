@@ -54,6 +54,7 @@
     <None Remove="Interface\IgnoredUpdates.xaml" />
     <None Remove="Interface\InstalledPackages.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
+    <None Remove="Interface\Pages\LogPage.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -188,6 +189,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\InstallOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Interface\Pages\LogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

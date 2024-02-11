@@ -438,8 +438,11 @@ namespace ModernWindow.PackageEngine
                         break;
                 }
 
-                // TODO: Logger log operation
-                Console.WriteLine(String.Join('\n', ProcessOutput.ToArray()));
+                ProcessOutput.Insert(0, "----------------------------------------------");
+                ProcessOutput.Add("");
+                ProcessOutput.Add("");
+                ProcessOutput.Add("");
+                bindings.SetSettingsValue("OperationHistory", String.Join('\n', ProcessOutput.ToArray()) + bindings.GetSettingsValue("OperationHistory"));
             }
             catch (Exception e)
             {
