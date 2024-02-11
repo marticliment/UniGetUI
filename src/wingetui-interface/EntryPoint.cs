@@ -15,53 +15,75 @@ namespace ModernWindow
         [STAThread]
         static void Main(string[] args)
         {
-            // Having an async main method breaks WebView2
-            CoreData.IsDaemon = args.Contains("--daemon");
-            _ = AsyncMain(args);
+            try
+            {
+                // Having an async main method breaks WebView2
+                CoreData.IsDaemon = args.Contains("--daemon");
+                _ = AsyncMain(args);
+            } 
+            catch (Exception e)
+            {
+                CoreData.ReportFatalException(e);
+            }
         }
 
         static async Task AsyncMain(string[] args)
         {
-            WinRT.ComWrappersSupport.InitializeComWrappers();
-            bool isRedirect = await DecideRedirection();
-            if (!isRedirect) // Sometimes, redirection fails, so we try again
-                isRedirect = await DecideRedirection();
-            if (!isRedirect) // Sometimes, redirection fails, so we try again (second time)
-                isRedirect = await DecideRedirection();
+            try { 
+                WinRT.ComWrappersSupport.InitializeComWrappers();
+                bool isRedirect = await DecideRedirection();
+                if (!isRedirect) // Sometimes, redirection fails, so we try again
+                    isRedirect = await DecideRedirection();
+                if (!isRedirect) // Sometimes, redirection fails, so we try again (second time)
+                    isRedirect = await DecideRedirection();
 
-            if (!isRedirect)
-            {
-                Microsoft.UI.Xaml.Application.Start((p) =>
+                if (!isRedirect)
                 {
-                    var context = new DispatcherQueueSynchronizationContext(
-                        DispatcherQueue.GetForCurrentThread());
-                    SynchronizationContext.SetSynchronizationContext(context);
-                    new MainApp();
-                });
+                    Microsoft.UI.Xaml.Application.Start((p) =>
+                    {
+                        var context = new DispatcherQueueSynchronizationContext(
+                            DispatcherQueue.GetForCurrentThread());
+                        SynchronizationContext.SetSynchronizationContext(context);
+                        new MainApp();
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                CoreData.ReportFatalException(e);
             }
         }
         private static async Task<bool> DecideRedirection()
         {
-            bool isRedirect = false;
-            AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
-            ExtendedActivationKind kind = args.Kind;
-
-            AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.WingetUI.NeXT");
-
-            if (keyInstance.IsCurrent)
+            try
             {
-                keyInstance.Activated += async (s, e) =>
+                
+                bool isRedirect = false;
+                AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
+                ExtendedActivationKind kind = args.Kind;
+
+                AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.WingetUI.NeXT");
+
+                if (keyInstance.IsCurrent)
                 {
-                    var AppInstance = MainApp.Current as MainApp;
-                    await AppInstance.ShowMainWindow_FromRedirect();
-                };
+                    keyInstance.Activated += async (s, e) =>
+                    {
+                        var AppInstance = MainApp.Current as MainApp;
+                        await AppInstance.ShowMainWindow_FromRedirect();
+                    };
+                }
+                else
+                {
+                    isRedirect = true;
+                    await keyInstance.RedirectActivationToAsync(args);
+                }
+                return isRedirect;
             }
-            else
+            catch (Exception e)
             {
-                isRedirect = true;
-                await keyInstance.RedirectActivationToAsync(args);
+                CoreData.ReportFatalException(e);
+                return false;
             }
-            return isRedirect;
         }
 
     }

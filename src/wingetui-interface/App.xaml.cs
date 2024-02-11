@@ -54,84 +54,97 @@ namespace ModernWindow
 
         public MainApp()
         {
-            this.InitializeComponent();
+            try { 
+                this.InitializeComponent();
          
-            this.UnhandledException += (sender, e) =>
-            {
-                AppTools.Log("Unhandled Exception raised: " + e.Message);
-                AppTools.Log("Stack Trace: \n" + e.Exception.StackTrace);
-                DisposeAndQuit(1);
-            };
-
-            if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
-                Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
-            Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
-
-            mainWindow = new MainWindow();
-            mainWindow.BlockLoading = true;
-            mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
-
-            var hWnd = mainWindow.GetWindowHandle();
-
-            Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-            Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
-
-            if (appWindow != null)
-                appWindow.Closing += mainWindow.HandleClosingEvent;
-
-            ToastNotificationManagerCompat.OnActivated += toastArgs => {
-                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-                ValueSet userInput = toastArgs.UserInput;
-                mainWindow.DispatcherQueue.TryEnqueue(() =>
+                this.UnhandledException += (sender, e) =>
                 {
-                    mainWindow.HandleNotificationActivation(args, userInput);
-                }); 
-            };
+                    AppTools.Log("Unhandled Exception raised: " + e.Message);
+                    AppTools.Log("Stack Trace: \n" + e.Exception.StackTrace);
+                    CoreData.ReportFatalException(e.Exception);
+                };
 
-            LoadComponents();
+                if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
+                    Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+                Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+
+                mainWindow = new MainWindow();
+                mainWindow.BlockLoading = true;
+                mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
+
+                var hWnd = mainWindow.GetWindowHandle();
+
+                Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+                Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+                if (appWindow != null)
+                    appWindow.Closing += mainWindow.HandleClosingEvent;
+
+                ToastNotificationManagerCompat.OnActivated += toastArgs => {
+                    ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                    ValueSet userInput = toastArgs.UserInput;
+                    mainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        mainWindow.HandleNotificationActivation(args, userInput);
+                    }); 
+                };
+
+                LoadComponents();
+            }
+            catch (Exception e)
+            {
+                CoreData.ReportFatalException(e);
+            }
         }
 
         public async void LoadComponents()
         {
-            _ = CoreData.LoadIconAndScreenshotsDatabase();
-
-            await mainWindow.DoEntryTextAnimation();
-
-            // Load managers
-
-            Winget = new Winget();
-            PackageManagerList.Add(Winget);
-            Scoop = new Scoop();
-            PackageManagerList.Add(Scoop);
-            Choco = new Chocolatey();
-            PackageManagerList.Add(Choco);
-            Pip = new Pip();
-            PackageManagerList.Add(Pip);
-            Npm = new Npm();
-            PackageManagerList.Add(Npm);
-            Dotnet = new Dotnet();
-            PackageManagerList.Add(Dotnet);
-            Powershell = new PowerShell();
-            PackageManagerList.Add(Powershell);
-
-            foreach(PackageManager manager in PackageManagerList)
-                _ = manager.Initialize();
-
-            int StartTime = Environment.TickCount;
-
-            foreach(PackageManager manager in PackageManagerList)
+            try
             {
-                while(!manager.ManagerReady && Environment.TickCount - StartTime < 10000)
+                _ = CoreData.LoadIconAndScreenshotsDatabase();
+
+                await mainWindow.DoEntryTextAnimation();
+
+                // Load managers
+
+                Winget = new Winget();
+                PackageManagerList.Add(Winget);
+                Scoop = new Scoop();
+                PackageManagerList.Add(Scoop);
+                Choco = new Chocolatey();
+                PackageManagerList.Add(Choco);
+                Pip = new Pip();
+                PackageManagerList.Add(Pip);
+                Npm = new Npm();
+                PackageManagerList.Add(Npm);
+                Dotnet = new Dotnet();
+                PackageManagerList.Add(Dotnet);
+                Powershell = new PowerShell();
+                PackageManagerList.Add(Powershell);
+
+                foreach (PackageManager manager in PackageManagerList)
+                    _ = manager.Initialize();
+
+                int StartTime = Environment.TickCount;
+
+                foreach (PackageManager manager in PackageManagerList)
                 {
-                    await Task.Delay(100);
-                    AppTools.Log("Waiting for manager " + manager.Name);
+                    while (!manager.ManagerReady && Environment.TickCount - StartTime < 10000)
+                    {
+                        await Task.Delay(100);
+                        AppTools.Log("Waiting for manager " + manager.Name);
+                    }
+                    AppTools.Log(manager.Name + " ready");
                 }
-                AppTools.Log(manager.Name + " ready");
+
+                Debug.WriteLine("All managers loaded");
+
+                await mainWindow.SwitchToInterface();
             }
-
-            Debug.WriteLine("All managers loaded");
-
-            await mainWindow.SwitchToInterface();
+            catch (Exception e)
+            {
+                CoreData.ReportFatalException(e);
+            }
         }
 
         public async Task ShowMainWindow_FromRedirect()
