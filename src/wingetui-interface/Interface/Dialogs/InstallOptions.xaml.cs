@@ -46,15 +46,15 @@ namespace ModernWindow.Interface.Dialogs
             Options = new InstallationOptions(package);
             Options.LoadOptionsFromDisk();
 
-            
+
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
             AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
 
             InteractiveCheckBox.IsChecked = Options.InteractiveInstallation;
             InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
-            
-            HashCheckbox.IsChecked = Operation != OperationType.Uninstall && Options.SkipHashCheck;
-            HashCheckbox.IsEnabled = Package.Manager.Capabilities.CanSkipIntegrityChecks;
+
+            HashCheckbox.IsChecked = Options.SkipHashCheck;
+            HashCheckbox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
             ArchitectureComboBox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
             ArchitectureComboBox.Items.Add(bindings.Translate("Default"));
@@ -62,16 +62,16 @@ namespace ModernWindow.Interface.Dialogs
 
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
-                foreach(var arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
+                foreach (var arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
                     ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
-                    if(Options.Architecture == arch)
+                    if (Options.Architecture == arch)
                         ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
                 }
 
             VersionComboBox.IsEnabled = Operation == OperationType.Install && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
             VersionComboBox.SelectionChanged += (s, e) =>
-              { IgnoreUpdatesCheckbox.IsChecked =  !new string[] { bindings.Translate("Latest"), bindings.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
+              { IgnoreUpdatesCheckbox.IsChecked = !new string[] { bindings.Translate("Latest"), bindings.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
             VersionComboBox.Items.Add(bindings.Translate("Latest"));
             VersionComboBox.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsPreRelease)
@@ -89,7 +89,7 @@ namespace ModernWindow.Interface.Dialogs
             ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
             ScopeCombo.Items.Add(bindings.Translate("Default"));
             ScopeCombo.SelectedIndex = 0;
-            if(package.Manager.Capabilities.SupportsCustomScopes)
+            if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(bindings.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
                 if (Options.InstallationScope == PackageScope.Local)
@@ -104,8 +104,15 @@ namespace ModernWindow.Interface.Dialogs
             SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if(Options.CustomParameters != null)
+            if (Options.CustomParameters != null)
                 CustomParameters.Text = String.Join(' ', Options.CustomParameters);
+
+            LoadIgnoredUpdates();
+        }
+
+        private async void LoadIgnoredUpdates()
+        { 
+            IgnoreUpdatesCheckbox.IsChecked = await Package.GetIgnoredUpdatesVersion() == "*";
         }
 
         private async Task LoadVersions()
@@ -124,9 +131,39 @@ namespace ModernWindow.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public void SaveToDisk()
+        public async void SaveToDisk()
         {
+            Options.RunAsAdministrator = AdminCheckBox.IsChecked.Value;
+            Options.InteractiveInstallation = InteractiveCheckBox.IsChecked.Value;
+            Options.SkipHashCheck = HashCheckbox.IsChecked.Value;
 
+            if(CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString()))
+                Options.Architecture = CommonTranslations.InvertedArchNames[ArchitectureComboBox.SelectedValue.ToString()];
+            else
+                Options.Architecture = null;
+
+            if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString()))
+                Options.InstallationScope = CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString()];
+            else
+                Options.InstallationScope = null;
+
+            Options.CustomInstallLocation = CustomInstallLocation.Text;
+            Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
+            Options.PreRelease = VersionComboBox.SelectedValue.ToString() == bindings.Translate("PreRelease");
+
+            if(VersionComboBox.SelectedValue.ToString() != bindings.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != bindings.Translate("Latest"))
+                Options.Version = VersionComboBox.SelectedValue.ToString();
+            else
+                Options.Version = "";
+
+            if (IgnoreUpdatesCheckbox.IsChecked.Value)
+                await Package.AddToIgnoredUpdates(version: "*");
+            else
+            {
+                if(await Package.GetIgnoredUpdatesVersion()== "*");
+                    await Package.RemoveFromIgnoredUpdates();
+            }
+            Options.SaveOptionsToDisk();
         }
 
         private async void SelectDir_Click(object sender, RoutedEventArgs e)

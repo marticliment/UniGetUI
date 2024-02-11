@@ -176,13 +176,13 @@ namespace ModernWindow.Interface.Dialogs
             switch (FutureOperation)
             {
                 case OperationType.Install:
-                    bindings.AddOperationToList(new InstallPackageOperation(Package));
+                    bindings.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
                     break;
                 case OperationType.Uninstall:
-                    bindings.App.mainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, new InstallationOptions(Package));
+                    bindings.App.mainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
                     break;
                 case OperationType.Update:
-                    bindings.AddOperationToList(new UpdatePackageOperation(Package));
+                    bindings.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
                     break;
             }
         }

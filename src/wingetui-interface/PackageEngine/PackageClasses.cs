@@ -295,6 +295,7 @@ namespace ModernWindow.PackageEngine
             public List<string> CustomParameters { get; set; }
             public bool PreRelease { get; set; } = false;
             public string CustomInstallLocation { get; set; } = "";
+            public string Version { get; set; } = "";
         }
 
         public bool SkipHashCheck { get; set; } = false;
@@ -311,17 +312,6 @@ namespace ModernWindow.PackageEngine
         public Package Package { get; }
 
         private string _saveFileName = "Unknown.Unknown.InstallationOptions";
-        private List<string> _dataToSave = new List<string>
-        {
-            "SkipHashCheck",
-            "InteractiveInstallation",
-            "RunAsAdministrator",
-            "Architecture",
-            "InstallationScope",
-            "CustomParameters",
-            "PreRelease",
-            "CustomInstallLocation"
-        };
 
         public InstallationOptions(Package package, bool reset = false)
         {
@@ -339,16 +329,6 @@ namespace ModernWindow.PackageEngine
                 LoadOptionsFromDisk();
         }
 
-        public Dictionary<string, object> ToDictionary()
-        {
-            Dictionary<string, object> optionsToSave = new Dictionary<string, object>();
-            foreach (string entry in _dataToSave)
-            {
-                optionsToSave[entry] = GetType().GetProperty(entry)?.GetValue(this);
-            }
-            return optionsToSave;
-        }
-
         public void LoadFromJsonString(string JSON)
         {
             JsonOptions_v1 options = JsonSerializer.Deserialize<JsonOptions_v1>(JSON);
@@ -356,6 +336,7 @@ namespace ModernWindow.PackageEngine
             InteractiveInstallation = options.InteractiveInstallation;
             RunAsAdministrator = options.RunAsAdministrator;
             CustomInstallLocation = options.CustomInstallLocation;
+            Version = options.Version;
             PreRelease = options.PreRelease;
             if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
                 Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
@@ -364,10 +345,35 @@ namespace ModernWindow.PackageEngine
             CustomParameters = options.CustomParameters;
         }
 
+        public string GetJsonString()
+        {
+            JsonOptions_v1 options = new JsonOptions_v1();
+            options.SkipHashCheck = SkipHashCheck;
+            options.InteractiveInstallation = InteractiveInstallation;
+            options.RunAsAdministrator = RunAsAdministrator;
+            options.CustomInstallLocation = CustomInstallLocation;
+            options.PreRelease = PreRelease;
+            options.Version = Version;
+            if (Architecture != null)
+                options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
+            if (InstallationScope != null)
+                options.InstallationScope = CommonTranslations.ScopeNames_NonLang[InstallationScope.Value];
+            options.CustomParameters = CustomParameters;
+
+            return JsonSerializer.Serialize(options);
+        }
+
         public void SaveOptionsToDisk()
         {
-            // Implement your custom serialization method here.
-            // Example: SaveJsonSettings(_saveFileName, ToDictionary(), "InstallationOptions");
+            try
+            {
+                var JSON = GetJsonString();
+                var filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
+                File.WriteAllText(filename, JSON);
+            } catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
         }
 
         public void LoadOptionsFromDisk()
