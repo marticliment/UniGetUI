@@ -84,7 +84,7 @@ namespace ModernWindow.Interface.Widgets
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Could not load announcements: " + ex.ToString());
+                AppTools.Log("Could not load announcements: " + ex.ToString());
                 SetText(binder.Translate("Could not load announcements - ") + ex.ToString());
                 SetImage(new Uri("ms-appx:///wingetui/resources/warn.png"));
             }

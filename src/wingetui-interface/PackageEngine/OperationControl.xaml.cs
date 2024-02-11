@@ -408,7 +408,7 @@ namespace ModernWindow.PackageEngine
                         if (bindings.OperationQueue.Count == 0)
                             if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
                             {
-                                Console.WriteLine("Erasing admin rights");
+                                AppTools.Log("Erasing admin rights");
                                 Process p = new Process();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -423,7 +423,7 @@ namespace ModernWindow.PackageEngine
                         if (bindings.OperationQueue.Count == 0)
                             if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
                             {
-                                Console.WriteLine("Erasing admin rights");
+                                AppTools.Log("Erasing admin rights");
                                 Process p = new Process();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -446,7 +446,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Operation failed: " + e.ToString());
+                AppTools.Log("Operation failed: " + e.ToString());
                 LineInfoText = bindings.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
                 try { this.Status = OperationStatus.Failed; } catch { }

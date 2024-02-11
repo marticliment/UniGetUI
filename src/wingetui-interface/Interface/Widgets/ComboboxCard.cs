@@ -121,7 +121,7 @@ namespace ModernWindow.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    AppTools.Log(ex);
                 }
             };
         }

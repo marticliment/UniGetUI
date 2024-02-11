@@ -9,7 +9,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Media.Audio;
 using Windows.Storage.Streams;
@@ -109,7 +111,7 @@ namespace ModernWindow.Structures
 
         public void RestartApp()
         {
-            Console.WriteLine(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            AppTools.Log(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
             System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
             App.DisposeAndQuit();
         }
@@ -124,6 +126,7 @@ namespace ModernWindow.Structures
                     Arguments = "/C where " + command,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -159,7 +162,34 @@ namespace ModernWindow.Structures
         {
             App.mainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
         }
-        
+
+        public static void Log(string s)
+        {
+            CoreData.WingetUILog += s + "\n";
+            Console.WriteLine(s);
+        }
+
+        public static void Log(Exception e)
+        { Log(e.ToString()); }
+
+        public static void Log(object o)
+        { Log(o.ToString()); }
+
+
+        public static void LogManagerOperation(PackageManager manager, Process process, string output)
+        {
+            output = Regex.Replace(output, "\n.{0,6}\n", "\n");
+            CoreData.ManagerLogs += $"=========================================\n";
+            CoreData.ManagerLogs += $"[{DateTime.Now}] {manager.Name} - Arguments: {process.StartInfo.Arguments}\n";
+            CoreData.ManagerLogs += $"       Executable: {process.StartInfo.FileName}\n";
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += output;
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += $"[{DateTime.Now}] Exit Code: {process.ExitCode}";
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += $"=========================================\n";
+        }
     }
 
 }

@@ -20,6 +20,7 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Diagnostics;
 using Windows.Storage.Pickers;
 using Windows.Storage;
+using ModernWindow.Data;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -51,11 +52,11 @@ namespace ModernWindow.Interface.Pages
         {
             if(LogType == LogType.WingetUILog)
             {
-                //LogTextBox.Text = File.ReadAllText(CoreData.WingetUILogFile);
+                LogTextBox.Text = CoreData.WingetUILog;
             }
             else if(LogType == LogType.ManagerLogs)
             {
-                //LogTextBox.Text = File.ReadAllText(CoreData.ManagerLogsFile);
+                LogTextBox.Text = CoreData.ManagerLogs;
             }
             else if(LogType == LogType.OperationHistory)
             {

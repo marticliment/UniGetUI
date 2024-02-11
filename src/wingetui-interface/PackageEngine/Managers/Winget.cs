@@ -14,6 +14,7 @@ using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
+using ModernWindow.Structures;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -38,6 +39,7 @@ namespace ModernWindow.PackageEngine.Managers
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"",
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -50,9 +52,11 @@ namespace ModernWindow.PackageEngine.Managers
             int SourceIndex = -1;
             bool DashesPassed = false;
             string line;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed && line.Contains("---"))
+                output += line + "\n";
+                if (!DashesPassed && line.Contains("---"))
                 {
                     var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
                     IdIndex = OldLine.IndexOf(HeaderPrefix+"Id");
@@ -87,6 +91,8 @@ namespace ModernWindow.PackageEngine.Managers
                 OldLine = line;
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             await Task.Run(p.WaitForExit);
 
             return Packages.ToArray();
@@ -102,6 +108,7 @@ namespace ModernWindow.PackageEngine.Managers
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " update --include-unknown",
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -115,9 +122,11 @@ namespace ModernWindow.PackageEngine.Managers
             int SourceIndex = -1;
             bool DashesPassed = false;
             string line;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed && line.Contains("---"))
+                output += line + "\n";
+                if (!DashesPassed && line.Contains("---"))
                 {
                     var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
                     var HeaderSuffix = OldLine.Contains("SearchId")? "Header": "";
@@ -165,6 +174,8 @@ namespace ModernWindow.PackageEngine.Managers
                 OldLine = line;
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             await Task.Run(p.WaitForExit);
             
             return Packages.ToArray();
@@ -179,6 +190,7 @@ namespace ModernWindow.PackageEngine.Managers
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " list",
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -192,9 +204,11 @@ namespace ModernWindow.PackageEngine.Managers
             int NewVersionIndex = -1;
             bool DashesPassed = false;
             string line;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed && line.Contains("---"))
+                output += line + "\n";
+                if (!DashesPassed && line.Contains("---"))
                 {
                     var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
                     var HeaderSuffix = OldLine.Contains("SearchId")? "Header": "";
@@ -234,6 +248,8 @@ namespace ModernWindow.PackageEngine.Managers
                 OldLine = line;
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             await Task.Run(p.WaitForExit);
 
             return Packages.ToArray();
@@ -433,7 +449,7 @@ namespace ModernWindow.PackageEngine.Managers
                         sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
                     }
                 } catch (Exception e) {
-                    Console.WriteLine(e);
+                    AppTools.Log(e);
                 }
             }
             await process.WaitForExitAsync();
@@ -449,6 +465,7 @@ namespace ModernWindow.PackageEngine.Managers
                 FileName = Properties.ExecutableFriendlyName,
                 Arguments = Properties.ExecutableCallArgs + " source update",
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
             };
             process.StartInfo = StartInfo;
             process.Start();
@@ -461,8 +478,8 @@ namespace ModernWindow.PackageEngine.Managers
             if(!process.HasExited)
             {
                 process.Kill();
-                Console.WriteLine("Winget source update timed out. Current output was");
-                Console.WriteLine(await process.StandardOutput.ReadToEndAsync());
+                AppTools.Log("Winget source update timed out. Current output was");
+                AppTools.Log(await process.StandardOutput.ReadToEndAsync());
             }
         }
 
@@ -515,6 +532,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Arguments = "/C echo %PROCESSOR_ARCHITECTURE%",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -541,6 +559,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Arguments = "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -583,8 +602,10 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             List<string> versions = new List<string>();
             bool DashesPassed = false;
+            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
@@ -593,7 +614,8 @@ namespace ModernWindow.PackageEngine.Managers
                 else 
                     versions.Add(line.Trim());
             }
-
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             return versions.ToArray();
         }
     }

@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using ModernWindow.Structures;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -37,8 +38,10 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             List<Package> Packages = new();
             bool HeaderPassed = false;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!HeaderPassed)
                     if(line.Contains("NAME"))
                         HeaderPassed = true;
@@ -73,8 +76,10 @@ namespace ModernWindow.PackageEngine.Managers
             p.Start();
             string line;
             List<UpgradablePackage> Packages = new();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 string[] elements = line.Split(':');
                 if(elements.Length >= 4)
                 {
@@ -96,12 +101,16 @@ namespace ModernWindow.PackageEngine.Managers
             };
 
             p.Start();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 string[] elements = line.Split(':');
                 if(elements.Length >= 4)
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this, PackageScope.Global));
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -126,9 +135,11 @@ namespace ModernWindow.PackageEngine.Managers
             p.Start();
             string line;
             List<Package> Packages = new();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                output += line + "\n";
+                if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
@@ -149,15 +160,18 @@ namespace ModernWindow.PackageEngine.Managers
             };
 
             p.Start();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                output += line + "\n";
+                if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();

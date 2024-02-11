@@ -11,6 +11,7 @@ using Microsoft.Windows.AppLifecycle;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,8 +58,8 @@ namespace ModernWindow
          
             this.UnhandledException += (sender, e) =>
             {
-                Console.WriteLine("Unhandled Exception raised: " + e.Message);
-                Console.WriteLine("Stack Trace: \n" + e.Exception.StackTrace);
+                AppTools.Log("Unhandled Exception raised: " + e.Message);
+                AppTools.Log("Stack Trace: \n" + e.Exception.StackTrace);
                 DisposeAndQuit(1);
             };
 
@@ -123,9 +124,9 @@ namespace ModernWindow
                 while(!manager.ManagerReady && Environment.TickCount - StartTime < 10000)
                 {
                     await Task.Delay(100);
-                    Console.WriteLine("Waiting for manager " + manager.Name);
+                    AppTools.Log("Waiting for manager " + manager.Name);
                 }
-                Console.WriteLine(manager.Name + " ready");
+                AppTools.Log(manager.Name + " ready");
             }
 
             Debug.WriteLine("All managers loaded");
@@ -152,7 +153,7 @@ namespace ModernWindow
 
         public void DisposeAndQuit(int outputCode = 0)
         {
-            Console.WriteLine("Quitting...");
+            AppTools.Log("Quitting...");
             mainWindow.Close();
             ToastNotificationManagerCompat.Uninstall();
             Environment.Exit(outputCode);

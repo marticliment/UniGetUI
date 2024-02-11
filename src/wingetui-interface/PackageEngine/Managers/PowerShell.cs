@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using ModernWindow.Structures;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -38,9 +39,11 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             List<Package> Packages = new();
             bool DashesPassed = false;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                Console.WriteLine(DashesPassed.ToString() + ": " + line);
+                output += line + "\n";
+                AppTools.Log(DashesPassed.ToString() + ": " + line);
                 if (!DashesPassed)
                 {
                     if(line.Contains("-----"))
@@ -58,13 +61,16 @@ namespace ModernWindow.PackageEngine.Managers
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
                     else
                     {
-                        Console.WriteLine("Unknown PowerShell source!");
+                        AppTools.Log("Unknown PowerShell source!");
                         var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);
                     }   
                 }
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -79,6 +85,7 @@ namespace ModernWindow.PackageEngine.Managers
                 FileName = Status.ExecutablePath,
                 Arguments = "",
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
@@ -117,9 +124,11 @@ namespace ModernWindow.PackageEngine.Managers
                 "); // do NOT remove the trailing endline
             string line;
             List<UpgradablePackage> Packages = new();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(line.StartsWith(">>"))
+                output += line + "\n";
+                if (line.StartsWith(">>"))
                     continue;
 
                 string[] elements = line.Split('|');
@@ -141,6 +150,8 @@ namespace ModernWindow.PackageEngine.Managers
                 }   
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -164,8 +175,10 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             List<Package> Packages = new();
             bool DashesPassed = false;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!DashesPassed)
                 {
                     if(line.Contains("-----"))
@@ -183,7 +196,7 @@ namespace ModernWindow.PackageEngine.Managers
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
                     else
                     {
-                        Console.WriteLine("Unknown PowerShell source!");
+                        AppTools.Log("Unknown PowerShell source!");
                         var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);
@@ -191,6 +204,8 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -289,8 +304,10 @@ namespace ModernWindow.PackageEngine.Managers
 
             bool dashesPassed = false;
             string line;
+            string output = "";
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 try {
                     if (string.IsNullOrEmpty(line))
                         continue;
@@ -304,9 +321,11 @@ namespace ModernWindow.PackageEngine.Managers
                             sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[2].Trim())));
                     }
                 } catch (Exception e) {
-                    Console.WriteLine(e);
+                    AppTools.Log(e);
                 }
             }
+            output += await process.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, process, output);
             await process.WaitForExitAsync();
             return sources.ToArray();
         }
@@ -372,6 +391,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Arguments = Properties.ExecutableCallArgs + " \"echo $PSVersionTable\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -404,8 +424,10 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             List<string> versions = new();
             bool DashesPassed = false;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!DashesPassed)
                 {
                     if(line.Contains("-----"))

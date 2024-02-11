@@ -450,7 +450,7 @@ namespace ModernWindow.Interface
                 Directory.Delete(CoreData.WingetUICacheDirectory_Icons, true);
             } catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                AppTools.Log(ex);
             }
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }

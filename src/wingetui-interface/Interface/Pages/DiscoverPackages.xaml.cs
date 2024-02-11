@@ -75,10 +75,10 @@ namespace ModernWindow.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    Console.WriteLine(e);
-                    Console.WriteLine(e.OriginalSource);
-                    Console.WriteLine(e.OriginalSource as FrameworkElement);
-                    Console.WriteLine((e.OriginalSource as FrameworkElement).DataContext);
+                    AppTools.Log(e);
+                    AppTools.Log(e.OriginalSource);
+                    AppTools.Log(e.OriginalSource as FrameworkElement);
+                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         var node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -91,7 +91,7 @@ namespace ModernWindow.Interface
                     }
                     else
                     {
-                        Console.WriteLine((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -117,7 +117,7 @@ namespace ModernWindow.Interface
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        AppTools.Log(ex);
                     }
                 }
             };

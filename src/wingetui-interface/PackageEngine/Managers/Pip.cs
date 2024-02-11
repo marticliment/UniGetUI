@@ -12,6 +12,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using CommunityToolkit.WinUI.Helpers;
 using Windows.ApplicationModel;
+using ModernWindow.Structures;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -57,9 +58,11 @@ namespace ModernWindow.PackageEngine.Managers
 
             string line;
             bool DashesPassed = false;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed)
+                output += line + "\n";
+                if (!DashesPassed)
                 {
                     if(line.Contains("----"))
                         DashesPassed = true;
@@ -75,6 +78,8 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -97,9 +102,11 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             bool DashesPassed = false;
             var Packages = new List<UpgradablePackage>();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed)
+                output += line + "\n";
+                if (!DashesPassed)
                 {
                     if(line.Contains("----"))
                         DashesPassed = true;
@@ -115,6 +122,8 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
                 }
             }
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -138,9 +147,11 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             bool DashesPassed = false;
             var Packages = new List<Package>();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed)
+                output += line + "\n";
+                if (!DashesPassed)
                 {
                     if(line.Contains("----"))
                         DashesPassed = true;
@@ -156,6 +167,8 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -280,6 +293,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Arguments = Properties.ExecutableCallArgs + " --version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -312,12 +326,16 @@ namespace ModernWindow.PackageEngine.Managers
 
             string line;
             string[] result = new string[0];
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(line.Contains("Available versions:"))
+                output += line + "\n";
+                if (line.Contains("Available versions:"))
                     result = line.Replace("Available versions:", "").Trim().Split(", ");
             }
 
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
             return result;
         }
     }

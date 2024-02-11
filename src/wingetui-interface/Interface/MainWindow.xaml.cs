@@ -83,7 +83,7 @@ namespace ModernWindow
                 NavigationPage.UpdatesPage.UpdateAll();
             else
                 Activate();
-            Console.WriteLine("Notification activated: " + args.ToString() + " " + input.ToString()) ;
+            AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString()) ;
         }
 
         public void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
@@ -340,7 +340,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                AppTools.Log(e);
                 if(DialogQueue.Contains(dialog))
                     DialogQueue.Remove(dialog);
                 return ContentDialogResult.None;

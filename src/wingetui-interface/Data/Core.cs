@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,10 @@ namespace ModernWindow.Data
             }
         }
         public static bool IsDaemon = false;
+
+        public static string WingetUILog = "";
+        public static string ManagerLogs = "";
+
 
         private static int __volatile_notification_id_counter = 1235;
         public static int VolatileNotificationIdCounter { get { return __volatile_notification_id_counter++; } }
@@ -84,19 +89,19 @@ namespace ModernWindow.Data
                     await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
                 }
 
-                Console.WriteLine("Downloaded icons and screenshots successfully!");
+                AppTools.Log("Downloaded icons and screenshots successfully!");
 
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to download icons and screenshots");
-                Console.WriteLine(e);
+                AppTools.Log("Failed to download icons and screenshots");
+                AppTools.Log(e);
             }
 
             
             if(!File.Exists(IconsAndScreenshotsFile))
             {
-                Console.WriteLine("WARNING: Icon Database file not found");
+                AppTools.Log("WARNING: Icon Database file not found");
                 return;
             }
 
@@ -108,8 +113,8 @@ namespace ModernWindow.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to load icon database");
-                Console.WriteLine(ex);
+                AppTools.Log("Failed to load icon database");
+                AppTools.Log(ex);
             }
         }
     }

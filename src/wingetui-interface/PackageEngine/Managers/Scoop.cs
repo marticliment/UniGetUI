@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using ABI.System.Collections.Generic;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
+using ModernWindow.Structures;
 using Windows.Graphics.Display;
 
 namespace ModernWindow.PackageEngine.Managers;
@@ -60,8 +61,10 @@ public class Scoop : PackageManagerWithSources
 
         string line;
         ManagerSource source = GetMainSource();
+        string output = "";
         while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
+            output += line + "\n";
             if (line.StartsWith("'"))
             {
                 var sourceName = line.Split(" ")[0].Replace("'", "");
@@ -69,7 +72,7 @@ public class Scoop : PackageManagerWithSources
                     source = SourceReference[sourceName];
                 else
                 {
-                    Console.WriteLine("Unknown source!");
+                    AppTools.Log("Unknown source!");
                     source = new ManagerSource(this, sourceName, new Uri("https://scoop.sh/"), 0, "Unknown");
                     SourceReference.Add(sourceName, source);
                 }
@@ -88,6 +91,8 @@ public class Scoop : PackageManagerWithSources
                 Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
             }
         }
+        output += await p.StandardError.ReadToEndAsync();
+        AppTools.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
 
@@ -119,8 +124,10 @@ public class Scoop : PackageManagerWithSources
 
         string line;
         bool DashesPassed = false;
+        string output = "";
         while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
+            output += line + "\n";
             if (!DashesPassed)
             {
                 if (line.Contains("---"))
@@ -139,13 +146,15 @@ public class Scoop : PackageManagerWithSources
 
                 if (!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                 {
-                    Console.WriteLine("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
+                    AppTools.Log("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
                     continue;
                 }
 
                 Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
             }
         }
+        output += await p.StandardError.ReadToEndAsync();
+        AppTools.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
 
@@ -170,9 +179,10 @@ public class Scoop : PackageManagerWithSources
 
         string line;
         bool DashesPassed = false;
+        string output = "";
         while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
-
+            output += line + "\n";
             if (!DashesPassed)
             {
                 if (line.Contains("---"))
@@ -195,7 +205,7 @@ public class Scoop : PackageManagerWithSources
                     source = SourceReference[sourceName];
                 else
                 {
-                    Console.WriteLine("Unknown source!");
+                    AppTools.Log("Unknown source!");
                     source = new ManagerSource(this, sourceName, new Uri("https://scoop.sh/"), 0, "Unknown");
                     SourceReference.Add(sourceName, source);
                 }
@@ -207,6 +217,8 @@ public class Scoop : PackageManagerWithSources
                 Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], source, this, scope));
             }
         }
+        output += await p.StandardError.ReadToEndAsync();
+        AppTools.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
 
@@ -223,7 +235,6 @@ public class Scoop : PackageManagerWithSources
 
     protected override async Task<ManagerSource[]> GetSources_UnSafe()
     {
-        Console.WriteLine("🔵 Starting " + Name + " source search...");
         using (Process process = new Process())
         {
             process.StartInfo.FileName = Status.ExecutablePath;
@@ -255,7 +266,6 @@ public class Scoop : PackageManagerWithSources
             }
 
             await process.WaitForExitAsync();
-            Debug.WriteLine("🔵 " + Name + " source search finished.");
             return sources.ToArray();
         }
     }
@@ -419,6 +429,7 @@ public class Scoop : PackageManagerWithSources
                 Arguments = Properties.ExecutableCallArgs + " --version",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 CreateNoWindow = true
             }
         };
@@ -436,7 +447,7 @@ public class Scoop : PackageManagerWithSources
     protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
     {
         await Task.Delay(0);
-        Console.WriteLine("Manager " + Name + " does not support version retrieving, this function should have never been called");
+        AppTools.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
         return new string[0];
     }
 }

@@ -14,6 +14,8 @@ using System.Collections;
 using Windows.UI.WebUI;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using ModernWindow.Structures;
+using Windows.Storage.Streams;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -38,9 +40,11 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
             string line;
+            string output = "";
             List<Package> Packages = new();
             while((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
@@ -55,6 +59,9 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -77,9 +84,11 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
             string line;
+            string output = "";
             List<UpgradablePackage> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split('|');
@@ -94,6 +103,9 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
                 }
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -116,9 +128,11 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
             string line;
+            string output = "";
             List<Package> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
@@ -133,6 +147,9 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -243,9 +260,12 @@ namespace ModernWindow.PackageEngine.Managers
             process.StartInfo = startInfo;
             process.Start();
 
+
+            string output = "";
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 try {
                     if (string.IsNullOrEmpty(line))
                         continue;
@@ -255,9 +275,13 @@ namespace ModernWindow.PackageEngine.Managers
                         sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
                     }
                 } catch (Exception e) {
-                    Console.WriteLine(e);
+                    AppTools.Log(e);
                 }
             }
+
+            output += await process.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, process, output);
+
             await process.WaitForExitAsync();
             return sources.ToArray();
         }
@@ -330,6 +354,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Arguments = "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -357,24 +382,29 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             };
 
-            Console.WriteLine(p.StartInfo.FileName);
-            Console.WriteLine(p.StartInfo.Arguments.ToString());
+            AppTools.Log(p.StartInfo.FileName);
+            AppTools.Log(p.StartInfo.Arguments.ToString());
 
             p.Start();
             string line;
+            string output = "";
             List<string> versions = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
-                    Console.WriteLine(line);
+                    AppTools.Log(line);
                     if (elements.Length < 2 || elements[0].Trim() != package.Id)
                         continue;
 
                     versions.Add(elements[1].Trim());
                 }
             }
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
+
             return versions.ToArray();
         }
     }

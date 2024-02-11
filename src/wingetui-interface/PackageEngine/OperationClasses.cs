@@ -79,7 +79,7 @@ namespace ModernWindow.PackageEngine
             {
                 if(bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    Console.WriteLine("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new Process();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -182,7 +182,7 @@ namespace ModernWindow.PackageEngine
             {
                 if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    Console.WriteLine("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new Process();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -283,7 +283,7 @@ namespace ModernWindow.PackageEngine
             {
                 if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    Console.WriteLine("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new Process();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";

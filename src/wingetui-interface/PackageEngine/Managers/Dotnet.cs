@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using ModernWindow.Structures;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -38,8 +39,10 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             List<Package> Packages = new();
             bool DashesPassed = false;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if (!DashesPassed)
                 {
                     if(line.Contains("-----"))
@@ -53,6 +56,9 @@ namespace ModernWindow.PackageEngine.Managers
                         // Dotnet tool packages are installed globally by default, hence the Global flag
                 }
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -95,9 +101,11 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             bool DashesPassed = false;
             var Packages = new List<UpgradablePackage>();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                if(!DashesPassed)
+                output += line + "\n";
+                if (!DashesPassed)
                 {
                     if(line.Contains("----"))
                         DashesPassed = true;
@@ -113,6 +121,9 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
                 }
             }
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
+
             return Packages.ToArray();
         }
 
@@ -172,8 +183,10 @@ namespace ModernWindow.PackageEngine.Managers
             p.Start();
 
             DashesPassed = false;
+            string output = "";
             while((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 if(!DashesPassed)
                 {
                     if(line.Contains("----"))
@@ -190,6 +203,9 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
             }
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
+
             return Packages.ToArray();
         }
         
@@ -312,6 +328,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Arguments = "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
@@ -327,7 +344,7 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             await Task.Delay(0);
-            Console.WriteLine("Manager "+Name+" does not support version retrieving, this function should have never been called");
+            AppTools.Log("Manager "+Name+" does not support version retrieving, this function should have never been called");
             return new string[0];
         }
     }

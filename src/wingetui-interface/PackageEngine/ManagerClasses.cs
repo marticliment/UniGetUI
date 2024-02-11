@@ -57,7 +57,7 @@ namespace ModernWindow.PackageEngine
                     else
                     {
                         ManagerReady = true;
-                        Console.WriteLine(Name + " sources took too long to load, using known sources as default");
+                        AppTools.Log(Name + " sources took too long to load, using known sources as default");
                         (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).DefaultSources;
                     }
                 }
@@ -67,7 +67,7 @@ namespace ModernWindow.PackageEngine
             catch (Exception e)
             {
                 ManagerReady = true; // We need this to unblock the main thread
-                Console.WriteLine("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
+                AppTools.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
             }
         }
 
@@ -88,7 +88,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error finding packages on manager " + Name + " with query "  + query +  ": \n" + e.ToString());
+                AppTools.Log("Error finding packages on manager " + Name + " with query "  + query +  ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -100,7 +100,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error finding updates on manager " + Name + ": \n" + e.ToString());
+                AppTools.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
                 return new UpgradablePackage[] { };
             }
         }
@@ -112,7 +112,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
+                AppTools.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -124,7 +124,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error getting package details on manager " + Name + " for package id=" + package.Id +": \n" + e.ToString());
+                AppTools.Log("Error getting package details on manager " + Name + " for package id=" + package.Id +": \n" + e.ToString());
                 return new PackageDetails(package);
             }
         }
@@ -140,7 +140,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                AppTools.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
                 return new string[0];
             }
         }
@@ -173,7 +173,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error finding sources for manager " + Name + ": \n" + e.ToString());
+                AppTools.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
                 return new ManagerSource[] { };
             }
         }

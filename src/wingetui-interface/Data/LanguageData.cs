@@ -576,14 +576,14 @@ namespace ModernWindow.Data
                 MainLangDict.TryAdd("locale", "en");
             }
             LoadStaticTranslation();
-            Console.WriteLine("Loaded language locale: " + MainLangDict["locale"]);
+            AppTools.Log("Loaded language locale: " + MainLangDict["locale"]);
         }
 
         public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
         {
             Dictionary<string, string> LangDict = new();
             var LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
-            Console.WriteLine(LangFileToLoad);
+            AppTools.Log(LangFileToLoad);
 
             if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
                 ForceBundled = true;
@@ -591,7 +591,7 @@ namespace ModernWindow.Data
             if(ForceBundled)
             {
                 LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "wingetui\\Core\\Languages", "lang_" + LangKey + ".json");
-                Console.WriteLine(LangFileToLoad);
+                AppTools.Log(LangFileToLoad);
             }
 
             LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null?x.Value.ToString(): "");
@@ -612,11 +612,11 @@ namespace ModernWindow.Data
                     var fileContents = await client.DownloadStringTaskAsync(NewFile);
                     File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
                 }
-                Console.WriteLine("Lang files were updated successfully");
+                AppTools.Log("Lang files were updated successfully");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                AppTools.Log(e);
             }
         }
 

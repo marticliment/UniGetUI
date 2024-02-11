@@ -385,7 +385,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                AppTools.Log(e.ToString());
             }
         }
 
