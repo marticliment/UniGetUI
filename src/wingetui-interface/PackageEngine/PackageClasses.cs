@@ -11,8 +11,11 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
+using Windows.Devices.Bluetooth.Background;
 using Windows.Graphics.DirectX.Direct3D11;
 using WinRT;
 
@@ -282,6 +285,18 @@ namespace ModernWindow.PackageEngine
 
     public class InstallationOptions
     {
+        public class JsonOptions_v1
+        {
+            public bool SkipHashCheck { get; set; } = false;
+            public bool InteractiveInstallation { get; set; } = false;
+            public bool RunAsAdministrator { get; set; } = false;
+            public string Architecture { get; set; } = "";
+            public string InstallationScope { get; set; } = "";
+            public List<string> CustomParameters { get; set; }
+            public bool PreRelease { get; set; } = false;
+            public string CustomInstallLocation { get; set; } = "";
+        }
+
         public bool SkipHashCheck { get; set; } = false;
         public bool InteractiveInstallation { get; set; } = false;
         public bool RunAsAdministrator { get; set; } = false;
@@ -334,35 +349,19 @@ namespace ModernWindow.PackageEngine
             return optionsToSave;
         }
 
-        public void LoadFromDictionary(Dictionary<string, object> data)
+        public void LoadFromJsonString(string JSON)
         {
-            foreach (string entry in _dataToSave)
-            {
-                if (data.ContainsKey(entry))
-                {
-                    if (entry == "Architecture" && data[entry].ToString() != "" && CommonTranslations.InvertedArchNames.ContainsKey(data[entry].ToString()))
-                        Architecture = CommonTranslations.InvertedArchNames[data[entry].ToString()];
-                    else if (entry == "InstallationScope" && data[entry].ToString() != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(data[entry].ToString()))
-                        InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[data[entry].ToString()];
-                    else if (data[entry] != null && data[entry].ToString() != "")
-                    {
-                        if (new string[] { "SkipHashCheck", "InteractiveInstallation", "RunAsAdministrator", "PreRelease" }.Contains(entry))
-                        {
-                            GetType().GetProperty(entry)?.SetValue(this, "true" == data[entry].ToString() ? true : false);
-                        }
-                        else if (new string[] { "CustomParameters" }.Contains(entry))
-                        {
-                            var list = new List<string>();
-                            (data[entry] as JsonArray).ToList().ForEach(x => list.Add(x.ToString()));
-                            GetType().GetProperty(entry)?.SetValue(this, list);
-                        }
-                        else
-                        {
-                            GetType().GetProperty(entry)?.SetValue(this, data[entry].ToString());
-                        }
-                    }
-                }
-            }
+            JsonOptions_v1 options = JsonSerializer.Deserialize<JsonOptions_v1>(JSON);
+            SkipHashCheck = options.SkipHashCheck;
+            InteractiveInstallation = options.InteractiveInstallation;
+            RunAsAdministrator = options.RunAsAdministrator;
+            CustomInstallLocation = options.CustomInstallLocation;
+            PreRelease = options.PreRelease;
+            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
+                Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
+            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(options.InstallationScope))
+                InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[options.InstallationScope];
+            CustomParameters = options.CustomParameters;
         }
 
         public void SaveOptionsToDisk()
@@ -378,10 +377,7 @@ namespace ModernWindow.PackageEngine
                 var filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
                 if (!File.Exists(filename))
                     return;
-                Dictionary<string, object?> DictData = new();
-                foreach(var element in (JsonObject.Parse(File.ReadAllText(filename)) as JsonObject))
-                    DictData.Add(element.Key, element.Value);
-                LoadFromDictionary(DictData);
+                LoadFromJsonString(File.ReadAllText(filename));
             }
             catch (Exception e)
             {
