@@ -466,6 +466,7 @@ namespace ModernWindow.PackageEngine.Managers
                 Arguments = Properties.ExecutableCallArgs + " source update",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                CreateNoWindow = true,
             };
             process.StartInfo = StartInfo;
             process.Start();
@@ -542,9 +543,9 @@ namespace ModernWindow.PackageEngine.Managers
             if(bindings.GetSettings("UseSystemWinget"))
                 status.ExecutablePath = await bindings.Which("winget.exe");
             else if(output.Contains("ARM64") | bindings.GetSettings("EnableArmWinget"))
-                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "wingetui/PackageEngine/Managers/winget-cli_arm64/winget.exe");
+                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "PackageEngine/Managers/winget-cli_arm64/winget.exe");
             else
-                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "wingetui/PackageEngine/Managers/winget-cli_x64/winget.exe");
+                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "PackageEngine/Managers/winget-cli_x64/winget.exe");
             
             status.Found = File.Exists(status.ExecutablePath);
 

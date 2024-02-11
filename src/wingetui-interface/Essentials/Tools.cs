@@ -166,7 +166,7 @@ namespace ModernWindow.Structures
         public static void Log(string s)
         {
             CoreData.WingetUILog += s + "\n";
-            Console.WriteLine(s);
+            Debug.WriteLine(s);
         }
 
         public static void Log(Exception e)

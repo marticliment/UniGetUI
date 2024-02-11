@@ -243,7 +243,7 @@ public class Scoop : PackageManagerWithSources
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = false;
+            process.StartInfo.CreateNoWindow = true;
 
             List<string> output = new List<string>();
             List<ManagerSource> sources = new List<ManagerSource>();
