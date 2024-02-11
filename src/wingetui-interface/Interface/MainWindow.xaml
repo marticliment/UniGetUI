@@ -32,7 +32,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="12,8,12,8" Spacing="10">
                     <Image VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="16" Height="16" >
                         <Image.Source>
-                            <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///wingetui/resources/icon.png"/>
+                            <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///Assets/Images/icon.png"/>
                         </Image.Source>
                     </Image>
                     <TextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="13"/>
@@ -64,7 +64,7 @@
                     </animations:Explicit.Animations>
                     <Image Width="87">
                         <Image.Source>
-                            <BitmapImage UriSource="ms-appx:///wingetui/resources/icon_unsquare.png"/>
+                            <BitmapImage UriSource="ms-appx:///Assets/Images/icon_unsquare.png"/>
                         </Image.Source>
                     </Image>
                 </Border>

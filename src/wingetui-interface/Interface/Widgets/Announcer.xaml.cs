@@ -77,7 +77,7 @@ namespace ModernWindow.Interface.Widgets
                 else
                 {
                     SetText(binder.Translate("Could not load announcements - HTTP status code is $CODE").Replace("$CODE", response.StatusCode.ToString()));
-                    SetImage(new Uri("ms-appx:///wingetui/resources/warn.png"));
+                    SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
                     if (!retry)
                         LoadAnnouncements(true);
                 }
@@ -86,7 +86,7 @@ namespace ModernWindow.Interface.Widgets
             {
                 AppTools.Log("Could not load announcements: " + ex.ToString());
                 SetText(binder.Translate("Could not load announcements - ") + ex.ToString());
-                SetImage(new Uri("ms-appx:///wingetui/resources/warn.png"));
+                SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
             }
         }
 

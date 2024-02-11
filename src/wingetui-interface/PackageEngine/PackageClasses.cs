@@ -101,7 +101,7 @@ namespace ModernWindow.PackageEngine
                 if (CoreData.IconDatabaseData[iconId].icon != "")
                     return new Uri(CoreData.IconDatabaseData[iconId].icon);
 
-            return new Uri("ms-appx:///wingetui/resources/package_color.png");
+            return new Uri("ms-appx:///Assets/Images/package_color.png"); // TODO: Fallback image!
         }
 
         public float GetFloatVersion()

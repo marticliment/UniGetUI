@@ -449,7 +449,6 @@ namespace ModernWindow.Interface
             if (!Initialized)
                 return;
             MainTitle.Text = "Discover Packages";
-            //HeaderImage.Source = new BitmapImage(new Uri("ms-appx:///wingetui/resources/desktop_download.png"));
             HeaderIcon.Glyph = "\uF6FA";
             CheckboxHeader.Content = " ";
             NameHeader.Content = bindings.Translate("Package Name");

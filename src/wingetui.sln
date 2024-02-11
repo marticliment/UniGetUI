@@ -5,14 +5,6 @@ VisualStudioVersion = 17.9.34407.89
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wingetui-interface", "wingetui-interface\wingetui-interface.csproj", "{80305A17-2534-48DC-8F75-41F70FCCEAAF}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "wingetui-engine", "wingetui-engine\wingetui-engine.pyproj", "{1662460D-EDC1-4402-BA48-2FF8B959158E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{F4A497FA-F4D1-40CF-967D-E9BEA72A05EC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingetUIShareComponent", "components\share\WingetUIShareComponent\WingetUIShareComponent.csproj", "{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsWebView", "components\webview2\c#\WinFormsWebView.csproj", "{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,53 +39,9 @@ Global
 		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x86.ActiveCfg = Release|x86
 		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x86.Build.0 = Release|x86
 		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x86.Deploy.0 = Release|x86
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Release|x64.ActiveCfg = Release|Any CPU
-		{1662460D-EDC1-4402-BA48-2FF8B959158E}.Release|x86.ActiveCfg = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|x64.Build.0 = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Debug|x86.Build.0 = Debug|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|ARM64.Build.0 = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|x64.ActiveCfg = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|x64.Build.0 = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|x86.ActiveCfg = Release|Any CPU
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4}.Release|x86.Build.0 = Release|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|x64.ActiveCfg = Debug|x64
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|x64.Build.0 = Debug|x64
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|x86.ActiveCfg = Debug|Win32
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Debug|x86.Build.0 = Debug|Win32
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|ARM64.Build.0 = Release|Any CPU
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|x64.ActiveCfg = Release|x64
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|x64.Build.0 = Release|x64
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|x86.ActiveCfg = Release|Win32
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A7B1E738-96C6-4076-9AF7-DF5ADFA6C5E4} = {F4A497FA-F4D1-40CF-967D-E9BEA72A05EC}
-		{9E2B0C34-4FFB-4B33-BE98-CB8D72900F43} = {F4A497FA-F4D1-40CF-967D-E9BEA72A05EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}

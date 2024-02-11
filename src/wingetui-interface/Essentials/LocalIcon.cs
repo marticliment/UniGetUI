@@ -44,7 +44,7 @@ namespace ModernWindow.Interface.Widgets
 
             if (Source == null)
                 Source = new BitmapImage();
-            (Source as BitmapImage).UriSource = new Uri("ms-appx:///wingetui/resources/" + IconName + "_" + theme + ".png");
+            (Source as BitmapImage).UriSource = new Uri("ms-appx:///Assets/Images/" + IconName + "_" + theme + ".png");
         }
     }
 }

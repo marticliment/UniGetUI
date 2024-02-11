@@ -590,7 +590,7 @@ namespace ModernWindow.Data
 
             if(ForceBundled)
             {
-                LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "wingetui\\Core\\Languages", "lang_" + LangKey + ".json");
+                LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
                 AppTools.Log(LangFileToLoad);
             }
 

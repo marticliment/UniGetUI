@@ -237,7 +237,7 @@ namespace ModernWindow
                 modifier += "_white";
             
 
-            var FullIconPath = Path.Join(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "\\wingetui\\resources\\tray" + modifier + ".ico");
+            var FullIconPath = Path.Join(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "\\Assets\\Images\\tray" + modifier + ".ico");
 
             TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
         }
