@@ -2,9 +2,7 @@
 using Microsoft.Windows.AppLifecycle;
 using ModernWindow.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +18,7 @@ namespace ModernWindow
                 // Having an async main method breaks WebView2
                 CoreData.IsDaemon = args.Contains("--daemon");
                 _ = AsyncMain(args);
-            } 
+            }
             catch (Exception e)
             {
                 CoreData.ReportFatalException(e);
@@ -29,7 +27,8 @@ namespace ModernWindow
 
         static async Task AsyncMain(string[] args)
         {
-            try { 
+            try
+            {
                 WinRT.ComWrappersSupport.InitializeComWrappers();
                 bool isRedirect = await DecideRedirection();
                 if (!isRedirect) // Sometimes, redirection fails, so we try again
@@ -41,7 +40,7 @@ namespace ModernWindow
                 {
                     Microsoft.UI.Xaml.Application.Start((p) =>
                     {
-                        var context = new DispatcherQueueSynchronizationContext(
+                        DispatcherQueueSynchronizationContext context = new(
                             DispatcherQueue.GetForCurrentThread());
                         SynchronizationContext.SetSynchronizationContext(context);
                         new MainApp();
@@ -57,7 +56,7 @@ namespace ModernWindow
         {
             try
             {
-                
+
                 bool isRedirect = false;
                 AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
                 ExtendedActivationKind kind = args.Kind;
@@ -68,7 +67,7 @@ namespace ModernWindow
                 {
                     keyInstance.Activated += async (s, e) =>
                     {
-                        var AppInstance = MainApp.Current as MainApp;
+                        MainApp AppInstance = MainApp.Current as MainApp;
                         await AppInstance.ShowMainWindow_FromRedirect();
                     };
                 }

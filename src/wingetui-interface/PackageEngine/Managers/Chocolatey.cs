@@ -1,32 +1,22 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Security.Cryptography.Certificates;
-using Windows.Management.Deployment;
-using Windows.Graphics.Display;
-using System.IO;
 using System.Diagnostics;
-using System.Data.Common;
-using System.Text.RegularExpressions;
-using System.Collections;
-using Windows.UI.WebUI;
-using System.Net.Http.Headers;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using ModernWindow.Structures;
-using Windows.Storage.Streams;
+using System.Threading.Tasks;
 
 namespace ModernWindow.PackageEngine.Managers
 {
     public class Chocolatey : PackageManagerWithSources
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] {"", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] {"", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
+        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -42,20 +32,20 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             string output = "";
             List<Package> Packages = new();
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
-                    for(int i = 0; i<elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
                     if (elements.Length < 2)
                         continue;
 
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
-                    
+
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
@@ -70,7 +60,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -96,7 +86,7 @@ namespace ModernWindow.PackageEngine.Managers
 
                     if (elements.Length <= 2)
                         continue;
-                    
+
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
@@ -114,7 +104,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -157,11 +147,11 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            var output_string = string.Join("\n", Output);
-            
-            if(ReturnCode == 1641 || ReturnCode == 0)
+            string output_string = string.Join("\n", Output);
+
+            if (ReturnCode == 1641 || ReturnCode == 0)
                 return OperationVeredict.Succeeded;
-            else if(ReturnCode == 3010)
+            else if (ReturnCode == 3010)
                 return OperationVeredict.Succeeded; // TODO: Restart required
             else if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation") || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) && !options.RunAsAdministrator)
             {
@@ -178,7 +168,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            var output_string = string.Join("\n", Output);
+            string output_string = string.Join("\n", Output);
 
             if (ReturnCode == 1641 || ReturnCode == 1614 || ReturnCode == 1605 || ReturnCode == 0)
                 return OperationVeredict.Succeeded;
@@ -193,18 +183,18 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options).ToList();
+            List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
             parameters.Add("--no-progress");
 
-            if(options.Architecture == System.Runtime.InteropServices.Architecture.X86)
+            if (options.Architecture == System.Runtime.InteropServices.Architecture.X86)
                 parameters.Add("--forcex86");
 
-            if(options.PreRelease)
+            if (options.PreRelease)
                 parameters.Add("--prerelease");
 
-            if(options.SkipHashCheck)
-                parameters.AddRange(new string[] { "--ignore-checksums", "--force"});
+            if (options.SkipHashCheck)
+                parameters.AddRange(new string[] { "--ignore-checksums", "--force" });
 
             if (options.Version != "")
                 parameters.AddRange(new string[] { "--version=" + options.Version, "--allow-downgrade" });
@@ -213,14 +203,14 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetInstallParameters(package, options);
+            string[] parameters = GetInstallParameters(package, options);
             parameters[0] = Properties.UpdateVerb;
             return parameters;
         }
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = new List<string>() { Properties.UninstallVerb, package.Id, "-y" };
+            List<string> parameters = new() { Properties.UninstallVerb, package.Id, "-y" };
 
             if (options.CustomParameters != null)
                 parameters.AddRange(options.CustomParameters);
@@ -243,10 +233,10 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new List<ManagerSource>();
+            List<ManagerSource> sources = new();
 
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo()
+            Process process = new();
+            ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " source list",
@@ -266,15 +256,19 @@ namespace ModernWindow.PackageEngine.Managers
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
-                try {
+                try
+                {
                     if (string.IsNullOrEmpty(line))
                         continue;
 
-                    if(line.Contains(" - ") && line.Contains(" | ")) {
+                    if (line.Contains(" - ") && line.Contains(" | "))
+                    {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
                         sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     AppTools.Log(e);
                 }
             }
@@ -314,7 +308,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override ManagerProperties GetProperties()
         {
-            ManagerProperties properties = new ManagerProperties()
+            ManagerProperties properties = new()
             {
                 Name = "Chocolatey",
                 Description = bindings.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
@@ -325,28 +319,28 @@ namespace ModernWindow.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "upgrade",
                 ExecutableCallArgs = "",
-                
+
             };
             return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()
         {
-            var status = new ManagerStatus();
+            ManagerStatus status = new();
 
-            if(bindings.GetSettings("UseSystemChocolatey"))
+            if (bindings.GetSettings("UseSystemChocolatey"))
                 status.ExecutablePath = await bindings.Which("choco.exe");
-            else if(File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe")))
+            else if (File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe")))
                 status.ExecutablePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe");
             else
                 status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "choco-cli/choco.exe");
-            
+
             status.Found = File.Exists(status.ExecutablePath);
 
-            if(!status.Found)
+            if (!status.Found)
                 return status;
 
-            Process process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -369,7 +363,8 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            var p = new Process() {
+            Process p = new()
+            {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = Status.ExecutablePath,

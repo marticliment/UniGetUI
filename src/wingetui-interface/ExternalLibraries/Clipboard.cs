@@ -48,7 +48,7 @@ namespace ModernWindow.Clipboard
             IntPtr hGlobal = default;
             try
             {
-                var bytes = (text.Length + 1) * 2;
+                int bytes = (text.Length + 1) * 2;
                 hGlobal = Marshal.AllocHGlobal(bytes);
 
                 if (hGlobal == default)
@@ -56,7 +56,7 @@ namespace ModernWindow.Clipboard
                     ThrowWin32();
                 }
 
-                var target = GlobalLock(hGlobal);
+                IntPtr target = GlobalLock(hGlobal);
 
                 if (target == default)
                 {
@@ -109,8 +109,8 @@ namespace ModernWindow.Clipboard
                     return null;
                 }
 
-                var size = GlobalSize(handle);
-                var buff = new byte[size];
+                int size = GlobalSize(handle);
+                byte[] buff = new byte[size];
 
                 Marshal.Copy(pointer, buff, 0, size);
 
@@ -129,7 +129,7 @@ namespace ModernWindow.Clipboard
 
         static void TryOpenClipboard()
         {
-            var num = 10;
+            int num = 10;
             while (true)
             {
                 if (OpenClipboard(default))

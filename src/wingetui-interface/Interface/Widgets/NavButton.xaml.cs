@@ -1,18 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Structures;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -46,18 +36,19 @@ namespace ModernWindow.Interface.Widgets
 
         public NavButton()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.DefaultStyleKey = typeof(NavButton);
+            DefaultStyleKey = typeof(NavButton);
 
 
             TextProperty = DependencyProperty.Register(
                 nameof(Text),
                 typeof(string),
                 typeof(NavButton),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+                {
                     string val = (string)e.NewValue;
-                    if(val.Contains(" "))
+                    if (val.Contains(" "))
                     {
                         Height = 58 + 14;
                         VariableGrid.RowDefinitions[1].Height = new GridLength(26 + 14);
@@ -72,7 +63,7 @@ namespace ModernWindow.Interface.Widgets
                         TextBlock.Height = 18;
                         VariableGrid.RowDefinitions[1].Height = new GridLength(26);
                     }
-                    TextBlock.Text = bindings.Translate(val).Replace(" ", "\x0a"); 
+                    TextBlock.Text = bindings.Translate(val).Replace(" ", "\x0a");
                 }))
             );
 

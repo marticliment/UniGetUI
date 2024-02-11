@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.Devices.Bluetooth.Advertisement;
-using static CommunityToolkit.WinUI.Animations.Expressions.ExpressionValues;
-using Windows.Globalization;
+﻿using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text.Json.Nodes;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using ModernWindow.PackageEngine;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 
 namespace ModernWindow.Data
 {
@@ -468,7 +463,7 @@ namespace ModernWindow.Data
                 }
                 ";
 
-        public static Dictionary<string, string> LanguageList = new Dictionary<string, string>
+        public static Dictionary<string, string> LanguageList = new()
         {
             {"default", "System language" },
             {"ar",     "Arabic - عربي‎"},
@@ -512,7 +507,7 @@ namespace ModernWindow.Data
         };
 
 
-        public static Dictionary<string, string> TranslatedPercentages = new Dictionary<string, string>
+        public static Dictionary<string, string> TranslatedPercentages = new()
         {
           {"ar", "87%"},
           {"bg", "83%"},
@@ -552,13 +547,11 @@ namespace ModernWindow.Data
 
         public LanguageEngine()
         {
-            var LangName = AppTools.GetSettingsValue_Static("PreferredLanguage");
-            if(LangName == "default" || LangName == "")
+            string LangName = AppTools.GetSettingsValue_Static("PreferredLanguage");
+            if (LangName == "default" || LangName == "")
             {
                 LangName = Windows.System.UserProfile.GlobalizationPreferences.Languages[0];
             }
-            var LangNames = (LangName, LangName[0..2]);
-            bool LangFound = false;
 
             if (LanguageData.LanguageList.ContainsKey(LangName))
             {
@@ -582,23 +575,23 @@ namespace ModernWindow.Data
         public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
         {
             Dictionary<string, string> LangDict = new();
-            var LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
+            string LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
             AppTools.Log(LangFileToLoad);
 
             if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
                 ForceBundled = true;
 
-            if(ForceBundled)
+            if (ForceBundled)
             {
                 LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
                 AppTools.Log(LangFileToLoad);
             }
 
-            LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null?x.Value.ToString(): "");
-            
+            LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
+
             if (!AppTools.GetSettings_Static("DisableLangAutoUpdater"))
                 _ = UpdateLanguageFile(LangKey);
-            
+
             return LangDict;
         }
 
@@ -606,10 +599,10 @@ namespace ModernWindow.Data
         {
             try
             {
-                var NewFile = new Uri("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/Core/Languages/" + "lang_" + LangKey + ".json");
-                using (WebClient client = new WebClient())
+                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/Core/Languages/" + "lang_" + LangKey + ".json");
+                using (WebClient client = new())
                 {
-                    var fileContents = await client.DownloadStringTaskAsync(NewFile);
+                    string fileContents = await client.DownloadStringTaskAsync(NewFile);
                     File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
                 }
                 AppTools.Log("Lang files were updated successfully");
@@ -671,7 +664,7 @@ namespace ModernWindow.Data
             { "User | Local", PackageScope.Local },
         };
 
-        public static Dictionary<PackageScope, string> ScopeNames_NonLang= new()
+        public static Dictionary<PackageScope, string> ScopeNames_NonLang = new()
         {
             { PackageScope.Global, "machine" },
             { PackageScope.Local, "user" },

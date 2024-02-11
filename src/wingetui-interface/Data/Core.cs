@@ -2,13 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
 
 namespace ModernWindow.Data
 {
@@ -17,7 +13,7 @@ namespace ModernWindow.Data
         public static string VersionName = "3.0-alpha0";
         public static double VersionNumber = 2.98;
 
-        private static string __ignored_updates_database_file =  Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "IgnoredPackageUpdates.json");
+        private static string __ignored_updates_database_file = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "IgnoredPackageUpdates.json");
         public static string IgnoredUpdatesDatabaseFile
         {
             get
@@ -74,18 +70,18 @@ namespace ModernWindow.Data
 
         public static async Task LoadIconAndScreenshotsDatabase()
         {
-            var IconsAndScreenshotsFile = Path.Join(WingetUICacheDirectory_Data, "Icon Database.json");
+            string IconsAndScreenshotsFile = Path.Join(WingetUICacheDirectory_Data, "Icon Database.json");
 
             try
             {
-                if(!File.Exists(IconsAndScreenshotsFile))
-                    if(!Directory.Exists(Path.GetDirectoryName(IconsAndScreenshotsFile)))
+                if (!File.Exists(IconsAndScreenshotsFile))
+                    if (!Directory.Exists(Path.GetDirectoryName(IconsAndScreenshotsFile)))
                         Directory.CreateDirectory(Path.GetDirectoryName(IconsAndScreenshotsFile));
-                
-                var DownloadUrl = new Uri("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json");
-                using (WebClient client = new WebClient())
+
+                Uri DownloadUrl = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json");
+                using (WebClient client = new())
                 {
-                    var fileContents = await client.DownloadStringTaskAsync(DownloadUrl);
+                    string fileContents = await client.DownloadStringTaskAsync(DownloadUrl);
                     await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
                 }
 
@@ -98,8 +94,8 @@ namespace ModernWindow.Data
                 AppTools.Log(e);
             }
 
-            
-            if(!File.Exists(IconsAndScreenshotsFile))
+
+            if (!File.Exists(IconsAndScreenshotsFile))
             {
                 AppTools.Log("WARNING: Icon Database file not found");
                 return;
@@ -107,7 +103,7 @@ namespace ModernWindow.Data
 
             try
             {
-                var JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(await File.ReadAllTextAsync(IconsAndScreenshotsFile));
+                IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(await File.ReadAllTextAsync(IconsAndScreenshotsFile));
                 if (JsonData.icons_and_screenshots != null)
                     IconDatabaseData = JsonData.icons_and_screenshots;
             }
@@ -120,12 +116,14 @@ namespace ModernWindow.Data
 
         public static void ReportFatalException(Exception e)
         {
-            var LangName = "Unknown";
-            try {
+            string LangName = "Unknown";
+            try
+            {
                 LangName = LanguageEngine.MainLangDict["langName"];
-            } catch {}
+            }
+            catch { }
 
-            var Error_String = $@"
+            string Error_String = $@"
                         OS: {Environment.OSVersion.Platform}
                    Version: {Environment.OSVersion.VersionString}
            OS Architecture: {Environment.Is64BitOperatingSystem}
@@ -142,7 +140,7 @@ Crash Traceback:
             Console.WriteLine(Error_String);
 
 
-            var ErrorBody = "https://www.marticliment.com/error-report/?appName=WingetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
+            string ErrorBody = "https://www.marticliment.com/error-report/?appName=WingetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
 
             Console.WriteLine(ErrorBody);
 

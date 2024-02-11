@@ -1,26 +1,17 @@
 using Microsoft.UI;
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -47,7 +38,7 @@ namespace ModernWindow.PackageEngine
 
         private string __button_text;
         private string __line_info_text = "Please wait...";
-        private Uri __icon_source = new Uri("ms-appx://wingetui/resources/package_color.png");
+        private Uri __icon_source = new("ms-appx://wingetui/resources/package_color.png");
         private string __operation_description = "$Package Install";
         private Color? __progressbar_color = null;
         private OperationStatus __status = OperationStatus.Pending;
@@ -58,7 +49,7 @@ namespace ModernWindow.PackageEngine
         {
             set
             {
-                if(value == WidgetLayout.Compact)
+                if (value == WidgetLayout.Compact)
                 {
                     Grid.SetColumn(OutputViewewBlock, 0);
                     Grid.SetColumnSpan(OutputViewewBlock, 4);
@@ -67,8 +58,9 @@ namespace ModernWindow.PackageEngine
                     Grid.SetColumnSpan(ProgressIndicator, 4);
                     Grid.SetRow(ProgressIndicator, 1);
                     if (MainGrid.RowDefinitions.Count < 2)
-                        MainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto});
-                } else
+                        MainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+                }
+                else
                 {
                     Grid.SetColumn(OutputViewewBlock, 2);
                     Grid.SetColumnSpan(OutputViewewBlock, 1);
@@ -113,11 +105,11 @@ namespace ModernWindow.PackageEngine
         protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
         protected event EventHandler<OperationCancelledEventArgs> CloseRequested;
         protected Process Process;
-        protected ObservableCollection<string> ProcessOutput = new ObservableCollection<string>();
+        protected ObservableCollection<string> ProcessOutput = new();
 
-        private ContentDialog OutputDialog = new ContentDialog();
-        private ScrollViewer LiveOutputScrollBar = new ScrollViewer();
-        private RichTextBlock LiveOutputTextBlock = new RichTextBlock();
+        private ContentDialog OutputDialog = new();
+        private ScrollViewer LiveOutputScrollBar = new();
+        private RichTextBlock LiveOutputTextBlock = new();
 
         public OperationStatus Status
         {
@@ -161,11 +153,11 @@ namespace ModernWindow.PackageEngine
         }
         public AbstractOperation()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             OutputDialog = new ContentDialog();
             OutputDialog.Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"];
-            OutputDialog.XamlRoot = this.XamlRoot;
+            OutputDialog.XamlRoot = XamlRoot;
             OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
@@ -187,7 +179,7 @@ namespace ModernWindow.PackageEngine
 
             OutputDialog.SizeChanged += (s, e) =>
             {
-                if(!IsDialogOpen)
+                if (!IsDialogOpen)
                     return;
 
                 LiveOutputScrollBar.MinWidth = bindings.App.mainWindow.NavigationPage.ActualWidth - 400;
@@ -195,38 +187,40 @@ namespace ModernWindow.PackageEngine
             };
 
             OutputDialog.Content = LiveOutputScrollBar;
-            
-            ProcessOutput.CollectionChanged += async (s, e) => {
+
+            ProcessOutput.CollectionChanged += async (s, e) =>
+            {
                 if (!IsDialogOpen)
                     return;
 
                 LiveOutputTextBlock.Blocks.Clear();
                 Paragraph p = new();
-                foreach (var line in ProcessOutput)
+                foreach (string line in ProcessOutput)
                 {
-                    if(line.Contains("  | "))
-                    p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a"});
+                    if (line.Contains("  | "))
+                        p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a" });
                 }
                 LiveOutputTextBlock.Blocks.Add(p);
                 await Task.Delay(100);
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
             };
-            
+
             Status = OperationStatus.Pending;
 
             ActionButton.Click += ActionButtonClicked;
-            OutputViewewBlock.Click += (s, e) => { 
+            OutputViewewBlock.Click += (s, e) =>
+            {
                 OpenLiveViewDialog();
             };
         }
 
         public async void OpenLiveViewDialog()
         {
-            OutputDialog.XamlRoot = this.XamlRoot;
+            OutputDialog.XamlRoot = XamlRoot;
             LiveOutputTextBlock.Blocks.Clear();
             Paragraph p = new();
             p.LineHeight = 4.8;
-            foreach (var line in ProcessOutput)
+            foreach (string line in ProcessOutput)
             {
                 if (Status != OperationStatus.Failed)
                 {
@@ -240,7 +234,7 @@ namespace ModernWindow.PackageEngine
             }
             LiveOutputTextBlock.Blocks.Add(p);
             IsDialogOpen = true;
-            
+
             if (await bindings.App.mainWindow.ShowDialog(OutputDialog) == ContentDialogResult.Secondary)
             {
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
@@ -274,7 +268,7 @@ namespace ModernWindow.PackageEngine
         public void CancelButtonClicked(OperationStatus OldStatus)
         {
             RemoveFromQueue();
-            this.Status = OperationStatus.Cancelled;
+            Status = OperationStatus.Cancelled;
             LineInfoText = bindings.Translate("Operation cancelled");
             if (OldStatus == OperationStatus.Running)
             {
@@ -314,7 +308,7 @@ namespace ModernWindow.PackageEngine
         }
         private async Task PreMainThread()
         {
-            this.Status = OperationStatus.Pending;
+            Status = OperationStatus.Pending;
             await WaitForAvailability();
             await MainThread();
         }
@@ -324,9 +318,9 @@ namespace ModernWindow.PackageEngine
             {
                 bindings.TooltipStatus.OperationsInProgress = bindings.TooltipStatus.OperationsInProgress + 1;
 
-                this.Status = OperationStatus.Running;
+                Status = OperationStatus.Running;
                 LineInfoText = bindings.Translate("Launching subprocess...");
-                ProcessStartInfo startInfo = new ProcessStartInfo();
+                ProcessStartInfo startInfo = new();
                 startInfo.RedirectStandardInput = true;
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
@@ -351,7 +345,7 @@ namespace ModernWindow.PackageEngine
                 {
                     if (line.Trim() != "")
                     {
-                        if(line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
+                        if (line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
                             Process.StandardInput.WriteLine("");
 
                         LineInfoText = line.Trim();
@@ -362,8 +356,8 @@ namespace ModernWindow.PackageEngine
                     }
                 }
 
-                foreach (var errorLine in (await Process.StandardError.ReadToEndAsync()).Split(' '))
-                    if(errorLine.Trim() != "")
+                foreach (string errorLine in (await Process.StandardError.ReadToEndAsync()).Split(' '))
+                    if (errorLine.Trim() != "")
                         ProcessOutput.Add("ERR | " + errorLine);
 
                 await Process.WaitForExitAsync();
@@ -374,15 +368,15 @@ namespace ModernWindow.PackageEngine
 
 
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
-                
-                var OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
-                
+
+                OperationVeredict OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
+
                 if (Status != OperationStatus.Cancelled)
                 {
                     switch (OperationVeredict)
                     {
                         case OperationVeredict.Failed:
-                            this.Status = OperationStatus.Failed;
+                            Status = OperationStatus.Failed;
                             RemoveFromQueue();
                             bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred + 1;
                             postAction = await HandleFailure();
@@ -390,13 +384,13 @@ namespace ModernWindow.PackageEngine
                             break;
 
                         case OperationVeredict.Succeeded:
-                            this.Status = OperationStatus.Succeeded;
+                            Status = OperationStatus.Succeeded;
                             postAction = await HandleSuccess();
                             RemoveFromQueue();
                             break;
 
                         case OperationVeredict.AutoRetry:
-                            this.Status = OperationStatus.Pending;
+                            Status = OperationStatus.Pending;
                             postAction = AfterFinshAction.Retry;
                             break;
                     }
@@ -409,7 +403,7 @@ namespace ModernWindow.PackageEngine
                             if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
                             {
                                 AppTools.Log("Erasing admin rights");
-                                Process p = new Process();
+                                Process p = new();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
@@ -424,7 +418,7 @@ namespace ModernWindow.PackageEngine
                             if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
                             {
                                 AppTools.Log("Erasing admin rights");
-                                Process p = new Process();
+                                Process p = new();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
@@ -449,7 +443,7 @@ namespace ModernWindow.PackageEngine
                 AppTools.Log("Operation failed: " + e.ToString());
                 LineInfoText = bindings.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
-                try { this.Status = OperationStatus.Failed; } catch { }
+                try { Status = OperationStatus.Failed; } catch { }
             }
             bindings.TooltipStatus.OperationsInProgress = bindings.TooltipStatus.OperationsInProgress - 1;
 
@@ -461,7 +455,7 @@ namespace ModernWindow.PackageEngine
                 await Task.Delay(1000);
 
             RemoveFromQueue();
-            if(bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+            if (bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
             {
                 bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
             }
@@ -491,11 +485,13 @@ namespace ModernWindow.PackageEngine
         private void ResizeEvent(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width < 500)
-            { 
+            {
                 if (LayoutMode != WidgetLayout.Compact)
                     LayoutMode = WidgetLayout.Compact;
-            } else {
-                if(LayoutMode != WidgetLayout.Default)
+            }
+            else
+            {
+                if (LayoutMode != WidgetLayout.Default)
                     LayoutMode = WidgetLayout.Default;
             }
 

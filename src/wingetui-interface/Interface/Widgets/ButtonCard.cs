@@ -1,22 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using CommunityToolkit.WinUI.Controls;
 using ModernWindow.Structures;
-using CommunityToolkit.WinUI;
-using Windows.Security.Cryptography.Certificates;
-using Windows.Networking.XboxLive;
-using System.Reflection.Emit;
-using System.Numerics;
-using System.Collections.ObjectModel;
-using Windows.Devices.Geolocation;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -64,7 +50,7 @@ namespace ModernWindow.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(ButtonCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = bindings.Translate((string)e.NewValue); })));
 
             _button = new Button();
             _button.MinWidth = 200;

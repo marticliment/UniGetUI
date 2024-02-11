@@ -1,25 +1,11 @@
-﻿using Microsoft.UI;
+﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Shapes;
+using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net.Security;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Graphics.DirectX.Direct3D11;
-using Windows.UI;
-using Windows.Web.UI;
-using CommunityToolkit.WinUI.Helpers;
-using ModernWindow.Data;
-using CommunityToolkit.WinUI.Notifications;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ModernWindow.PackageEngine
 {
@@ -49,20 +35,20 @@ namespace ModernWindow.PackageEngine
     {
         public OperationStatus OldStatus;
         public OperationCancelledEventArgs(OperationStatus OldStatus)
-        { 
+        {
             this.OldStatus = OldStatus;
         }
     }
-    
+
     public abstract class PackageOperation : AbstractOperation
     {
-        
+
         protected Package Package;
         protected InstallationOptions Options;
         public PackageOperation(Package package, InstallationOptions options)
         {
-            this.Package = package;
-            this.Options = options;
+            Package = package;
+            Options = options;
             MainProcedure();
         }
         public PackageOperation(Package package) : this(package, new InstallationOptions(package)) { }
@@ -75,12 +61,12 @@ namespace ModernWindow.PackageEngine
         public InstallPackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            if(Options.RunAsAdministrator || bindings.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            if (Options.RunAsAdministrator || bindings.GetSettings("AlwaysElevate" + Package.Manager.Name))
             {
-                if(bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
                 {
                     AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new Process();
+                    Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
@@ -95,7 +81,7 @@ namespace ModernWindow.PackageEngine
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
             }
-            Process process = new Process();
+            Process process = new();
             process.StartInfo = startInfo;
 
             return process;
@@ -125,9 +111,9 @@ namespace ModernWindow.PackageEngine
                     .AddText(bindings.Translate("Installation failed"))
                     .AddText(bindings.Translate("{package} could not be installed").Replace("{package}", Package.Name)).Show();
 
-            ContentDialog dialog = new ContentDialog();
+            ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.XamlRoot = this.XamlRoot;
+            dialog.XamlRoot = XamlRoot;
             dialog.Title = bindings.Translate("{package} installation failed").Replace("{package}", Package.Name);
             dialog.Content = bindings.Translate("{package} could not be installed").Replace("{package}", Package.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
             dialog.PrimaryButtonText = bindings.Translate("Retry");
@@ -135,11 +121,12 @@ namespace ModernWindow.PackageEngine
             dialog.CloseButtonText = bindings.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
-            dialog.SecondaryButtonClick += (s, e) => {
+            dialog.SecondaryButtonClick += (s, e) =>
+            {
                 OpenLiveViewDialog();
             };
 
-            var result = await bindings.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(dialog);
             while (result == ContentDialogResult.Secondary)
                 result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
 
@@ -166,7 +153,7 @@ namespace ModernWindow.PackageEngine
 
         protected override void Initialize()
         {
-            OperationTitle = bindings.Translate("{package} Installation").Replace("{package}", Package.Name); 
+            OperationTitle = bindings.Translate("{package} Installation").Replace("{package}", Package.Name);
             IconSource = Package.GetIconUrl();
         }
     }
@@ -183,7 +170,7 @@ namespace ModernWindow.PackageEngine
                 if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
                 {
                     AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new Process();
+                    Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
@@ -197,7 +184,7 @@ namespace ModernWindow.PackageEngine
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
-            Process process = new Process();
+            Process process = new();
             process.StartInfo = startInfo;
 
             return process;
@@ -226,10 +213,10 @@ namespace ModernWindow.PackageEngine
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Update failed"))
                     .AddText(bindings.Translate("{package} could not be updated").Replace("{package}", Package.Name)).Show();
-            
-            ContentDialog dialog = new ContentDialog();
+
+            ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.XamlRoot = this.XamlRoot;
+            dialog.XamlRoot = XamlRoot;
             dialog.Title = bindings.Translate("{package} update failed").Replace("{package}", Package.Name);
             dialog.Content = bindings.Translate("{package} could not be updated").Replace("{package}", Package.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
             dialog.PrimaryButtonText = bindings.Translate("Retry");
@@ -237,11 +224,12 @@ namespace ModernWindow.PackageEngine
             dialog.CloseButtonText = bindings.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
-            dialog.SecondaryButtonClick += (s, e) => {
+            dialog.SecondaryButtonClick += (s, e) =>
+            {
                 OpenLiveViewDialog();
             };
 
-            var result = await bindings.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(dialog);
             while (result == ContentDialogResult.Secondary)
                 result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
 
@@ -284,7 +272,7 @@ namespace ModernWindow.PackageEngine
                 if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
                 {
                     AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new Process();
+                    Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
@@ -298,7 +286,7 @@ namespace ModernWindow.PackageEngine
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
-            Process process = new Process();
+            Process process = new();
             process.StartInfo = startInfo;
 
 
@@ -322,18 +310,18 @@ namespace ModernWindow.PackageEngine
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = bindings.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
-            
+
             if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Uninstallation failed"))
                     .AddText(bindings.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name)).Show();
-            
-            
-            ContentDialog dialog = new ContentDialog();
+
+
+            ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.XamlRoot = this.XamlRoot;
+            dialog.XamlRoot = XamlRoot;
             dialog.Title = bindings.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
             dialog.Content = bindings.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
             dialog.PrimaryButtonText = bindings.Translate("Retry");
@@ -341,18 +329,19 @@ namespace ModernWindow.PackageEngine
             dialog.CloseButtonText = bindings.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
-            dialog.SecondaryButtonClick += (s, e) => {
+            dialog.SecondaryButtonClick += (s, e) =>
+            {
                 OpenLiveViewDialog();
             };
 
-            var result = await bindings.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(dialog);
             while (result == ContentDialogResult.Secondary)
                 result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
             else
-                return AfterFinshAction.ManualClose; 
+                return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()

@@ -1,21 +1,10 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json.Nodes;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,13 +34,13 @@ namespace ModernWindow.Interface
     {
 
         AppTools bindings = AppTools.Instance;
-        public ObservableCollection<LibraryLicense> Licenses = new ObservableCollection<LibraryLicense>();
+        public ObservableCollection<LibraryLicense> Licenses = new();
         public ObservableCollection<Person> Contributors = new();
         public ObservableCollection<Person> Translators = new();
         public AboutWingetUI()
         {
-            this.InitializeComponent();
-            foreach(var license in LicenseData.LicenseNames.Keys)
+            InitializeComponent();
+            foreach (string license in LicenseData.LicenseNames.Keys)
             {
                 Licenses.Add(new LibraryLicense()
                 {
@@ -61,11 +50,11 @@ namespace ModernWindow.Interface
                 });
             }
 
-            foreach(var contributor in ContributorsData.Contributors)
+            foreach (string contributor in ContributorsData.Contributors)
             {
-                Person person = new Person()
+                Person person = new()
                 {
-                    Name = "@"+contributor,
+                    Name = "@" + contributor,
                     ProfilePicture = new Uri("https://github.com/" + contributor + ".png"),
                     GitHubUrl = new Uri("https://github.com/" + contributor),
                     HasPicture = true,
@@ -78,23 +67,23 @@ namespace ModernWindow.Interface
 
             VersionText.Text = bindings.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
 
-            foreach (var langKey in TranslatorsInfo)
+            foreach (KeyValuePair<string, JsonNode> langKey in TranslatorsInfo)
             {
-                var TranslatorsForLang = langKey.Value.AsArray();
+                JsonArray TranslatorsForLang = langKey.Value.AsArray();
                 bool LangShown = false;
-                foreach(var translator in TranslatorsForLang)
+                foreach (JsonNode translator in TranslatorsForLang)
                 {
                     Uri? url = null;
                     if (translator["link"].ToString() != "")
                         url = new Uri(translator["link"].ToString());
-                    Person person = new Person()
+                    Person person = new()
                     {
-                        Name = (url != null? "@": "") + translator["name"].ToString(),
+                        Name = (url != null ? "@" : "") + translator["name"].ToString(),
                         HasPicture = url != null,
                         HasGithubProfile = url != null,
                         GitHubUrl = url != null ? url : new Uri("https://github.com/"),
                         ProfilePicture = url != null ? new Uri(url.ToString() + ".png") : new Uri("https://github.com/"),
-                        Language = !LangShown? LanguageData.LanguageList[langKey.Key]: "",
+                        Language = !LangShown ? LanguageData.LanguageList[langKey.Key] : "",
                     };
                     LangShown = true;
                     Translators.Add(person);

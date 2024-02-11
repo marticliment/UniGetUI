@@ -1,30 +1,14 @@
-using CommunityToolkit.WinUI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.DirectX.Direct3D11;
-using Windows.Media.Audio;
-using Windows.Storage.AccessCache;
-using Windows.Storage.Pickers;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -42,7 +26,7 @@ namespace ModernWindow.Interface.Dialogs
         public InstallOptionsPage(Package package, OperationType Operation)
         {
             Package = package;
-            this.InitializeComponent();
+            InitializeComponent();
             Options = new InstallationOptions(package);
             Options.LoadOptionsFromDisk();
 
@@ -62,7 +46,7 @@ namespace ModernWindow.Interface.Dialogs
 
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
-                foreach (var arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
+                foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
                     ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
                     if (Options.Architecture == arch)
@@ -111,7 +95,7 @@ namespace ModernWindow.Interface.Dialogs
         }
 
         private async void LoadIgnoredUpdates()
-        { 
+        {
             IgnoreUpdatesCheckbox.IsChecked = await Package.GetIgnoredUpdatesVersion() == "*";
         }
 
@@ -119,9 +103,9 @@ namespace ModernWindow.Interface.Dialogs
         {
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnored();
 
-            var versions = await Package.Manager.GetPackageVersions(Package);
-            
-            foreach(string ver in versions)
+            string[] versions = await Package.Manager.GetPackageVersions(Package);
+
+            foreach (string ver in versions)
             {
                 VersionComboBox.Items.Add(ver);
                 if (Options.Version == ver)
@@ -137,7 +121,7 @@ namespace ModernWindow.Interface.Dialogs
             Options.InteractiveInstallation = InteractiveCheckBox.IsChecked.Value;
             Options.SkipHashCheck = HashCheckbox.IsChecked.Value;
 
-            if(CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString()))
+            if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString()))
                 Options.Architecture = CommonTranslations.InvertedArchNames[ArchitectureComboBox.SelectedValue.ToString()];
             else
                 Options.Architecture = null;
@@ -151,7 +135,7 @@ namespace ModernWindow.Interface.Dialogs
             Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == bindings.Translate("PreRelease");
 
-            if(VersionComboBox.SelectedValue.ToString() != bindings.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != bindings.Translate("Latest"))
+            if (VersionComboBox.SelectedValue.ToString() != bindings.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != bindings.Translate("Latest"))
                 Options.Version = VersionComboBox.SelectedValue.ToString();
             else
                 Options.Version = "";
@@ -160,17 +144,17 @@ namespace ModernWindow.Interface.Dialogs
                 await Package.AddToIgnoredUpdates(version: "*");
             else
             {
-                if(await Package.GetIgnoredUpdatesVersion()== "*");
-                    await Package.RemoveFromIgnoredUpdates();
+                if (await Package.GetIgnoredUpdatesVersion() == "*") ;
+                await Package.RemoveFromIgnoredUpdates();
             }
             Options.SaveOptionsToDisk();
         }
 
         private async void SelectDir_Click(object sender, RoutedEventArgs e)
         {
-            FolderPicker openPicker = new Windows.Storage.Pickers.FolderPicker();
+            FolderPicker openPicker = new();
 
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
             WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
             openPicker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
             openPicker.FileTypeFilter.Add("*");

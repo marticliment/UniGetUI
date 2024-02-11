@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModernWindow.Essentials
 {
@@ -24,13 +22,14 @@ namespace ModernWindow.Essentials
                     return;
                 Sort();
             }
-            
+
         }
-        public void Sort() {
+        public void Sort()
+        {
             BlockSorting = true;
 
-            var sorted = Descending ? this.OrderByDescending(SortingSelector).ToList(): this.OrderBy(SortingSelector).ToList();
-            foreach (var item in sorted)
+            List<T> sorted = Descending ? this.OrderByDescending(SortingSelector).ToList() : this.OrderBy(SortingSelector).ToList();
+            foreach (T item in sorted)
             {
                 Move(IndexOf(item), sorted.IndexOf(item));
             }

@@ -1,18 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Data;
+using System;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -27,7 +16,7 @@ namespace ModernWindow.Interface.Dialogs
     {
         public ReleaseNotes()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             _ = InitializeWebView();
 
             WebView.NavigationStarting += (s, e) => { ProgressBar.Visibility = Visibility.Visible; };
@@ -40,6 +29,6 @@ namespace ModernWindow.Interface.Dialogs
             WebView.Source = new Uri("https://github.com/marticliment/WingetUI/releases/tag/" + CoreData.VersionName);
         }
 
-        
+
     }
 }

@@ -1,20 +1,7 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using ModernWindow.Structures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.Json;
-using Windows.Graphics.DirectX.Direct3D11;
-using static System.Net.Mime.MediaTypeNames;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -54,13 +41,13 @@ namespace ModernWindow.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = bindings.Translate((string)e.NewValue); })));
 
             UnderTextProperty = DependencyProperty.Register(
             nameof(UnderText),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { this.Description = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Description = bindings.Translate((string)e.NewValue); })));
 
             IconProperty = DependencyProperty.Register(
             nameof(Icon),
@@ -68,7 +55,7 @@ namespace ModernWindow.Interface.Widgets
             typeof(CheckboxCard),
             new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
             {
-                this.HeaderIcon = new LocalIcon((string)e.NewValue);
+                HeaderIcon = new LocalIcon((string)e.NewValue);
             })));
 
 

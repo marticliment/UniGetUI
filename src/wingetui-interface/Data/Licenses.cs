@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
 
 namespace ModernWindow.Data
 {
     public static class LicenseData
     {
-        public static Dictionary<string, string> LicenseNames = new Dictionary<string, string>() {
+        public static Dictionary<string, string> LicenseNames = new() {
             {"WingetUI",                "LGPL v2.1" },
             {"Python 3",                "PSF"},
             {"PySide6",                 "LGPLv3"},
@@ -36,7 +32,7 @@ namespace ModernWindow.Data
             {"Icons",                   "By Icons8"},
         };
 
-        public static Dictionary<string, Uri> LicenseURLs = new Dictionary<string, Uri>(){
+        public static Dictionary<string, Uri> LicenseURLs = new(){
             {"WingetUI",           new Uri("https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html")},
             {"Python 3",           new Uri("https://docs.python.org/3/license.html#psf-license")},
             {"PySide6",            new Uri("https://www.tldrlegal.com/license/gnu-lesser-general-public-license-v3-lgpl-3")},

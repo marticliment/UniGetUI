@@ -1,20 +1,13 @@
 ﻿using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
-using Microsoft.Web.WebView2.Core;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Media.Audio;
-using Windows.Storage.Streams;
 
 namespace ModernWindow.Structures
 {
@@ -24,11 +17,11 @@ namespace ModernWindow.Structures
         public class __tooltip_options
         {
             private int _errors_occurred = 0;
-            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value;AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus() ;  } }
+            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
             private bool _restart_required = false;
-            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value;AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus();  } }
+            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
             private int _operations_in_progress = 0;
-            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value;AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus();  } }
+            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
             private int _available_updates = 0;
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
         }
@@ -39,9 +32,9 @@ namespace ModernWindow.Structures
         public ThemeListener ThemeListener;
         public List<AbstractOperation> OperationQueue = new();
 
-        public __tooltip_options TooltipStatus = new __tooltip_options();
+        public __tooltip_options TooltipStatus = new();
 
-        private LanguageEngine LanguageEngine = new LanguageEngine();
+        private LanguageEngine LanguageEngine = new();
 
         private static AppTools instance;
 
@@ -118,7 +111,7 @@ namespace ModernWindow.Structures
 
         public async Task<string> Which(string command)
         {
-            Process process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -131,14 +124,14 @@ namespace ModernWindow.Structures
                 }
             };
             process.Start();
-            var line = await process.StandardOutput.ReadLineAsync();
+            string line = await process.StandardOutput.ReadLineAsync();
             string output;
             if (line == null)
                 output = "";
             else
                 output = line.Trim();
             await process.WaitForExitAsync();
-            if(process.ExitCode != 0 || output == "")
+            if (process.ExitCode != 0 || output == "")
                 return Path.Join(Environment.GetLogicalDrives()[0], "ThisExe\\WasNotFound\\InPath", command);
             else
                 return output;
@@ -148,11 +141,11 @@ namespace ModernWindow.Structures
         {
             name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1];
             string newName = "";
-            for(int i = 0; i<name.Length; i++)
+            for (int i = 0; i < name.Length; i++)
             {
                 if (i == 0 || name[i - 1] == ' ')
                     newName += name[i].ToString().ToUpper();
-                else 
+                else
                     newName += name[i];
             }
             return newName;

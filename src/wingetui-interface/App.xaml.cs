@@ -1,13 +1,5 @@
-﻿using ABI.Windows.ApplicationModel.Activation;
-using CommunityToolkit.WinUI.Notifications;
+﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.AppLifecycle;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Managers;
@@ -16,23 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.System;
 
 namespace ModernWindow
 {
     public partial class MainApp : Application
     {
-        
+
         // Python modules to be imported
         //public dynamic Tools;
         //public dynamic Core;
@@ -46,7 +29,7 @@ namespace ModernWindow
         public Dotnet Dotnet;
         public PowerShell Powershell;
 
-        public List<PackageManager> PackageManagerList = new List<PackageManager>();
+        public List<PackageManager> PackageManagerList = new();
 
         public Interface.SettingsInterface settings;
         public MainWindow mainWindow;
@@ -54,10 +37,11 @@ namespace ModernWindow
 
         public MainApp()
         {
-            try { 
-                this.InitializeComponent();
-         
-                this.UnhandledException += (sender, e) =>
+            try
+            {
+                InitializeComponent();
+
+                UnhandledException += (sender, e) =>
                 {
                     AppTools.Log("Unhandled Exception raised: " + e.Message);
                     AppTools.Log("Stack Trace: \n" + e.Exception.StackTrace);
@@ -72,7 +56,7 @@ namespace ModernWindow
                 mainWindow.BlockLoading = true;
                 mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
 
-                var hWnd = mainWindow.GetWindowHandle();
+                IntPtr hWnd = mainWindow.GetWindowHandle();
 
                 Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
                 Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
@@ -80,13 +64,14 @@ namespace ModernWindow
                 if (appWindow != null)
                     appWindow.Closing += mainWindow.HandleClosingEvent;
 
-                ToastNotificationManagerCompat.OnActivated += toastArgs => {
+                ToastNotificationManagerCompat.OnActivated += toastArgs =>
+                {
                     ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
                     ValueSet userInput = toastArgs.UserInput;
                     mainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
                         mainWindow.HandleNotificationActivation(args, userInput);
-                    }); 
+                    });
                 };
 
                 LoadComponents();
@@ -149,7 +134,7 @@ namespace ModernWindow
 
         public async Task ShowMainWindow_FromRedirect()
         {
-            while(mainWindow == null)
+            while (mainWindow == null)
                 await Task.Delay(100);
             mainWindow.DispatcherQueue.TryEnqueue(() => { mainWindow.Activate(); });
         }
@@ -174,7 +159,7 @@ namespace ModernWindow
 
         private void __quit_app()
         {
-            this.Exit();
+            Exit();
         }
 
     }

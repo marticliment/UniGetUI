@@ -1,17 +1,11 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Security.Cryptography.Certificates;
-using Windows.Management.Deployment;
-using Windows.Graphics.Display;
-using System.IO;
 using System.Diagnostics;
-using System.Data.Common;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
-using ModernWindow.Structures;
+using System.Threading.Tasks;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -23,7 +17,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -46,7 +40,7 @@ namespace ModernWindow.PackageEngine.Managers
                 AppTools.Log(DashesPassed.ToString() + ": " + line);
                 if (!DashesPassed)
                 {
-                    if(line.Contains("-----"))
+                    if (line.Contains("-----"))
                         DashesPassed = true;
                 }
                 else
@@ -62,10 +56,10 @@ namespace ModernWindow.PackageEngine.Managers
                     else
                     {
                         AppTools.Log("Unknown PowerShell source!");
-                        var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
+                        ManagerSource s = new(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);
-                    }   
+                    }
                 }
             }
 
@@ -79,7 +73,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -93,10 +87,10 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
 
-            var sources = await GetSources();
+            ManagerSource[] sources = await GetSources();
 
             string SourceDict = "{";
-            foreach (var source in sources)
+            foreach (ManagerSource source in sources)
             {
                 SourceDict += "\"" + source.Name + "\" = \"" + source.Url.ToString() + "\";";
             }
@@ -144,10 +138,10 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceReference[elements[3]], this));
                 else
                 {
-                    var s = new ManagerSource(this, elements[3], new Uri("https://www.powershellgallery.com/api/v2"));
+                    ManagerSource s = new(this, elements[3], new Uri("https://www.powershellgallery.com/api/v2"));
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], s, this));
                     SourceReference.Add(s.Name, s);
-                }   
+                }
             }
 
             output += await p.StandardError.ReadToEndAsync();
@@ -159,7 +153,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -181,7 +175,7 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (!DashesPassed)
                 {
-                    if(line.Contains("-----"))
+                    if (line.Contains("-----"))
                         DashesPassed = true;
                 }
                 else
@@ -197,10 +191,10 @@ namespace ModernWindow.PackageEngine.Managers
                     else
                     {
                         AppTools.Log("Unknown PowerShell source!");
-                        var s = new ManagerSource(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
+                        ManagerSource s = new(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);
-                    }   
+                    }
                 }
             }
 
@@ -223,9 +217,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            var output_string = string.Join("\n", Output);
+            string output_string = string.Join("\n", Output);
 
-            if(output_string.Contains("AdminPrivilegesAreRequired") && !options.RunAsAdministrator)
+            if (output_string.Contains("AdminPrivilegesAreRequired") && !options.RunAsAdministrator)
             {
                 options.RunAsAdministrator = true;
                 return OperationVeredict.AutoRetry;
@@ -235,7 +229,7 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUpdateParameters(package, options).ToList();
+            List<string> parameters = GetUpdateParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
             parameters.AddRange(new string[] { "-AllowClobber" });
@@ -244,21 +238,21 @@ namespace ModernWindow.PackageEngine.Managers
             else
                 parameters.AddRange(new string[] { "-Scope", "CurrentUser" });
 
-            if(options.Version != "")
+            if (options.Version != "")
                 parameters.AddRange(new string[] { "-RequiredVersion", options.Version });
 
             return parameters.ToArray();
-            
+
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options).ToList();
+            List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.UpdateVerb;
 
-            if(options.PreRelease)
+            if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
 
-            if(options.SkipHashCheck)
+            if (options.SkipHashCheck)
                 parameters.Add("-SkipPublisherCheck");
 
             return parameters.ToArray();
@@ -266,9 +260,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = new List<string>() { Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force" };
+            List<string> parameters = new() { Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force" };
 
-            if(options.CustomParameters != null)
+            if (options.CustomParameters != null)
                 parameters.AddRange(options.CustomParameters);
 
             return parameters.ToArray();
@@ -285,10 +279,10 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new List<ManagerSource>();
+            List<ManagerSource> sources = new();
 
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo()
+            Process process = new();
+            ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " Get-PSRepository",
@@ -308,19 +302,25 @@ namespace ModernWindow.PackageEngine.Managers
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
-                try {
+                try
+                {
                     if (string.IsNullOrEmpty(line))
                         continue;
 
-                    if (!dashesPassed) {
+                    if (!dashesPassed)
+                    {
                         if (line.Contains("---"))
                             dashesPassed = true;
-                    } else {
+                    }
+                    else
+                    {
                         string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
-                        if(parts.Length >= 3)
+                        if (parts.Length >= 3)
                             sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[2].Trim())));
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     AppTools.Log(e);
                 }
             }
@@ -356,7 +356,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override ManagerProperties GetProperties()
         {
-            ManagerProperties properties = new ManagerProperties()
+            ManagerProperties properties = new()
             {
                 Name = "PowerShell",
                 Description = bindings.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
@@ -367,23 +367,23 @@ namespace ModernWindow.PackageEngine.Managers
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
                 ExecutableCallArgs = "-NoProfile -Command",
-                
+
             };
             return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()
         {
-            var status = new ManagerStatus
+            ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
             };
             status.Found = File.Exists(status.ExecutablePath);
 
-            if(!status.Found)
+            if (!status.Found)
                 return status;
 
-            Process process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -405,7 +405,7 @@ namespace ModernWindow.PackageEngine.Managers
         }
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            var p = new Process()
+            Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -430,7 +430,7 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (!DashesPassed)
                 {
-                    if(line.Contains("-----"))
+                    if (line.Contains("-----"))
                         DashesPassed = true;
                 }
                 else

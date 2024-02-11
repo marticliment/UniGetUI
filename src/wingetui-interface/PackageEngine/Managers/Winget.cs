@@ -1,20 +1,12 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Security.Cryptography.Certificates;
-using Windows.Management.Deployment;
-using Windows.Graphics.Display;
-using System.IO;
 using System.Diagnostics;
-using System.Data.Common;
-using System.Text.RegularExpressions;
-using System.Net.Http.Headers;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using CommunityToolkit.WinUI.Helpers;
-using Microsoft.UI.Xaml;
-using ModernWindow.Structures;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -32,9 +24,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            var Packages = new List<Package>();
-            Process p = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo()
+            List<Package> Packages = new();
+            Process p = new();
+            ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"",
@@ -48,7 +40,7 @@ namespace ModernWindow.PackageEngine.Managers
 
             string OldLine = "";
             int IdIndex = -1;
-            int VersionIndex =-1;
+            int VersionIndex = -1;
             int SourceIndex = -1;
             bool DashesPassed = false;
             string line;
@@ -58,10 +50,10 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (!DashesPassed && line.Contains("---"))
                 {
-                    var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix+"Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix+"Version");
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix+"Source");
+                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
+                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
+                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
                     DashesPassed = true;
                 }
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
@@ -69,7 +61,7 @@ namespace ModernWindow.PackageEngine.Managers
                     int offset = 0; // Account for non-unicode character length
                     while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
                         offset++;
-                    string name = line[..(IdIndex-offset)].Trim();
+                    string name = line[..(IdIndex - offset)].Trim();
                     string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
                     string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
                     ManagerSource source;
@@ -84,7 +76,7 @@ namespace ModernWindow.PackageEngine.Managers
                         {
                             source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
                             SourceReference.Add(source.Name, source);
-                        }    
+                        }
                     }
                     Packages.Add(new Package(name, id, version, source, this));
                 }
@@ -101,9 +93,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            var Packages = new List<UpgradablePackage>();
-            Process p = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo()
+            List<UpgradablePackage> Packages = new();
+            Process p = new();
+            ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " update --include-unknown",
@@ -117,8 +109,8 @@ namespace ModernWindow.PackageEngine.Managers
 
             string OldLine = "";
             int IdIndex = -1;
-            int VersionIndex =-1;
-            int NewVersionIndex =-1;
+            int VersionIndex = -1;
+            int NewVersionIndex = -1;
             int SourceIndex = -1;
             bool DashesPassed = false;
             string line;
@@ -128,19 +120,19 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (!DashesPassed && line.Contains("---"))
                 {
-                    var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
-                    var HeaderSuffix = OldLine.Contains("SearchId")? "Header": "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix+"Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix+"Version");
-                    NewVersionIndex = OldLine.IndexOf("Available"+HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix+"Source");
+                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
+                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
+                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
+                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
+                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
                     DashesPassed = true;
                 }
                 else if (line.Trim() == "")
                 {
                     DashesPassed = false;
                 }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length )
+                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
                 {
                     int offset = 0; // Account for non-unicode character length
                     while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
@@ -149,7 +141,7 @@ namespace ModernWindow.PackageEngine.Managers
                     string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
                     string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
                     string newVersion;
-                    if(SourceIndex != -1)
+                    if (SourceIndex != -1)
                         newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
                     else
                         newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
@@ -166,7 +158,7 @@ namespace ModernWindow.PackageEngine.Managers
                         {
                             source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
                             SourceReference.Add(source.Name, source);
-                        }    
+                        }
                     }
 
                     Packages.Add(new UpgradablePackage(name, id, version, newVersion, source, this));
@@ -177,15 +169,15 @@ namespace ModernWindow.PackageEngine.Managers
             output += await p.StandardError.ReadToEndAsync();
             AppTools.LogManagerOperation(this, p, output);
             await Task.Run(p.WaitForExit);
-            
+
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            var Packages = new List<Package>();
-            Process p = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo()
+            List<Package> Packages = new();
+            Process p = new();
+            ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " list",
@@ -199,7 +191,7 @@ namespace ModernWindow.PackageEngine.Managers
 
             string OldLine = "";
             int IdIndex = -1;
-            int VersionIndex =-1;
+            int VersionIndex = -1;
             int SourceIndex = -1;
             int NewVersionIndex = -1;
             bool DashesPassed = false;
@@ -210,12 +202,12 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (!DashesPassed && line.Contains("---"))
                 {
-                    var HeaderPrefix = OldLine.Contains("SearchId")? "Search": "";
-                    var HeaderSuffix = OldLine.Contains("SearchId")? "Header": "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix+"Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix+"Version");
-                    NewVersionIndex = OldLine.IndexOf("Available"+HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix+"Source");
+                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
+                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
+                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
+                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
+                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
                     DashesPassed = true;
                 }
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
@@ -226,12 +218,12 @@ namespace ModernWindow.PackageEngine.Managers
                     string name = line[..(IdIndex - offset)].Trim();
                     string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
                     if (NewVersionIndex == -1 && SourceIndex != -1) NewVersionIndex = SourceIndex;
-                    else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length-1;
+                    else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length - 1;
                     string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
 
                     ManagerSource source;
                     string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                    if(SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
+                    if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
                         source = GetLocalSource(id); // Load Winget Local Sources
                     else
                     {
@@ -241,7 +233,7 @@ namespace ModernWindow.PackageEngine.Managers
                         {
                             source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
                             SourceReference.Add(source.Name, source);
-                        } 
+                        }
                     }
                     Packages.Add(new Package(name, id, version, source, this));
                 }
@@ -259,8 +251,8 @@ namespace ModernWindow.PackageEngine.Managers
         {
             // Check if source is android
             bool AndroidValid = true;
-            foreach(char c in id)
-                if(!"abcdefghijklmnopqrstuvwxyz.…".Contains(c))
+            foreach (char c in id)
+                if (!"abcdefghijklmnopqrstuvwxyz.…".Contains(c))
                 {
                     AndroidValid = false;
                     break;
@@ -275,7 +267,7 @@ namespace ModernWindow.PackageEngine.Managers
             // Check if source is Ubisoft Connect
             if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                 return UbisoftConnectSource;
-            
+
             // Check if source is GOG
             if (id.EndsWith("_is1") && id.Split("_is1")[0].Count(x => !"1234567890".Contains(x)) == 0)
                 return GOGSource;
@@ -289,7 +281,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options).ToList();
+            List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
             parameters.Add("--accept-package-agreements");
@@ -301,8 +293,8 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 parameters.Add("--location"); parameters.Add(options.CustomInstallLocation);
             }
-            
-            switch(options.Architecture)
+
+            switch (options.Architecture)
             {
                 case (null):
                     break;
@@ -320,16 +312,16 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            if(package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
+            if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
                 options.Architecture = Architecture.X64;
-            else if(package.Name.Contains("32-bit") || package.Id.ToLower().Contains("x86"))
+            else if (package.Name.Contains("32-bit") || package.Id.ToLower().Contains("x86"))
                 options.Architecture = Architecture.X86;
 
-            var parameters = GetInstallParameters(package, options);
+            string[] parameters = GetInstallParameters(package, options);
             parameters[0] = Properties.InstallVerb;
-            if( package.Version == "Unknown" && parameters.Contains("--force"))
+            if (package.Version == "Unknown" && parameters.Contains("--force"))
             {
-                var p = parameters.ToList();
+                List<string> p = parameters.ToList();
                 p.Add("--force");
                 p.Add("--include-unknown");
                 parameters = p.ToArray();
@@ -339,11 +331,11 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new List<string>() { Properties.UninstallVerb };
+            List<string> parameters = new() { Properties.UninstallVerb };
             if (!package.Id.Contains("…"))
                 parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
             else if (!package.Name.Contains("…"))
-                parameters.AddRange(new string[] { "--name", "\""+package.Name+"\"", "--exact" });
+                parameters.AddRange(new string[] { "--name", "\"" + package.Name + "\"", "--exact" });
             else
                 parameters.AddRange(new string[] { "--id", package.Id.Replace("…", "") });
 
@@ -372,7 +364,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            var output_string = string.Join("\n", Output);
+            string output_string = string.Join("\n", Output);
 
             if (ReturnCode == -1978334967) // Use https://www.rapidtables.com/convert/number/hex-to-decimal.html for easy UInt(hex) to Int(dec) conversion
                 return OperationVeredict.Succeeded; // TODO: Needs restart
@@ -392,9 +384,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            var output_string = string.Join("\n", Output);
+            string output_string = string.Join("\n", Output);
 
-            if(output_string.Contains("1603") || output_string.Contains("0x80070005") || output_string.Contains("Access is denied"))
+            if (output_string.Contains("1603") || output_string.Contains("0x80070005") || output_string.Contains("Access is denied"))
             {
                 options.RunAsAdministrator = true;
                 return OperationVeredict.AutoRetry;
@@ -416,10 +408,10 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new List<ManagerSource>();
+            List<ManagerSource> sources = new();
 
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo()
+            Process process = new();
+            ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " source list",
@@ -437,18 +429,24 @@ namespace ModernWindow.PackageEngine.Managers
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
-                try {
+                try
+                {
                     if (string.IsNullOrEmpty(line))
                         continue;
 
-                    if (!dashesPassed) {
+                    if (!dashesPassed)
+                    {
                         if (line.Contains("---"))
                             dashesPassed = true;
-                    } else {
+                    }
+                    else
+                    {
                         string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
                         sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     AppTools.Log(e);
                 }
             }
@@ -459,8 +457,8 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task RefreshSources()
         {
-            Process process = new Process();
-            ProcessStartInfo StartInfo = new ProcessStartInfo()
+            Process process = new();
+            ProcessStartInfo StartInfo = new()
             {
                 FileName = Properties.ExecutableFriendlyName,
                 Arguments = Properties.ExecutableCallArgs + " source update",
@@ -476,7 +474,7 @@ namespace ModernWindow.PackageEngine.Managers
             while (!process.HasExited && Environment.TickCount - StartTime < 8000)
                 await Task.Delay(100);
 
-            if(!process.HasExited)
+            if (!process.HasExited)
             {
                 process.Kill();
                 AppTools.Log("Winget source update timed out. Current output was");
@@ -507,7 +505,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override ManagerProperties GetProperties()
         {
-            ManagerProperties properties = new ManagerProperties()
+            ManagerProperties properties = new()
             {
                 Name = "Winget",
                 Description = bindings.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
@@ -524,8 +522,8 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<ManagerStatus> LoadManager()
         {
-            var status = new ManagerStatus();
-            Process process = new Process()
+            ManagerStatus status = new();
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -538,18 +536,18 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             };
             process.Start();
-            var output = await process.StandardOutput.ReadToEndAsync();
+            string output = await process.StandardOutput.ReadToEndAsync();
 
-            if(bindings.GetSettings("UseSystemWinget"))
+            if (bindings.GetSettings("UseSystemWinget"))
                 status.ExecutablePath = await bindings.Which("winget.exe");
-            else if(output.Contains("ARM64") | bindings.GetSettings("EnableArmWinget"))
+            else if (output.Contains("ARM64") | bindings.GetSettings("EnableArmWinget"))
                 status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "PackageEngine/Managers/winget-cli_arm64/winget.exe");
             else
                 status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "PackageEngine/Managers/winget-cli_x64/winget.exe");
-            
+
             status.Found = File.Exists(status.ExecutablePath);
 
-            if(!status.Found)
+            if (!status.Found)
                 return status;
 
             process = new Process()
@@ -575,7 +573,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            var callId = "";
+            string callId = "";
             if (!package.Id.Contains("…"))
                 callId = "--id " + package.Id + " --exact";
             else if (!package.Name.Contains("…"))
@@ -584,7 +582,7 @@ namespace ModernWindow.PackageEngine.Managers
                 callId = "--id " + package.Id;
 
 
-            var p = new Process()
+            Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -601,7 +599,7 @@ namespace ModernWindow.PackageEngine.Managers
             p.Start();
 
             string line;
-            List<string> versions = new List<string>();
+            List<string> versions = new();
             bool DashesPassed = false;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -612,7 +610,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (line.Contains("---"))
                         DashesPassed = true;
                 }
-                else 
+                else
                     versions.Add(line.Trim());
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -642,7 +640,7 @@ namespace ModernWindow.PackageEngine.Managers
             return Winget.bindings.Translate("Android Subsystem");
         }
     }
-    
+
     public class SteamSource : ManagerSource
     {
         public override string IconId { get { return "steam"; } }
@@ -653,7 +651,7 @@ namespace ModernWindow.PackageEngine.Managers
             return "Steam";
         }
     }
-    
+
     public class UbisoftConnectSource : ManagerSource
     {
         public override string IconId { get { return "uplay"; } }
@@ -664,7 +662,7 @@ namespace ModernWindow.PackageEngine.Managers
             return "Ubisoft Connect";
         }
     }
-    
+
     public class GOGSource : ManagerSource
     {
         public override string IconId { get { return "gog"; } }
@@ -675,7 +673,7 @@ namespace ModernWindow.PackageEngine.Managers
             return "GOG";
         }
     }
-    
+
     public class MicrosoftStoreSource : ManagerSource
     {
         public override string IconId { get { return "msstore"; } }

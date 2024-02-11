@@ -1,15 +1,10 @@
-﻿using System;
+﻿using ModernWindow.Essentials;
+using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.WindowsAppSDK.Runtime.Packages;
-using ModernWindow.Essentials;
-using ModernWindow.PackageEngine;
-using ModernWindow.Structures;
-using Windows.Media.Core;
 
 namespace ModernWindow.PackageEngine
 {
@@ -23,9 +18,9 @@ namespace ModernWindow.PackageEngine
         public static AppTools bindings = AppTools.Instance;
         public ManagerSource MainSource { get; set; }
 
-        public static string[] FALSE_PACKAGE_NAMES = new string[] {""};
-        public static string[] FALSE_PACKAGE_IDS = new string[] {""};
-        public static string[] FALSE_PACKAGE_VERSIONS = new string[] {""};
+        public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
+        public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
+        public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
 
         public bool ManagerReady { get; set; } = false;
 
@@ -45,8 +40,8 @@ namespace ModernWindow.PackageEngine
 
                 if (this is PackageManagerWithSources && Status.Found)
                 {
-                    var SourcesTask = (this as PackageManagerWithSources).GetSources();
-                    var winner = await Task.WhenAny(
+                    Task<ManagerSource[]> SourcesTask = (this as PackageManagerWithSources).GetSources();
+                    Task winner = await Task.WhenAny(
                         SourcesTask,
                         Task.Delay(10000));
                     if (winner == SourcesTask)
@@ -77,7 +72,7 @@ namespace ModernWindow.PackageEngine
 
         public bool IsEnabled()
         {
-            return !bindings.GetSettings("Disable"+Name);
+            return !bindings.GetSettings("Disable" + Name);
         }
 
         public virtual async Task<Package[]> FindPackages(string query)
@@ -88,7 +83,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding packages on manager " + Name + " with query "  + query +  ": \n" + e.ToString());
+                AppTools.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -124,7 +119,7 @@ namespace ModernWindow.PackageEngine
             }
             catch (Exception e)
             {
-                AppTools.Log("Error getting package details on manager " + Name + " for package id=" + package.Id +": \n" + e.ToString());
+                AppTools.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
                 return new PackageDetails(package);
             }
         }
@@ -133,7 +128,7 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
-                if(package.Manager.Capabilities.SupportsCustomVersions)
+                if (package.Manager.Capabilities.SupportsCustomVersions)
                     return await GetPackageVersions_Unsafe(package);
                 else
                     return new string[0];
@@ -160,11 +155,11 @@ namespace ModernWindow.PackageEngine
         public abstract ManagerSource GetMainSource();
     }
 
-    public abstract class PackageManagerWithSources : PackageManager 
+    public abstract class PackageManagerWithSources : PackageManager
     {
         public ManagerSource[] Sources { get; set; }
         public ManagerSource[] DefaultSources { get; set; }
-        public Dictionary<string, ManagerSource> SourceReference = new Dictionary<string, ManagerSource>();
+        public Dictionary<string, ManagerSource> SourceReference = new();
         public virtual async Task<ManagerSource[]> GetSources()
         {
             try
@@ -245,15 +240,15 @@ namespace ModernWindow.PackageEngine
             Manager = manager;
             Name = name;
             Url = url;
-            if(manager.Capabilities.Sources.KnowsPackageCount)
+            if (manager.Capabilities.Sources.KnowsPackageCount)
                 PackageCount = packageCount;
-            if(manager.Capabilities.Sources.KnowsUpdateDate)
+            if (manager.Capabilities.Sources.KnowsUpdateDate)
                 UpdateDate = updateDate;
         }
 
         public override string ToString()
         {
-            if(Manager.Capabilities.SupportsCustomSources)
+            if (Manager.Capabilities.SupportsCustomSources)
                 return Manager.Name + ": " + Name;
             else
                 return Manager.Name;
@@ -261,7 +256,7 @@ namespace ModernWindow.PackageEngine
 
         public override bool Equals(object obj)
         {
-            if(obj is not ManagerSource) 
+            if (obj is not ManagerSource)
                 return false;
             else
                 return (obj as ManagerSource).Manager == Manager && (obj as ManagerSource).Name == Name && (obj as ManagerSource).Url == Url;

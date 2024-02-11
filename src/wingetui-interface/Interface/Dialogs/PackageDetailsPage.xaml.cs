@@ -1,23 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,14 +31,14 @@ namespace ModernWindow.Interface.Dialogs
             Wide,
             Unloaded
         }
-        
+
         private LayoutMode layoutMode = LayoutMode.Unloaded;
         public PackageDetailsPage(Package package, OperationType futureOperation)
         {
             FutureOperation = futureOperation;
             Package = package;
 
-            this.InitializeComponent();
+            InitializeComponent();
 
             InstallOptionsPage = new InstallOptionsPage(package, futureOperation);
             InstallOptionsExpander.Content = InstallOptionsPage;
@@ -71,14 +59,14 @@ namespace ModernWindow.Interface.Dialogs
 
             IdTextBlock.Text = package.Id;
             VersionTextBlock.Text = package.Version;
-            if(package is UpgradablePackage)
+            if (package is UpgradablePackage)
                 VersionTextBlock.Text += " - " + bindings.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
             PackageName.Text = package.Name;
             PackageIcon.Source = new BitmapImage() { UriSource = package.GetIconUrl() };
             SourceNameTextBlock.Text = package.SourceAsString;
 
 
-            var LoadingString = bindings.Translate("Loading...");
+            string LoadingString = bindings.Translate("Loading...");
             LoadingIndicator.Visibility = Visibility.Visible;
 
 
@@ -99,7 +87,7 @@ namespace ModernWindow.Interface.Dialogs
             DownloadInstallerButton.IsEnabled = false;
             ReleaseNotesUrlButton.Content = LoadingString;
 
-            if(CoreData.IconDatabaseData.ContainsKey(Package.GetIconId()))
+            if (CoreData.IconDatabaseData.ContainsKey(Package.GetIconId()))
             {
                 if (CoreData.IconDatabaseData[Package.GetIconId()].images.Count > 0)
                 {
@@ -110,38 +98,40 @@ namespace ModernWindow.Interface.Dialogs
                         ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(new Uri(image)) });
                 }
             }
-                
+
 
             _ = LoadInformation();
-            
+
         }
         public async Task LoadInformation()
         {
             LoadingIndicator.Visibility = Visibility.Visible;
 
-            var NotFound = bindings.Translate("Not available");
-            var InvalidUri = new Uri("about:blank");
+            string NotFound = bindings.Translate("Not available");
+            Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
 
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
-            HomepageUrlButton.Content = Info.HomepageUrl != null? Info.HomepageUrl: NotFound;
-            HomepageUrlButton.NavigateUri = Info.HomepageUrl != null? Info.HomepageUrl: InvalidUri;
-            PublisherTextBlock.Text = Info.Publisher != ""? Info.Publisher: NotFound;
-            AuthorTextBlock.Text = Info.Author != "" ? Info.Author: NotFound;
-            LicenseTextBlock.Text = Info.License!= "" ? Info.License: NotFound;
-            if(Info.License != "" && Info.LicenseUrl != null)
+            HomepageUrlButton.Content = Info.HomepageUrl != null ? Info.HomepageUrl : NotFound;
+            HomepageUrlButton.NavigateUri = Info.HomepageUrl != null ? Info.HomepageUrl : InvalidUri;
+            PublisherTextBlock.Text = Info.Publisher != "" ? Info.Publisher : NotFound;
+            AuthorTextBlock.Text = Info.Author != "" ? Info.Author : NotFound;
+            LicenseTextBlock.Text = Info.License != "" ? Info.License : NotFound;
+            if (Info.License != "" && Info.LicenseUrl != null)
             {
                 LicenseTextBlock.Text = Info.License;
                 LicenseUrlButton.Content = "(" + Info.LicenseUrl + ")";
                 LicenseUrlButton.NavigateUri = Info.LicenseUrl;
-            } else if (Info.License != "" && Info.LicenseUrl == null)
+            }
+            else if (Info.License != "" && Info.LicenseUrl == null)
             {
                 LicenseTextBlock.Text = Info.License;
                 LicenseUrlButton.Content = "";
                 LicenseUrlButton.NavigateUri = InvalidUri;
-            } else if(Info.License == "" && Info.LicenseUrl != null)
+            }
+            else if (Info.License == "" && Info.LicenseUrl != null)
             {
                 LicenseTextBlock.Text = "";
                 LicenseUrlButton.Content = Info.LicenseUrl;
@@ -155,10 +145,10 @@ namespace ModernWindow.Interface.Dialogs
             }
 
             DescriptionBox.Text = Info.Description != "" ? Info.Description : NotFound;
-            ManifestUrlButton.Content = Info.ManifestUrl != null ? Info.ManifestUrl: NotFound;
+            ManifestUrlButton.Content = Info.ManifestUrl != null ? Info.ManifestUrl : NotFound;
             ManifestUrlButton.NavigateUri = Info.ManifestUrl != null ? Info.ManifestUrl : InvalidUri;
-            HashTextBlock.Text = Info.InstallerHash != "" ? Info.InstallerHash: NotFound;
-            InstallerUrlButton.Content = Info.InstallerUrl != null ? Info.InstallerUrl: NotFound;
+            HashTextBlock.Text = Info.InstallerHash != "" ? Info.InstallerHash : NotFound;
+            InstallerUrlButton.Content = Info.InstallerUrl != null ? Info.InstallerUrl : NotFound;
             InstallerUrlButton.NavigateUri = Info.InstallerUrl != null ? Info.InstallerUrl : InvalidUri;
             InstallerTypeTextBlock.Text = Info.InstallerType != "" ? Info.InstallerType : NotFound;
             UpdateDateTextBlock.Text = Info.UpdateDate != "" ? Info.UpdateDate : NotFound;
@@ -189,7 +179,7 @@ namespace ModernWindow.Interface.Dialogs
 
         public void ShareButton_Click(object sender, RoutedEventArgs e)
         {
-             bindings.App.mainWindow.SharePackage(Package);
+            bindings.App.mainWindow.SharePackage(Package);
         }
 
         public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
@@ -205,10 +195,10 @@ namespace ModernWindow.Interface.Dialogs
         {
             if (e.NewSize.Width < 800)
             {
-                if(layoutMode != LayoutMode.Normal)
+                if (layoutMode != LayoutMode.Normal)
                 {
                     layoutMode = LayoutMode.Normal;
-                 
+
                     MainGrid.ColumnDefinitions.Clear();
                     MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(TitlePanel, 0);
@@ -217,7 +207,7 @@ namespace ModernWindow.Interface.Dialogs
                     Grid.SetColumn(ActionsPanel, 0);
                     Grid.SetColumn(InstallOptionsBorder, 0);
                     Grid.SetColumn(MoreDataStackPanel, 0);
-                
+
                     MainGrid.RowDefinitions.Clear();
                     MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
                     MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
@@ -244,7 +234,7 @@ namespace ModernWindow.Interface.Dialogs
                     MainGrid.Children.Add(ActionsPanel);
                     MainGrid.Children.Add(InstallOptionsBorder);
                     MainGrid.Children.Add(MoreDataStackPanel);
-                    ScreenshotsCarroussel.Height = PackageHasScreenshots? 225: 150;
+                    ScreenshotsCarroussel.Height = PackageHasScreenshots ? 225 : 150;
 
                     InstallOptionsExpander.IsExpanded = false;
 
@@ -281,7 +271,7 @@ namespace ModernWindow.Interface.Dialogs
                     LeftPanel.Children.Add(ActionsPanel);
                     LeftPanel.Children.Add(InstallOptionsBorder);
                     RightPanel.Children.Add(MoreDataStackPanel);
-                    ScreenshotsCarroussel.Height = PackageHasScreenshots? 400: 150;
+                    ScreenshotsCarroussel.Height = PackageHasScreenshots ? 400 : 150;
 
                     InstallOptionsExpander.IsExpanded = true;
 

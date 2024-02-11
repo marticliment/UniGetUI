@@ -1,17 +1,12 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Security.Cryptography.Certificates;
-using Windows.Management.Deployment;
-using Windows.Graphics.Display;
-using System.IO;
 using System.Diagnostics;
-using System.Data.Common;
-using System.Text.RegularExpressions;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using ModernWindow.Structures;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -23,7 +18,7 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
 
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -45,15 +40,15 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (!DashesPassed)
                 {
-                    if(line.Contains("-----"))
+                    if (line.Contains("-----"))
                         DashesPassed = true;
                 }
                 else
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if(elements.Length >= 2)
-                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global)); 
-                        // Dotnet tool packages are installed globally by default, hence the Global flag
+                    if (elements.Length >= 2)
+                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                    // Dotnet tool packages are installed globally by default, hence the Global flag
                 }
             }
 
@@ -68,9 +63,10 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             string path = await bindings.Which("dotnet-tools-outdated.exe");
-            if(!File.Exists(path))
+            if (!File.Exists(path))
             {
-                Process proc = new Process() {
+                Process proc = new()
+                {
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = path,
@@ -84,7 +80,8 @@ namespace ModernWindow.PackageEngine.Managers
                 path = "dotnet-tools-outdated.exe";
             }
 
-            Process p = new Process() {
+            Process p = new()
+            {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = path,
@@ -100,16 +97,18 @@ namespace ModernWindow.PackageEngine.Managers
 
             string line;
             bool DashesPassed = false;
-            var Packages = new List<UpgradablePackage>();
+            List<UpgradablePackage> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
                 if (!DashesPassed)
                 {
-                    if(line.Contains("----"))
+                    if (line.Contains("----"))
                         DashesPassed = true;
-                } else {
+                }
+                else
+                {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length < 3)
                         continue;
@@ -117,7 +116,7 @@ namespace ModernWindow.PackageEngine.Managers
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
-                    
+
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
                 }
             }
@@ -129,7 +128,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new Process()
+            Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -146,7 +145,7 @@ namespace ModernWindow.PackageEngine.Managers
 
             string line;
             bool DashesPassed = false;
-            var Packages = new List<Package>();
+            List<Package> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 if (!DashesPassed)
@@ -168,7 +167,8 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             }
 
-            p = new Process() {
+            p = new Process()
+            {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = Status.ExecutablePath,
@@ -184,14 +184,16 @@ namespace ModernWindow.PackageEngine.Managers
 
             DashesPassed = false;
             string output = "";
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
-                if(!DashesPassed)
+                if (!DashesPassed)
                 {
-                    if(line.Contains("----"))
+                    if (line.Contains("----"))
                         DashesPassed = true;
-                } else {
+                }
+                else
+                {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length < 2)
                         continue;
@@ -199,7 +201,7 @@ namespace ModernWindow.PackageEngine.Managers
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
-                    
+
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
             }
@@ -208,11 +210,11 @@ namespace ModernWindow.PackageEngine.Managers
 
             return Packages.ToArray();
         }
-        
+
 
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
@@ -226,13 +228,13 @@ namespace ModernWindow.PackageEngine.Managers
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUpdateParameters(package, options);
+            string[] parameters = GetUpdateParameters(package, options);
             parameters[0] = Properties.InstallVerb;
             return parameters;
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options).ToList();
+            List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.UpdateVerb;
 
             if (options.Architecture == Architecture.X86)
@@ -249,16 +251,16 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = new List<string>() { Properties.UninstallVerb, package.Id };
+            List<string> parameters = new() { Properties.UninstallVerb, package.Id };
 
-            if(options.CustomParameters != null)
+            if (options.CustomParameters != null)
                 parameters.AddRange(options.CustomParameters);
 
             if (options.CustomInstallLocation != "")
                 parameters.Add("--tool-path" + options.CustomInstallLocation);
             else if (package.Scope == PackageScope.Global)
                 parameters.Add("--global");
-            
+
             return parameters.ToArray();
         }
 
@@ -294,7 +296,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override ManagerProperties GetProperties()
         {
-            ManagerProperties properties = new ManagerProperties()
+            ManagerProperties properties = new()
             {
                 Name = ".NET Tool",
                 Description = bindings.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
@@ -305,22 +307,22 @@ namespace ModernWindow.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 ExecutableCallArgs = "tool",
-                
+
             };
             return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()
         {
-            var status = new ManagerStatus();
+            ManagerStatus status = new();
 
             status.ExecutablePath = await bindings.Which("dotnet.exe");
             status.Found = File.Exists(status.ExecutablePath);
 
-            if(!status.Found)
+            if (!status.Found)
                 return status;
 
-            Process process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -344,7 +346,7 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             await Task.Delay(0);
-            AppTools.Log("Manager "+Name+" does not support version retrieving, this function should have never been called");
+            AppTools.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
             return new string[0];
         }
     }

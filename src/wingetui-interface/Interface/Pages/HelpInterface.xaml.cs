@@ -1,20 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using ModernWindow.Data;
-using System.Threading.Tasks;
+using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,15 +17,16 @@ namespace ModernWindow.Interface.Dialogs
         bool Initialized = false;
         public HelpDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             _ = InitializeWebView();
 
-            WebView.NavigationStarting += (s, e) => { 
+            WebView.NavigationStarting += (s, e) =>
+            {
                 ProgressBar.Visibility = Visibility.Visible;
-                if(e.Uri.ToString().Contains("marticliment.com") && !e.Uri.ToString().Contains("isWingetUIIframe"))
+                if (e.Uri.ToString().Contains("marticliment.com") && !e.Uri.ToString().Contains("isWingetUIIframe"))
                 {
                     e.Cancel = true;
-                    if(e.Uri.ToString().Contains("?"))
+                    if (e.Uri.ToString().Contains("?"))
                         WebView.Source = new Uri(e.Uri.ToString() + "&isWingetUIIframe");
                     else
                         WebView.Source = new Uri(e.Uri.ToString() + "?isWingetUIIframe");
@@ -55,7 +44,7 @@ namespace ModernWindow.Interface.Dialogs
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if(Initialized && WebView.CanGoBack)
+            if (Initialized && WebView.CanGoBack)
                 WebView.GoBack();
         }
 
@@ -81,7 +70,7 @@ namespace ModernWindow.Interface.Dialogs
 
         private void BrowserButton_Click(object sender, RoutedEventArgs e)
         {
-            if(Initialized)
+            if (Initialized)
                 Process.Start(new ProcessStartInfo { FileName = WebView.Source.ToString().Replace("?isWingetUIIframe", "").Replace("&isWingetUIIframe", ""), UseShellExecute = true });
         }
     }

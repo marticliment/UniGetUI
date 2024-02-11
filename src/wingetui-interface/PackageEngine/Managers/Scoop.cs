@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using ABI.System.Collections.Generic;
-using CommunityToolkit.WinUI;
-using Microsoft.UI.Xaml;
-using ModernWindow.Structures;
-using Windows.Graphics.Display;
 
 namespace ModernWindow.PackageEngine.Managers;
 
@@ -24,12 +17,12 @@ public class Scoop : PackageManagerWithSources
     new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
     protected override async Task<Package[]> FindPackages_UnSafe(string query)
     {
-        var Packages = new List<Package>();
+        List<Package> Packages = new();
 
         string path = await bindings.Which("scoop-search.exe");
         if (!File.Exists(path))
         {
-            Process proc = new Process()
+            Process proc = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -44,7 +37,7 @@ public class Scoop : PackageManagerWithSources
             path = "scoop-search.exe";
         }
 
-        Process p = new Process()
+        Process p = new()
         {
             StartInfo = new ProcessStartInfo()
             {
@@ -67,7 +60,7 @@ public class Scoop : PackageManagerWithSources
             output += line + "\n";
             if (line.StartsWith("'"))
             {
-                var sourceName = line.Split(" ")[0].Replace("'", "");
+                string sourceName = line.Split(" ")[0].Replace("'", "");
                 if (SourceReference.ContainsKey(sourceName))
                     source = SourceReference[sourceName];
                 else
@@ -79,7 +72,7 @@ public class Scoop : PackageManagerWithSources
             }
             else if (line.Trim() != "")
             {
-                var elements = line.Trim().Split(" ");
+                string[] elements = line.Trim().Split(" ");
                 if (elements.Length < 2)
                     continue;
 
@@ -98,16 +91,16 @@ public class Scoop : PackageManagerWithSources
 
     protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
     {
-        var InstalledPackages = new Dictionary<string, Package>();
-        foreach (var InstalledPackage in await GetInstalledPackages())
+        Dictionary<string, Package> InstalledPackages = new();
+        foreach (Package InstalledPackage in await GetInstalledPackages())
         {
             if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
                 InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
         }
 
-        var Packages = new List<UpgradablePackage>();
+        List<UpgradablePackage> Packages = new();
 
-        Process p = new Process()
+        Process p = new()
         {
             StartInfo = new ProcessStartInfo()
             {
@@ -135,7 +128,7 @@ public class Scoop : PackageManagerWithSources
             }
             else if (line.Trim() != "")
             {
-                var elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
+                string[] elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
                 if (elements.Length < 3)
                     continue;
 
@@ -160,9 +153,9 @@ public class Scoop : PackageManagerWithSources
 
     protected override async Task<Package[]> GetInstalledPackages_UnSafe()
     {
-        var Packages = new List<Package>();
+        List<Package> Packages = new();
 
-        Process p = new Process()
+        Process p = new()
         {
             StartInfo = new ProcessStartInfo()
             {
@@ -190,7 +183,7 @@ public class Scoop : PackageManagerWithSources
             }
             else if (line.Trim() != "")
             {
-                var elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
+                string[] elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
                 if (elements.Length < 3)
                     continue;
 
@@ -200,7 +193,7 @@ public class Scoop : PackageManagerWithSources
                     continue;
 
                 ManagerSource source;
-                var sourceName = elements[2];
+                string sourceName = elements[2];
                 if (SourceReference.ContainsKey(sourceName))
                     source = SourceReference[sourceName];
                 else
@@ -210,7 +203,7 @@ public class Scoop : PackageManagerWithSources
                     SourceReference.Add(sourceName, source);
                 }
 
-                var scope = PackageScope.User;
+                PackageScope scope = PackageScope.User;
                 if (line.Contains("Global install"))
                     scope = PackageScope.Global;
 
@@ -235,7 +228,7 @@ public class Scoop : PackageManagerWithSources
 
     protected override async Task<ManagerSource[]> GetSources_UnSafe()
     {
-        using (Process process = new Process())
+        using (Process process = new())
         {
             process.StartInfo.FileName = Status.ExecutablePath;
             process.StartInfo.Arguments = Properties.ExecutableCallArgs + " bucket list";
@@ -245,8 +238,8 @@ public class Scoop : PackageManagerWithSources
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
 
-            List<string> output = new List<string>();
-            List<ManagerSource> sources = new List<ManagerSource>();
+            List<string> output = new();
+            List<ManagerSource> sources = new();
 
             process.Start();
 
@@ -272,7 +265,7 @@ public class Scoop : PackageManagerWithSources
 
     public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
-        var output_string = string.Join("\n", Output);
+        string output_string = string.Join("\n", Output);
         if ((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
         {
             package.Scope = PackageScope.Global;
@@ -289,7 +282,7 @@ public class Scoop : PackageManagerWithSources
     }
     public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
-        var output_string = string.Join("\n", Output);
+        string output_string = string.Join("\n", Output);
         if ((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
         {
             package.Scope = PackageScope.Global;
@@ -311,7 +304,7 @@ public class Scoop : PackageManagerWithSources
 
     public override string[] GetUninstallParameters(Package package, InstallationOptions options)
     {
-        List<string> parameters = new List<string>();
+        List<string> parameters = new();
 
         parameters.Add(Properties.UninstallVerb);
         parameters.Add(package.Source.Name + "/" + package.Id);
@@ -329,13 +322,13 @@ public class Scoop : PackageManagerWithSources
     }
     public override string[] GetInstallParameters(Package package, InstallationOptions options)
     {
-        var parameters = GetUpdateParameters(package, options);
+        string[] parameters = GetUpdateParameters(package, options);
         parameters[0] = Properties.InstallVerb;
         return parameters;
     }
     public override string[] GetUpdateParameters(Package package, InstallationOptions options)
     {
-        var parameters = GetUninstallParameters(package, options).ToList();
+        List<string> parameters = GetUninstallParameters(package, options).ToList();
         parameters[0] = Properties.UpdateVerb;
 
         parameters.Remove("--purge");
@@ -368,8 +361,8 @@ public class Scoop : PackageManagerWithSources
 
     public override async Task RefreshSources()
     {
-        Process process = new Process();
-        ProcessStartInfo StartInfo = new ProcessStartInfo()
+        Process process = new();
+        ProcessStartInfo StartInfo = new()
         {
             FileName = Properties.ExecutableFriendlyName,
             Arguments = Properties.ExecutableCallArgs + " update"
@@ -416,12 +409,12 @@ public class Scoop : PackageManagerWithSources
 
     protected override async Task<ManagerStatus> LoadManager()
     {
-        var status = new ManagerStatus
+        ManagerStatus status = new()
         {
             ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
         };
 
-        Process process = new Process()
+        Process process = new()
         {
             StartInfo = new ProcessStartInfo()
             {

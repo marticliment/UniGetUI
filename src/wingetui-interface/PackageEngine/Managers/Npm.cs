@@ -1,16 +1,9 @@
-﻿using System;
+﻿using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Security.Cryptography.Certificates;
-using Windows.Management.Deployment;
-using Windows.Graphics.Display;
-using System.IO;
 using System.Diagnostics;
-using System.Data.Common;
-using System.Text.RegularExpressions;
-using ModernWindow.Structures;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -21,7 +14,7 @@ namespace ModernWindow.PackageEngine.Managers
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -43,14 +36,14 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 output += line + "\n";
                 if (!HeaderPassed)
-                    if(line.Contains("NAME"))
+                    if (line.Contains("NAME"))
                         HeaderPassed = true;
-                else
-                {
-                    string[] elements = line.Split('\t');
-                    if(elements.Length >= 5)
-                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
-                }
+                    else
+                    {
+                        string[] elements = line.Split('\t');
+                        if (elements.Length >= 5)
+                            Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
+                    }
             }
 
             await p.WaitForExitAsync();
@@ -60,7 +53,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -81,12 +74,12 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 output += line + "\n";
                 string[] elements = line.Split(':');
-                if(elements.Length >= 4)
+                if (elements.Length >= 4)
                 {
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
                 }
             }
-            
+
             p = new Process();
             p.StartInfo = new ProcessStartInfo()
             {
@@ -105,7 +98,7 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 output += line + "\n";
                 string[] elements = line.Split(':');
-                if(elements.Length >= 4)
+                if (elements.Length >= 4)
                     Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this, PackageScope.Global));
             }
 
@@ -119,7 +112,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -145,7 +138,7 @@ namespace ModernWindow.PackageEngine.Managers
                     Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
-            
+
             p = new Process();
             p.StartInfo = new ProcessStartInfo()
             {
@@ -179,40 +172,40 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
-            return ReturnCode == 0? OperationVeredict.Succeeded : OperationVeredict.Failed;
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options);
+            string[] parameters = GetUninstallParameters(package, options);
             parameters[0] = Properties.InstallVerb;
 
-            if(options.Version != "")
+            if (options.Version != "")
                 parameters[1] = package.Id + "@" + package.Version;
             else
                 parameters[1] = package.Id + "@latest";
-            
+
             return parameters;
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options);
+            string[] parameters = GetUninstallParameters(package, options);
             parameters[0] = Properties.UpdateVerb;
             parameters[1] = package.Id + "@" + package.NewVersion;
             return parameters;
         }
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = new List<string>() { Properties.UninstallVerb, package.Id };
+            List<string> parameters = new() { Properties.UninstallVerb, package.Id };
 
             if (options.CustomParameters != null)
                 parameters.AddRange(options.CustomParameters);
@@ -251,7 +244,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override ManagerProperties GetProperties()
         {
-            ManagerProperties properties = new ManagerProperties()
+            ManagerProperties properties = new()
             {
                 Name = "Npm",
                 Description = bindings.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
@@ -262,22 +255,22 @@ namespace ModernWindow.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install",
                 ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command npm",
-                
+
             };
             return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()
         {
-            var status = new ManagerStatus();
+            ManagerStatus status = new();
 
             status.ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
             status.Found = File.Exists(await bindings.Which("npm"));
 
-            if(!status.Found)
+            if (!status.Found)
                 return status;
 
-            Process process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -303,7 +296,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            var p = new Process()
+            Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -323,10 +316,10 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
 
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 if (line.Contains("\""))
-                    versions.Add(line.Trim().TrimStart('"').TrimEnd(',').TrimEnd('"'));                        
+                    versions.Add(line.Trim().TrimStart('"').TrimEnd(',').TrimEnd('"'));
             }
 
             return versions.ToArray();

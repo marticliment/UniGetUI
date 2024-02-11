@@ -1,26 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using ModernWindow.Structures;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Security.Cryptography.Core;
-using Windows.Devices.Bluetooth.Advertisement;
-using Windows.ApplicationModel.DataTransfer;
-using System.Diagnostics;
-using Windows.Storage.Pickers;
-using Windows.Storage;
 using ModernWindow.Data;
+using ModernWindow.Structures;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,22 +30,22 @@ namespace ModernWindow.Interface.Pages
         public LogType LogType;
         public LogPage(LogType logType = LogType.WingetUILog)
         {
-            this.InitializeComponent();
+            InitializeComponent();
             LogType = logType;
             LoadLog();
         }
 
         public void LoadLog()
         {
-            if(LogType == LogType.WingetUILog)
+            if (LogType == LogType.WingetUILog)
             {
                 LogTextBox.Text = CoreData.WingetUILog;
             }
-            else if(LogType == LogType.ManagerLogs)
+            else if (LogType == LogType.ManagerLogs)
             {
                 LogTextBox.Text = CoreData.ManagerLogs;
             }
-            else if(LogType == LogType.OperationHistory)
+            else if (LogType == LogType.OperationHistory)
             {
                 LogTextBox.Text = AppTools.GetSettingsValue_Static("OperationHistory");
             }
@@ -71,7 +58,7 @@ namespace ModernWindow.Interface.Pages
 
         public async void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            FileSavePicker savePicker = new FileSavePicker();
+            FileSavePicker savePicker = new();
             savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
             savePicker.FileTypeChoices.Add(AppTools.Instance.Translate("Text"), new List<string>() { ".txt" });

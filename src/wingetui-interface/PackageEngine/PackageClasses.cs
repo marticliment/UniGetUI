@@ -1,23 +1,14 @@
-﻿using Microsoft.UI.Xaml.Media;
-using Microsoft.WindowsAppSDK.Runtime;
-using ModernWindow.Data;
+﻿using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
-using Windows.Devices.Bluetooth.Background;
-using Windows.Graphics.DirectX.Direct3D11;
-using WinRT;
 
 namespace ModernWindow.PackageEngine
 {
@@ -29,13 +20,13 @@ namespace ModernWindow.PackageEngine
         Local = 0,
         User = 0,
     }
-    public class Package: INotifyPropertyChanged
+    public class Package : INotifyPropertyChanged
     {
         public AppTools bindings = AppTools.Instance;
 
         private bool __is_checked = false;
 
-        public bool IsChecked { get {return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
+        public bool IsChecked { get { return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
         public string Id { get; set; }
@@ -50,11 +41,15 @@ namespace ModernWindow.PackageEngine
         public event PropertyChangedEventHandler PropertyChanged;
 
         public PackageScope Scope { get; set; }
-        public string SourceAsString { get {
+        public string SourceAsString
+        {
+            get
+            {
                 if (Source != null)
                     return Source.ToString();
                 else return "";
-            } }
+            }
+        }
 
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
         {
@@ -87,9 +82,9 @@ namespace ModernWindow.PackageEngine
             string iconId = Id.ToLower();
             if (Manager == bindings.App.Winget)
                 iconId = String.Join('.', iconId.Split(".")[1..]);
-            else if(Manager == bindings.App.Choco)
+            else if (Manager == bindings.App.Choco)
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
-            else if(Manager == bindings.App.Scoop)
+            else if (Manager == bindings.App.Scoop)
                 iconId = iconId.Replace(".app", "");
             return iconId;
         }
@@ -122,12 +117,12 @@ namespace ModernWindow.PackageEngine
                 }
             }
             float res = 0.0F;
-            if(_ver != "" && _ver != ".")
+            if (_ver != "" && _ver != ".")
                 try
                 {
                     return float.Parse(_ver);
                 }
-                catch {}
+                catch { }
             return res;
         }
 
@@ -136,7 +131,7 @@ namespace ModernWindow.PackageEngine
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
             JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
             if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
-                IgnoredUpdatesJson.Remove(IgnoredId);   
+                IgnoredUpdatesJson.Remove(IgnoredId);
             IgnoredUpdatesJson.Add(IgnoredId, version);
             await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
@@ -222,7 +217,7 @@ namespace ModernWindow.PackageEngine
                 {
                     return float.Parse(_ver);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             return res;
@@ -235,8 +230,8 @@ namespace ModernWindow.PackageEngine
 
         public bool NewVersionIsInstalled()
         {
-            foreach (var package in bindings.App.mainWindow.NavigationPage.InstalledPage.Packages)
-                if(package.Manager == Manager && package.Id == Id && package.Version == NewVersion && package.Source.Name == Source.Name)
+            foreach (Package package in bindings.App.mainWindow.NavigationPage.InstalledPage.Packages)
+                if (package.Manager == Manager && package.Id == Id && package.Version == NewVersion && package.Source.Name == Source.Name)
                     return true;
             return false;
         }
@@ -347,7 +342,7 @@ namespace ModernWindow.PackageEngine
 
         public string GetJsonString()
         {
-            JsonOptions_v1 options = new JsonOptions_v1();
+            JsonOptions_v1 options = new();
             options.SkipHashCheck = SkipHashCheck;
             options.InteractiveInstallation = InteractiveInstallation;
             options.RunAsAdministrator = RunAsAdministrator;
@@ -367,10 +362,11 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
-                var JSON = GetJsonString();
-                var filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
+                string JSON = GetJsonString();
+                string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
                 File.WriteAllText(filename, JSON);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 AppTools.Log(ex);
             }
@@ -380,7 +376,7 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
-                var filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
+                string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
                 if (!File.Exists(filename))
                     return;
                 LoadFromJsonString(File.ReadAllText(filename));
@@ -393,7 +389,7 @@ namespace ModernWindow.PackageEngine
 
         public override string ToString()
         {
-            var customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";
+            string customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";
             return $"<InstallationOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
                    $"RunAsAdministrator={RunAsAdministrator};" +

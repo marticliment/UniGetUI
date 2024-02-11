@@ -1,26 +1,15 @@
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using ModernWindow.Data;
+using ModernWindow.PackageEngine;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System.Threading.Tasks;
-using Windows.Devices.AllJoyn;
-using ModernWindow.Structures;
-using Microsoft.WindowsAppSDK.Runtime;
-using ModernWindow.Data;
 using System.Text.Json.Nodes;
-using ModernWindow.PackageEngine;
-using System.Collections.ObjectModel;
-using Windows.Graphics.DirectX.Direct3D11;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,34 +19,34 @@ namespace ModernWindow.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    
+
     public sealed partial class IgnoredUpdatesManager : Page
     {
         AppTools bindings = AppTools.Instance;
         public IgnoredUpdatesManager()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             IgnoredUpdatesList.DoubleTapped += IgnoredUpdatesList_DoubleTapped;
         }
 
         public async Task UpdateData()
         {
 
-            var ManagerNameReference = new Dictionary<string, PackageManager>();
+            Dictionary<string, PackageManager> ManagerNameReference = new();
 
-            foreach(var Manager in bindings.App.PackageManagerList)
+            foreach (PackageManager Manager in bindings.App.PackageManagerList)
             {
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
 
             JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            
+
             IgnoredUpdatesList.Items.Clear();
 
-            foreach(var keypair in IgnoredUpdatesJson)
+            foreach (KeyValuePair<string, JsonNode> keypair in IgnoredUpdatesJson)
             {
                 PackageManager manager = bindings.App.Winget; // Manager by default
-                if(ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
+                if (ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
                     manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
 
                 IgnoredUpdatesList.Items.Add(new IgnoredPackage(keypair.Key.Split("\\")[^1], keypair.Value.ToString(), manager, IgnoredUpdatesList));
@@ -78,19 +67,19 @@ namespace ModernWindow.Interface
                 await package.RemoveFromIgnoredUpdates();
         }
     }
-    
+
     public class IgnoredPackage
     {
         public string Id { get; }
         public string Name { get; }
         public string Version { get; }
-        public PackageManager Manager{ get; }
+        public PackageManager Manager { get; }
         private ListView List { get; }
         public IgnoredPackage(string id, string version, PackageManager manager, ListView list)
         {
             Id = id;
             Name = AppTools.Instance.FormatAsName(id);
-            if(version == "*")
+            if (version == "*")
                 Version = AppTools.Instance.Translate("All versions");
             else
                 Version = version;

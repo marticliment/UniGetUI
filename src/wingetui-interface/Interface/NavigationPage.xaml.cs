@@ -1,30 +1,14 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using ModernWindow.Interface.Widgets;
-using Microsoft.UI.Composition;
-using System.Numerics;
-using System.Collections.ObjectModel;
-using ModernWindow.PackageEngine;
-using System.Threading.Tasks;
-using ModernWindow.Structures;
-using ModernWindow.Interface.Dialogs;
 using ModernWindow.Data;
-using System.Security.Cryptography.X509Certificates;
-using CommunityToolkit.WinUI.Animations;
+using ModernWindow.Interface.Dialogs;
 using ModernWindow.Interface.Pages;
+using ModernWindow.Interface.Widgets;
+using ModernWindow.PackageEngine;
+using ModernWindow.Structures;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -50,7 +34,7 @@ namespace ModernWindow.Interface
 
         public NavigationPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             UpdatesBadge = __updates_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
             SettingsPage = new SettingsInterface();
@@ -117,9 +101,9 @@ namespace ModernWindow.Interface
 
         private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            ContentDialog AboutDialog = new ContentDialog();
+            ContentDialog AboutDialog = new();
             AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            AboutDialog.XamlRoot = this.XamlRoot;
+            AboutDialog.XamlRoot = XamlRoot;
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
             AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
             AboutDialog.Content = AboutPage;
@@ -137,9 +121,9 @@ namespace ModernWindow.Interface
 
         public async Task ManageIgnoredUpdatesDialog()
         {
-            ContentDialog UpdatesDialog = new ContentDialog();
+            ContentDialog UpdatesDialog = new();
             UpdatesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            UpdatesDialog.XamlRoot = this.XamlRoot;
+            UpdatesDialog.XamlRoot = XamlRoot;
             UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
             UpdatesDialog.PrimaryButtonText = bindings.Translate("Close");
@@ -158,25 +142,25 @@ namespace ModernWindow.Interface
 
         public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
         {
-            var OptionsPage = new InstallOptionsPage(package, Operation);
+            InstallOptionsPage OptionsPage = new(package, Operation);
 
-            ContentDialog OptionsDialog = new ContentDialog();
+            ContentDialog OptionsDialog = new();
             OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            OptionsDialog.XamlRoot = this.XamlRoot;
+            OptionsDialog.XamlRoot = XamlRoot;
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             if (Operation == OperationType.Install)
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Install");
-            else if(Operation == OperationType.Update)
+            else if (Operation == OperationType.Update)
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Update");
-            else 
+            else
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Uninstall");
             OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
 
-            var result = await bindings.App.mainWindow.ShowDialog(OptionsDialog);
+            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(OptionsDialog);
             OptionsPage.SaveToDisk();
 
             OptionsDialog.Content = null;
@@ -191,7 +175,7 @@ namespace ModernWindow.Interface
             foreach (Page page in PageButtonReference.Keys)
                 if (page.Visibility == Visibility.Visible)
                     OldPage = page;
-            if(!PageButtonReference.ContainsKey(TargetPage))
+            if (!PageButtonReference.ContainsKey(TargetPage))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
                 Grid.SetColumn(TargetPage, 0);
@@ -200,7 +184,7 @@ namespace ModernWindow.Interface
             }
             foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
             {
-                
+
                 button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
             }
 
@@ -213,19 +197,19 @@ namespace ModernWindow.Interface
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
         {
 
-            ContentDialog NotesDialog = new ContentDialog();
+            ContentDialog NotesDialog = new();
             NotesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            NotesDialog.XamlRoot = this.XamlRoot;
+            NotesDialog.XamlRoot = XamlRoot;
             NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
             NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
             NotesDialog.CloseButtonText = bindings.Translate("Close");
             NotesDialog.Title = bindings.Translate("Release notes");
-            var notes = new ReleaseNotes();
+            ReleaseNotes notes = new();
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
             {
                 notes.MinWidth = ActualWidth - 300;
-                notes.MinHeight = ActualHeight- 200;
+                notes.MinHeight = ActualHeight - 200;
             };
 
             await bindings.App.mainWindow.ShowDialog(NotesDialog);
@@ -235,11 +219,11 @@ namespace ModernWindow.Interface
 
         public async Task ShowPackageDetails(Package package, OperationType ActionOperation)
         {
-            var DetailsPage = new PackageDetailsPage(package, ActionOperation);
+            PackageDetailsPage DetailsPage = new(package, ActionOperation);
 
-            ContentDialog DetailsDialog = new ContentDialog();
+            ContentDialog DetailsDialog = new();
             DetailsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            DetailsDialog.XamlRoot = this.XamlRoot;
+            DetailsDialog.XamlRoot = XamlRoot;
             DetailsDialog.Resources["ContentDialogMaxWidth"] = 8000;
             DetailsDialog.Resources["ContentDialogMaxHeight"] = 4000;
             DetailsDialog.Content = DetailsPage;
@@ -281,7 +265,7 @@ namespace ModernWindow.Interface
             ShowHelp();
         }
         public async void ShowHelp()
-        { 
+        {
             NavigateToPage(HelpPage);
         }
 

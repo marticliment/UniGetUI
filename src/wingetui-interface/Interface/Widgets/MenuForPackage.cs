@@ -1,13 +1,8 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
+using System;
 
 namespace ModernWindow.Interface.Widgets
 {
@@ -16,7 +11,7 @@ namespace ModernWindow.Interface.Widgets
         public AppTools bindings = AppTools.Instance;
         public BetterMenu() : base()
         {
-            this.MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
+            MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
         }
     }
 
@@ -41,13 +36,14 @@ namespace ModernWindow.Interface.Widgets
 
         public BetterMenuItem() : base()
         {
-            this.Style = (Style)Application.Current.Resources["BetterMenuItem"];
-            
+            Style = (Style)Application.Current.Resources["BetterMenuItem"];
+
             IconNameProperty = DependencyProperty.Register(
                 nameof(IconName),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+                {
                     Icon = new LocalIcon(e.NewValue as string);
                 })));
 
@@ -55,7 +51,8 @@ namespace ModernWindow.Interface.Widgets
                 nameof(Text),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+                {
                     (this as MenuFlyoutItem).Text = AppTools.Instance.Translate(e.NewValue as string);
                 })));
 
@@ -71,7 +68,7 @@ namespace ModernWindow.Interface.Widgets
 
         public MenuForPackage() : base()
         {
-            this.MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
+            MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
             PackageProperty = DependencyProperty.Register(
                 nameof(Package),
                 typeof(Package),
@@ -109,7 +106,7 @@ namespace ModernWindow.Interface.Widgets
 
         public MenuItemForPackage() : base()
         {
-            this.Style = (Style)Application.Current.Resources["BetterMenuItem"];
+            Style = (Style)Application.Current.Resources["BetterMenuItem"];
             PackageProperty = DependencyProperty.Register(
                 nameof(Package),
                 typeof(Package),
@@ -120,7 +117,8 @@ namespace ModernWindow.Interface.Widgets
                 nameof(IconName),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => {
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+                {
                     Icon = new LocalIcon(e.NewValue as string);
                 })));
 

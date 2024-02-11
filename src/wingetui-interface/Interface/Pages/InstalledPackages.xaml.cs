@@ -1,15 +1,7 @@
-using CommunityToolkit.WinUI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.VisualBasic;
 using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine;
@@ -17,19 +9,10 @@ using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection.Metadata.Ecma335;
-using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using System.Xml;
-using Windows.Devices.Bluetooth.Advertisement;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Core;
-using Windows.Web.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,8 +22,8 @@ namespace ModernWindow.Interface
 
     public partial class InstalledPackagesPage : Page
     {
-        public ObservableCollection<Package> Packages = new ObservableCollection<Package>();
-        public SortableObservableCollection<Package> FilteredPackages = new SortableObservableCollection<Package>() { SortingSelector = (a) => (a.Name) };
+        public ObservableCollection<Package> Packages = new();
+        public SortableObservableCollection<Package> FilteredPackages = new() { SortingSelector = (a) => (a.Name) };
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
@@ -61,7 +44,7 @@ namespace ModernWindow.Interface
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
         public InstalledPackagesPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             MainTitle = __main_title;
             MainSubtitle = __main_subtitle;
             PackageList = __package_list;
@@ -82,12 +65,12 @@ namespace ModernWindow.Interface
                     AppTools.Log(e.OriginalSource);
                     AppTools.Log(e.OriginalSource as FrameworkElement);
                     AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
-                    if((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
-                        var node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
                         if (node == null)
                             return;
-                        if(SourcesTreeView.SelectedNodes.Contains(node))
+                        if (SourcesTreeView.SelectedNodes.Contains(node))
                             SourcesTreeView.SelectedNodes.Remove(node);
                         else
                             SourcesTreeView.SelectedNodes.Add(node);
@@ -99,7 +82,8 @@ namespace ModernWindow.Interface
                 }
             };
 
-            PackageList.DoubleTapped += (s, e) => {
+            PackageList.DoubleTapped += (s, e) =>
+            {
                 _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
             };
 
@@ -166,7 +150,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            var source = package.Source;
+            ManagerSource source = package.Source;
             if (!UsedManagers.Contains(source.Manager))
             {
                 UsedManagers.Add(source.Manager);
@@ -183,7 +167,7 @@ namespace ModernWindow.Interface
             if ((!UsedSourcesForManager.ContainsKey(source.Manager) || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
             {
                 UsedSourcesForManager[source.Manager].Add(source);
-                var item = new TreeViewNode() { Content = source.Name };
+                TreeViewNode item = new() { Content = source.Name };
                 NodesForSources.Add(source, item);
 
                 if (source.IsVirtualManager)
@@ -253,20 +237,20 @@ namespace ModernWindow.Interface
 
             await Task.Delay(100);
 
-            var tasks = new List<Task<Package[]>>();
+            List<Task<Package[]>> tasks = new();
 
-            foreach (var manager in bindings.App.PackageManagerList)
+            foreach (PackageManager manager in bindings.App.PackageManagerList)
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {
-                    var task = manager.GetInstalledPackages();
+                    Task<Package[]> task = manager.GetInstalledPackages();
                     tasks.Add(task);
                 }
             }
 
             while (tasks.Count > 0)
             {
-                foreach (var task in tasks.ToArray())
+                foreach (Task<Package[]> task in tasks.ToArray())
                 {
                     if (!task.IsCompleted)
                         await Task.Delay(100);
@@ -304,7 +288,7 @@ namespace ModernWindow.Interface
 
             if (SourcesTreeView.SelectedNodes.Count > 0)
             {
-                foreach (var node in SourcesTreeView.SelectedNodes)
+                foreach (TreeViewNode node in SourcesTreeView.SelectedNodes)
                 {
                     if (NodesForSources.ContainsValue(node))
                         VisibleSources.Add(NodesForSources.First(x => x.Value == node).Key);
@@ -324,9 +308,10 @@ namespace ModernWindow.Interface
 
             Func<string, string> CharsFunc;
             if (IgnoreSpecialCharsCheckbox.IsChecked == true)
-                CharsFunc = (x) => {
-                    var temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
-                    foreach (var entry in new Dictionary<char, string>
+                CharsFunc = (x) =>
+                {
+                    string temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
+                    foreach (KeyValuePair<char, string> entry in new Dictionary<char, string>
                         {
                             {'a', "àáäâ"},
                             {'e', "èéëê"},
@@ -355,7 +340,7 @@ namespace ModernWindow.Interface
 
             FilteredPackages.BlockSorting = true;
             int HiddenPackagesDueToSource = 0;
-            foreach (var match in MatchingList)
+            foreach (Package match in MatchingList)
             {
                 if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
@@ -367,7 +352,7 @@ namespace ModernWindow.Interface
 
             if (MatchingList.Count() == 0)
             {
-                if(!StillLoading)
+                if (!StillLoading)
                 {
                     if (Packages.Count() == 0)
                     {
@@ -383,7 +368,7 @@ namespace ModernWindow.Interface
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
-                
+
             }
             else
             {
@@ -399,7 +384,7 @@ namespace ModernWindow.Interface
 
             FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
-            var Item = PackageList.SelectedItem;
+            object Item = PackageList.SelectedItem;
             FilteredPackages.Sort();
 
             if (Item != null)
@@ -431,22 +416,22 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            var UninstallSelected = new AppBarButton();
-            var UninstallAsAdmin = new AppBarButton();
-            var UninstallInteractive = new AppBarButton();
-            var InstallationSettings = new AppBarButton();
+            AppBarButton UninstallSelected = new();
+            AppBarButton UninstallAsAdmin = new();
+            AppBarButton UninstallInteractive = new();
+            AppBarButton InstallationSettings = new();
 
-            var PackageDetails = new AppBarButton();
-            var SharePackage = new AppBarButton();
+            AppBarButton PackageDetails = new();
+            AppBarButton SharePackage = new();
 
-            var SelectAll = new AppBarButton();
-            var SelectNone = new AppBarButton();
+            AppBarButton SelectAll = new();
+            AppBarButton SelectNone = new();
 
-            var IgnoreSelected = new AppBarButton();
-            var ManageIgnored = new AppBarButton();
-            var ExportSelection = new AppBarButton();
+            AppBarButton IgnoreSelected = new();
+            AppBarButton ManageIgnored = new();
+            AppBarButton ExportSelection = new();
 
-            var HelpButton = new AppBarButton();
+            AppBarButton HelpButton = new();
 
             ToolBar.PrimaryCommands.Add(UninstallSelected);
             ToolBar.PrimaryCommands.Add(UninstallAsAdmin);
@@ -467,7 +452,7 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
 
-            var Labels = new Dictionary<AppBarButton, string>
+            Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
                 { UninstallSelected,      "Uninstall selected packages" },
@@ -484,7 +469,7 @@ namespace ModernWindow.Interface
                 { HelpButton,             "Help" }
             };
 
-            foreach (var toolButton in Labels.Keys)
+            foreach (AppBarButton toolButton in Labels.Keys)
             {
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
@@ -492,7 +477,7 @@ namespace ModernWindow.Interface
                 toolButton.Label = bindings.Translate(Labels[toolButton].Trim());
             }
 
-            var Icons = new Dictionary<AppBarButton, string>
+            Dictionary<AppBarButton, string> Icons = new()
             {
                 { UninstallSelected,      "menu_uninstall" },
                 { UninstallAsAdmin,       "runasadmin" },
@@ -508,23 +493,25 @@ namespace ModernWindow.Interface
                 { HelpButton,           "help" }
             };
 
-            foreach (var toolButton in Icons.Keys)
+            foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.Click += (s, e) => { _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); };
-            ExportSelection.IsEnabled = false; 
+            ExportSelection.IsEnabled = false;
             HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
 
 
-            InstallationSettings.Click += async (s, e) => {
+            InstallationSettings.Click += async (s, e) =>
+            {
                 if (PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
                     ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
             };
 
 
             ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
-            IgnoreSelected.Click += async (s, e) => {
-                foreach (var package in FilteredPackages) if (package.IsChecked)
+            IgnoreSelected.Click += async (s, e) =>
+            {
+                foreach (Package package in FilteredPackages) if (package.IsChecked)
                         await package.AddToIgnoredUpdates();
             };
 
@@ -541,9 +528,9 @@ namespace ModernWindow.Interface
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
         {
-            ContentDialog dialog = new ContentDialog();
+            ContentDialog dialog = new();
 
-            dialog.XamlRoot = this.XamlRoot;
+            dialog.XamlRoot = XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.Title = bindings.Translate("Are you sure?");
             dialog.PrimaryButtonText = bindings.Translate("No");
@@ -565,30 +552,31 @@ namespace ModernWindow.Interface
                 return;
             }
 
-            ContentDialog dialog = new ContentDialog();
+            ContentDialog dialog = new();
 
-            dialog.XamlRoot = this.XamlRoot;
+            dialog.XamlRoot = XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.Title = bindings.Translate("Are you sure?");
             dialog.PrimaryButtonText = bindings.Translate("No");
             dialog.SecondaryButtonText = bindings.Translate("Yes");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
-            var p = new StackPanel();
+            StackPanel p = new();
             p.Children.Add(new TextBlock() { Text = bindings.Translate("Do you really want to uninstall the following {0} packages?").Replace("{0}", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
 
             string pkgList = "";
-            foreach (var package in packages)
+            foreach (Package package in packages)
                 pkgList += " ● " + package.Name + "\x0a";
 
-            var PackageListTextBlock = new TextBlock() { FontFamily = new FontFamily("Consolas"), Text = pkgList };
+            TextBlock PackageListTextBlock = new() { FontFamily = new FontFamily("Consolas"), Text = pkgList };
             p.Children.Add(new ScrollView() { Content = PackageListTextBlock, MaxHeight = 200 });
 
             dialog.Content = p;
-                
+
             if (await bindings.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
-                foreach(var package in packages)
-                    bindings.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package) {
+                foreach (Package package in packages)
+                    bindings.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package)
+                    {
                         RunAsAdministrator = AsAdmin,
                         InteractiveInstallation = Interactive,
                         RemoveDataOnUninstall = RemoveData
@@ -599,7 +587,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+            ConfirmAndUninstall((PackageList.SelectedItem as Package),
                 new InstallationOptions((PackageList.SelectedItem as Package)));
         }
 
@@ -607,15 +595,15 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
-                new InstallationOptions((PackageList.SelectedItem as Package)) { RunAsAdministrator = true }) ;
+            ConfirmAndUninstall((PackageList.SelectedItem as Package),
+                new InstallationOptions((PackageList.SelectedItem as Package)) { RunAsAdministrator = true });
         }
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+            ConfirmAndUninstall((PackageList.SelectedItem as Package),
                 new InstallationOptions((PackageList.SelectedItem as Package)) { InteractiveInstallation = true });
         }
 
@@ -623,7 +611,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package), 
+            ConfirmAndUninstall((PackageList.SelectedItem as Package),
                 new InstallationOptions((PackageList.SelectedItem as Package)) { RemoveDataOnUninstall = true });
         }
 
@@ -677,8 +665,8 @@ namespace ModernWindow.Interface
 
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem as Package != null 
-                && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall) )
+            if (PackageList.SelectedItem as Package != null
+                && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
             }
@@ -686,21 +674,21 @@ namespace ModernWindow.Interface
 
         private void SelectAllItems()
         {
-            foreach (var package in FilteredPackages) 
+            foreach (Package package in FilteredPackages)
                 package.IsChecked = true;
             AllSelected = true;
         }
 
         private void ClearItemSelection()
         {
-            foreach (var package in FilteredPackages) 
-                package.IsChecked = false; 
+            foreach (Package package in FilteredPackages)
+                package.IsChecked = false;
             AllSelected = false;
         }
 
         public void RemoveCorrespondingPackages(Package foreignPackage)
         {
-            foreach(var package in Packages.ToArray())
+            foreach (Package package in Packages.ToArray())
                 if (package == foreignPackage || package.Equals(foreignPackage))
                 {
                     Packages.Remove(package);
@@ -712,7 +700,7 @@ namespace ModernWindow.Interface
         }
         public void AddInstalledPackage(Package foreignPackage)
         {
-            foreach (var package in Packages.ToArray())
+            foreach (Package package in Packages.ToArray())
                 if (package == foreignPackage || package.Equals(foreignPackage))
                     return;
             Packages.Add(foreignPackage);

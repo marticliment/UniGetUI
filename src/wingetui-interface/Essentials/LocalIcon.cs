@@ -3,13 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using ModernWindow.Structures;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI;
-using Windows.UI.ViewManagement;
 
 namespace ModernWindow.Interface.Widgets
 {
@@ -18,13 +11,14 @@ namespace ModernWindow.Interface.Widgets
         public static AppTools bindings = AppTools.Instance;
 
         private string __icon_name;
-        public string IconName { 
+        public string IconName
+        {
             get { return __icon_name; }
-            set { __icon_name = value; __apply_icon(); ActualThemeChanged += (s, e) => { __apply_icon(); };  }
+            set { __icon_name = value; __apply_icon(); ActualThemeChanged += (s, e) => { __apply_icon(); }; }
         }
 
         public LocalIcon()
-        {            
+        {
         }
 
         public LocalIcon(string iconName)
@@ -36,8 +30,8 @@ namespace ModernWindow.Interface.Widgets
 
         public void __apply_icon()
         {
-            var theme = "white";
-            if(ActualTheme == ElementTheme.Light)
+            string theme = "white";
+            if (ActualTheme == ElementTheme.Light)
             {
                 theme = "black";
             }

@@ -1,38 +1,19 @@
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using ModernWindow.Clipboard;
+using ModernWindow.Data;
+using ModernWindow.Interface.Widgets;
+using ModernWindow.PackageEngine;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.VisualBasic.FileIO;
-using System.Diagnostics;
-using Microsoft.UI;
-using System.Windows.Input;
-using Windows.UI;
-using ModernWindow.Structures;
-using Windows.Storage.AccessCache;
-using Windows.Storage.Pickers;
 using Windows.Storage;
-using ModernWindow.Interface.Widgets;
-using CommunityToolkit.WinUI.Controls;
-using System.Reflection;
-using Windows.ApplicationModel.DataTransfer;
-using ModernWindow.PackageEngine;
-using ModernWindow.PackageEngine.Managers;
-using System.Xml.Schema;
-using ModernWindow.Clipboard;
-using Windows.UI.Text;
-using Microsoft.UI.Xaml.Media.Imaging;
-using ModernWindow.Data;
-using Windows.Globalization;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,12 +33,12 @@ namespace ModernWindow.Interface
 
         public SettingsInterface()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             // General Settings Section
-            var lang_dict = LanguageData.LanguageList;
+            Dictionary<string, string> lang_dict = LanguageData.LanguageList;
             bool isFirst = true;
-            foreach (var entry in lang_dict)
+            foreach (KeyValuePair<string, string> entry in lang_dict)
             {
                 LanguageSelector.AddItem(entry.Value, entry.Key.ToString(), isFirst);
                 isFirst = false;
@@ -66,7 +47,8 @@ namespace ModernWindow.Interface
 
 
 
-            Dictionary<string, string> updates_dict = new Dictionary<string, string> {
+            Dictionary<string, string> updates_dict = new()
+            {
                 {bindings.Translate("{0} minutes").Replace("{0}", "10"), "600"},
                 {bindings.Translate("{0} minutes").Replace("{0}", "30"), "1800"},
                 {bindings.Translate("1 hour"), "3600"},
@@ -80,7 +62,7 @@ namespace ModernWindow.Interface
                 {bindings.Translate("1 week"), "604800"}
             };
 
-            foreach (var entry in updates_dict)
+            foreach (KeyValuePair<string, string> entry in updates_dict)
             {
                 UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value.ToString(), false);
             }
@@ -112,9 +94,9 @@ namespace ModernWindow.Interface
 
             // Admin Settings Section
             int index = 2;
-            foreach(PackageManager manager in bindings.App.PackageManagerList)
+            foreach (PackageManager manager in bindings.App.PackageManagerList)
             {
-                CheckboxCard card = new CheckboxCard()
+                CheckboxCard card = new()
                 {
                     Text = "Always elevate {pm} installations by default",
                     SettingName = "AlwaysElevate" + manager.Name,
@@ -128,16 +110,16 @@ namespace ModernWindow.Interface
 
 
             // Package Manager banners;
-            Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new Dictionary<PackageManager, SettingsEntry>();
-            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = new Dictionary<PackageManager, List<SettingsCard>>();
+            Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new();
+            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = new();
 
-            foreach (var Manager in bindings.App.PackageManagerList)
+            foreach (PackageManager Manager in bindings.App.PackageManagerList)
             {
                 ExtraSettingsCards.Add(Manager, new List<SettingsCard>());
             }
 
 
-            var Winget_ResetSources = new ButtonCard() { Text="Reset Winget sources (might help if no packages are listed", ButtonText="Reset" };
+            ButtonCard Winget_ResetSources = new() { Text = "Reset Winget sources (might help if no packages are listed", ButtonText = "Reset" };
             Winget_ResetSources.Click += (s, e) =>
             {
                 // Spawn reset winget sources window
@@ -146,21 +128,21 @@ namespace ModernWindow.Interface
 
             ExtraSettingsCards[bindings.App.Winget].Add(Winget_ResetSources);
 
-            var Scoop_Install = new ButtonCard() { Text = "Install Scoop", ButtonText = "Install" };
+            ButtonCard Scoop_Install = new() { Text = "Install Scoop", ButtonText = "Install" };
             Scoop_Install.Click += (s, e) =>
             {
                 // Spawn install scoop window
                 ((SettingsEntry)PackageManagerExpanders[bindings.App.Scoop]).ShowRestartRequiredBanner();
                 bindings.SetSettings("DisableScoop", false);
             };
-            var Scoop_Uninstall = new ButtonCard() { Text = "Uninstall Scoop (and its packages)", ButtonText = "Uninstall" };
+            ButtonCard Scoop_Uninstall = new() { Text = "Uninstall Scoop (and its packages)", ButtonText = "Uninstall" };
             Scoop_Uninstall.Click += (s, e) =>
             {
                 // Spawn uninstall scoop window
                 ((SettingsEntry)PackageManagerExpanders[bindings.App.Scoop]).ShowRestartRequiredBanner();
                 bindings.SetSettings("DisableScoop", true);
             };
-            var Scoop_ResetAppCache = new ButtonCard() { Text = "Reset Scoop's global app cache", ButtonText = "Reset" };
+            ButtonCard Scoop_ResetAppCache = new() { Text = "Reset Scoop's global app cache", ButtonText = "Reset" };
             Scoop_Uninstall.Click += (s, e) =>
             {
                 // Spawn Scoop Cache clearer
@@ -170,7 +152,7 @@ namespace ModernWindow.Interface
             ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_Uninstall);
             ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_ResetAppCache);
 
-            var Chocolatey_SystemChoco = new CheckboxCard() { Text= "Use system Chocolatey", SettingName="UseSystemChocolatey" };
+            CheckboxCard Chocolatey_SystemChoco = new() { Text = "Use system Chocolatey", SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
                 ((SettingsEntry)PackageManagerExpanders[bindings.App.Choco]).ShowRestartRequiredBanner();
@@ -183,17 +165,17 @@ namespace ModernWindow.Interface
             foreach (PackageManager Manager in bindings.App.PackageManagerList)
             {
 
-                var ManagerExpander = new SettingsEntry
+                SettingsEntry ManagerExpander = new()
                 {
                     Text = Manager.Name,
                     Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
                 };
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
 
-                InfoBar ManagerStatus = new InfoBar();
+                InfoBar ManagerStatus = new();
 
-                var LongVersion = new TextBlock();
-                HyperlinkButton ShowVersionButton = new HyperlinkButton();
+                TextBlock LongVersion = new();
+                HyperlinkButton ShowVersionButton = new();
                 ShowVersionButton.Content = bindings.Translate("Expand version");
                 ShowVersionButton.Visibility = Visibility.Collapsed;
                 ManagerStatus.ActionButton = ShowVersionButton;
@@ -204,12 +186,12 @@ namespace ModernWindow.Interface
                 LongVersion.FontFamily = new FontFamily("Consolas");
                 LongVersion.Visibility = Visibility.Collapsed;
                 ManagerStatus.Content = LongVersion;
-                
+
                 void SetManagerStatus(PackageManager Manager, bool ShowVersion = false)
                 {
                     ShowVersionButton.Visibility = Visibility.Collapsed;
                     LongVersion.Visibility = Visibility.Collapsed;
-                    if(Manager.IsEnabled() && Manager.Status.Found)
+                    if (Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
                         ManagerStatus.Title = bindings.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.Name);
@@ -219,7 +201,9 @@ namespace ModernWindow.Interface
                         {
                             ManagerStatus.Message = bindings.Translate("{pm} version:").Replace("{pm}", Manager.Name);
                             LongVersion.Visibility = Visibility.Visible;
-                        } else {
+                        }
+                        else
+                        {
                             ManagerStatus.Message = "";
                             ShowVersionButton.Visibility = Visibility.Visible;
                         }
@@ -247,13 +231,14 @@ namespace ModernWindow.Interface
 
                 ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
 
-                var ManagerSwitch = new ToggleSwitch
+                ToggleSwitch ManagerSwitch = new()
                 {
                     IsOn = Manager.IsEnabled()
                 };
-                ManagerSwitch.Toggled += (s, e) => {
+                ManagerSwitch.Toggled += (s, e) =>
+                {
                     bindings.SetSettings("Disable" + Manager.Name, !ManagerSwitch.IsOn);
-                    SetManagerStatus(Manager); 
+                    SetManagerStatus(Manager);
                     EnableOrDisableEntries();
                 };
 
@@ -262,7 +247,7 @@ namespace ModernWindow.Interface
                 void EnableOrDisableEntries()
                 {
                     if (ExtraSettingsCards.ContainsKey(Manager))
-                        foreach (var card in ExtraSettingsCards[Manager])
+                        foreach (SettingsCard card in ExtraSettingsCards[Manager])
                         {
                             if (ManagerSwitch.IsOn)
                                 card.Visibility = Visibility.Visible;
@@ -270,8 +255,8 @@ namespace ModernWindow.Interface
                                 card.Visibility = Visibility.Collapsed;
                         }
                 }
-                
-                var ManagerPath = new SettingsCard() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
+
+                SettingsCard ManagerPath = new() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {
@@ -279,25 +264,25 @@ namespace ModernWindow.Interface
                 };
                 ExtraSettingsCards[Manager].Insert(0, ManagerPath);
 
-                
-                if(Manager is PackageManagerWithSources)
+
+                if (Manager is PackageManagerWithSources)
                 {
-                    var SourceManagerCard = new SettingsCard();
+                    SettingsCard SourceManagerCard = new();
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
-                    var SourceManager = new SourceManager(Manager as PackageManagerWithSources);
+                    SourceManager SourceManager = new(Manager as PackageManagerWithSources);
                     SourceManagerCard.Description = SourceManager;
                     ExtraSettingsCards[Manager].Insert(1, SourceManagerCard);
                 }
 
                 if (ExtraSettingsCards.ContainsKey(Manager))
-                    foreach (var card in ExtraSettingsCards[Manager])
+                    foreach (SettingsCard card in ExtraSettingsCards[Manager])
                     {
                         ManagerExpander.Items.Add(card);
                     }
 
                 SetManagerStatus(Manager);
                 EnableOrDisableEntries();
-            
+
                 MainLayout.Children.Add(ManagerExpander);
             }
         }
@@ -318,7 +303,7 @@ namespace ModernWindow.Interface
 
         private async void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-            FileOpenPicker openPicker = new FileOpenPicker();
+            FileOpenPicker openPicker = new();
 
             openPicker.ViewMode = PickerViewMode.List;
             openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
@@ -337,7 +322,7 @@ namespace ModernWindow.Interface
         private async void ExportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
 
-            FileSavePicker savePicker = new FileSavePicker();
+            FileSavePicker savePicker = new();
             savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             WinRT.Interop.InitializeWithWindow.Initialize(savePicker, (IntPtr)GetHwnd());
             savePicker.FileTypeChoices.Add(bindings.Translate("WingetUI Settings File"), new List<string>() { ".conf" });
@@ -381,9 +366,9 @@ namespace ModernWindow.Interface
 
         private async void ChangeBackupDirectory_Click(object sender, dynamic e)
         {
-            FolderPicker openPicker = new Windows.Storage.Pickers.FolderPicker();
+            FolderPicker openPicker = new();
 
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
 
             WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
 
@@ -448,7 +433,8 @@ namespace ModernWindow.Interface
             try
             {
                 Directory.Delete(CoreData.WingetUICacheDirectory_Icons, true);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 AppTools.Log(ex);
             }

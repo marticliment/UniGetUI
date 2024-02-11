@@ -1,27 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml.Documents;
-using ModernWindow.Structures;
-using System.Diagnostics;
-using Windows.Web.Http;
-using Windows.UI.Text;
-using Microsoft.UI.Text;
-using Microsoft.Windows.ApplicationModel.DynamicDependency.BootstrapCS;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Windows.System.UserProfile;
+using ModernWindow.Structures;
+using System;
+using Windows.UI.Text;
+using Windows.Web.Http;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,7 +24,7 @@ namespace ModernWindow.Interface.Widgets
         DependencyProperty UrlProperty;
 
 
-        private static HttpClient NetClient = new HttpClient();
+        private static HttpClient NetClient = new();
 
 
         public Announcer()
@@ -51,9 +35,9 @@ namespace ModernWindow.Interface.Widgets
             typeof(CheckboxCard),
             new PropertyMetadata(default(Uri), new PropertyChangedCallback((d, e) => { LoadAnnouncements(); })));
 
-            this.InitializeComponent();
-            this.DefaultStyleKey = typeof(Announcer);
-            this.BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
+            InitializeComponent();
+            DefaultStyleKey = typeof(Announcer);
+            BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
             SetText(binder.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
         }
@@ -70,7 +54,7 @@ namespace ModernWindow.Interface.Widgets
                 if (response.IsSuccessStatusCode)
                 {
                     string text = response.Content.ToString().Split("////")[0];
-                    Uri imageUrl = new Uri(response.Content.ToString().Split("////")[1]);
+                    Uri imageUrl = new(response.Content.ToString().Split("////")[1]);
                     SetText(text);
                     SetImage(imageUrl);
                 }
@@ -92,17 +76,18 @@ namespace ModernWindow.Interface.Widgets
 
         public void SetText_Safe(string text)
         {
-            ((MainApp)Application.Current).mainWindow.DispatcherQueue.TryEnqueue(() => {
+            ((MainApp)Application.Current).mainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
                 SetText(text);
             });
         }
 
         public void SetText(string text)
         {
-            Paragraph paragraph = new Paragraph();
+            Paragraph paragraph = new();
             foreach (string line in text.Split("\n"))
             {
-                if(line.Contains("<h1>"))
+                if (line.Contains("<h1>"))
                     paragraph.Inlines.Add(new Run() { Text = line.Replace("<h1>", "").Replace("</h1>", ""), FontSize = 24, FontWeight = new FontWeight(650) });
                 else
                     paragraph.Inlines.Add(new Run() { Text = line.Replace("<p>", "").Replace("</p>", "").Replace("<br>", "") });
@@ -116,7 +101,7 @@ namespace ModernWindow.Interface.Widgets
 
         public void SetImage(Uri url)
         {
-            BitmapImage bitmapImage = new BitmapImage();
+            BitmapImage bitmapImage = new();
             bitmapImage.UriSource = url;
             _image.Source = bitmapImage;
 
