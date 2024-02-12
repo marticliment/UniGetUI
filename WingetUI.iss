@@ -244,8 +244,8 @@ Source: "src\wingetui-interface\bin\x64\Release\net6.0-windows10.0.19041.0\win10
 Source: "src\wingetui-interface\bin\x64\Release\net6.0-windows10.0.19041.0\win10-x64\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
-Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: dontcopy                                
-Source: "InstallerExtras\appsdk.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "InstallerExtras\appsdk.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 Source: "InstallerExtras\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
@@ -254,7 +254,8 @@ Name: "{autostartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks:
 Name: "{autodesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
-Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
+Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;    
+Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)";
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
 ; Check: not CmdLineParamExists('/NoAutoStart');
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory
