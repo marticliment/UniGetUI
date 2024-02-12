@@ -1565,6 +1565,9 @@
     <None Update="choco-cli\helpers\functions\Write-FunctionCallLogMessage.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="choco-cli\lib\dummyfile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="choco-cli\LICENSE.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

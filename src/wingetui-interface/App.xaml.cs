@@ -15,12 +15,6 @@ namespace ModernWindow
 {
     public partial class MainApp : Application
     {
-
-        // Python modules to be imported
-        //public dynamic Tools;
-        //public dynamic Core;
-        //public dynamic Globals;
-
         public Scoop Scoop;
         public Winget Winget;
         public Chocolatey Choco;

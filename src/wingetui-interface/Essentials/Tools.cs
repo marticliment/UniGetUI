@@ -56,11 +56,18 @@ namespace ModernWindow.Structures
             ThemeListener = new ThemeListener();
         }
 
+        public static void EnsureTempDir()
+        {
+            if (!Directory.Exists(CoreData.WingetUIDataDirectory))
+                Directory.CreateDirectory(CoreData.WingetUIDataDirectory);
+        }
+
         public bool GetSettings(string setting, bool invert = false)
         { return AppTools.GetSettings_Static(setting, invert); }
 
         public static bool GetSettings_Static(string setting, bool invert = false)
         {
+            EnsureTempDir();
             return File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)) ^ invert;
         }
 
@@ -69,6 +76,7 @@ namespace ModernWindow.Structures
 
         public static void SetSettings_Static(string setting, bool value)
         {
+            EnsureTempDir();
             if (value)
             {
                 if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
@@ -85,6 +93,7 @@ namespace ModernWindow.Structures
 
         public static string GetSettingsValue_Static(string setting)
         {
+            EnsureTempDir();
             if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
                 return "";
             return File.ReadAllText(Path.Join(CoreData.WingetUIDataDirectory, setting));
@@ -94,6 +103,7 @@ namespace ModernWindow.Structures
 
         public static void SetSettingsValue_Static(string setting, string value)
         {
+            EnsureTempDir();
             File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
         }
 

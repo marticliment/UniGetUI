@@ -603,6 +603,10 @@ namespace ModernWindow.Data
                 using (WebClient client = new())
                 {
                     string fileContents = await client.DownloadStringTaskAsync(NewFile);
+
+                    if (!Directory.Exists(CoreData.WingetUICacheDirectory_Lang))
+                        Directory.CreateDirectory(CoreData.WingetUICacheDirectory_Lang);
+
                     File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
                 }
                 AppTools.Log("Lang files were updated successfully");

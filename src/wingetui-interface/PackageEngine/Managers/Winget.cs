@@ -1,4 +1,5 @@
-﻿using ModernWindow.Structures;
+﻿using ModernWindow.Data;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +30,7 @@ namespace ModernWindow.PackageEngine.Managers
             ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"",
+                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -98,7 +99,7 @@ namespace ModernWindow.PackageEngine.Managers
             ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " update --include-unknown",
+                Arguments = Properties.ExecutableCallArgs + " update --include-unknown  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -180,7 +181,7 @@ namespace ModernWindow.PackageEngine.Managers
             ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list",
+                Arguments = Properties.ExecutableCallArgs + " list  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -460,7 +461,7 @@ namespace ModernWindow.PackageEngine.Managers
             Process process = new();
             ProcessStartInfo StartInfo = new()
             {
-                FileName = Properties.ExecutableFriendlyName,
+                FileName = Status.ExecutablePath,
                 Arguments = Properties.ExecutableCallArgs + " source update",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -541,9 +542,9 @@ namespace ModernWindow.PackageEngine.Managers
             if (bindings.GetSettings("UseSystemWinget"))
                 status.ExecutablePath = await bindings.Which("winget.exe");
             else if (output.Contains("ARM64") | bindings.GetSettings("EnableArmWinget"))
-                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "PackageEngine/Managers/winget-cli_arm64/winget.exe");
+                status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_arm64", "winget.exe");
             else
-                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "PackageEngine/Managers/winget-cli_x64/winget.exe");
+                status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
 
             status.Found = File.Exists(status.ExecutablePath);
 
@@ -555,7 +556,7 @@ namespace ModernWindow.PackageEngine.Managers
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = "--version",
+                    Arguments = Properties.ExecutableCallArgs + " --version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -565,6 +566,7 @@ namespace ModernWindow.PackageEngine.Managers
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
 
+            Status = status; // Need to set status before calling RefreshSources, otherwise will crash
             if (status.Found && IsEnabled())
                 await RefreshSources();
 
