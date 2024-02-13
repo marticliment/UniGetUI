@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using ModernWindow.Data;
+using ModernWindow.Structures;
 using System;
 using System.Linq;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                CoreData.ReportFatalException(e);
+                AppTools.ReportFatalException(e);
             }
         }
 
@@ -49,7 +50,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                CoreData.ReportFatalException(e);
+                AppTools.ReportFatalException(e);
             }
         }
         private static async Task<bool> DecideRedirection()
@@ -80,7 +81,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                CoreData.ReportFatalException(e);
+                AppTools.ReportFatalException(e);
                 return false;
             }
         }

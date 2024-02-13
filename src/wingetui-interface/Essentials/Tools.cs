@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace ModernWindow.Structures
 {
@@ -192,6 +193,62 @@ namespace ModernWindow.Structures
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += $"=========================================\n";
+        }
+
+        public static void ReportFatalException(Exception e)
+        {
+            string LangName = "Unknown";
+            try
+            {
+                LangName = LanguageEngine.MainLangDict["langName"];
+            }
+            catch { }
+
+            string Error_String = $@"
+                        OS: {Environment.OSVersion.Platform}
+                   Version: {Environment.OSVersion.VersionString}
+           OS Architecture: {Environment.Is64BitOperatingSystem}
+          APP Architecture: {Environment.Is64BitProcess}
+                  Language: {LangName}
+               APP Version: {CoreData.VersionName}
+                Executable: {Environment.ProcessPath}
+
+Crash Message: {e.Message}
+
+Crash Traceback: 
+{e.StackTrace}";
+
+            Console.WriteLine(Error_String);
+
+
+            string ErrorBody = "https://www.marticliment.com/error-report/?appName=WingetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
+
+            Console.WriteLine(ErrorBody);
+
+            using System.Diagnostics.Process cmd = new();
+            cmd.StartInfo.FileName = "cmd.exe";
+            cmd.StartInfo.RedirectStandardInput = true;
+            cmd.StartInfo.RedirectStandardOutput = false;
+            cmd.StartInfo.CreateNoWindow = true;
+            cmd.StartInfo.UseShellExecute = false;
+            cmd.Start();
+            cmd.StandardInput.WriteLine("start " + ErrorBody);
+            cmd.StandardInput.WriteLine("exit");
+            cmd.WaitForExit();
+            Environment.Exit(1);
+
+        }
+
+        public static async void LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
+        {
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
+            p.StartInfo.UseShellExecute = true;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.Verb = RunAsAdmin? "runas": "";
+            p.Start();
+            await p.WaitForExitAsync();
         }
     }
 

@@ -39,7 +39,7 @@ namespace ModernWindow
                 {
                     AppTools.Log("Unhandled Exception raised: " + e.Message);
                     AppTools.Log("Stack Trace: \n" + e.Exception.StackTrace);
-                    CoreData.ReportFatalException(e.Exception);
+                    AppTools.ReportFatalException(e.Exception);
                 };
 
                 if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
@@ -72,7 +72,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                CoreData.ReportFatalException(e);
+                AppTools.ReportFatalException(e);
             }
         }
 
@@ -122,7 +122,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                CoreData.ReportFatalException(e);
+                AppTools.ReportFatalException(e);
             }
         }
 

@@ -6,6 +6,8 @@ using ModernWindow.Clipboard;
 using ModernWindow.Data;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Managers;
+using ModernWindow.Properties;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -122,8 +124,7 @@ namespace ModernWindow.Interface
             ButtonCard Winget_ResetSources = new() { Text = "Reset Winget sources (might help if no packages are listed", ButtonText = "Reset" };
             Winget_ResetSources.Click += (s, e) =>
             {
-                // Spawn reset winget sources window
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.Winget]).ShowRestartRequiredBanner();
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), "Resetting Winget sources - WingetUI", RunAsAdmin: true);
             };
 
             ExtraSettingsCards[bindings.App.Winget].Add(Winget_ResetSources);
@@ -131,21 +132,19 @@ namespace ModernWindow.Interface
             ButtonCard Scoop_Install = new() { Text = "Install Scoop", ButtonText = "Install" };
             Scoop_Install.Click += (s, e) =>
             {
-                // Spawn install scoop window
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.Scoop]).ShowRestartRequiredBanner();
-                bindings.SetSettings("DisableScoop", false);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), "Scoop Installer - WingetUI");
+                PackageManagerExpanders[bindings.App.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_Uninstall = new() { Text = "Uninstall Scoop (and its packages)", ButtonText = "Uninstall" };
             Scoop_Uninstall.Click += (s, e) =>
             {
-                // Spawn uninstall scoop window
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.Scoop]).ShowRestartRequiredBanner();
-                bindings.SetSettings("DisableScoop", true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), "Scoop Uninstaller - WingetUI");
+                PackageManagerExpanders[bindings.App.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_ResetAppCache = new() { Text = "Reset Scoop's global app cache", ButtonText = "Reset" };
-            Scoop_Uninstall.Click += (s, e) =>
+            ButtonCard Scoop_ResetAppCache = new() { Text = "Run cleanup and clear cache", ButtonText = "Run" };
+            Scoop_ResetAppCache.Click += (s, e) =>
             {
-                // Spawn Scoop Cache clearer
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), "Clearing scoop cache - WingetUI", RunAsAdmin: true);
             };
 
             ExtraSettingsCards[bindings.App.Scoop].Add(Scoop_Install);
@@ -155,7 +154,7 @@ namespace ModernWindow.Interface
             CheckboxCard Chocolatey_SystemChoco = new() { Text = "Use system Chocolatey", SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
-                ((SettingsEntry)PackageManagerExpanders[bindings.App.Choco]).ShowRestartRequiredBanner();
+                PackageManagerExpanders[bindings.App.Choco].ShowRestartRequiredBanner();
             };
 
             ExtraSettingsCards[bindings.App.Choco].Add(Chocolatey_SystemChoco);
