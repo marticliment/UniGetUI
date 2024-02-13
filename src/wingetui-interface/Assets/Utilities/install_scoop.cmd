@@ -3,7 +3,8 @@ SET wingetuipath=%~dp0..\wingetui.exe
 set pwsh=C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
 echo Scoop Installer Assistant - WingetUI
 echo This script will install Scoop and its dependencies, since it appears that they are not installed on your machine.
-pause
+echo|set/p="Press <ENTER> to continue or CLOSE this window to abort this process"&runas/u: "">NUL
+cls
 %pwsh% Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 %pwsh% -ExecutionPolicy ByPass -File "%~dp0\install_scoop.ps1"
 if %errorlevel% equ 0 (
