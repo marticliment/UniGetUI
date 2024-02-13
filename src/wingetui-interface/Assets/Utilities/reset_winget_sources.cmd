@@ -1,8 +1,8 @@
 @echo off
-SET dirpathx86="%~dp0..\PackageManagers\winget-cli_x64\"
-SET dirpatharm="%~dp0..\PackageManagers\winget-cli_arm64\"
-SET wingetpath="%~dp0..\winget-cli\PackageManagers\winget-cli_x64\winget.exe"
-SET sudopath="%~dp0..\components\gsudo.exe"
+SET dirpathx86="%~dp0..\..\PackageEngine\Managers\winget-cli_x64\"
+SET dirpatharm="%~dp0..\..\PackageEngine\Managers\winget-cli_arm64\"
+SET wingetpath="%~dp0..\..\winget-cli\PackageManagers\winget-cli_x64\winget.exe"
+SET sudopath="%~dp0..\..\Assets\Utilities\gsudo.exe"
 %sudopath% cache on
 echo This script will reset winget sources.
 echo . Please wait... 
