@@ -550,7 +550,7 @@ namespace ModernWindow.Data
             string LangName = AppTools.GetSettingsValue_Static("PreferredLanguage");
             if (LangName == "default" || LangName == "")
             {
-                LangName = Windows.System.UserProfile.GlobalizationPreferences.Languages[0];
+                LangName = System.Globalization.CultureInfo.CurrentCulture.ToString().Replace("-", "_");
             }
 
             if (LanguageData.LanguageList.ContainsKey(LangName))

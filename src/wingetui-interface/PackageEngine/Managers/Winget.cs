@@ -1,10 +1,12 @@
-﻿using ModernWindow.Data;
+﻿using Microsoft.UI.Xaml.Controls;
+using ModernWindow.Data;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -402,9 +404,208 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
+        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            throw new NotImplementedException();
+            var details = new PackageDetails(package);
+
+            if (package.Source.Name == "winget")
+                details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/" 
+                    + package.Id[0].ToString().ToLower() + "/" 
+                    + package.Id.Split('.')[0] + "/" 
+                    + String.Join("/", (package.Id.Contains('.')? package.Id.Split('.')[1..]: package.Id.Split('.')))
+                );
+
+            // Get the output for the best matching locale
+            Process process = new();
+            string packageIdentifier;
+            if (!package.Id.Contains("…"))
+                packageIdentifier =  "--id " + package.Id + " --exact";
+            else if (!package.Name.Contains("…"))
+                packageIdentifier = "--name " + package.Id + " --exact";
+            else
+                packageIdentifier = "--id " + package.Id;
+
+            var output = new List<string>();
+            bool LocaleFound = true;
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale " + System.Globalization.CultureInfo.CurrentCulture.ToString(),
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            process.StartInfo = startInfo;
+            process.Start();
+
+            string _line;
+            while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+                if(_line.Trim() != "")
+                { 
+                    output.Add(_line);
+                    AppTools.Log(_line);
+                    if(_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details.")) 
+                    {
+                        LocaleFound = false;
+                        break;
+                    }
+                }
+            
+            // Load fallback english locale
+            if(!LocaleFound)
+            {
+                output.Clear();
+                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
+                process = new Process();
+                LocaleFound = true;
+                startInfo = new()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale en-US",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                process.StartInfo = startInfo;
+                process.Start();
+
+                while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+                    if (_line.Trim() != "")
+                    {
+                        output.Add(_line);
+                        AppTools.Log(_line);
+                        if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
+                        {
+                            LocaleFound = false;
+                            break;
+                        }
+                    }
+            }
+
+            // Load default locale
+            if (!LocaleFound)
+            {
+                output.Clear();
+                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=en-US. Loading default");
+                LocaleFound = true;
+                process = new Process();
+                startInfo = new()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                process.StartInfo = startInfo;
+                process.Start();
+
+                while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+                    if (_line.Trim() != "")
+                    {
+                        output.Add(_line);
+                        AppTools.Log(_line);
+                    }
+            }
+
+            // Parse the output
+            bool IsLoadingDescription = false;
+            bool IsLoadingReleaseNotes = false;
+            bool IsLoadingTags = false;
+            foreach (string __line in output)
+            {
+                try
+                { 
+                    string line = __line.TrimEnd();
+                    if(line == "")
+                        continue;
+                    
+                    // Check if a multiline field is being loaded
+                    if(line.StartsWith(" ") && IsLoadingDescription)
+                        details.Description += "\n" + line.Trim();
+                    else if(line.StartsWith(" ") && IsLoadingReleaseNotes)
+                        details.ReleaseNotes += "\n" + line.Trim();
+                    else if(line.StartsWith(" ") && IsLoadingTags)
+                        details.Tags = details.Tags.Append(line.Trim()).ToArray();
+                    
+                    // Stop loading multiline fields
+                    else if (IsLoadingDescription)
+                        IsLoadingDescription = false;
+                    else if (IsLoadingReleaseNotes)
+                        IsLoadingReleaseNotes = false;
+                    else if (IsLoadingTags)
+                        IsLoadingTags = false;
+
+                    // Check for singleline fields
+                    if (line.Contains("Publisher:"))
+                        details.Publisher = line.Split(":")[1].Trim();
+
+                    else if (line.Contains("Author:"))
+                        details.Author = line.Split(":")[1].Trim();
+
+                    else if (line.Contains("Homepage:"))
+                        details.HomepageUrl = new Uri(line.Replace("Homepage:", "").Trim());
+
+                    else if (line.Contains("License:"))
+                        details.License = line.Split(":")[1].Trim();
+
+                    else if (line.Contains("License Url:"))
+                        details.LicenseUrl = new Uri(line.Replace("License Url:", "").Trim());
+
+                    else if (line.Contains("Installer SHA256:"))
+                        details.InstallerHash = line.Split(":")[1].Trim();
+
+                    else if (line.Contains("Installer Url:"))
+                    {
+                        details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
+                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
+                        req.Method = "HEAD";
+                        WebResponse resp = req.GetResponse();
+                        long ContentLength = 0;
+                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                        {
+                            details.InstallerSize = ContentLength / 1048576;
+                        }
+                    }
+                    else if (line.Contains("Release Date:"))
+                        details.UpdateDate = line.Split(":")[1].Trim();
+
+                    else if (line.Contains("Release Notes Url:"))
+                        details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
+
+                    else if (line.Contains("Installer Type:"))
+                        details.InstallerType = line.Split(":")[1].Trim();
+
+                    else if (line.Contains("Description:"))
+                    {
+                        details.Description = line.Split(":")[1].Trim();
+                        IsLoadingDescription = true;
+                    }
+                    else if (line.Contains("ReleaseNotes"))
+                    {
+                        details.ReleaseNotes = line.Split(":")[1].Trim();
+                        IsLoadingReleaseNotes = true;
+                    }
+                    else if (line.Contains("Tags"))
+                    {
+                        details.Tags = new string[0];
+                        IsLoadingTags = true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    AppTools.Log(e.Message);
+                }
+            }
+
+            return details;
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()

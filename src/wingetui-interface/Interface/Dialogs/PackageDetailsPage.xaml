@@ -145,6 +145,7 @@
                             <Button Name="DownloadInstallerButton" Click="DownloadInstallerButton_Click">
                                 <widgets:TranslatedTextBlock Text="Download installer"/>
                             </Button>
+                            <widgets:TranslatedTextBlock Text="Size" Suffix=":" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock Name="InstallerSizeTextBlock" Text="Hello World" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>

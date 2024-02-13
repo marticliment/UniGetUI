@@ -110,6 +110,7 @@ namespace ModernWindow.Interface.Dialogs
             string NotFound = bindings.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
+            AppTools.Log("Received info " + Info);
 
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
