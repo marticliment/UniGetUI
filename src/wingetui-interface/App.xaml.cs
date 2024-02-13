@@ -68,6 +68,7 @@ namespace ModernWindow
                     });
                 };
 
+
                 LoadComponents();
             }
             catch (Exception e)
@@ -150,11 +151,5 @@ namespace ModernWindow
             ToastNotificationManagerCompat.Uninstall();
             Environment.Exit(outputCode);
         }
-
-        private void __quit_app()
-        {
-            Exit();
-        }
-
     }
 }
