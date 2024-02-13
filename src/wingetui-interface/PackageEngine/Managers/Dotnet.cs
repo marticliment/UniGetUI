@@ -257,7 +257,7 @@ namespace ModernWindow.PackageEngine.Managers
                 parameters.AddRange(options.CustomParameters);
 
             if (options.CustomInstallLocation != "")
-                parameters.Add("--tool-path" + options.CustomInstallLocation);
+                parameters.AddRange(new string[] { "--tool-path", "\"" + options.CustomInstallLocation + "\"" });
             else if (package.Scope == PackageScope.Global)
                 parameters.Add("--global");
 

@@ -292,7 +292,7 @@ namespace ModernWindow.PackageEngine.Managers
 
             if (options.CustomInstallLocation != "")
             {
-                parameters.Add("--location"); parameters.Add(options.CustomInstallLocation);
+                parameters.Add("--location"); parameters.Add("\"" + options.CustomInstallLocation + "\"");
             }
 
             switch (options.Architecture)
