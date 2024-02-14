@@ -603,39 +603,32 @@ namespace ModernWindow.Interface
             ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages) if (package.IsChecked)
+                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
                         await package.AddToIgnoredUpdates();
             };
 
             UpdateSelected.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages) if (package.IsChecked)
+                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
                         bindings.AddOperationToList(new UpdatePackageOperation(package));
             };
             UpdateAsAdmin.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages) if (package.IsChecked)
+                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
                         bindings.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { RunAsAdministrator = true }));
             };
             UpdateSkipHash.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages) if (package.IsChecked)
+                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
                         bindings.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { SkipHashCheck = true }));
             };
             UpdateInteractive.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages) if (package.IsChecked)
+                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
                         bindings.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { InteractiveInstallation = true }));
-            };
-
-            IgnoreSelected.Click += (s, e) =>
-            {
-                foreach (UpgradablePackage package in FilteredPackages)
-                    if (package.IsChecked)
-                        package.AddToIgnoredUpdates();
             };
 
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
