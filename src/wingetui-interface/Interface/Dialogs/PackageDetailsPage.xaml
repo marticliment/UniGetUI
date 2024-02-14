@@ -141,10 +141,14 @@
                             <widgets:TranslatedTextBlock Text="Installer URL" Suffix=":" FontWeight="Bold"/>
                             <HyperlinkButton Name="InstallerUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Button Name="DownloadInstallerButton" Click="DownloadInstallerButton_Click">
-                                <widgets:TranslatedTextBlock Text="Download installer"/>
-                            </Button>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Grid>
+                                <ProgressBar Width="198" Visibility="Collapsed" VerticalAlignment="Top" Margin="1,0,1,0" CornerRadius="4,4,0,0" HorizontalAlignment="Stretch" IsIndeterminate="True" Name="DownloadInstallerButtonProgress"/>
+                                <Button Width="200" Name="DownloadInstallerButton" Click="DownloadInstallerButton_Click">
+                                    <widgets:TranslatedTextBlock Text="Download installer"/>
+                                </Button>
+                            </Grid>
+                            <TextBlock Name="ErrorOutput" Foreground="Orange"  Text="Hello"/>
                             <widgets:TranslatedTextBlock Text="Size" Suffix=":" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock Name="InstallerSizeTextBlock" Text="Hello World" VerticalAlignment="Center"/>
                         </StackPanel>

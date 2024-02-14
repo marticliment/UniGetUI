@@ -5,7 +5,11 @@ using ModernWindow.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
 using System;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -183,9 +187,46 @@ namespace ModernWindow.Interface.Dialogs
             bindings.App.mainWindow.SharePackage(Package);
         }
 
-        public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
+        public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
-            //
+            try
+            {
+                if (Info.InstallerUrl == null)
+                    return;
+
+                ErrorOutput.Text = "";
+                FileSavePicker savePicker = new Windows.Storage.Pickers.FileSavePicker();
+                var window = bindings.App.mainWindow;
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
+                savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
+                savePicker.SuggestedFileName = Package.Id + " installer." + Info.InstallerUrl.ToString().Split('.')[^1];
+                savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Info.InstallerUrl.ToString().Split('.')[^1] });
+                StorageFile file = await savePicker.PickSaveFileAsync();
+                if (file != null)
+                {
+                    DownloadInstallerButton.Content = bindings.Translate("Downloading");
+                    DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
+                    AppTools.Log(file.Path.ToString());
+                    using var httpClient = new HttpClient();
+                    await using var s = await httpClient.GetStreamAsync(Info.InstallerUrl);
+                    await using var fs = File.OpenWrite(file.Path.ToString());
+                    await s.CopyToAsync(fs);
+                    fs.Dispose();
+                    DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
+                    System.Diagnostics.Process.Start("explorer.exe", "/select," + file.Path.ToString());
+                    DownloadInstallerButton.Content = bindings.Translate("Download succeeded");
+                }
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+                DownloadInstallerButton.Content = bindings.Translate("An error occurred");
+                DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
+                ErrorOutput.Text = ex.Message;
+            }
+            
+
         }
         public void CloseButton_Click(object sender, RoutedEventArgs e)
         {
