@@ -511,7 +511,7 @@ namespace ModernWindow.Interface
             ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         await package.AddToIgnoredUpdates();
             };
 
@@ -674,14 +674,14 @@ namespace ModernWindow.Interface
 
         private void SelectAllItems()
         {
-            foreach (Package package in FilteredPackages)
+            foreach (Package package in FilteredPackages.ToArray())
                 package.IsChecked = true;
             AllSelected = true;
         }
 
         private void ClearItemSelection()
         {
-            foreach (Package package in FilteredPackages)
+            foreach (Package package in FilteredPackages.ToArray())
                 package.IsChecked = false;
             AllSelected = false;
         }

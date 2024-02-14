@@ -148,7 +148,7 @@
                                     <widgets:TranslatedTextBlock Text="Download installer"/>
                                 </Button>
                             </Grid>
-                            <TextBlock Name="ErrorOutput" Foreground="Orange"  Text="Hello"/>
+                            <TextBlock Name="ErrorOutput" Foreground="Orange" VerticalAlignment="Center" Text=""/>
                             <widgets:TranslatedTextBlock Text="Size" Suffix=":" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock Name="InstallerSizeTextBlock" Text="Hello World" VerticalAlignment="Center"/>
                         </StackPanel>
