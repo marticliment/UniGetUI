@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11698,
-        "done": 5017,
-        "packages_with_icon": 5017,
-        "packages_with_screenshot": 536,
-        "total_screenshots": 1690
+        "done": 5018,
+        "packages_with_icon": 5018,
+        "packages_with_screenshot": 537,
+        "total_screenshots": 1691
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -192,8 +192,10 @@
             "images": []
         },
         "3dmark": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.ibb.co/zrwxXrq/download.png",
+            "images": [
+                "http://cooltown2.hattara.fuma.fi/static/images/screenshots/ul-procyon-ai-inference-windows-result-part-1.png"
+            ]
         },
         "3dxware-10": {
             "icon": "",
