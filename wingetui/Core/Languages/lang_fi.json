@@ -30,7 +30,7 @@
   "Application theme:" : null,
   "Architecture to install:" : null,
   "Are these screenshots wron or blurry?" : null,
-  "Are you sure?" : null,
+  "Are you sure?" : "Oletko sinä valmis?",
   "Ask for administrator rights when required" : null,
   "Ask once or always for administrator rights, elevate installations by default" : null,
   "Ask only once for administrator privileges (not recommended)" : null,
