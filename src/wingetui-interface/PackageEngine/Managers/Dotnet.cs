@@ -1,9 +1,11 @@
-﻿using ModernWindow.Structures;
+﻿using CommunityToolkit.Common;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -269,9 +271,95 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
+        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            throw new NotImplementedException();
+            var details = new PackageDetails(package);
+
+            try
+            {
+                details.ManifestUrl = new Uri("https://www.nuget.org/packages/" + package.Id);
+                var url = $"http://www.nuget.org/api/v2/Packages(Id='{package.Id}',Version='')";
+
+                using (WebClient client = new WebClient())
+                {
+                    AppTools.Log("Starting...");
+                    var task = Task<string>.Factory.StartNew(() => { return client.DownloadString(url); });
+                    string apiContents = await task;
+
+                    details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
+                    details.InstallerType = bindings.Translate("NuPkg (zipped manifest)");
+                    try
+                    {
+                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
+                        req.Method = "HEAD";
+                        WebResponse resp = await req.GetResponseAsync();
+                        long ContentLength = 0;
+                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                        {
+                            details.InstallerSize = ContentLength / 1048576;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AppTools.Log(e);
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<name>[^<>]+<\/name>"))
+                    {
+                        details.Author = match.Value.Replace("<name>", "").Replace("</name>", "");
+                        details.Publisher = match.Value.Replace("<name>", "").Replace("</name>", "");
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<d:Description>[^<>]+<\/d:Description>"))
+                    {
+                        details.Description = match.Value.Replace("<d:Description>", "").Replace("</d:Description>", "");
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<updated>[^<>]+<\/updated>"))
+                    {
+                        details.UpdateDate = match.Value.Replace("<updated>", "").Replace("</updated>", "");
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<d:ProjectUrl>[^<>]+<\/d:ProjectUrl>"))
+                    {
+                        details.HomepageUrl = new Uri(match.Value.Replace("<d:ProjectUrl>", "").Replace("</d:ProjectUrl>", ""));
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<d:LicenseUrl>[^<>]+<\/d:LicenseUrl>"))
+                    {
+                        details.LicenseUrl = new Uri(match.Value.Replace("<d:LicenseUrl>", "").Replace("</d:LicenseUrl>", ""));
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<d:PackageHash>[^<>]+<\/d:PackageHash>"))
+                    {
+                        details.InstallerHash = match.Value.Replace("<d:PackageHash>", "").Replace("</d:PackageHash>", "");
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<d:ReleaseNotes>[^<>]+<\/d:ReleaseNotes>"))
+                    {
+                        details.ReleaseNotes = match.Value.Replace("<d:ReleaseNotes>", "").Replace("</d:ReleaseNotes>", "");
+                        break;
+                    }
+
+                    foreach (Match match in Regex.Matches(apiContents, @"<d:LicenseNames>[^<>]+<\/d:LicenseNames>"))
+                    {
+                        details.License = match.Value.Replace("<d:LicenseNames>", "").Replace("</d:LicenseNames>", "");
+                        break;
+                    }
+                }
+                return details;
+            }
+            catch (Exception e)
+            {
+                AppTools.Log(e);
+                return details;
+            }
         }
 
 

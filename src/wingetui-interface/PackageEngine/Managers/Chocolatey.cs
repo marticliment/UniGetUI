@@ -248,7 +248,7 @@ namespace ModernWindow.PackageEngine.Managers
                     details.InstallerUrl = new Uri("https://packages.chocolatey.org/" + package.Id + "." + package.Version + ".nupkg");
                     WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
                     req.Method = "HEAD";
-                    WebResponse resp = req.GetResponse();
+                    WebResponse resp = await req.GetResponseAsync();
                     long ContentLength = 0;
                     if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
                     {
