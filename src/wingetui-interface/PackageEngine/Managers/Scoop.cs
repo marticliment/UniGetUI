@@ -231,7 +231,6 @@ public class Scoop : PackageManagerWithSources
         if (package.Source.Url != null)
             try
             {
-                // TODO: Investigate mismatched source urls
                 details.ManifestUrl = new Uri(package.Source.Url.ToString() + "/blob/master/bucket/" + package.Id + ".json");
             } catch (Exception ex)
             {
