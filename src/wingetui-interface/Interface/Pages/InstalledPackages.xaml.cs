@@ -342,7 +342,7 @@ namespace ModernWindow.Interface
             int HiddenPackagesDueToSource = 0;
             foreach (Package match in MatchingList)
             {
-                if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if ( (VisibleManagers.Contains(match.Manager) && match.Manager != bindings.App.Winget) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
                 else
                     HiddenPackagesDueToSource++;
