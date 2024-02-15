@@ -414,6 +414,8 @@ namespace ModernWindow.PackageEngine.Managers
                     + package.Id.Split('.')[0] + "/" 
                     + String.Join("/", (package.Id.Contains('.')? package.Id.Split('.')[1..]: package.Id.Split('.')))
                 );
+            else if (package.Source.Name == "msstore")
+                details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
 
             // Get the output for the best matching locale
             Process process = new();

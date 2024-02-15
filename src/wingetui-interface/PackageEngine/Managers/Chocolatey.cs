@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -226,9 +227,168 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
+        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            throw new NotImplementedException();
+            var details = new PackageDetails(package);
+
+            /*if (package.Source.Name == "winget")
+                details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
+                    + package.Id[0].ToString().ToLower() + "/"
+                    + package.Id.Split('.')[0] + "/"
+                    + String.Join("/", (package.Id.Contains('.') ? package.Id.Split('.')[1..] : package.Id.Split('.')))
+                );*/
+
+            AppTools.Log(package.Source.Url.ToString().Trim()[^1]);
+
+            if(package.Source.Name == "community")
+                details.ManifestUrl = new Uri("https://community.chocolatey.org/packages/" + package.Id);
+            else if (package.Source.Url != null && package.Source.Url.ToString().Trim()[^1].ToString() == "/")                
+                details.ManifestUrl = new Uri((package.Source.Url.ToString().Trim() + "package/" + package.Id).Replace("//", "/").Replace(":/", "://"));
+
+            
+
+            if(package.Source.Name == "community")
+            {
+                try
+                {
+                    details.InstallerType = bindings.Translate("NuPkg (zipped manifest)");
+                    details.InstallerUrl = new Uri("https://packages.chocolatey.org/" + package.Id + "." + package.Version + ".nupkg");
+                    WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
+                    req.Method = "HEAD";
+                    WebResponse resp = req.GetResponse();
+                    long ContentLength = 0;
+                    if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                    {
+                        details.InstallerSize = ContentLength / 1048576;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
+            }
+
+            Process process = new();
+            var output = new List<string>();
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " info " + package.Id,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            process.StartInfo = startInfo;
+            process.Start();
+
+            string _line;
+            while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+                if (_line.Trim() != "")
+                {
+                    output.Add(_line);
+                    AppTools.Log(_line);
+                }
+
+            // Parse the output
+            bool IsLoadingDescription = false;
+            bool IsLoadingReleaseNotes = false;
+            bool IsLoadingTags = false;
+            foreach (string __line in output)
+            {
+                try
+                {
+                    string line = __line.TrimEnd();
+                    if (line == "")
+                        continue;
+
+                    // Check if a multiline field is being loaded
+                    if (line.StartsWith("  ") && IsLoadingDescription)
+                        details.Description += "\n" + line.Trim();
+                    else if (line.StartsWith("  ") && IsLoadingReleaseNotes)
+                        details.ReleaseNotes += "\n" + line.Trim();
+                    /*else if (line.StartsWith("  ") && IsLoadingTags)
+                        details.Tags = details.Tags.Append(line.Trim()).ToArray();
+                    */
+                    // Stop loading multiline fields
+                    else if (IsLoadingDescription)
+                        IsLoadingDescription = false;
+                    else if (IsLoadingReleaseNotes)
+                        IsLoadingReleaseNotes = false;
+                    else if (IsLoadingTags)
+                        IsLoadingTags = false;
+
+                    // Check for singleline fields
+                    if (line.StartsWith(" ") && line.Contains("Title:"))
+                        details.UpdateDate = line.Split("|")[1].Trim().Replace("Published:", "");
+
+                    else if (line.StartsWith(" ") && line.Contains("Author:"))
+                        details.Author = line.Split(":")[1].Trim();
+
+                    else if (line.StartsWith(" ") && line.Contains("Software Site:"))
+                        details.HomepageUrl = new Uri(line.Replace("Software Site:", "").Trim());
+
+                    /*else if (line.StartsWith(" ") && line.Contains("License:"))
+                        details.License = line.Split(":")[1].Trim();*/
+
+                    else if (line.StartsWith(" ") && line.Contains("Software License:"))
+                        details.LicenseUrl = new Uri(line.Replace("Software License:", "").Trim());
+
+                    else if (line.StartsWith(" ") && line.Contains("Package Checksum:"))
+                        details.InstallerHash = line.Split(":")[1].Trim().Replace("'", "");
+
+                    /*else if (line.StartsWith(" ") && line.Contains("Installer Url:"))
+                    {
+                        details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
+                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
+                        req.Method = "HEAD";
+                        WebResponse resp = req.GetResponse();
+                        long ContentLength = 0;
+                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                        {
+                            details.InstallerSize = ContentLength / 1048576;
+                        }
+                    }*/
+                    /*else if (line.StartsWith(" ") && line.Contains("Release Date:"))
+                        details.UpdateDate = line.Split(":")[1].Trim();
+                    */
+                    /*else if (line.StartsWith(" ") && line.Contains("Release Notes Url:"))
+                        details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
+
+                    else if (line.StartsWith(" ") && line.Contains("Installer Type:"))
+                        details.InstallerType = line.Split(":")[1].Trim();
+                    */
+                    else if (line.StartsWith(" ") && line.Contains("Description:"))
+                    {
+                        details.Description = line.Split(":")[1].Trim();
+                        IsLoadingDescription = true;
+                    }
+                    else if (line.StartsWith(" ") && line.Contains("Release Notes:"))
+                    {
+                        details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes:", "").Trim());
+                        details.ReleaseNotes = "";
+                        IsLoadingReleaseNotes = true;
+                    }
+                    else if (line.StartsWith(" ") && line.Contains("Tags"))
+                    {
+                        var tags = new List<string>();
+                        foreach(string tag in line.Replace("Tags:", "").Trim().Split(' '))
+                        {
+                            if (tag.Trim() != "")
+                                tags.Add(tag.Trim());
+                        }
+                        details.Tags = tags.ToArray();
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    AppTools.Log(e.Message);
+                }
+            }
+
+            return details;
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
@@ -354,6 +514,8 @@ namespace ModernWindow.PackageEngine.Managers
             };
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+
+            //TODO: Add chocolatey to path if needed
 
             if (status.Found && IsEnabled())
                 await RefreshSources();

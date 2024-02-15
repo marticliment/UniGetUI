@@ -201,6 +201,8 @@ namespace ModernWindow.Interface.Dialogs
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
                 savePicker.SuggestedFileName = Package.Id + " installer." + Info.InstallerUrl.ToString().Split('.')[^1];
+                if(Info.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
+                    savePicker.FileTypeChoices.Add("Compressed Manifest File", new System.Collections.Generic.List<string>() { ".zip" });
                 savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Info.InstallerUrl.ToString().Split('.')[^1] });
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
