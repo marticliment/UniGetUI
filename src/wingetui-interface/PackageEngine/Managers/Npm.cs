@@ -3,7 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -221,9 +225,98 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
+        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            throw new NotImplementedException();
+            var details = new PackageDetails(package);
+            try
+            {
+                details.InstallerType = "Tarball";
+                details.ManifestUrl = new Uri($"https://www.npmjs.com/package/{package.Id}");
+                details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{package.Id}?activeTab=versions");
+
+                using (Process p = new Process())
+                {
+                    p.StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = Status.ExecutablePath,
+                        Arguments = Properties.ExecutableCallArgs + " info " + package.Id,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        CreateNoWindow = true,
+                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                    };
+
+                    p.Start();
+
+                    List<string> output = new List<string>();
+                    string line;
+                    while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+                    {
+                        output.Add(line);
+                    }
+
+                    int lineNo = 0;
+                    bool ReadingMaintainer = false;
+                    foreach (string outLine in output)
+                    {
+                        try
+                        {
+                            lineNo++;
+                            if (lineNo == 2)
+                            {
+                                details.License = outLine.Split("|")[1];
+                            }
+                            else if (lineNo == 3)
+                            {
+                                details.Description = outLine.Trim();
+                            }
+                            else if (lineNo == 4)
+                            {
+                                details.HomepageUrl = new Uri(outLine.Trim());
+                            }
+                            else if (outLine.StartsWith(".tarball"))
+                            {
+                                details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
+                                WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
+                                req.Method = "HEAD";
+                                WebResponse resp = await req.GetResponseAsync();
+                                long ContentLength = 0;
+                                if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                                    details.InstallerSize = ContentLength / 1048576;
+                            }
+                            else if (outLine.StartsWith(".integrity"))
+                            {
+                                details.InstallerHash = outLine.Replace(".integrity: sha512-", "").Replace("==", "").Trim();
+                            }
+                            else if (outLine.StartsWith("maintainers:"))
+                            {
+                                ReadingMaintainer = true;
+                            }
+                            else if (ReadingMaintainer)
+                            {
+                                ReadingMaintainer = false;
+                                details.Author = outLine.Replace("-", "").Split('<')[0].Trim();
+                            }
+                            else if (outLine.StartsWith("published"))
+                            {
+                                details.Publisher = outLine.Split("by").Last().Split('<')[0].Trim();
+                                details.UpdateDate = outLine.Replace("published", "").Split("by")[0].Trim();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            AppTools.Log(e);
+                        }
+                    }
+                }
+            } catch (Exception e)
+            {
+                AppTools.Log(e);
+            }
+
+            return details;
         }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
