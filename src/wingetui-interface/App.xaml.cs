@@ -35,6 +35,7 @@ namespace ModernWindow
             {
                 InitializeComponent();
 
+                // Initialize error handler
                 UnhandledException += (sender, e) =>
                 {
                     AppTools.Log("Unhandled Exception raised: " + e.Message);
@@ -42,10 +43,13 @@ namespace ModernWindow
                     AppTools.ReportFatalException(e.Exception);
                 };
 
+                // Set WebView user data folder to temp folder, since C:\Program Files\WingetUI is read-only for non-admin processes
                 if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
                     Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
+                
                 Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
 
+                // Reroute close event for the mainWindow
                 mainWindow = new MainWindow();
                 mainWindow.BlockLoading = true;
                 mainWindow.Closed += (sender, args) => { DisposeAndQuit(0); };
@@ -57,7 +61,9 @@ namespace ModernWindow
 
                 if (appWindow != null)
                     appWindow.Closing += mainWindow.HandleClosingEvent;
-
+                
+                // Clear old notifications and register the activation event
+                ToastNotificationManagerCompat.History.Clear();
                 ToastNotificationManagerCompat.OnActivated += toastArgs =>
                 {
                     ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
@@ -68,7 +74,7 @@ namespace ModernWindow
                     });
                 };
 
-
+                // Start async loading of components
                 LoadComponents();
             }
             catch (Exception e)
@@ -81,12 +87,13 @@ namespace ModernWindow
         {
             try
             {
+                // Download and load icon and screenshot database
                 _ = CoreData.LoadIconAndScreenshotsDatabase();
 
+                // Do WingetUI entry text animation
                 await mainWindow.DoEntryTextAnimation();
 
-                // Load managers
-
+                // Load Package Managers
                 Winget = new Winget();
                 PackageManagerList.Add(Winget);
                 Scoop = new Scoop();
@@ -102,11 +109,12 @@ namespace ModernWindow
                 Powershell = new PowerShell();
                 PackageManagerList.Add(Powershell);
 
+                // Start initializing package managers
                 foreach (PackageManager manager in PackageManagerList)
                     _ = manager.Initialize();
 
+                // Timeout for Package Managers initialization
                 int StartTime = Environment.TickCount;
-
                 foreach (PackageManager manager in PackageManagerList)
                 {
                     while (!manager.ManagerReady && Environment.TickCount - StartTime < 10000)
@@ -119,6 +127,7 @@ namespace ModernWindow
 
                 Debug.WriteLine("All managers loaded");
 
+                // Hide the loading page and show the main interface
                 await mainWindow.SwitchToInterface();
             }
             catch (Exception e)
@@ -148,7 +157,6 @@ namespace ModernWindow
         {
             AppTools.Log("Quitting...");
             mainWindow.Close();
-            ToastNotificationManagerCompat.Uninstall();
             Environment.Exit(outputCode);
         }
     }

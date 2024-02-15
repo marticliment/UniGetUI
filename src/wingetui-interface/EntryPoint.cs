@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Dispatching;
+﻿using CommunityToolkit.WinUI.Notifications;
+using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using ModernWindow.Data;
 using ModernWindow.Structures;
@@ -18,7 +19,11 @@ namespace ModernWindow
             {
                 // Having an async main method breaks WebView2
                 CoreData.IsDaemon = args.Contains("--daemon");
-                _ = AsyncMain(args);
+
+                if (args.Contains("--uninstall-wingetui"))
+                    UninstallPreps();
+                else
+                    _ = AsyncMain(args);
             }
             catch (Exception e)
             {
@@ -84,6 +89,11 @@ namespace ModernWindow
                 AppTools.ReportFatalException(e);
                 return false;
             }
+        }
+        private static void UninstallPreps()
+        {
+            //TODO: Make the uninstaller call WingetUI with the argument --uninstall-wingetui
+            ToastNotificationManagerCompat.Uninstall();
         }
 
     }
