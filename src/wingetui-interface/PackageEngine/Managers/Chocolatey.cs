@@ -231,13 +231,6 @@ namespace ModernWindow.PackageEngine.Managers
         {
             var details = new PackageDetails(package);
 
-            /*if (package.Source.Name == "winget")
-                details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
-                    + package.Id[0].ToString().ToLower() + "/"
-                    + package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (package.Id.Contains('.') ? package.Id.Split('.')[1..] : package.Id.Split('.')))
-                );*/
-
             AppTools.Log(package.Source.Url.ToString().Trim()[^1]);
 
             if(package.Source.Name == "community")
@@ -308,9 +301,7 @@ namespace ModernWindow.PackageEngine.Managers
                         details.Description += "\n" + line.Trim();
                     else if (line.StartsWith("  ") && IsLoadingReleaseNotes)
                         details.ReleaseNotes += "\n" + line.Trim();
-                    /*else if (line.StartsWith("  ") && IsLoadingTags)
-                        details.Tags = details.Tags.Append(line.Trim()).ToArray();
-                    */
+
                     // Stop loading multiline fields
                     else if (IsLoadingDescription)
                         IsLoadingDescription = false;
@@ -329,36 +320,12 @@ namespace ModernWindow.PackageEngine.Managers
                     else if (line.StartsWith(" ") && line.Contains("Software Site:"))
                         details.HomepageUrl = new Uri(line.Replace("Software Site:", "").Trim());
 
-                    /*else if (line.StartsWith(" ") && line.Contains("License:"))
-                        details.License = line.Split(":")[1].Trim();*/
-
                     else if (line.StartsWith(" ") && line.Contains("Software License:"))
                         details.LicenseUrl = new Uri(line.Replace("Software License:", "").Trim());
 
                     else if (line.StartsWith(" ") && line.Contains("Package Checksum:"))
                         details.InstallerHash = line.Split(":")[1].Trim().Replace("'", "");
 
-                    /*else if (line.StartsWith(" ") && line.Contains("Installer Url:"))
-                    {
-                        details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-                        req.Method = "HEAD";
-                        WebResponse resp = req.GetResponse();
-                        long ContentLength = 0;
-                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                        {
-                            details.InstallerSize = ContentLength / 1048576;
-                        }
-                    }*/
-                    /*else if (line.StartsWith(" ") && line.Contains("Release Date:"))
-                        details.UpdateDate = line.Split(":")[1].Trim();
-                    */
-                    /*else if (line.StartsWith(" ") && line.Contains("Release Notes Url:"))
-                        details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
-
-                    else if (line.StartsWith(" ") && line.Contains("Installer Type:"))
-                        details.InstallerType = line.Split(":")[1].Trim();
-                    */
                     else if (line.StartsWith(" ") && line.Contains("Description:"))
                     {
                         details.Description = line.Split(":")[1].Trim();
