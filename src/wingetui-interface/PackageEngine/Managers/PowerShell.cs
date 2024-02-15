@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -270,9 +271,76 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
+        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            throw new NotImplementedException();
+            var details = new PackageDetails(package);
+
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " Find-Module -Name " + package.Id + " | Get-Member -MemberType NoteProperty | Select-Object Definition",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            p.Start();
+
+            string line;
+            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                if (line.Count(c => c == ' ') < 1)
+                    continue;
+                
+                try
+                {
+                    var entry = line.Split('=')[0].Split(' ')[^1];
+                    var PossibleContent = line.Split('=')[1].Trim();
+                    if(PossibleContent == "null")
+                        continue;
+
+                    if (entry == "Author")
+                        details.Author = PossibleContent;
+
+                    else if(entry == ("CompanyName"))
+                        details.Publisher = PossibleContent;
+
+                    else if(entry == ("Copyright"))
+                        details.License = PossibleContent;
+
+                    else if(entry == ("LicenseUri"))
+                        details.LicenseUrl = new Uri(PossibleContent);
+
+                    else if( entry == ("Description"))
+                        details.Description = PossibleContent;
+
+                    else if(entry == ("Type"))
+                        details.InstallerType = PossibleContent;
+
+                    else if(entry == ("ProjectUri"))
+                        details.HomepageUrl = new Uri(PossibleContent);
+
+                    else if (entry == ("PublishedDate"))
+                        details.UpdateDate = PossibleContent;
+
+                    else if (entry == ("UpdatedDate"))
+                        details.UpdateDate = PossibleContent;
+
+                    else if (entry == ("ReleaseNotes"))
+                        details.ReleaseNotes = PossibleContent;
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
+
+            }
+
+            return details;
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
