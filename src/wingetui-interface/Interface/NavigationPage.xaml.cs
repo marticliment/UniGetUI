@@ -229,9 +229,10 @@ namespace ModernWindow.Interface
             DetailsDialog.Content = DetailsPage;
             DetailsDialog.SizeChanged += (s, e) =>
             {
-                DetailsPage.MinWidth = ActualWidth - 300;
+                int hOffset = (ActualWidth < 1300)? 100: 300;
+                DetailsPage.MinWidth = ActualWidth - hOffset;
                 DetailsPage.MinHeight = ActualHeight - 100;
-                DetailsPage.MaxWidth = ActualWidth - 300;
+                DetailsPage.MaxWidth = ActualWidth - hOffset;
                 DetailsPage.MaxHeight = ActualHeight - 100;
             };
 

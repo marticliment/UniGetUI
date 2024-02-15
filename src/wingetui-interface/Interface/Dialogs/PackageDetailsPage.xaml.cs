@@ -237,7 +237,7 @@ namespace ModernWindow.Interface.Dialogs
 
         public void PackageDetailsPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width < 800)
+            if (e.NewSize.Width < 950)
             {
                 if (layoutMode != LayoutMode.Normal)
                 {
@@ -291,7 +291,7 @@ namespace ModernWindow.Interface.Dialogs
                     layoutMode = LayoutMode.Wide;
 
                     MainGrid.ColumnDefinitions.Clear();
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });
                     MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(LeftPanel, 0);
                     Grid.SetColumn(RightPanel, 1);
