@@ -282,7 +282,6 @@ namespace ModernWindow.PackageEngine.Managers
 
                 using (WebClient client = new WebClient())
                 {
-                    AppTools.Log("Starting...");
                     var task = Task<string>.Factory.StartNew(() => { return client.DownloadString(url); });
                     string apiContents = await task;
 

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -238,12 +240,111 @@ namespace ModernWindow.PackageEngine.Managers
             return new ManagerSource(this, "pip", new Uri("https://pypi.org/"));
         }
 
-        public override Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
+        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            throw new NotImplementedException();
+            var details = new PackageDetails(package);
+
+            AppTools.Log("Getting package details for " + package.Id);
+
+            string JsonString;
+            using (WebClient client = new WebClient())
+            {
+                var task = Task<string>.Factory.StartNew(() => { return client.DownloadString(new Uri($"https://pypi.org/pypi/{package.Id}/json")); });
+                JsonString = await task;
+            }
+
+            JsonObject RawInfo = JsonObject.Parse(JsonString) as JsonObject;
+
+
+
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("author"))
+                    details.Author = (RawInfo["info"] as JsonObject)["author"].ToString();
+            }
+            catch (Exception ex) { AppTools.Log("Can't load author: " + ex); }
+
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("home_page"))
+                    details.HomepageUrl = new Uri((RawInfo["info"] as JsonObject)["home_page"].ToString());
+            }
+            catch (Exception ex) { AppTools.Log("Can't load home_page: " + ex); }
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("package_url"))
+                    details.ManifestUrl = new Uri((RawInfo["info"] as JsonObject)["package_url"].ToString());
+            }
+            catch (Exception ex) { AppTools.Log("Can't load package_url: " + ex); }
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("summary"))
+                    details.Description = (RawInfo["info"] as JsonObject)["summary"].ToString();
+            }
+            catch (Exception ex) { AppTools.Log("Can't load summary: " + ex); }
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("license"))
+                    details.License = (RawInfo["info"] as JsonObject)["license"].ToString();
+            }
+            catch (Exception ex) { AppTools.Log("Can't load license: " + ex); }
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("maintainer"))
+                    details.Publisher = (RawInfo["info"] as JsonObject)["maintainer"].ToString();
+            }
+            catch (Exception ex) { AppTools.Log("Can't load maintainer: " + ex); }
+            try
+            {
+                if ((RawInfo["info"] as JsonObject).ContainsKey("classifiers") && (RawInfo["info"] as JsonObject)["classifiers"] is JsonArray)
+                {
+                    var Tags = new List<string>();
+                    foreach (string line in (RawInfo["info"] as JsonObject)["classifiers"] as JsonArray)
+                        if (line.Contains("License ::"))
+                            details.License = line.Split("::")[^1].Trim();
+                        else if (line.Contains("Topic ::"))
+                            if (!Tags.Contains(line.Split("::")[^1].Trim()))
+                                Tags.Add(line.Split("::")[^1].Trim());  
+                    details.Tags = Tags.ToArray();
+                }   
+            }
+            catch (Exception ex) { AppTools.Log("Can't load classifiers: " + ex); }
+
+            try
+            {
+                JsonObject? url = null;
+                if (RawInfo.ContainsKey("url"))
+                
+                    url = RawInfo["url"] as JsonObject;
+                else if (RawInfo.ContainsKey("urls"))
+                    url = (RawInfo["urls"] as JsonArray)[0] as JsonObject;
+
+                if(url != null)
+                { 
+                    if(url.ContainsKey("digests") && (url["digests"] as JsonObject).ContainsKey("sha256"))
+                    {
+                        details.InstallerHash = url["digests"]["sha256"].ToString();
+                    }
+                    if(url.ContainsKey("url"))
+                    {
+                        details.InstallerType = url["url"].ToString().Split('.')[^1].Replace("whl", "Wheel");
+                        details.InstallerUrl = new Uri(url["url"].ToString());
+                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
+                        req.Method = "HEAD";
+                        WebResponse resp = await req.GetResponseAsync();
+                        long ContentLength = 0;
+                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                            details.InstallerSize = ContentLength / 1048576;
+
+                    }
+                }
+            }
+            catch (Exception ex) { AppTools.Log("Can't load installer data: " + ex); }
+
+            return details;
         }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+#pragma warning disable CS1998
         public override async Task RefreshSources()
         {
             // Pip does not support manual source refreshing
