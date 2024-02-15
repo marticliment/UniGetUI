@@ -37,7 +37,6 @@ namespace ModernWindow.PackageEngine.Managers
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
-                AppTools.Log(DashesPassed.ToString() + ": " + line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("-----"))
@@ -55,7 +54,6 @@ namespace ModernWindow.PackageEngine.Managers
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
                     else
                     {
-                        AppTools.Log("Unknown PowerShell source!");
                         ManagerSource s = new(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
                         Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);

@@ -164,7 +164,11 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
-                return await GetSources_UnSafe();
+                var sources = await GetSources_UnSafe();
+                SourceReference.Clear();
+                foreach (var source in sources)
+                    SourceReference.Add(source.Name, source);
+                return sources;
             }
             catch (Exception e)
             {

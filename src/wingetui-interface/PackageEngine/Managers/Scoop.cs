@@ -227,6 +227,17 @@ public class Scoop : PackageManagerWithSources
     public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
     {
         var details = new PackageDetails(package);
+
+        if (package.Source.Url != null)
+            try
+            {
+                // TODO: Investigate mismatched source urls
+                details.ManifestUrl = new Uri(package.Source.Url.ToString() + "/blob/master/bucket/" + package.Id + ".json");
+            } catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
+
         Process p = new Process();
         p.StartInfo = new ProcessStartInfo()
         {
