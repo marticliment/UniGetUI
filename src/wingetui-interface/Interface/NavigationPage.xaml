@@ -9,7 +9,10 @@
     xmlns:interface="using:ModernWindow.Interface"
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     xmlns:engine="using:ModernWindow.PackageEngine"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    MinHeight="500"
+    MinWidth="500"
+    >
 
     <UserControl.Resources>
         <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
@@ -53,8 +56,8 @@
 
         <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="225"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" MinHeight="305"/>
+                <RowDefinition Height="*" MinHeight="185"/>
             </Grid.RowDefinitions>
             <StackPanel Width="64" Grid.Row="0" Grid.Column="0"
             Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
