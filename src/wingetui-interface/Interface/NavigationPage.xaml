@@ -83,9 +83,9 @@
                 Width="64"
                 Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
                 <widgets:NavButton
-                    Text="More" x:Name="MoreNavButton"
+                    Text="About" x:Name="AboutNavButton"
                     x:FieldModifier="public"
-                    Glyph="&#xE712;" Click="MoreNavButton_Click"
+                    Glyph="&#xE946;" Click="AboutNavButton_Click"
                     />
                 <widgets:NavButton
                     Text="Settings" x:Name="SettingsNavButton"
@@ -93,9 +93,9 @@
                     Glyph="&#xE713;" Click="SettingsNavButton_Click"
                     />
                 <widgets:NavButton
-                    Text="About" x:Name="AboutNavButton"
+                    Text="More" x:Name="MoreNavButton"
                     x:FieldModifier="public"
-                    Glyph="&#xE946;" Click="AboutNavButton_Click"
+                    Glyph="&#xE712;" Click="MoreNavButton_Click"
                     />
             </StackPanel>
         </Grid>
