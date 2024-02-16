@@ -511,6 +511,36 @@ namespace ModernWindow.PackageEngine.Managers
 
             return versions.ToArray();
         }
+
+        public override ManagerSource[] GetKnownSources()
+        {
+            return new ManagerSource[] { 
+                new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))
+            };
+        }
+
+        public override string[] GetAddSourceParameters(ManagerSource source)
+        {
+            if (source.Url.ToString() == "https://www.powershellgallery.com/api/v2")
+                return new string[] { "Register-PSRepository", "-Default" };
+            return new string[] { "Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString() };
+        }
+
+        public override string[] GetRemoveSourceParameters(ManagerSource source)
+        {
+            return new string[] { "Unregister-PSRepository", "-Name", source.Name };
+        }
+
+        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
     }
 
 }

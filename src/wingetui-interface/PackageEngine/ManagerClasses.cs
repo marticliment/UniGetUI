@@ -40,6 +40,8 @@ namespace ModernWindow.PackageEngine
 
                 if (this is PackageManagerWithSources && Status.Found)
                 {
+                    (this as PackageManagerWithSources).KnownSources = (this as PackageManagerWithSources).GetKnownSources();
+
                     Task<ManagerSource[]> SourcesTask = (this as PackageManagerWithSources).GetSources();
                     Task winner = await Task.WhenAny(
                         SourcesTask,
@@ -53,7 +55,7 @@ namespace ModernWindow.PackageEngine
                     {
                         ManagerReady = true;
                         AppTools.Log(Name + " sources took too long to load, using known sources as default");
-                        (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).DefaultSources;
+                        (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).KnownSources;
                     }
                 }
                 Debug.WriteLine("Manager " + Name + " loaded");
@@ -158,7 +160,8 @@ namespace ModernWindow.PackageEngine
     public abstract class PackageManagerWithSources : PackageManager
     {
         public ManagerSource[] Sources { get; set; }
-        public ManagerSource[] DefaultSources { get; set; }
+        public ManagerSource[] KnownSources { get; set; }
+
         public Dictionary<string, ManagerSource> SourceReference = new();
         public virtual async Task<ManagerSource[]> GetSources()
         {
@@ -176,6 +179,12 @@ namespace ModernWindow.PackageEngine
                 return new ManagerSource[] { };
             }
         }
+
+        public abstract ManagerSource[] GetKnownSources();
+        public abstract string[] GetAddSourceParameters(ManagerSource source);
+        public abstract string[] GetRemoveSourceParameters(ManagerSource source);
+        public abstract OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
         protected abstract Task<ManagerSource[]> GetSources_UnSafe();
     }
 
@@ -229,6 +238,7 @@ namespace ModernWindow.PackageEngine
         {
             public bool KnowsUpdateDate { get; set; } = false;
             public bool KnowsPackageCount { get; set; } = false;
+            public bool MustBeInstalledAsAdmin { get; set; } = false;
             public Capabilities()
             { }
         }

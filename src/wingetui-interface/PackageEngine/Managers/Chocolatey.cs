@@ -531,5 +531,30 @@ namespace ModernWindow.PackageEngine.Managers
 
             return versions.ToArray();
         }
+
+        public override ManagerSource[] GetKnownSources()
+        {
+            return new ManagerSource[] { new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")) };
+        }
+
+        public override string[] GetAddSourceParameters(ManagerSource source)
+        {
+            return new string[] { "source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y" };
+        }
+
+        public override string[] GetRemoveSourceParameters(ManagerSource source)
+        {
+            return new string[] { "source", "remove", "--name", source.Name, "-y" };
+        }
+
+        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
     }
 }

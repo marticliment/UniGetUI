@@ -255,8 +255,6 @@ namespace ModernWindow.PackageEngine.Managers
 
             JsonObject RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
-
-
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("author"))

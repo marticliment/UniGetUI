@@ -578,4 +578,41 @@ public class Scoop : PackageManagerWithSources
         AppTools.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
         return new string[0];
     }
+
+    public override ManagerSource[] GetKnownSources()
+    {
+        return new ManagerSource[]
+        {
+            new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+            new ManagerSource(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
+            new ManagerSource(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
+            new ManagerSource(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
+            new ManagerSource(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
+            new ManagerSource(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
+            new ManagerSource(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
+            new ManagerSource(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
+            new ManagerSource(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
+            new ManagerSource(this, "games", new Uri("https://github.com/Calinou/scoop-games")),
+        };
+    }
+
+    public override string[] GetAddSourceParameters(ManagerSource source)
+    {
+        return new string[] { "bucket", "add", source.Name, source.Url.ToString() };
+    }
+
+    public override string[] GetRemoveSourceParameters(ManagerSource source)
+    {
+        return new string[] { "bucket", "rm", source.Name };
+    }
+
+    public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+    {
+        return ReturnCode == 0? OperationVeredict.Succeeded: OperationVeredict.Failed;
+    }
+
+    public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+    {
+        return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+    }
 }

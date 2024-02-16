@@ -225,11 +225,13 @@ namespace ModernWindow.PackageEngine.Managers
                     string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
 
                     ManagerSource source;
-                    string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
                     if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
+                    {
                         source = GetLocalSource(id); // Load Winget Local Sources
+                    }
                     else
                     {
+                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();                    
                         if (SourceReference.ContainsKey(sourceName))
                             source = SourceReference[sourceName];
                         else
@@ -252,34 +254,42 @@ namespace ModernWindow.PackageEngine.Managers
 
         private ManagerSource GetLocalSource(string id)
         {
-            // Check if source is android
-            bool AndroidValid = true;
-            foreach (char c in id)
-                if (!"abcdefghijklmnopqrstuvwxyz.…".Contains(c))
-                {
-                    AndroidValid = false;
-                    break;
-                }
-            if (AndroidValid && id.Count(x => x == '.') >= 2)
-                return AndroidSubsystemSource;
+            try
+            {
+                // Check if source is android
+                bool AndroidValid = true;
+                foreach (char c in id)
+                    if (!"abcdefghijklmnopqrstuvwxyz.…".Contains(c))
+                    {
+                        AndroidValid = false;
+                        break;
+                    }
+                if (AndroidValid && id.Count(x => x == '.') >= 2)
+                    return AndroidSubsystemSource;
 
-            // Check if source is Steama
-            if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
-                return SteamSource;
+                // Check if source is Steama
+                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                    return SteamSource;
 
-            // Check if source is Ubisoft Connect
-            if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
-                return UbisoftConnectSource;
+                // Check if source is Ubisoft Connect
+                if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                    return UbisoftConnectSource;
 
-            // Check if source is GOG
-            if (id.EndsWith("_is1") && id.Split("_is1")[0].Count(x => !"1234567890".Contains(x)) == 0)
-                return GOGSource;
+                // Check if source is GOG
+                if (id.EndsWith("_is1") && id.Split("_is1")[0].Count(x => !"1234567890".Contains(x)) == 0)
+                    return GOGSource;
 
-            // Check if source is Microsoft Store
-            if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13 | id.Split('_')[^1].Length <= 13 && id[^1] == '…'))
-                return MicrosoftStoreSource;
+                // Check if source is Microsoft Store
+                if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13 | id.Split('_')[^1].Length <= 13 && id[^1] == '…'))
+                    return MicrosoftStoreSource;
 
-            return LocalPcSource;
+                return LocalPcSource;
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+                return LocalPcSource;
+            }
         }
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
@@ -703,6 +713,7 @@ namespace ModernWindow.PackageEngine.Managers
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
+                    MustBeInstalledAsAdmin = true,
                 }
             };
         }
@@ -821,6 +832,35 @@ namespace ModernWindow.PackageEngine.Managers
             output += await p.StandardError.ReadToEndAsync();
             AppTools.LogManagerOperation(this, p, output);
             return versions.ToArray();
+        }
+
+        public override ManagerSource[] GetKnownSources()
+        {
+            return new ManagerSource[]
+            {
+                new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
+                new ManagerSource(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")),
+            };
+        }
+
+        public override string[] GetAddSourceParameters(ManagerSource source)
+        {
+            return new string[] { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
+        }
+
+        public override string[] GetRemoveSourceParameters(ManagerSource source)
+        {
+            return new string[] { "source", "remove", "--name", source.Name, "--disable-interactivity" };
+        }
+
+        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
     }
 
