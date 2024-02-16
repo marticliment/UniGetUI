@@ -530,7 +530,7 @@
                 <TextBlock 
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Name}"
+                    Text="{x:Bind Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind Name}"
                     />
                 <widgets:LocalIcon
@@ -541,7 +541,7 @@
                 <TextBlock 
                     Grid.Column="4" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Id}"
+                    Text="{x:Bind Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind Id}"
                     />
                 <widgets:LocalIcon
@@ -552,7 +552,7 @@
                 <TextBlock 
                     Grid.Column="6" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Version}"
+                    Text="{x:Bind Version}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind Version}"
                     />
                 <widgets:LocalIcon
@@ -563,7 +563,7 @@
                 <TextBlock 
                     Grid.Column="8" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Source.ToString()}"
+                    Text="{x:Bind Source.ToString()}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind Source.ToString()}"
                     />
             </Grid>
