@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ModernWindow.PackageEngine;
 using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -39,40 +40,89 @@ namespace ModernWindow.Interface.Widgets
             InitializeComponent();
             Header.Text = bindings.Translate("Manage {0} sources").Replace("{0}", Manager.Properties.Name);
             AddSourceButton.Content = bindings.Translate("Add source");
-            AddSourceButton.Click += async (sender, e) => { 
-                ContentDialog d = new ContentDialog();
-                d.Title = bindings.Translate("Add source");
-                
-                var SourcesCombo = new ComboBox();
-                var NameSourceRef = new Dictionary<string, ManagerSource>();
-                foreach(var source in Manager.KnownSources)
+            AddSourceButton.Click += async (sender, e) =>
+            {
+                try
                 {
-                    SourcesCombo.Items.Add(source.Name);
-                    NameSourceRef.Add(source.Name, source);
-                }
-                d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                StackPanel p = new StackPanel();
-                p.Spacing = 8;
-                p.Children.Add(new TextBlock() { Text = bindings.Translate("Select the source you want to add:") });
-                p.Children.Add(SourcesCombo);
-                SourcesCombo.Items.Add(bindings.Translate("Other"));
-                SourcesCombo.SelectedIndex = 0;
-                SourcesCombo.HorizontalAlignment = HorizontalAlignment.Stretch;
 
-                d.XamlRoot = this.XamlRoot;
-                d.Content = p;
-                d.PrimaryButtonText = bindings.Translate("Add");
-                d.SecondaryButtonText = bindings.Translate("Cancel");
-                d.DefaultButton = ContentDialogButton.Primary;
+                    ContentDialog d = new ContentDialog();
+                    d.Title = bindings.Translate("Add source");
 
-                if(await bindings.App.mainWindow.ShowDialog(d) == ContentDialogResult.Primary)
-                {
-                    if (bindings.Translate("Other") != SourcesCombo.SelectedValue.ToString())
+                    var SourcesCombo = new ComboBox();
+                    var NameSourceRef = new Dictionary<string, ManagerSource>();
+                    foreach (var source in Manager.KnownSources)
                     {
-                        var op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString()]);
+                        SourcesCombo.Items.Add(source.Name);
+                        NameSourceRef.Add(source.Name, source);
+                    }
+
+                    d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                    StackPanel p = new StackPanel();
+                    p.Spacing = 8;
+                    p.Children.Add(new TextBlock() { Text = bindings.Translate("Select the source you want to add:") });
+                    p.Children.Add(SourcesCombo);
+
+                    var SourceNameTextBox = new TextBox() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
+                    var SourceUrlTextBox = new TextBox() { HorizontalAlignment = HorizontalAlignment.Stretch };
+
+                    var p1 = new StackPanel() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
+                    p1.Children.Add(new TextBlock() { Text = bindings.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
+                    p1.Children.Add(SourceNameTextBox);
+
+
+                    var p2 = new StackPanel() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
+                    p2.Children.Add(new TextBlock() { Text = bindings.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
+                    p2.Children.Add(SourceUrlTextBox);
+
+                    p.Children.Add(p1);
+                    p.Children.Add(p2);
+
+                    SourcesCombo.Items.Add(bindings.Translate("Other"));
+                    SourcesCombo.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    SourcesCombo.SelectionChanged += (sender, e) =>
+                    {
+                        if (SourcesCombo.SelectedValue.ToString() == bindings.Translate("Other"))
+                        {
+                            SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = true;
+                            SourceUrlTextBox.Text = SourceNameTextBox.Text = "";
+                        }
+                        else
+                        {
+                            SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = false;
+                            SourceUrlTextBox.Text = NameSourceRef[SourcesCombo.SelectedValue.ToString()].Url.ToString();
+                            SourceNameTextBox.Text = NameSourceRef[SourcesCombo.SelectedValue.ToString()].Name;
+                        }
+                    };
+                    SourcesCombo.SelectedIndex = 0;
+
+                    d.XamlRoot = this.XamlRoot;
+                    d.Content = p;
+                    d.PrimaryButtonText = bindings.Translate("Add");
+                    d.SecondaryButtonText = bindings.Translate("Cancel");
+                    d.DefaultButton = ContentDialogButton.Primary;
+
+                    if (await bindings.App.mainWindow.ShowDialog(d) == ContentDialogResult.Primary)
+                    {
+                        AddSourceOperation op;
+                        if (bindings.Translate("Other") != SourcesCombo.SelectedValue.ToString())
+                            op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString()]);
+                        else
+                            op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
                         bindings.AddOperationToList(op);
                         op.OperationSucceeded += (sender, e) => { LoadSources(); };
+
                     }
+                }
+                catch (Exception ex)
+                {
+                    ContentDialog d = new ContentDialog();
+                    d.XamlRoot = this.XamlRoot;
+                    d.Title = bindings.Translate("An error occurred");
+                    d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                    d.Content = bindings.Translate("An error occurred when adding the source: ") + ex.Message;
+                    _ = bindings.App.mainWindow.ShowDialog(d, HighPriority: true);
+                    d.PrimaryButtonText = bindings.Translate("Close");
+                    AppTools.Log(ex);
                 }
             };
             this.Manager = Manager;
