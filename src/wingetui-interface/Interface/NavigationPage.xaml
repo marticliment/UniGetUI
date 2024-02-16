@@ -76,6 +76,14 @@
                     Text="Installed Packages"
                     Glyph="&#xE977;" Click="InstalledNavButton_Click"
                 />
+                <Grid>
+                <widgets:NavButton x:Name="BundlesNavButton"
+                    x:FieldModifier="public"
+                    Text="Package Bundles"
+                    Glyph="&#xF133;" Click="BundlesNavButton_Click"
+                />
+                    <InfoBadge Value="0" Name="__bundle_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
+                </Grid>
             </StackPanel>
 
             <StackPanel

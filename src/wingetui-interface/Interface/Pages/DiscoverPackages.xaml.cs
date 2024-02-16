@@ -467,7 +467,6 @@ namespace ModernWindow.Interface
             AppBarButton SelectAll = new();
             AppBarButton SelectNone = new();
 
-            AppBarButton ImportPackages = new();
             AppBarButton ExportSelection = new();
 
             AppBarButton HelpButton = new();
@@ -485,7 +484,6 @@ namespace ModernWindow.Interface
             ToolBar.PrimaryCommands.Add(SelectAll);
             ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(ImportPackages);
             ToolBar.PrimaryCommands.Add(ExportSelection);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
@@ -502,8 +500,7 @@ namespace ModernWindow.Interface
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
                 { SelectNone,           " Clear selection" },
-                { ImportPackages,       "Import packages" },
-                { ExportSelection,      "Export selected packages" },
+                { ExportSelection,      "Add selection to a bundle" },
                 { HelpButton,           "Help" }
             };
 
@@ -526,7 +523,6 @@ namespace ModernWindow.Interface
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
                 { SelectNone,           "selectnone" },
-                { ImportPackages,       "import" },
                 { ExportSelection,      "export" },
                 { HelpButton,           "help" }
             };
@@ -535,8 +531,7 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.Click += (s, e) => { _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install); };
-            ImportPackages.IsEnabled = false;
-            ExportSelection.IsEnabled = false;
+            ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
 
             InstallationSettings.Click += async (s, e) =>
@@ -578,6 +573,14 @@ namespace ModernWindow.Interface
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
 
         }
+
+        private void ExportSelection_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                    bindings.App.mainWindow.NavigationPage.BundlesPage.AddPackage(package);
+            bindings.App.mainWindow.NavigationPage.BundlesNavButton.ForceClick();
+        }
+
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)

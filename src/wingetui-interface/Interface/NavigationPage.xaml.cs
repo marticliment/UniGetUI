@@ -23,9 +23,11 @@ namespace ModernWindow.Interface
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public HelpDialog HelpPage;
+        public PackageBundlePage BundlesPage;
         public Page OldPage;
         public Page CurrentPage;
         public InfoBadge UpdatesBadge;
+        public InfoBadge BundleBadge;
         public StackPanel OperationStackPanel;
         private Dictionary<Page, NavButton> PageButtonReference = new();
 
@@ -36,6 +38,7 @@ namespace ModernWindow.Interface
         {
             InitializeComponent();
             UpdatesBadge = __updates_count_badge;
+            BundleBadge = __bundle_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
             SettingsPage = new SettingsInterface();
             DiscoverPage = new DiscoverPackagesPage();
@@ -43,10 +46,11 @@ namespace ModernWindow.Interface
             InstalledPage = new InstalledPackagesPage();
             AboutPage = new AboutWingetUI();
             HelpPage = new HelpDialog();
+            BundlesPage = new PackageBundlePage();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();
 
             int i = 0;
-            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, SettingsPage })
+            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, SettingsPage, BundlesPage })
             {
                 Grid.SetColumn(page, 0);
                 Grid.SetRow(page, 0);
@@ -58,6 +62,7 @@ namespace ModernWindow.Interface
             PageButtonReference.Add(UpdatesPage, UpdatesNavButton);
             PageButtonReference.Add(InstalledPage, InstalledNavButton);
             PageButtonReference.Add(SettingsPage, SettingsNavButton);
+            PageButtonReference.Add(BundlesPage, BundlesNavButton);
 
             DiscoverNavButton.ForceClick();
         }
@@ -75,6 +80,11 @@ namespace ModernWindow.Interface
         private void UpdatesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
             NavigateToPage(UpdatesPage);
+        }
+
+        private void BundlesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        {
+            NavigateToPage(BundlesPage);
         }
 
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
@@ -153,8 +163,10 @@ namespace ModernWindow.Interface
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Install");
             else if (Operation == OperationType.Update)
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Update");
-            else
+            else if(Operation == OperationType.Uninstall)
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Uninstall");
+            else
+                OptionsDialog.SecondaryButtonText = "";
             OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);

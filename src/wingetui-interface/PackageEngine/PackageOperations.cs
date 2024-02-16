@@ -28,7 +28,8 @@ namespace ModernWindow.PackageEngine
     {
         Install,
         Update,
-        Uninstall
+        Uninstall, 
+        None
     }
 
     public class OperationCancelledEventArgs : EventArgs

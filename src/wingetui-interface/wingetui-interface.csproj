@@ -40,6 +40,7 @@
     <None Remove="Interface\InstalledPackages.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
     <None Remove="Interface\Pages\LogPage.xaml" />
+    <None Remove="Interface\Pages\PackageBundle.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -73,6 +74,9 @@
     <Page Update="Interface\InstalledPackages.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Interface\Pages\PackageBundle.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Interface\SoftwareUpdates.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

@@ -53,7 +53,7 @@ namespace ModernWindow.Interface.Dialogs
                         ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
                 }
 
-            VersionComboBox.IsEnabled = Operation == OperationType.Install && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
+            VersionComboBox.IsEnabled = (Operation == OperationType.Install || Operation == OperationType.None) && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
             VersionComboBox.SelectionChanged += (s, e) =>
               { IgnoreUpdatesCheckbox.IsChecked = !new string[] { bindings.Translate("Latest"), bindings.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
             VersionComboBox.Items.Add(bindings.Translate("Latest"));
