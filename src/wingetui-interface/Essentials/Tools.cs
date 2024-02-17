@@ -177,7 +177,7 @@ namespace ModernWindow.Structures
         { Log(e.ToString()); }
 
         public static void Log(object o)
-        { Log(o.ToString()); }
+        { if (o != null) Log(o.ToString()); else Log("null"); }
 
 
         public static void LogManagerOperation(PackageManager manager, Process process, string output)
