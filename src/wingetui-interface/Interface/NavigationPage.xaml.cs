@@ -182,6 +182,30 @@ namespace ModernWindow.Interface
 
         }
 
+        public async Task<InstallationOptions> UpdateInstallationSettings(Package package, InstallationOptions options)
+        {
+            InstallOptionsPage OptionsPage = new(package, options);
+
+            ContentDialog OptionsDialog = new();
+            OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            OptionsDialog.XamlRoot = XamlRoot;
+            OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
+            OptionsDialog.SecondaryButtonText = "";
+            OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
+            OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
+            OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Content = OptionsPage;
+            await bindings.App.mainWindow.ShowDialog(OptionsDialog);
+            OptionsPage.SaveToDisk();
+
+            OptionsDialog.Content = null;
+            OptionsDialog = null;
+
+            return await OptionsPage.GetUpdatedOptions();
+
+        }
+
         private void NavigateToPage(Page TargetPage)
         {
             foreach (Page page in PageButtonReference.Keys)

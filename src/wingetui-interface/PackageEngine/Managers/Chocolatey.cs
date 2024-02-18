@@ -1,4 +1,5 @@
-﻿using ModernWindow.Structures;
+﻿using CommunityToolkit.WinUI.Animations;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -391,7 +392,10 @@ namespace ModernWindow.PackageEngine.Managers
                     if (line.Contains(" - ") && line.Contains(" | "))
                     {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
-                        sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
+                        if(parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
+                            sources.Add(new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/")));
+                        else
+                            sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
                     }
                 }
                 catch (Exception e)

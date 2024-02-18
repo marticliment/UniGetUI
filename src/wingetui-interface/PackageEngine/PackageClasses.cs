@@ -3,6 +3,7 @@ using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -22,37 +23,6 @@ namespace ModernWindow.PackageEngine
     }
     public class Package : INotifyPropertyChanged
     {
-        public class __serializable_updates_options_v1
-        {
-            public bool UpdatesIgnored { get; set; } = false;
-            public string IgnoredVersion { get; set; } = "";
-            public static async Task<__serializable_updates_options_v1> FromPackage(Package package)
-            {
-                var Serializable = new __serializable_updates_options_v1();
-                Serializable.UpdatesIgnored = await package.HasUpdatesIgnored();
-                Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersion();
-                return Serializable;
-            }
-        }
-        public class __serializable_bundled_package_v1
-        {
-            public string Id { get; set; } = "";
-            public string Name { get; set; } = "";
-            public string Version { get; set; } = "";
-            public string Source { get; set; } = "";
-            public string ManagerName { get; set; } = "";
-            public InstallationOptions.__serializable_options_v1 InstallationOptions { get; set; }
-            public __serializable_updates_options_v1 Updates { get; set; }
-        }
-
-        public class __serializable_incompatible_package_v1
-        {
-            public string Id { get; set; } = "";
-            public string Name { get; set; } = "";
-            public string Version { get; set; } = "";
-            public string Source { get; set; } = "";
-        }
-
 
         public AppTools bindings = AppTools.Instance;
 
@@ -212,7 +182,14 @@ namespace ModernWindow.PackageEngine
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+
+
         public async Task<__serializable_bundled_package_v1> AsSerializable_BundledPackage()
+        {
+            return await AsSerializable_BundledPackage(new InstallationOptions(this));
+        }
+
+        public async Task<__serializable_bundled_package_v1> AsSerializable_BundledPackage(InstallationOptions options)
         {
             var Serializable = new __serializable_bundled_package_v1();
             Serializable.Id = Id;
@@ -220,7 +197,6 @@ namespace ModernWindow.PackageEngine
             Serializable.Version = Version;
             Serializable.Source = Source.Name;
             Serializable.ManagerName = Manager.Name;
-            var options = new InstallationOptions(this);
             Serializable.InstallationOptions = options.AsSerializable();
             var updates = await __serializable_updates_options_v1.FromPackage(this);
             Serializable.Updates = updates;
@@ -235,6 +211,11 @@ namespace ModernWindow.PackageEngine
             Serializable.Version = Version;
             Serializable.Source = Source.Name;
             return Serializable;
+        }
+
+        public static Package FromSerialized(__serializable_bundled_package_v1 DeserializedPackage, PackageManager manager, ManagerSource source)
+        {
+            return new Package(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, source, manager);
         }
 
     }
@@ -383,9 +364,14 @@ namespace ModernWindow.PackageEngine
                 LoadOptionsFromDisk();
         }
 
-        public void LoadFromJsonString(string JSON)
+        public static InstallationOptions FromSerialized(__serializable_options_v1 options, Package package)
         {
-            __serializable_options_v1 options = JsonSerializer.Deserialize<__serializable_options_v1>(JSON);
+            var opt = new InstallationOptions(package, reset: true);
+            opt.FromSerialized(options);
+            return opt;
+        }
+        public void FromSerialized(__serializable_options_v1 options)
+        {
             SkipHashCheck = options.SkipHashCheck;
             InteractiveInstallation = options.InteractiveInstallation;
             RunAsAdministrator = options.RunAsAdministrator;
@@ -442,7 +428,8 @@ namespace ModernWindow.PackageEngine
                 string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
                 if (!File.Exists(filename))
                     return;
-                LoadFromJsonString(File.ReadAllText(filename));
+                __serializable_options_v1 options = JsonSerializer.Deserialize<__serializable_options_v1>(File.ReadAllText(filename));
+                FromSerialized(options);
             }
             catch (Exception e)
             {

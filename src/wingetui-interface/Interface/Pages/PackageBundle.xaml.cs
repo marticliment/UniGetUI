@@ -21,58 +21,20 @@ using Windows.UI.Core;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using static ModernWindow.Interface.BundledPackage;
 using System.Xml.Serialization;
 using System.Text;
+using System.Data;
+using Windows.Graphics.DirectX.Direct3D11;
+using System.Xml.Linq;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using static ModernWindow.PackageEngine.Package;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ModernWindow.Interface
 {
-
-    public class BundledPackage
-    {
-        public enum BundleFormatType
-        {
-            JSON,
-            YAML,
-            XML
-        }
-
-        public class __serializable_exportable_packages
-        {
-            public double export_version { get; set; } = 2.0;
-            public List<Package.__serializable_bundled_package_v1> packages { get; set; } = new();
-            public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.";
-            public List<Package.__serializable_incompatible_package_v1> incompatible_packages { get; set; } = new();
-
-        }
-
-        public AppTools bindings = AppTools.Instance;
-        public Package Package { get; }
-        public InstallationOptions Options { get; }
-
-        public BundledPackage(Package package)
-        {
-            Package = package;
-            Options = new InstallationOptions(package);
-        }
-
-        public void ShowOptions(object sender, RoutedEventArgs e)
-        {
-            _ = bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(Package, OperationType.None);
-        }
-
-        public void RemoveFromList(object sender, RoutedEventArgs e)
-        {
-            bindings.App.mainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
-            bindings.App.mainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
-            bindings.App.mainWindow.NavigationPage.BundlesPage.UpdateCount();
-        }
-
-    }
-
     public partial class PackageBundlePage : Page
     {
         public ObservableCollection<BundledPackage> Packages = new();
@@ -149,6 +111,7 @@ namespace ModernWindow.Interface
                         if (element.DataContext != null && element.DataContext is BundledPackage package)
                         {
                             PackageList.SelectedItem = package;
+                            MenuInstallSettings.IsEnabled = MenuDetails.IsEnabled = MenuShare.IsEnabled = package.IsValid;
                             PackageContextMenu.ShowAt(PackageList, e.GetPosition(PackageList));
                         }
                     }
@@ -164,7 +127,7 @@ namespace ModernWindow.Interface
                 if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
-                        _ = bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                        (PackageList.SelectedItem as BundledPackage).ShowOptions(s, e);
                     else
                         _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
                 }
@@ -490,7 +453,7 @@ namespace ModernWindow.Interface
             RemoveSelected.Click += (s, e) =>
             {
                 foreach (BundledPackage package in FilteredPackages.ToArray()) 
-                    if (package.Package.IsChecked)
+                    if (package.IsChecked)
                     {
                         FilteredPackages.Remove(package);
                         Packages.Remove(package);
@@ -500,11 +463,14 @@ namespace ModernWindow.Interface
 
             InstallPackages.Click += (s, e) => {
                 foreach (BundledPackage package in FilteredPackages.ToArray())
-                    if (package.Package.IsChecked)
+                    if (package.IsChecked && package.IsValid)
                         bindings.AddOperationToList(new InstallPackageOperation(package.Package));
             };
 
-            OpenBundle.Click += (s, e) => {  };
+            OpenBundle.Click += (s, e) => {
+                ClearList();
+                OpenFile();
+            };
 
             ExportBundle.Click += (s, e) => {
                 SaveFile();
@@ -516,24 +482,6 @@ namespace ModernWindow.Interface
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
 
         }
-
-        public async void ConfirmAndUninstall(Package package, InstallationOptions options)
-        {
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = bindings.Translate("Are you sure?");
-            dialog.PrimaryButtonText = bindings.Translate("No");
-            dialog.SecondaryButtonText = bindings.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Content = bindings.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
-
-            if (await bindings.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
-                bindings.AddOperationToList(new UninstallPackageOperation(package, options));
-
-        }
-
         private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
@@ -545,14 +493,14 @@ namespace ModernWindow.Interface
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
                 return;
             bindings.App.mainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
                 return;
             _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
         }
@@ -572,107 +520,189 @@ namespace ModernWindow.Interface
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             if ((PackageList.SelectedItem as BundledPackage).Package != null)
-                _ = bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                (PackageList.SelectedItem as BundledPackage).ShowOptions(sender, e);
         }
 
         private void SelectAllItems()
         {
             foreach (BundledPackage package in FilteredPackages.ToArray())
-                package.Package.IsChecked = true;
+                package.IsChecked = true;
             AllSelected = true;
         }
 
         private void ClearItemSelection()
         {
             foreach (BundledPackage package in FilteredPackages.ToArray())
-                package.Package.IsChecked = false;
+                package.IsChecked = false;
             AllSelected = false;
         }
 
         public void AddPackage(Package foreignPackage)
         {
-            Packages.Add(new BundledPackage(foreignPackage));
-            AddPackageToSourcesList(foreignPackage);
+            if (foreignPackage.Source.IsVirtualManager)
+                AddPackage(new InvalidBundledPackage(foreignPackage));
+            else
+                AddPackage(new BundledPackage(foreignPackage));
+        }
+
+        public void AddPackage(BundledPackage package)
+        {
+            Packages.Add(package);
+            AddPackageToSourcesList(package.Package);
             BackgroundText.Visibility = Packages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
             bindings.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
             bindings.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
             FilterPackages(QueryBlock.Text.Trim());
         }
 
-        public static Package[] GetPackagesFromJsonString(string JsonContents)
-        {
-            var Packages = new List<Package>();
 
-            var Deserialized = JsonSerializer.Deserialize<BundledPackage.__serializable_exportable_packages>(JsonContents);
-
-            return new Package[0];
-        }
-
-        public async void SaveFile()
+        public async void OpenFile()
         {
             try
             {
-                // Get file 
-                var picker = new Windows.Storage.Pickers.FileSavePicker();
+                // Select file
+                var picker = new Windows.Storage.Pickers.FileOpenPicker();
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-                picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
-                picker.FileTypeChoices.Add("YAML", new List<string>() { ".yaml" });
-                picker.FileTypeChoices.Add("XML", new List<string>() { ".xml" });
-                picker.SuggestedFileName = bindings.Translate("WingetUI package bundle");
+                picker.FileTypeFilter.Add(".json");
+                picker.FileTypeFilter.Add(".yaml");
+                picker.FileTypeFilter.Add(".xml");
 
-                // Save file
-                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
-                if (file != null)
-                {
+                Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+                if (file == null)
+                    return;
 
-                    ContentDialog dialog = new();
-                    dialog.XamlRoot = XamlRoot;
-                    dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    dialog.Title = bindings.Translate("Please wait");
-                    dialog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+                // Loading dialog
+                ContentDialog dialog = new();
+                dialog.XamlRoot = XamlRoot;
+                dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                dialog.Title = bindings.Translate("Please wait");
+                dialog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
 
-                    _ = dialog.ShowAsync();
+                _ = dialog.ShowAsync();
 
-                    List<Package> packages = new List<Package>();
-                    foreach (BundledPackage package in Packages)
-                        packages.Add(package.Package);
+                // Read file
+                BundleFormatType formatType;
+                if (file.FileType.ToLower() == ".yaml")
+                    formatType = BundleFormatType.YAML;
+                else if (file.FileType.ToLower() == ".xml")
+                    formatType = BundleFormatType.XML;
+                else
+                    formatType = BundleFormatType.JSON;
+                
+                string fileContent = await Windows.Storage.FileIO.ReadTextAsync(file);
 
-                    BundleFormatType formatType;
-                    if (file.FileType.ToLower() == ".yaml")
-                        formatType = BundleFormatType.YAML;
-                    else if (file.FileType.ToLower() == ".xml")
-                        formatType = BundleFormatType.XML;
-                    else
-                        formatType = BundleFormatType.JSON;
+                // Import packages to list
+                await AddPackagesFromBundleString(fileContent, formatType);
 
-                    await Windows.Storage.FileIO.WriteTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
-
-                    dialog.Hide();
-
-                    // Launch file
-                    Process.Start(new ProcessStartInfo()
-                    {
-                        FileName = "explorer.exe",
-                        Arguments = @$"/select, ""{file.Path}"""
-                    });
-
-                }
+                dialog.Hide();
             }
             catch (Exception ex)
             {
                 AppTools.Log(ex);
             }
         }
+        public async Task AddPackagesFromBundleString(string content, BundleFormatType format)
+        {
+            // Deserialize data
+            __serializable_exportable_packages DeserializedData;
+            if (format == BundleFormatType.JSON)
+                DeserializedData = JsonSerializer.Deserialize<__serializable_exportable_packages>(content);
+            else if (format == BundleFormatType.YAML)
+            {
+                var deserializer = new DeserializerBuilder()
+                    .Build();
+                DeserializedData = deserializer.Deserialize<__serializable_exportable_packages>(content);
+            }
+            else
+            {
+                var tempfile = Path.GetTempFileName();
+                await File.WriteAllTextAsync(tempfile, content);
+                var reader = new StreamReader(tempfile);
+                var serializer = new XmlSerializer(typeof(__serializable_exportable_packages));
+                DeserializedData = serializer.Deserialize(reader) as __serializable_exportable_packages;
+                reader.Close();
+                File.Delete(tempfile);
+            }
 
-        public async static Task<string> GetBundleStringFromPackages(Package[] packages, BundleFormatType formatType = BundleFormatType.JSON)
+            // Load individual packages
+            var InvalidPackages = new Dictionary<DeserializedPackageStatus, List<string>>()
+            {
+                {DeserializedPackageStatus.ManagerNotFound, new List<string>() },
+                {DeserializedPackageStatus.ManagerNotEnabled, new List<string>() },
+                {DeserializedPackageStatus.ManagerNotReady, new List<string>() },
+                {DeserializedPackageStatus.SourceNotFound, new List<string>() },
+            };
+
+            // Get a list of all managers
+            Dictionary<string, PackageManager> ManagerSourceReference = new();
+            foreach (PackageManager manager in AppTools.Instance.App.PackageManagerList)
+            {
+                ManagerSourceReference.Add(manager.Name, manager);
+            }
+
+            foreach (var DeserializedPackage in DeserializedData.packages)
+            {
+                // Check if the manager exists
+                if(!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
+                {
+                    AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
+                    continue;
+                }
+                PackageManager PackageManager = ManagerSourceReference[DeserializedPackage.ManagerName];
+                
+                // Handle a disabled manager
+                if(!PackageManager.IsEnabled())
+                {
+                    AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
+                    continue;
+                }
+                // Handle a nonworking manager
+                if (!PackageManager.Status.Found)
+                {
+                    AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
+                    continue;
+                }
+
+                ManagerSource Source = null;
+
+                if(PackageManager.Capabilities.SupportsCustomSources)
+                {
+                    // Check if the source exists
+                    if ((PackageManager as PackageManagerWithSources).SourceReference.ContainsKey(DeserializedPackage.Source.Split(':')[^1].Trim()))
+                    {
+                        Source = (PackageManager as PackageManagerWithSources).SourceReference[DeserializedPackage.Source.Split(':')[^1].Trim()];
+                    }
+                    else
+                    {
+                        Source = null;
+                        AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
+                        continue;
+                    }
+                }
+                else
+                    Source = PackageManager.GetMainSource();
+
+                Package package = new Package(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
+
+                var InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
+                var UpdateOptions = DeserializedPackage.Updates;
+                
+                BundledPackage newPackage = new BundledPackage(package, InstallOptions, UpdateOptions);
+                AddPackage(newPackage);
+            }
+        }
+
+
+
+        public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             var exportable = new __serializable_exportable_packages();
-            foreach (Package package in packages)
-                if(package.Source.IsVirtualManager)
-                    exportable.incompatible_packages.Add(package.AsSerializable_IncompatiblePackage());
+            foreach (BundledPackage package in packages)
+                if(!package.IsValid)
+                    exportable.incompatible_packages.Add(package.Package.AsSerializable_IncompatiblePackage());
                 else
-                    exportable.packages.Add(await package.AsSerializable_BundledPackage());
+                    exportable.packages.Add(await package.Package.AsSerializable_BundledPackage(package.Options));
 
             AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
             var ExportableData = "";
@@ -700,5 +730,64 @@ namespace ModernWindow.Interface
 
             return ExportableData;
         }
+        public async void SaveFile()
+        {
+            try
+            {
+                // Get file 
+                var picker = new Windows.Storage.Pickers.FileSavePicker();
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
+                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
+                picker.FileTypeChoices.Add("YAML", new List<string>() { ".yaml" });
+                picker.FileTypeChoices.Add("XML", new List<string>() { ".xml" });
+                picker.SuggestedFileName = bindings.Translate("WingetUI package bundle");
+
+                // Save file
+                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+                if (file != null)
+                {
+                    // Loading dialog
+                    ContentDialog dialog = new();
+                    dialog.XamlRoot = XamlRoot;
+                    dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                    dialog.Title = bindings.Translate("Please wait");
+                    dialog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+
+                    _ = dialog.ShowAsync();
+
+                    List<BundledPackage> packages = new List<BundledPackage>();
+                    foreach (BundledPackage package in Packages) 
+                        packages.Add(package);
+
+                    // Select appropiate format
+                    BundleFormatType formatType;
+                    if (file.FileType.ToLower() == ".yaml")
+                        formatType = BundleFormatType.YAML;
+                    else if (file.FileType.ToLower() == ".xml")
+                        formatType = BundleFormatType.XML;
+                    else
+                        formatType = BundleFormatType.JSON;
+
+                    // Save serialized data
+                    await Windows.Storage.FileIO.WriteTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
+
+                    dialog.Hide();
+
+                    // Launch file
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = @$"/select, ""{file.Path}"""
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
+        }
+
     }
 }

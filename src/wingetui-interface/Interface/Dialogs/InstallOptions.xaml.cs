@@ -23,13 +23,15 @@ namespace ModernWindow.Interface.Dialogs
         AppTools bindings = AppTools.Instance;
         public InstallationOptions Options;
         public Package Package;
-        public InstallOptionsPage(Package package, OperationType Operation)
+
+        public InstallOptionsPage(Package package, OperationType Operation): this(package, Operation, new InstallationOptions(package)) { }
+        public InstallOptionsPage(Package package, InstallationOptions options): this(package, OperationType.None, options) { }
+        public InstallOptionsPage(Package package, OperationType Operation, InstallationOptions options)
         {
             Package = package;
             InitializeComponent();
-            Options = new InstallationOptions(package);
-            Options.LoadOptionsFromDisk();
 
+            Options = options;
 
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
             AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
@@ -115,7 +117,7 @@ namespace ModernWindow.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async void SaveToDisk()
+        public async Task<InstallationOptions> GetUpdatedOptions()
         {
             Options.RunAsAdministrator = AdminCheckBox.IsChecked.Value;
             Options.InteractiveInstallation = InteractiveCheckBox.IsChecked.Value;
@@ -147,7 +149,13 @@ namespace ModernWindow.Interface.Dialogs
                 if (await Package.GetIgnoredUpdatesVersion() == "*") ;
                 await Package.RemoveFromIgnoredUpdates();
             }
-            Options.SaveOptionsToDisk();
+            return Options;
+        }
+
+        public async void SaveToDisk()
+        {
+
+            (await GetUpdatedOptions()).SaveOptionsToDisk();
         }
 
         private async void SelectDir_Click(object sender, RoutedEventArgs e)
