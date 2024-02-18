@@ -110,7 +110,7 @@ namespace ModernWindow.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.Uninstall);
+                _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -122,9 +122,6 @@ namespace ModernWindow.Interface
                         if (element.DataContext != null && element.DataContext is BundledPackage package)
                         {
                             PackageList.SelectedItem = package;
-                            MenuAsAdmin.IsEnabled = package.Package.Manager.Capabilities.CanRunAsAdmin;
-                            MenuInteractive.IsEnabled = package.Package.Manager.Capabilities.CanRunInteractively;
-                            MenuRemoveData.IsEnabled = package.Package.Manager.Capabilities.CanRemoveDataOnUninstall;
                             PackageContextMenu.ShowAt(PackageList, e.GetPosition(PackageList));
                         }
                     }
@@ -140,14 +137,9 @@ namespace ModernWindow.Interface
                 if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
-                            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
-                    }
-                    else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
-                        ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
+                        _ = bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
                     else
-                        _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+                        _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -158,7 +150,7 @@ namespace ModernWindow.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
                 {
-                    (PackageList.SelectedItem as Package).IsChecked = !(PackageList.SelectedItem as Package).IsChecked;
+                    ((PackageList.SelectedItem as BundledPackage).Package).IsChecked = !((PackageList.SelectedItem as BundledPackage).Package).IsChecked;
                 }
             };
 
@@ -384,7 +376,6 @@ namespace ModernWindow.Interface
             BackgroundText.Visibility = Packages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
             bindings.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
             bindings.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-            FilterPackages(QueryBlock.Text.Trim());
         }
 
         public void GenerateToolBar()
@@ -466,7 +457,7 @@ namespace ModernWindow.Interface
             PackageDetails.Click += (s, e) =>
             {
                 if (PackageList.SelectedItem != null)
-                    _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
+                    _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
             };
 
             HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
@@ -562,72 +553,28 @@ namespace ModernWindow.Interface
                     }));
         }
 
-        private void MenuUninstall_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)));
-        }
 
-        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs package)
+        private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)) { RunAsAdministrator = true });
-        }
 
-        private void MenuInteractive_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)) { InteractiveInstallation = true });
-        }
+            (PackageList.SelectedItem as BundledPackage).RemoveFromList(sender, package);
 
-        private void MenuRemoveData_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)) { RemoveDataOnUninstall = true });
-        }
-
-        private void MenuReinstall_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            bindings.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
-        }
-
-        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            bindings.AddOperationToList(new UninstallPackageOperation((PackageList.SelectedItem as Package)));
-            bindings.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
-
-        }
-        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdates();
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.App.mainWindow.SharePackage((PackageList.SelectedItem as Package));
+            bindings.App.mainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+            _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
         }
 
 
@@ -642,13 +589,10 @@ namespace ModernWindow.Interface
             FilterPackages(QueryBlock.Text.Trim());
         }
 
-        private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
+        private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem as Package != null
-                && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
-            {
-                ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
-            }
+            if ((PackageList.SelectedItem as BundledPackage).Package != null)
+                _ = bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
         }
 
         private void SelectAllItems()

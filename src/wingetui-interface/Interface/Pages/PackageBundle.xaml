@@ -611,7 +611,7 @@
                 FontWeight="Bold"  FontFamily="Segoe UI Variable Display"
                 />
             <widgets:TranslatedTextBlock Grid.Column="1" Grid.Row="2" 
-                Text="MAINSUBTITLE" FontSize="11" x:Name="__main_subtitle"
+                Text="" FontSize="11" x:Name="__main_subtitle"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 FontWeight="Normal" Foreground="{StaticResource AppBarItemDisabledForegroundThemeBrush}"
                 />
@@ -805,42 +805,15 @@
                 >
                     <ListView.ContextFlyout>
                         <widgets:BetterMenu x:Name="PackageContextMenu">
-                            <widgets:BetterMenuItem x:Name="MenuUninstall" 
-                                Text="{x:Bind bindings.Translate('Uninstall')}"
-                                Click="MenuUninstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
-                                IconName="menu_uninstall"/>
-                            <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
                                 Text="{x:Bind bindings.Translate('Installation options')}" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
                                 IconName="options"/>
                             <MenuFlyoutSeparator Height="5"/>
-                            <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
-                                Text="{x:Bind bindings.Translate('Uninstall as administrator')}" 
-                                Click="MenuAsAdmin_Invoked"
-                                IconName="runasadmin"/>
-                            <widgets:BetterMenuItem x:Name="MenuInteractive"
-                                Text="{x:Bind bindings.Translate('Interactive uninstallation')}" 
-                                Click="MenuInteractive_Invoked" 
-                                IconName="interactive"/>
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
-                                Text="{x:Bind bindings.Translate('Uninstall and remove data')}" 
-                                Click="MenuRemoveData_Invoked"
-                                IconName="menu_close"/>
-                            <MenuFlyoutSeparator Height="5"/>
-                            <widgets:BetterMenuItem x:Name="MenuReinstall" 
-                                Text="{x:Bind bindings.Translate('Reinstall package')}" 
-                                Click="MenuReinstall_Invoked"
-                                IconName="newversion"/>
-                            <widgets:BetterMenuItem x:Name="MenuUninstallThenReinstall" 
-                                Text="{x:Bind bindings.Translate('Uninstall package, then reinstall it')}" 
-                                Click="MenuUninstallThenReinstall_Invoked"
-                                IconName="undelete"/>
-                            <MenuFlyoutSeparator Height="5"/>
-                            <widgets:BetterMenuItem x:Name="MenuIgnorePackage" 
-                                Text="{x:Bind bindings.Translate('Ignore updates for this package')}" 
-                                Click="MenuIgnorePackage_Invoked"
-                                IconName="pin"/>
+                                Text="{x:Bind bindings.Translate('Remove from list')}" 
+                                Click="MenuRemoveFromList_Invoked"
+                                IconName="menu_uninstall"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="{x:Bind bindings.Translate('Share this package')}" 

@@ -48,6 +48,10 @@ namespace ModernWindow.Interface.Dialogs
             InstallOptionsExpander.Content = InstallOptionsPage;
 
             SizeChanged += PackageDetailsPage_SizeChanged;
+
+            if(futureOperation == OperationType.None)
+                futureOperation = OperationType.Install;
+
             switch (futureOperation)
             {
                 case OperationType.Install:
