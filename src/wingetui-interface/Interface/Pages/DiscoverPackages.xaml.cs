@@ -500,7 +500,7 @@ namespace ModernWindow.Interface
                 { SharePackage,         " Share" },
                 { SelectAll,            " Select all" },
                 { SelectNone,           " Clear selection" },
-                { ExportSelection,      "Add selection to a bundle" },
+                { ExportSelection,      "Add selection to bundle" },
                 { HelpButton,           "Help" }
             };
 
@@ -523,7 +523,7 @@ namespace ModernWindow.Interface
                 { SharePackage,         "share" },
                 { SelectAll,            "selectall" },
                 { SelectNone,           "selectnone" },
-                { ExportSelection,      "export" },
+                { ExportSelection,      "add_to" },
                 { HelpButton,           "help" }
             };
 

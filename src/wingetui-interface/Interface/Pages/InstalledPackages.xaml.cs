@@ -465,7 +465,7 @@ namespace ModernWindow.Interface
                 { SelectNone,             " Clear selection" },
                 { IgnoreSelected,         "Ignore selected packages" },
                 { ManageIgnored,          "Manage ignored updates" },
-                { ExportSelection,        "Add selection to a bundle" },
+                { ExportSelection,        "Add selection to bundle" },
                 { HelpButton,             "Help" }
             };
 
@@ -489,7 +489,7 @@ namespace ModernWindow.Interface
                 { SelectNone,           "selectnone" },
                 { IgnoreSelected,       "pin" },
                 { ManageIgnored,        "blacklist" },
-                { ExportSelection,      "export" },
+                { ExportSelection,      "add_to" },
                 { HelpButton,           "help" }
             };
 

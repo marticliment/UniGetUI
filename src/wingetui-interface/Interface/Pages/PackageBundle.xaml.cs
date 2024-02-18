@@ -18,6 +18,12 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.UI.Core;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
+using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using static ModernWindow.Interface.BundledPackage;
+using System.Xml.Serialization;
+using System.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,6 +33,12 @@ namespace ModernWindow.Interface
 
     public class BundledPackage
     {
+        public enum BundleFormatType
+        {
+            JSON,
+            YAML,
+            XML
+        }
 
         public class __serializable_exportable_packages
         {
@@ -402,8 +414,7 @@ namespace ModernWindow.Interface
 
             AppBarButton RemoveSelected = new();
 
-            AppBarButton ExportBundleAsJson = new();
-            AppBarButton ExportBundleAsYaml = new();
+            AppBarButton ExportBundle = new();
 
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
@@ -413,11 +424,10 @@ namespace ModernWindow.Interface
 
             AppBarButton HelpButton = new();
 
-            ToolBar.PrimaryCommands.Add(InstallPackages);
             ToolBar.PrimaryCommands.Add(OpenBundle);
+            ToolBar.PrimaryCommands.Add(ExportBundle);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(ExportBundleAsJson);
-            ToolBar.PrimaryCommands.Add(ExportBundleAsYaml);
+            ToolBar.PrimaryCommands.Add(InstallPackages);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(SelectAll);
             ToolBar.PrimaryCommands.Add(SelectNone);
@@ -435,8 +445,7 @@ namespace ModernWindow.Interface
                 { InstallPackages,        "Install selection" },
                 { OpenBundle,             "Open existing bundle" },
                 { RemoveSelected,         "Remove selection from bundle" },
-                { ExportBundleAsJson,     "Save bundle as JSON" },
-                { ExportBundleAsYaml,     "Save as YAML" },
+                { ExportBundle,           "Save bundle as" },
                 { PackageDetails,         " Package details" },
                 { SharePackage,           " Share" },
                 { SelectAll,              " Select all" },
@@ -455,10 +464,9 @@ namespace ModernWindow.Interface
             Dictionary<AppBarButton, string> Icons = new()
             {
                 { InstallPackages,        "newversion" },
-                { OpenBundle,             "import" },
+                { OpenBundle,             "openfolder" },
                 { RemoveSelected,         "menu_uninstall" },
-                { ExportBundleAsJson,     "json" },
-                { ExportBundleAsYaml,     "yaml" },
+                { ExportBundle,           "save" },
                 { PackageDetails,         "info" },
                 { SharePackage,           "share" },
                 { SelectAll,              "selectall" },
@@ -498,13 +506,9 @@ namespace ModernWindow.Interface
 
             OpenBundle.Click += (s, e) => {  };
 
-            ExportBundleAsJson.Click += (s, e) => { 
-                SaveJsonFile();
+            ExportBundle.Click += (s, e) => {
+                SaveFile();
             };
-
-            ExportBundleAsYaml.Click += (s, e) => {  };
-
-
 
             SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
 
@@ -529,47 +533,6 @@ namespace ModernWindow.Interface
                 bindings.AddOperationToList(new UninstallPackageOperation(package, options));
 
         }
-        public async void ConfirmAndUninstall(Package[] packages, bool AsAdmin = false, bool Interactive = false, bool RemoveData = false)
-        {
-            if (packages.Length == 0)
-                return;
-            if (packages.Length == 1)
-            {
-                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]));
-                return;
-            }
-
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = bindings.Translate("Are you sure?");
-            dialog.PrimaryButtonText = bindings.Translate("No");
-            dialog.SecondaryButtonText = bindings.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-
-            StackPanel p = new();
-            p.Children.Add(new TextBlock() { Text = bindings.Translate("Do you really want to uninstall the following {0} packages?").Replace("{0}", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
-
-            string pkgList = "";
-            foreach (Package package in packages)
-                pkgList += " ● " + package.Name + "\x0a";
-
-            TextBlock PackageListTextBlock = new() { FontFamily = new FontFamily("Consolas"), Text = pkgList };
-            p.Children.Add(new ScrollView() { Content = PackageListTextBlock, MaxHeight = 200 });
-
-            dialog.Content = p;
-
-            if (await bindings.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
-                foreach (Package package in packages)
-                    bindings.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package)
-                    {
-                        RunAsAdministrator = AsAdmin,
-                        InteractiveInstallation = Interactive,
-                        RemoveDataOnUninstall = RemoveData
-                    }));
-        }
-
 
         private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs package)
         {
@@ -645,7 +608,7 @@ namespace ModernWindow.Interface
             return new Package[0];
         }
 
-        public async void SaveJsonFile()
+        public async void SaveFile()
         {
             try
             {
@@ -654,6 +617,8 @@ namespace ModernWindow.Interface
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
                 picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
+                picker.FileTypeChoices.Add("YAML", new List<string>() { ".yaml" });
+                picker.FileTypeChoices.Add("XML", new List<string>() { ".xml" });
                 picker.SuggestedFileName = bindings.Translate("WingetUI package bundle");
 
                 // Save file
@@ -673,7 +638,15 @@ namespace ModernWindow.Interface
                     foreach (BundledPackage package in Packages)
                         packages.Add(package.Package);
 
-                    await Windows.Storage.FileIO.WriteTextAsync(file, await GetJsonFromPackages(packages.ToArray()));
+                    BundleFormatType formatType;
+                    if (file.FileType.ToLower() == ".yaml")
+                        formatType = BundleFormatType.YAML;
+                    else if (file.FileType.ToLower() == ".xml")
+                        formatType = BundleFormatType.XML;
+                    else
+                        formatType = BundleFormatType.JSON;
+
+                    await Windows.Storage.FileIO.WriteTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
 
                     dialog.Hide();
 
@@ -692,17 +665,37 @@ namespace ModernWindow.Interface
             }
         }
 
-        public async static Task<string> GetJsonFromPackages(Package[] packages)
+        public async static Task<string> GetBundleStringFromPackages(Package[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
-            var exportable = new BundledPackage.__serializable_exportable_packages();
+            var exportable = new __serializable_exportable_packages();
             foreach (Package package in packages)
                 if(package.Source.IsVirtualManager)
                     exportable.incompatible_packages.Add(package.AsSerializable_IncompatiblePackage());
                 else
                     exportable.packages.Add(await package.AsSerializable_BundledPackage());
 
-            AppTools.Log("Finished loading serializable objects");
-            var ExportableData = JsonSerializer.Serialize<BundledPackage.__serializable_exportable_packages>(exportable, new JsonSerializerOptions() { WriteIndented = true });
+            AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
+            var ExportableData = "";
+            
+            if(formatType == BundleFormatType.JSON)
+                ExportableData = JsonSerializer.Serialize<__serializable_exportable_packages>(exportable, new JsonSerializerOptions() { WriteIndented = true });
+            else if (formatType == BundleFormatType.YAML)
+            {
+                var serializer = new SerializerBuilder()
+                    .Build();
+                ExportableData = serializer.Serialize(exportable);
+            } else
+            {
+                var tempfile = Path.GetTempFileName();
+                var writer = new StreamWriter(tempfile);
+                var serializer = new XmlSerializer(typeof(__serializable_exportable_packages));
+                serializer.Serialize(writer, exportable);
+                writer.Close();
+                ExportableData = await File.ReadAllTextAsync(tempfile);
+                File.Delete(tempfile);
+
+            }
+
             AppTools.Log("Finished serializing");
 
             return ExportableData;
