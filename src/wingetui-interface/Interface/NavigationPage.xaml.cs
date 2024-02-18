@@ -5,7 +5,8 @@ using ModernWindow.Data;
 using ModernWindow.Interface.Dialogs;
 using ModernWindow.Interface.Pages;
 using ModernWindow.Interface.Widgets;
-using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -163,7 +164,7 @@ namespace ModernWindow.Interface
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Install");
             else if (Operation == OperationType.Update)
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Update");
-            else if(Operation == OperationType.Uninstall)
+            else if (Operation == OperationType.Uninstall)
                 OptionsDialog.SecondaryButtonText = bindings.Translate("Uninstall");
             else
                 OptionsDialog.SecondaryButtonText = "";
@@ -265,7 +266,7 @@ namespace ModernWindow.Interface
             DetailsDialog.Content = DetailsPage;
             DetailsDialog.SizeChanged += (s, e) =>
             {
-                int hOffset = (ActualWidth < 1300)? 100: 300;
+                int hOffset = (ActualWidth < 1300) ? 100 : 300;
                 DetailsPage.MinWidth = ActualWidth - hOffset;
                 DetailsPage.MinHeight = ActualHeight - 100;
                 DetailsPage.MaxWidth = ActualWidth - hOffset;

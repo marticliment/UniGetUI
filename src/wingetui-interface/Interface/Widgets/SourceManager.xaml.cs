@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace ModernWindow.Interface.Widgets
         }
         public void Remove(object sender, RoutedEventArgs e)
         {
-            var op = new RemoveSourceOperation(Source);
+            RemoveSourceOperation op = new(Source);
             Parent.bindings.AddOperationToList(op);
             op.OperationSucceeded += (sender, e) => { Parent.RemoveSourceItem(this); };
         }
@@ -45,32 +46,32 @@ namespace ModernWindow.Interface.Widgets
                 try
                 {
 
-                    ContentDialog d = new ContentDialog();
+                    ContentDialog d = new();
                     d.Title = bindings.Translate("Add source");
 
-                    var SourcesCombo = new ComboBox();
-                    var NameSourceRef = new Dictionary<string, ManagerSource>();
-                    foreach (var source in Manager.KnownSources)
+                    ComboBox SourcesCombo = new();
+                    Dictionary<string, ManagerSource> NameSourceRef = new();
+                    foreach (ManagerSource source in Manager.KnownSources)
                     {
                         SourcesCombo.Items.Add(source.Name);
                         NameSourceRef.Add(source.Name, source);
                     }
 
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    StackPanel p = new StackPanel();
+                    StackPanel p = new();
                     p.Spacing = 8;
                     p.Children.Add(new TextBlock() { Text = bindings.Translate("Select the source you want to add:") });
                     p.Children.Add(SourcesCombo);
 
-                    var SourceNameTextBox = new TextBox() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
-                    var SourceUrlTextBox = new TextBox() { HorizontalAlignment = HorizontalAlignment.Stretch };
+                    TextBox SourceNameTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
+                    TextBox SourceUrlTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
-                    var p1 = new StackPanel() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
+                    StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
                     p1.Children.Add(new TextBlock() { Text = bindings.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
                     p1.Children.Add(SourceNameTextBox);
 
 
-                    var p2 = new StackPanel() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
+                    StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
                     p2.Children.Add(new TextBlock() { Text = bindings.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
                     p2.Children.Add(SourceUrlTextBox);
 
@@ -95,7 +96,7 @@ namespace ModernWindow.Interface.Widgets
                     };
                     SourcesCombo.SelectedIndex = 0;
 
-                    d.XamlRoot = this.XamlRoot;
+                    d.XamlRoot = XamlRoot;
                     d.Content = p;
                     d.PrimaryButtonText = bindings.Translate("Add");
                     d.SecondaryButtonText = bindings.Translate("Cancel");
@@ -115,8 +116,8 @@ namespace ModernWindow.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    ContentDialog d = new ContentDialog();
-                    d.XamlRoot = this.XamlRoot;
+                    ContentDialog d = new();
+                    d.XamlRoot = XamlRoot;
                     d.Title = bindings.Translate("An error occurred");
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                     d.Content = bindings.Translate("An error occurred when adding the source: ") + ex.Message;

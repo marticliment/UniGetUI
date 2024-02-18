@@ -1798,4 +1798,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interface\SoftwarePages\" />
+    <Folder Include="PackageEngine\Operations\" />
+  </ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
-﻿using ModernWindow.Structures;
+﻿using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -227,14 +227,14 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            var details = new PackageDetails(package);
+            PackageDetails details = new(package);
             try
             {
                 details.InstallerType = "Tarball";
                 details.ManifestUrl = new Uri($"https://www.npmjs.com/package/{package.Id}");
                 details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{package.Id}?activeTab=versions");
 
-                using (Process p = new Process())
+                using (Process p = new())
                 {
                     p.StartInfo = new ProcessStartInfo()
                     {
@@ -250,7 +250,7 @@ namespace ModernWindow.PackageEngine.Managers
 
                     p.Start();
 
-                    List<string> output = new List<string>();
+                    List<string> output = new();
                     string line;
                     while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                     {
@@ -311,7 +311,8 @@ namespace ModernWindow.PackageEngine.Managers
                         }
                     }
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 AppTools.Log(e);
             }

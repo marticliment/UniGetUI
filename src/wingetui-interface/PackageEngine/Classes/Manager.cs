@@ -1,4 +1,5 @@
 ﻿using ModernWindow.Essentials;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine
+namespace ModernWindow.PackageEngine.Classes
 {
 
     public abstract class PackageManager : SingletonBase<PackageManager>
@@ -167,9 +168,9 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
-                var sources = await GetSources_UnSafe();
+                ManagerSource[] sources = await GetSources_UnSafe();
                 SourceReference.Clear();
-                foreach (var source in sources)
+                foreach (ManagerSource source in sources)
                     SourceReference.Add(source.Name, source);
                 return sources;
             }
@@ -245,11 +246,11 @@ namespace ModernWindow.PackageEngine
 
         public PackageManager Manager { get; }
         public string Name { get; }
-        public Uri? Url { get; }
+        public Uri Url { get; }
         public int? PackageCount { get; }
         public string UpdateDate { get; }
 
-        public ManagerSource(PackageManager manager, string name, Uri? url = null, int? packageCount = 0, string? updateDate = null)
+        public ManagerSource(PackageManager manager, string name, Uri url = null, int? packageCount = 0, string updateDate = null)
         {
             Manager = manager;
             Name = name;

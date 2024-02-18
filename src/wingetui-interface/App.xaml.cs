@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using ModernWindow.Data;
-using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Managers;
 using ModernWindow.Structures;
 using System;
@@ -46,7 +46,7 @@ namespace ModernWindow
                 // Set WebView user data folder to temp folder, since C:\Program Files\WingetUI is read-only for non-admin processes
                 if (!Directory.Exists(System.IO.Path.Join(Path.GetTempPath(), "WingetUI", "WebView")))
                     Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
-                
+
                 Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Join(Path.GetTempPath(), "WingetUI", "WebView"));
 
                 // Reroute close event for the mainWindow
@@ -61,7 +61,7 @@ namespace ModernWindow
 
                 if (appWindow != null)
                     appWindow.Closing += mainWindow.HandleClosingEvent;
-                
+
                 // Clear old notifications and register the activation event
                 ToastNotificationManagerCompat.History.Clear();
                 ToastNotificationManagerCompat.OnActivated += toastArgs =>

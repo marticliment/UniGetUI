@@ -1,4 +1,6 @@
-﻿using ModernWindow.Structures;
+﻿using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -242,14 +244,14 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            var details = new PackageDetails(package);
+            PackageDetails details = new(package);
 
             AppTools.Log("Getting package details for " + package.Id);
 
             string JsonString;
-            using (WebClient client = new WebClient())
+            using (WebClient client = new())
             {
-                var task = Task<string>.Factory.StartNew(() => { return client.DownloadString(new Uri($"https://pypi.org/pypi/{package.Id}/json")); });
+                Task<string> task = Task<string>.Factory.StartNew(() => { return client.DownloadString(new Uri($"https://pypi.org/pypi/{package.Id}/json")); });
                 JsonString = await task;
             }
 
@@ -296,15 +298,15 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("classifiers") && (RawInfo["info"] as JsonObject)["classifiers"] is JsonArray)
                 {
-                    var Tags = new List<string>();
+                    List<string> Tags = new();
                     foreach (string line in (RawInfo["info"] as JsonObject)["classifiers"] as JsonArray)
                         if (line.Contains("License ::"))
                             details.License = line.Split("::")[^1].Trim();
                         else if (line.Contains("Topic ::"))
                             if (!Tags.Contains(line.Split("::")[^1].Trim()))
-                                Tags.Add(line.Split("::")[^1].Trim());  
+                                Tags.Add(line.Split("::")[^1].Trim());
                     details.Tags = Tags.ToArray();
-                }   
+                }
             }
             catch (Exception ex) { AppTools.Log("Can't load classifiers: " + ex); }
 
@@ -312,18 +314,18 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 JsonObject? url = null;
                 if (RawInfo.ContainsKey("url"))
-                
+
                     url = RawInfo["url"] as JsonObject;
                 else if (RawInfo.ContainsKey("urls"))
                     url = (RawInfo["urls"] as JsonArray)[0] as JsonObject;
 
-                if(url != null)
-                { 
-                    if(url.ContainsKey("digests") && (url["digests"] as JsonObject).ContainsKey("sha256"))
+                if (url != null)
+                {
+                    if (url.ContainsKey("digests") && (url["digests"] as JsonObject).ContainsKey("sha256"))
                     {
                         details.InstallerHash = url["digests"]["sha256"].ToString();
                     }
-                    if(url.ContainsKey("url"))
+                    if (url.ContainsKey("url"))
                     {
                         details.InstallerType = url["url"].ToString().Split('.')[^1].Replace("whl", "Wheel");
                         details.InstallerUrl = new Uri(url["url"].ToString());

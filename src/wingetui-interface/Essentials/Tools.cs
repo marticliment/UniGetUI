@@ -2,13 +2,13 @@
 using Microsoft.UI.Xaml;
 using ModernWindow.Data;
 using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
 
 namespace ModernWindow.Structures
 {
@@ -241,12 +241,12 @@ Crash Traceback:
 
         public static async void LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo.FileName = "cmd.exe";
             p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.Verb = RunAsAdmin? "runas": "";
+            p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
             p.Start();
             await p.WaitForExitAsync();
         }

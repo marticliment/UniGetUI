@@ -2,12 +2,13 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ModernWindow.Data;
+using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine
+namespace ModernWindow.PackageEngine.Operations
 {
     public enum OperationVeredict
     {
@@ -28,7 +29,7 @@ namespace ModernWindow.PackageEngine
     {
         Install,
         Update,
-        Uninstall, 
+        Uninstall,
         None
     }
 
@@ -74,13 +75,13 @@ namespace ModernWindow.PackageEngine
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
 
             }
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
             }
             Process process = new();
             process.StartInfo = startInfo;
@@ -178,12 +179,12 @@ namespace ModernWindow.PackageEngine
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
+                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             Process process = new();
             process.StartInfo = startInfo;
@@ -280,12 +281,12 @@ namespace ModernWindow.PackageEngine
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
             }
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
             Process process = new();
             process.StartInfo = startInfo;

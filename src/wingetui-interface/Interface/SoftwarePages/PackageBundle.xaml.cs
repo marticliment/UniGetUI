@@ -1,34 +1,24 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
 using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
-using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Windows.UI.Core;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using System.Xml.Serialization;
-using System.Text;
-using System.Data;
-using Windows.Graphics.DirectX.Direct3D11;
-using System.Xml.Linq;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using static ModernWindow.PackageEngine.Package;
+using Windows.UI.Core;
+using YamlDotNet.Serialization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -292,7 +282,7 @@ namespace ModernWindow.Interface
             int HiddenPackagesDueToSource = 0;
             foreach (BundledPackage match in MatchingList)
             {
-                if ( (VisibleManagers.Contains(match.Package.Manager) && match.Package.Manager != bindings.App.Winget) || VisibleSources.Contains(match.Package.Source))
+                if ((VisibleManagers.Contains(match.Package.Manager) && match.Package.Manager != bindings.App.Winget) || VisibleSources.Contains(match.Package.Source))
                     FilteredPackages.Add(match);
                 else
                     HiddenPackagesDueToSource++;
@@ -452,7 +442,7 @@ namespace ModernWindow.Interface
 
             RemoveSelected.Click += (s, e) =>
             {
-                foreach (BundledPackage package in FilteredPackages.ToArray()) 
+                foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked)
                     {
                         FilteredPackages.Remove(package);
@@ -461,18 +451,21 @@ namespace ModernWindow.Interface
                 UpdateCount();
             };
 
-            InstallPackages.Click += (s, e) => {
+            InstallPackages.Click += (s, e) =>
+            {
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
                         bindings.AddOperationToList(new InstallPackageOperation(package.Package));
             };
 
-            OpenBundle.Click += (s, e) => {
+            OpenBundle.Click += (s, e) =>
+            {
                 ClearList();
                 OpenFile();
             };
 
-            ExportBundle.Click += (s, e) => {
+            ExportBundle.Click += (s, e) =>
+            {
                 SaveFile();
             };
 
@@ -561,7 +554,7 @@ namespace ModernWindow.Interface
             try
             {
                 // Select file
-                var picker = new Windows.Storage.Pickers.FileOpenPicker();
+                Windows.Storage.Pickers.FileOpenPicker picker = new();
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
                 picker.FileTypeFilter.Add(".json");
@@ -589,7 +582,7 @@ namespace ModernWindow.Interface
                     formatType = BundleFormatType.XML;
                 else
                     formatType = BundleFormatType.JSON;
-                
+
                 string fileContent = await Windows.Storage.FileIO.ReadTextAsync(file);
 
                 // Import packages to list
@@ -610,23 +603,23 @@ namespace ModernWindow.Interface
                 DeserializedData = JsonSerializer.Deserialize<__serializable_exportable_packages>(content);
             else if (format == BundleFormatType.YAML)
             {
-                var deserializer = new DeserializerBuilder()
+                IDeserializer deserializer = new DeserializerBuilder()
                     .Build();
                 DeserializedData = deserializer.Deserialize<__serializable_exportable_packages>(content);
             }
             else
             {
-                var tempfile = Path.GetTempFileName();
+                string tempfile = Path.GetTempFileName();
                 await File.WriteAllTextAsync(tempfile, content);
-                var reader = new StreamReader(tempfile);
-                var serializer = new XmlSerializer(typeof(__serializable_exportable_packages));
+                StreamReader reader = new(tempfile);
+                XmlSerializer serializer = new(typeof(__serializable_exportable_packages));
                 DeserializedData = serializer.Deserialize(reader) as __serializable_exportable_packages;
                 reader.Close();
                 File.Delete(tempfile);
             }
 
             // Load individual packages
-            var InvalidPackages = new Dictionary<DeserializedPackageStatus, List<string>>()
+            Dictionary<DeserializedPackageStatus, List<string>> InvalidPackages = new()
             {
                 {DeserializedPackageStatus.ManagerNotFound, new List<string>() },
                 {DeserializedPackageStatus.ManagerNotEnabled, new List<string>() },
@@ -641,18 +634,18 @@ namespace ModernWindow.Interface
                 ManagerSourceReference.Add(manager.Name, manager);
             }
 
-            foreach (var DeserializedPackage in DeserializedData.packages)
+            foreach (__serializable_bundled_package_v1 DeserializedPackage in DeserializedData.packages)
             {
                 // Check if the manager exists
-                if(!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
+                if (!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
                 PackageManager PackageManager = ManagerSourceReference[DeserializedPackage.ManagerName];
-                
+
                 // Handle a disabled manager
-                if(!PackageManager.IsEnabled())
+                if (!PackageManager.IsEnabled())
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
@@ -666,7 +659,7 @@ namespace ModernWindow.Interface
 
                 ManagerSource Source = null;
 
-                if(PackageManager.Capabilities.SupportsCustomSources)
+                if (PackageManager.Capabilities.SupportsCustomSources)
                 {
                     // Check if the source exists
                     if ((PackageManager as PackageManagerWithSources).SourceReference.ContainsKey(DeserializedPackage.Source.Split(':')[^1].Trim()))
@@ -683,12 +676,12 @@ namespace ModernWindow.Interface
                 else
                     Source = PackageManager.GetMainSource();
 
-                Package package = new Package(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
+                Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
 
-                var InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
-                var UpdateOptions = DeserializedPackage.Updates;
-                
-                BundledPackage newPackage = new BundledPackage(package, InstallOptions, UpdateOptions);
+                InstallationOptions InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
+                __serializable_updates_options_v1 UpdateOptions = DeserializedPackage.Updates;
+
+                BundledPackage newPackage = new(package, InstallOptions, UpdateOptions);
                 AddPackage(newPackage);
             }
         }
@@ -697,28 +690,29 @@ namespace ModernWindow.Interface
 
         public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
-            var exportable = new __serializable_exportable_packages();
+            __serializable_exportable_packages exportable = new();
             foreach (BundledPackage package in packages)
-                if(!package.IsValid)
+                if (!package.IsValid)
                     exportable.incompatible_packages.Add(package.Package.AsSerializable_IncompatiblePackage());
                 else
                     exportable.packages.Add(await package.Package.AsSerializable_BundledPackage(package.Options));
 
             AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
-            var ExportableData = "";
-            
-            if(formatType == BundleFormatType.JSON)
+            string ExportableData = "";
+
+            if (formatType == BundleFormatType.JSON)
                 ExportableData = JsonSerializer.Serialize<__serializable_exportable_packages>(exportable, new JsonSerializerOptions() { WriteIndented = true });
             else if (formatType == BundleFormatType.YAML)
             {
-                var serializer = new SerializerBuilder()
+                ISerializer serializer = new SerializerBuilder()
                     .Build();
                 ExportableData = serializer.Serialize(exportable);
-            } else
+            }
+            else
             {
-                var tempfile = Path.GetTempFileName();
-                var writer = new StreamWriter(tempfile);
-                var serializer = new XmlSerializer(typeof(__serializable_exportable_packages));
+                string tempfile = Path.GetTempFileName();
+                StreamWriter writer = new(tempfile);
+                XmlSerializer serializer = new(typeof(__serializable_exportable_packages));
                 serializer.Serialize(writer, exportable);
                 writer.Close();
                 ExportableData = await File.ReadAllTextAsync(tempfile);
@@ -735,7 +729,7 @@ namespace ModernWindow.Interface
             try
             {
                 // Get file 
-                var picker = new Windows.Storage.Pickers.FileSavePicker();
+                Windows.Storage.Pickers.FileSavePicker picker = new();
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
                 picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
@@ -756,8 +750,8 @@ namespace ModernWindow.Interface
 
                     _ = dialog.ShowAsync();
 
-                    List<BundledPackage> packages = new List<BundledPackage>();
-                    foreach (BundledPackage package in Packages) 
+                    List<BundledPackage> packages = new();
+                    foreach (BundledPackage package in Packages)
                         packages.Add(package);
 
                     // Select appropiate format

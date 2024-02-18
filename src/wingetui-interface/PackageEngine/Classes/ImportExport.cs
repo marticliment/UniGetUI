@@ -1,16 +1,13 @@
 ﻿using Microsoft.UI.Xaml;
 using ModernWindow.Structures;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine
+namespace ModernWindow.PackageEngine.Classes
 {
-    
+
     public class __serializable_exportable_packages
     {
         public double export_version { get; set; } = 2.0;
@@ -33,7 +30,7 @@ namespace ModernWindow.PackageEngine
         public string IgnoredVersion { get; set; } = "";
         public static async Task<__serializable_updates_options_v1> FromPackage(Package package)
         {
-            var Serializable = new __serializable_updates_options_v1();
+            __serializable_updates_options_v1 Serializable = new();
             Serializable.UpdatesIgnored = await package.HasUpdatesIgnored();
             Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersion();
             return Serializable;
@@ -69,10 +66,6 @@ namespace ModernWindow.PackageEngine
 
     public class BundledPackage : INotifyPropertyChanged
     {
-        
-
-       
-
         public AppTools bindings = AppTools.Instance;
         public Package Package { get; }
         public bool IsValid { get; set; } = true;

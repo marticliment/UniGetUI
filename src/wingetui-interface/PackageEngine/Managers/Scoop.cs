@@ -1,4 +1,6 @@
-﻿using ModernWindow.Structures;
+﻿using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -226,18 +227,19 @@ public class Scoop : PackageManagerWithSources
 
     public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
     {
-        var details = new PackageDetails(package);
+        PackageDetails details = new(package);
 
         if (package.Source.Url != null)
             try
             {
                 details.ManifestUrl = new Uri(package.Source.Url.ToString() + "/blob/master/bucket/" + package.Id + ".json");
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 AppTools.Log(ex);
             }
 
-        Process p = new Process();
+        Process p = new();
         p.StartInfo = new ProcessStartInfo()
         {
             FileName = Status.ExecutablePath,
@@ -271,7 +273,7 @@ public class Scoop : PackageManagerWithSources
         {
             if (RawInfo.ContainsKey("innosetup"))
                 details.InstallerType = "Inno Setup (" + bindings.Translate("extracted") + ")";
-            else 
+            else
                 details.InstallerType = bindings.Translate("Scoop package");
         }
         catch (Exception ex) { AppTools.Log("Can't load installer type: " + ex); }
@@ -281,7 +283,7 @@ public class Scoop : PackageManagerWithSources
             if (RawInfo.ContainsKey("homepage"))
             {
                 details.HomepageUrl = new Uri(RawInfo["homepage"].ToString());
-                if(details.HomepageUrl.ToString().Contains("https://github.com/"))
+                if (details.HomepageUrl.ToString().Contains("https://github.com/"))
                     details.Author = details.HomepageUrl.ToString().Replace("https://github.com/", "").Split("/")[0];
                 else
                     details.Author = details.HomepageUrl.Host.Split(".")[^2];
@@ -326,7 +328,7 @@ public class Scoop : PackageManagerWithSources
                     details.InstallerUrl = new Uri(RawInfo["url"][0].ToString());
                 else
                     details.InstallerUrl = new Uri(RawInfo["url"].ToString());
-                
+
                 if (RawInfo["hash"] is JsonArray)
                     details.InstallerHash = RawInfo["hash"][0].ToString();
                 else
@@ -334,11 +336,11 @@ public class Scoop : PackageManagerWithSources
             }
             else if (RawInfo.ContainsKey("architecture"))
             {
-                var FirstArch = (RawInfo["architecture"] as JsonObject).ElementAt(0).Key;
+                string FirstArch = (RawInfo["architecture"] as JsonObject).ElementAt(0).Key;
                 details.InstallerHash = RawInfo["architecture"][FirstArch]["hash"].ToString();
                 details.InstallerUrl = new Uri(RawInfo["architecture"][FirstArch]["url"].ToString());
             }
-            
+
             WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
             req.Method = "HEAD";
             WebResponse resp = await req.GetResponseAsync();
@@ -583,16 +585,16 @@ public class Scoop : PackageManagerWithSources
     {
         return new ManagerSource[]
         {
-            new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
-            new ManagerSource(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
-            new ManagerSource(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
-            new ManagerSource(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
-            new ManagerSource(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
-            new ManagerSource(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
-            new ManagerSource(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
-            new ManagerSource(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
-            new ManagerSource(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
-            new ManagerSource(this, "games", new Uri("https://github.com/Calinou/scoop-games")),
+            new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+            new(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
+            new(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
+            new(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
+            new(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
+            new(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
+            new(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
+            new(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
+            new(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
+            new(this, "games", new Uri("https://github.com/Calinou/scoop-games")),
         };
     }
 
@@ -608,7 +610,7 @@ public class Scoop : PackageManagerWithSources
 
     public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
     {
-        return ReturnCode == 0? OperationVeredict.Succeeded: OperationVeredict.Failed;
+        return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
     }
 
     public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)

@@ -1,7 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ModernWindow.Data;
-using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Linq;
@@ -24,8 +25,8 @@ namespace ModernWindow.Interface.Dialogs
         public InstallationOptions Options;
         public Package Package;
 
-        public InstallOptionsPage(Package package, OperationType Operation): this(package, Operation, new InstallationOptions(package)) { }
-        public InstallOptionsPage(Package package, InstallationOptions options): this(package, OperationType.None, options) { }
+        public InstallOptionsPage(Package package, OperationType Operation) : this(package, Operation, new InstallationOptions(package)) { }
+        public InstallOptionsPage(Package package, InstallationOptions options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(Package package, OperationType Operation, InstallationOptions options)
         {
             Package = package;

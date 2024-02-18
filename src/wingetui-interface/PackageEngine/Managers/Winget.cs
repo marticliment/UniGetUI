@@ -1,5 +1,6 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using ModernWindow.Data;
+﻿using ModernWindow.Data;
+using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -231,7 +232,7 @@ namespace ModernWindow.PackageEngine.Managers
                     }
                     else
                     {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();                    
+                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
                         if (SourceReference.ContainsKey(sourceName))
                             source = SourceReference[sourceName];
                         else
@@ -416,13 +417,13 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            var details = new PackageDetails(package);
+            PackageDetails details = new(package);
 
             if (package.Source.Name == "winget")
-                details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/" 
-                    + package.Id[0].ToString().ToLower() + "/" 
-                    + package.Id.Split('.')[0] + "/" 
-                    + String.Join("/", (package.Id.Contains('.')? package.Id.Split('.')[1..]: package.Id.Split('.')))
+                details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
+                    + package.Id[0].ToString().ToLower() + "/"
+                    + package.Id.Split('.')[0] + "/"
+                    + String.Join("/", (package.Id.Contains('.') ? package.Id.Split('.')[1..] : package.Id.Split('.')))
                 );
             else if (package.Source.Name == "msstore")
                 details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
@@ -431,13 +432,13 @@ namespace ModernWindow.PackageEngine.Managers
             Process process = new();
             string packageIdentifier;
             if (!package.Id.Contains("…"))
-                packageIdentifier =  "--id " + package.Id + " --exact";
+                packageIdentifier = "--id " + package.Id + " --exact";
             else if (!package.Name.Contains("…"))
                 packageIdentifier = "--name " + package.Id + " --exact";
             else
                 packageIdentifier = "--id " + package.Id;
 
-            var output = new List<string>();
+            List<string> output = new();
             bool LocaleFound = true;
             ProcessStartInfo startInfo = new()
             {
@@ -454,19 +455,19 @@ namespace ModernWindow.PackageEngine.Managers
 
             string _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
-                if(_line.Trim() != "")
-                { 
+                if (_line.Trim() != "")
+                {
                     output.Add(_line);
                     AppTools.Log(_line);
-                    if(_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details.")) 
+                    if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
                     {
                         LocaleFound = false;
                         break;
                     }
                 }
-            
+
             // Load fallback english locale
-            if(!LocaleFound)
+            if (!LocaleFound)
             {
                 output.Clear();
                 AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
@@ -533,19 +534,19 @@ namespace ModernWindow.PackageEngine.Managers
             foreach (string __line in output)
             {
                 try
-                { 
+                {
                     string line = __line.TrimEnd();
-                    if(line == "")
+                    if (line == "")
                         continue;
-                    
+
                     // Check if a multiline field is being loaded
-                    if(line.StartsWith(" ") && IsLoadingDescription)
+                    if (line.StartsWith(" ") && IsLoadingDescription)
                         details.Description += "\n" + line.Trim();
-                    else if(line.StartsWith(" ") && IsLoadingReleaseNotes)
+                    else if (line.StartsWith(" ") && IsLoadingReleaseNotes)
                         details.ReleaseNotes += "\n" + line.Trim();
-                    else if(line.StartsWith(" ") && IsLoadingTags)
+                    else if (line.StartsWith(" ") && IsLoadingTags)
                         details.Tags = details.Tags.Append(line.Trim()).ToArray();
-                    
+
                     // Stop loading multiline fields
                     else if (IsLoadingDescription)
                         IsLoadingDescription = false;
@@ -838,8 +839,8 @@ namespace ModernWindow.PackageEngine.Managers
         {
             return new ManagerSource[]
             {
-                new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
-                new ManagerSource(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")),
+                new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
+                new(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")),
             };
         }
 

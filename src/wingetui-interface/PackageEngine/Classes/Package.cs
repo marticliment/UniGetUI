@@ -3,7 +3,6 @@ using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -11,7 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine
+namespace ModernWindow.PackageEngine.Classes
 {
     public enum PackageScope
     {
@@ -85,7 +84,7 @@ namespace ModernWindow.PackageEngine
         {
             string iconId = Id.ToLower();
             if (Manager == bindings.App.Winget)
-                iconId = String.Join('.', iconId.Split(".")[1..]);
+                iconId = string.Join('.', iconId.Split(".")[1..]);
             else if (Manager == bindings.App.Choco)
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
             else if (Manager == bindings.App.Scoop)
@@ -109,7 +108,7 @@ namespace ModernWindow.PackageEngine
             bool _dotAdded = false;
             foreach (char _char in Version)
             {
-                if (Char.IsDigit(_char))
+                if (char.IsDigit(_char))
                     _ver += _char;
                 else if (_char == '.')
                 {
@@ -191,21 +190,21 @@ namespace ModernWindow.PackageEngine
 
         public async Task<__serializable_bundled_package_v1> AsSerializable_BundledPackage(InstallationOptions options)
         {
-            var Serializable = new __serializable_bundled_package_v1();
+            __serializable_bundled_package_v1 Serializable = new();
             Serializable.Id = Id;
             Serializable.Name = Name;
             Serializable.Version = Version;
             Serializable.Source = Source.Name;
             Serializable.ManagerName = Manager.Name;
             Serializable.InstallationOptions = options.AsSerializable();
-            var updates = await __serializable_updates_options_v1.FromPackage(this);
+            __serializable_updates_options_v1 updates = await __serializable_updates_options_v1.FromPackage(this);
             Serializable.Updates = updates;
             return Serializable;
         }
 
         public __serializable_incompatible_package_v1 AsSerializable_IncompatiblePackage()
         {
-            var Serializable = new __serializable_incompatible_package_v1();
+            __serializable_incompatible_package_v1 Serializable = new();
             Serializable.Id = Id;
             Serializable.Name = Name;
             Serializable.Version = Version;
@@ -240,7 +239,7 @@ namespace ModernWindow.PackageEngine
             bool _dotAdded = false;
             foreach (char _char in NewVersion)
             {
-                if (Char.IsDigit(_char))
+                if (char.IsDigit(_char))
                     _ver += _char;
                 else if (_char == '.')
                 {
@@ -288,17 +287,17 @@ namespace ModernWindow.PackageEngine
         public string Description { get; set; } = "";
         public string Publisher { get; set; } = "";
         public string Author { get; set; } = "";
-        public Uri? HomepageUrl { get; set; } = null;
+        public Uri HomepageUrl { get; set; } = null;
         public string License { get; set; } = "";
-        public Uri? LicenseUrl { get; set; } = null;
-        public Uri? InstallerUrl { get; set; } = null;
+        public Uri LicenseUrl { get; set; } = null;
+        public Uri InstallerUrl { get; set; } = null;
         public string InstallerHash { get; set; } = "";
         public string InstallerType { get; set; } = "";
         public double InstallerSize { get; set; } = 0; // In Megabytes
-        public Uri? ManifestUrl { get; set; } = null;
+        public Uri ManifestUrl { get; set; } = null;
         public string UpdateDate { get; set; } = "";
         public string ReleaseNotes { get; set; } = "";
-        public Uri? ReleaseNotesUrl { get; set; } = null;
+        public Uri ReleaseNotesUrl { get; set; } = null;
         public string[] Versions { get; set; } = new string[0];
         public string[] Architectures { get; set; } = new string[0];
         public string[] Scopes { get; set; } = new string[0];
@@ -366,7 +365,7 @@ namespace ModernWindow.PackageEngine
 
         public static InstallationOptions FromSerialized(__serializable_options_v1 options, Package package)
         {
-            var opt = new InstallationOptions(package, reset: true);
+            InstallationOptions opt = new(package, reset: true);
             opt.FromSerialized(options);
             return opt;
         }

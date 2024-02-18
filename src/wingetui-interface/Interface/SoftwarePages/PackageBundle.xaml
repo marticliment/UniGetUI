@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:engine="using:ModernWindow.PackageEngine"
+    xmlns:engine="using:ModernWindow.PackageEngine.Classes"
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" 
     mc:Ignorable="d"

@@ -10,22 +10,13 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Interface\Pages\PackageBundle.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Interface\Pages\LogPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Dialogs\ReleaseNotes.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Dialogs\InstallOptions.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="PackageEngine\OperationControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Widgets\NavButton.xaml">

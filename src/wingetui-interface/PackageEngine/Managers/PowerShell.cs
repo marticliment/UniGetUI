@@ -1,10 +1,11 @@
-﻿using ModernWindow.Structures;
+﻿using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
+using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -273,9 +274,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            var details = new PackageDetails(package);
+            PackageDetails details = new(package);
 
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -290,37 +291,37 @@ namespace ModernWindow.PackageEngine.Managers
             p.Start();
 
             string line;
-            while((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 if (line.Count(c => c == ' ') < 1)
                     continue;
-                
+
                 try
                 {
-                    var entry = line.Split('=')[0].Split(' ')[^1];
-                    var PossibleContent = line.Split('=')[1].Trim();
-                    if(PossibleContent == "null")
+                    string entry = line.Split('=')[0].Split(' ')[^1];
+                    string PossibleContent = line.Split('=')[1].Trim();
+                    if (PossibleContent == "null")
                         continue;
 
                     if (entry == "Author")
                         details.Author = PossibleContent;
 
-                    else if(entry == ("CompanyName"))
+                    else if (entry == ("CompanyName"))
                         details.Publisher = PossibleContent;
 
-                    else if(entry == ("Copyright"))
+                    else if (entry == ("Copyright"))
                         details.License = PossibleContent;
 
-                    else if(entry == ("LicenseUri"))
+                    else if (entry == ("LicenseUri"))
                         details.LicenseUrl = new Uri(PossibleContent);
 
-                    else if( entry == ("Description"))
+                    else if (entry == ("Description"))
                         details.Description = PossibleContent;
 
-                    else if(entry == ("Type"))
+                    else if (entry == ("Type"))
                         details.InstallerType = PossibleContent;
 
-                    else if(entry == ("ProjectUri"))
+                    else if (entry == ("ProjectUri"))
                         details.HomepageUrl = new Uri(PossibleContent);
 
                     else if (entry == ("PublishedDate"))
@@ -514,9 +515,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override ManagerSource[] GetKnownSources()
         {
-            return new ManagerSource[] { 
-                new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-                new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))
+            return new ManagerSource[] {
+                new(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                new(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))
             };
         }
 

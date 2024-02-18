@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.WinUI.Animations;
+﻿using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -230,18 +231,18 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            var details = new PackageDetails(package);
+            PackageDetails details = new(package);
 
             AppTools.Log(package.Source.Url.ToString().Trim()[^1]);
 
-            if(package.Source.Name == "community")
+            if (package.Source.Name == "community")
                 details.ManifestUrl = new Uri("https://community.chocolatey.org/packages/" + package.Id);
-            else if (package.Source.Url != null && package.Source.Url.ToString().Trim()[^1].ToString() == "/")                
+            else if (package.Source.Url != null && package.Source.Url.ToString().Trim()[^1].ToString() == "/")
                 details.ManifestUrl = new Uri((package.Source.Url.ToString().Trim() + "package/" + package.Id).Replace("//", "/").Replace(":/", "://"));
 
-            
 
-            if(package.Source.Name == "community")
+
+            if (package.Source.Name == "community")
             {
                 try
                 {
@@ -263,7 +264,7 @@ namespace ModernWindow.PackageEngine.Managers
             }
 
             Process process = new();
-            var output = new List<string>();
+            List<string> output = new();
             ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
@@ -340,8 +341,8 @@ namespace ModernWindow.PackageEngine.Managers
                     }
                     else if (line.StartsWith(" ") && line.Contains("Tags"))
                     {
-                        var tags = new List<string>();
-                        foreach(string tag in line.Replace("Tags:", "").Trim().Split(' '))
+                        List<string> tags = new();
+                        foreach (string tag in line.Replace("Tags:", "").Trim().Split(' '))
                         {
                             if (tag.Trim() != "")
                                 tags.Add(tag.Trim());
@@ -392,7 +393,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (line.Contains(" - ") && line.Contains(" | "))
                     {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
-                        if(parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
+                        if (parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
                             sources.Add(new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/")));
                         else
                             sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
@@ -538,7 +539,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override ManagerSource[] GetKnownSources()
         {
-            return new ManagerSource[] { new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")) };
+            return new ManagerSource[] { new(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")) };
         }
 
         public override string[] GetAddSourceParameters(ManagerSource source)

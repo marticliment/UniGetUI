@@ -1,16 +1,14 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using ModernWindow.Data;
+using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine
+namespace ModernWindow.PackageEngine.Operations
 {
 
     public abstract class SourceOperation : AbstractOperation
@@ -42,13 +40,13 @@ namespace ModernWindow.PackageEngine
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\"" + Source.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
+                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\"" + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
 
             }
             else
             {
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
+                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
             }
             Process process = new();
             process.StartInfo = startInfo;
@@ -144,13 +142,13 @@ namespace ModernWindow.PackageEngine
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\"" + Source.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
+                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\"" + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
 
             }
             else
             {
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + String.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
+                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
             }
             Process process = new();
             process.StartInfo = startInfo;

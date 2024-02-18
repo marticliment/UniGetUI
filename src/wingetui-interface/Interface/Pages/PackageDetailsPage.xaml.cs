@@ -2,7 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using ModernWindow.Data;
-using ModernWindow.PackageEngine;
+using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.IO;
@@ -49,7 +50,7 @@ namespace ModernWindow.Interface.Dialogs
 
             SizeChanged += PackageDetailsPage_SizeChanged;
 
-            if(futureOperation == OperationType.None)
+            if (futureOperation == OperationType.None)
                 futureOperation = OperationType.Install;
 
             switch (futureOperation)
@@ -199,13 +200,13 @@ namespace ModernWindow.Interface.Dialogs
                     return;
 
                 ErrorOutput.Text = "";
-                FileSavePicker savePicker = new Windows.Storage.Pickers.FileSavePicker();
-                var window = bindings.App.mainWindow;
-                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                FileSavePicker savePicker = new();
+                MainWindow window = bindings.App.mainWindow;
+                IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
                 savePicker.SuggestedFileName = Package.Id + " installer." + Info.InstallerUrl.ToString().Split('.')[^1];
-                if(Info.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
+                if (Info.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
                     savePicker.FileTypeChoices.Add("Compressed Manifest File", new System.Collections.Generic.List<string>() { ".zip" });
                 savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Info.InstallerUrl.ToString().Split('.')[^1] });
                 StorageFile file = await savePicker.PickSaveFileAsync();
@@ -214,9 +215,9 @@ namespace ModernWindow.Interface.Dialogs
                     DownloadInstallerButton.Content = bindings.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
                     AppTools.Log(file.Path.ToString());
-                    using var httpClient = new HttpClient();
-                    await using var s = await httpClient.GetStreamAsync(Info.InstallerUrl);
-                    await using var fs = File.OpenWrite(file.Path.ToString());
+                    using HttpClient httpClient = new();
+                    await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
+                    await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);
                     fs.Dispose();
                     DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
@@ -231,7 +232,7 @@ namespace ModernWindow.Interface.Dialogs
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;
             }
-            
+
 
         }
         public void CloseButton_Click(object sender, RoutedEventArgs e)

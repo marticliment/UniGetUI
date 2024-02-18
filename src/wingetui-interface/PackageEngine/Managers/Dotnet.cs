@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Common;
+﻿using ModernWindow.PackageEngine.Classes;
+using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -273,16 +274,16 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            var details = new PackageDetails(package);
+            PackageDetails details = new(package);
 
             try
             {
                 details.ManifestUrl = new Uri("https://www.nuget.org/packages/" + package.Id);
-                var url = $"http://www.nuget.org/api/v2/Packages(Id='{package.Id}',Version='')";
+                string url = $"http://www.nuget.org/api/v2/Packages(Id='{package.Id}',Version='')";
 
-                using (WebClient client = new WebClient())
+                using (WebClient client = new())
                 {
-                    var task = Task<string>.Factory.StartNew(() => { return client.DownloadString(url); });
+                    Task<string> task = Task<string>.Factory.StartNew(() => { return client.DownloadString(url); });
                     string apiContents = await task;
 
                     details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
