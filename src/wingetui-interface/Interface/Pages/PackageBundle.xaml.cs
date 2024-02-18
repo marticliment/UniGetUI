@@ -10,8 +10,12 @@ using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 
@@ -23,9 +27,20 @@ namespace ModernWindow.Interface
 
     public class BundledPackage
     {
+
+        public class __serializable_exportable_packages
+        {
+            public double export_version { get; set; } = 2.0;
+            public List<Package.__serializable_bundled_package_v1> packages { get; set; } = new();
+            public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.";
+            public List<Package.__serializable_incompatible_package_v1> incompatible_packages { get; set; } = new();
+
+        }
+
         public AppTools bindings = AppTools.Instance;
         public Package Package { get; }
         public InstallationOptions Options { get; }
+
         public BundledPackage(Package package)
         {
             Package = package;
@@ -483,7 +498,9 @@ namespace ModernWindow.Interface
 
             OpenBundle.Click += (s, e) => {  };
 
-            ExportBundleAsJson.Click += (s, e) => {  };
+            ExportBundleAsJson.Click += (s, e) => { 
+                SaveJsonFile();
+            };
 
             ExportBundleAsYaml.Click += (s, e) => {  };
 
@@ -617,6 +634,78 @@ namespace ModernWindow.Interface
             bindings.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
             bindings.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
             FilterPackages(QueryBlock.Text.Trim());
+        }
+
+        public static Package[] GetPackagesFromJsonString(string JsonContents)
+        {
+            var Packages = new List<Package>();
+
+            var Deserialized = JsonSerializer.Deserialize<BundledPackage.__serializable_exportable_packages>(JsonContents);
+
+            return new Package[0];
+        }
+
+        public async void SaveJsonFile()
+        {
+            try
+            {
+                // Get file 
+                var picker = new Windows.Storage.Pickers.FileSavePicker();
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
+                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
+                picker.SuggestedFileName = bindings.Translate("WingetUI package bundle");
+
+                // Save file
+                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+                if (file != null)
+                {
+
+                    ContentDialog dialog = new();
+                    dialog.XamlRoot = XamlRoot;
+                    dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                    dialog.Title = bindings.Translate("Please wait");
+                    dialog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+
+                    _ = dialog.ShowAsync();
+
+                    List<Package> packages = new List<Package>();
+                    foreach (BundledPackage package in Packages)
+                        packages.Add(package.Package);
+
+                    await Windows.Storage.FileIO.WriteTextAsync(file, await GetJsonFromPackages(packages.ToArray()));
+
+                    dialog.Hide();
+
+                    // Launch file
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = @$"/select, ""{file.Path}"""
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
+        }
+
+        public async static Task<string> GetJsonFromPackages(Package[] packages)
+        {
+            var exportable = new BundledPackage.__serializable_exportable_packages();
+            foreach (Package package in packages)
+                if(package.Source.IsVirtualManager)
+                    exportable.incompatible_packages.Add(package.AsSerializable_IncompatiblePackage());
+                else
+                    exportable.packages.Add(await package.AsSerializable_BundledPackage());
+
+            AppTools.Log("Finished loading serializable objects");
+            var ExportableData = JsonSerializer.Serialize<BundledPackage.__serializable_exportable_packages>(exportable, new JsonSerializerOptions() { WriteIndented = true });
+            AppTools.Log("Finished serializing");
+
+            return ExportableData;
         }
     }
 }

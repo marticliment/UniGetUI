@@ -22,6 +22,38 @@ namespace ModernWindow.PackageEngine
     }
     public class Package : INotifyPropertyChanged
     {
+        public class __serializable_updates_options_v1
+        {
+            public bool UpdatesIgnored { get; set; } = false;
+            public string IgnoredVersion { get; set; } = "";
+            public static async Task<__serializable_updates_options_v1> FromPackage(Package package)
+            {
+                var Serializable = new __serializable_updates_options_v1();
+                Serializable.UpdatesIgnored = await package.HasUpdatesIgnored();
+                Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersion();
+                return Serializable;
+            }
+        }
+        public class __serializable_bundled_package_v1
+        {
+            public string Id { get; set; } = "";
+            public string Name { get; set; } = "";
+            public string Version { get; set; } = "";
+            public string Source { get; set; } = "";
+            public string ManagerName { get; set; } = "";
+            public InstallationOptions.__serializable_options_v1 InstallationOptions { get; set; }
+            public __serializable_updates_options_v1 Updates { get; set; }
+        }
+
+        public class __serializable_incompatible_package_v1
+        {
+            public string Id { get; set; } = "";
+            public string Name { get; set; } = "";
+            public string Version { get; set; } = "";
+            public string Source { get; set; } = "";
+        }
+
+
         public AppTools bindings = AppTools.Instance;
 
         private bool __is_checked = false;
@@ -50,6 +82,8 @@ namespace ModernWindow.PackageEngine
                 else return "";
             }
         }
+
+
 
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
         {
@@ -178,6 +212,31 @@ namespace ModernWindow.PackageEngine
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public async Task<__serializable_bundled_package_v1> AsSerializable_BundledPackage()
+        {
+            var Serializable = new __serializable_bundled_package_v1();
+            Serializable.Id = Id;
+            Serializable.Name = Name;
+            Serializable.Version = Version;
+            Serializable.Source = Source.Name;
+            Serializable.ManagerName = Manager.Name;
+            var options = new InstallationOptions(this);
+            Serializable.InstallationOptions = options.AsSerializable();
+            var updates = await __serializable_updates_options_v1.FromPackage(this);
+            Serializable.Updates = updates;
+            return Serializable;
+        }
+
+        public __serializable_incompatible_package_v1 AsSerializable_IncompatiblePackage()
+        {
+            var Serializable = new __serializable_incompatible_package_v1();
+            Serializable.Id = Id;
+            Serializable.Name = Name;
+            Serializable.Version = Version;
+            Serializable.Source = Source.Name;
+            return Serializable;
+        }
+
     }
 
     public class UpgradablePackage : Package
@@ -280,7 +339,7 @@ namespace ModernWindow.PackageEngine
 
     public class InstallationOptions
     {
-        public class JsonOptions_v1
+        public class __serializable_options_v1
         {
             public bool SkipHashCheck { get; set; } = false;
             public bool InteractiveInstallation { get; set; } = false;
@@ -326,7 +385,7 @@ namespace ModernWindow.PackageEngine
 
         public void LoadFromJsonString(string JSON)
         {
-            JsonOptions_v1 options = JsonSerializer.Deserialize<JsonOptions_v1>(JSON);
+            __serializable_options_v1 options = JsonSerializer.Deserialize<__serializable_options_v1>(JSON);
             SkipHashCheck = options.SkipHashCheck;
             InteractiveInstallation = options.InteractiveInstallation;
             RunAsAdministrator = options.RunAsAdministrator;
@@ -342,7 +401,12 @@ namespace ModernWindow.PackageEngine
 
         public string GetJsonString()
         {
-            JsonOptions_v1 options = new();
+            return JsonSerializer.Serialize(AsSerializable());
+        }
+
+        public __serializable_options_v1 AsSerializable()
+        {
+            __serializable_options_v1 options = new();
             options.SkipHashCheck = SkipHashCheck;
             options.InteractiveInstallation = InteractiveInstallation;
             options.RunAsAdministrator = RunAsAdministrator;
@@ -354,8 +418,7 @@ namespace ModernWindow.PackageEngine
             if (InstallationScope != null)
                 options.InstallationScope = CommonTranslations.ScopeNames_NonLang[InstallationScope.Value];
             options.CustomParameters = CustomParameters;
-
-            return JsonSerializer.Serialize(options);
+            return options;
         }
 
         public void SaveOptionsToDisk()
