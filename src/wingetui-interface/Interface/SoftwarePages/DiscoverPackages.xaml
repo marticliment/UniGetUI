@@ -8,9 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:engine="using:ModernWindow.PackageEngine"
+    xmlns:pkgClasses="using:ModernWindow.PackageEngine.Classes"
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:engine1="using:ModernWindow.PackageEngine.Classes"
     mc:Ignorable="d"
     Name="DiscoverPage"
     NavigationCacheMode="Required">
@@ -500,7 +501,7 @@
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="PackageTemplate" x:DataType="engine:Package">
+        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:Package">
             <Grid ColumnSpacing="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>

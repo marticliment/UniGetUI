@@ -13,7 +13,7 @@
     mc:Ignorable="d"
     Name="DiscoverPage"
     NavigationCacheMode="Required"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations">
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:ModernWindow.PackageEngine.Classes">
 
     <animations:Implicit.ShowAnimations>
         <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
@@ -501,7 +501,7 @@
         </Style>
 
 
-        <DataTemplate x:Key="PackageTemplate" x:DataType="engine:Package">
+        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:Package">
             <Grid ColumnSpacing="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
