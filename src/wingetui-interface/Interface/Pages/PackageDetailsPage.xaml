@@ -6,6 +6,8 @@
     xmlns:local="using:ModernWindow.Interface.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:ModernWindow.Interface.Widgets"
+    xmlns:xaml="using:Microsoft.UI.Xaml.Controls"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <Grid>
@@ -29,7 +31,18 @@
                 
                 <!-- Tags + Description -->
                 <StackPanel Name="DescriptionPanel" Orientation="Vertical" VerticalAlignment="Top">
-                    <GridView Name="TagGridView"/>
+                    <xaml:ItemsRepeater Name="TagGridView" ItemsSource="{x:Bind ShowableTags}">
+                        <xaml:ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="TextBlock">
+                                <Border  Background="{ThemeResource AccentAAFillColorDefaultBrush}" Padding="8,2,8,2" Margin="2" CornerRadius="12" Height="24" VerticalAlignment="Center" >
+                                    <TextBlock Text="{x:Bind Text}" Foreground="{ThemeResource TextOnAccentAAFillColorPrimary}"/>
+                                </Border>
+                            </DataTemplate>
+                        </xaml:ItemsRepeater.ItemTemplate>
+                        <xaml:ItemsRepeater.Layout>
+                            <toolkit:WrapLayout x:Name="Wrap"/>
+                        </xaml:ItemsRepeater.Layout>
+                    </xaml:ItemsRepeater>
                     <TextBlock Name="DescriptionBox" TextWrapping="WrapWholeWords" Text="Hello World. This is the App's description"/>
                 </StackPanel>
 

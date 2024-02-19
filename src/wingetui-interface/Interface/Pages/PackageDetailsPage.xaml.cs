@@ -6,6 +6,7 @@ using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace ModernWindow.Interface.Dialogs
         private PackageDetails Info;
         OperationType FutureOperation;
         bool PackageHasScreenshots = false;
+        public ObservableCollection<TextBlock> ShowableTags = new();
 
         private enum LayoutMode
         {
@@ -167,6 +169,10 @@ namespace ModernWindow.Interface.Dialogs
             DownloadInstallerButton.IsEnabled = Info.InstallerUrl != null;
             ReleaseNotesUrlButton.Content = Info.ReleaseNotesUrl != null ? Info.ReleaseNotesUrl : NotFound;
             ReleaseNotesUrlButton.NavigateUri = Info.ReleaseNotesUrl != null ? Info.ReleaseNotesUrl : InvalidUri;
+
+            ShowableTags.Clear();
+            foreach (string tag in Info.Tags)
+                ShowableTags.Add(new TextBlock() { Text = tag });
         }
 
         public void ActionButton_Click(object sender, RoutedEventArgs e)
