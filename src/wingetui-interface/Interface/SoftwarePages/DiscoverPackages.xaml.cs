@@ -575,11 +575,10 @@ namespace ModernWindow.Interface
 
         }
 
-        private void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
-                    bindings.App.mainWindow.NavigationPage.BundlesPage.AddPackage(package);
             bindings.App.mainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            await bindings.App.mainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)

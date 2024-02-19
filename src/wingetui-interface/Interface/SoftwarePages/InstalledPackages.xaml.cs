@@ -513,7 +513,7 @@ namespace ModernWindow.Interface
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
-                        await package.AddToIgnoredUpdates();
+                        await package.AddToIgnoredUpdatesAsync();
             };
 
             UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray()); };
@@ -527,12 +527,10 @@ namespace ModernWindow.Interface
 
         }
 
-        private void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Package package in FilteredPackages.ToArray())
-                if (package.IsChecked)
-                    bindings.App.mainWindow.NavigationPage.BundlesPage.AddPackage(package);
             bindings.App.mainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            await bindings.App.mainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
         }
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
@@ -643,7 +641,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdates();
+            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync();
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs package)

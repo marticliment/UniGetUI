@@ -198,7 +198,6 @@ namespace ModernWindow.Interface
             OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
             await bindings.App.mainWindow.ShowDialog(OptionsDialog);
-            OptionsPage.SaveToDisk();
 
             OptionsDialog.Content = null;
             OptionsDialog = null;

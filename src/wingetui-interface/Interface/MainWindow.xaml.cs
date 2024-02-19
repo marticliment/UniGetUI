@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation.Collections;
 
 
@@ -44,6 +45,9 @@ namespace ModernWindow
         public NavigationPage NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
+        ContentDialog LoadingSthDalog;
+
+        private int LoadingDialogCount = 0;
 
         public List<ContentDialog> DialogQueue = new();
 
@@ -56,6 +60,13 @@ namespace ModernWindow
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
+
+            LoadingSthDalog = new ContentDialog();
+            LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            LoadingSthDalog.Title = bindings.Translate("Please wait");
+            LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+
+
         }
 
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -267,6 +278,27 @@ namespace ModernWindow
                 ContentRoot.RequestedTheme = ElementTheme.Default;
             }
 
+        }
+
+        public void ShowLoadingDialog()
+        {
+            if(LoadingDialogCount == 0 && DialogQueue.Count == 0)
+            {
+                LoadingSthDalog.XamlRoot = NavigationPage.XamlRoot;
+                _ = LoadingSthDalog.ShowAsync();
+            }
+            LoadingDialogCount++;
+        }
+
+        public void HideLoadingDialog()
+        {
+            LoadingDialogCount--;
+            if(LoadingDialogCount <= 0)
+            {
+                LoadingSthDalog.Hide();
+            }
+            if (LoadingDialogCount < 0)
+                LoadingDialogCount = 0;
         }
 
         public void SharePackage(Package package)

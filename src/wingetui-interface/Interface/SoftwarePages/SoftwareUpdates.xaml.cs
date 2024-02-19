@@ -259,7 +259,7 @@ namespace ModernWindow.Interface
                             int InitialCount = Packages.Count;
                             foreach (UpgradablePackage package in task.Result)
                             {
-                                if (await package.HasUpdatesIgnored(package.NewVersion))
+                                if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
                                     continue;
 
                                 if (package.NewVersionIsInstalled())
@@ -605,7 +605,7 @@ namespace ModernWindow.Interface
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
-                        await package.AddToIgnoredUpdates();
+                        await package.AddToIgnoredUpdatesAsync();
             };
 
             UpdateSelected.Click += (s, e) =>
@@ -702,14 +702,14 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdates();
+            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdatesAsync();
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdates((PackageList.SelectedItem as UpgradablePackage).Version);
+            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdatesAsync((PackageList.SelectedItem as UpgradablePackage).Version);
         }
 
         private void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)

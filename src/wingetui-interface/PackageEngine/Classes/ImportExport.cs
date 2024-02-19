@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using static ModernWindow.PackageEngine.Classes.InstallationOptions;
 
 namespace ModernWindow.PackageEngine.Classes
 {
 
-    public class __serializable_exportable_packages
+    public class SerializableBundle_v1
     {
         public double export_version { get; set; } = 2.0;
-        public List<__serializable_bundled_package_v1> packages { get; set; } = new();
+        public List<SerializableValidPackage_v1> packages { get; set; } = new();
         public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.";
-        public List<__serializable_incompatible_package_v1> incompatible_packages { get; set; } = new();
+        public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = new();
 
     }
     public enum DeserializedPackageStatus
@@ -24,30 +25,43 @@ namespace ModernWindow.PackageEngine.Classes
         SourceNotFound,
         IsAvailable
     }
-    public class __serializable_updates_options_v1
+    public class SerializableUpdatesOptions_v1
     {
         public bool UpdatesIgnored { get; set; } = false;
         public string IgnoredVersion { get; set; } = "";
-        public static async Task<__serializable_updates_options_v1> FromPackage(Package package)
+        public static async Task<SerializableUpdatesOptions_v1> FromPackageAsync(Package package)
         {
-            __serializable_updates_options_v1 Serializable = new();
-            Serializable.UpdatesIgnored = await package.HasUpdatesIgnored();
-            Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersion();
+            SerializableUpdatesOptions_v1 Serializable = new();
+            Serializable.UpdatesIgnored = await package.HasUpdatesIgnoredAsync();
+            Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersionAsync();
             return Serializable;
         }
     }
-    public class __serializable_bundled_package_v1
+    public class SerializableValidPackage_v1
     {
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";
         public string Version { get; set; } = "";
         public string Source { get; set; } = "";
         public string ManagerName { get; set; } = "";
-        public InstallationOptions.__serializable_options_v1 InstallationOptions { get; set; }
-        public __serializable_updates_options_v1 Updates { get; set; }
+        public SerializableInstallationOptions_v1 InstallationOptions { get; set; }
+        public SerializableUpdatesOptions_v1 Updates { get; set; }
     }
 
-    public class __serializable_incompatible_package_v1
+    public class SerializableInstallationOptions_v1
+    {
+        public bool SkipHashCheck { get; set; } = false;
+        public bool InteractiveInstallation { get; set; } = false;
+        public bool RunAsAdministrator { get; set; } = false;
+        public string Architecture { get; set; } = "";
+        public string InstallationScope { get; set; } = "";
+        public List<string> CustomParameters { get; set; }
+        public bool PreRelease { get; set; } = false;
+        public string CustomInstallLocation { get; set; } = "";
+        public string Version { get; set; } = "";
+    }
+
+    public class SerializableIncompatiblePackage_v1
     {
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";
@@ -69,9 +83,8 @@ namespace ModernWindow.PackageEngine.Classes
         public AppTools bindings = AppTools.Instance;
         public Package Package { get; }
         public bool IsValid { get; set; } = true;
-        bool RequiresImportWhenInstalling { get; } = false;
-        public InstallationOptions Options { get; set; }
-        public __serializable_updates_options_v1 UpdateOptions = null;
+        public InstallationOptions InstallOptions { get; set; }
+        public SerializableUpdatesOptions_v1 UpdateOptions = null;
 
         public double DrawOpacity = 1;
 
@@ -123,24 +136,24 @@ namespace ModernWindow.PackageEngine.Classes
                 return Package.Source.IconId;
             }
         }
-        public BundledPackage(Package package)
+        public static async Task<BundledPackage> FromPackageAsync(Package package)
         {
-            Package = package;
-            Options = new InstallationOptions(package);
-            RequiresImportWhenInstalling = false;
+            var iOptions = await InstallationOptions.FromPackageAsync(package);
+            var uOptions = await SerializableUpdatesOptions_v1.FromPackageAsync(package);
+
+            return new BundledPackage(package, iOptions, uOptions);
         }
 
-        public BundledPackage(Package package, InstallationOptions options, __serializable_updates_options_v1 updateOptions)
+        public BundledPackage(Package package, InstallationOptions options, SerializableUpdatesOptions_v1 updateOptions)
         {
             Package = package;
-            RequiresImportWhenInstalling = true;
-            Options = options;
+            InstallOptions = options;
             UpdateOptions = updateOptions;
         }
 
         public async virtual void ShowOptions(object sender, RoutedEventArgs e)
         {
-            Options = await bindings.App.mainWindow.NavigationPage.UpdateInstallationSettings(Package, Options);
+            InstallOptions = await bindings.App.mainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
         }
 
         public void RemoveFromList(object sender, RoutedEventArgs e)
@@ -154,6 +167,38 @@ namespace ModernWindow.PackageEngine.Classes
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+
+
+        public virtual SerializableValidPackage_v1 AsSerializable()
+        {
+            SerializableValidPackage_v1 Serializable = new();
+            Serializable.Id = Id;
+            Serializable.Name = Name;
+            Serializable.Version = Package.Version;
+            Serializable.Source = Package.Source.Name;
+            Serializable.ManagerName = Package.Manager.Name;
+            Serializable.InstallationOptions = this.InstallOptions.Serialized();
+            Serializable.Updates = this.UpdateOptions;
+            return Serializable;
+        }
+
+        public virtual SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
+        {
+            SerializableIncompatiblePackage_v1 Serializable = new();
+            Serializable.Id = Id;
+            Serializable.Name = Name;
+            Serializable.Version = version;
+            Serializable.Source = SourceAsString;
+            return Serializable;
+        }
+
+        public static Package FromSerialized(SerializableValidPackage_v1 DeserializedPackage, PackageManager manager, ManagerSource source)
+        {
+            return new Package(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, source, manager);
+        }
+
+
 
     }
 
@@ -207,7 +252,7 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
-        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : base(new Package(name, id, version, AppTools.Instance.App.Winget.MainSource, AppTools.Instance.App.Winget))
+        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, AppTools.Instance.App.Winget.MainSource, AppTools.Instance.App.Winget))
         {
             IsValid = false;
             DrawOpacity = 0.5;
@@ -217,7 +262,7 @@ namespace ModernWindow.PackageEngine.Classes
             __source = source;
             __manager = manager;
         }
-        public InvalidBundledPackage(Package package) : base(package)
+        public InvalidBundledPackage(Package package) : base(package, new InstallationOptions(package, reset: true), new SerializableUpdatesOptions_v1())
         {
             IsValid = false;
             DrawOpacity = 0.5;
@@ -242,8 +287,23 @@ namespace ModernWindow.PackageEngine.Classes
         }
         public async override void ShowOptions(object sender, RoutedEventArgs e)
         {
-            // Todo: show warning?
+            await Task.Delay(0);
         }
+
+        public override SerializableValidPackage_v1 AsSerializable()
+        {
+            throw new System.Exception("Cannot serialize an invalid package as a bundled package. Call Serialized_Incompatible() instead ");
+        }
+        public override SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
+        {
+            SerializableIncompatiblePackage_v1 Serializable = new();
+            Serializable.Id = Id;
+            Serializable.Name = Name;
+            Serializable.Version = version;
+            Serializable.Source = SourceAsString;
+            return Serializable;
+        }
+
 
     }
 

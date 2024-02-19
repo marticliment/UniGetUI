@@ -17,6 +17,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.Core;
 using YamlDotNet.Serialization;
 
@@ -451,11 +452,29 @@ namespace ModernWindow.Interface
                 UpdateCount();
             };
 
-            InstallPackages.Click += (s, e) =>
+            InstallPackages.Click += async (s, e) =>
             {
+                bindings.App.mainWindow.ShowLoadingDialog();
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
+                    {
+                        // Actually import settings
+                        package.InstallOptions.SaveOptionsToDisk();
+
+                        if (package.UpdateOptions.IgnoredVersion != "")
+                            await package.Package.AddToIgnoredUpdatesAsync(package.UpdateOptions.IgnoredVersion);
+                        else
+                            await package.Package.RemoveFromIgnoredUpdatesAsync();
+                    }
+
+
+                bindings.App.mainWindow.HideLoadingDialog();
+
+                foreach (BundledPackage package in FilteredPackages.ToArray())
+                    if (package.IsChecked && package.IsValid)
+                        // Install packages
                         bindings.AddOperationToList(new InstallPackageOperation(package.Package));
+
             };
 
             OpenBundle.Click += (s, e) =>
@@ -530,12 +549,22 @@ namespace ModernWindow.Interface
             AllSelected = false;
         }
 
-        public void AddPackage(Package foreignPackage)
+        public async Task AddPackages(IEnumerable<Package> packages)
         {
-            if (foreignPackage.Source.IsVirtualManager)
-                AddPackage(new InvalidBundledPackage(foreignPackage));
-            else
-                AddPackage(new BundledPackage(foreignPackage));
+            bindings.App.mainWindow.ShowLoadingDialog();
+            var bundled = new List<BundledPackage>();
+            foreach (var pkg in packages)
+            {
+                if (pkg.Source.IsVirtualManager)
+                    bundled.Add(new InvalidBundledPackage(pkg));
+                else
+                    bundled.Add(await BundledPackage.FromPackageAsync(pkg));
+            }
+
+            foreach (var pkg in bundled)
+                AddPackage(pkg);
+            bindings.App.mainWindow.HideLoadingDialog();
+
         }
 
         public void AddPackage(BundledPackage package)
@@ -565,14 +594,7 @@ namespace ModernWindow.Interface
                 if (file == null)
                     return;
 
-                // Loading dialog
-                ContentDialog dialog = new();
-                dialog.XamlRoot = XamlRoot;
-                dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                dialog.Title = bindings.Translate("Please wait");
-                dialog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
-
-                _ = dialog.ShowAsync();
+                bindings.App.mainWindow.ShowLoadingDialog();
 
                 // Read file
                 BundleFormatType formatType;
@@ -588,32 +610,34 @@ namespace ModernWindow.Interface
                 // Import packages to list
                 await AddPackagesFromBundleString(fileContent, formatType);
 
-                dialog.Hide();
+                bindings.App.mainWindow.HideLoadingDialog();
+
             }
             catch (Exception ex)
             {
                 AppTools.Log(ex);
+                bindings.App.mainWindow.HideLoadingDialog();
             }
         }
         public async Task AddPackagesFromBundleString(string content, BundleFormatType format)
         {
             // Deserialize data
-            __serializable_exportable_packages DeserializedData;
+            SerializableBundle_v1 DeserializedData;
             if (format == BundleFormatType.JSON)
-                DeserializedData = JsonSerializer.Deserialize<__serializable_exportable_packages>(content);
+                DeserializedData = JsonSerializer.Deserialize<SerializableBundle_v1>(content);
             else if (format == BundleFormatType.YAML)
             {
                 IDeserializer deserializer = new DeserializerBuilder()
                     .Build();
-                DeserializedData = deserializer.Deserialize<__serializable_exportable_packages>(content);
+                DeserializedData = deserializer.Deserialize<SerializableBundle_v1>(content);
             }
             else
             {
                 string tempfile = Path.GetTempFileName();
                 await File.WriteAllTextAsync(tempfile, content);
                 StreamReader reader = new(tempfile);
-                XmlSerializer serializer = new(typeof(__serializable_exportable_packages));
-                DeserializedData = serializer.Deserialize(reader) as __serializable_exportable_packages;
+                XmlSerializer serializer = new(typeof(SerializableBundle_v1));
+                DeserializedData = serializer.Deserialize(reader) as SerializableBundle_v1;
                 reader.Close();
                 File.Delete(tempfile);
             }
@@ -634,7 +658,7 @@ namespace ModernWindow.Interface
                 ManagerSourceReference.Add(manager.Name, manager);
             }
 
-            foreach (__serializable_bundled_package_v1 DeserializedPackage in DeserializedData.packages)
+            foreach (SerializableValidPackage_v1 DeserializedPackage in DeserializedData.packages)
             {
                 // Check if the manager exists
                 if (!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
@@ -679,7 +703,7 @@ namespace ModernWindow.Interface
                 Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
 
                 InstallationOptions InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
-                __serializable_updates_options_v1 UpdateOptions = DeserializedPackage.Updates;
+                SerializableUpdatesOptions_v1 UpdateOptions = DeserializedPackage.Updates;
 
                 BundledPackage newPackage = new(package, InstallOptions, UpdateOptions);
                 AddPackage(newPackage);
@@ -690,18 +714,18 @@ namespace ModernWindow.Interface
 
         public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
-            __serializable_exportable_packages exportable = new();
+            SerializableBundle_v1 exportable = new();
             foreach (BundledPackage package in packages)
                 if (!package.IsValid)
-                    exportable.incompatible_packages.Add(package.Package.AsSerializable_IncompatiblePackage());
+                    exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
                 else
-                    exportable.packages.Add(await package.Package.AsSerializable_BundledPackage(package.Options));
+                    exportable.packages.Add(package.AsSerializable());
 
             AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
             string ExportableData = "";
 
             if (formatType == BundleFormatType.JSON)
-                ExportableData = JsonSerializer.Serialize<__serializable_exportable_packages>(exportable, new JsonSerializerOptions() { WriteIndented = true });
+                ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions() { WriteIndented = true });
             else if (formatType == BundleFormatType.YAML)
             {
                 ISerializer serializer = new SerializerBuilder()
@@ -712,7 +736,7 @@ namespace ModernWindow.Interface
             {
                 string tempfile = Path.GetTempFileName();
                 StreamWriter writer = new(tempfile);
-                XmlSerializer serializer = new(typeof(__serializable_exportable_packages));
+                XmlSerializer serializer = new(typeof(SerializableBundle_v1));
                 serializer.Serialize(writer, exportable);
                 writer.Close();
                 ExportableData = await File.ReadAllTextAsync(tempfile);
@@ -742,13 +766,7 @@ namespace ModernWindow.Interface
                 if (file != null)
                 {
                     // Loading dialog
-                    ContentDialog dialog = new();
-                    dialog.XamlRoot = XamlRoot;
-                    dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    dialog.Title = bindings.Translate("Please wait");
-                    dialog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
-
-                    _ = dialog.ShowAsync();
+                    bindings.App.mainWindow.ShowLoadingDialog();
 
                     List<BundledPackage> packages = new();
                     foreach (BundledPackage package in Packages)
@@ -766,7 +784,7 @@ namespace ModernWindow.Interface
                     // Save serialized data
                     await Windows.Storage.FileIO.WriteTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
 
-                    dialog.Hide();
+                    bindings.App.mainWindow.HideLoadingDialog();
 
                     // Launch file
                     Process.Start(new ProcessStartInfo()
@@ -779,6 +797,7 @@ namespace ModernWindow.Interface
             }
             catch (Exception ex)
             {
+                bindings.App.mainWindow.HideLoadingDialog();
                 AppTools.Log(ex);
             }
         }

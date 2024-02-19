@@ -99,12 +99,12 @@ namespace ModernWindow.Interface.Dialogs
 
         private async void LoadIgnoredUpdates()
         {
-            IgnoreUpdatesCheckbox.IsChecked = await Package.GetIgnoredUpdatesVersion() == "*";
+            IgnoreUpdatesCheckbox.IsChecked = await Package.GetIgnoredUpdatesVersionAsync() == "*";
         }
 
         private async Task LoadVersions()
         {
-            IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnored();
+            IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
 
             string[] versions = await Package.Manager.GetPackageVersions(Package);
 
@@ -144,11 +144,11 @@ namespace ModernWindow.Interface.Dialogs
                 Options.Version = "";
 
             if (IgnoreUpdatesCheckbox.IsChecked.Value)
-                await Package.AddToIgnoredUpdates(version: "*");
+                await Package.AddToIgnoredUpdatesAsync(version: "*");
             else
             {
-                if (await Package.GetIgnoredUpdatesVersion() == "*") ;
-                await Package.RemoveFromIgnoredUpdates();
+                if (await Package.GetIgnoredUpdatesVersionAsync() == "*") ;
+                await Package.RemoveFromIgnoredUpdatesAsync();
             }
             return Options;
         }
