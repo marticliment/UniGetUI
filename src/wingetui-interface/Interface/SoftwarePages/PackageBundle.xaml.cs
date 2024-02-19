@@ -365,6 +365,7 @@ namespace ModernWindow.Interface
                 return;
             AppBarButton InstallPackages = new();
             AppBarButton OpenBundle = new();
+            AppBarButton NewBundle = new();
 
             AppBarButton RemoveSelected = new();
 
@@ -378,11 +379,13 @@ namespace ModernWindow.Interface
 
             AppBarButton HelpButton = new();
 
+            ToolBar.PrimaryCommands.Add(NewBundle);
             ToolBar.PrimaryCommands.Add(OpenBundle);
             ToolBar.PrimaryCommands.Add(ExportBundle);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallPackages);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(new AppBarElementContainer() { Content = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch } });
             ToolBar.PrimaryCommands.Add(SelectAll);
             ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
@@ -396,6 +399,7 @@ namespace ModernWindow.Interface
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
+                { NewBundle,              "New bundle" },
                 { InstallPackages,        "Install selection" },
                 { OpenBundle,             "Open existing bundle" },
                 { RemoveSelected,         "Remove selection from bundle" },
@@ -417,6 +421,7 @@ namespace ModernWindow.Interface
 
             Dictionary<AppBarButton, string> Icons = new()
             {
+                { NewBundle,              "add_to" },
                 { InstallPackages,        "newversion" },
                 { OpenBundle,             "openfolder" },
                 { RemoveSelected,         "menu_uninstall" },
@@ -439,7 +444,10 @@ namespace ModernWindow.Interface
 
             HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
 
-
+            NewBundle.Click += (s, e) =>
+            {
+                ClearList();
+            };
 
             RemoveSelected.Click += (s, e) =>
             {
