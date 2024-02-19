@@ -2,6 +2,7 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using ModernWindow.Data;
 using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
@@ -10,9 +11,11 @@ using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -40,6 +43,8 @@ namespace ModernWindow.Interface
         private bool IsDescending = true;
         private bool Initialized = false;
         private bool AllSelected = false;
+
+        private bool HasDoneBackup = false;
         TreeViewNode LocalPackagesNode;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
@@ -276,6 +281,51 @@ namespace ModernWindow.Interface
 
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
+
+            if(!HasDoneBackup)
+            {
+                if(bindings.GetSettings("EnablePackageBackup"))
+                    _ = BackupPackages();
+            }
+        }
+
+        public async Task BackupPackages()
+        {
+
+            try
+            {
+                AppTools.Log("Start backup");
+                var packagestoExport = new List<BundledPackage>();
+                foreach (var package in Packages)
+                    packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
+
+                var BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
+
+                var dirName = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
+                if (dirName == "")
+                    dirName = CoreData.WingetUI_DefaultBackupDirectory;
+
+                if(!Directory.Exists(dirName))
+                    Directory.CreateDirectory(dirName);
+
+                var fileName = bindings.GetSettingsValue("ChangeBackupFileName");
+                if (fileName == "")
+                    fileName = bindings.Translate("{pcName} installed packages").Replace("{pcName}", Environment.MachineName);
+
+                if (bindings.GetSettings("EnableBackupTimestamping"))
+                    fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+
+                fileName += ".json";
+
+                var filePath = Path.Combine(dirName, fileName);
+                await File.WriteAllTextAsync(filePath, BackupContents);
+                HasDoneBackup = true;
+                AppTools.Log("Backup saved to " + filePath);
+            } 
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
         }
 
         public void FilterPackages(string query, bool StillLoading = false)

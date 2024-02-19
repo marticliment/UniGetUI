@@ -280,10 +280,11 @@ namespace ModernWindow
 
         }
 
-        public void ShowLoadingDialog()
+        public void ShowLoadingDialog(string text)
         {
             if(LoadingDialogCount == 0 && DialogQueue.Count == 0)
             {
+                LoadingSthDalog.Title = text;
                 LoadingSthDalog.XamlRoot = NavigationPage.XamlRoot;
                 _ = LoadingSthDalog.ShowAsync();
             }

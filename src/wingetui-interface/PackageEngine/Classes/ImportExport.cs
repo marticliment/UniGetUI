@@ -148,6 +148,7 @@ namespace ModernWindow.PackageEngine.Classes
         {
             Package = package;
             InstallOptions = options;
+            IsValid = !package.Source.IsVirtualManager;
             UpdateOptions = updateOptions;
         }
 

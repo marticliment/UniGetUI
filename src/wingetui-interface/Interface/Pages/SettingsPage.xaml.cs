@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using ModernWindow.Clipboard;
 using ModernWindow.Data;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Windows.ApplicationModel.VoiceCommands;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -79,7 +81,7 @@ namespace ModernWindow.Interface
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
             if (!bindings.GetSettings("ChangeBackupOutputDirectory"))
             {
-                BackupDirectoryLabel.Text = CoreData.DEFAULT_PACKAGE_BACKUP_DIR;
+                BackupDirectoryLabel.Text = CoreData.WingetUI_DefaultBackupDirectory;
                 ResetBackupDirectory.IsEnabled = false;
             }
             else
@@ -356,7 +358,7 @@ namespace ModernWindow.Interface
 
         private void ResetBackupPath_Click(object sender, dynamic e)
         {
-            BackupDirectoryLabel.Text = CoreData.DEFAULT_PACKAGE_BACKUP_DIR;
+            BackupDirectoryLabel.Text = CoreData.WingetUI_DefaultBackupDirectory;
             bindings.SetSettings("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
@@ -390,7 +392,7 @@ namespace ModernWindow.Interface
         {
             string directory = bindings.GetSettingsValue("ChangeBackupOutputDirectory");
             if (directory == "")
-                directory = CoreData.DEFAULT_PACKAGE_BACKUP_DIR;
+                directory = CoreData.WingetUI_DefaultBackupDirectory;
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             Process.Start("explorer.exe", directory);
@@ -436,6 +438,13 @@ namespace ModernWindow.Interface
                 AppTools.Log(ex);
             }
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
+        }
+
+        private async void DoBackup_Click(object sender, ButtonCardEventArgs e)
+        {
+            bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Performing backup, please wait..."));
+            await bindings.App.mainWindow.NavigationPage.InstalledPage.BackupPackages();
+            bindings.App.mainWindow.HideLoadingDialog();
         }
     }
 }

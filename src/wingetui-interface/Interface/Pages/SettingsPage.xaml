@@ -204,6 +204,11 @@
                             </Toolkit:SettingsCard.Description>
 
                         </widgets:ButtonCard>
+                        <widgets:ButtonCard
+                            Text="Perform a backup now"
+                            ButtonText="Backup"
+                            Click="DoBackup_Click"
+                            />
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
                 <widgets:SettingsEntry

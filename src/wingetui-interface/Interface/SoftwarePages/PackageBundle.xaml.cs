@@ -214,9 +214,10 @@ namespace ModernWindow.Interface
             RootNodeForManager.Clear();
             NodesForSources.Clear();
             LocalPackagesNode.Children.Clear();
+            AppTools.Instance.App.mainWindow.NavigationPage.BundleBadge.Visibility = Visibility.Collapsed;
+            FilterPackages("");
             BackgroundText.Text = "No packages have been added yet";
             BackgroundText.Visibility = Visibility.Visible;
-            FilterPackages("");
         }
 
         public void FilterPackages(string query, bool StillLoading = false)
@@ -462,7 +463,7 @@ namespace ModernWindow.Interface
 
             InstallPackages.Click += async (s, e) =>
             {
-                bindings.App.mainWindow.ShowLoadingDialog();
+                bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Preparing packages, please wait..."));
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
                     {
@@ -559,7 +560,7 @@ namespace ModernWindow.Interface
 
         public async Task AddPackages(IEnumerable<Package> packages)
         {
-            bindings.App.mainWindow.ShowLoadingDialog();
+            bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Preparing packages, please wait..."));
             var bundled = new List<BundledPackage>();
             foreach (var pkg in packages)
             {
@@ -602,7 +603,7 @@ namespace ModernWindow.Interface
                 if (file == null)
                     return;
 
-                bindings.App.mainWindow.ShowLoadingDialog();
+                bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Loading packages, please wait..."));
 
                 // Read file
                 BundleFormatType formatType;
@@ -718,8 +719,6 @@ namespace ModernWindow.Interface
             }
         }
 
-
-
         public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
@@ -774,7 +773,7 @@ namespace ModernWindow.Interface
                 if (file != null)
                 {
                     // Loading dialog
-                    bindings.App.mainWindow.ShowLoadingDialog();
+                    bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Saving packages, please wait..."));
 
                     List<BundledPackage> packages = new();
                     foreach (BundledPackage package in Packages)
