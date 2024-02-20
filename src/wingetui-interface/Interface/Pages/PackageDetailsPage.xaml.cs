@@ -123,6 +123,23 @@ namespace ModernWindow.Interface.Dialogs
             Info = await Package.Manager.GetPackageDetails(Package);
             AppTools.Log("Received info " + Info);
 
+            string command = "";
+
+            switch (FutureOperation)
+            {
+                case OperationType.Install:
+                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetInstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
+                    break;
+
+                case OperationType.Uninstall:
+                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUninstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
+                    break;  
+
+                case OperationType.Update:
+                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUpdateParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
+                    break;
+            }
+            CommandTextBlock.Text = command;
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 

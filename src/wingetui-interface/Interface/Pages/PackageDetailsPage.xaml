@@ -72,12 +72,16 @@
                 </StackPanel>
 
                 <!-- Install and Share button -->
-                <Grid Name="ActionsPanel"  VerticalAlignment="Top">
+                <Grid Name="ActionsPanel"  VerticalAlignment="Top" RowSpacing="8" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10000*" MaxWidth="250"/>
                         <ColumnDefinition Width="*" MinWidth="16"/>
                         <ColumnDefinition Width="10000*" MaxWidth="250"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <Button Grid.Column="0" Name="ShareButton" Click="ShareButton_Click" CornerRadius="8" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Height="40">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8" HorizontalAlignment="Center">
                             <widgets:LocalIcon IconName="share" Height="20" Width="20"/>
@@ -85,6 +89,7 @@
                         </StackPanel>
                     </Button>
                     <Button Grid.Column="2" Name="ActionButton" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Action!" Click="ActionButton_Click" Height="40" CornerRadius="8"/>
+                    <TextBox Name="CommandTextBlock" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" FontFamily="Consolas" IsReadOnly="True" Padding="12,6,12,6" CornerRadius="8" TextWrapping="Wrap"/>
                 </Grid>
 
                 <!-- Screenshots -->
