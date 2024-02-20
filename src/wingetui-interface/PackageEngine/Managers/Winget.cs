@@ -388,6 +388,26 @@ namespace ModernWindow.PackageEngine.Managers
             if (output_string.Contains("No applicable upgrade found") || output_string.Contains("No newer package versions are available from the configured sources"))
                 return OperationVeredict.Succeeded;
 
+            if(output_string.Contains("winget settings --enable InstallerHashOverride"))
+            {
+                AppTools.Log("Enabling skip hash ckeck for winget...");
+                Process p = new Process()
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = CoreData.GSudoPath,
+                        Arguments = Status.ExecutablePath + " " + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
+                    }
+                };
+                p.Start();
+                p.WaitForExit();
+                return OperationVeredict.AutoRetry;
+            }
+
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
