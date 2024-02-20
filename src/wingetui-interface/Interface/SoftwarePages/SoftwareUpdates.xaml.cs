@@ -349,6 +349,8 @@ namespace ModernWindow.Interface
                     toast.Show();
                 }
             }
+
+            // TODO: wait interval and check again
         }
 
         public void UpdateAll()
