@@ -98,13 +98,6 @@ namespace ModernWindow.Interface
             int index = 2;
             foreach (PackageManager manager in bindings.App.PackageManagerList)
             {
-                CheckboxCard card = new()
-                {
-                    Text = "Always elevate {pm} installations by default",
-                    SettingName = "AlwaysElevate" + manager.Name,
-                };
-                card._checkbox.Content = card._checkbox.Content.ToString().Replace("{pm}", manager.Name);
-                AdminSettingsExpander.Items.Insert(index++, card);
             }
 
             // Experimental Settings Section
@@ -255,13 +248,32 @@ namespace ModernWindow.Interface
                         }
                 }
 
+                
+                index = 0;
+
                 SettingsCard ManagerPath = new() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {
                     WindowsClipboard.SetText(ManagerPath.Description.ToString());
                 };
-                ExtraSettingsCards[Manager].Insert(0, ManagerPath);
+                ExtraSettingsCards[Manager].Insert(index++, ManagerPath);
+
+                CheckboxCard AdminCard = new()
+                {
+                    Text = "Always run {pm} operations with administrator rights",
+                    SettingName = "AlwaysElevate" + Manager.Name,
+                };
+                AdminCard._checkbox.Content = AdminCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
+                ExtraSettingsCards[Manager].Insert(index++, AdminCard);
+
+                CheckboxCard ParallelCard = new()
+                {
+                    Text = "Allow {pm} operations to be performed in parallel",
+                    SettingName = "AlwaysElevate" + Manager.Name,
+                };
+                ParallelCard._checkbox.Content = ParallelCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
+                ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
 
                 if (Manager is PackageManagerWithSources)
@@ -270,7 +282,7 @@ namespace ModernWindow.Interface
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
                     SourceManager SourceManager = new(Manager as PackageManagerWithSources);
                     SourceManagerCard.Description = SourceManager;
-                    ExtraSettingsCards[Manager].Insert(1, SourceManagerCard);
+                    ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
                 }
 
                 if (ExtraSettingsCards.ContainsKey(Manager))

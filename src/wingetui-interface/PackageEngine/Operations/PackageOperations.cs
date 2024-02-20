@@ -53,6 +53,33 @@ namespace ModernWindow.PackageEngine.Operations
             Options = options;
             MainProcedure();
         }
+
+        protected override async Task WaitForAvailability()
+        {
+            if(bindings.GetSettings("AllowParallelInstalls") || bindings.GetSettings("AllowParallelInstallsForManager" + Package.Manager.Name))
+            {
+                AppTools.Log("Parallel installs are allowed. Skipping queue check");
+                return;
+            }
+
+            AddToQueue();
+            int currentIndex = -2;
+            int oldIndex = -1;
+            while (currentIndex != 0)
+            {
+                if (Status == OperationStatus.Cancelled)
+                    return; // If th operation has been cancelled
+
+                currentIndex = bindings.OperationQueue.IndexOf(this);
+                if (currentIndex != oldIndex)
+                {
+                    LineInfoText = bindings.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
+                    oldIndex = currentIndex;
+                }
+                await Task.Delay(100);
+            }
+        }
+
         public PackageOperation(Package package) : this(package, new InstallationOptions(package)) { }
     }
 

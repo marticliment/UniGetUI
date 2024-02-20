@@ -260,7 +260,7 @@ namespace ModernWindow.PackageEngine
             if (Index != -1)
                 bindings.OperationQueue.Remove(this);
         }
-        private void AddToQueue()
+        protected void AddToQueue()
         {
             if (!bindings.OperationQueue.Contains(this))
                 bindings.OperationQueue.Add(this);
@@ -283,12 +283,12 @@ namespace ModernWindow.PackageEngine
             _ = Close();
         }
 
-        private void AddToQueue_Priority()
+        protected void AddToQueue_Priority()
         {
             bindings.OperationQueue.Insert(0, this);
         }
 
-        private async Task WaitForAvailability()
+        protected virtual async Task WaitForAvailability()
         {
             AddToQueue();
             int currentIndex = -2;
@@ -307,13 +307,13 @@ namespace ModernWindow.PackageEngine
                 await Task.Delay(100);
             }
         }
-        private async Task PreMainThread()
+        protected async Task PreMainThread()
         {
             Status = OperationStatus.Pending;
             await WaitForAvailability();
             await MainThread();
         }
-        private async Task MainThread()
+        protected async Task MainThread()
         {
             try
             {

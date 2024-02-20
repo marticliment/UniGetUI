@@ -10,7 +10,7 @@ namespace ModernWindow.Data
 {
     public static class CoreData
     {
-        public static string VersionName = "3.0-alpha0";
+        public static string VersionName = "3.0-alpha1";
         public static double VersionNumber = 2.98;
 
         private static string __ignored_updates_database_file = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "IgnoredPackageUpdates.json");
