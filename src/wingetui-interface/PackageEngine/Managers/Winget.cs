@@ -16,8 +16,8 @@ namespace ModernWindow.PackageEngine.Managers
 {
     public class Winget : PackageManagerWithSources
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "have", "the", "Id" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
+        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "e(s)", "have", "the", "Id" };
+        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
         private static LocalPcSource LocalPcSource { get; } = new LocalPcSource();
         private static AndroidSubsystemSource AndroidSubsystemSource { get; } = new AndroidSubsystemSource();
