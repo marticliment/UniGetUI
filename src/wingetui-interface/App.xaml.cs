@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
+using YamlDotNet.Serialization;
 
 namespace ModernWindow
 {
@@ -63,7 +64,15 @@ namespace ModernWindow
                     appWindow.Closing += mainWindow.HandleClosingEvent;
 
                 // Clear old notifications and register the activation event
+                try { 
                 ToastNotificationManagerCompat.History.Clear();
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
+                try { 
                 ToastNotificationManagerCompat.OnActivated += toastArgs =>
                 {
                     ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
@@ -73,6 +82,13 @@ namespace ModernWindow
                         mainWindow.HandleNotificationActivation(args, userInput);
                     });
                 };
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
+
 
                 // Start async loading of components
                 LoadComponents();

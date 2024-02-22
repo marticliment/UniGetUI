@@ -71,12 +71,19 @@ namespace ModernWindow.PackageEngine.Operations
         {
             LineInfoText = bindings.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                try
+                {
+                    new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Installation failed"))
                     .AddText(bindings.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
 
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
@@ -107,11 +114,19 @@ namespace ModernWindow.PackageEngine.Operations
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = bindings.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                
+                try{
+                    new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Addition succeeded"))
                     .AddText(bindings.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -209,11 +224,18 @@ namespace ModernWindow.PackageEngine.Operations
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = bindings.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+                try { 
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Removal succeeded"))
                     .AddText(bindings.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }

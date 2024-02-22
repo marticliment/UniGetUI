@@ -134,12 +134,18 @@ namespace ModernWindow.PackageEngine.Operations
         {
             LineInfoText = bindings.Translate("{package} installation failed").Replace("{package}", Package.Name);
             if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
+                try { 
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Installation failed"))
                     .AddText(bindings.Translate("{package} could not be installed").Replace("{package}", Package.Name)).Show();
 
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
@@ -171,11 +177,19 @@ namespace ModernWindow.PackageEngine.Operations
             bindings.App.mainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                
+                try{
+                    new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Installation succeeded"))
                     .AddText(bindings.Translate("{package} was installed successfully").Replace("{package}", Package.Name)).Show();
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -237,12 +251,17 @@ namespace ModernWindow.PackageEngine.Operations
         {
             LineInfoText = bindings.Translate("{package} update failed. Click here for more details.").Replace("{package}", Package.Name);
             if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                try{new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Update failed"))
                     .AddText(bindings.Translate("{package} could not be updated").Replace("{package}", Package.Name)).Show();
 
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
@@ -273,11 +292,17 @@ namespace ModernWindow.PackageEngine.Operations
             LineInfoText = bindings.Translate("{package} was updated successfully").Replace("{package}", Package.Name);
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                try{new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(bindings.Translate("Update succeeded"))
                 .AddText(bindings.Translate("{package} was updated successfully").Replace("{package}", Package.Name)).Show();
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -341,12 +366,17 @@ namespace ModernWindow.PackageEngine.Operations
             LineInfoText = bindings.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
 
             if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                try{new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(bindings.Translate("Uninstallation failed"))
                     .AddText(bindings.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name)).Show();
 
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
 
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -379,11 +409,17 @@ namespace ModernWindow.PackageEngine.Operations
             bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             bindings.App.mainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
             if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
-                new ToastContentBuilder()
+                try{new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(bindings.Translate("Uninstall succeeded"))
                 .AddText(bindings.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name)).Show();
+
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }

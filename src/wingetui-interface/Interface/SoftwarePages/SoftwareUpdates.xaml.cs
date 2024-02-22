@@ -329,24 +329,31 @@ namespace ModernWindow.Interface
 
                 if (!bindings.GetSettings("DisableUpdatesNotifications") && !bindings.GetSettings("DisableNotifications"))
                 {
-                    ToastContentBuilder toast = new();
-                    toast.AddArgument("action", "openWingetUI");
-                    toast.AddArgument("notificationId", CoreData.UpdatesAvailableNotificationId);
-                    toast.AddText(title);
-                    toast.AddText(body);
-                    toast.AddAttributionText(attribution);
-                    if (ShowButtons)
+                    try
                     {
-                        toast.AddButton(new ToastButton()
-                            .SetContent(bindings.Translate("Open WingetUI"))
-                            .AddArgument("action", "openWingetUI")
-                            .SetBackgroundActivation());
-                        toast.AddButton(new ToastButton()
-                            .SetContent(bindings.Translate("Update all"))
-                            .AddArgument("action", "updateAll")
-                            .SetBackgroundActivation());
+
+                        ToastContentBuilder toast = new();
+                        toast.AddArgument("action", "openWingetUI");
+                        toast.AddArgument("notificationId", CoreData.UpdatesAvailableNotificationId);
+                        toast.AddText(title);
+                        toast.AddText(body);
+                        toast.AddAttributionText(attribution);
+                        if (ShowButtons)
+                        {
+                            toast.AddButton(new ToastButton()
+                                .SetContent(bindings.Translate("Open WingetUI"))
+                                .AddArgument("action", "openWingetUI")
+                                .SetBackgroundActivation());
+                            toast.AddButton(new ToastButton()
+                                .SetContent(bindings.Translate("Update all"))
+                                .AddArgument("action", "updateAll")
+                                .SetBackgroundActivation());
+                        }
+                        toast.Show();
+                    } catch (Exception ex)
+                    {
+                        AppTools.Log(ex);
                     }
-                    toast.Show();
                 }
             }
 
