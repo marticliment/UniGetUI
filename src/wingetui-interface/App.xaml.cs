@@ -136,7 +136,6 @@ namespace ModernWindow
                     while (!manager.ManagerReady && Environment.TickCount - StartTime < 10000)
                     {
                         await Task.Delay(100);
-                        AppTools.Log("Waiting for manager " + manager.Name);
                     }
                     AppTools.Log(manager.Name + " ready");
                 }

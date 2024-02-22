@@ -42,6 +42,7 @@ namespace ModernWindow.Interface
         private bool Initialized = false;
         private bool AllSelected = true;
 
+
         public string InstantSearchSettingString = "DisableInstantSearchUpdatesTab";
         public SoftwareUpdatesPage()
         {
@@ -431,18 +432,19 @@ namespace ModernWindow.Interface
                 MatchingList = Packages.Where(x => CharsFunc(x.Name).Contains(CharsFunc(query)) | CharsFunc(x.Id).Contains(CharsFunc(query))).ToArray();
 
             FilteredPackages.BlockSorting = true;
-            int HiddenPackagesDueToSource = 0;
             foreach (UpgradablePackage match in MatchingList)
             {
                 if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
-                else
-                    HiddenPackagesDueToSource++;
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
+            UpdatePackageCount(StillLoading);
+        }
 
-            if (MatchingList.Count() == 0)
+        public void UpdatePackageCount(bool StillLoading = false)
+        { 
+            if (FilteredPackages.Count() == 0)
             {
                 if (!StillLoading)
                 {
@@ -456,7 +458,7 @@ namespace ModernWindow.Interface
                     {
                         BackgroundText.Text = "No results were found matching the input criteria";
                         SourcesPlaceholderText.Text = "No packages were found";
-                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -465,7 +467,7 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
             }
 
             bindings.App.mainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
@@ -763,8 +765,7 @@ namespace ModernWindow.Interface
                     if (FilteredPackages.Contains(package))
                         FilteredPackages.Remove(package);
                 }
-            if (bindings.App.mainWindow.NavigationPage.CurrentPage != bindings.App.mainWindow.NavigationPage.UpdatesPage)
-                FilterPackages(QueryBlock.Text.Trim());
+            UpdatePackageCount();
         }
 
     }

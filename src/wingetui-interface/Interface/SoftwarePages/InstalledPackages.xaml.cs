@@ -400,8 +400,12 @@ namespace ModernWindow.Interface
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
+            UpdatePackageCount(StillLoading);
+        }
 
-            if (MatchingList.Count() == 0)
+        public void UpdatePackageCount(bool StillLoading = false)
+        { 
+            if (FilteredPackages.Count() == 0)
             {
                 if (!StillLoading)
                 {
@@ -415,7 +419,7 @@ namespace ModernWindow.Interface
                     {
                         BackgroundText.Text = "No results were found matching the input criteria";
                         SourcesPlaceholderText.Text = "No packages were found";
-                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -424,7 +428,7 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
             }
         }
 
@@ -752,8 +756,7 @@ namespace ModernWindow.Interface
                     if (FilteredPackages.Contains(package))
                         FilteredPackages.Remove(package);
                 }
-            if (bindings.App.mainWindow.NavigationPage.CurrentPage != bindings.App.mainWindow.NavigationPage.InstalledPage)
-                FilterPackages(QueryBlock.Text.Trim());
+            UpdatePackageCount();
         }
         public void AddInstalledPackage(Package foreignPackage)
         {
@@ -761,7 +764,7 @@ namespace ModernWindow.Interface
                 if (package == foreignPackage || package.Equals(foreignPackage))
                     return;
             Packages.Add(foreignPackage);
-            FilterPackages(QueryBlock.Text.Trim());
+            UpdatePackageCount();
         }
 
     }
