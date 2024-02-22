@@ -32,7 +32,7 @@ namespace ModernWindow.PackageEngine.Managers
                         FileName = path,
                         Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
                         UseShellExecute = true,
-                        CreateNoWindow = true
+                        CreateNoWindow = true,
                     }
                 };
                 proc.Start();
@@ -49,7 +49,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 
@@ -95,7 +96,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 
@@ -143,7 +145,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 
@@ -398,7 +401,8 @@ namespace ModernWindow.PackageEngine.Managers
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
             process.Start();
@@ -422,7 +426,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardInput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 

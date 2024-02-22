@@ -50,7 +50,8 @@ public class Scoop : PackageManagerWithSources
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
 
@@ -113,7 +114,8 @@ public class Scoop : PackageManagerWithSources
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
 
@@ -168,7 +170,8 @@ public class Scoop : PackageManagerWithSources
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
 
@@ -247,7 +250,8 @@ public class Scoop : PackageManagerWithSources
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
+            StandardOutputEncoding = System.Text.Encoding.UTF8
         };
 
         p.Start();
@@ -374,6 +378,7 @@ public class Scoop : PackageManagerWithSources
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
 
             List<string> output = new();
             List<ManagerSource> sources = new();
@@ -560,7 +565,8 @@ public class Scoop : PackageManagerWithSources
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
         process.Start();

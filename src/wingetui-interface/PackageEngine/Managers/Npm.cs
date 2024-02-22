@@ -28,7 +28,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -67,7 +68,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -94,7 +96,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -126,7 +129,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -153,7 +157,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -245,7 +250,8 @@ namespace ModernWindow.PackageEngine.Managers
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
                         CreateNoWindow = true,
-                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                        StandardOutputEncoding = System.Text.Encoding.UTF8
                     };
 
                     p.Start();
@@ -375,7 +381,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
             process.Start();
@@ -401,7 +408,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 

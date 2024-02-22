@@ -28,7 +28,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -72,7 +73,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -116,7 +118,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -273,7 +276,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             process.StartInfo = startInfo;
             process.Start();
@@ -373,7 +377,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             process.StartInfo = startInfo;
@@ -481,7 +486,8 @@ namespace ModernWindow.PackageEngine.Managers
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
             process.Start();
@@ -507,7 +513,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 

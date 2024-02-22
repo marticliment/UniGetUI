@@ -30,7 +30,8 @@ namespace ModernWindow.PackageEngine.Managers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
             p.Start();
@@ -75,7 +76,7 @@ namespace ModernWindow.PackageEngine.Managers
                         FileName = path,
                         Arguments = Properties.ExecutableCallArgs + " install dotnet-tools-outdated.exe",
                         UseShellExecute = true,
-                        CreateNoWindow = true
+                        CreateNoWindow = true,
                     }
                 };
                 proc.Start();
@@ -92,7 +93,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 
@@ -140,7 +142,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 
@@ -179,7 +182,8 @@ namespace ModernWindow.PackageEngine.Managers
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
 
@@ -378,7 +382,7 @@ namespace ModernWindow.PackageEngine.Managers
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
                 SupportsPreRelease = true,
-                SupportsCustomLocations = true,
+                SupportsCustomLocations = true
             };
         }
 
@@ -419,7 +423,8 @@ namespace ModernWindow.PackageEngine.Managers
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
             process.Start();
