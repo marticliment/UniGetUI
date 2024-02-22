@@ -376,7 +376,7 @@ namespace ModernWindow.PackageEngine.Managers
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install --upgrade",
-                ExecutableCallArgs = "-m pip",
+                ExecutableCallArgs = " -m pip",
 
             };
             return properties;
