@@ -15,11 +15,12 @@ namespace ModernWindow
         [STAThread]
         static void Main(string[] args)
         {
+            // Having an async main method breaks WebView2
             try
             {
-                // Having an async main method breaks WebView2
                 CoreData.IsDaemon = args.Contains("--daemon");
 
+                // If the app is being uninstalled, we need to uninstall the toast notification activator
                 if (args.Contains("--uninstall-wingetui"))
                     UninstallPreps();
                 else
@@ -35,6 +36,8 @@ namespace ModernWindow
         {
             try
             {
+
+                // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
                 bool isRedirect = await DecideRedirection();
                 if (!isRedirect) // Sometimes, redirection fails, so we try again
@@ -42,6 +45,7 @@ namespace ModernWindow
                 if (!isRedirect) // Sometimes, redirection fails, so we try again (second time)
                     isRedirect = await DecideRedirection();
 
+                // If this is the main instance, start the app
                 if (!isRedirect)
                 {
                     Microsoft.UI.Xaml.Application.Start((p) =>
@@ -62,7 +66,8 @@ namespace ModernWindow
         {
             try
             {
-
+                // Idk how does this work, I copied it from the MS Docs
+                // example on single-instance apps using unpackaged AppSdk + WinUI3
                 bool isRedirect = false;
                 AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
                 ExtendedActivationKind kind = args.Kind;

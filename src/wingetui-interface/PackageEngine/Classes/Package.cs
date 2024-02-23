@@ -9,10 +9,12 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using static ModernWindow.PackageEngine.Classes.InstallationOptions;
 
 namespace ModernWindow.PackageEngine.Classes
 {
+    /// <summary>
+    /// Represents the scope of a package. To be coherent with package manager naming, the values are repeated.
+    /// </summary>
     public enum PackageScope
     {
         // Repeated entries for coherence with Package Managers
@@ -21,13 +23,19 @@ namespace ModernWindow.PackageEngine.Classes
         Local = 0,
         User = 0,
     }
+
+    /// <summary>
+    /// This class represents a installable package or a package that is already installed.
+    /// </summary>
     public class Package : INotifyPropertyChanged
     {
-
+        // Internal properties
         public AppTools bindings = AppTools.Instance;
-
         private bool __is_checked = false;
+        public event PropertyChangedEventHandler PropertyChanged;
 
+
+        // Public properties
         public bool IsChecked { get { return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
@@ -39,22 +47,25 @@ namespace ModernWindow.PackageEngine.Classes
         public string UniqueId { get; }
         public string NewVersion { get; }
         public bool IsUpgradable { get; } = false;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public PackageScope Scope { get; set; }
         public string SourceAsString
         {
             get
             {
-                if (Source != null)
-                    return Source.ToString();
+                if (Source != null) return Source.ToString();
                 else return "";
             }
         }
 
-
-
+        /// <summary>
+        /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="id"></param>
+        /// <param name="version"></param>
+        /// <param name="source"></param>
+        /// <param name="manager"></param>
+        /// <param name="scope"></param>
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
         {
             Name = name;
@@ -76,11 +87,10 @@ namespace ModernWindow.PackageEngine.Classes
                 return Source == (obj as Package).Source && Id == (obj as Package).Id;
         }
 
-        public Package _get_self_package()
-        {
-            return this;
-        }
-
+        /// <summary>
+        /// Load the package's normalized icon id,
+        /// </summary>
+        /// <returns>a string with the package's normalized icon id</returns>
         public string GetIconId()
         {
             string iconId = Id.ToLower();
@@ -93,6 +103,10 @@ namespace ModernWindow.PackageEngine.Classes
             return iconId;
         }
 
+        /// <summary>
+        /// Get the package's icon url. If the package has no icon, a fallback image is returned.
+        /// </summary>
+        /// <returns>An always-valid URI object</returns>
         public Uri GetIconUrl()
         {
             string iconId = GetIconId();
@@ -103,6 +117,10 @@ namespace ModernWindow.PackageEngine.Classes
             return new Uri("ms-appx:///Assets/Images/package_color.png"); // TODO: Fallback image!
         }
 
+        /// <summary>
+        /// Returns a float representation of the package's version for comparison purposes.
+        /// </summary>
+        /// <returns>A float value. Returns 0.0F if the version could not be parsed</returns>
         public float GetFloatVersion()
         {
             string _ver = "";
@@ -130,6 +148,12 @@ namespace ModernWindow.PackageEngine.Classes
             return res;
         }
 
+        /// <summary>
+        /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.
+        /// Calling this method will override older ignored updates.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
         public async Task AddToIgnoredUpdatesAsync(string version = "*")
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
@@ -143,6 +167,10 @@ namespace ModernWindow.PackageEngine.Classes
             // TODO: Change InstalledPackages flag to show that the package is ignored, add to IgnoredPackages if applicable
         }
 
+        /// <summary>
+        /// Removes the package from the ignored updates list, either if it is ignored for all updates or for a specific version only.
+        /// </summary>
+        /// <returns></returns>
         public async Task RemoveFromIgnoredUpdatesAsync()
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
@@ -157,6 +185,14 @@ namespace ModernWindow.PackageEngine.Classes
 
         }
 
+        /// <summary>
+        /// Returns true if the package's updates are ignored. If the version parameter
+        /// is passed it will be checked if that version is ignored. Please note that if 
+        /// all updates are ignored, calling this method with a specific version will 
+        /// still return true, although the passed version is not explicitly ignored. 
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
         public async Task<bool> HasUpdatesIgnoredAsync(string version = "*")
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
@@ -167,6 +203,12 @@ namespace ModernWindow.PackageEngine.Classes
                 return false;
         }
 
+        /// <summary>
+        /// Returns (as a string) the version for which a package has been ignored. When no versions 
+        /// are ignored, an empty string will be returned; and when all versions are ignored an asterisk
+        /// will be returned.
+        /// </summary>
+        /// <returns></returns>
         public async Task<string> GetIgnoredUpdatesVersionAsync()
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
