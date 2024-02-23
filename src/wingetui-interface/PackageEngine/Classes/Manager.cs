@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 namespace ModernWindow.PackageEngine.Classes
 {
 
+    /// <summary>
+    /// Absract class that all managers must implement
+    /// </summary>
     public abstract class PackageManager : SingletonBase<PackageManager>
     {
         public ManagerProperties Properties { get; set; } = new();
@@ -18,16 +21,15 @@ namespace ModernWindow.PackageEngine.Classes
         public string Name { get; set; } = "Unset";
         public static AppTools bindings = AppTools.Instance;
         public ManagerSource MainSource { get; set; }
-
         public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
-
         public bool ManagerReady { get; set; } = false;
 
-        protected PackageManager()
-        {
-        }
+        /// <summary>
+        /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
+        /// </summary>
+        /// <returns></returns>
         public async Task Initialize()
         {
             try
@@ -69,16 +71,38 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Returns a ManagerProperties object representing the properties of the package manager
+        /// </summary>
+        /// <returns></returns>
         protected abstract ManagerProperties GetProperties();
+        /// <summary>
+        /// Returns a ManagerCapabilities object representing the capabilities of the package manager
+        /// </summary>
+        /// <returns></returns>
         protected abstract ManagerCapabilities GetCapabilities();
+        /// <summary>
+        /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
+        /// </summary>
+        /// <returns></returns>
         protected abstract Task<ManagerStatus> LoadManager();
 
+        /// <summary>
+        /// Returns true if the manager is enabled, false otherwise
+        /// </summary>
+        /// <returns></returns>
         public bool IsEnabled()
         {
             return !bindings.GetSettings("Disable" + Name);
         }
 
-        public virtual async Task<Package[]> FindPackages(string query)
+        /// <summary>
+        /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may 
+        /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public async Task<Package[]> FindPackages(string query)
         {
             try
             {
@@ -90,7 +114,14 @@ namespace ModernWindow.PackageEngine.Classes
                 return new Package[] { };
             }
         }
-        public virtual async Task<UpgradablePackage[]> GetAvailableUpdates()
+
+        /// <summary>
+        /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager. 
+        /// This method is fail-safe and will return an empty array if an error occurs.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public async Task<UpgradablePackage[]> GetAvailableUpdates()
         {
             try
             {
@@ -102,7 +133,13 @@ namespace ModernWindow.PackageEngine.Classes
                 return new UpgradablePackage[] { };
             }
         }
-        public virtual async Task<Package[]> GetInstalledPackages()
+
+        /// <summary>
+        /// Returns an array of Package objects that represent the installed reported by the manager. 
+        /// This method is fail-safe and will return an empty array if an error occurs.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Package[]> GetInstalledPackages()
         {
             try
             {
@@ -114,7 +151,15 @@ namespace ModernWindow.PackageEngine.Classes
                 return new Package[] { };
             }
         }
-        public virtual async Task<PackageDetails> GetPackageDetails(Package package)
+
+        /// <summary>
+        /// Returns a PackageDetails object that represents the details for the given Package object.
+        /// This method is fail-safe and will return a valid but empty PackageDetails object with the package 
+        /// id if an error occurs.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        public async Task<PackageDetails> GetPackageDetails(Package package)
         {
             try
             {
@@ -127,7 +172,14 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
-        public virtual async Task<string[]> GetPackageVersions(Package package)
+        /// <summary>
+        /// Returns the available versions to install for the given package. 
+        /// If the manager does not support listing the versions, an empty array will be returned.
+        /// This method is fail-safe and will return an empty array if an error occurs.
+        /// </summary>
+        /// <param name="package">The package from which to load its versions</param>
+        /// <returns>An array of stings containing the found versions, an empty array if none.</returns>
+        public async Task<string[]> GetPackageVersions(Package package)
         {
             try
             {
@@ -143,18 +195,120 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Returns the available versions to install for the given package. 
+        /// If the manager does not support listing the versions, an empty array must be returned.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The package from which to load its versions</param>
+        /// <returns>An array of stings containing the found versions, an empty array if none.</returns>
         protected abstract Task<string[]> GetPackageVersions_Unsafe(Package package);
+
+        /// <summary>
+        /// Returns the available packages to install for the given query.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="query">The query string to search for</param>
+        /// <returns>An array of Package objects</returns>
         protected abstract Task<Package[]> FindPackages_UnSafe(string query);
+
+        /// <summary>
+        /// Returns the available updates reported by the manager.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <returns>An array of UpgradablePackage objects</returns>
         protected abstract Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe();
+
+        /// <summary>
+        /// Returns an array of Package objects containing the installed packages reported by the manager.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <returns>An array of Package objects</returns>
         protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
+
+        /// <summary>
+        /// Returns the specific details and info for the given package.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The package for which to load the details</param>
+        /// <returns>A PackageDetails with the package details loaded</returns>
         public abstract Task<PackageDetails> GetPackageDetails_UnSafe(Package package);
+
+
+        /// <summary>
+        /// Returns the command-line parameters to install the given package.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The Package going to be installed</param>
+        /// <param name="options">The options in which it is going to be installed</param>
+        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
         public abstract string[] GetInstallParameters(Package package, InstallationOptions options);
+
+
+        /// <summary>
+        /// Returns the command-line parameters to update the given package.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The Package going to be updated</param>
+        /// <param name="options">The options in which it is going to be updated</param>
+        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
         public abstract string[] GetUpdateParameters(Package package, InstallationOptions options);
+
+        /// <summary>
+        /// Returns the command-line parameters to uninstall the given package.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The Package going to be uninstalled</param>
+        /// <param name="options">The options in which it is going to be uninstalled</param>
+        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
         public abstract string[] GetUninstallParameters(Package package, InstallationOptions options);
+
+        /// <summary>
+        /// Decides and returns the verdict of the install operation.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The package that was installed</param>
+        /// <param name="options">The options with which the package was installed. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
+        /// <param name="ReturnCode">The exit code of the process</param>
+        /// <param name="Output">the output of the process</param>
+        /// <returns>An OperationVeredict value representing the result of the installation</returns>
         public abstract OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+
+
+        /// <summary>
+        /// Decides and returns the verdict of the update operation.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The package that was updated</param>
+        /// <param name="options">The options with which the package was updated. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
+        /// <param name="ReturnCode">The exit code of the process</param>
+        /// <param name="Output">the output of the process</param>
+        /// <returns>An OperationVeredict value representing the result of the update</returns>
         public abstract OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+
+        /// <summary>
+        /// Decides and returns the verdict of the uninstall operation.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <param name="package">The package that was uninstalled</param>
+        /// <param name="options">The options with which the package was uninstalled. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
+        /// <param name="ReturnCode">The exit code of the process</param>
+        /// <param name="Output">the output of the process</param>
+        /// <returns>An OperationVeredict value representing the result of the uninstall</returns>
         public abstract OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+
+        /// <summary>
+        /// Refreshes the Package Manager sources/indexes
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <returns></returns>
         public abstract Task RefreshSources();
+
+        /// <summary>
+        /// Returns the main source for the manager, even if the manager does not support custom sources.
+        /// Each manager MUST implement this method.
+        /// </summary>
+        /// <returns>A ManagerSource object representing the main source/index</returns>
         public abstract ManagerSource GetMainSource();
     }
 
@@ -185,6 +339,7 @@ namespace ModernWindow.PackageEngine.Classes
         public abstract string[] GetAddSourceParameters(ManagerSource source);
         public abstract string[] GetRemoveSourceParameters(ManagerSource source);
         public abstract OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
+        
         public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
         protected abstract Task<ManagerSource[]> GetSources_UnSafe();
     }

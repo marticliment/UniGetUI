@@ -46,7 +46,7 @@ namespace ModernWindow.PackageEngine.Classes
         public PackageManager Manager { get; }
         public string UniqueId { get; }
         public string NewVersion { get; }
-        public bool IsUpgradable { get; } = false;
+        public virtual bool IsUpgradable { get; } = false;
         public PackageScope Scope { get; set; }
         public string SourceAsString
         {
@@ -79,6 +79,11 @@ namespace ModernWindow.PackageEngine.Classes
             VersionAsFloat = GetFloatVersion();
         }
 
+        /// <summary>
+        /// Internal method
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (!(obj is Package))
@@ -218,6 +223,11 @@ namespace ModernWindow.PackageEngine.Classes
             else
                 return "";
         }
+
+        /// <summary>
+        /// Internal method to raise the PropertyChanged event.
+        /// </summary>
+        /// <param name="name"></param>
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -227,11 +237,21 @@ namespace ModernWindow.PackageEngine.Classes
 
     public class UpgradablePackage : Package
     {
+        // Public properties
         public new string NewVersion { get; }
-
         public float NewVersionAsFloat { get; }
-        public new bool IsUpgradable { get; } = true;
+        public override bool IsUpgradable { get; } = true;
 
+        /// <summary>
+        /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="id"></param>
+        /// <param name="installed_version"></param>
+        /// <param name="new_version"></param>
+        /// <param name="source"></param>
+        /// <param name="manager"></param>
+        /// <param name="scope"></param>
         public UpgradablePackage(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local) : base(name, id, installed_version, source, manager, scope)
         {
             NewVersion = new_version;
@@ -239,6 +259,10 @@ namespace ModernWindow.PackageEngine.Classes
             NewVersionAsFloat = GetFloatNewVersion();
         }
 
+        /// <summary>
+        /// Returns a float value representing the new new version of the package, for comparison purposes.
+        /// </summary>
+        /// <returns></returns>
         public float GetFloatNewVersion()
         {
             string _ver = "";
@@ -268,11 +292,11 @@ namespace ModernWindow.PackageEngine.Classes
             return res;
         }
 
-        public new UpgradablePackage _get_self_package()
-        {
-            return this;
-        }
-
+        /// <summary>
+        /// This version will check if the new version of the package is already present 
+        /// on the InstalledPackages list, to prevent already installed updates from being updated again.
+        /// </summary>
+        /// <returns></returns>
         public bool NewVersionIsInstalled()
         {
             foreach (Package package in bindings.App.mainWindow.NavigationPage.InstalledPage.Packages)
@@ -282,6 +306,9 @@ namespace ModernWindow.PackageEngine.Classes
         }
     }
 
+    /// <summary>
+    /// The properties of a given package.
+    /// </summary>
     public class PackageDetails
     {
         public Package Package { get; }
@@ -304,11 +331,13 @@ namespace ModernWindow.PackageEngine.Classes
         public string UpdateDate { get; set; } = "";
         public string ReleaseNotes { get; set; } = "";
         public Uri ReleaseNotesUrl { get; set; } = null;
-        public string[] Versions { get; set; } = new string[0];
-        public string[] Architectures { get; set; } = new string[0];
-        public string[] Scopes { get; set; } = new string[0];
         public string[] Tags { get; set; } = new string[0];
 
+        /// <summary>
+        /// Construct a PackageDetails object from a given package. The constructor does 
+        /// NOT load the package's details. They must be loaded manually
+        /// </summary>
+        /// <param name="package"></param>
         public PackageDetails(Package package)
         {
             Package = package;
@@ -323,6 +352,9 @@ namespace ModernWindow.PackageEngine.Classes
         }
     }
 
+    /// <summary>
+    /// This class represents the options in which a package must be installed, updated or uninstalled.
+    /// </summary>
     public class InstallationOptions
     {
         public bool SkipHashCheck { get; set; } = false;
@@ -340,6 +372,13 @@ namespace ModernWindow.PackageEngine.Classes
 
         private string _saveFileName = "Unknown.Unknown.InstallationOptions";
 
+        /// <summary>
+        /// Construct a new InstallationOptions object for a given package. The options will be 
+        /// loaded from disk unless the reset parameter is set to true, in which case the options
+        /// will be the default ones.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="reset"></param>
         public InstallationOptions(Package package, bool reset = false)
         {
             Package = package;
@@ -350,6 +389,12 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Returns a new InstallationOptions object from a given package. The options will be
+        /// loaded from the disk asynchronously.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
         public static async Task<InstallationOptions> FromPackageAsync(Package package)
         {
             var options = new InstallationOptions(package, reset: true);
@@ -357,18 +402,31 @@ namespace ModernWindow.PackageEngine.Classes
             return options;
         }
 
+        /// <summary>
+        /// Overload of the constructor that accepts an UpgradablePackage object.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="reset"></param>
         public InstallationOptions(UpgradablePackage package, bool reset = false) : this((Package)package, reset)
-        {
-            if (!reset)
-                LoadOptionsFromDisk();
-        }
+        { }
 
+        /// <summary>
+        /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="package"></param>
+        /// <returns></returns>
         public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, Package package)
         {
             InstallationOptions opt = new(package, reset: true);
             opt.FromSerialized(options);
             return opt;
         }
+
+        /// <summary>
+        /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
+        /// </summary>
+        /// <param name="options"></param>
         public void FromSerialized(SerializableInstallationOptions_v1 options)
         {
             SkipHashCheck = options.SkipHashCheck;
@@ -384,11 +442,19 @@ namespace ModernWindow.PackageEngine.Classes
             CustomParameters = options.CustomParameters;
         }
 
+        /// <summary>
+        /// Returns a string containing the JSON representation with the options of the current instance.
+        /// </summary>
+        /// <returns></returns>
         public string GetJsonString()
         {
             return JsonSerializer.Serialize(Serialized());
         }
 
+        /// <summary>
+        /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
+        /// </summary>
+        /// <returns></returns>
         public SerializableInstallationOptions_v1 Serialized()
         {
             SerializableInstallationOptions_v1 options = new();
@@ -406,6 +472,9 @@ namespace ModernWindow.PackageEngine.Classes
             return options;
         }
 
+        /// <summary>
+        /// Saves the current options to disk.
+        /// </summary>
         public void SaveOptionsToDisk()
         {
             try
@@ -420,6 +489,9 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Saves the current options to disk, asynchronously.
+        /// </summary>
         public async Task SaveOptionsToDiskAsync()
         {
             try
@@ -434,6 +506,9 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Loads the options from disk, asynchronously.
+        /// </summary>
         public void LoadOptionsFromDisk()
         {
             try
@@ -450,6 +525,9 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Loads the options from disk.
+        /// </summary>
         public async Task LoadOptionsFromDiskAsync()
         {
             try
@@ -466,6 +544,10 @@ namespace ModernWindow.PackageEngine.Classes
             }
         }
 
+        /// <summary>
+        /// Returns a string representation of the current options.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";
