@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>ModernWindow</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
+    <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
     <StartupObject>ModernWindow.EntryPoint</StartupObject>
@@ -16,11 +17,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Intereface\**" />
     <Content Remove="..\wingetui-engine\.vscode\**" />
@@ -28,7 +27,6 @@
     <None Remove="Intereface\**" />
     <Page Remove="Intereface\**" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Interface\AboutWingetUI.xaml" />
     <None Remove="Interface\Dialogs\HelpInterface.xaml" />
@@ -46,8 +44,7 @@
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
   </ItemGroup>
-
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
@@ -59,7 +56,6 @@
     <PackageReference Include="YamlDotNet" Version="15.1.1" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
-
   <!-- 
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
     Tools extension to be activated for this project even if the Windows App SDK Nuget
@@ -108,7 +104,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-
   <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
