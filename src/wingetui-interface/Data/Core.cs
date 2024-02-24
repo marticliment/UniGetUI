@@ -36,6 +36,7 @@ namespace ModernWindow.Data
         public static int UpdatesAvailableNotificationId = 1234;
 
         public static string WingetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
+        public static string WingetUIExecutableFile = Environment.ProcessPath;
         public static string GSudoPath = Path.Join(WingetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
 
         public static string WingetUIDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using ModernWindow.Data;
+using ModernWindow.Interface;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Managers;
 using ModernWindow.Structures;
@@ -108,6 +109,9 @@ namespace ModernWindow
 
                 // Do WingetUI entry text animation
                 await mainWindow.DoEntryTextAnimation();
+
+                var apirunner = new BackgroundApiRunner();
+                _ = apirunner.Start();
 
                 // Load Package Managers
                 Winget = new Winget();
