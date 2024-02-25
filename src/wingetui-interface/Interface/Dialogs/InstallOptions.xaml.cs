@@ -159,18 +159,12 @@ namespace ModernWindow.Interface.Dialogs
             (await GetUpdatedOptions()).SaveOptionsToDisk();
         }
 
-        private async void SelectDir_Click(object sender, RoutedEventArgs e)
+        private void SelectDir_Click(object sender, RoutedEventArgs e)
         {
-            FolderPicker openPicker = new();
-
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
-            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
-            openPicker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-            openPicker.FileTypeFilter.Add("*");
-
-            StorageFolder folder = await openPicker.PickSingleFolderAsync();
-            if (folder != null)
-                CustomInstallLocation.Text = folder.Path;
+            var openPicker = new Pickers.FolderPicker(bindings.App.mainWindow.GetWindowHandle());
+            string folder = openPicker.Show();
+            if (folder != String.Empty)
+                CustomInstallLocation.Text = folder;
         }
 
         private void ResetDir_Click(object sender, RoutedEventArgs e)

@@ -6,6 +6,7 @@ using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
+using Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -592,29 +593,23 @@ namespace ModernWindow.Interface
             try
             {
                 // Select file
-                Windows.Storage.Pickers.FileOpenPicker picker = new();
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-                picker.FileTypeFilter.Add(".json");
-                picker.FileTypeFilter.Add(".yaml");
-                picker.FileTypeFilter.Add(".xml");
-
-                Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-                if (file == null)
+                var picker = new Pickers.FileOpenPicker(bindings.App.mainWindow.GetWindowHandle());
+                var file = picker.Show(new List<string>() {"*.json", "*.yaml", "*.xml" });
+                if (file == String.Empty)
                     return;
 
                 bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Loading packages, please wait..."));
 
                 // Read file
                 BundleFormatType formatType;
-                if (file.FileType.ToLower() == ".yaml")
+                if (file.Split('.')[^1].ToLower() == "yaml")
                     formatType = BundleFormatType.YAML;
-                else if (file.FileType.ToLower() == ".xml")
+                else if (file.Split('.')[^1].ToLower() == "xml")
                     formatType = BundleFormatType.XML;
                 else
                     formatType = BundleFormatType.JSON;
 
-                string fileContent = await Windows.Storage.FileIO.ReadTextAsync(file);
+                string fileContent = await File.ReadAllTextAsync(file);
 
                 // Import packages to list
                 await AddPackagesFromBundleString(fileContent, formatType);

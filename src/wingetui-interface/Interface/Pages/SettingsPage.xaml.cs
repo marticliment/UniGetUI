@@ -377,20 +377,13 @@ namespace ModernWindow.Interface
 
         private async void ChangeBackupDirectory_Click(object sender, dynamic e)
         {
-            FolderPicker openPicker = new();
 
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(bindings.App.mainWindow);
-
-            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
-
-            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            openPicker.FileTypeFilter.Add("*");
-
-            StorageFolder folder = await openPicker.PickSingleFolderAsync();
-            if (folder != null)
+            var openPicker = new Pickers.FolderPicker(bindings.App.mainWindow.GetWindowHandle());
+            string folder = openPicker.Show();
+            if (folder != String.Empty)
             {
-                bindings.SetSettingsValue("ChangeBackupOutputDirectory", folder.Path);
-                BackupDirectoryLabel.Text = folder.Path;
+                bindings.SetSettingsValue("ChangeBackupOutputDirectory", folder);
+                BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
             else

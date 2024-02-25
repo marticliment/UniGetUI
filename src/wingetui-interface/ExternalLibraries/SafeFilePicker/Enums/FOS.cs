@@ -1,4 +1,6 @@
-﻿namespace Pickers.Enums;
+﻿using System;
+
+namespace Pickers.Enums;
 
 [Flags]
 // https://learn.microsoft.com/ru-ru/windows/win32/api/shobjidl_core/ne-shobjidl_core-_fileopendialogoptions

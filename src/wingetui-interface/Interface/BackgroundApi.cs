@@ -152,8 +152,9 @@ namespace ModernWindow.Interface
                         icon = "https://marticliment.com/resources/widgets/package_color.png";
                     packages += $"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&";
                 }
-
-                packages = packages[..(packages.Length - 2)];
+                
+                if(packages.Length > 2)
+                    packages = packages[..(packages.Length - 2)];
                 AppTools.Log(packages);
 
                 return packages;
