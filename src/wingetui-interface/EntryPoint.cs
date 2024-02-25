@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Structures;
 using System;
 using System.Diagnostics;
@@ -121,10 +121,8 @@ namespace ModernWindow
                 ToastNotificationManagerCompat.Uninstall();
             }
             catch (Exception e)
-            { }
-
-            
+            { 
+            }
         }
-
     }
 }

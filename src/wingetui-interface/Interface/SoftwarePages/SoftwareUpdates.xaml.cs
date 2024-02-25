@@ -2,7 +2,7 @@ using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Essentials;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;

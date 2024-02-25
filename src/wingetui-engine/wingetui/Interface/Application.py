@@ -31,10 +31,6 @@ class WingetUIApplication(QApplication):
         try:
             self.loadStatus = 0
 
-            # Preparation threads
-            if not getSettings("DisableApi"):
-                Thread(target=BackendApi.runBackendApi, args=(self.showProgram,), daemon=True).start()
-
             Thread(target=self.removeScoopCache, daemon=True).start()
 
             Thread(target=self.updateIfPossible, daemon=True).start()

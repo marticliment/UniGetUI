@@ -1,5 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Data;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Structures;
 using Nancy;
 using Nancy.Hosting.Self;

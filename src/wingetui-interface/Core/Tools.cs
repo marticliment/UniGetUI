@@ -1,13 +1,22 @@
-﻿using CommunityToolkit.WinUI.Helpers;
+﻿using CommunityToolkit.WinUI.Controls;
+using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
-using ModernWindow.Data;
+using Microsoft.UI.Xaml.Controls;
+using ModernWindow.Core.Data;
 using ModernWindow.PackageEngine;
 using ModernWindow.PackageEngine.Classes;
+using Nancy;
+using Nancy.Conventions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -271,6 +280,128 @@ Crash Traceback:
             return token == ApiAuthToken
                 ;
         }
-    }
 
+        /// <summary>
+        /// Update WingetUI
+        /// </summary>
+        /// <param name="round"></param>
+        public async void UpdateWingetUIIfPossible(int round = 0)
+        {
+            InfoBar? banner = null; ;
+            try
+            {
+                AppTools.Log("Starting update check");
+
+                string fileContents = "";
+                using (WebClient client = new())
+                {
+                    fileContents = await client.DownloadStringTaskAsync("https://www.marticliment.com/versions/wingetui.ver");
+                }
+
+                if (!fileContents.Contains("///"))
+                    throw new FormatException("The updates file does not follow the FloatVersion///Sha256Hash format");
+
+                float LatestVersion = float.Parse(fileContents.Split("///")[0].Replace("\n", "").Trim(), CultureInfo.InvariantCulture);
+                string InstallerHash = fileContents.Split("///")[1].Replace("\n", "").Trim().ToLower();
+
+                if (LatestVersion > CoreData.VersionNumber)
+                {
+                    AppTools.Log("Updates found, downloading installer...");
+                    Log("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
+                    Log("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
+
+                    banner = App.mainWindow.UpdatesBanner;
+                    banner.Title= Translate("WingetUI version {0} is being downloaded.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
+                    banner.Message = Translate("This may take a minute or two");
+                    banner.Severity = InfoBarSeverity.Informational;
+                    banner.IsOpen = true;
+                    banner.IsClosable = false;
+
+                    Uri DownloadUrl = new Uri("https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe");
+                    string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "wingetui-updater.exe");
+
+                    using (WebClient client = new WebClient())
+                    {
+                        await Task.Run(() => client.DownloadFile(DownloadUrl, InstallerPath));
+                    }
+
+                    string Hash = "";
+                    SHA256 Sha256 = SHA256.Create();
+                    using (FileStream stream = File.OpenRead(InstallerPath))
+                    {
+                        Hash = Convert.ToHexString(Sha256.ComputeHash(stream)).ToLower();
+                    }
+
+                    if (Hash == InstallerHash)
+                    {
+
+                        banner.Title = Translate("WingetUI {0} is ready to be installed.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
+                        banner.Message = Translate("The update will be installed upon closing WingetUI");
+                        banner.ActionButton = new Button();
+                        banner.ActionButton.Content = Translate("Update now");
+                        banner.ActionButton.Click += (sender, args) => { Instance.App.mainWindow.HideWindow(); };
+                        banner.Severity = InfoBarSeverity.Success;
+                        banner.IsOpen = true;
+                        banner.IsClosable = true;
+
+                        if (Instance.App.mainWindow.Visible)
+                            Log("Waiting for mainWindow to be hidden");
+
+                        while (Instance.App.mainWindow.Visible)
+                            await Task.Delay(100);
+
+                        Log("Hash ok, starting update");
+                        Process p = new Process();
+                        p.StartInfo.FileName = "cmd.exe";
+                        p.StartInfo.Arguments = $"/c start /B \"\" \"{InstallerPath}\" /silent";
+                        p.StartInfo.UseShellExecute = true;
+                        p.StartInfo.CreateNoWindow = true;
+                        p.Start();
+                        Instance.App.DisposeAndQuit();
+                    }
+                    else
+                    {
+                        Log("Hash mismatch, not updating!");
+                        Log("Current hash : " + Hash);
+                        Log("Expected hash: " + InstallerHash);
+                        File.Delete(InstallerPath);
+
+                        banner.Title = Translate("The installer hash does not match the expected value.");
+                        banner.Message = Translate("The update will not continue.");
+                        banner.Severity = InfoBarSeverity.Error;
+                        banner.IsOpen = true;
+                        banner.IsClosable = true;
+
+                        await Task.Delay(7200000); // Check again in 2 hours
+                        UpdateWingetUIIfPossible();
+                    }
+                }
+                else
+                {
+                    Log("WingetUI is up to date");
+                    await Task.Delay(7200000); // Check again in 2 hours
+                    UpdateWingetUIIfPossible();
+                }
+            }
+            catch (Exception e)
+            {
+                if(banner != null)
+                {
+                    banner.Title = Translate("An error occurred when checking for updates: ");
+                    banner.Message = e.Message;
+                    banner.Severity = InfoBarSeverity.Error;
+                    banner.IsOpen = true;
+                    banner.IsClosable = true;
+                }
+
+                Log(e);
+
+                if (round >= 3)
+                    return;
+
+                await Task.Delay(600000); // Try again in 10 minutes
+                UpdateWingetUIIfPossible(round + 1);
+            }
+        }
+    }
 }

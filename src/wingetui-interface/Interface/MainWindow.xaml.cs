@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Interface;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
@@ -91,6 +91,11 @@ namespace ModernWindow
                 //if (bindings.OperationQueue.Count > 0)
                 // TODO: Handle confirmation if ongoing operations
             }
+        }
+
+        public void HideWindow()
+        {
+            this.Hide();
         }
 
         private void LoadTrayMenu()
@@ -243,7 +248,7 @@ namespace ModernWindow
 
 
             NavigationPage = new NavigationPage();
-            Grid.SetRow(NavigationPage, 1);
+            Grid.SetRow(NavigationPage, 2);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
 

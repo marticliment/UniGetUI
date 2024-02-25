@@ -26,6 +26,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="36"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Border Grid.Row="0" Grid.Column="0" x:Name="__app_titlebar" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -38,6 +39,7 @@
                     <TextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="13"/>
                 </StackPanel>
             </Border>
+            <InfoBar Name="UpdatesBanner" x:FieldModifier="public" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsOpen="False" Margin="4"/>
         </Grid>
         <Grid Grid.Row="0" Grid.Column="0" x:Name="LoadingWindow" Visibility="Visible"
               Background="{StaticResource ProgressBarBorderThemeBrush}">

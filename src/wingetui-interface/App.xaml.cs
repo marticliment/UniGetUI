@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Interface;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Managers;
@@ -104,6 +104,9 @@ namespace ModernWindow
         {
             try
             {
+                // Start WingetUI AutoUpdater
+                AppTools.Instance.UpdateWingetUIIfPossible();
+
                 // Download and load icon and screenshot database
                 _ = CoreData.LoadIconAndScreenshotsDatabase();
 
@@ -173,7 +176,7 @@ namespace ModernWindow
             }
         }
 
-        public void DisposeAndQuit(int outputCode = 0)
+        public async void DisposeAndQuit(int outputCode = 0)
         {
             AppTools.Log("Quitting...");
             mainWindow.Close();

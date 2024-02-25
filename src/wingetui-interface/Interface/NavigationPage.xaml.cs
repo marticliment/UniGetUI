@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Interface.Dialogs;
 using ModernWindow.Interface.Pages;
 using ModernWindow.Interface.Widgets;

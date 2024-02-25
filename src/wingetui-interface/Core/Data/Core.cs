@@ -1,17 +1,20 @@
 ﻿using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Windows.Storage.Search;
 
-namespace ModernWindow.Data
+namespace ModernWindow.Core.Data
 {
     public static class CoreData
     {
         public static string VersionName = "3.0-alpha1";
-        public static double VersionNumber = 2.98;
+        public static double VersionNumber = 1.98;
 
         private static string __ignored_updates_database_file = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "IgnoredPackageUpdates.json");
         public static string IgnoredUpdatesDatabaseFile
