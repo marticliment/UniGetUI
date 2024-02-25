@@ -29,16 +29,6 @@ namespace ModernWindow.Interface
                 }
                 catch (Exception e)
                 {
-                    // Could not create host, most likely because the api URL has not been reserved
-                    // Do the reservation process.
-                    Process p = new();
-                    p.StartInfo.FileName = CoreData.WingetUIExecutableFile;
-                    p.StartInfo.Arguments = "--reserve-api-url";
-                    p.StartInfo.Verb = "runas";
-                    p.StartInfo.UseShellExecute = true;
-                    p.StartInfo.CreateNoWindow = true;
-                    p.Start();
-                    await p.WaitForExitAsync();
 
                     host = new NancyHost(new Uri("http://localhost:7058/"));
                     host.Start();
@@ -69,7 +59,7 @@ namespace ModernWindow.Interface
     {
         public BackgroundApiHandler()
         {
-            // Enabke CORS
+            // Enable CORS
             After.AddItemToEndOfPipeline((ctx) =>
             {
                 ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")

@@ -301,7 +301,7 @@ namespace ModernWindow.Interface
         {
             ShowHelp();
         }
-        public async void ShowHelp()
+        public void ShowHelp()
         {
             NavigateToPage(HelpPage);
         }
