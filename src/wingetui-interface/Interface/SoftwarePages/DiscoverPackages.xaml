@@ -735,12 +735,12 @@
                                             <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QueryBothRadio" Margin="0,-2,0,-2" Height="30">
+                                    <RadioButton x:Name="QueryBothRadio" Margin="0,-2,0,-2" Height="30" IsChecked="True">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Both" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QuerySimilarResultsRadio" Margin="0,-2,0,-2" Height="30" IsChecked="True">
+                                    <RadioButton x:Name="QuerySimilarResultsRadio" Margin="0,-2,0,-2" Height="30">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap"/>
                                         </RadioButton.Content>

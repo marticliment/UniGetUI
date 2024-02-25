@@ -660,5 +660,57 @@ namespace ModernWindow.Interface
         }
 
 
+        public void ShowSharedPackage_ThreadSafe(string pId, string pSource)
+        {
+            bindings.App.mainWindow.DispatcherQueue.TryEnqueue(() => { ShowSharedPackage(pId, pSource); });
+        }
+
+        private async void ShowSharedPackage(string pId, string pSource)
+        {
+            if (!Initialized)
+                return;
+
+            AppTools.Log("Showing shared package...");
+
+            bindings.App.mainWindow.Activate();
+
+            bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Please wait...").Replace("{0}", pId));
+            QueryIdRadio.IsChecked = true;
+            QueryBlock.Text = pId;
+            await FilterPackages(pId);
+            QueryBothRadio.IsChecked = true;
+            bindings.App.mainWindow.HideLoadingDialog();
+            if (FilteredPackages.Count == 1)
+            {
+                AppTools.Log("Only one package was found for pId=" + pId + ", showing it.");
+                await bindings.App.mainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+            }
+            else if (FilteredPackages.Count > 1)
+            {
+                var managerName = pSource.Contains(':')? pSource.Split(':')[0] : pSource;
+                foreach (var match in FilteredPackages)
+                    if (match.Source.Manager.Name == managerName)
+                    {
+                        AppTools.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
+                        await bindings.App.mainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
+                        return;
+                    }
+                AppTools.Log("No package found with the exact same manager, showing the first one.");
+                await bindings.App.mainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+            }
+            else
+            {
+                AppTools.Log("No packages were found matching the given pId=" + pId);
+                var c = new ContentDialog();
+                c.XamlRoot = this.XamlRoot;
+                c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                c.Title = bindings.Translate("Package not found");
+                c.Content = bindings.Translate("The package {0} from {1} was not found.").Replace("{0}", pId).Replace("{1}", pSource);
+                c.PrimaryButtonText = bindings.Translate("OK");
+                c.DefaultButton = ContentDialogButton.Primary;
+                await bindings.App.mainWindow.ShowDialog(c);
+            }
+        }
+
     }
 }
