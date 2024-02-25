@@ -167,13 +167,11 @@ namespace ModernWindow
         protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             // If the app has not been called with the --daemon argument, show the main window.
-            
-            // TODO: Deeply test this method
             if (!CoreData.IsDaemon)
             {
                 await ShowMainWindow_FromRedirect();
-                CoreData.IsDaemon = false;
             }
+            CoreData.IsDaemon = false;
         }
 
         public async void DisposeAndQuit(int outputCode = 0)

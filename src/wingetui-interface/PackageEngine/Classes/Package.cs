@@ -119,7 +119,7 @@ namespace ModernWindow.PackageEngine.Classes
                 if (CoreData.IconDatabaseData[iconId].icon != "")
                     return new Uri(CoreData.IconDatabaseData[iconId].icon);
 
-            return new Uri("ms-appx:///Assets/Images/package_color.png"); // TODO: Fallback image!
+            return new Uri("ms-appx:///Assets/Images/package_color.png");
         }
 
         /// <summary>

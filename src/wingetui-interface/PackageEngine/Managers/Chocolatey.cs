@@ -493,8 +493,16 @@ namespace ModernWindow.PackageEngine.Managers
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
 
-            //TODO: Add chocolatey to path if needed
-
+            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Tools.GetSettings("UseSystemChocolatey") && !Tools.GetSettings("ChocolateyAddedToPath") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            {
+                // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
+                AppTools.Log("Adding chocolatey to path");
+                string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
+                Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
+                Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
+                Tools.SetSettings("ChocolateyAddedToPath", true);
+            }
+            
             if (status.Found && IsEnabled())
                 await RefreshSources();
 
