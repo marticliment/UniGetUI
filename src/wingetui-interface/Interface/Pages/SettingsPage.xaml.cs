@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using ModernWindow.Clipboard;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;

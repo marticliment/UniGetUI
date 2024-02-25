@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;
 using System;

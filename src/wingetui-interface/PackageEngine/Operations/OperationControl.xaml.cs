@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using ModernWindow.Data;
+using ModernWindow.Core.Data;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
