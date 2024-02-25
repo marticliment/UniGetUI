@@ -1,4 +1,4 @@
-﻿namespace ModernWindow.Data
+﻿namespace ModernWindow.Core.Data
 {
     public static class ContributorsData
     {

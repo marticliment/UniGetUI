@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ModernWindow.Data
+namespace ModernWindow.Core.Data
 {
     public static class LicenseData
     {

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace ModernWindow.Data
+namespace ModernWindow.Core.Data
 {
     public static class LanguageData
     {
