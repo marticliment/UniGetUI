@@ -4,7 +4,7 @@
         "done": 5019,
         "packages_with_icon": 5019,
         "packages_with_screenshot": 537,
-        "total_screenshots": 1691
+        "total_screenshots": 1690
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -32899,11 +32899,10 @@
         "qr-codereader": {
             "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo_dark.png",
             "images": [
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_1.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_3.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5.png"
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_dark.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_light.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_dark.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_light.png"
             ]
         },
         "qrcp": {
