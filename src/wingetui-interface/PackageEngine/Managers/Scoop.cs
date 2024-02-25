@@ -577,7 +577,33 @@ public class Scoop : PackageManagerWithSources
         if (status.Found && IsEnabled())
             _ = RefreshSources();
 
+        if (status.Found && IsEnabled() && Tools.GetSettings("EnableScoopCleanup"))
+            RunCleanup();
+
         return status;
+    }
+
+    private async void RunCleanup()
+    {
+        AppTools.Log("Starting scoop cleanup...");
+        foreach(var command in new string[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
+        {
+            Process p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " " + command,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
+            };
+            p.Start();
+            await p.WaitForExitAsync();
+        }
     }
 
     protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
