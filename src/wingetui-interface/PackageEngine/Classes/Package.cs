@@ -45,7 +45,7 @@ namespace ModernWindow.PackageEngine.Classes
         public ManagerSource Source { get; set; }
         public PackageManager Manager { get; }
         public string UniqueId { get; }
-        public string NewVersion { get; }
+        public string NewVersion { get; set;  }
         public virtual bool IsUpgradable { get; } = false;
         public PackageScope Scope { get; set; }
         public string SourceAsString
@@ -238,7 +238,6 @@ namespace ModernWindow.PackageEngine.Classes
     public class UpgradablePackage : Package
     {
         // Public properties
-        public new string NewVersion { get; }
         public float NewVersionAsFloat { get; }
         public override bool IsUpgradable { get; } = true;
 

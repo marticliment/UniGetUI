@@ -303,7 +303,10 @@ namespace ModernWindow.PackageEngine.Operations
                 {
                     AppTools.Log(ex);
                 }
-            await Task.Delay(0);
+
+            if(Package.Version == "Unknown")
+                await Package.AddToIgnoredUpdatesAsync(Package.NewVersion);
+            
             return AfterFinshAction.TimeoutClose;
         }
 
