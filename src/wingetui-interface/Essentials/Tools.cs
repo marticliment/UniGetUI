@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -38,6 +39,7 @@ namespace ModernWindow.Structures
         private LanguageEngine LanguageEngine = new();
 
         private static AppTools instance;
+        string ApiAuthToken;
 
         public static AppTools Instance
         {
@@ -55,6 +57,19 @@ namespace ModernWindow.Structures
         {
             App = (MainApp)Application.Current;
             ThemeListener = new ThemeListener();
+
+            ApiAuthToken = RandomString(64);
+            SetSettingsValue("CurrentSessionToken", ApiAuthToken);
+            AppTools.Log("Api auth token: " + ApiAuthToken);
+        }
+
+        private string RandomString(int length)
+        {
+            var random = new Random();
+            const string pool = "abcdefghijklmnopqrstuvwxyz0123456789";
+            var chars = Enumerable.Range(0, length)
+                .Select(x => pool[random.Next(0, pool.Length)]);
+            return new string(chars.ToArray());
         }
 
         public static void EnsureTempDir()
@@ -249,6 +264,12 @@ Crash Traceback:
             p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
             p.Start();
             await p.WaitForExitAsync();
+        }
+
+        public bool AuthenticateToken(string token)
+        {
+            return token == ApiAuthToken
+                ;
         }
     }
 

@@ -768,5 +768,33 @@ namespace ModernWindow.Interface
             UpdatePackageCount();
         }
 
+        public void UpdatePackageForId(string id)
+        {
+            foreach(UpgradablePackage package in Packages)
+            {
+                if (package.Id == id)
+                {
+                    bindings.AddOperationToList(new UpdatePackageOperation(package));
+                    AppTools.Log("Updating package with id " + id + ". Operation was launched from widgets");
+                    break;
+                }
+            }
+            AppTools.Log("WARNING! No package with id " + id + " was found. Operation was launched from widgets");
+        }
+        
+        public void UpdateAllPackages()
+        {
+            AppTools.Log("Updating all packages");
+            foreach (UpgradablePackage package in Packages)
+                bindings.AddOperationToList(new UpdatePackageOperation(package));
+        }
+
+        public void UpdateAllPackagesForManager(string manager)
+        {
+            AppTools.Log("Updating all packages");
+            foreach (UpgradablePackage package in Packages)
+                if (package.Manager.Name == manager)
+                    bindings.AddOperationToList(new UpdatePackageOperation(package));
+        }
     }
 }
