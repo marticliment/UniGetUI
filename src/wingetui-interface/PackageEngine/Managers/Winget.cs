@@ -335,14 +335,11 @@ namespace ModernWindow.PackageEngine.Managers
                 options.Architecture = Architecture.X86;
 
             string[] parameters = GetInstallParameters(package, options);
-            parameters[0] = Properties.InstallVerb;
-            if (package.Version == "Unknown" && parameters.Contains("--force"))
-            {
-                List<string> p = parameters.ToList();
-                p.Add("--force");
-                p.Add("--include-unknown");
-                parameters = p.ToArray();
-            }
+            parameters[0] = Properties.UpdateVerb;
+            List<string> p = parameters.ToList();
+            p.Add("--force");
+            p.Add("--include-unknown");
+            parameters = p.ToArray();
             return parameters;
         }
 

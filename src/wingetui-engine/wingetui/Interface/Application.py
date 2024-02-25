@@ -33,8 +33,6 @@ class WingetUIApplication(QApplication):
 
             Thread(target=self.removeScoopCache, daemon=True).start()
 
-            Thread(target=self.updateIfPossible, daemon=True).start()
-
 
     def removeScoopCache(self):
         try:
@@ -48,47 +46,4 @@ class WingetUIApplication(QApplication):
                 p3.wait()
         except Exception as e:
             report(e)
-
-    def updateIfPossible(self, round: int = 0):
-        if not getSettings("DisableAutoUpdateWingetUI"):
-            print("🔵 Starting update check")
-            try:
-                response = urlopen("https://www.marticliment.com/versions/wingetui.ver")
-            except Exception as e:
-                print(e)
-                response = urlopen("https://versions.marticliment.com/versions/wingetui.ver")
-            print("🔵 Version URL:", response.url)
-            response = response.read().decode("utf8")
-            new_version_number = response.split("///")[0]
-            provided_hash = response.split("///")[1].replace("\n", "").lower()
-            if float(new_version_number) > version:
-                print("🟢 Updates found!")
-                url = "https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe"
-                filedata = urlopen(url)
-                datatowrite = filedata.read()
-                filename = ""
-                downloadPath = os.environ["temp"] if "temp" in os.environ.keys() else os.path.expanduser("~")
-                with open(os.path.join(downloadPath, "wingetui-updater.exe"), 'wb') as f:
-                    f.write(datatowrite)
-                    filename = f.name
-                if hashlib.sha256(datatowrite).hexdigest().lower() == provided_hash:
-                    print("🔵 Hash: ", provided_hash)
-                    print("🟢 Hash ok, starting update")
-                    Globals.updatesAvailable = True
-                    while Globals.mainWindow is None:
-                        time.sleep(1)
-                    Globals.canUpdate = not Globals.mainWindow.isVisible()
-                    while not Globals.canUpdate:
-                        time.sleep(0.1)
-                    if not getSettings("DisableAutoUpdateWingetUI"):
-                        subprocess.run(f'start /B "" "{filename}" /silent', shell=True)
-                else:
-                    print("🟠 Hash not ok")
-                    print("🟠 File hash: ", hashlib.sha256(datatowrite).hexdigest())
-                    print("🟠 Provided hash: ", provided_hash)
-            else:
-                print("🟢 Updates not found")
-        if round <= 2:
-            time.sleep(600)
-            self.updateIfPossible(round + 1)
 
