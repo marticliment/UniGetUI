@@ -593,7 +593,7 @@ namespace ModernWindow.Interface
             try
             {
                 // Select file
-                var picker = new Pickers.FileOpenPicker(bindings.App.mainWindow.GetWindowHandle());
+                var picker = new Pickers.FilePicker(bindings.App.mainWindow.GetWindowHandle());
                 var file = picker.Show(new List<string>() {"*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
@@ -755,17 +755,9 @@ namespace ModernWindow.Interface
             try
             {
                 // Get file 
-                Windows.Storage.Pickers.FileSavePicker picker = new();
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-                picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
-                picker.FileTypeChoices.Add("YAML", new List<string>() { ".yaml" });
-                picker.FileTypeChoices.Add("XML", new List<string>() { ".xml" });
-                picker.SuggestedFileName = bindings.Translate("WingetUI package bundle");
-
                 // Save file
-                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
-                if (file != null)
+                var file = (new Pickers.FileSavePicker(bindings.App.mainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, "WingetUI package bundle.json") ;
+                if (file != String.Empty)
                 {
                     // Loading dialog
                     bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Saving packages, please wait..."));
@@ -774,17 +766,17 @@ namespace ModernWindow.Interface
                     foreach (BundledPackage package in Packages)
                         packages.Add(package);
 
-                    // Select appropiate format
+                    // Select appropriate format
                     BundleFormatType formatType;
-                    if (file.FileType.ToLower() == ".yaml")
+                    if (file.Split(':')[^1].ToLower() == "yaml")
                         formatType = BundleFormatType.YAML;
-                    else if (file.FileType.ToLower() == ".xml")
+                    else if (file.Split(':')[^1].ToLower() == "xml")
                         formatType = BundleFormatType.XML;
                     else
                         formatType = BundleFormatType.JSON;
 
                     // Save serialized data
-                    await Windows.Storage.FileIO.WriteTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
+                    await File.WriteAllTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
 
                     bindings.App.mainWindow.HideLoadingDialog();
 
@@ -792,7 +784,7 @@ namespace ModernWindow.Interface
                     Process.Start(new ProcessStartInfo()
                     {
                         FileName = "explorer.exe",
-                        Arguments = @$"/select, ""{file.Path}"""
+                        Arguments = @$"/select, ""{file}"""
                     });
 
                 }

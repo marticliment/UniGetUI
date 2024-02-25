@@ -15,3 +15,11 @@ CoClass(typeof(FileOpenDialogRCW))]
 internal interface FileOpenDialog : IFileOpenDialog
 {
 }
+
+
+[ComImport,
+Guid(IIDGuid.IFileSaveDialog),
+CoClass(typeof(FileSaveDialogRCW))]
+internal interface FileSaveDialog : IFileSaveDialog
+{
+}

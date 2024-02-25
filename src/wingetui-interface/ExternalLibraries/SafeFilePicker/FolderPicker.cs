@@ -29,6 +29,6 @@ public class FolderPicker
     /// <returns>Path to selected folder or empty string.</returns>
     public string Show()
     {
-        return Helper.Show(_windowHandle, FOS.FOS_PICKFOLDERS | FOS.FOS_FORCEFILESYSTEM);
+        return Helper.ShowOpen(_windowHandle, FOS.FOS_PICKFOLDERS | FOS.FOS_FORCEFILESYSTEM);
     }
 }

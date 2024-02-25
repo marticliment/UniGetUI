@@ -22,3 +22,18 @@ internal interface IFileOpenDialog : IFileDialog
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
     void GetSelectedItems([MarshalAs(UnmanagedType.Interface)] out IShellItemArray ppsai);
 }
+
+internal interface IFileSaveDialog : IFileDialog
+{
+    // Defined on IFileDialog - repeated here due to requirements of COM interop layer
+    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+    void SetFileTypes([In] uint cFileTypes, [In] ref COMDLG_FILTERSPEC rgFilterSpec);
+
+    // Defined by IFileOpenDialog
+    // ---------------------------------------------------------------------------------
+    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+    void GetResults([MarshalAs(UnmanagedType.Interface)] out IShellItemArray ppenum);
+
+    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+    void GetSelectedItems([MarshalAs(UnmanagedType.Interface)] out IShellItemArray ppsai);
+}
