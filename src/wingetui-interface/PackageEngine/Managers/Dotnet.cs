@@ -51,7 +51,7 @@ namespace ModernWindow.PackageEngine.Managers
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length >= 2)
-                        Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                        Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                     // Dotnet tool packages are installed globally by default, hence the Global flag
                 }
             }
@@ -66,7 +66,7 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            string path = await bindings.Which("dotnet-tools-outdated.exe");
+            string path = await Tools.Which("dotnet-tools-outdated.exe");
             if (!File.Exists(path))
             {
                 Process proc = new()
@@ -122,7 +122,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -169,7 +169,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.User));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.User));
                 }
             }
 
@@ -209,7 +209,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -291,7 +291,7 @@ namespace ModernWindow.PackageEngine.Managers
                     string apiContents = await task;
 
                     details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
-                    details.InstallerType = bindings.Translate("NuPkg (zipped manifest)");
+                    details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");
                     try
                     {
                         WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
@@ -391,7 +391,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = ".NET Tool",
-                Description = bindings.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
+                Description = Tools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
                 IconId = "dotnet",
                 ColorIconId = "dotnet_color",
                 ExecutableFriendlyName = "dotnet tool",
@@ -408,7 +408,7 @@ namespace ModernWindow.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
-            status.ExecutablePath = await bindings.Which("dotnet.exe");
+            status.ExecutablePath = await Tools.Which("dotnet.exe");
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)

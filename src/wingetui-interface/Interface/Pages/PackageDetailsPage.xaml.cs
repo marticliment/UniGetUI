@@ -23,7 +23,7 @@ namespace ModernWindow.Interface.Dialogs
     /// </summary>
     public sealed partial class PackageDetailsPage : Page
     {
-        public AppTools bindings = AppTools.Instance;
+        public AppTools Tools = AppTools.Instance;
         public Package Package;
         private InstallOptionsPage InstallOptionsPage;
         public event EventHandler Close;
@@ -58,26 +58,26 @@ namespace ModernWindow.Interface.Dialogs
             switch (futureOperation)
             {
                 case OperationType.Install:
-                    ActionButton.Content = bindings.Translate("Install");
+                    ActionButton.Content = Tools.Translate("Install");
                     break;
                 case OperationType.Uninstall:
-                    ActionButton.Content = bindings.Translate("Uninstall");
+                    ActionButton.Content = Tools.Translate("Uninstall");
                     break;
                 case OperationType.Update:
-                    ActionButton.Content = bindings.Translate("Update");
+                    ActionButton.Content = Tools.Translate("Update");
                     break;
             }
 
             IdTextBlock.Text = package.Id;
             VersionTextBlock.Text = package.Version;
             if (package is UpgradablePackage)
-                VersionTextBlock.Text += " - " + bindings.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
+                VersionTextBlock.Text += " - " + Tools.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
             PackageName.Text = package.Name;
             PackageIcon.Source = new BitmapImage() { UriSource = package.GetIconUrl() };
             SourceNameTextBlock.Text = package.SourceAsString;
 
 
-            string LoadingString = bindings.Translate("Loading...");
+            string LoadingString = Tools.Translate("Loading...");
             LoadingIndicator.Visibility = Visibility.Visible;
 
 
@@ -118,7 +118,7 @@ namespace ModernWindow.Interface.Dialogs
         {
             LoadingIndicator.Visibility = Visibility.Visible;
 
-            string NotFound = bindings.Translate("Not available");
+            string NotFound = Tools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
             AppTools.Log("Received info " + Info);
@@ -199,20 +199,20 @@ namespace ModernWindow.Interface.Dialogs
             switch (FutureOperation)
             {
                 case OperationType.Install:
-                    bindings.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
+                    Tools.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
                     break;
                 case OperationType.Uninstall:
-                    bindings.App.mainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
+                    Tools.App.mainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
                     break;
                 case OperationType.Update:
-                    bindings.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
+                    Tools.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
                     break;
             }
         }
 
         public void ShareButton_Click(object sender, RoutedEventArgs e)
         {
-            bindings.App.mainWindow.SharePackage(Package);
+            Tools.App.mainWindow.SharePackage(Package);
         }
 
         public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
@@ -224,7 +224,7 @@ namespace ModernWindow.Interface.Dialogs
 
                 ErrorOutput.Text = "";
                 FileSavePicker savePicker = new();
-                MainWindow window = bindings.App.mainWindow;
+                MainWindow window = Tools.App.mainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
@@ -235,7 +235,7 @@ namespace ModernWindow.Interface.Dialogs
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
                 {
-                    DownloadInstallerButton.Content = bindings.Translate("Downloading");
+                    DownloadInstallerButton.Content = Tools.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
                     AppTools.Log(file.Path.ToString());
                     using HttpClient httpClient = new();
@@ -245,13 +245,13 @@ namespace ModernWindow.Interface.Dialogs
                     fs.Dispose();
                     DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                     System.Diagnostics.Process.Start("explorer.exe", "/select," + file.Path.ToString());
-                    DownloadInstallerButton.Content = bindings.Translate("Download succeeded");
+                    DownloadInstallerButton.Content = Tools.Translate("Download succeeded");
                 }
             }
             catch (Exception ex)
             {
                 AppTools.Log(ex);
-                DownloadInstallerButton.Content = bindings.Translate("An error occurred");
+                DownloadInstallerButton.Content = Tools.Translate("An error occurred");
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;
             }

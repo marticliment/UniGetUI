@@ -41,7 +41,7 @@ namespace ModernWindow
         static readonly Guid _dtm_iid =
             new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
-        AppTools bindings = AppTools.Instance;
+        AppTools Tools = AppTools.Instance;
         public NavigationPage NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
@@ -63,7 +63,7 @@ namespace ModernWindow
 
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            LoadingSthDalog.Title = bindings.Translate("Please wait");
+            LoadingSthDalog.Title = Tools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
 
 
@@ -80,7 +80,7 @@ namespace ModernWindow
 
         public void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
         {
-            if (!bindings.GetSettings("DisableSystemTray"))
+            if (!Tools.GetSettings("DisableSystemTray"))
             {
                 args.Cancel = true;
                 RecentlyActivated = false;
@@ -88,7 +88,7 @@ namespace ModernWindow
             }
             else
             {
-                //if (bindings.OperationQueue.Count > 0)
+                //if (Tools.OperationQueue.Count > 0)
                 // TODO: Handle confirmation if ongoing operations
             }
         }
@@ -121,7 +121,7 @@ namespace ModernWindow
 
             foreach (KeyValuePair<XamlUICommand, string> item in Labels)
             {
-                item.Key.Label = bindings.Translate(item.Value);
+                item.Key.Label = Tools.Translate(item.Value);
             }
 
             Dictionary<XamlUICommand, string> Icons = new()
@@ -142,9 +142,9 @@ namespace ModernWindow
             DiscoverPackages.ExecuteRequested += (s, e) => { NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => { NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => { NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
-            AboutWingetUI.Label = bindings.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            AboutWingetUI.Label = Tools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
             ShowWingetUI.ExecuteRequested += (s, e) => { Activate(); };
-            QuitWingetUI.ExecuteRequested += (s, e) => { bindings.App.DisposeAndQuit(); };
+            QuitWingetUI.ExecuteRequested += (s, e) => { Tools.App.DisposeAndQuit(); };
 
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
@@ -191,30 +191,30 @@ namespace ModernWindow
         public void UpdateSystemTrayStatus()
         {
             string modifier = "_empty";
-            string tooltip = bindings.Translate("Everything is up to date") + " - WingetUI";
+            string tooltip = Tools.Translate("Everything is up to date") + " - WingetUI";
 
-            if (bindings.TooltipStatus.OperationsInProgress > 0)
+            if (Tools.TooltipStatus.OperationsInProgress > 0)
             {
                 modifier = "_blue";
-                tooltip = bindings.Translate("Operation in progress") + " - WingetUI";
+                tooltip = Tools.Translate("Operation in progress") + " - WingetUI";
             }
-            else if (bindings.TooltipStatus.ErrorsOccurred > 0)
+            else if (Tools.TooltipStatus.ErrorsOccurred > 0)
             {
                 modifier = "_orange";
-                tooltip = bindings.Translate("Attention required") + " - WingetUI";
+                tooltip = Tools.Translate("Attention required") + " - WingetUI";
             }
-            else if (bindings.TooltipStatus.RestartRequired)
+            else if (Tools.TooltipStatus.RestartRequired)
             {
                 modifier = "_turquoise";
-                tooltip = bindings.Translate("Restart required") + " - WingetUI";
+                tooltip = Tools.Translate("Restart required") + " - WingetUI";
             }
-            else if (bindings.TooltipStatus.AvailableUpdates > 0)
+            else if (Tools.TooltipStatus.AvailableUpdates > 0)
             {
                 modifier = "_green";
-                if (bindings.TooltipStatus.AvailableUpdates == 1)
-                    tooltip = bindings.Translate("1 update is available") + " - WingetUI";
+                if (Tools.TooltipStatus.AvailableUpdates == 1)
+                    tooltip = Tools.Translate("1 update is available") + " - WingetUI";
                 else
-                    tooltip = bindings.Translate("{0} updates are available").Replace("{0}", bindings.TooltipStatus.AvailableUpdates.ToString()) + " - WingetUI";
+                    tooltip = Tools.Translate("{0} updates are available").Replace("{0}", Tools.TooltipStatus.AvailableUpdates.ToString()) + " - WingetUI";
             }
 
             TrayIcon.ToolTipText = tooltip;
@@ -263,23 +263,23 @@ namespace ModernWindow
 
         public void ApplyTheme()
         {
-            string preferredTheme = bindings.GetSettingsValue("PreferredTheme");
+            string preferredTheme = Tools.GetSettingsValue("PreferredTheme");
             if (preferredTheme == "dark")
             {
-                bindings.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 ContentRoot.RequestedTheme = ElementTheme.Dark;
             }
             else if (preferredTheme == "light")
             {
-                bindings.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                Tools.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Light;
             }
             else
             {
                 if (ContentRoot.ActualTheme == ElementTheme.Dark)
-                    bindings.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                    Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 else
-                    bindings.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                    Tools.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Default;
             }
 

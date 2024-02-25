@@ -23,7 +23,7 @@ namespace ModernWindow.Interface.Widgets
     public sealed class ComboboxCard : SettingsCard
     {
         private ComboBox _combobox;
-        private static AppTools bindings = AppTools.Instance;
+        private static AppTools Tools = AppTools.Instance;
         private ObservableCollection<string> _elements;
         private Dictionary<string, string> _values_ref;
         private Dictionary<string, string> _inverted_val_ref;
@@ -63,7 +63,7 @@ namespace ModernWindow.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = Tools.Translate((string)e.NewValue); })));
 
             _elements = new ObservableCollection<string>();
             _values_ref = new Dictionary<string, string>();
@@ -85,7 +85,7 @@ namespace ModernWindow.Interface.Widgets
         public void AddItem(string name, string value, bool translate)
         {
             if (translate)
-                name = bindings.Translate(name);
+                name = Tools.Translate(name);
             _elements.Add(name);
             _values_ref.Add(name, value);
             _inverted_val_ref.Add(value, name);
@@ -95,7 +95,7 @@ namespace ModernWindow.Interface.Widgets
         {
             try
             {
-                string savedItem = bindings.GetSettingsValue(SettingName);
+                string savedItem = Tools.GetSettingsValue(SettingName);
                 _combobox.SelectedIndex = _elements.IndexOf(_inverted_val_ref[savedItem]);
             }
             catch
@@ -106,7 +106,7 @@ namespace ModernWindow.Interface.Widgets
             {
                 try
                 {
-                    bindings.SetSettingsValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
+                    Tools.SetSettingsValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
                     ValueChanged?.Invoke(this, new ComboCardEventArgs());
                 }
                 catch (Exception ex)

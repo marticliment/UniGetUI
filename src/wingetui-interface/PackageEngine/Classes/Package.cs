@@ -30,7 +30,7 @@ namespace ModernWindow.PackageEngine.Classes
     public class Package : INotifyPropertyChanged
     {
         // Internal properties
-        public AppTools bindings = AppTools.Instance;
+        public AppTools Tools = AppTools.Instance;
         private bool __is_checked = false;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -99,11 +99,11 @@ namespace ModernWindow.PackageEngine.Classes
         public string GetIconId()
         {
             string iconId = Id.ToLower();
-            if (Manager == bindings.App.Winget)
+            if (Manager == Tools.App.Winget)
                 iconId = string.Join('.', iconId.Split(".")[1..]);
-            else if (Manager == bindings.App.Choco)
+            else if (Manager == Tools.App.Choco)
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
-            else if (Manager == bindings.App.Scoop)
+            else if (Manager == Tools.App.Scoop)
                 iconId = iconId.Replace(".app", "");
             return iconId;
         }
@@ -167,7 +167,7 @@ namespace ModernWindow.PackageEngine.Classes
                 IgnoredUpdatesJson.Remove(IgnoredId);
             IgnoredUpdatesJson.Add(IgnoredId, version);
             await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
-            bindings.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
+            Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
 
             // TODO: Change InstalledPackages flag to show that the package is ignored, add to IgnoredPackages if applicable
         }
@@ -299,7 +299,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public bool NewVersionIsInstalled()
         {
-            foreach (Package package in bindings.App.mainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (Package package in Tools.App.mainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Manager == Manager && package.Id == Id && package.Version == NewVersion && package.Source.Name == Source.Name)
                     return true;
             return false;

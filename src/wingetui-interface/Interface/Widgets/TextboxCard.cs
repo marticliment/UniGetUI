@@ -21,7 +21,7 @@ namespace ModernWindow.Interface.Widgets
     {
         private TextBox _textbox;
         private HyperlinkButton _helpbutton;
-        private static AppTools bindings = AppTools.Instance;
+        private static AppTools Tools = AppTools.Instance;
         private static string _text;
 
         public string SettingName
@@ -64,13 +64,13 @@ namespace ModernWindow.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = Tools.Translate((string)e.NewValue); })));
 
             PlaceholderProperty = DependencyProperty.Register(
             nameof(Placeholder),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = Tools.Translate((string)e.NewValue); })));
 
             SettingProperty = DependencyProperty.Register(
             nameof(SettingName),
@@ -78,7 +78,7 @@ namespace ModernWindow.Interface.Widgets
             typeof(CheckboxCard),
             new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
             {
-                _textbox.Text = bindings.GetSettingsValue((string)e.NewValue);
+                _textbox.Text = Tools.GetSettingsValue((string)e.NewValue);
                 _textbox.TextChanged += (sender, e) => { SaveValue(); };
             })));
 
@@ -90,7 +90,7 @@ namespace ModernWindow.Interface.Widgets
             {
                 _helpbutton.NavigateUri = (Uri)e.NewValue;
                 _helpbutton.Visibility = Visibility.Visible;
-                _helpbutton.Content = bindings.Translate("More info");
+                _helpbutton.Content = Tools.Translate("More info");
             })));
 
             _helpbutton = new HyperlinkButton();
@@ -117,9 +117,9 @@ namespace ModernWindow.Interface.Widgets
                     SanitizedText = SanitizedText.Replace(rem.ToString(), "");
 
             if (SanitizedText != "")
-                bindings.SetSettingsValue(SettingName, SanitizedText);
+                Tools.SetSettingsValue(SettingName, SanitizedText);
             else
-                bindings.SetSettings(SettingName, false);
+                Tools.SetSettings(SettingName, false);
             TextboxEventArgs args = new();
             ValueChanged?.Invoke(this, args);
         }

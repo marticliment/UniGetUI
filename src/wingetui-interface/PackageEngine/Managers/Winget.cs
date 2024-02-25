@@ -750,7 +750,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Winget",
-                Description = bindings.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
+                Description = Tools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
                 IconId = "winget",
                 ColorIconId = "winget_color",
                 ExecutableFriendlyName = "winget.exe",
@@ -781,9 +781,9 @@ namespace ModernWindow.PackageEngine.Managers
             process.Start();
             string output = await process.StandardOutput.ReadToEndAsync();
 
-            if (bindings.GetSettings("UseSystemWinget"))
-                status.ExecutablePath = await bindings.Which("winget.exe");
-            else if (output.Contains("ARM64") | bindings.GetSettings("EnableArmWinget"))
+            if (Tools.GetSettings("UseSystemWinget"))
+                status.ExecutablePath = await Tools.Which("winget.exe");
+            else if (output.Contains("ARM64") | Tools.GetSettings("EnableArmWinget"))
                 status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_arm64", "winget.exe");
             else
                 status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
@@ -897,29 +897,29 @@ namespace ModernWindow.PackageEngine.Managers
     public class LocalPcSource : ManagerSource
     {
         public override string IconId { get { return "localpc"; } }
-        public LocalPcSource() : base(Winget.bindings.App.Winget, Winget.bindings.Translate("Local PC"), new Uri("https://microsoft.com/local-pc-source"))
+        public LocalPcSource() : base(Winget.Tools.App.Winget, Winget.Tools.Translate("Local PC"), new Uri("https://microsoft.com/local-pc-source"))
         { IsVirtualManager = true; }
         public override string ToString()
         {
-            return Winget.bindings.Translate("Local PC");
+            return Winget.Tools.Translate("Local PC");
         }
     }
 
     public class AndroidSubsystemSource : ManagerSource
     {
         public override string IconId { get { return "android"; } }
-        public AndroidSubsystemSource() : base(Winget.bindings.App.Winget, Winget.bindings.Translate("Android Subsystem"), new Uri("https://microsoft.com/local-pc-source"))
+        public AndroidSubsystemSource() : base(Winget.Tools.App.Winget, Winget.Tools.Translate("Android Subsystem"), new Uri("https://microsoft.com/local-pc-source"))
         { IsVirtualManager = true; }
         public override string ToString()
         {
-            return Winget.bindings.Translate("Android Subsystem");
+            return Winget.Tools.Translate("Android Subsystem");
         }
     }
 
     public class SteamSource : ManagerSource
     {
         public override string IconId { get { return "steam"; } }
-        public SteamSource() : base(Winget.bindings.App.Winget, "Steam", new Uri("https://microsoft.com/local-pc-source"))
+        public SteamSource() : base(Winget.Tools.App.Winget, "Steam", new Uri("https://microsoft.com/local-pc-source"))
         { IsVirtualManager = true; }
         public override string ToString()
         {
@@ -930,7 +930,7 @@ namespace ModernWindow.PackageEngine.Managers
     public class UbisoftConnectSource : ManagerSource
     {
         public override string IconId { get { return "uplay"; } }
-        public UbisoftConnectSource() : base(Winget.bindings.App.Winget, "Ubisoft Connect", new Uri("https://microsoft.com/local-pc-source"))
+        public UbisoftConnectSource() : base(Winget.Tools.App.Winget, "Ubisoft Connect", new Uri("https://microsoft.com/local-pc-source"))
         { IsVirtualManager = true; }
         public override string ToString()
         {
@@ -941,7 +941,7 @@ namespace ModernWindow.PackageEngine.Managers
     public class GOGSource : ManagerSource
     {
         public override string IconId { get { return "gog"; } }
-        public GOGSource() : base(Winget.bindings.App.Winget, "GOG", new Uri("https://microsoft.com/gog-source"))
+        public GOGSource() : base(Winget.Tools.App.Winget, "GOG", new Uri("https://microsoft.com/gog-source"))
         { IsVirtualManager = true; }
         public override string ToString()
         {
@@ -952,7 +952,7 @@ namespace ModernWindow.PackageEngine.Managers
     public class MicrosoftStoreSource : ManagerSource
     {
         public override string IconId { get { return "msstore"; } }
-        public MicrosoftStoreSource() : base(Winget.bindings.App.Winget, "Microsoft Store", new Uri("https://microsoft.com/microsoft-store-source"))
+        public MicrosoftStoreSource() : base(Winget.Tools.App.Winget, "Microsoft Store", new Uri("https://microsoft.com/microsoft-store-source"))
         { IsVirtualManager = true; }
         public override string ToString()
         {

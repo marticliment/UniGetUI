@@ -35,7 +35,7 @@ namespace ModernWindow.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools bindings = AppTools.Instance;
+        protected AppTools Tools = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -57,7 +57,7 @@ namespace ModernWindow.Interface
             PackageList = __package_list;
             LoadingProgressBar = __loading_progressbar;
             LoadingProgressBar.Visibility = Visibility.Collapsed;
-            LocalPackagesNode = new TreeViewNode() { Content = bindings.Translate("Local"), IsExpanded = false };
+            LocalPackagesNode = new TreeViewNode() { Content = Tools.Translate("Local"), IsExpanded = false };
             Initialized = true;
             ReloadButton.Visibility = Visibility.Collapsed;
             FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
@@ -91,7 +91,7 @@ namespace ModernWindow.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -121,7 +121,7 @@ namespace ModernWindow.Interface
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
                         (PackageList.SelectedItem as BundledPackage).ShowOptions(s, e);
                     else
-                        _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                        _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -190,7 +190,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            bindings.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+            Tools.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
@@ -285,7 +285,7 @@ namespace ModernWindow.Interface
             int HiddenPackagesDueToSource = 0;
             foreach (BundledPackage match in MatchingList)
             {
-                if ((VisibleManagers.Contains(match.Package.Manager) && match.Package.Manager != bindings.App.Winget) || VisibleSources.Contains(match.Package.Source))
+                if ((VisibleManagers.Contains(match.Package.Manager) && match.Package.Manager != Tools.App.Winget) || VisibleSources.Contains(match.Package.Source))
                     FilteredPackages.Add(match);
                 else
                     HiddenPackagesDueToSource++;
@@ -307,7 +307,7 @@ namespace ModernWindow.Interface
                     {
                         BackgroundText.Text = "No results were found matching the input criteria";
                         SourcesPlaceholderText.Text = "No packages were found";
-                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -316,7 +316,7 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
+                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
             }
         }
 
@@ -342,10 +342,10 @@ namespace ModernWindow.Interface
             MainTitle.Text = "Package Bundles";
             HeaderIcon.Glyph = "\uF133";
             CheckboxHeader.Content = " ";
-            NameHeader.Content = bindings.Translate("Package Name");
-            IdHeader.Content = bindings.Translate("Package ID");
-            VersionHeader.Content = bindings.Translate("Version");
-            SourceHeader.Content = bindings.Translate("Source");
+            NameHeader.Content = Tools.Translate("Package Name");
+            IdHeader.Content = Tools.Translate("Package ID");
+            VersionHeader.Content = Tools.Translate("Version");
+            SourceHeader.Content = Tools.Translate("Source");
 
             CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
@@ -357,8 +357,8 @@ namespace ModernWindow.Interface
         public void UpdateCount()
         {
             BackgroundText.Visibility = Packages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            bindings.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
-            bindings.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+            Tools.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
+            Tools.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public void GenerateToolBar()
@@ -418,7 +418,7 @@ namespace ModernWindow.Interface
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = bindings.Translate(Labels[toolButton].Trim());
+                toolButton.Label = Tools.Translate(Labels[toolButton].Trim());
             }
 
             Dictionary<AppBarButton, string> Icons = new()
@@ -441,10 +441,10 @@ namespace ModernWindow.Interface
             PackageDetails.Click += (s, e) =>
             {
                 if (PackageList.SelectedItem != null)
-                    _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                    _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
             };
 
-            HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (s, e) => { Tools.App.mainWindow.NavigationPage.ShowHelp(); };
 
             NewBundle.Click += (s, e) =>
             {
@@ -464,7 +464,7 @@ namespace ModernWindow.Interface
 
             InstallPackages.Click += async (s, e) =>
             {
-                bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Preparing packages, please wait..."));
+                Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
                     {
@@ -478,12 +478,12 @@ namespace ModernWindow.Interface
                     }
 
 
-                bindings.App.mainWindow.HideLoadingDialog();
+                Tools.App.mainWindow.HideLoadingDialog();
 
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
                         // Install packages
-                        bindings.AddOperationToList(new InstallPackageOperation(package.Package));
+                        Tools.AddOperationToList(new InstallPackageOperation(package.Package));
 
             };
 
@@ -498,7 +498,7 @@ namespace ModernWindow.Interface
                 SaveFile();
             };
 
-            SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
+            SharePackage.Click += (s, e) => { Tools.App.mainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -517,14 +517,14 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
                 return;
-            bindings.App.mainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
+            Tools.App.mainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
                 return;
-            _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+            _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
         }
 
 
@@ -561,7 +561,7 @@ namespace ModernWindow.Interface
 
         public async Task AddPackages(IEnumerable<Package> packages)
         {
-            bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Preparing packages, please wait..."));
+            Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
             var bundled = new List<BundledPackage>();
             foreach (var pkg in packages)
             {
@@ -573,7 +573,7 @@ namespace ModernWindow.Interface
 
             foreach (var pkg in bundled)
                 AddPackage(pkg);
-            bindings.App.mainWindow.HideLoadingDialog();
+            Tools.App.mainWindow.HideLoadingDialog();
 
         }
 
@@ -582,8 +582,8 @@ namespace ModernWindow.Interface
             Packages.Add(package);
             AddPackageToSourcesList(package.Package);
             BackgroundText.Visibility = Packages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            bindings.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
-            bindings.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+            Tools.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
+            Tools.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
             FilterPackages(QueryBlock.Text.Trim());
         }
 
@@ -593,12 +593,12 @@ namespace ModernWindow.Interface
             try
             {
                 // Select file
-                var picker = new Pickers.FilePicker(bindings.App.mainWindow.GetWindowHandle());
+                var picker = new Pickers.FilePicker(Tools.App.mainWindow.GetWindowHandle());
                 var file = picker.Show(new List<string>() {"*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
 
-                bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Loading packages, please wait..."));
+                Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Loading packages, please wait..."));
 
                 // Read file
                 BundleFormatType formatType;
@@ -614,13 +614,13 @@ namespace ModernWindow.Interface
                 // Import packages to list
                 await AddPackagesFromBundleString(fileContent, formatType);
 
-                bindings.App.mainWindow.HideLoadingDialog();
+                Tools.App.mainWindow.HideLoadingDialog();
 
             }
             catch (Exception ex)
             {
                 AppTools.Log(ex);
-                bindings.App.mainWindow.HideLoadingDialog();
+                Tools.App.mainWindow.HideLoadingDialog();
             }
         }
         public async Task AddPackagesFromBundleString(string content, BundleFormatType format)
@@ -756,11 +756,11 @@ namespace ModernWindow.Interface
             {
                 // Get file 
                 // Save file
-                var file = (new Pickers.FileSavePicker(bindings.App.mainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, "WingetUI package bundle.json") ;
+                var file = (new Pickers.FileSavePicker(Tools.App.mainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, "WingetUI package bundle.json") ;
                 if (file != String.Empty)
                 {
                     // Loading dialog
-                    bindings.App.mainWindow.ShowLoadingDialog(bindings.Translate("Saving packages, please wait..."));
+                    Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Saving packages, please wait..."));
 
                     List<BundledPackage> packages = new();
                     foreach (BundledPackage package in Packages)
@@ -778,7 +778,7 @@ namespace ModernWindow.Interface
                     // Save serialized data
                     await File.WriteAllTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
 
-                    bindings.App.mainWindow.HideLoadingDialog();
+                    Tools.App.mainWindow.HideLoadingDialog();
 
                     // Launch file
                     Process.Start(new ProcessStartInfo()
@@ -791,7 +791,7 @@ namespace ModernWindow.Interface
             }
             catch (Exception ex)
             {
-                bindings.App.mainWindow.HideLoadingDialog();
+                Tools.App.mainWindow.HideLoadingDialog();
                 AppTools.Log(ex);
             }
         }

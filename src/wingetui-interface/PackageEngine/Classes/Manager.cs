@@ -19,7 +19,7 @@ namespace ModernWindow.PackageEngine.Classes
         public ManagerCapabilities Capabilities { get; set; } = new();
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
-        public static AppTools bindings = AppTools.Instance;
+        public static AppTools Tools = AppTools.Instance;
         public ManagerSource MainSource { get; set; }
         public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
@@ -93,7 +93,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public bool IsEnabled()
         {
-            return !bindings.GetSettings("Disable" + Name);
+            return !Tools.GetSettings("Disable" + Name);
         }
 
         /// <summary>

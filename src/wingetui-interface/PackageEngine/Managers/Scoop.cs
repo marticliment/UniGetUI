@@ -1,4 +1,5 @@
-﻿using ModernWindow.PackageEngine.Classes;
+﻿using H.NotifyIcon.Core;
+using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
@@ -23,7 +24,7 @@ public class Scoop : PackageManagerWithSources
     {
         List<Package> Packages = new();
 
-        string path = await bindings.Which("scoop-search.exe");
+        string path = await Tools.Which("scoop-search.exe");
         if (!File.Exists(path))
         {
             Process proc = new()
@@ -86,7 +87,7 @@ public class Scoop : PackageManagerWithSources
                 if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                     continue;
 
-                Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
+                Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
             }
         }
         output += await p.StandardError.ReadToEndAsync();
@@ -149,7 +150,7 @@ public class Scoop : PackageManagerWithSources
                     continue;
                 }
 
-                Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
+                Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
             }
         }
         output += await p.StandardError.ReadToEndAsync();
@@ -214,14 +215,13 @@ public class Scoop : PackageManagerWithSources
                 if (line.Contains("Global install"))
                     scope = PackageScope.Global;
 
-                Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], source, this, scope));
+                Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], source, this, scope));
             }
         }
         output += await p.StandardError.ReadToEndAsync();
         AppTools.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
-
 
     public override ManagerSource GetMainSource()
     {
@@ -276,9 +276,9 @@ public class Scoop : PackageManagerWithSources
         try
         {
             if (RawInfo.ContainsKey("innosetup"))
-                details.InstallerType = "Inno Setup (" + bindings.Translate("extracted") + ")";
+                details.InstallerType = "Inno Setup (" + Tools.Translate("extracted") + ")";
             else
-                details.InstallerType = bindings.Translate("Scoop package");
+                details.InstallerType = Tools.Translate("Scoop package");
         }
         catch (Exception ex) { AppTools.Log("Can't load installer type: " + ex); }
 
@@ -538,7 +538,7 @@ public class Scoop : PackageManagerWithSources
         return new ManagerProperties()
         {
             Name = "Scoop",
-            Description = bindings.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
+            Description = Tools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
             IconId = "scoop",
             ColorIconId = "scoop_color",
             ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command scoop",

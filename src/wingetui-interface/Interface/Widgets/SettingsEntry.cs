@@ -10,7 +10,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public sealed class SettingsEntry : SettingsExpander
     {
-        public static AppTools bindings = AppTools.Instance;
+        public static AppTools Tools = AppTools.Instance;
         private InfoBar infoBar;
         private Button RestartButton;
         public string Text
@@ -41,13 +41,13 @@ namespace ModernWindow.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = Tools.Translate((string)e.NewValue); })));
 
             UnderTextProperty = DependencyProperty.Register(
             nameof(UnderText),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Description = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Description = Tools.Translate((string)e.NewValue); })));
 
             IconProperty = DependencyProperty.Register(
             nameof(Icon),
@@ -65,14 +65,14 @@ namespace ModernWindow.Interface.Widgets
             infoBar = new InfoBar();
             infoBar.Severity = InfoBarSeverity.Warning;
             infoBar.Title = "";
-            infoBar.Message = bindings.Translate("Restart WingetUI to fully apply changes");
+            infoBar.Message = Tools.Translate("Restart WingetUI to fully apply changes");
             infoBar.CornerRadius = new CornerRadius(0);
             infoBar.BorderThickness = new Thickness(0);
             RestartButton = new Button();
             RestartButton.HorizontalAlignment = HorizontalAlignment.Right;
             infoBar.ActionButton = RestartButton;
-            RestartButton.Content = bindings.Translate("Restart WingetUI");
-            RestartButton.Click += (s, e) => { bindings.RestartApp(); };
+            RestartButton.Content = Tools.Translate("Restart WingetUI");
+            RestartButton.Click += (s, e) => { Tools.RestartApp(); };
             ItemsHeader = infoBar;
 
             DefaultStyleKey = typeof(SettingsExpander);

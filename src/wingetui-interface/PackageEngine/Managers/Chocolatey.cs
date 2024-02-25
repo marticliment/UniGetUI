@@ -50,7 +50,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -95,7 +95,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
                 }
             }
 
@@ -140,7 +140,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -249,7 +249,7 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 try
                 {
-                    details.InstallerType = bindings.Translate("NuPkg (zipped manifest)");
+                    details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");
                     details.InstallerUrl = new Uri("https://packages.chocolatey.org/" + package.Id + "." + package.Version + ".nupkg");
                     WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
                     req.Method = "HEAD";
@@ -448,7 +448,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Chocolatey",
-                Description = bindings.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
+                Description = Tools.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
                 IconId = "choco",
                 ColorIconId = "choco_color",
                 ExecutableFriendlyName = "choco.exe",
@@ -465,8 +465,8 @@ namespace ModernWindow.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
-            if (bindings.GetSettings("UseSystemChocolatey"))
-                status.ExecutablePath = await bindings.Which("choco.exe");
+            if (Tools.GetSettings("UseSystemChocolatey"))
+                status.ExecutablePath = await Tools.Which("choco.exe");
             else if (File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe")))
                 status.ExecutablePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe");
             else

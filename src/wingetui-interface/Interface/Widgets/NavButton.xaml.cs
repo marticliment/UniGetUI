@@ -12,7 +12,7 @@ namespace ModernWindow.Interface.Widgets
     public sealed partial class NavButton : UserControl
     {
 
-        private AppTools bindings = AppTools.Instance;
+        private AppTools Tools = AppTools.Instance;
         public class NavButtonEventArgs : EventArgs
         {
             public NavButtonEventArgs()
@@ -63,7 +63,7 @@ namespace ModernWindow.Interface.Widgets
                         TextBlock.Height = 18;
                         VariableGrid.RowDefinitions[1].Height = new GridLength(26);
                     }
-                    TextBlock.Text = bindings.Translate(val).Replace(" ", "\x0a");
+                    TextBlock.Text = Tools.Translate(val).Replace(" ", "\x0a");
                 }))
             );
 
@@ -74,7 +74,7 @@ namespace ModernWindow.Interface.Widgets
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { IconBlock.Glyph = (string)e.NewValue; }))
             );
 
-            bindings.App.mainWindow.NavButtonList.Add(this);
+            Tools.App.mainWindow.NavButtonList.Add(this);
         }
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {

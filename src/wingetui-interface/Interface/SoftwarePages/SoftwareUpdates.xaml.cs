@@ -30,7 +30,7 @@ namespace ModernWindow.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools bindings = AppTools.Instance;
+        protected AppTools Tools = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -84,7 +84,7 @@ namespace ModernWindow.Interface
             };
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
+                _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -115,13 +115,13 @@ namespace ModernWindow.Interface
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
                     {
-                        if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Update))
-                            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
+                        if (await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Update))
+                            Tools.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
                     }
                     else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
-                        bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as Package));
+                        Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as Package));
                     else
-                        _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
+                        _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -194,7 +194,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            bindings.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+            Tools.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
@@ -237,7 +237,7 @@ namespace ModernWindow.Interface
 
             List<Task<UpgradablePackage[]>> tasks = new();
 
-            foreach (PackageManager manager in bindings.App.PackageManagerList)
+            foreach (PackageManager manager in Tools.App.PackageManagerList)
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {
@@ -287,18 +287,18 @@ namespace ModernWindow.Interface
                 string title = "";
                 string attribution = "";
                 bool ShowButtons = false;
-                if (bindings.GetSettings("AutomaticallyUpdatePackages") || Environment.GetCommandLineArgs().Contains("--updateapps"))
+                if (Tools.GetSettings("AutomaticallyUpdatePackages") || Environment.GetCommandLineArgs().Contains("--updateapps"))
                 {
                     if (Packages.Count == 1)
                     {
-                        title = bindings.Translate("An update was found!");
-                        body = bindings.Translate("{0} is being updates to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
-                        attribution = bindings.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
+                        title = Tools.Translate("An update was found!");
+                        body = Tools.Translate("{0} is being updates to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
+                        attribution = Tools.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
                     }
                     else
                     {
-                        title = bindings.Translate("Updates found!");
-                        body = bindings.Translate("{0} packages are being updated").Replace("{0}", Packages.Count.ToString()); ;
+                        title = Tools.Translate("Updates found!");
+                        body = Tools.Translate("{0} packages are being updated").Replace("{0}", Packages.Count.ToString()); ;
                         foreach (UpgradablePackage package in Packages)
                         {
                             attribution += package.Name + ", ";
@@ -311,14 +311,14 @@ namespace ModernWindow.Interface
                 {
                     if (Packages.Count == 1)
                     {
-                        title = bindings.Translate("An update was found!");
-                        body = bindings.Translate("{0} can be updated to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
-                        attribution = bindings.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
+                        title = Tools.Translate("An update was found!");
+                        body = Tools.Translate("{0} can be updated to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
+                        attribution = Tools.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
                     }
                     else
                     {
-                        title = bindings.Translate("Updates found!");
-                        body = bindings.Translate("{0} packages can be updated").Replace("{0}", Packages.Count.ToString()); ;
+                        title = Tools.Translate("Updates found!");
+                        body = Tools.Translate("{0} packages can be updated").Replace("{0}", Packages.Count.ToString()); ;
                         foreach (UpgradablePackage package in Packages)
                         {
                             attribution += package.Name + ", ";
@@ -328,7 +328,7 @@ namespace ModernWindow.Interface
                     }
                 }
 
-                if (!bindings.GetSettings("DisableUpdatesNotifications") && !bindings.GetSettings("DisableNotifications"))
+                if (!Tools.GetSettings("DisableUpdatesNotifications") && !Tools.GetSettings("DisableNotifications"))
                 {
                     try
                     {
@@ -342,11 +342,11 @@ namespace ModernWindow.Interface
                         if (ShowButtons)
                         {
                             toast.AddButton(new ToastButton()
-                                .SetContent(bindings.Translate("Open WingetUI"))
+                                .SetContent(Tools.Translate("Open WingetUI"))
                                 .AddArgument("action", "openWingetUI")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
-                                .SetContent(bindings.Translate("Update all"))
+                                .SetContent(Tools.Translate("Update all"))
                                 .AddArgument("action", "updateAll")
                                 .SetBackgroundActivation());
                         }
@@ -365,7 +365,7 @@ namespace ModernWindow.Interface
         {
             foreach (UpgradablePackage package in Packages)
             {
-                bindings.AddOperationToList(new UpdatePackageOperation(package));
+                Tools.AddOperationToList(new UpdatePackageOperation(package));
             }
         }
 
@@ -458,7 +458,7 @@ namespace ModernWindow.Interface
                     {
                         BackgroundText.Text = "No results were found matching the input criteria";
                         SourcesPlaceholderText.Text = "No packages were found";
-                        MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -467,14 +467,14 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = bindings.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
             }
 
-            bindings.App.mainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
-            bindings.App.mainWindow.NavigationPage.UpdatesBadge.Value = Packages.Count();
+            Tools.App.mainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
+            Tools.App.mainWindow.NavigationPage.UpdatesBadge.Value = Packages.Count();
             try
             {
-                bindings.TooltipStatus.AvailableUpdates = Packages.Count();
+                Tools.TooltipStatus.AvailableUpdates = Packages.Count();
             }
             catch (Exception) { }
         }
@@ -502,11 +502,11 @@ namespace ModernWindow.Interface
             HeaderIcon.Glyph = "\uE895";
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
             CheckboxHeader.Content = " ";
-            NameHeader.Content = bindings.Translate("Package Name");
-            IdHeader.Content = bindings.Translate("Package ID");
-            VersionHeader.Content = bindings.Translate("Version");
-            NewVersionHeader.Content = bindings.Translate("New version");
-            SourceHeader.Content = bindings.Translate("Source");
+            NameHeader.Content = Tools.Translate("Package Name");
+            IdHeader.Content = Tools.Translate("Package ID");
+            VersionHeader.Content = Tools.Translate("Version");
+            NewVersionHeader.Content = Tools.Translate("New version");
+            SourceHeader.Content = Tools.Translate("Source");
 
             CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
@@ -579,7 +579,7 @@ namespace ModernWindow.Interface
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = bindings.Translate(Labels[toolButton].Trim());
+                toolButton.Label = Tools.Translate(Labels[toolButton].Trim());
             }
 
             Dictionary<AppBarButton, string> Icons = new()
@@ -602,17 +602,17 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
 
-            PackageDetails.Click += (s, e) => { _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); };
-            HelpButton.Click += (s, e) => { bindings.App.mainWindow.NavigationPage.ShowHelp(); };
+            PackageDetails.Click += (s, e) => { _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); };
+            HelpButton.Click += (s, e) => { Tools.App.mainWindow.NavigationPage.ShowHelp(); };
 
 
             InstallationSettings.Click += async (s, e) =>
             {
-                if (PackageList.SelectedItem != null && await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Update))
-                    bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
+                if (PackageList.SelectedItem != null && await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Update))
+                    Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
             };
 
-            ManageIgnored.Click += async (s, e) => { await bindings.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
+            ManageIgnored.Click += async (s, e) => { await Tools.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
@@ -622,28 +622,28 @@ namespace ModernWindow.Interface
             UpdateSelected.Click += (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
-                        bindings.AddOperationToList(new UpdatePackageOperation(package));
+                        Tools.AddOperationToList(new UpdatePackageOperation(package));
             };
             UpdateAsAdmin.Click += (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
-                        bindings.AddOperationToList(new UpdatePackageOperation(package,
+                        Tools.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { RunAsAdministrator = true }));
             };
             UpdateSkipHash.Click += (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
-                        bindings.AddOperationToList(new UpdatePackageOperation(package,
+                        Tools.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { SkipHashCheck = true }));
             };
             UpdateInteractive.Click += (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
-                        bindings.AddOperationToList(new UpdatePackageOperation(package,
+                        Tools.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => { bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { Tools.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -653,28 +653,28 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = bindings.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
+            _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.App.mainWindow.SharePackage(PackageList.SelectedItem as UpgradablePackage);
+            Tools.App.mainWindow.SharePackage(PackageList.SelectedItem as UpgradablePackage);
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
+            Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
                 new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { SkipHashCheck = true }));
         }
 
@@ -682,7 +682,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
+            Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
                 new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { InteractiveInstallation = true }));
         }
 
@@ -690,7 +690,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
+            Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
                 new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { RunAsAdministrator = true }));
         }
 
@@ -698,15 +698,15 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
-            bindings.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            Tools.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            Tools.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            bindings.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            Tools.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
@@ -739,8 +739,8 @@ namespace ModernWindow.Interface
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
 
-            if (await bindings.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as UpgradablePackage, OperationType.Update))
-                bindings.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            if (await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as UpgradablePackage, OperationType.Update))
+                Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
         }
 
         private void SelectAllItems()
@@ -774,7 +774,7 @@ namespace ModernWindow.Interface
             {
                 if (package.Id == id)
                 {
-                    bindings.AddOperationToList(new UpdatePackageOperation(package));
+                    Tools.AddOperationToList(new UpdatePackageOperation(package));
                     AppTools.Log("Updating package with id " + id + ". Operation was launched from widgets");
                     break;
                 }
@@ -786,7 +786,7 @@ namespace ModernWindow.Interface
         {
             AppTools.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
-                bindings.AddOperationToList(new UpdatePackageOperation(package));
+                Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
 
         public void UpdateAllPackagesForManager(string manager)
@@ -794,7 +794,7 @@ namespace ModernWindow.Interface
             AppTools.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
                 if (package.Manager.Name == manager)
-                    bindings.AddOperationToList(new UpdatePackageOperation(package));
+                    Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
     }
 }

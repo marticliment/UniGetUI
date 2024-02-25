@@ -54,11 +54,11 @@ namespace ModernWindow.PackageEngine.Managers
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
                     if (SourceReference.ContainsKey(elements[2]))
-                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
+                        Packages.Add(new Package(Tools.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
                     else
                     {
                         ManagerSource s = new(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
-                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
+                        Packages.Add(new Package(Tools.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);
                     }
                 }
@@ -137,11 +137,11 @@ namespace ModernWindow.PackageEngine.Managers
                     continue;
 
                 if (SourceReference.ContainsKey(elements[3]))
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceReference[elements[3]], this));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceReference[elements[3]], this));
                 else
                 {
                     ManagerSource s = new(this, elements[3], new Uri("https://www.powershellgallery.com/api/v2"));
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], s, this));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], s, this));
                     SourceReference.Add(s.Name, s);
                 }
             }
@@ -190,12 +190,12 @@ namespace ModernWindow.PackageEngine.Managers
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
                     if (SourceReference.ContainsKey(elements[2]))
-                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
+                        Packages.Add(new Package(Tools.FormatAsName(elements[1]), elements[1], elements[0], SourceReference[elements[2]], this));
                     else
                     {
                         AppTools.Log("Unknown PowerShell source!");
                         ManagerSource s = new(this, elements[2], new Uri("https://www.powershellgallery.com/api/v2"));
-                        Packages.Add(new Package(bindings.FormatAsName(elements[1]), elements[1], elements[0], s, this));
+                        Packages.Add(new Package(Tools.FormatAsName(elements[1]), elements[1], elements[0], s, this));
                         SourceReference.Add(s.Name, s);
                     }
                 }
@@ -431,7 +431,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "PowerShell",
-                Description = bindings.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
+                Description = Tools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = "powershell",
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "powershell.exe",

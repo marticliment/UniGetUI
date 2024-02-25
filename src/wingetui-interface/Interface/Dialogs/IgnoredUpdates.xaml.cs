@@ -22,7 +22,7 @@ namespace ModernWindow.Interface
 
     public sealed partial class IgnoredUpdatesManager : Page
     {
-        AppTools bindings = AppTools.Instance;
+        AppTools Tools = AppTools.Instance;
         public IgnoredUpdatesManager()
         {
             InitializeComponent();
@@ -34,7 +34,7 @@ namespace ModernWindow.Interface
 
             Dictionary<string, PackageManager> ManagerNameReference = new();
 
-            foreach (PackageManager Manager in bindings.App.PackageManagerList)
+            foreach (PackageManager Manager in Tools.App.PackageManagerList)
             {
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
@@ -45,7 +45,7 @@ namespace ModernWindow.Interface
 
             foreach (KeyValuePair<string, JsonNode> keypair in IgnoredUpdatesJson)
             {
-                PackageManager manager = bindings.App.Winget; // Manager by default
+                PackageManager manager = Tools.App.Winget; // Manager by default
                 if (ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
                     manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
 

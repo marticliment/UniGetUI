@@ -21,7 +21,7 @@ namespace ModernWindow.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        AppTools bindings = AppTools.Instance;
+        AppTools Tools = AppTools.Instance;
         public InstallationOptions Options;
         public Package Package;
 
@@ -44,7 +44,7 @@ namespace ModernWindow.Interface.Dialogs
             HashCheckbox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
             ArchitectureComboBox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
-            ArchitectureComboBox.Items.Add(bindings.Translate("Default"));
+            ArchitectureComboBox.Items.Add(Tools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
 
 
@@ -58,14 +58,14 @@ namespace ModernWindow.Interface.Dialogs
 
             VersionComboBox.IsEnabled = (Operation == OperationType.Install || Operation == OperationType.None) && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
             VersionComboBox.SelectionChanged += (s, e) =>
-              { IgnoreUpdatesCheckbox.IsChecked = !new string[] { bindings.Translate("Latest"), bindings.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
-            VersionComboBox.Items.Add(bindings.Translate("Latest"));
+              { IgnoreUpdatesCheckbox.IsChecked = !new string[] { Tools.Translate("Latest"), Tools.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
+            VersionComboBox.Items.Add(Tools.Translate("Latest"));
             VersionComboBox.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsPreRelease)
             {
-                VersionComboBox.Items.Add(bindings.Translate("PreRelease"));
+                VersionComboBox.Items.Add(Tools.Translate("PreRelease"));
                 if (Options.PreRelease)
-                    VersionComboBox.SelectedValue = bindings.Translate("PreRelease");
+                    VersionComboBox.SelectedValue = Tools.Translate("PreRelease");
             }
 
             if (Package.Manager.Capabilities.SupportsCustomVersions)
@@ -74,14 +74,14 @@ namespace ModernWindow.Interface.Dialogs
                 VersionProgress.Visibility = Visibility.Collapsed;
 
             ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
-            ScopeCombo.Items.Add(bindings.Translate("Default"));
+            ScopeCombo.Items.Add(Tools.Translate("Default"));
             ScopeCombo.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
-                ScopeCombo.Items.Add(bindings.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
+                ScopeCombo.Items.Add(Tools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
                 if (Options.InstallationScope == PackageScope.Local)
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
-                ScopeCombo.Items.Add(bindings.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
+                ScopeCombo.Items.Add(Tools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
                 if (Options.InstallationScope == PackageScope.Global)
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
             }
@@ -136,9 +136,9 @@ namespace ModernWindow.Interface.Dialogs
 
             Options.CustomInstallLocation = CustomInstallLocation.Text;
             Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
-            Options.PreRelease = VersionComboBox.SelectedValue.ToString() == bindings.Translate("PreRelease");
+            Options.PreRelease = VersionComboBox.SelectedValue.ToString() == Tools.Translate("PreRelease");
 
-            if (VersionComboBox.SelectedValue.ToString() != bindings.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != bindings.Translate("Latest"))
+            if (VersionComboBox.SelectedValue.ToString() != Tools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != Tools.Translate("Latest"))
                 Options.Version = VersionComboBox.SelectedValue.ToString();
             else
                 Options.Version = "";
@@ -161,7 +161,7 @@ namespace ModernWindow.Interface.Dialogs
 
         private void SelectDir_Click(object sender, RoutedEventArgs e)
         {
-            var openPicker = new Pickers.FolderPicker(bindings.App.mainWindow.GetWindowHandle());
+            var openPicker = new Pickers.FolderPicker(Tools.App.mainWindow.GetWindowHandle());
             string folder = openPicker.Show();
             if (folder != String.Empty)
                 CustomInstallLocation.Text = folder;

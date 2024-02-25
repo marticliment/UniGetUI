@@ -706,7 +706,7 @@
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="0">
-                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind bindings.GetSettings(InstantSearchSettingString, x:True)}">
+                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind Tools.GetSettings(InstantSearchSettingString, x:True)}">
                                     <CheckBox.Content>
                                         <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap"/>
                                     </CheckBox.Content>
@@ -798,48 +798,48 @@
                     <ListView.ContextFlyout>
                         <widgets:BetterMenu x:Name="PackageContextMenu">
                             <widgets:BetterMenuItem x:Name="MenuUninstall" 
-                                Text="{x:Bind bindings.Translate('Uninstall')}"
+                                Text="{x:Bind Tools.Translate('Uninstall')}"
                                 Click="MenuUninstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
                                 IconName="menu_uninstall"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
-                                Text="{x:Bind bindings.Translate('Installation options')}" 
+                                Text="{x:Bind Tools.Translate('Installation options')}" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
                                 IconName="options"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
-                                Text="{x:Bind bindings.Translate('Uninstall as administrator')}" 
+                                Text="{x:Bind Tools.Translate('Uninstall as administrator')}" 
                                 Click="MenuAsAdmin_Invoked"
                                 IconName="runasadmin"/>
                             <widgets:BetterMenuItem x:Name="MenuInteractive"
-                                Text="{x:Bind bindings.Translate('Interactive uninstallation')}" 
+                                Text="{x:Bind Tools.Translate('Interactive uninstallation')}" 
                                 Click="MenuInteractive_Invoked" 
                                 IconName="interactive"/>
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
-                                Text="{x:Bind bindings.Translate('Uninstall and remove data')}" 
+                                Text="{x:Bind Tools.Translate('Uninstall and remove data')}" 
                                 Click="MenuRemoveData_Invoked"
                                 IconName="menu_close"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuReinstall" 
-                                Text="{x:Bind bindings.Translate('Reinstall package')}" 
+                                Text="{x:Bind Tools.Translate('Reinstall package')}" 
                                 Click="MenuReinstall_Invoked"
                                 IconName="newversion"/>
                             <widgets:BetterMenuItem x:Name="MenuUninstallThenReinstall" 
-                                Text="{x:Bind bindings.Translate('Uninstall package, then reinstall it')}" 
+                                Text="{x:Bind Tools.Translate('Uninstall package, then reinstall it')}" 
                                 Click="MenuUninstallThenReinstall_Invoked"
                                 IconName="undelete"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuIgnorePackage" 
-                                Text="{x:Bind bindings.Translate('Ignore updates for this package')}" 
+                                Text="{x:Bind Tools.Translate('Ignore updates for this package')}" 
                                 Click="MenuIgnorePackage_Invoked"
                                 IconName="pin"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
-                                Text="{x:Bind bindings.Translate('Share this package')}" 
+                                Text="{x:Bind Tools.Translate('Share this package')}" 
                                 Click="MenuShare_Invoked"
                                 IconName="share"/>
                             <widgets:BetterMenuItem x:Name="MenuDetails" 
-                                Text="{x:Bind bindings.Translate('Package details')}" 
+                                Text="{x:Bind Tools.Translate('Package details')}" 
                                 Click="MenuDetails_Invoked" KeyboardAcceleratorTextOverride="Enter"
                                 IconName="info"/>
 

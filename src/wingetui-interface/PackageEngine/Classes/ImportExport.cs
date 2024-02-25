@@ -80,7 +80,7 @@ namespace ModernWindow.PackageEngine.Classes
 
     public class BundledPackage : INotifyPropertyChanged
     {
-        public AppTools bindings = AppTools.Instance;
+        public AppTools Tools = AppTools.Instance;
         public Package Package { get; }
         public bool IsValid { get; set; } = true;
         public InstallationOptions InstallOptions { get; set; }
@@ -115,7 +115,7 @@ namespace ModernWindow.PackageEngine.Classes
             get
             {
                 if (UpdateOptions == null || !UpdateOptions.UpdatesIgnored)
-                    return bindings.Translate("Latest");
+                    return Tools.Translate("Latest");
                 else
                     return Package.Version;
             }
@@ -154,14 +154,14 @@ namespace ModernWindow.PackageEngine.Classes
 
         public async virtual void ShowOptions(object sender, RoutedEventArgs e)
         {
-            InstallOptions = await bindings.App.mainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
+            InstallOptions = await Tools.App.mainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
         }
 
         public void RemoveFromList(object sender, RoutedEventArgs e)
         {
-            bindings.App.mainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
-            bindings.App.mainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
-            bindings.App.mainWindow.NavigationPage.BundlesPage.UpdateCount();
+            Tools.App.mainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
+            Tools.App.mainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
+            Tools.App.mainWindow.NavigationPage.BundlesPage.UpdateCount();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

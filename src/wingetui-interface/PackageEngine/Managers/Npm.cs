@@ -47,7 +47,7 @@ namespace ModernWindow.PackageEngine.Managers
                     {
                         string[] elements = line.Split('\t');
                         if (elements.Length >= 5)
-                            Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
+                            Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
                     }
             }
 
@@ -82,7 +82,7 @@ namespace ModernWindow.PackageEngine.Managers
                 string[] elements = line.Split(':');
                 if (elements.Length >= 4)
                 {
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
                 }
             }
 
@@ -106,7 +106,7 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 string[] elements = line.Split(':');
                 if (elements.Length >= 4)
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this, PackageScope.Global));
             }
 
             output += await p.StandardError.ReadToEndAsync();
@@ -143,7 +143,7 @@ namespace ModernWindow.PackageEngine.Managers
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -168,7 +168,7 @@ namespace ModernWindow.PackageEngine.Managers
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
             }
 
@@ -347,7 +347,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Npm",
-                Description = bindings.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
+                Description = Tools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
                 IconId = "node",
                 ColorIconId = "node_color",
                 ExecutableFriendlyName = "npm",
@@ -365,7 +365,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerStatus status = new();
 
             status.ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
-            status.Found = File.Exists(await bindings.Which("npm"));
+            status.Found = File.Exists(await Tools.Which("npm"));
 
             if (!status.Found)
                 return status;

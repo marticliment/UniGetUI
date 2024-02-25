@@ -35,7 +35,7 @@ namespace ModernWindow.PackageEngine
             Compact,
         }
 
-        public static AppTools bindings = AppTools.Instance;
+        public static AppTools Tools = AppTools.Instance;
 
         private string __button_text;
         private string __line_info_text = "Please wait...";
@@ -123,31 +123,31 @@ namespace ModernWindow.PackageEngine
                     case OperationStatus.Pending:
                         ProgressIndicator.IsIndeterminate = true;
                         ProgressBarColor = Colors.Gray;
-                        ButtonText = bindings.Translate("Cancel");
+                        ButtonText = Tools.Translate("Cancel");
                         break;
 
                     case OperationStatus.Running:
                         ProgressIndicator.IsIndeterminate = true;
                         ProgressBarColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.AccentLight1);
-                        ButtonText = bindings.Translate("Cancel");
+                        ButtonText = Tools.Translate("Cancel");
                         break;
 
                     case OperationStatus.Succeeded:
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#11945a");
                         ProgressIndicator.IsIndeterminate = false;
-                        ButtonText = bindings.Translate("Close");
+                        ButtonText = Tools.Translate("Close");
                         break;
 
                     case OperationStatus.Failed:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fe890b");
-                        ButtonText = bindings.Translate("Close");
+                        ButtonText = Tools.Translate("Close");
                         break;
 
                     case OperationStatus.Cancelled:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fec10b");
-                        ButtonText = bindings.Translate("Close");
+                        ButtonText = Tools.Translate("Close");
                         break;
                 }
             }
@@ -173,9 +173,9 @@ namespace ModernWindow.PackageEngine
             LiveOutputScrollBar.Width = 600;
             LiveOutputScrollBar.Content = LiveOutputTextBlock;
 
-            OutputDialog.Title = bindings.Translate("Live output");
-            OutputDialog.CloseButtonText = bindings.Translate("Close");
-            OutputDialog.SecondaryButtonText = bindings.Translate("Copy and close");
+            OutputDialog.Title = Tools.Translate("Live output");
+            OutputDialog.CloseButtonText = Tools.Translate("Close");
+            OutputDialog.SecondaryButtonText = Tools.Translate("Copy and close");
 
 
             OutputDialog.SizeChanged += (s, e) =>
@@ -183,8 +183,8 @@ namespace ModernWindow.PackageEngine
                 if (!IsDialogOpen)
                     return;
 
-                LiveOutputScrollBar.MinWidth = bindings.App.mainWindow.NavigationPage.ActualWidth - 400;
-                LiveOutputScrollBar.MinHeight = bindings.App.mainWindow.NavigationPage.ActualHeight - 200;
+                LiveOutputScrollBar.MinWidth = Tools.App.mainWindow.NavigationPage.ActualWidth - 400;
+                LiveOutputScrollBar.MinHeight = Tools.App.mainWindow.NavigationPage.ActualHeight - 200;
             };
 
             OutputDialog.Content = LiveOutputScrollBar;
@@ -236,7 +236,7 @@ namespace ModernWindow.PackageEngine
             LiveOutputTextBlock.Blocks.Add(p);
             IsDialogOpen = true;
 
-            if (await bindings.App.mainWindow.ShowDialog(OutputDialog) == ContentDialogResult.Secondary)
+            if (await Tools.App.mainWindow.ShowDialog(OutputDialog) == ContentDialogResult.Secondary)
             {
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
                 Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
@@ -256,21 +256,21 @@ namespace ModernWindow.PackageEngine
 
         private void RemoveFromQueue()
         {
-            int Index = bindings.OperationQueue.IndexOf(this);
+            int Index = Tools.OperationQueue.IndexOf(this);
             if (Index != -1)
-                bindings.OperationQueue.Remove(this);
+                Tools.OperationQueue.Remove(this);
         }
         protected void AddToQueue()
         {
-            if (!bindings.OperationQueue.Contains(this))
-                bindings.OperationQueue.Add(this);
+            if (!Tools.OperationQueue.Contains(this))
+                Tools.OperationQueue.Add(this);
         }
 
         public void CancelButtonClicked(OperationStatus OldStatus)
         {
             RemoveFromQueue();
             Status = OperationStatus.Cancelled;
-            LineInfoText = bindings.Translate("Operation cancelled");
+            LineInfoText = Tools.Translate("Operation cancelled");
             if (OldStatus == OperationStatus.Running)
             {
                 Process.Kill();
@@ -285,7 +285,7 @@ namespace ModernWindow.PackageEngine
 
         protected void AddToQueue_Priority()
         {
-            bindings.OperationQueue.Insert(0, this);
+            Tools.OperationQueue.Insert(0, this);
         }
 
         protected virtual async Task WaitForAvailability()
@@ -298,10 +298,10 @@ namespace ModernWindow.PackageEngine
                 if (Status == OperationStatus.Cancelled)
                     return; // If th operation has been cancelled
 
-                currentIndex = bindings.OperationQueue.IndexOf(this);
+                currentIndex = Tools.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
-                    LineInfoText = bindings.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
+                    LineInfoText = Tools.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
                     oldIndex = currentIndex;
                 }
                 await Task.Delay(100);
@@ -317,10 +317,10 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
-                bindings.TooltipStatus.OperationsInProgress = bindings.TooltipStatus.OperationsInProgress + 1;
+                Tools.TooltipStatus.OperationsInProgress = Tools.TooltipStatus.OperationsInProgress + 1;
 
                 Status = OperationStatus.Running;
-                LineInfoText = bindings.Translate("Launching subprocess...");
+                LineInfoText = Tools.Translate("Launching subprocess...");
                 ProcessStartInfo startInfo = new();
                 startInfo.RedirectStandardInput = true;
                 startInfo.RedirectStandardOutput = true;
@@ -379,9 +379,9 @@ namespace ModernWindow.PackageEngine
                         case OperationVeredict.Failed:
                             Status = OperationStatus.Failed;
                             RemoveFromQueue();
-                            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred + 1;
+                            Tools.TooltipStatus.ErrorsOccurred = Tools.TooltipStatus.ErrorsOccurred + 1;
                             postAction = await HandleFailure();
-                            bindings.TooltipStatus.ErrorsOccurred = bindings.TooltipStatus.ErrorsOccurred - 1;
+                            Tools.TooltipStatus.ErrorsOccurred = Tools.TooltipStatus.ErrorsOccurred - 1;
                             break;
 
                         case OperationVeredict.Succeeded:
@@ -400,8 +400,8 @@ namespace ModernWindow.PackageEngine
                 switch (postAction)
                 {
                     case AfterFinshAction.TimeoutClose:
-                        if (bindings.OperationQueue.Count == 0)
-                            if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                        if (Tools.OperationQueue.Count == 0)
+                            if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
                             {
                                 AppTools.Log("Erasing admin rights");
                                 Process p = new();
@@ -415,8 +415,8 @@ namespace ModernWindow.PackageEngine
                         break;
 
                     case AfterFinshAction.ManualClose:
-                        if (bindings.OperationQueue.Count == 0)
-                            if (bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                        if (Tools.OperationQueue.Count == 0)
+                            if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
                             {
                                 AppTools.Log("Erasing admin rights");
                                 Process p = new();
@@ -437,16 +437,16 @@ namespace ModernWindow.PackageEngine
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
-                bindings.SetSettingsValue("OperationHistory", String.Join('\n', ProcessOutput.ToArray()) + bindings.GetSettingsValue("OperationHistory"));
+                Tools.SetSettingsValue("OperationHistory", String.Join('\n', ProcessOutput.ToArray()) + Tools.GetSettingsValue("OperationHistory"));
             }
             catch (Exception e)
             {
                 AppTools.Log("Operation failed: " + e.ToString());
-                LineInfoText = bindings.Translate("An unexpected error occurred:") + " " + e.Message;
+                LineInfoText = Tools.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }
             }
-            bindings.TooltipStatus.OperationsInProgress = bindings.TooltipStatus.OperationsInProgress - 1;
+            Tools.TooltipStatus.OperationsInProgress = Tools.TooltipStatus.OperationsInProgress - 1;
 
 
         }
@@ -456,9 +456,9 @@ namespace ModernWindow.PackageEngine
                 await Task.Delay(1000);
 
             RemoveFromQueue();
-            if (bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+            if (Tools.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
             {
-                bindings.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
+                Tools.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
             }
         }
 
@@ -471,7 +471,7 @@ namespace ModernWindow.PackageEngine
 
         protected void Retry()
         {
-            LineInfoText = bindings.Translate("Retrying, please wait...");
+            LineInfoText = Tools.Translate("Retrying, please wait...");
             ProcessOutput.Clear();
             Status = OperationStatus.Pending;
             _ = MainThread();

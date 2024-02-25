@@ -18,7 +18,7 @@ namespace ModernWindow.Interface
 {
     public sealed partial class NavigationPage : UserControl
     {
-        public static AppTools bindings = AppTools.Instance;
+        public static AppTools Tools = AppTools.Instance;
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;
@@ -91,16 +91,16 @@ namespace ModernWindow.Interface
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
 
-            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
             MoreNavButton.ToggleButton.IsChecked = true;
 
-            (VersionMenuItem as MenuFlyoutItem).Text = bindings.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            (VersionMenuItem as MenuFlyoutItem).Text = Tools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
             MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions() { ShowMode = FlyoutShowMode.Standard });
 
             MoreNavButtonMenu.Closed += (s, e) =>
             {
-                foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+                foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
                     button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
             };
         }
@@ -118,14 +118,14 @@ namespace ModernWindow.Interface
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
             AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
             AboutDialog.Content = AboutPage;
-            AboutDialog.PrimaryButtonText = bindings.Translate("Close");
-            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+            AboutDialog.PrimaryButtonText = Tools.Translate("Close");
+            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
 
-            await bindings.App.mainWindow.ShowDialog(AboutDialog);
+            await Tools.App.mainWindow.ShowDialog(AboutDialog);
 
             AboutDialog.Content = null;
-            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
             AboutDialog = null;
         }
@@ -137,15 +137,15 @@ namespace ModernWindow.Interface
             UpdatesDialog.XamlRoot = XamlRoot;
             UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            UpdatesDialog.PrimaryButtonText = bindings.Translate("Close");
-            UpdatesDialog.SecondaryButtonText = bindings.Translate("Reset");
+            UpdatesDialog.PrimaryButtonText = Tools.Translate("Close");
+            UpdatesDialog.SecondaryButtonText = Tools.Translate("Reset");
             UpdatesDialog.DefaultButton = ContentDialogButton.Primary;
-            UpdatesDialog.Title = bindings.Translate("Manage ignored updates");
+            UpdatesDialog.Title = Tools.Translate("Manage ignored updates");
             UpdatesDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
 
             _ = IgnoredUpdatesPage.UpdateData();
-            await bindings.App.mainWindow.ShowDialog(UpdatesDialog);
+            await Tools.App.mainWindow.ShowDialog(UpdatesDialog);
 
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
@@ -161,19 +161,19 @@ namespace ModernWindow.Interface
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             if (Operation == OperationType.Install)
-                OptionsDialog.SecondaryButtonText = bindings.Translate("Install");
+                OptionsDialog.SecondaryButtonText = Tools.Translate("Install");
             else if (Operation == OperationType.Update)
-                OptionsDialog.SecondaryButtonText = bindings.Translate("Update");
+                OptionsDialog.SecondaryButtonText = Tools.Translate("Update");
             else if (Operation == OperationType.Uninstall)
-                OptionsDialog.SecondaryButtonText = bindings.Translate("Uninstall");
+                OptionsDialog.SecondaryButtonText = Tools.Translate("Uninstall");
             else
                 OptionsDialog.SecondaryButtonText = "";
-            OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
+            OptionsDialog.PrimaryButtonText = Tools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = Tools.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
 
-            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(OptionsDialog);
+            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(OptionsDialog);
             OptionsPage.SaveToDisk();
 
             OptionsDialog.Content = null;
@@ -193,11 +193,11 @@ namespace ModernWindow.Interface
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             OptionsDialog.SecondaryButtonText = "";
-            OptionsDialog.PrimaryButtonText = bindings.Translate("Save and close");
+            OptionsDialog.PrimaryButtonText = Tools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = bindings.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = Tools.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
-            await bindings.App.mainWindow.ShowDialog(OptionsDialog);
+            await Tools.App.mainWindow.ShowDialog(OptionsDialog);
 
             OptionsDialog.Content = null;
             OptionsDialog = null;
@@ -218,7 +218,7 @@ namespace ModernWindow.Interface
                 Grid.SetRow(TargetPage, 0);
                 MainContentPresenterGrid.Children.Add(TargetPage);
             }
-            foreach (NavButton button in bindings.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
             {
 
                 button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
@@ -238,8 +238,8 @@ namespace ModernWindow.Interface
             NotesDialog.XamlRoot = XamlRoot;
             NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
             NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
-            NotesDialog.CloseButtonText = bindings.Translate("Close");
-            NotesDialog.Title = bindings.Translate("Release notes");
+            NotesDialog.CloseButtonText = Tools.Translate("Close");
+            NotesDialog.Title = Tools.Translate("Release notes");
             ReleaseNotes notes = new();
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
@@ -248,7 +248,7 @@ namespace ModernWindow.Interface
                 notes.MinHeight = ActualHeight - 200;
             };
 
-            await bindings.App.mainWindow.ShowDialog(NotesDialog);
+            await Tools.App.mainWindow.ShowDialog(NotesDialog);
 
             NotesDialog = null;
         }
@@ -274,7 +274,7 @@ namespace ModernWindow.Interface
 
             DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
 
-            await bindings.App.mainWindow.ShowDialog(DetailsDialog);
+            await Tools.App.mainWindow.ShowDialog(DetailsDialog);
 
             DetailsDialog.Content = null;
             DetailsDialog = null;
@@ -308,7 +308,7 @@ namespace ModernWindow.Interface
 
         private void QuitWingetUI_Click(object sender, RoutedEventArgs e)
         {
-            bindings.App.DisposeAndQuit();
+            Tools.App.DisposeAndQuit();
         }
     }
 }

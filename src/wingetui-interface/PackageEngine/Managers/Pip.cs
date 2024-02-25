@@ -22,7 +22,7 @@ namespace ModernWindow.PackageEngine.Managers
         {
             List<Package> Packages = new();
 
-            string path = await bindings.Which("parse_pip_search");
+            string path = await Tools.Which("parse_pip_search");
             if (!File.Exists(path))
             {
                 Process proc = new()
@@ -77,7 +77,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -125,7 +125,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(bindings.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -174,7 +174,7 @@ namespace ModernWindow.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(bindings.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -369,7 +369,7 @@ namespace ModernWindow.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Pip",
-                Description = bindings.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
+                Description = Tools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
                 IconId = "python",
                 ColorIconId = "pip_color",
                 ExecutableFriendlyName = "pip",
@@ -386,7 +386,7 @@ namespace ModernWindow.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
-            status.ExecutablePath = await bindings.Which("python.exe");
+            status.ExecutablePath = await Tools.Which("python.exe");
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)

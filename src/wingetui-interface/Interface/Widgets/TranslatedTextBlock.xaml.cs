@@ -9,7 +9,7 @@ namespace ModernWindow.Interface.Widgets
 {
     public sealed partial class TranslatedTextBlock : UserControl
     {
-        static AppTools bindings = AppTools.Instance;
+        static AppTools Tools = AppTools.Instance;
 
         public string Text
         {
@@ -53,19 +53,19 @@ namespace ModernWindow.Interface.Widgets
                 nameof(Text),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = Prefix + bindings.Translate((string)e.NewValue) + Suffix; })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = Prefix + Tools.Translate((string)e.NewValue) + Suffix; })));
 
             PrefixProperty = DependencyProperty.Register(
                 nameof(Prefix),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = (string)e.NewValue + bindings.Translate(Text) + Suffix; })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = (string)e.NewValue + Tools.Translate(Text) + Suffix; })));
 
             SuffixProperty = DependencyProperty.Register(
                 nameof(Suffix),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = Prefix + bindings.Translate(Text) + (string)e.NewValue; })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = Prefix + Tools.Translate(Text) + (string)e.NewValue; })));
 
         }
     }

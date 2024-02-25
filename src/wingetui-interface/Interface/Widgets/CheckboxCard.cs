@@ -21,7 +21,7 @@ namespace ModernWindow.Interface.Widgets
     public sealed class CheckboxCard : SettingsCard
     {
         public CheckBox _checkbox;
-        private AppTools bindings = AppTools.Instance;
+        private AppTools Tools = AppTools.Instance;
 
         public string SettingName
         {
@@ -59,13 +59,13 @@ namespace ModernWindow.Interface.Widgets
                 nameof(Text),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = bindings.Translate((string)e.NewValue); })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = Tools.Translate((string)e.NewValue); })));
 
             SettingProperty = DependencyProperty.Register(
                 nameof(SettingName),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = bindings.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = Tools.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
 
 
             ContentAlignment = ContentAlignment.Left;
@@ -75,8 +75,8 @@ namespace ModernWindow.Interface.Widgets
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (s, e) => { bindings.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
-            _checkbox.Unchecked += (s, e) => { bindings.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };
+            _checkbox.Checked += (s, e) => { Tools.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
+            _checkbox.Unchecked += (s, e) => { Tools.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };
         }
     }
 }

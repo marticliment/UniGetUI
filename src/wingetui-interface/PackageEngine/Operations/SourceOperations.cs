@@ -30,7 +30,7 @@ namespace ModernWindow.PackageEngine.Operations
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
-                if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
                 {
                     AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -69,15 +69,15 @@ namespace ModernWindow.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = bindings.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
+            LineInfoText = Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
+            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(bindings.Translate("Installation failed"))
-                    .AddText(bindings.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+                    .AddText(Tools.Translate("Installation failed"))
+                    .AddText(Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
 
                 }
                 catch (Exception ex)
@@ -87,11 +87,11 @@ namespace ModernWindow.PackageEngine.Operations
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
-            dialog.Title = bindings.Translate("Source addition failed");
-            dialog.Content = bindings.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
-            dialog.PrimaryButtonText = bindings.Translate("Retry");
-            dialog.SecondaryButtonText = bindings.Translate("More details");
-            dialog.CloseButtonText = bindings.Translate("Close");
+            dialog.Title = Tools.Translate("Source addition failed");
+            dialog.Content = Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+            dialog.PrimaryButtonText = Tools.Translate("Retry");
+            dialog.SecondaryButtonText = Tools.Translate("More details");
+            dialog.CloseButtonText = Tools.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             dialog.SecondaryButtonClick += (s, e) =>
@@ -99,9 +99,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -112,15 +112,15 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             OperationSucceeded?.Invoke(this, new EventArgs());
-            LineInfoText = bindings.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+            LineInfoText = Tools.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
+            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 
                 try{
                     new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(bindings.Translate("Addition succeeded"))
-                    .AddText(bindings.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+                    .AddText(Tools.Translate("Addition succeeded"))
+                    .AddText(Tools.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
 
                 }
                 catch (Exception ex)
@@ -133,7 +133,7 @@ namespace ModernWindow.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            OperationTitle = bindings.Translate("Adding source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
+            OperationTitle = Tools.Translate("Adding source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
@@ -147,7 +147,7 @@ namespace ModernWindow.PackageEngine.Operations
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
-                if (bindings.GetSettings("DoCacheAdminRights") || bindings.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
                 {
                     AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -186,22 +186,22 @@ namespace ModernWindow.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = bindings.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!bindings.GetSettings("DisableErrorNotifications") && !bindings.GetSettings("DisableNotifications"))
+            LineInfoText = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
+            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(bindings.Translate("Removal failed"))
-                    .AddText(bindings.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+                    .AddText(Tools.Translate("Removal failed"))
+                    .AddText(Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
 
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
-            dialog.Title = bindings.Translate("Source removal failed");
-            dialog.Content = bindings.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + bindings.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
-            dialog.PrimaryButtonText = bindings.Translate("Retry");
-            dialog.SecondaryButtonText = bindings.Translate("More details");
-            dialog.CloseButtonText = bindings.Translate("Close");
+            dialog.Title = Tools.Translate("Source removal failed");
+            dialog.Content = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+            dialog.PrimaryButtonText = Tools.Translate("Retry");
+            dialog.SecondaryButtonText = Tools.Translate("More details");
+            dialog.CloseButtonText = Tools.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             dialog.SecondaryButtonClick += (s, e) =>
@@ -209,9 +209,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await bindings.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await bindings.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -222,14 +222,14 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             OperationSucceeded?.Invoke(this, new EventArgs());
-            LineInfoText = bindings.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!bindings.GetSettings("DisableSuccessNotifications") && !bindings.GetSettings("DisableNotifications"))
+            LineInfoText = Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
+            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try { 
                 new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(bindings.Translate("Removal succeeded"))
-                    .AddText(bindings.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+                    .AddText(Tools.Translate("Removal succeeded"))
+                    .AddText(Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
 
                 }
                 catch (Exception ex)
@@ -242,7 +242,7 @@ namespace ModernWindow.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            OperationTitle = bindings.Translate("Removing source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
+            OperationTitle = Tools.Translate("Removing source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }

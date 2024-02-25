@@ -33,7 +33,7 @@ namespace ModernWindow.Interface
     public sealed partial class AboutWingetUI : Page
     {
 
-        AppTools bindings = AppTools.Instance;
+        AppTools Tools = AppTools.Instance;
         public ObservableCollection<LibraryLicense> Licenses = new();
         public ObservableCollection<Person> Contributors = new();
         public ObservableCollection<Person> Translators = new();
@@ -65,7 +65,7 @@ namespace ModernWindow.Interface
 
             JsonObject TranslatorsInfo = JsonNode.Parse(LanguageData.TranslatorsJSON).AsObject();
 
-            VersionText.Text = bindings.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            VersionText.Text = Tools.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
 
             foreach (KeyValuePair<string, JsonNode> langKey in TranslatorsInfo)
             {

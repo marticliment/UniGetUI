@@ -714,7 +714,7 @@
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="0">
-                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind bindings.GetSettings(InstantSearchSettingString, x:True)}">
+                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind Tools.GetSettings(InstantSearchSettingString, x:True)}">
                                     <CheckBox.Content>
                                         <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap"/>
                                     </CheckBox.Content>
@@ -806,21 +806,21 @@
                     <ListView.ContextFlyout>
                         <widgets:BetterMenu x:Name="PackageContextMenu">
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
-                                Text="{x:Bind bindings.Translate('Installation options')}" 
+                                Text="{x:Bind Tools.Translate('Installation options')}" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
                                 IconName="options"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
-                                Text="{x:Bind bindings.Translate('Remove from list')}" 
+                                Text="{x:Bind Tools.Translate('Remove from list')}" 
                                 Click="MenuRemoveFromList_Invoked"
                                 IconName="menu_uninstall"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
-                                Text="{x:Bind bindings.Translate('Share this package')}" 
+                                Text="{x:Bind Tools.Translate('Share this package')}" 
                                 Click="MenuShare_Invoked"
                                 IconName="share"/>
                             <widgets:BetterMenuItem x:Name="MenuDetails" 
-                                Text="{x:Bind bindings.Translate('Package details')}" 
+                                Text="{x:Bind Tools.Translate('Package details')}" 
                                 Click="MenuDetails_Invoked" KeyboardAcceleratorTextOverride="Enter"
                                 IconName="info"/>
 

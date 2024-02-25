@@ -20,7 +20,7 @@ namespace ModernWindow.Interface.Widgets
     public sealed class ButtonCard : SettingsCard
     {
         private static Button _button;
-        private static AppTools bindings = AppTools.Instance;
+        private static AppTools Tools = AppTools.Instance;
 
         public string ButtonText
         {
@@ -40,7 +40,7 @@ namespace ModernWindow.Interface.Widgets
         nameof(ButtonText),
         typeof(string),
         typeof(ButtonCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _button.Content = bindings.Translate((string)e.NewValue); })));
+        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _button.Content = Tools.Translate((string)e.NewValue); })));
 
         public new event EventHandler<ButtonCardEventArgs> Click;
 
@@ -50,7 +50,7 @@ namespace ModernWindow.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(ButtonCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = bindings.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = Tools.Translate((string)e.NewValue); })));
 
             _button = new Button();
             _button.MinWidth = 200;
