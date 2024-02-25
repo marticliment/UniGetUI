@@ -78,7 +78,7 @@ namespace ModernWindow
             AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
-        public void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+        public async void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
         {
             if (!Tools.GetSettings("DisableSystemTray"))
             {
@@ -88,8 +88,21 @@ namespace ModernWindow
             }
             else
             {
-                //if (Tools.OperationQueue.Count > 0)
-                // TODO: Handle confirmation if ongoing operations
+                if (Tools.OperationQueue.Count > 0)
+                {
+                    args.Cancel = true;
+                    ContentDialog d = new ContentDialog();
+                    d.XamlRoot = NavigationPage.XamlRoot;
+                    d.Title = Tools.Translate("Operation in progress");
+                    d.Content = Tools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
+                    d.PrimaryButtonText = Tools.Translate("Quit");
+                    d.SecondaryButtonText = Tools.Translate("Cancel");
+                    d.DefaultButton = ContentDialogButton.Secondary;
+
+                    var result = await ShowDialog(d);
+                    if (result == ContentDialogResult.Primary)
+                        Tools.App.DisposeAndQuit();
+                }
             }
         }
 
