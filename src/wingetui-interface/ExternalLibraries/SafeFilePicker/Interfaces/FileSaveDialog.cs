@@ -10,8 +10,8 @@ namespace Pickers.Interfaces;
 // straightforward way. Behind the scenes, the C# compiler
 // morphs all 'new CoClass()' calls to 'new CoClassWrapper()'
 [ComImport,
-Guid(IIDGuid.IFileOpenDialog),
-CoClass(typeof(FileOpenDialogRCW))]
-internal interface FileOpenDialog : IFileOpenDialog
+Guid(IIDGuid.IFileSaveDialog),
+CoClass(typeof(FileSaveDialogRCW))]
+internal interface FileSaveDialog : IFileSaveDialog
 {
 }

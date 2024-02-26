@@ -8,7 +8,7 @@ namespace Pickers.Classes;
 [ComImport,
 ClassInterface(ClassInterfaceType.None),
 TypeLibType(TypeLibTypeFlags.FCanCreate),
-Guid(CLSIDGuid.FileOpenDialog)]
-internal class FileOpenDialogRCW
+Guid(CLSIDGuid.FileSaveDialog)]
+internal class FileSaveDialogRCW
 {
 }
