@@ -593,7 +593,7 @@ namespace ModernWindow.Interface
             try
             {
                 // Select file
-                var picker = new Pickers.FilePicker(Tools.App.mainWindow.GetWindowHandle());
+                var picker = new Pickers.FileOpenPicker(Tools.App.mainWindow.GetWindowHandle());
                 var file = picker.Show(new List<string>() {"*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
