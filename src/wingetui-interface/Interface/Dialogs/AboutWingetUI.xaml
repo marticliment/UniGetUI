@@ -11,6 +11,8 @@
     Width="650"
     >
     <Pivot MaxWidth="700" HorizontalAlignment="Stretch">
+        
+        <!-- About -->
         <PivotItem>
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
@@ -42,6 +44,7 @@
             </ScrollView>
         </PivotItem>
 
+        <!-- Licenses -->
         <PivotItem>
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
@@ -61,11 +64,13 @@
                             <DataTemplate x:DataType="local:LibraryLicense">
                                 <Grid ColumnSpacing="8" Margin="0" Padding="0">
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="240"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                    <HyperlinkButton Grid.Column="1" Content="{x:Bind License}" NavigateUri="{x:Bind LicenseURL}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <HyperlinkButton Grid.Column="1" Content="{x:Bind License}" NavigateUri="{x:Bind LicenseURL}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <HyperlinkButton Grid.Column="2" NavigateUri="{x:Bind HomepageUrl}" VerticalAlignment="Center" HorizontalAlignment="Right" Content="{x:Bind HomepageText}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -75,6 +80,7 @@
             </ScrollView>
         </PivotItem>
 
+        <!-- Contributors -->
         <PivotItem>
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
@@ -115,6 +121,7 @@
             </ScrollView>
         </PivotItem>
 
+        <!-- Translators -->
         <PivotItem>
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">
@@ -160,6 +167,7 @@
             </ScrollView>
         </PivotItem>
 
+        <!-- Support me -->
         <PivotItem>
             <PivotItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="6">

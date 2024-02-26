@@ -19,6 +19,8 @@ namespace ModernWindow.Interface
         public string Name { get; set; }
         public string License { get; set; }
         public Uri LicenseURL { get; set; }
+        public string HomepageText { get; set; }
+        public Uri HomepageUrl { get; set; }
     }
     public class Person
     {
@@ -46,7 +48,9 @@ namespace ModernWindow.Interface
                 {
                     Name = license,
                     License = LicenseData.LicenseNames[license],
-                    LicenseURL = LicenseData.LicenseURLs[license]
+                    LicenseURL = LicenseData.LicenseURLs[license],
+                    HomepageUrl = LicenseData.HomepageUrls[license],
+                    HomepageText = Tools.Translate("{0} homepage").Replace("{0}", license)
                 });
             }
 
