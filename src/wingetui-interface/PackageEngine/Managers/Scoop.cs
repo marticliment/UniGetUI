@@ -577,6 +577,8 @@ public class Scoop : PackageManagerWithSources
         if (status.Found && IsEnabled())
             _ = RefreshSources();
 
+
+        Status = status; // Wee need this for the RunCleanup method to get the executable path
         if (status.Found && IsEnabled() && Tools.GetSettings("EnableScoopCleanup"))
             RunCleanup();
 
