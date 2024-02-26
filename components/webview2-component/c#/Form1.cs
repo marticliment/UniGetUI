@@ -1,14 +1,6 @@
-﻿using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Core;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,94 +8,90 @@ namespace WinFormsWebView
 {
     public partial class Form1 : Form
     {
-        bool loaded = false;
-        bool contextMenuEnabled = true;
+        private bool _loaded = false;
+        private readonly bool _contextMenuEnabled = true;
+        private readonly SemaphoreSlim _loadSemaphore = new SemaphoreSlim(1, 1);
+
         public Form1(bool contextMenuEnabled = true)
         {
-            this.contextMenuEnabled = contextMenuEnabled;
+            _contextMenuEnabled = contextMenuEnabled;
             InitializeComponent();
-            loadWV();
-            Hide();
             Opacity = 0.0f;
+            LoadWebView();
         }
 
-        public int getHWND() {
-            return this.Handle.ToInt32();
-        }
+        public int HWND => Handle.ToInt32(); // Simplified property
 
-        public void uncoverWindow()
+        public void UncoverWindow()
         {
             Opacity = 1.0f;
             Show();
         }
 
-        public async void navigateTo(string url)
+        private async Task WaitForLoadAsync()
         {
-            while(!loaded)
+            await _loadSemaphore.WaitAsync();
+            try
             {
-                await Task.Delay(50);
+                if (!_loaded)
+                {
+                    await Task.Delay(50);
+                }
             }
+            finally
+            {
+                _loadSemaphore.Release();
+            }
+        }
+
+        public async void NavigateTo(string url)
+        {
+            await WaitForLoadAsync();
             webView.Source = new Uri(url);
         }
 
-        public async void navigateToString(string content)
+        public async void NavigateToString(string content)
         {
-            while (!loaded)
-            {
-                await Task.Delay(50);
-            }
+            await WaitForLoadAsync();
             webView.NavigateToString(content);
         }
 
-        public async void stop()
+        public async void Stop()
         {
-            while (!loaded)
-            {
-                await Task.Delay(50);
-            }
+            await WaitForLoadAsync();
             webView.Stop();
         }
 
-        public async void reload()
+        public async void Reload()
         {
-            while (!loaded)
-            {
-                await Task.Delay(50);
-            }
+            await WaitForLoadAsync();
             webView.Reload();
         }
 
-        public string getUrl()
-        {
-            if (loaded)
-                return webView.Source.ToString();
-            else
-                return "";
-        }
+        public string Url => _loaded ? webView.Source.ToString() : string.Empty; // Simplified property
 
-        private async void loadWV(string pathAppend = "")
+        private async void LoadWebView(string pathAppend = "")
         {
+            await _loadSemaphore.WaitAsync();
             try
             {
-                CoreWebView2Environment cwv2Environment = await CoreWebView2Environment.CreateAsync(null, Path.Combine(Path.GetTempPath(), pathAppend), new CoreWebView2EnvironmentOptions());
-                await webView.EnsureCoreWebView2Async(cwv2Environment);
-                webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = this.contextMenuEnabled;
-                loaded = true;
-                try
+                if (!_loaded)
                 {
+                    CoreWebView2Environment cwv2Environment = await CoreWebView2Environment.CreateAsync(null, Path.Combine(Path.GetTempPath(), pathAppend), new CoreWebView2EnvironmentOptions());
+                    await webView.EnsureCoreWebView2Async(cwv2Environment);
+                    webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = _contextMenuEnabled;
+                    webView.CoreWebView2.NavigationCompleted += (sender, args) => _loaded = true;
                     webView.Source = new Uri("about:blank");
                 }
-                catch
-                {
-                    webView.NavigateToString("<html><h1>Invalid arguments</h1></html>");
-                }
-                loaded = true;
             }
-            catch (System.Runtime.InteropServices.COMException)
+            catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException || ex is IOException)
             {
-                this.loadWV("new");
+                LoadWebView("new");
             }
-            
+            finally
+            {
+                _loadSemaphore.Release();
+            }
         }
     }
 }
