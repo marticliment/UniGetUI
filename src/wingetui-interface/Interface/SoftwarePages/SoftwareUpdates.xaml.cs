@@ -266,6 +266,9 @@ namespace ModernWindow.Interface
                                 if (package.NewVersionIsInstalled())
                                     AppTools.Log("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
 
+                                package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
+                                package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
+
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
                             }
@@ -276,6 +279,7 @@ namespace ModernWindow.Interface
                     }
                 }
             }
+
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
 

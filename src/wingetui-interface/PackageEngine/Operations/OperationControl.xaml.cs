@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using ModernWindow.Core.Data;
+using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
@@ -254,10 +255,9 @@ namespace ModernWindow.PackageEngine
                 CloseButtonClicked(Status);
         }
 
-        private void RemoveFromQueue()
+        protected void RemoveFromQueue()
         {
-            int Index = Tools.OperationQueue.IndexOf(this);
-            if (Index != -1)
+            while(Tools.OperationQueue.IndexOf(this) != -1)
                 Tools.OperationQueue.Remove(this);
         }
         protected void AddToQueue()
@@ -428,7 +428,6 @@ namespace ModernWindow.PackageEngine
                         break;
 
                     case AfterFinshAction.Retry:
-                        AddToQueue_Priority();
                         Retry();
                         break;
                 }
@@ -471,6 +470,7 @@ namespace ModernWindow.PackageEngine
 
         protected void Retry()
         {
+            AddToQueue_Priority();
             LineInfoText = Tools.Translate("Retrying, please wait...");
             ProcessOutput.Clear();
             Status = OperationStatus.Pending;
@@ -479,7 +479,6 @@ namespace ModernWindow.PackageEngine
 
         protected void MainProcedure()
         {
-            AddToQueue();
             Initialize();
             _ = PreMainThread();
         }

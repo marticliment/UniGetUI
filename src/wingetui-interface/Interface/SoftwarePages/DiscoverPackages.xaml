@@ -502,7 +502,7 @@
         </Style>
 
         <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:Package">
-            <Grid ColumnSpacing="5">
+            <Grid ColumnSpacing="5" Opacity="{x:Bind ListedOpacity, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
@@ -522,16 +522,23 @@
                     VerticalAlignment="Center"
                     IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
-                <widgets:LocalIcon
-                    IconName="install"
-                    Grid.Column="1" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    />
+                <Canvas Grid.Column="1" Grid.Row="0" Height="24" Width="24">
+                    <Border Background="{ThemeResource AccentAAFillColorTertiaryBrush}" 
+                            Height="20" Width="20" 
+                            Canvas.Top="2" Canvas.Left="2"
+                            CornerRadius="12" Visibility="{x:Bind ListIconShowHighlight, Mode=OneWay}"/>
+                    <widgets:LocalIcon
+                            IconName="{x:Bind ListedIconId, Mode=OneWay}"
+                            Height="24" Width="24" 
+                            Canvas.Top="0" Canvas.Left="0"
+                            VerticalAlignment="Center"
+                        />
+                </Canvas>
                 <TextBlock 
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"
                     Text="{x:Bind Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Name}"
+                    ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />
                 <widgets:LocalIcon
                     IconName="ID"

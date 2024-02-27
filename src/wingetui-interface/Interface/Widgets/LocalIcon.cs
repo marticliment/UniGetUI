@@ -9,23 +9,42 @@ namespace ModernWindow.Interface.Widgets
     public class LocalIcon : ImageIcon
     {
         public static AppTools Tools = AppTools.Instance;
+        private bool __registered_theme_event = false;
+        public DependencyProperty IconNameProperty;
 
-        private string __icon_name;
         public string IconName
         {
-            get { return __icon_name; }
-            set { __icon_name = value; __apply_icon(); ActualThemeChanged += (s, e) => { __apply_icon(); }; }
+            get => (string)GetValue(IconNameProperty);
+            set => SetValue(IconNameProperty, value);
         }
 
         public LocalIcon()
         {
+            IconNameProperty = DependencyProperty.Register(
+            nameof(IconName),
+            typeof(string),
+            typeof(ButtonCard),
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { 
+                IconName = (string)e.NewValue; 
+                __apply_icon();
+                if (!__registered_theme_event)
+                {
+                    ActualThemeChanged += (s, e) => { __apply_icon(); };
+                    __registered_theme_event = true;
+                }
+            })));
         }
 
-        public LocalIcon(string iconName)
+        public LocalIcon(string iconName) : this()
         {
-            __icon_name = iconName;
+            IconName = iconName;
             __apply_icon();
-            ActualThemeChanged += (s, e) => { __apply_icon(); };
+
+            if(!__registered_theme_event)
+            {
+                ActualThemeChanged += (s, e) => { __apply_icon(); };
+                __registered_theme_event = true;
+            }
         }
 
         public void __apply_icon()

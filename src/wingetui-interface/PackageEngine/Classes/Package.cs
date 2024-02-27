@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace ModernWindow.PackageEngine.Classes
 {
@@ -24,6 +26,17 @@ namespace ModernWindow.PackageEngine.Classes
         User = 0,
     }
 
+    public enum PackageTag
+    {
+        Default,
+        AlreadyInstalled,
+        IsUpgradable,
+        Pinned,
+        OnQueue,
+        BeingProcessed,
+        Failed
+    }
+
     /// <summary>
     /// This class represents a installable package or a package that is already installed.
     /// </summary>
@@ -33,10 +46,104 @@ namespace ModernWindow.PackageEngine.Classes
         public AppTools Tools = AppTools.Instance;
         private bool __is_checked = false;
         public event PropertyChangedEventHandler PropertyChanged;
+        private string __listed_icon_id;
+        private string __name_tooltip;
+        private PackageTag __tag;
+        private float __opacity;
+        private bool __show_icon_highlight;
 
+        public PackageTag Tag
+        {
+            get { return __tag; }
+
+            set
+            {
+                __tag = value;
+                switch(__tag)
+                {
+                    case PackageTag.Default:
+                        ListedIconId = "install";
+                        ListIconShowHighlight = false;
+                        ListedOpacity = 1;
+                        ListedNameTooltip = Name;
+                        break;
+
+                    case PackageTag.AlreadyInstalled:
+                        ListedIconId = "installed";
+                        ListIconShowHighlight = true;
+                        ListedOpacity = 1;
+                        ListedNameTooltip = Tools.Translate("This package is already installed") + " - " + Name;
+                        break;
+
+                    case PackageTag.IsUpgradable:
+                        ListedIconId = "update";
+                        ListIconShowHighlight = true;
+                        ListedOpacity = 1;
+                        ListedNameTooltip = Tools.Translate("This package can be updated") + " - " + Name;
+                        break;
+
+                    case PackageTag.Pinned:
+                        ListedIconId = "pin_fill";
+                        ListIconShowHighlight = false;
+                        ListedOpacity = 1;
+                        ListedNameTooltip = Tools.Translate("Updates for this package are ignored") + " - " + Name;
+                        break;
+
+                    case PackageTag.OnQueue:
+                        ListedIconId = "sandclock";
+                        ListIconShowHighlight = false;
+                        ListedOpacity = .5F;
+                        ListedNameTooltip = Tools.Translate("This package is on the queue") + " - " + Name;
+                        break;
+
+                    case PackageTag.BeingProcessed:
+                        ListedIconId = "gears";
+                        ListIconShowHighlight = false;
+                        ListedOpacity = .5F;
+                        ListedNameTooltip = Tools.Translate("This package is being processed") + " - " + Name;
+                        break;
+
+                    case PackageTag.Failed:
+                        ListedIconId = "warning";
+                        ListIconShowHighlight = true;
+                        ListedOpacity = 1;
+                        ListedNameTooltip = Tools.Translate("An error occurred while processing this package") + " - " + Name;
+                        break;
+                }
+            }
+        }
 
         // Public properties
-        public bool IsChecked { get { return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
+        public bool ListIconShowHighlight
+        {
+            get { return __show_icon_highlight; }
+            set { __show_icon_highlight = value; OnPropertyChanged(); }
+        }
+
+        public bool IsChecked
+        {
+            get { return __is_checked; }
+            set { __is_checked = value; OnPropertyChanged(); }
+        }
+
+        public string ListedIconId
+        {
+            set { __listed_icon_id = value; OnPropertyChanged(); }
+            get { return __listed_icon_id; }
+        }
+
+        public string ListedNameTooltip
+        {
+            get { return __name_tooltip; }
+            set { __name_tooltip = value; OnPropertyChanged(); }
+        }
+
+        public float ListedOpacity
+        {
+            get { return __opacity; }
+            set { __opacity = value; OnPropertyChanged(); }
+        }
+
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
         public string Id { get; set; }
@@ -77,6 +184,7 @@ namespace ModernWindow.PackageEngine.Classes
             UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}";
             NewVersion = "";
             VersionAsFloat = GetFloatVersion();
+            Tag = PackageTag.Default;
         }
 
         /// <summary>
@@ -169,7 +277,7 @@ namespace ModernWindow.PackageEngine.Classes
             await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
 
-            // TODO: Change InstalledPackages flag to show that the package is ignored, add to IgnoredPackages if applicable
+            GetInstalledPackage()?.SetTag(PackageTag.Pinned);
         }
 
         /// <summary>
@@ -186,7 +294,7 @@ namespace ModernWindow.PackageEngine.Classes
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             }
 
-            // TODO: Change InstalledPackages flag to show that the package is no longer ignored
+            GetInstalledPackage()?.SetTag(PackageTag.Default);
 
         }
 
@@ -196,16 +304,17 @@ namespace ModernWindow.PackageEngine.Classes
         /// all updates are ignored, calling this method with a specific version will 
         /// still return true, although the passed version is not explicitly ignored. 
         /// </summary>
-        /// <param name="version"></param>
+        /// <param name="Version"></param>
         /// <returns></returns>
-        public async Task<bool> HasUpdatesIgnoredAsync(string version = "*")
+        public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
             JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == version))
+            if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == Version))
                 return true;
             else
                 return false;
+            
         }
 
         /// <summary>
@@ -231,6 +340,52 @@ namespace ModernWindow.PackageEngine.Classes
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        /// <summary>
+        /// Returns the corresponding installed Package object. Will return null if not applicable
+        /// </summary>
+        /// <returns>a Package object if found, null if not</returns>
+        public Package? GetInstalledPackage()
+        {
+            foreach (var package in Tools.App.mainWindow.NavigationPage.InstalledPage.Packages)
+                if (package.Equals(this))
+                    return package;
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the corresponding available Package object. Will return null if not applicable
+        /// </summary>
+        /// <returns>a Package object if found, null if not</returns>
+        public Package? GetAvailablePackage()
+        {
+            foreach (var package in Tools.App.mainWindow.NavigationPage.DiscoverPage.Packages)
+                if (package.Equals(this))
+                    return package;
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the corresponding upgradable Package object. Will return null if not applicable
+        /// </summary>
+        /// <returns>a Package object if found, null if not</returns>
+        public Package? GetUpgradablePackage()
+        {
+            foreach (var package in Tools.App.mainWindow.NavigationPage.UpdatesPage.Packages)
+                if (package.Equals(this))
+                    return package;
+            return null;
+        }
+
+        /// <summary>
+        /// Sets the package tag. You may as well use the Tag property.
+        /// This function is used for compatibility with the ? operator
+        /// </summary>
+        /// <param name="tag"></param>
+        public void SetTag(PackageTag tag)
+        {
+            Tag = tag;
         }
 
     }

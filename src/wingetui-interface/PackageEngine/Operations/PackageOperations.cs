@@ -62,6 +62,8 @@ namespace ModernWindow.PackageEngine.Operations
                 return;
             }
 
+            Package.SetTag(PackageTag.OnQueue);
+
             AddToQueue();
             int currentIndex = -2;
             int oldIndex = -1;
@@ -78,6 +80,8 @@ namespace ModernWindow.PackageEngine.Operations
                 }
                 await Task.Delay(100);
             }
+
+            Package.SetTag(PackageTag.BeingProcessed);
         }
 
         public PackageOperation(Package package) : this(package, new InstallationOptions(package)) { }
@@ -133,6 +137,9 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = Tools.Translate("{package} installation failed").Replace("{package}", Package.Name);
+
+            Package.SetTag(PackageTag.Failed);
+
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try { 
                 new ToastContentBuilder()
@@ -174,8 +181,10 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = Tools.Translate("{package} was installed successfully").Replace("{package}", Package.Name);
+
+            Package.SetTag(PackageTag.AlreadyInstalled);
             Tools.App.mainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
-            Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 
                 try{
@@ -250,6 +259,9 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = Tools.Translate("{package} update failed. Click here for more details.").Replace("{package}", Package.Name);
+
+            Package.SetTag(PackageTag.Failed);
+
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
@@ -290,7 +302,11 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = Tools.Translate("{package} was updated successfully").Replace("{package}", Package.Name);
+
+            Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
+            Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
             Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+            
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")
@@ -368,6 +384,8 @@ namespace ModernWindow.PackageEngine.Operations
         {
             LineInfoText = Tools.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
 
+            Package.SetTag(PackageTag.Failed);
+
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
@@ -409,8 +427,11 @@ namespace ModernWindow.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = Tools.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name);
+
+            Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             Tools.App.mainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
+
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
                 .AddArgument("action", "openWingetUI")

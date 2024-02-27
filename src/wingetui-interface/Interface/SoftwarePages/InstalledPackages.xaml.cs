@@ -270,6 +270,12 @@ namespace ModernWindow.Interface
                             {
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
+
+                                if (await package.HasUpdatesIgnoredAsync(Version: "*"))
+                                    package.Tag = PackageTag.Pinned;
+                                else if (package.GetUpgradablePackage() != null)
+                                    package.Tag = PackageTag.IsUpgradable;
+                                package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
                             }
                             if (InitialCount < Packages.Count)
                                 FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
@@ -278,6 +284,7 @@ namespace ModernWindow.Interface
                     }
                 }
             }
+
 
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;

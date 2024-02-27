@@ -292,6 +292,11 @@ namespace ModernWindow.Interface
                                 {
                                     Packages.Add(package);
                                     AddPackageToSourcesList(package);
+
+                                    if (package.GetUpgradablePackage() != null)
+                                        package.SetTag(PackageTag.IsUpgradable);
+                                    else if (package.GetInstalledPackage() != null)
+                                        package.SetTag(PackageTag.AlreadyInstalled);
                                 }
                                 if (InitialCount < Packages.Count)
                                     FilterPackages_SortOnly(QueryBlock.Text.Trim(), StillLoading: true);
