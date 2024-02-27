@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11698,
-        "done": 5019,
-        "packages_with_icon": 5019,
-        "packages_with_screenshot": 537,
-        "total_screenshots": 1693
+        "total": 11699,
+        "done": 5020,
+        "packages_with_icon": 5020,
+        "packages_with_screenshot": 538,
+        "total_screenshots": 1697
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -17006,6 +17006,15 @@
         "gps-sdr-sim": {
             "icon": "https://community.chocolatey.org/content/packageimages/gps-sdr-sim.1.0.png",
             "images": []
+        },
+        "gpt4all": {
+            "icon": "https://gpt4all.io/gpt4all-128.png",
+            "images": [
+                "https://gpt4all.io/robot_poem_gpt4all_still.png",
+                "https://gpt4all.io/robot_poem_gpt4all_still.png",
+                "https://gpt4all.io/baroque_gpt4all_still.png",
+                "https://gpt4all.io/web_request_gpt4all_still.png"
+            ]
         },
         "gptgen": {
             "icon": "",
