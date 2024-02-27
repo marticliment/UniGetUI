@@ -7,6 +7,7 @@ contributors = [
   "RavenMacDaddy",
   "Mikey1993",
   "raghavdhingra24",
+  "Malus-risus",
   "adripo",
   "MisterEvans78",
   "rumplin",
@@ -21,16 +22,14 @@ contributors = [
   "adfnekc",
   "vedantmgoyal2009",
   "aaronliu0130",
-  "victorelec14",
-  "harleylara",
-  "flatron4eg"
+  "victorelec14"
 ]
 
 contributorsInfo = [
   {
     "name": "marticliment",
     "link": "https://github.com/marticliment",
-    "contributions": 2432
+    "contributions": 2437
   },
   {
     "name": "ppvnf",
@@ -55,6 +54,11 @@ contributorsInfo = [
   {
     "name": "raghavdhingra24",
     "link": "https://github.com/raghavdhingra24",
+    "contributions": 7
+  },
+  {
+    "name": "Malus-risus",
+    "link": "https://github.com/Malus-risus",
     "contributions": 7
   },
   {
@@ -130,16 +134,6 @@ contributorsInfo = [
   {
     "name": "victorelec14",
     "link": "https://github.com/victorelec14",
-    "contributions": 1
-  },
-  {
-    "name": "harleylara",
-    "link": "https://github.com/harleylara",
-    "contributions": 1
-  },
-  {
-    "name": "flatron4eg",
-    "link": "https://github.com/flatron4eg",
     "contributions": 1
   }
 ]
