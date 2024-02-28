@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "3.0-beta0"
+#define MyAppVersion "3.0-beta1"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -31,13 +31,13 @@ PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=WingetUI Installer
 OutputDir=.     
 MinVersion=10.0
-SetupIconFile=src\wingetui-interface\Assets\Images\icon.ico
+SetupIconFile=src\wingetui\Assets\Images\icon.ico
 UninstallDisplayIcon={app}\WingetUI.exe
 Compression=lzma
 SolidCompression=yes
 WizardStyle=classic
 WizardImageFile=InstallerExtras\INSTALLER.BMP
-WizardSmallImageFile=src\wingetui-interface\Assets\Images\icon.bmp
+WizardSmallImageFile=src\wingetui\Assets\Images\icon.bmp
 DisableWelcomePage=no
 AllowUNCPath=no
 UsePreviousTasks=yes
@@ -239,9 +239,9 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
-Source: "src\wingetui-interface\bin\x64\Release\net8.0-windows10.0.19041.0\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
-Source: "src\wingetui-interface\bin\x64\Release\net8.0-windows10.0.19041.0\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "src\wingetui-interface\bin\x64\Release\net8.0-windows10.0.19041.0\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
+Source: "src\wingetui\bin\x64\Release\net8.0-windows10.0.19041.0\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Source: "src\wingetui\bin\x64\Release\net8.0-windows10.0.19041.0\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+Source: "src\wingetui\bin\x64\Release\net8.0-windows10.0.19041.0\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: deleteafterinstall

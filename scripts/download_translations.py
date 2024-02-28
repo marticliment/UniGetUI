@@ -177,9 +177,7 @@ try:
     if (isAutoCommit):
         if (not isSomeChanges):
             os.system("git reset --hard")  # prevent clean
-    else:
-        os.system("pause")
-
+    
 except Exception as e:
     print(e)
     print(e.__traceback__.tb_lineno)

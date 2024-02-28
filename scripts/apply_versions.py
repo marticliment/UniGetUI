@@ -35,7 +35,6 @@ try:
     }, encoding="utf-8-sig")
 
     print("done!")
-    os.system("pause")
 except FileNotFoundError as e:
     print(f"Error: {e.strerror}: {e.filename}")
     os.system("pause")
