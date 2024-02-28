@@ -73,9 +73,10 @@ namespace ModernWindow.Interface
 
             foreach (KeyValuePair<string, JsonNode> langKey in TranslatorsInfo)
             {
-                if(LanguageData.LanguageList.ContainsKey(langKey.Key))
+                if(!LanguageData.LanguageList.ContainsKey(langKey.Key))
                 {
-                    AppTools.Log($"Language {langKey} not in list, maybe has not been added yet?");
+                    AppTools.Log($"Language {langKey.Key} not in list, maybe has not been added yet?");
+                    continue;
                 }
                 JsonArray TranslatorsForLang = langKey.Value.AsArray();
                 bool LangShown = false;
