@@ -86,7 +86,7 @@ namespace ModernWindow.Core.Data
         {
             try
             {
-                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/Core/Languages/" + "lang_" + LangKey + ".json");
+                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Languages/" + "lang_" + LangKey + ".json");
                 using (WebClient client = new())
                 {
                     string fileContents = await client.DownloadStringTaskAsync(NewFile);
