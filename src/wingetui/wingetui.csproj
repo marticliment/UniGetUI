@@ -166,6 +166,7 @@
     <Content Remove="Assets\console_white.png" />
     <Content Remove="Assets\copy_black.png" />
     <Content Remove="Assets\copy_white.png" />
+    <Content Remove="Assets\Data\LanguagesReference.json" />
     <Content Remove="Assets\desktop_download.png" />
     <Content Remove="Assets\disk_black.png" />
     <Content Remove="Assets\disk_white.png" />

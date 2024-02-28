@@ -9,69 +9,33 @@ This file contains a list of the available languages and other related informati
 import os
 import json
 
-if os.path.exists("../src/wingetui/Assets/Languages/Contributors.list"):
-    f = open("../src/wingetui/Assets/Languages/Contributors.list", "r")
+if os.path.exists("../src/wingetui/Assets/Data/Contributors.list"):
+    f = open("../src/wingetui/Assets/Data/Contributors.list", "r")
     contributors = f.readlines()
 else:
     print("No contributors file!")
     contributors = []
 
-if os.path.exists("../src/wingetui/Assets/Languages/Translators.json"):
-    f = open("../src/wingetui/Assets/Languages/Translators.json", "r")
+if os.path.exists("../src/wingetui/Assets/Data/Translators.json"):
+    f = open("../src/wingetui/Assets/Data/Translators.json", "r")
     languageCredits = json.load(f)
 else:
     print("No translators file!")
     languageCredits = {}
 
-if os.path.exists("../src/wingetui/Assets/Languages/TranslatedPercentages.json"):
-    f = open("../src/wingetui/Assets/Languages/TranslatedPercentages.json", "r")
+if os.path.exists("../src/wingetui/Assets/Data/TranslatedPercentages.json"):
+    f = open("../src/wingetui/Assets/Data/TranslatedPercentages.json", "r")
     untranslatedPercentage = json.load(f)
 else:
     print("No translated percent file!")
     untranslatedPercentage = {}
 
-languageReference = {
-    "default": "System language",
-    "ar": "Arabic - عربي‎",
-    "bg": "Bulgarian - български",
-    "bn": "Bangla - বাংলা",
-    "ca": "Catalan - Català",
-    "cs": "Czech - Čeština",
-    "da": "Danish - Dansk",
-    "de": "German - Deutsch",
-    "el": "Greek - Ελληνικά",
-    "en": "English - English",
-    "es": "Spanish - Castellano",
-    "fa": "Persian - فارسی‎",
-    "fr": "French - Français",
-    "hi": "Hindi - हिंदी",
-    "hr": "Croatian - Hrvatski",
-    "he": "Hebrew - עִבְרִית‎",
-    "hu": "Hungarian - Magyar",
-    "it": "Italian - Italiano",
-    "id": "Indonesian - Bahasa Indonesia",
-    "ja": "Japanese - 日本語",
-    "ko": "Korean - 한국어",
-    "mk": "Macedonian - Македонски",
-    "nb": "Norwegian (bokmål)",
-    "nl": "Dutch - Nederlands",
-    "pl": "Polish - Polski",
-    "pt_BR": "Portuguese (Brazil)",
-    "pt_PT": "Portuguese (Portugal)",
-    "ro": "Romanian - Română",
-    "ru": "Russian - Русский",
-    "sr": "Serbian - Srpski",
-    "si": "Sinhala - සිංහල",
-    "sl": "Slovene - Slovenščina",
-    "tg": "Tagalog - Tagalog",
-    "th": "Thai - ภาษาไทย",
-    "tr": "Turkish - Türkçe",
-    "ua": "Ukranian - Yкраї́нська",
-    "vi": "Vietnamese - Tiếng Việt",
-    "zh_CN": "Simplified Chinese (China)",
-    "zh_TW": "Traditional Chinese (Taiwan)",
-}
-
+if os.path.exists("../src/wingetui/Assets/Data/LanguagesReference.json"):
+    f = open("../src/wingetui/Assets/Data/LanguagesReference.json", "r")
+    languageReference = json.load(f)
+else:
+    print("No translated percent file!")
+    languageReference = {}
 
 languageRemap = {
     "pt-BR": "pt_BR",
@@ -122,7 +86,6 @@ def getMarkdownSupportLangs():
     ]
 
     dir = os.path.dirname(__file__)
-    print(dir)
     for lang, langName in languageReference.items():
         if (not os.path.exists(f"{dir}/../../src/wingetui/Assets/Languages/lang_{lang}.json")):
             continue
