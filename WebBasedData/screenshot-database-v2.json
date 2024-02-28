@@ -315,27 +315,21 @@
             "images": []
         },
         "7zip": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://a.fsdn.com/con/app/proj/sevenzip/screenshots/534500_4.png",
-                "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c-1200-80.jpg",
-                "https://www.wikihow.com/images/thumb/e/e2/Highly-Compress-Files-with-7zip-Step-3.jpg/v4-460px-Highly-Compress-Files-with-7zip-Step-3.jpg"
+                "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png"
             ]
         },
         "7zip-alpha-exe": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://a.fsdn.com/con/app/proj/sevenzip/screenshots/534500_4.png",
-                "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c-1200-80.jpg",
-                "https://www.wikihow.com/images/thumb/e/e2/Highly-Compress-Files-with-7zip-Step-3.jpg/v4-460px-Highly-Compress-Files-with-7zip-Step-3.jpg"
+                "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png"
             ]
         },
         "7zip-alpha-msi": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://a.fsdn.com/con/app/proj/sevenzip/screenshots/534500_4.png",
-                "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c-1200-80.jpg",
-                "https://www.wikihow.com/images/thumb/e/e2/Highly-Compress-Files-with-7zip-Step-3.jpg/v4-460px-Highly-Compress-Files-with-7zip-Step-3.jpg"
+                "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png"
             ]
         },
         "7zip-commandline": {
@@ -343,12 +337,13 @@
             "images": []
         },
         "7zip-zstd": {
-            "icon": "https://findicons.com/files/icons/1008/quiet/256/7zip.png",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": [
-                "https://mcmilk.de/projects/7-Zip-zstd/Fileman.png",
-                "https://mcmilk.de/projects/7-Zip-zstd/Methods.png",
-                "https://mcmilk.de/projects/7-Zip-zstd/Add-To-Archive.png",
-                "https://mcmilk.de/projects/7-Zip-zstd/dl/compr-v120.png"
+                "https://i.postimg.cc/qvcFN2Pc/7zip-zstd-1.png",
+                "https://i.postimg.cc/d3THwCRy/7zip-zstd-2.png",
+                "https://i.postimg.cc/1tX772fM/7zip-zstd-3.png",
+                "https://i.postimg.cc/SsPTBd94/7zip-zstd-4.png",
+                "https://i.postimg.cc/9fJNpCFr/7zip-zstd-5.png"
             ]
         },
         "7zip19-00-helper": {
@@ -2267,7 +2262,6 @@
         "anki": {
             "icon": "https://i.redd.it/cruevyf68dt31.png",
             "images": [
-                "https://arihoresh.com/wp-content/uploads/2021/09/Laptop2-1-1024x458-1.jpg",
                 "https://images.squarespace-cdn.com/content/v1/58eada9abe659458e85c3f68/1532751018464-0U0KMM5L0XH731KAZ27K/01.png",
                 "https://remembereverything.org/wp-content/uploads/2016/10/Vocabulary-card-Anki-2.jpg",
                 "https://uploads-ssl.webflow.com/5dc6cc5bc19d438a53fbbaa9/607c90200e3c5babc5c380c0_German%20Noun%20Flashcards%20by%20Visual%20German.png",
@@ -5321,8 +5315,10 @@
             "images": []
         },
         "blockbench": {
-            "icon": "",
-            "images": []
+            "icon": "https://offlinesetups.com/wp-content/uploads/2022/06/Blockbench.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/minecraft/creator/documents/media/entitymodeling/animation.png"
+            ]
         },
         "blockcheck": {
             "icon": "https://community.chocolatey.org/content/packageimages/blockcheck.0.0.9.7.png",
@@ -16710,11 +16706,11 @@
             "images": []
         },
         "google-assistant": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Google_Assistant_logo.svg/768px-Google_Assistant_logo.svg.png",
             "images": []
         },
         "google-assistant-pr\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Google_Assistant_logo.svg/768px-Google_Assistant_logo.svg.png",
             "images": []
         },
         "google-books-downloader": {
@@ -16726,7 +16722,7 @@
             "images": []
         },
         "google-calendar-desktop": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/2048px-Google_Calendar_icon_%282020%29.svg.png",
             "images": []
         },
         "google-cast-chrome": {
@@ -16735,6 +16731,10 @@
         },
         "google-chat-linux": {
             "icon": "",
+            "images": []
+        },
+        "google-chat-linux": {
+            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2021/01/scalable.svg.png",
             "images": []
         },
         "google-chrome-for-enterprise": {
@@ -16762,11 +16762,11 @@
             "images": []
         },
         "google-java-format": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
             "images": []
         },
         "google-meet-desktop": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/512px-Google_Meet_icon_%282020%29.svg.png",
             "images": []
         },
         "google-pinyin": {
@@ -16782,7 +16782,7 @@
             "images": []
         },
         "google-voice-deskt\u2026": {
-            "icon": "",
+            "icon": "https://fonts.gstatic.com/s/i/productlogos/voice_2020q4/v1/web-96dp/logo_voice_2020q4_color_2x_web_96dp.png",
             "images": []
         },
         "google-voice-desktop": {
@@ -16802,7 +16802,7 @@
             "images": []
         },
         "googlechatelectron": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Google_Chat_icon_%282020%29.svg/1200px-Google_Chat_icon_%282020%29.svg.png",
             "images": []
         },
         "googlechrome": {
@@ -16857,6 +16857,14 @@
         },
         "googleplaymusicdeskto\u2026": {
             "icon": "",
+            "images": []
+        },
+        "googlephotos": {
+            "icon": "",
+            "images": []
+        },
+        "googleplaymusicdeskto\u2026": {
+            "icon": "https://cdn.wccftech.com/wp-content/uploads/2018/01/Youtube-music.png",
             "images": []
         },
         "gopass": {
@@ -17006,6 +17014,15 @@
         "gps-sdr-sim": {
             "icon": "https://community.chocolatey.org/content/packageimages/gps-sdr-sim.1.0.png",
             "images": []
+        },
+        "gpt4all": {
+            "icon": "https://gpt4all.io/gpt4all-128.png",
+            "images": [
+                "https://gpt4all.io/robot_poem_gpt4all_still.png",
+                "https://gpt4all.io/robot_poem_gpt4all_still.png",
+                "https://gpt4all.io/baroque_gpt4all_still.png",
+                "https://gpt4all.io/web_request_gpt4all_still.png"
+            ]
         },
         "gptgen": {
             "icon": "",
@@ -21680,7 +21697,7 @@
             "images": []
         },
         "komac": {
-            "icon": "",
+            "icon": "https://github.com/russellbanks/Komac/raw/main/assets/logo.svg",
             "images": []
         },
         "kombustor-2": {
@@ -32899,11 +32916,13 @@
         "qr-codereader": {
             "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo_dark.png",
             "images": [
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_1.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_3.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5.png"
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/social_banner.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_dark.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_light.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_dark.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_light.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5_dark.png",
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5_light.png"
             ]
         },
         "qrcp": {
@@ -40372,7 +40391,7 @@
             "images": []
         },
         "tencentmeeting": {
-            "icon": "",
+            "icon": "https://cdn.meeting.tencent.com/assets/next-website/logo512.png",
             "images": []
         },
         "tencentmeetingrooms": {
@@ -43941,15 +43960,15 @@
             "images": []
         },
         "visualstudio-2019-buildt\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
             "images": []
         },
         "visualstudio-2019-enterp\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
             "images": []
         },
         "visualstudio-2019-profes\u2026": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
             "images": []
         },
         "visualstudio-2019-remotetools": {
@@ -43957,15 +43976,15 @@
             "images": []
         },
         "visualstudio-2022-buildt\u2026": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
         "visualstudio-2022-commun\u2026": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
         "visualstudio-2022-enterp\u2026": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
         "visualstudio-2022-profes\u2026": {
@@ -44628,11 +44647,11 @@
             "images": []
         },
         "vncserver": {
-            "icon": "",
+            "icon": "https://www.pacisoft.vn/wp-content/uploads/2018/10/vnc-viewer-logo.png ",
             "images": []
         },
         "vncviewer": {
-            "icon": "",
+            "icon": "https://www.pacisoft.vn/wp-content/uploads/2018/10/vnc-viewer-logo.png ",
             "images": []
         },
         "vnote": {

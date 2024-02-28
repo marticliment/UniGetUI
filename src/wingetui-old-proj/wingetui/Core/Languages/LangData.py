@@ -18,6 +18,7 @@ languageReference = {
     "ca"    : "Catalan - Català",
     "cs"    : "Czech - Čeština",
     "da"    : "Danish - Dansk",
+    "fi"    : "Finnish - Suomi",
     "de"    : "German - Deutsch",
     "el"    : "Greek - Ελληνικά",
     "en"    : "English - English",
@@ -33,7 +34,8 @@ languageReference = {
     "ja"    : "Japanese - 日本語",
     "ko"    : "Korean - 한국어",
     "mk"    : "Macedonian - Македонски",
-    "nb"    : "Norwegian (bokmål)",
+    "nb"    : "Norwegian (bokmål) - Norsk Bokmål",
+    "nn-NO" : "Norwegian (nynorsk) - Norsk nynorsk",
     "nl"    : "Dutch - Nederlands",
     "pl"    : "Polish - Polski",
     "pt_BR" : "Portuguese (Brazil)",
@@ -43,6 +45,7 @@ languageReference = {
     "sr"    : "Serbian - Srpski",
     "si"    : "Sinhala - සිංහල",
     "sl"    : "Slovene - Slovenščina",
+    "sv"    : "Swedish - Svenska",
     "tg"    : "Tagalog - Tagalog",
     "th"    : "Thai - ภาษาไทย",
     "tr"    : "Turkish - Türkçe",
@@ -59,6 +62,7 @@ languageRemap = {
     "uk":      "ua",
     "zh-Hans": "zh_CN",
     "zh-Hant": "zh_TW",
+    "nn":      "nn-NO"
 }
 
 
