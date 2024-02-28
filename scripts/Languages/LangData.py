@@ -9,22 +9,25 @@ This file contains a list of the available languages and other related informati
 import os
 import json
 
-if os.path.exists("src/wingetui/Assets/Languages/Contributors.list"):
-    f = open("src/wingetui/Assets/Languages/Contributors.list", "r")
+if os.path.exists("../src/wingetui/Assets/Languages/Contributors.list"):
+    f = open("../src/wingetui/Assets/Languages/Contributors.list", "r")
     contributors = f.readlines()
 else:
+    print("No contributors file!")
     contributors = []
 
-if os.path.exists("src/wingetui/Assets/Languages/Translators.json"):
-    f = open("src/wingetui/Assets/Languages/Translators.json", "r")
+if os.path.exists("../src/wingetui/Assets/Languages/Translators.json"):
+    f = open("../src/wingetui/Assets/Languages/Translators.json", "r")
     languageCredits = json.load(f)
 else:
+    print("No translators file!")
     languageCredits = {}
 
-if os.path.exists("src/wingetui/Assets/Languages/TranslatedPercentages.json"):
-    f = open("src/wingetui/Assets/Languages/TranslatedPercentages.json", "r")
+if os.path.exists("../src/wingetui/Assets/Languages/TranslatedPercentages.json"):
+    f = open("../src/wingetui/Assets/Languages/TranslatedPercentages.json", "r")
     untranslatedPercentage = json.load(f)
 else:
+    print("No translated percent file!")
     untranslatedPercentage = {}
 
 languageReference = {
@@ -119,14 +122,15 @@ def getMarkdownSupportLangs():
     ]
 
     dir = os.path.dirname(__file__)
+    print(dir)
     for lang, langName in languageReference.items():
-        if (not os.path.exists(f"{dir}/lang_{lang}.json")):
+        if (not os.path.exists(f"{dir}/../../src/wingetui/Assets/Languages/lang_{lang}.json")):
             continue
-        
+
         perc = untranslatedPercentage[lang] if (lang in untranslatedPercentage) else "100%"
         if (perc == "0%"):
             continue
-        
+
         langName = languageReference[lang] if (lang in languageReference) else lang
         flag = languageFlagsRemap[lang] if (lang in languageFlagsRemap) else lang
         credits = makeURLFromTranslatorList(languageCredits[lang] if (lang in languageCredits) else "")
